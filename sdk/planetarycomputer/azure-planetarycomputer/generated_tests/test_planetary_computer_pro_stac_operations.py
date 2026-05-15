@@ -459,9 +459,9 @@ class TestPlanetaryComputerProStacOperations(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy
-    def test_stac_get_conformance_class(self, planetarycomputerpro_endpoint):
+    def test_stac_get_conformance_classes(self, planetarycomputerpro_endpoint):
         client = self.create_client(endpoint=planetarycomputerpro_endpoint)
-        response = client.stac.get_conformance_class()
+        response = client.stac.get_conformance_classes()
 
         # please add some check logic here by yourself
         # ...

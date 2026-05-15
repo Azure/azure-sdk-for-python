@@ -1,247 +1,247 @@
-2026-05-12 14:39:12,586 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,586 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Get STAC API Conformance Classes
-2026-05-12 14:39:12,586 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved 15 conformance classes
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 1: http://www.opengis.net/spec/cql2/1.0/conf/basic-cql2
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 2: http://www.opengis.net/spec/cql2/1.0/conf/cql2-json
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 3: http://www.opengis.net/spec/cql2/1.0/conf/cql2-text
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 4: http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 5: http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 6: http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 7: http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/filter
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 8: https://api.stacspec.org/v1.0.0-rc.2/item-search#filter
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 9: https://api.stacspec.org/v1.0.0/collections
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 10: https://api.stacspec.org/v1.0.0/core
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 11: https://api.stacspec.org/v1.0.0/item-search
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 12: https://api.stacspec.org/v1.0.0/item-search#fields
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 13: https://api.stacspec.org/v1.0.0/item-search#query
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 14: https://api.stacspec.org/v1.0.0/item-search#sort
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 15: https://api.stacspec.org/v1.0.0/ogcapi-features
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO - Supports: http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO - Supports: https://api.stacspec.org/v1.0.0/core
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO - Supports: https://api.stacspec.org/v1.0.0/collections
-2026-05-12 14:39:12,593 - test_planetary_computer_02_stac_specification_async - INFO - Supports: https://api.stacspec.org/v1.0.0/item-search
-2026-05-12 14:39:12,616 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,616 - test_planetary_computer_02_stac_specification_async - INFO - TEST: List STAC Collections
-2026-05-12 14:39:12,616 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved 8 collections
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,695 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,695 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Get STAC API Conformance Classes
+2026-05-15 11:47:58,695 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved 15 conformance classes
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 1: http://www.opengis.net/spec/cql2/1.0/conf/basic-cql2
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 2: http://www.opengis.net/spec/cql2/1.0/conf/cql2-json
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 3: http://www.opengis.net/spec/cql2/1.0/conf/cql2-text
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 4: http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 5: http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 6: http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 7: http://www.opengis.net/spec/ogcapi-features-3/1.0/conf/filter
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 8: https://api.stacspec.org/v1.0.0-rc.2/item-search#filter
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 9: https://api.stacspec.org/v1.0.0/collections
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 10: https://api.stacspec.org/v1.0.0/core
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 11: https://api.stacspec.org/v1.0.0/item-search
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 12: https://api.stacspec.org/v1.0.0/item-search#fields
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 13: https://api.stacspec.org/v1.0.0/item-search#query
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 14: https://api.stacspec.org/v1.0.0/item-search#sort
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO -   Conformance 15: https://api.stacspec.org/v1.0.0/ogcapi-features
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO - Supports: http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO - Supports: https://api.stacspec.org/v1.0.0/core
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO - Supports: https://api.stacspec.org/v1.0.0/collections
+2026-05-15 11:47:58,700 - test_planetary_computer_02_stac_specification_async - INFO - Supports: https://api.stacspec.org/v1.0.0/item-search
+2026-05-15 11:47:58,709 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,709 - test_planetary_computer_02_stac_specification_async - INFO - TEST: List STAC Collections
+2026-05-15 11:47:58,709 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved 8 collections
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO - 
 Collection 1:
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   ID: sentinel-2
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   Title: Sentinel-2 Test
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Sentinel-2 placeholder for testing
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   License: proprietary
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO -   ID: sentinel-2
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO -   Title: Sentinel-2 Test
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Sentinel-2 placeholder for testing
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO -   License: proprietary
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO - 
 Collection 2:
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   ID: landsat-8
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   Title: Landsat-8 Test
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Landsat-8 placeholder for testing
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   License: proprietary
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO -   ID: landsat-8
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO -   Title: Landsat-8 Test
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Landsat-8 placeholder for testing
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO -   License: proprietary
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO - 
 Collection 3:
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   ID: dem
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   Title: DEM Test
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Digital Elevation Model placeholder for testing
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   License: proprietary
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,732 - test_planetary_computer_02_stac_specification_async - INFO -   ID: dem
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   Title: DEM Test
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Digital Elevation Model placeholder for testing
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   License: proprietary
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO - 
 Collection 4:
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   ID: land-cover
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   Title: Land Cover Test
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Land cover placeholder for testing
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   License: proprietary
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   ID: land-cover
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   Title: Land Cover Test
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Land cover placeholder for testing
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   License: proprietary
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO - 
 Collection 5:
-2026-05-12 14:39:12,643 - test_planetary_computer_02_stac_specification_async - INFO -   ID: io-collection
-2026-05-12 14:39:12,644 - test_planetary_computer_02_stac_specification_async - INFO -   Title: Impact Observatory Collection
-2026-05-12 14:39:12,644 - test_planetary_computer_02_stac_specification_async - INFO -   Description: An example collection
-2026-05-12 14:39:12,644 - test_planetary_computer_02_stac_specification_async - INFO -   License: CC-BY-4.0
-2026-05-12 14:39:12,665 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,665 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Get STAC Collection (naip)
-2026-05-12 14:39:12,665 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved collection: naip
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -   Title: NAIP Test Dataset
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -   Description: NAIP imagery for SDK testing...
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -   License: proprietary
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -   Extent:
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -     Spatial attributes: ['as_dict', 'bounding_box', 'clear', 'copy', 'get', 'items', 'keys', 'pop', 'popitem', 'setdefault', 'update', 'values']
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -     Temporal interval: [[datetime.datetime(2020, 1, 1, 0, 0, tzinfo=<isodate.tzinfo.Utc object at 0x11025c8e0>), datetime.datetime(2099, 12, 31, 23, 59, 59, tzinfo=<isodate.tzinfo.Utc object at 0x11025c8e0>)]]
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -   Links count: 5
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -     - items: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip/items
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -     - parent: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -     - root: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -     - self: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip
-2026-05-12 14:39:12,674 - test_planetary_computer_02_stac_specification_async - INFO -     - http://www.opengis.net/def/rel/ogc/1.0/queryables: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip/queryables
-2026-05-12 14:39:12,689 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,689 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Search STAC Items with Spatial Filter
-2026-05-12 14:39:12,689 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO - Search returned 5 items
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   ID: io-collection
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   Title: Impact Observatory Collection
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   Description: An example collection
+2026-05-15 11:47:58,733 - test_planetary_computer_02_stac_specification_async - INFO -   License: CC-BY-4.0
+2026-05-15 11:47:58,744 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,744 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Get STAC Collection (naip)
+2026-05-15 11:47:58,744 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,752 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved collection: naip
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -   Title: NAIP Test Dataset
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -   Description: NAIP imagery for SDK testing...
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -   License: proprietary
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -   Extent:
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -     Spatial attributes: ['as_dict', 'bounding_box', 'clear', 'copy', 'get', 'items', 'keys', 'pop', 'popitem', 'setdefault', 'update', 'values']
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -     Temporal interval: [[datetime.datetime(2020, 1, 1, 0, 0, tzinfo=<isodate.tzinfo.Utc object at 0x10e130820>), datetime.datetime(2099, 12, 31, 23, 59, 59, tzinfo=<isodate.tzinfo.Utc object at 0x10e130820>)]]
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -   Links count: 5
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -     - items: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip/items
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -     - parent: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -     - root: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -     - self: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip
+2026-05-15 11:47:58,753 - test_planetary_computer_02_stac_specification_async - INFO -     - http://www.opengis.net/def/rel/ogc/1.0/queryables: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip/queryables
+2026-05-15 11:47:58,762 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,762 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Search STAC Items with Spatial Filter
+2026-05-15 11:47:58,762 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO - Search returned 5 items
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO - 
 Item 1:
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO -   ID: ga_m_3308429_nw_16_060_20211114
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO -   Geometry type: Polygon
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO -   ID: ga_m_3308429_nw_16_060_20211114
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO -   Geometry type: Polygon
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO - 
 Item 2:
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO -   ID: ga_m_3308429_ne_16_060_20211114
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO -   Geometry type: Polygon
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO -   ID: ga_m_3308429_ne_16_060_20211114
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO -   Geometry type: Polygon
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO - 
 Item 3:
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO -   ID: ga_m_3308421_sw_16_060_20211114
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
-2026-05-12 14:39:12,729 - test_planetary_computer_02_stac_specification_async - INFO -   Geometry type: Polygon
-2026-05-12 14:39:12,750 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,750 - test_planetary_computer_02_stac_specification_async - INFO - TEST: List Items in Collection
-2026-05-12 14:39:12,750 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved 10 items from collection naip
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO -   ID: ga_m_3308421_sw_16_060_20211114
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
+2026-05-15 11:47:58,798 - test_planetary_computer_02_stac_specification_async - INFO -   Geometry type: Polygon
+2026-05-15 11:47:58,824 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,824 - test_planetary_computer_02_stac_specification_async - INFO - TEST: List Items in Collection
+2026-05-15 11:47:58,824 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved 10 items from collection naip
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO - 
 Item 1:
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO -   ID: va_m_3807708_sw_18_060_20231113_20240103
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO -   Assets: image, tilejson, thumbnail, rendered_preview
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   ID: va_m_3807708_sw_18_060_20231113_20240103
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   Assets: image, tilejson, thumbnail, rendered_preview
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO - 
 Item 2:
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO -   ID: tn_m_3508308_nw_17_060_20231025_20240104
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO -   Assets: image, tilejson, thumbnail, rendered_preview
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   ID: va_m_3807708_se_18_060_20231113_20240103
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   Assets: image, tilejson, thumbnail, rendered_preview
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO - 
 Item 3:
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO -   ID: tn_m_3508209_sw_17_060_20231025_20240104
-2026-05-12 14:39:12,813 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
-2026-05-12 14:39:12,814 - test_planetary_computer_02_stac_specification_async - INFO -   Assets: image, tilejson, thumbnail, rendered_preview
-2026-05-12 14:39:12,814 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   ID: va_m_3807716_se_18_060_20231104_20240103
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   Assets: image, tilejson, thumbnail, rendered_preview
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO - 
 Item 4:
-2026-05-12 14:39:12,814 - test_planetary_computer_02_stac_specification_async - INFO -   ID: tn_m_3508201_ne_17_060_20231025_20240104
-2026-05-12 14:39:12,814 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
-2026-05-12 14:39:12,814 - test_planetary_computer_02_stac_specification_async - INFO -   Assets: image, tilejson, thumbnail, rendered_preview
-2026-05-12 14:39:12,814 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   ID: va_m_3807716_nw_18_060_20231104_20240103
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   Assets: image, tilejson, thumbnail, rendered_preview
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO - 
 Item 5:
-2026-05-12 14:39:12,814 - test_planetary_computer_02_stac_specification_async - INFO -   ID: va_m_3807715_se_18_060_20231011_20240103
-2026-05-12 14:39:12,814 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
-2026-05-12 14:39:12,814 - test_planetary_computer_02_stac_specification_async - INFO -   Assets: image, tilejson, thumbnail, rendered_preview
-2026-05-12 14:39:12,828 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,828 - test_planetary_computer_02_stac_specification_async - INFO - TEST: List Collection Queryables
-2026-05-12 14:39:12,828 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved queryables for collection: naip
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - Found 4 queryable properties
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   ID: tn_m_3508308_sw_17_060_20231025_20240104
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
+2026-05-15 11:47:58,886 - test_planetary_computer_02_stac_specification_async - INFO -   Assets: image, tilejson, thumbnail, rendered_preview
+2026-05-15 11:47:58,899 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,899 - test_planetary_computer_02_stac_specification_async - INFO - TEST: List Collection Queryables
+2026-05-15 11:47:58,899 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved queryables for collection: naip
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO - Found 4 queryable properties
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 1: id
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item identifier
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://schemas.stacspec.org/v1.0.0/item-spec/json-schema/item.json#/definitions/core/allOf/2/properties/id
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item identifier
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://schemas.stacspec.org/v1.0.0/item-spec/json-schema/item.json#/definitions/core/allOf/2/properties/id
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 2: datetime
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Datetime
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Type: string
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Datetime
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO -   Type: string
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 3: geometry
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item Geometry
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://geojson.org/schema/Feature.json
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item Geometry
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://geojson.org/schema/Feature.json
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 4: test:property
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Test property - updated
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Test property - updated
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 1: id
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item identifier
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://schemas.stacspec.org/v1.0.0/item-spec/json-schema/item.json#/definitions/core/allOf/2/properties/id
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item identifier
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://schemas.stacspec.org/v1.0.0/item-spec/json-schema/item.json#/definitions/core/allOf/2/properties/id
+2026-05-15 11:47:58,907 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 2: datetime
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Datetime
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Type: string
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Datetime
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Type: string
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 3: geometry
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item Geometry
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://geojson.org/schema/Feature.json
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item Geometry
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://geojson.org/schema/Feature.json
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 4: test:property
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Test property - updated
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Test property - updated
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 1: id
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item identifier
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://schemas.stacspec.org/v1.0.0/item-spec/json-schema/item.json#/definitions/core/allOf/2/properties/id
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item identifier
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://schemas.stacspec.org/v1.0.0/item-spec/json-schema/item.json#/definitions/core/allOf/2/properties/id
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 2: datetime
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Datetime
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO -   Type: string
-2026-05-12 14:39:12,835 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Datetime
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Type: string
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 3: geometry
-2026-05-12 14:39:12,836 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item Geometry
-2026-05-12 14:39:12,836 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://geojson.org/schema/Feature.json
-2026-05-12 14:39:12,836 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Item Geometry
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Reference: https://geojson.org/schema/Feature.json
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryable 4: test:property
-2026-05-12 14:39:12,836 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Test property - updated
-2026-05-12 14:39:12,836 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO -   Description: Test property - updated
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO - 
 Queryables schema: http://json-schema.org/draft-07/schema#
-2026-05-12 14:39:12,836 - test_planetary_computer_02_stac_specification_async - INFO - Queryables ID: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip/queryables?api-version=2026-04-15
-2026-05-12 14:39:12,854 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,854 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Search Items with Temporal Filter
-2026-05-12 14:39:12,854 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,918 - test_planetary_computer_02_stac_specification_async - INFO - Temporal search returned 10 items
-2026-05-12 14:39:12,918 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,908 - test_planetary_computer_02_stac_specification_async - INFO - Queryables ID: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip/queryables?api-version=2026-04-15
+2026-05-15 11:47:58,918 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,919 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Search Items with Temporal Filter
+2026-05-15 11:47:58,919 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,984 - test_planetary_computer_02_stac_specification_async - INFO - Temporal search returned 10 items
+2026-05-15 11:47:58,984 - test_planetary_computer_02_stac_specification_async - INFO - 
 Item 1: nc_m_3508049_sw_17_060_20220927
-2026-05-12 14:39:12,918 - test_planetary_computer_02_stac_specification_async - INFO -   Datetime: 2022-09-27T16:00:00Z
-2026-05-12 14:39:12,918 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,984 - test_planetary_computer_02_stac_specification_async - INFO -   Datetime: 2022-09-27T16:00:00Z
+2026-05-15 11:47:58,984 - test_planetary_computer_02_stac_specification_async - INFO - 
 Item 2: nc_m_3508049_ne_17_060_20220927
-2026-05-12 14:39:12,918 - test_planetary_computer_02_stac_specification_async - INFO -   Datetime: 2022-09-27T16:00:00Z
-2026-05-12 14:39:12,918 - test_planetary_computer_02_stac_specification_async - INFO - 
-Item 3: ny_m_4007424_sw_18_060_20220915
-2026-05-12 14:39:12,918 - test_planetary_computer_02_stac_specification_async - INFO -   Datetime: 2022-09-15T16:00:00Z
-2026-05-12 14:39:12,941 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:12,941 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Search Items with Sorting
-2026-05-12 14:39:12,941 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,007 - test_planetary_computer_02_stac_specification_async - INFO - Search with DESC sorting returned 5 items
-2026-05-12 14:39:13,007 - test_planetary_computer_02_stac_specification_async - INFO - Item 1: va_m_3807708_sw_18_060_20231113_20240103
-2026-05-12 14:39:13,007 - test_planetary_computer_02_stac_specification_async - INFO - Item 2: tn_m_3508308_nw_17_060_20231025_20240104
-2026-05-12 14:39:13,007 - test_planetary_computer_02_stac_specification_async - INFO - Item 3: tn_m_3508209_sw_17_060_20231025_20240104
-2026-05-12 14:39:13,007 - test_planetary_computer_02_stac_specification_async - INFO - Item 4: tn_m_3508201_ne_17_060_20231025_20240104
-2026-05-12 14:39:13,007 - test_planetary_computer_02_stac_specification_async - INFO - Item 5: va_m_3807715_se_18_060_20231011_20240103
-2026-05-12 14:39:13,013 - test_planetary_computer_02_stac_specification_async - INFO - 
+2026-05-15 11:47:58,984 - test_planetary_computer_02_stac_specification_async - INFO -   Datetime: 2022-09-27T16:00:00Z
+2026-05-15 11:47:58,984 - test_planetary_computer_02_stac_specification_async - INFO - 
+Item 3: nc_m_3508041_sw_17_060_20220927
+2026-05-15 11:47:58,984 - test_planetary_computer_02_stac_specification_async - INFO -   Datetime: 2022-09-27T16:00:00Z
+2026-05-15 11:47:58,997 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:58,997 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Search Items with Sorting
+2026-05-15 11:47:58,997 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,059 - test_planetary_computer_02_stac_specification_async - INFO - Search with DESC sorting returned 5 items
+2026-05-15 11:47:59,059 - test_planetary_computer_02_stac_specification_async - INFO - Item 1: va_m_3807708_sw_18_060_20231113_20240103
+2026-05-15 11:47:59,059 - test_planetary_computer_02_stac_specification_async - INFO - Item 2: va_m_3807708_se_18_060_20231113_20240103
+2026-05-15 11:47:59,059 - test_planetary_computer_02_stac_specification_async - INFO - Item 3: va_m_3807716_se_18_060_20231104_20240103
+2026-05-15 11:47:59,059 - test_planetary_computer_02_stac_specification_async - INFO - Item 4: va_m_3807716_nw_18_060_20231104_20240103
+2026-05-15 11:47:59,059 - test_planetary_computer_02_stac_specification_async - INFO - Item 5: tn_m_3508308_sw_17_060_20231025_20240104
+2026-05-15 11:47:59,064 - test_planetary_computer_02_stac_specification_async - INFO - 
 Search with ASC sorting returned 5 items
-2026-05-12 14:39:13,013 - test_planetary_computer_02_stac_specification_async - INFO - Item 1: nv_m_3611563_ne_11_1_20100510
-2026-05-12 14:39:13,013 - test_planetary_computer_02_stac_specification_async - INFO - Item 2: fl_m_2808139_sw_17_1_20100520
-2026-05-12 14:39:13,013 - test_planetary_computer_02_stac_specification_async - INFO - Item 3: az_m_3311240_ne_12_1_20100608
-2026-05-12 14:39:13,013 - test_planetary_computer_02_stac_specification_async - INFO - Item 4: az_m_3311133_sw_12_1_20100608
-2026-05-12 14:39:13,013 - test_planetary_computer_02_stac_specification_async - INFO - Item 5: az_m_3311133_nw_12_1_20100608
-2026-05-12 14:39:13,038 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,038 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Create STAC Item
-2026-05-12 14:39:13,038 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,039 - test_planetary_computer_02_stac_specification_async - INFO - Creating STAC item: ga_m_3308421_se_16_060_20211114_test
-2026-05-12 14:39:13,118 - test_planetary_computer_02_stac_specification_async - ERROR - Failed to create item: Operation returned an invalid status 'OK'
-Content: {"id": "00000000-0000-0000-0000-000000000000","status":"Failed","statusHistory":[{"status":"Pending","timestamp":"2026-05-12T13:29:40.897559Z"},{"status":"Running","timestamp":"2026-05-12T13:29:42.28564Z"},{"status":"Failed","timestamp":"2026-05-12T13:29:43.471253Z","errorCode":"ItemAlreadyExistsInCollection","errorMessage":"Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip'"}],"type":"AddItem","creationTime":"2026-05-12T13:29:40.897559Z","startTime":"2026-05-12T13:29:40.897559Z","finishTime":"2026-05-12T13:29:43.471253Z","collectionId":"naip","additionalInformation":{"TotalFailedItems":"1","TotalItems":"1","TotalPendingItems":"0","TotalSuccessfulItems":"0"},"error":{"error":{"code":"ItemAlreadyExistsInCollection","message":"Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip'"}}}
-2026-05-12 14:39:13,118 - test_planetary_computer_02_stac_specification_async - INFO - Item creation may not be supported in this environment
-2026-05-12 14:39:13,137 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,137 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Update STAC Item
-2026-05-12 14:39:13,137 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,153 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved item for update: ga_m_3308421_se_16_060_20211114_test
-2026-05-12 14:39:13,153 - test_planetary_computer_02_stac_specification_async - INFO - Updating item with platform property: Imagery
-2026-05-12 14:39:13,164 - test_planetary_computer_02_stac_specification_async - ERROR - Failed to update item: Operation returned an invalid status 'OK'
-Content: {"id": "00000000-0000-0000-0000-000000000000","status":"Failed","statusHistory":[{"status":"Pending","timestamp":"2026-05-12T13:30:13.056248Z"},{"status":"Running","timestamp":"2026-05-12T13:30:13.261728Z"},{"status":"Failed","timestamp":"2026-05-12T13:30:22.498278Z","errorCode":"IngestionResourceForbidden","errorMessage":"Asset transformation exception. Reason: Error retrieving content from sas token source. Reason: Forbidden access. You do not have permission to access this resource. Verify your access control settings, role assignments, SAS Token or that the managed identity has the required permissions. Learn more about access control: https://aka.ms/mpcpro-ingestion-source. Source: https://SANITIZED.blob.core.windows.net/naip-00000000/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED.blob.core.windows.net/naip-00000000/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"}],"type":"UpdateItem","creationTime":"2026-05-12T13:30:13.056248Z","startTime":"2026-05-12T13:30:13.056248Z","finishTime":"2026-05-12T13:30:22.498278Z","collectionId":"naip","additionalInformation":{"TotalFailedItems":"1","TotalItems":"1","TotalPendingItems":"0","TotalSuccessfulItems":"0"},"error":{"error":{"code":"IngestionResourceForbidden","message":"Asset transformation exception. Reason: Error retrieving content from sas token source. Reason: Forbidden access. You do not have permission to access this resource. Verify your access control settings, role assignments, SAS Token or that the managed identity has the required permissions. Learn more about access control: https://aka.ms/mpcpro-ingestion-source. Source: https://SANITIZED.blob.core.windows.net/naip-00000000/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED.blob.core.windows.net/naip-00000000/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"}}}
-2026-05-12 14:39:13,164 - test_planetary_computer_02_stac_specification_async - INFO - Item update may not be supported in this environment or item doesn't exist
-2026-05-12 14:39:13,164 - test_planetary_computer_02_stac_specification_async - INFO - This is expected if public access is restricted on the storage account
-2026-05-12 14:39:13,184 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,184 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Get STAC Item
-2026-05-12 14:39:13,184 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,203 - test_planetary_computer_02_stac_specification_async - INFO - Getting item: va_m_3807708_sw_18_060_20231113_20240103
-2026-05-12 14:39:13,206 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved item: va_m_3807708_sw_18_060_20231113_20240103
-2026-05-12 14:39:13,206 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
-2026-05-12 14:39:13,206 - test_planetary_computer_02_stac_specification_async - INFO -   Assets (4): image, tilejson, thumbnail, rendered_preview
-2026-05-12 14:39:13,206 - test_planetary_computer_02_stac_specification_async - INFO -   Found common assets: image, tilejson, thumbnail, rendered_preview
-2026-05-12 14:39:13,228 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,229 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Replace STAC Item
-2026-05-12 14:39:13,229 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,259 - test_planetary_computer_02_stac_specification_async - INFO - Using test item for replace test: ga_m_3308421_se_16_060_20211114_test
-2026-05-12 14:39:13,260 - test_planetary_computer_02_stac_specification_async - INFO - Replacing item ga_m_3308421_se_16_060_20211114_test using begin_replace_item...
-2026-05-12 14:39:13,274 - test_planetary_computer_02_stac_specification_async - INFO - Replaced item ga_m_3308421_se_16_060_20211114_test
-2026-05-12 14:39:13,277 - test_planetary_computer_02_stac_specification_async - INFO - Verified replaced item, platform: Imagery Updated via Replace Test
-2026-05-12 14:39:13,286 - test_planetary_computer_02_stac_specification_async - INFO - Restored original item ga_m_3308421_se_16_060_20211114_test
-2026-05-12 14:39:13,286 - test_planetary_computer_02_stac_specification_async - INFO - Successfully verified replace operation for item ga_m_3308421_se_16_060_20211114_test
-2026-05-12 14:39:13,305 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,306 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Delete STAC Item
-2026-05-12 14:39:13,306 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-05-12 14:39:13,306 - test_planetary_computer_02_stac_specification_async - INFO - Creating STAC item to delete: ga_m_3308421_se_16_060_20211114_delete_test
-2026-05-12 14:39:13,336 - test_planetary_computer_02_stac_specification_async - INFO - Created item ga_m_3308421_se_16_060_20211114_delete_test
-2026-05-12 14:39:13,340 - test_planetary_computer_02_stac_specification_async - INFO - Verified item ga_m_3308421_se_16_060_20211114_delete_test exists
-2026-05-12 14:39:13,341 - test_planetary_computer_02_stac_specification_async - INFO - Deleting item ga_m_3308421_se_16_060_20211114_delete_test...
-2026-05-12 14:39:13,346 - test_planetary_computer_02_stac_specification_async - INFO - Delete operation completed for item ga_m_3308421_se_16_060_20211114_delete_test
-2026-05-12 14:39:13,346 - test_planetary_computer_02_stac_specification_async - INFO - Verifying item ga_m_3308421_se_16_060_20211114_delete_test was deleted...
-2026-05-12 14:39:13,348 - test_planetary_computer_02_stac_specification_async - INFO - Verified item ga_m_3308421_se_16_060_20211114_delete_test was successfully deleted
-2026-05-12 14:39:13,348 - test_planetary_computer_02_stac_specification_async - INFO - Successfully completed delete test for item ga_m_3308421_se_16_060_20211114_delete_test
+2026-05-15 11:47:59,065 - test_planetary_computer_02_stac_specification_async - INFO - Item 1: nv_m_3611564_nw_11_1_20100510
+2026-05-15 11:47:59,065 - test_planetary_computer_02_stac_specification_async - INFO - Item 2: nv_m_3611563_ne_11_1_20100510
+2026-05-15 11:47:59,065 - test_planetary_computer_02_stac_specification_async - INFO - Item 3: fl_m_2808139_sw_17_1_20100520
+2026-05-15 11:47:59,065 - test_planetary_computer_02_stac_specification_async - INFO - Item 4: fl_m_2808139_nw_17_1_20100520
+2026-05-15 11:47:59,065 - test_planetary_computer_02_stac_specification_async - INFO - Item 5: az_m_3311240_ne_12_1_20100608
+2026-05-15 11:47:59,074 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,074 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Create STAC Item
+2026-05-15 11:47:59,074 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,074 - test_planetary_computer_02_stac_specification_async - INFO - Creating STAC item: ga_m_3308421_se_16_060_20211114_test
+2026-05-15 11:47:59,157 - test_planetary_computer_02_stac_specification_async - ERROR - Failed to create item: Operation returned an invalid status 'OK'
+Content: {"id": "00000000-0000-0000-0000-000000000000","status":"Failed","statusHistory":[{"status":"Pending","timestamp":"2026-05-15T10:05:59.30656Z"},{"status":"Running","timestamp":"2026-05-15T10:06:00.432261Z"},{"status":"Failed","timestamp":"2026-05-15T10:06:01.272331Z","errorCode":"ItemAlreadyExistsInCollection","errorMessage":"Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip'"}],"type":"AddItem","creationTime":"2026-05-15T10:05:59.30656Z","startTime":"2026-05-15T10:05:59.30656Z","finishTime":"2026-05-15T10:06:01.272331Z","collectionId":"naip","additionalInformation":{"TotalFailedItems":"1","TotalItems":"1","TotalPendingItems":"0","TotalSuccessfulItems":"0"},"error":{"error":{"code":"ItemAlreadyExistsInCollection","message":"Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip'"}}}
+2026-05-15 11:47:59,157 - test_planetary_computer_02_stac_specification_async - INFO - Item creation may not be supported in this environment
+2026-05-15 11:47:59,166 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,167 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Update STAC Item
+2026-05-15 11:47:59,167 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,183 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved item for update: ga_m_3308421_se_16_060_20211114_test
+2026-05-15 11:47:59,184 - test_planetary_computer_02_stac_specification_async - INFO - Updating item with platform property: Imagery
+2026-05-15 11:47:59,194 - test_planetary_computer_02_stac_specification_async - ERROR - Failed to update item: Operation returned an invalid status 'OK'
+Content: {"id": "00000000-0000-0000-0000-000000000000","status":"Failed","statusHistory":[{"status":"Pending","timestamp":"2026-05-15T10:06:31.690994Z"},{"status":"Running","timestamp":"2026-05-15T10:06:32.937843Z"},{"status":"Failed","timestamp":"2026-05-15T10:06:39.205382Z","errorCode":"IngestionResourceForbidden","errorMessage":"Asset transformation exception. Reason: Error retrieving content from sas token source. Reason: Forbidden access. You do not have permission to access this resource. Verify your access control settings, role assignments, SAS Token or that the managed identity has the required permissions. Learn more about access control: https://aka.ms/mpcpro-ingestion-source. Source: https://SANITIZED.blob.core.windows.net/naip-00000000/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED.blob.core.windows.net/naip-00000000/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"}],"type":"UpdateItem","creationTime":"2026-05-15T10:06:31.690994Z","startTime":"2026-05-15T10:06:31.690994Z","finishTime":"2026-05-15T10:06:39.205382Z","collectionId":"naip","additionalInformation":{"TotalFailedItems":"1","TotalItems":"1","TotalPendingItems":"0","TotalSuccessfulItems":"0"},"error":{"error":{"code":"IngestionResourceForbidden","message":"Asset transformation exception. Reason: Error retrieving content from sas token source. Reason: Forbidden access. You do not have permission to access this resource. Verify your access control settings, role assignments, SAS Token or that the managed identity has the required permissions. Learn more about access control: https://aka.ms/mpcpro-ingestion-source. Source: https://SANITIZED.blob.core.windows.net/naip-00000000/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED.blob.core.windows.net/naip-00000000/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"}}}
+2026-05-15 11:47:59,194 - test_planetary_computer_02_stac_specification_async - INFO - Item update may not be supported in this environment or item doesn't exist
+2026-05-15 11:47:59,194 - test_planetary_computer_02_stac_specification_async - INFO - This is expected if public access is restricted on the storage account
+2026-05-15 11:47:59,209 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,209 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Get STAC Item
+2026-05-15 11:47:59,210 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,228 - test_planetary_computer_02_stac_specification_async - INFO - Getting item: va_m_3807708_sw_18_060_20231113_20240103
+2026-05-15 11:47:59,231 - test_planetary_computer_02_stac_specification_async - INFO - Retrieved item: va_m_3807708_sw_18_060_20231113_20240103
+2026-05-15 11:47:59,231 - test_planetary_computer_02_stac_specification_async - INFO -   Collection: naip
+2026-05-15 11:47:59,231 - test_planetary_computer_02_stac_specification_async - INFO -   Assets (4): image, tilejson, thumbnail, rendered_preview
+2026-05-15 11:47:59,231 - test_planetary_computer_02_stac_specification_async - INFO -   Found common assets: image, tilejson, thumbnail, rendered_preview
+2026-05-15 11:47:59,239 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,239 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Replace STAC Item
+2026-05-15 11:47:59,240 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,272 - test_planetary_computer_02_stac_specification_async - INFO - Using test item for replace test: ga_m_3308421_se_16_060_20211114_test
+2026-05-15 11:47:59,273 - test_planetary_computer_02_stac_specification_async - INFO - Replacing item ga_m_3308421_se_16_060_20211114_test using begin_replace_item...
+2026-05-15 11:47:59,286 - test_planetary_computer_02_stac_specification_async - INFO - Replaced item ga_m_3308421_se_16_060_20211114_test
+2026-05-15 11:47:59,289 - test_planetary_computer_02_stac_specification_async - INFO - Verified replaced item, platform: Imagery Updated via Replace Test
+2026-05-15 11:47:59,297 - test_planetary_computer_02_stac_specification_async - INFO - Restored original item ga_m_3308421_se_16_060_20211114_test
+2026-05-15 11:47:59,297 - test_planetary_computer_02_stac_specification_async - INFO - Successfully verified replace operation for item ga_m_3308421_se_16_060_20211114_test
+2026-05-15 11:47:59,305 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,305 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Delete STAC Item
+2026-05-15 11:47:59,305 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
+2026-05-15 11:47:59,306 - test_planetary_computer_02_stac_specification_async - INFO - Creating STAC item to delete: ga_m_3308421_se_16_060_20211114_delete_test
+2026-05-15 11:47:59,333 - test_planetary_computer_02_stac_specification_async - INFO - Created item ga_m_3308421_se_16_060_20211114_delete_test
+2026-05-15 11:47:59,336 - test_planetary_computer_02_stac_specification_async - INFO - Verified item ga_m_3308421_se_16_060_20211114_delete_test exists
+2026-05-15 11:47:59,336 - test_planetary_computer_02_stac_specification_async - INFO - Deleting item ga_m_3308421_se_16_060_20211114_delete_test...
+2026-05-15 11:47:59,357 - test_planetary_computer_02_stac_specification_async - INFO - Delete operation completed for item ga_m_3308421_se_16_060_20211114_delete_test
+2026-05-15 11:47:59,357 - test_planetary_computer_02_stac_specification_async - INFO - Verifying item ga_m_3308421_se_16_060_20211114_delete_test was deleted...
+2026-05-15 11:47:59,366 - test_planetary_computer_02_stac_specification_async - INFO - Verified item ga_m_3308421_se_16_060_20211114_delete_test was successfully deleted
+2026-05-15 11:47:59,366 - test_planetary_computer_02_stac_specification_async - INFO - Successfully completed delete test for item ga_m_3308421_se_16_060_20211114_delete_test

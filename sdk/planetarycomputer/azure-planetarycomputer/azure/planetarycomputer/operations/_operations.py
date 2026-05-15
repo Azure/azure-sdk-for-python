@@ -1103,7 +1103,7 @@ def build_stac_replace_tile_settings_request(collection_id: str, **kwargs: Any) 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_get_conformance_class_request(**kwargs: Any) -> HttpRequest:
+def build_stac_get_conformance_classes_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -14274,7 +14274,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_conformance_class(self, **kwargs: Any) -> _models.StacConformanceClasses:
+    def get_conformance_classes(self, **kwargs: Any) -> _models.StacConformanceClasses:
         """Conformance Classes.
 
         Returns the STAC conformance classes.
@@ -14296,7 +14296,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.StacConformanceClasses] = kwargs.pop("cls", None)
 
-        _request = build_stac_get_conformance_class_request(
+        _request = build_stac_get_conformance_classes_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

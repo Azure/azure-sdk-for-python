@@ -47,14 +47,14 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_01_get_conformance_class(self, planetarycomputer_endpoint):
+    def test_01_get_conformance_classes(self, planetarycomputer_endpoint):
         """Test getting STAC API conformance classes."""
         logger.info("=" * 80)
         logger.info("TEST: Get STAC API Conformance Classes")
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        conformance = client.stac.get_conformance_class()
+        conformance = client.stac.get_conformance_classes()
 
         # Validate conformance response
         assert conformance is not None, "Conformance should not be None"

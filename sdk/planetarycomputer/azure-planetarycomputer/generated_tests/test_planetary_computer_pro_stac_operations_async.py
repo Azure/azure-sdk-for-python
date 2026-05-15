@@ -464,9 +464,9 @@ class TestPlanetaryComputerProStacOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_stac_get_conformance_class(self, planetarycomputerpro_endpoint):
+    async def test_stac_get_conformance_classes(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.stac.get_conformance_class()
+        response = await client.stac.get_conformance_classes()
 
         # please add some check logic here by yourself
         # ...

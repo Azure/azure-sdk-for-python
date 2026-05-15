@@ -303,9 +303,9 @@ async def manage_tile_settings(client: PlanetaryComputerProClient, collection_id
     logging.info(stac_collection_tile_settings_response)
 
 
-async def get_conformance_class(client: "PlanetaryComputerProClient"):
+async def get_conformance_classes(client: "PlanetaryComputerProClient"):
     """Get STAC conformance classes."""
-    result = await client.stac.get_conformance_class()
+    result = await client.stac.get_conformance_classes()
     logging.info(result)
 
 
@@ -441,7 +441,7 @@ async def main():
     await update_collection(client, collection_id)
     await manage_partition_type(client, collection_id)
     await manage_render_options(client, collection_id)
-    await get_conformance_class(client)
+    await get_conformance_classes(client)
     await get_landing_page(client)
     await manage_queryables(client, collection_id)
     await manage_tile_settings(client, collection_id)

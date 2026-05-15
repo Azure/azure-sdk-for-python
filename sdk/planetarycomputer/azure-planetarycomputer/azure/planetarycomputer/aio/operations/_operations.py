@@ -160,7 +160,7 @@ from ...operations._operations import (
     build_stac_get_collection_request,
     build_stac_get_collection_thumbnail_request,
     build_stac_get_collections_request,
-    build_stac_get_conformance_class_request,
+    build_stac_get_conformance_classes_request,
     build_stac_get_item_collection_request,
     build_stac_get_item_request,
     build_stac_get_landing_page_request,
@@ -4214,7 +4214,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_conformance_class(self, **kwargs: Any) -> _models.StacConformanceClasses:
+    async def get_conformance_classes(self, **kwargs: Any) -> _models.StacConformanceClasses:
         """Conformance Classes.
 
         Returns the STAC conformance classes.
@@ -4236,7 +4236,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.StacConformanceClasses] = kwargs.pop("cls", None)
 
-        _request = build_stac_get_conformance_class_request(
+        _request = build_stac_get_conformance_classes_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

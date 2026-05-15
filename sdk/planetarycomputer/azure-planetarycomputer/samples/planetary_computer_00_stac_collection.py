@@ -300,9 +300,9 @@ def manage_tile_settings(client: PlanetaryComputerProClient, collection_id):
     logging.info(stac_collection_tile_settings_response)
 
 
-def get_conformance_class(client: PlanetaryComputerProClient):
+def get_conformance_classes(client: PlanetaryComputerProClient):
     """Get STAC conformance classes."""
-    result = client.stac.get_conformance_class()
+    result = client.stac.get_conformance_classes()
     logging.info(result)
 
 
@@ -434,7 +434,7 @@ def main():
     update_collection(client, collection_id)
     manage_partition_type(client, collection_id)
     manage_render_options(client, collection_id)
-    get_conformance_class(client)
+    get_conformance_classes(client)
     get_landing_page(client)
     manage_queryables(client, collection_id)
     manage_tile_settings(client, collection_id)

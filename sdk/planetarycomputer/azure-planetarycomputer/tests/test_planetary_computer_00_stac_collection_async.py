@@ -84,7 +84,7 @@ class TestPlanetaryComputerStacCollectionAsync(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_02_get_conformance_class(self, planetarycomputer_endpoint):
+    async def test_02_get_conformance_classes(self, planetarycomputer_endpoint):
         """
         Test getting STAC conformance classes.
 
@@ -93,14 +93,14 @@ class TestPlanetaryComputerStacCollectionAsync(PlanetaryComputerProClientTestBas
         - List of conformance URIs
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_02_get_conformance_class")
+        test_logger.info("TEST: test_02_get_conformance_classes")
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info("Calling: get_conformance_class()")
-        response = await client.stac.get_conformance_class()
+        test_logger.info("Calling: get_conformance_classes()")
+        response = await client.stac.get_conformance_classes()
 
         test_logger.info(f"Response type: {type(response)}")
         if hasattr(response, "as_dict"):

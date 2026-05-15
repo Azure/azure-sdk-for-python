@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.stac.get_conformance_class()
+    response = client.stac.get_conformance_classes()
     print(response)
 
 

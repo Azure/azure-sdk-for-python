@@ -1,136 +1,136 @@
-2026-05-12 14:39:22,124 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,124 - test_collection_tiler - INFO - TEST: test_01_get_collection_info
-2026-05-12 14:39:22,124 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,132 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerStacSearchRegistration'>
-2026-05-12 14:39:22,132 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,049 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,049 - test_collection_tiler - INFO - TEST: test_01_get_collection_info
+2026-05-15 11:48:11,049 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,055 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerStacSearchRegistration'>
+2026-05-15 11:48:11,055 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,145 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,145 - test_collection_tiler - INFO - TEST: test_02_get_collection_point
-2026-05-12 14:39:22,145 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,152 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerCoreModelsResponsesPoint'>
-2026-05-12 14:39:22,152 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,076 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,076 - test_collection_tiler - INFO - TEST: test_02_get_collection_point
+2026-05-15 11:48:11,076 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,082 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerCoreModelsResponsesPoint'>
+2026-05-15 11:48:11,082 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,171 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,172 - test_collection_tiler - INFO - TEST: test_03_get_collection_point_assets
-2026-05-12 14:39:22,172 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,185 - test_collection_tiler - INFO - Response type: <class 'list'>
-2026-05-12 14:39:22,185 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,098 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,098 - test_collection_tiler - INFO - TEST: test_03_get_collection_point_assets
+2026-05-15 11:48:11,098 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,112 - test_collection_tiler - INFO - Response type: <class 'list'>
+2026-05-15 11:48:11,112 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,200 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,200 - test_collection_tiler - INFO - TEST: test_04_get_collection_tile
-2026-05-12 14:39:22,200 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,205 - test_collection_tiler - INFO - Tile size: 97090 bytes
-2026-05-12 14:39:22,206 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,131 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,131 - test_collection_tiler - INFO - TEST: test_04_get_collection_tile
+2026-05-15 11:48:11,131 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,136 - test_collection_tiler - INFO - Tile size: 97090 bytes
+2026-05-15 11:48:11,136 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,221 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,221 - test_collection_tiler - INFO - TEST: test_05_get_collection_tile_json
-2026-05-12 14:39:22,221 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,227 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileJsonMetadata'>
-2026-05-12 14:39:22,227 - test_collection_tiler - INFO - TileJSON keys: ['tilejson', 'name', 'version', 'scheme', 'tiles', 'minzoom', 'maxzoom', 'bounds', 'center']
-2026-05-12 14:39:22,228 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,151 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,151 - test_collection_tiler - INFO - TEST: test_05_get_collection_tile_json
+2026-05-15 11:48:11,152 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,157 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileJsonMetadata'>
+2026-05-15 11:48:11,158 - test_collection_tiler - INFO - TileJSON keys: ['tilejson', 'name', 'version', 'scheme', 'tiles', 'minzoom', 'maxzoom', 'bounds', 'center']
+2026-05-15 11:48:11,158 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,264 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,264 - test_collection_tiler - INFO - TEST: test_06_get_collection_bbox_crop
-2026-05-12 14:39:22,264 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,278 - test_collection_tiler - INFO - Image size: 1612525 bytes
-2026-05-12 14:39:22,278 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,198 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,198 - test_collection_tiler - INFO - TEST: test_06_get_collection_bbox_crop
+2026-05-15 11:48:11,198 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,211 - test_collection_tiler - INFO - Image size: 1612525 bytes
+2026-05-15 11:48:11,211 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,295 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,295 - test_collection_tiler - INFO - TEST: test_07_get_collection_wmts_capabilities
-2026-05-12 14:39:22,295 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,301 - test_collection_tiler - INFO - Response type: <class 'generator'>
-2026-05-12 14:39:22,301 - test_collection_tiler - INFO - Response size: 17300 bytes
-2026-05-12 14:39:22,301 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,228 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,228 - test_collection_tiler - INFO - TEST: test_07_get_collection_wmts_capabilities
+2026-05-15 11:48:11,228 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,233 - test_collection_tiler - INFO - Response type: <class 'generator'>
+2026-05-15 11:48:11,234 - test_collection_tiler - INFO - Response size: 17300 bytes
+2026-05-15 11:48:11,234 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,321 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,321 - test_collection_tiler - INFO - TEST: test_08_crop_collection_feature
-2026-05-12 14:39:22,321 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,330 - test_collection_tiler - INFO - Image size: 428684 bytes
-2026-05-12 14:39:22,331 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,251 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,252 - test_collection_tiler - INFO - TEST: test_08_crop_collection_feature
+2026-05-15 11:48:11,252 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,264 - test_collection_tiler - INFO - Image size: 428684 bytes
+2026-05-15 11:48:11,264 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,347 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,347 - test_collection_tiler - INFO - TEST: test_09_get_collection_tilesets
-2026-05-12 14:39:22,348 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,367 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetList'>
-2026-05-12 14:39:22,367 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,279 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,279 - test_collection_tiler - INFO - TEST: test_09_get_collection_tilesets
+2026-05-15 11:48:11,280 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,299 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetList'>
+2026-05-15 11:48:11,299 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,393 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,394 - test_collection_tiler - INFO - TEST: test_10_get_collection_assets_for_tile
-2026-05-12 14:39:22,394 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,408 - test_collection_tiler - INFO - Response type: <class 'list'>
-2026-05-12 14:39:22,408 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,315 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,315 - test_collection_tiler - INFO - TEST: test_10_get_collection_assets_for_tile
+2026-05-15 11:48:11,315 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,327 - test_collection_tiler - INFO - Response type: <class 'list'>
+2026-05-15 11:48:11,327 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,422 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,422 - test_collection_tiler - INFO - TEST: test_11_get_collection_tileset_metadata
-2026-05-12 14:39:22,422 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,435 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetMetadata'>
-2026-05-12 14:39:22,435 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,343 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,343 - test_collection_tiler - INFO - TEST: test_11_get_collection_tileset_metadata
+2026-05-15 11:48:11,343 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,355 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetMetadata'>
+2026-05-15 11:48:11,355 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,448 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,448 - test_collection_tiler - INFO - TEST: test_01_get_collection_info
-2026-05-12 14:39:22,448 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,455 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerStacSearchRegistration'>
-2026-05-12 14:39:22,455 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,369 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,369 - test_collection_tiler - INFO - TEST: test_01_get_collection_info
+2026-05-15 11:48:11,369 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,376 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerStacSearchRegistration'>
+2026-05-15 11:48:11,376 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,467 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,467 - test_collection_tiler - INFO - TEST: test_02_get_collection_point
-2026-05-12 14:39:22,467 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,473 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerCoreModelsResponsesPoint'>
-2026-05-12 14:39:22,473 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,399 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,399 - test_collection_tiler - INFO - TEST: test_02_get_collection_point
+2026-05-15 11:48:11,399 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,405 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerCoreModelsResponsesPoint'>
+2026-05-15 11:48:11,405 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,488 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,488 - test_collection_tiler - INFO - TEST: test_03_get_collection_point_assets
-2026-05-12 14:39:22,488 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,503 - test_collection_tiler - INFO - Response type: <class 'list'>
-2026-05-12 14:39:22,503 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,421 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,421 - test_collection_tiler - INFO - TEST: test_03_get_collection_point_assets
+2026-05-15 11:48:11,421 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,434 - test_collection_tiler - INFO - Response type: <class 'list'>
+2026-05-15 11:48:11,434 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,516 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,517 - test_collection_tiler - INFO - TEST: test_04_get_collection_tile
-2026-05-12 14:39:22,517 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,522 - test_collection_tiler - INFO - Tile size: 97090 bytes
-2026-05-12 14:39:22,522 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,448 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,448 - test_collection_tiler - INFO - TEST: test_04_get_collection_tile
+2026-05-15 11:48:11,448 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,453 - test_collection_tiler - INFO - Tile size: 97090 bytes
+2026-05-15 11:48:11,453 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,537 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,537 - test_collection_tiler - INFO - TEST: test_05_get_collection_tile_json
-2026-05-12 14:39:22,537 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,544 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileJsonMetadata'>
-2026-05-12 14:39:22,544 - test_collection_tiler - INFO - TileJSON keys: ['tilejson', 'name', 'version', 'scheme', 'tiles', 'minzoom', 'maxzoom', 'bounds', 'center']
-2026-05-12 14:39:22,544 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,466 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,467 - test_collection_tiler - INFO - TEST: test_05_get_collection_tile_json
+2026-05-15 11:48:11,467 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,472 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileJsonMetadata'>
+2026-05-15 11:48:11,473 - test_collection_tiler - INFO - TileJSON keys: ['tilejson', 'name', 'version', 'scheme', 'tiles', 'minzoom', 'maxzoom', 'bounds', 'center']
+2026-05-15 11:48:11,473 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,573 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,573 - test_collection_tiler - INFO - TEST: test_06_get_collection_bbox_crop
-2026-05-12 14:39:22,573 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,590 - test_collection_tiler - INFO - Image size: 1612525 bytes
-2026-05-12 14:39:22,590 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,506 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,506 - test_collection_tiler - INFO - TEST: test_06_get_collection_bbox_crop
+2026-05-15 11:48:11,506 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,517 - test_collection_tiler - INFO - Image size: 1612525 bytes
+2026-05-15 11:48:11,517 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,600 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,600 - test_collection_tiler - INFO - TEST: test_07_get_collection_wmts_capabilities
-2026-05-12 14:39:22,600 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,606 - test_collection_tiler - INFO - Response type: <class 'async_generator'>
-2026-05-12 14:39:22,607 - test_collection_tiler - INFO - Response size: 17300 bytes
-2026-05-12 14:39:22,607 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,533 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,534 - test_collection_tiler - INFO - TEST: test_07_get_collection_wmts_capabilities
+2026-05-15 11:48:11,534 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,540 - test_collection_tiler - INFO - Response type: <class 'async_generator'>
+2026-05-15 11:48:11,540 - test_collection_tiler - INFO - Response size: 17300 bytes
+2026-05-15 11:48:11,540 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,652 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,652 - test_collection_tiler - INFO - TEST: test_08_crop_collection_feature
-2026-05-12 14:39:22,652 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,661 - test_collection_tiler - INFO - Image size: 428684 bytes
-2026-05-12 14:39:22,662 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,560 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,560 - test_collection_tiler - INFO - TEST: test_08_crop_collection_feature
+2026-05-15 11:48:11,560 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,568 - test_collection_tiler - INFO - Image size: 428684 bytes
+2026-05-15 11:48:11,568 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,679 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,679 - test_collection_tiler - INFO - TEST: test_09_get_collection_tilesets
-2026-05-12 14:39:22,679 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,699 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetList'>
-2026-05-12 14:39:22,699 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,584 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,584 - test_collection_tiler - INFO - TEST: test_09_get_collection_tilesets
+2026-05-15 11:48:11,584 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,608 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetList'>
+2026-05-15 11:48:11,608 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,710 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,710 - test_collection_tiler - INFO - TEST: test_10_get_collection_assets_for_tile
-2026-05-12 14:39:22,710 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,729 - test_collection_tiler - INFO - Response type: <class 'list'>
-2026-05-12 14:39:22,729 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,626 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,626 - test_collection_tiler - INFO - TEST: test_10_get_collection_assets_for_tile
+2026-05-15 11:48:11,626 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,639 - test_collection_tiler - INFO - Response type: <class 'list'>
+2026-05-15 11:48:11,639 - test_collection_tiler - INFO - Test PASSED
 
-2026-05-12 14:39:22,757 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,758 - test_collection_tiler - INFO - TEST: test_11_get_collection_tileset_metadata
-2026-05-12 14:39:22,758 - test_collection_tiler - INFO - ================================================================================
-2026-05-12 14:39:22,773 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetMetadata'>
-2026-05-12 14:39:22,773 - test_collection_tiler - INFO - Test PASSED
+2026-05-15 11:48:11,655 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,655 - test_collection_tiler - INFO - TEST: test_11_get_collection_tileset_metadata
+2026-05-15 11:48:11,655 - test_collection_tiler - INFO - ================================================================================
+2026-05-15 11:48:11,668 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetMetadata'>
+2026-05-15 11:48:11,668 - test_collection_tiler - INFO - Test PASSED
 
