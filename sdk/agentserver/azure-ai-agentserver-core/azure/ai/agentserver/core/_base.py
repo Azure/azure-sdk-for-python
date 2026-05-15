@@ -287,6 +287,18 @@ class AgentServerHost(Starlette):
             **kwargs,
         )
 
+        # Instrument the Starlette app with OpenTelemetry so that every
+        # incoming HTTP request gets a real SERVER span with proper trace
+        # context propagation from the incoming traceparent header.
+        try:
+            from opentelemetry.instrumentation.starlette import StarletteInstrumentor
+            StarletteInstrumentor.instrument_app(self)
+            logger.info("Starlette OpenTelemetry instrumentation enabled.")
+        except ImportError:
+            logger.debug("opentelemetry-instrumentation-starlette not installed — skipping.")
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning("Failed to instrument Starlette app", exc_info=True)
+
     # ------------------------------------------------------------------
     # Server version (x-platform-server header)
     # ------------------------------------------------------------------

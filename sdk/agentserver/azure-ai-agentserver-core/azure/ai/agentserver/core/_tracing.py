@@ -291,37 +291,13 @@ def request_context(
 
     token = _otel_context.attach(ctx)
 
-    # Create a real SERVER span parented under the remote context so that
-    # downstream instrumentors (e.g. azure-ai-projects) get a recording span.
-    tracer = trace.get_tracer("azure.ai.agentserver")
-    with tracer.start_as_current_span(
-        "blah",
-        kind=trace.SpanKind.SERVER,
-        context=ctx,
-    ) as span:
-        # Debug: log the span context after creating the server span
-        _span_ctx = span.get_span_context()
-        logger.error(
-            "request_context server span: span_type=%s is_recording=%s "
-            "trace_id=%s span_id=%s trace_flags=%02x is_remote=%s is_valid=%s "
-            "has_attributes=%s",
-            type(span).__name__,
-            span.is_recording(),
-            format(_span_ctx.trace_id, '032x') if _span_ctx.trace_id else None,
-            format(_span_ctx.span_id, '016x') if _span_ctx.span_id else None,
-            _span_ctx.trace_flags,
-            _span_ctx.is_remote,
-            _span_ctx.is_valid,
-            hasattr(span, 'attributes'),
-        )
-
+    try:
+        yield
+    finally:
         try:
-            yield
-        finally:
-            try:
-                _otel_context.detach(token)
-            except ValueError:
-                pass
+            _otel_context.detach(token)
+        except ValueError:
+            pass
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
