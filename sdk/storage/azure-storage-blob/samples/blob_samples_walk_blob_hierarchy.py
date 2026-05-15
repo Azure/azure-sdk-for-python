@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -41,8 +39,8 @@ C: container4
 import os
 import sys
 
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobServiceClient
-
 from azure.storage.blob import BlobPrefix
 
 try:
@@ -51,9 +49,10 @@ except KeyError:
     print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
 
-def walk_container(client, container):
-    container_client = client.get_container_client(container.name)
-    print('C: {}'.format(container.name))
+
+def walk_container(client, container_prop):
+    container_client = client.get_container_client(container_prop.name)
+    print('C: {}'.format(container_prop.name))
     depth = 1
     separator = '   '
 
@@ -75,11 +74,12 @@ def walk_container(client, container):
                 print(message)
     walk_blob_hierarchy()
 
+
 try:
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
     containers = service_client.list_containers()
     for container in containers:
         walk_container(service_client, container)
-except Exception as error:
+except HttpResponseError as error:
     print(error)
     sys.exit(1)

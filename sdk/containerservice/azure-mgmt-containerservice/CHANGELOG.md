@@ -1,5 +1,15 @@
 # Release History
 
+## 41.2.0 (2026-05-09)
+
+### Features Added
+
+  - Model `AgentPoolManagedClusterAgentPoolProfileProperties` added property `artifact_streaming_profile`
+  - Model `ManagedClusterAgentPoolProfile` added property `artifact_streaming_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `artifact_streaming_profile`
+  - Enum `OSSKU` added member `AZURE_CONTAINER_LINUX`
+  - Added model `AgentPoolArtifactStreamingProfile`
+
 ## 41.2.0b1 (2026-04-24)
 
 ### Features Added

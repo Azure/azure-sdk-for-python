@@ -4,18 +4,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-wildcard-import, wildcard-import
+
 from __future__ import division
 
 import functools
 import os
-import logging
+
 from devtools_testutils import EnvironmentVariableLoader, EnvironmentVariableOptions
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
-
-try:
-    from cStringIO import StringIO      # Python 2
-except ImportError:
-    from io import StringIO
 
 try:
     # Running locally - use configuration in settings_real.py
@@ -28,17 +25,26 @@ except ImportError:
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 os.environ['STORAGE_ACCOUNT_NAME'] = os.environ.get('STORAGE_ACCOUNT_NAME', None) or STORAGE_ACCOUNT_NAME
 os.environ['STORAGE_ACCOUNT_KEY'] = os.environ.get('STORAGE_ACCOUNT_KEY', None) or STORAGE_ACCOUNT_KEY
-os.environ['SECONDARY_STORAGE_ACCOUNT_NAME'] = os.environ.get('SECONDARY_STORAGE_ACCOUNT_NAME', None) or SECONDARY_STORAGE_ACCOUNT_NAME
-os.environ['SECONDARY_STORAGE_ACCOUNT_KEY'] = os.environ.get('SECONDARY_STORAGE_ACCOUNT_KEY', None) or SECONDARY_STORAGE_ACCOUNT_KEY
+os.environ['SECONDARY_STORAGE_ACCOUNT_NAME'] = os.environ.get(
+    'SECONDARY_STORAGE_ACCOUNT_NAME', None) or SECONDARY_STORAGE_ACCOUNT_NAME
+os.environ['SECONDARY_STORAGE_ACCOUNT_KEY'] = os.environ.get(
+    'SECONDARY_STORAGE_ACCOUNT_KEY', None) or SECONDARY_STORAGE_ACCOUNT_KEY
 os.environ['BLOB_STORAGE_ACCOUNT_NAME'] = os.environ.get('BLOB_STORAGE_ACCOUNT_NAME', None) or BLOB_STORAGE_ACCOUNT_NAME
 os.environ['BLOB_STORAGE_ACCOUNT_KEY'] = os.environ.get('BLOB_STORAGE_ACCOUNT_KEY', None) or BLOB_STORAGE_ACCOUNT_KEY
-os.environ['VERSIONED_STORAGE_ACCOUNT_NAME'] = os.environ.get('VERSIONED_STORAGE_ACCOUNT_NAME', None) or VERSIONED_STORAGE_ACCOUNT_NAME
-os.environ['VERSIONED_STORAGE_ACCOUNT_KEY'] = os.environ.get('VERSIONED_STORAGE_ACCOUNT_KEY', None) or VERSIONED_STORAGE_ACCOUNT_KEY
-os.environ['PREMIUM_STORAGE_ACCOUNT_NAME'] = os.environ.get('PREMIUM_STORAGE_ACCOUNT_NAME', None) or PREMIUM_STORAGE_ACCOUNT_NAME
-os.environ['PREMIUM_STORAGE_ACCOUNT_KEY'] = os.environ.get('PREMIUM_STORAGE_ACCOUNT_KEY', None) or PREMIUM_STORAGE_ACCOUNT_KEY
-os.environ['SOFT_DELETE_STORAGE_ACCOUNT_NAME'] = os.environ.get('SOFT_DELETE_STORAGE_ACCOUNT_NAME', None) or SOFT_DELETE_STORAGE_ACCOUNT_NAME
-os.environ['SOFT_DELETE_STORAGE_ACCOUNT_KEY'] = os.environ.get('SOFT_DELETE_STORAGE_ACCOUNT_KEY', None) or SOFT_DELETE_STORAGE_ACCOUNT_KEY
-os.environ['STORAGE_RESOURCE_GROUP_NAME'] = os.environ.get('STORAGE_RESOURCE_GROUP_NAME', None) or STORAGE_RESOURCE_GROUP_NAME
+os.environ['VERSIONED_STORAGE_ACCOUNT_NAME'] = os.environ.get(
+    'VERSIONED_STORAGE_ACCOUNT_NAME', None) or VERSIONED_STORAGE_ACCOUNT_NAME
+os.environ['VERSIONED_STORAGE_ACCOUNT_KEY'] = os.environ.get(
+    'VERSIONED_STORAGE_ACCOUNT_KEY', None) or VERSIONED_STORAGE_ACCOUNT_KEY
+os.environ['PREMIUM_STORAGE_ACCOUNT_NAME'] = os.environ.get(
+    'PREMIUM_STORAGE_ACCOUNT_NAME', None) or PREMIUM_STORAGE_ACCOUNT_NAME
+os.environ['PREMIUM_STORAGE_ACCOUNT_KEY'] = os.environ.get(
+    'PREMIUM_STORAGE_ACCOUNT_KEY', None) or PREMIUM_STORAGE_ACCOUNT_KEY
+os.environ['SOFT_DELETE_STORAGE_ACCOUNT_NAME'] = os.environ.get(
+    'SOFT_DELETE_STORAGE_ACCOUNT_NAME', None) or SOFT_DELETE_STORAGE_ACCOUNT_NAME
+os.environ['SOFT_DELETE_STORAGE_ACCOUNT_KEY'] = os.environ.get(
+    'SOFT_DELETE_STORAGE_ACCOUNT_KEY', None) or SOFT_DELETE_STORAGE_ACCOUNT_KEY
+os.environ['STORAGE_RESOURCE_GROUP_NAME'] = os.environ.get(
+    'STORAGE_RESOURCE_GROUP_NAME', None) or STORAGE_RESOURCE_GROUP_NAME
 
 
 os.environ['AZURE_TEST_RUN_LIVE'] = os.environ.get('AZURE_TEST_RUN_LIVE', None) or RUN_IN_LIVE

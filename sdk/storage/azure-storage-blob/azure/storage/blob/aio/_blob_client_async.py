@@ -3476,15 +3476,6 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
         :return: A ContainerClient.
         :rtype: ~azure.storage.blob.ContainerClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_containers_async.py
-                :start-after: [START get_container_client_from_blob_client]
-                :end-before: [END get_container_client_from_blob_client]
-                :language: python
-                :dedent: 12
-                :caption: Get container client from blob object.
         """
         from ._container_client_async import ContainerClient
         if not isinstance(self._pipeline._transport, AsyncTransportWrapper): # pylint: disable = protected-access
