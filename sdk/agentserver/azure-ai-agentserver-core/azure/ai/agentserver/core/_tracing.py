@@ -269,6 +269,18 @@ def request_context(
     :return: Context manager (yields nothing).
     :rtype: Iterator[None]
     """
+    # Debug: log raw incoming trace headers
+    _raw_tp = headers.get("traceparent")
+    _raw_flags = _raw_tp.split("-")[3] if _raw_tp and _raw_tp.count("-") >= 3 else "N/A"
+    logger.error(
+        "request_context incoming headers: traceparent=%s trace_flags=%s tracestate=%s baggage=%s x-request-id=%s",
+        _raw_tp,
+        _raw_flags,
+        headers.get("tracestate"),
+        headers.get("baggage"),
+        headers.get("x-request-id"),
+    )
+
     # Extract W3C trace context (traceparent + tracestate + baggage)
     ctx = _propagator.extract(carrier=headers)
 
@@ -282,25 +294,19 @@ def request_context(
     from opentelemetry.trace import get_current_span as _get_current
     _attached_span = _get_current()
     _span_ctx = _attached_span.get_span_context()
-    logger.debug(
-        "request_context attached: span_type=%s trace_id=%s span_id=%s "
-        "trace_flags=%02x is_remote=%s is_valid=%s",
-        type(_attached_span).__name__,
-        format(_span_ctx.trace_id, '032x') if _span_ctx.trace_id else None,
-        format(_span_ctx.span_id, '016x') if _span_ctx.span_id else None,
-        _span_ctx.trace_flags,
-        _span_ctx.is_remote,
-        _span_ctx.is_valid,
-    )
     logger.error(
-        "request_context attached: span_type=%s trace_id=%s span_id=%s "
-        "trace_flags=%02x is_remote=%s is_valid=%s",
+        "request_context post-attach: span_type=%s is_recording=%s "
+        "trace_id=%s span_id=%s trace_flags=%02x is_remote=%s is_valid=%s "
+        "has_attributes=%s tracestate=%s",
         type(_attached_span).__name__,
+        _attached_span.is_recording(),
         format(_span_ctx.trace_id, '032x') if _span_ctx.trace_id else None,
         format(_span_ctx.span_id, '016x') if _span_ctx.span_id else None,
         _span_ctx.trace_flags,
         _span_ctx.is_remote,
         _span_ctx.is_valid,
+        hasattr(_attached_span, 'attributes'),
+        str(_span_ctx.trace_state) if _span_ctx.trace_state else None,
     )
 
     try:
