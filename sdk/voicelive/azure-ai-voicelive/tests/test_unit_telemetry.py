@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -520,6 +521,7 @@ class TestDoneEventContentExtraction:
             result, "response.function_call_arguments.done"
         )
         import json as _json
+
         parsed = _json.loads(content)
         assert parsed["name"] == "get_current_weather"
         assert parsed["arguments"] == {"location": "Seattle"}
@@ -538,6 +540,7 @@ class TestDoneEventContentExtraction:
         }
         content = _VoiceLiveInstrumentorPreview._extract_done_event_content(result, "response.output_item.done")
         import json as _json
+
         parsed = _json.loads(content)
         assert parsed["messages"][0]["name"] == "get_current_weather"
         assert parsed["messages"][0]["arguments"] == {"location": "Seattle"}
@@ -560,6 +563,7 @@ class TestDoneEventContentExtraction:
         }
         content = _VoiceLiveInstrumentorPreview._extract_done_event_content(result, "response.done")
         import json as _json
+
         parsed = _json.loads(content)
         assert parsed["messages"][0]["name"] == "get_current_weather"
         assert parsed["messages"][0]["arguments"] == {"location": "Seattle"}
@@ -583,9 +587,7 @@ class TestSessionIdExtraction:
         _VoiceLiveInstrumentorPreview._extract_session_id(conn, result)
 
         assert conn._telemetry_session_id == "test-session-abc123"
-        conn._telemetry_span.add_attribute.assert_called_with(
-            "gen_ai.voice.session_id", "test-session-abc123"
-        )
+        conn._telemetry_span.add_attribute.assert_called_with("gen_ai.voice.session_id", "test-session-abc123")
 
     def test_extract_session_id_from_object(self):
         from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
@@ -639,15 +641,9 @@ class TestAudioFormatExtraction:
 
         assert conn._telemetry_input_audio_format == "pcm16"
         assert conn._telemetry_output_audio_format == "pcm16"
-        conn._telemetry_span.add_attribute.assert_any_call(
-            "gen_ai.voice.input_audio_format", "pcm16"
-        )
-        conn._telemetry_span.add_attribute.assert_any_call(
-            "gen_ai.voice.output_audio_format", "pcm16"
-        )
-        conn._telemetry_span.add_attribute.assert_any_call(
-            "gen_ai.voice.input_sample_rate", 24000
-        )
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.voice.input_audio_format", "pcm16")
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.voice.output_audio_format", "pcm16")
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.voice.input_sample_rate", 24000)
 
     def test_extract_audio_format_with_g711_ulaw(self):
         from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
@@ -667,9 +663,7 @@ class TestAudioFormatExtraction:
 
         assert conn._telemetry_input_audio_format == "g711_ulaw"
         assert conn._telemetry_output_audio_format == "g711_alaw"
-        conn._telemetry_span.add_attribute.assert_any_call(
-            "gen_ai.voice.input_sample_rate", 8000
-        )
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.voice.input_sample_rate", 8000)
 
     def test_extract_audio_format_no_sampling_rate(self):
         """When input_audio_sampling_rate is absent, only formats are set."""
@@ -689,8 +683,9 @@ class TestAudioFormatExtraction:
 
         assert conn._telemetry_input_audio_format == "pcm16"
         # input_sample_rate should NOT be set
-        calls = [c for c in conn._telemetry_span.add_attribute.call_args_list
-                 if c[0][0] == "gen_ai.voice.input_sample_rate"]
+        calls = [
+            c for c in conn._telemetry_span.add_attribute.call_args_list if c[0][0] == "gen_ai.voice.input_sample_rate"
+        ]
         assert len(calls) == 0
 
     def test_extract_audio_format_no_session(self):
@@ -724,15 +719,9 @@ class TestAudioFormatExtraction:
 
         assert conn._telemetry_input_audio_format == "pcm16"
         assert conn._telemetry_output_audio_format == "pcm16"
-        conn._telemetry_span.add_attribute.assert_any_call(
-            "gen_ai.voice.input_audio_format", "pcm16"
-        )
-        conn._telemetry_span.add_attribute.assert_any_call(
-            "gen_ai.voice.output_audio_format", "pcm16"
-        )
-        conn._telemetry_span.add_attribute.assert_any_call(
-            "gen_ai.voice.input_sample_rate", 24000
-        )
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.voice.input_audio_format", "pcm16")
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.voice.output_audio_format", "pcm16")
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.voice.input_sample_rate", 24000)
 
     def test_extract_audio_format_from_recv_no_session(self):
         """Recv extraction should not crash when session field is missing."""
@@ -899,7 +888,7 @@ class TestAudioBytesTracking:
         conn = MagicMock()
         conn._telemetry_audio_bytes_received = 0
 
-        raw_audio = b"\xFF" * 200
+        raw_audio = b"\xff" * 200
         b64_delta = base64.b64encode(raw_audio).decode("utf-8")
 
         audio_bytes = len(base64.b64decode(b64_delta))
@@ -1103,15 +1092,9 @@ class TestSessionConfigExtraction:
 
         _VoiceLiveInstrumentorPreview._extract_session_config_from_send(conn, event)
 
-        conn._telemetry_span.add_attribute.assert_any_call(
-            "gen_ai.system_instructions", "You are a helpful assistant."
-        )
-        conn._telemetry_span.add_attribute.assert_any_call(
-            "gen_ai.request.temperature", "0.7"
-        )
-        conn._telemetry_span.add_attribute.assert_any_call(
-            "gen_ai.request.max_output_tokens", 4096
-        )
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.system_instructions", "You are a helpful assistant.")
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.request.temperature", "0.7")
+        conn._telemetry_span.add_attribute.assert_any_call("gen_ai.request.max_output_tokens", 4096)
 
     def test_extract_tools(self):
         from azure.ai.voicelive.telemetry._voicelive_instrumentor import _VoiceLiveInstrumentorPreview
@@ -1246,8 +1229,9 @@ class TestAgentConfigExtraction:
 
         import asyncio
 
-        with patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.settings") as mock_settings, \
-             patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.start_span") as mock_start:
+        with patch("azure.ai.voicelive.telemetry._voicelive_instrumentor.settings") as mock_settings, patch(
+            "azure.ai.voicelive.telemetry._voicelive_instrumentor.start_span"
+        ) as mock_start:
             mock_span = MagicMock()
             mock_span.__enter__ = MagicMock(return_value=mock_span)
             mock_span.__exit__ = MagicMock(return_value=False)
@@ -1674,8 +1658,7 @@ class TestMCPEventExtraction:
         _VoiceLiveInstrumentorPreview._extract_event_ids(conn, result, span)
 
         # Should NOT have mcp.tool_name
-        tool_name_calls = [c for c in span.add_attribute.call_args_list
-                           if c[0][0] == "gen_ai.voice.mcp.tool_name"]
+        tool_name_calls = [c for c in span.add_attribute.call_args_list if c[0][0] == "gen_ai.voice.mcp.tool_name"]
         assert len(tool_name_calls) == 0
 
     def test_extract_item_id_from_nested_item(self):
@@ -1854,4 +1837,3 @@ class TestAgentSessionConfigOnConnect:
         span.add_attribute.assert_any_call("gen_ai.conversation.id", "conv_123")
         span.add_attribute.assert_any_call("gen_ai.agent.version", "v2.1")
         span.add_attribute.assert_any_call("gen_ai.agent.project_name", "TestProject")
-

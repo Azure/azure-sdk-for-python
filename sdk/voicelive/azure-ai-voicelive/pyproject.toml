@@ -17,17 +17,16 @@ authors = [
 description = "Microsoft Corporation Azure Ai Voicelive Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
@@ -74,9 +73,10 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
+
 [tool.pytest.ini_options]
-asyncio_default_fixture_loop_scope = "function"
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.azure-sdk-conda]
 in_bundle = false
