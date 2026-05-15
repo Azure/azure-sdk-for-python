@@ -279,10 +279,9 @@ def request_context(
 
     token = _otel_context.attach(ctx)
     # Debug: log the span context after attaching remote trace context
-    _attached_span = trace.get_span_from_context(ctx)
-    _current_span = trace.get_current_span()
+    from opentelemetry.trace import get_current_span as _get_current
+    _attached_span = _get_current()
     _span_ctx = _attached_span.get_span_context()
-    _current_span_ctx = _current_span.get_span_context()
     logger.debug(
         "request_context attached: span_type=%s trace_id=%s span_id=%s "
         "trace_flags=%02x is_remote=%s is_valid=%s",
@@ -302,27 +301,6 @@ def request_context(
         _span_ctx.trace_flags,
         _span_ctx.is_remote,
         _span_ctx.is_valid,
-    )
-
-    logger.debug(
-        "current span : span_type=%s trace_id=%s span_id=%s "
-        "trace_flags=%02x is_remote=%s is_valid=%s",
-        type(_current_span).__name__,
-        format(_current_span_ctx.trace_id, '032x') if _current_span_ctx.trace_id else None,
-        format(_current_span_ctx.span_id, '016x') if _current_span_ctx.span_id else None,
-        _current_span_ctx.trace_flags,
-        _current_span_ctx.is_remote,
-        _current_span_ctx.is_valid,
-    )
-    logger.error(
-        "current span : span_type=%s trace_id=%s span_id=%s "
-        "trace_flags=%02x is_remote=%s is_valid=%s",
-        type(_current_span).__name__,
-        format(_current_span_ctx.trace_id, '032x') if _current_span_ctx.trace_id else None,
-        format(_current_span_ctx.span_id, '016x') if _current_span_ctx.span_id else None,
-        _current_span_ctx.trace_flags,
-        _current_span_ctx.is_remote,
-        _current_span_ctx.is_valid,
     )
 
     try:
