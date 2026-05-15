@@ -21,7 +21,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.polling.base_polling import BadStatus, LROBasePolling
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -233,6 +233,32 @@ class JobsOperations(_GeneratedJobsOps):
             kwargs["headers"] = dict(headers)
             kwargs["headers"][_FOUNDRY_FEATURES_HEADER_NAME] = self._JOBS_PREVIEW_HEADER
 
+    @staticmethod
+    def _handle_not_found_as_deleted(polling_method: LROBasePolling) -> None:
+        """Patch ``polling_method.update_status`` so that a 404 response on the polling
+        URL is treated as success.
+
+        When a delete LRO completes, the backend removes the job and the operation record,
+        causing subsequent poll requests to return 404. ``LROBasePolling`` would normally
+        raise ``BadStatus`` for any non-2xx response, so we intercept that here and flip
+        the status to ``"Succeeded"`` when the response code is 404.
+
+        :param polling_method: The ``LROBasePolling`` instance to patch.
+        :type polling_method: ~azure.core.polling.base_polling.LROBasePolling
+        """
+        _base_update = polling_method.update_status
+
+        def _update_status(_base=_base_update, _pm=polling_method):
+            try:
+                _base()
+            except BadStatus:
+                if _pm._pipeline_response and _pm._pipeline_response.http_response.status_code == 404:
+                    _pm._status = "Succeeded"
+                else:
+                    raise
+
+        polling_method.update_status = _update_status  # type: ignore[method-assign]
+
     @distributed_trace
     def list(  # type: ignore[override]
         self,
@@ -353,6 +379,7 @@ class JobsOperations(_GeneratedJobsOps):
                 headers=lro_headers,
                 **kwargs,
             )
+            self._handle_not_found_as_deleted(polling_method)  # type: ignore[arg-type]
         elif polling is False:
             polling_method = NoPolling()
         else:
