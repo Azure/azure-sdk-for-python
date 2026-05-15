@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.azurestack import AzureStackManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.azurestack import AzureStackManagementClient
     pip install azure-identity
     pip install azure-mgmt-azurestack
 # USAGE
-    python list.py
+    python put.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,14 +28,23 @@ from azure.mgmt.azurestack import AzureStackManagementClient
 def main():
     client = AzureStackManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="dd8597b4-8739-4467-8b10-f8679f62bfbf",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.linked_subscriptions.create_or_update(
+        resource_group="azurestack",
+        linked_subscription_name="testLinkedSubscription",
+        resource={
+            "location": "eastus",
+            "properties": {
+                "linkedSubscriptionId": "104fbb77-2b0e-476a-83de-65ad8acd1f0b",
+                "registrationResourceId": "/subscriptions/dd8597b4-8739-4467-8b10-f8679f62bfbf/resourceGroups/azurestack/providers/Microsoft.AzureStack/registrations/testRegistration",
+            },
+        },
+    )
+    print(response)
 
 
-# x-ms-original-file: specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2022-06-01/examples/Operation/List.json
+# x-ms-original-file: specification/azurestack/resource-manager/Microsoft.AzureStack/AzureStack/preview/2020-06-01-preview/examples/LinkedSubscription/Put.json
 if __name__ == "__main__":
     main()
