@@ -22,8 +22,7 @@ try:
     import aiohttp
 except ImportError as exc:
     raise ImportError(
-        "aiohttp is required for azure-ai-voicelive. "
-        "Install it with: pip install azure-ai-voicelive[aiohttp]"
+        "aiohttp is required for azure-ai-voicelive. Install it with: pip install azure-ai-voicelive[aiohttp]"
     ) from exc
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
