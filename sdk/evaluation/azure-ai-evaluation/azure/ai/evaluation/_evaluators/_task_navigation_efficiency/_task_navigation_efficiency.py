@@ -349,6 +349,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             )
 
             return {
+                "task_navigation_efficiency": float(match_result),
                 "task_navigation_efficiency_score": float(match_result),
                 "task_navigation_efficiency_result": EVALUATION_PASS_FAIL_MAPPING[match_result],
                 "task_navigation_efficiency_passed": match_result,
