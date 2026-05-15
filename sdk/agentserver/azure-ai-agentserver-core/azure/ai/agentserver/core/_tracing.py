@@ -297,7 +297,7 @@ def request_context(
     with tracer.start_as_current_span(
         "blah",
         kind=trace.SpanKind.SERVER,
-        context=ctx,
+        # context=ctx,
     ) as span:
         # Debug: log the span context after creating the server span
         _span_ctx = span.get_span_context()
