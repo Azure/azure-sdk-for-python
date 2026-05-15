@@ -74,8 +74,8 @@ async def test_sse_keepalive_disabled_by_default(monkeypatch):
         assert resp.status_code == 200
         lines = _parse_lines(resp.text)
 
-    keep_alives = [line for line in lines if line.startswith(": keep-alive")]
-    assert keep_alives == []
+    keepalive_lines = [line for line in lines if line.startswith(": keep-alive")]
+    assert keepalive_lines == []
 
 
 # ---------------------------------------------------------------------------
@@ -97,8 +97,8 @@ async def test_sse_keepalive_interleaves_frames_when_env_var_set(monkeypatch):
         assert resp.status_code == 200
         lines = _parse_lines(resp.text)
 
-    keep_alives = [line for line in lines if line.startswith(": keep-alive")]
-    assert len(keep_alives) >= 1, f"Expected at least one keep-alive comment, got lines={lines!r}"
+    keepalive_lines = [line for line in lines if line.startswith(": keep-alive")]
+    assert len(keepalive_lines) >= 1, f"Expected at least one keep-alive comment, got lines={lines!r}"
     # Original handler events are still present and intact.
     assert any(line == "event: msg" for line in lines)
     assert any(line.startswith("data:") for line in lines)
