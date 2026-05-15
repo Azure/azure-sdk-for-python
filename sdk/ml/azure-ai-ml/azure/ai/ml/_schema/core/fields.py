@@ -454,6 +454,16 @@ class UnionField(fields.Field):
     def insert_union_field(self, field):
         self._union_fields.insert(0, field)
 
+    @staticmethod
+    def _contains_file_not_found_error(error_message):
+        if isinstance(error_message, str):
+            return "No such file or directory" in error_message
+        if isinstance(error_message, dict):
+            return any(UnionField._contains_file_not_found_error(value) for value in error_message.values())
+        if isinstance(error_message, list):
+            return any(UnionField._contains_file_not_found_error(value) for value in error_message)
+        return False
+
     # This sets the parent for the schema and also handles nesting.
     def _bind_to_schema(self, field_name, schema):
         super()._bind_to_schema(field_name, schema)
@@ -487,7 +497,10 @@ class UnionField(fields.Field):
             try:
                 return schema.deserialize(value, attr, data, **kwargs)
             except ValidationError as e:
-                errors.append(e.normalized_messages())
+                normalized_messages = e.normalized_messages()
+                if self._contains_file_not_found_error(normalized_messages):
+                    raise ValidationError(normalized_messages, field_name=attr) from e
+                errors.append(normalized_messages)
             except ValidationException as e:
                 # ValidationException is explicitly raised in project code so usually easy to locate with error message
                 errors.append([str(e)])

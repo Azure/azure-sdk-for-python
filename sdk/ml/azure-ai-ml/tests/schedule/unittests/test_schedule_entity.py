@@ -200,4 +200,5 @@ class TestScheduleEntity:
 
         message = str(e.value)
         assert "No such file or directory" in message
-        assert "In order to specify an existing jobs" not in message
+        assert message.count("No such file or directory") == 1
+        assert "Not supporting non file for create_job" not in message
