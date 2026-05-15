@@ -47,7 +47,6 @@ from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapProp
 from . import _config
 
 _Content = Union[str, bytes, memoryview]
-_W3C_HEADERS = ("traceparent", "tracestate", "baggage")
 
 # GenAI semantic convention attribute keys
 _ATTR_SERVICE_NAME = "service.name"
@@ -271,23 +270,68 @@ def request_context(
     :rtype: Iterator[None]
     """
     # Extract W3C trace context (traceparent + tracestate + baggage)
-    carrier = _extract_w3c_carrier(headers)
-    ctx = _propagator.extract(carrier=carrier) if carrier else None
+    ctx = _propagator.extract(carrier=headers)
 
     # Add x-request-id to baggage for downstream propagation
     x_request_id = headers.get("x-request-id")
     if x_request_id:
         ctx = _otel_baggage.set_baggage("x_request_id", x_request_id, context=ctx)
 
-    token = _otel_context.attach(ctx) if ctx else None
+    token = _otel_context.attach(ctx)
+    # Debug: log the span context after attaching remote trace context
+    _attached_span = trace.get_span_from_context(ctx)
+    _current_span = trace.get_current_span()
+    _span_ctx = _attached_span.get_span_context()
+    _current_span_ctx = _current_span.get_span_context()
+    logger.debug(
+        "request_context attached: span_type=%s trace_id=%s span_id=%s "
+        "trace_flags=%02x is_remote=%s is_valid=%s",
+        type(_attached_span).__name__,
+        format(_span_ctx.trace_id, '032x') if _span_ctx.trace_id else None,
+        format(_span_ctx.span_id, '016x') if _span_ctx.span_id else None,
+        _span_ctx.trace_flags,
+        _span_ctx.is_remote,
+        _span_ctx.is_valid,
+    )
+    logger.error(
+        "request_context attached: span_type=%s trace_id=%s span_id=%s "
+        "trace_flags=%02x is_remote=%s is_valid=%s",
+        type(_attached_span).__name__,
+        format(_span_ctx.trace_id, '032x') if _span_ctx.trace_id else None,
+        format(_span_ctx.span_id, '016x') if _span_ctx.span_id else None,
+        _span_ctx.trace_flags,
+        _span_ctx.is_remote,
+        _span_ctx.is_valid,
+    )
+
+    logger.debug(
+        "current span : span_type=%s trace_id=%s span_id=%s "
+        "trace_flags=%02x is_remote=%s is_valid=%s",
+        type(_current_span).__name__,
+        format(_current_span_ctx.trace_id, '032x') if _current_span_ctx.trace_id else None,
+        format(_current_span_ctx.span_id, '016x') if _current_span_ctx.span_id else None,
+        _current_span_ctx.trace_flags,
+        _current_span_ctx.is_remote,
+        _current_span_ctx.is_valid,
+    )
+    logger.error(
+        "current span : span_type=%s trace_id=%s span_id=%s "
+        "trace_flags=%02x is_remote=%s is_valid=%s",
+        type(_current_span).__name__,
+        format(_current_span_ctx.trace_id, '032x') if _current_span_ctx.trace_id else None,
+        format(_current_span_ctx.span_id, '016x') if _current_span_ctx.span_id else None,
+        _current_span_ctx.trace_flags,
+        _current_span_ctx.is_remote,
+        _current_span_ctx.is_valid,
+    )
+
     try:
         yield
     finally:
-        if token is not None:
-            try:
-                _otel_context.detach(token)
-            except ValueError:
-                pass
+        try:
+            _otel_context.detach(token)
+        except ValueError:
+            pass
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
@@ -575,5 +619,4 @@ def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] =
     return provider
 
 
-def _extract_w3c_carrier(headers: Mapping[str, str]) -> dict[str, str]:
-    return {k: v for k in _W3C_HEADERS if (v := headers.get(k)) is not None}
+
