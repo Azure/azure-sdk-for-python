@@ -539,13 +539,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return tool_calls
 
-    def _extract_tool_names_and_params_from_response(self, response) -> List[Tuple[str, Dict[str, str]]]:
+    def _extract_tool_names_and_params_from_response(self, response) -> List[Tuple[str, Dict[str, Any]]]:
         """Extract tool names and parameters from the response.
 
         :param response: The response to parse.
         :type response: Union[str, List[dict]]
         :return: List of tuples containing (tool_name, parameters_dict) extracted from the response.
-        :rtype: List[Tuple[str, Dict[str, str]]]
+        :rtype: List[Tuple[str, Dict[str, Any]]]
         """
         tool_calls = self._parse_tools_from_response(response)
         tool_name_param_pairs = []
@@ -580,14 +580,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             if "arguments" in tool_call:
                 args = tool_call["arguments"]
                 if isinstance(args, dict):
-                    # Convert all values to strings for consistent comparison
-                    parameters = {str(k): str(v) for k, v in args.items()}
+                    parameters = {str(k): v for k, v in args.items()}
                 elif isinstance(args, str):
                     # If arguments is a string, try to parse it as JSON
                     try:
                         parsed_args = json.loads(args)
                         if isinstance(parsed_args, dict):
-                            parameters = {str(k): str(v) for k, v in parsed_args.items()}
+                            parameters = {str(k): v for k, v in parsed_args.items()}
                     except json.JSONDecodeError:
                         raise EvaluationException(
                             "Failed to parse tool call arguments as JSON.",
