@@ -39,6 +39,7 @@ Breaking changes in beta classes:
 * Added Hosted Agent creation sample `sample_hosted_agent_create.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`.
 * The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
 * Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
+* Added Hosted Agent code-upload samples `sample_hosted_agent_create_from_code.py` and `sample_hosted_agent_create_from_code_async.py`, demonstrating uploading a code zip as a new hosted agent version.
 
 ## 2.1.0 (2026-04-20)
 

@@ -25,12 +25,12 @@ USAGE:
     2) FOUNDRY_HOSTED_AGENT_NAME - The Hosted Agent name.
     3) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format
        '<registry>/<repository>[:<tag>|@<digest>]'.
+       You can build a sample image from the `samples/hosted_agents/assets/echo-agent` folder.
     4) AZURE_SUBSCRIPTION_ID - Azure subscription ID where the
        Azure AI account and project are deployed.
 """
 
 import os
-import time
 
 from dotenv import load_dotenv
 
@@ -38,6 +38,7 @@ from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import HostedAgentDefinition, ProtocolVersionRecord
+from hosted_agents_util import wait_for_agent_version_active
 from rbac_util import ensure_agent_identity_rbac
 
 load_dotenv()
@@ -46,29 +47,6 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
-
-
-def wait_for_agent_version_active(
-    project_client: AIProjectClient,
-    agent_name: str,
-    agent_version: str,
-    max_attempts: int = 60,
-    poll_interval_seconds: int = 10,
-) -> None:
-    for attempt in range(max_attempts):
-        time.sleep(poll_interval_seconds)
-        version_details = project_client.agents.get_version(agent_name=agent_name, agent_version=agent_version)
-        status = version_details.status
-
-        print(f"Agent version status: {status} (attempt {attempt + 1})")
-
-        if status == "active":
-            return
-
-        if status == "failed":
-            raise RuntimeError(f"Agent version provisioning failed: {dict(version_details)}")
-
-    raise RuntimeError("Timed out waiting for agent version to become active")
 
 
 with (

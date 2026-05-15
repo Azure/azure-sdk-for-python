@@ -181,6 +181,18 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm()
 
+    @servicePreparer()
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_hosted_agent_create_from_remote_build",
+                sample_filename="sample_hosted_agent_create_from_code.py",
+                env_vars={
+                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
@@ -188,7 +200,6 @@ class TestSamples(AzureRecordedTestCase):
             samples_to_skip=[],
         ),
     )
-    @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:

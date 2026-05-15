@@ -8,11 +8,13 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
 from sample_executor import (
+    AdditionalSampleTestDetail,
     AsyncSampleExecutor,
     SamplePathPasser,
     get_async_sample_paths,
 )
 from test_samples_helpers import get_sample_env_vars
+from tests.samples.test_samples import additionalSampleTests
 
 
 class TestSamplesAsync(AzureRecordedTestCase):
@@ -170,6 +172,18 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async()
 
+    @servicePreparer()
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_hosted_agent_create_from_remote_build_async",
+                sample_filename="sample_hosted_agent_create_from_code_async.py",
+                env_vars={
+                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_async_sample_paths(
@@ -177,7 +191,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
             samples_to_skip=[],
         ),
     )
-    @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
