@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.customproviders import Customproviders
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.customproviders import Customproviders
     pip install azure-identity
     pip install azure-mgmt-customproviders
 # USAGE
-    python create_or_update_an_association.py
+    python create_or_update_custom_rp.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,21 +28,25 @@ from azure.mgmt.customproviders import Customproviders
 def main():
     client = Customproviders(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.associations.begin_create_or_update(
-        scope="scope",
-        association_name="associationName",
-        association={
+    response = client.custom_resource_provider.begin_create_or_update(
+        resource_group_name="testRG",
+        resource_provider_name="newrp",
+        resource_provider={
+            "location": "eastus",
             "properties": {
-                "targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/appRG/providers/Microsoft.Solutions/applications/applicationName"
-            }
+                "actions": [{"endpoint": "https://mytestendpoint/", "name": "TestAction", "routingType": "Proxy"}],
+                "resourceTypes": [
+                    {"endpoint": "https://mytestendpoint2/", "name": "TestResource", "routingType": "Proxy,Cache"}
+                ],
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/preview/2018-09-01-preview/examples/createOrUpdateAssociation.json
+# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/CustomProviders/preview/2018-09-01-preview/examples/createOrUpdateCustomRP.json
 if __name__ == "__main__":
     main()

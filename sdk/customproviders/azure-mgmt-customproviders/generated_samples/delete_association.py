@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.customproviders import Customproviders
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.customproviders import Customproviders
     pip install azure-identity
     pip install azure-mgmt-customproviders
 # USAGE
-    python delete_an_association.py
+    python delete_association.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +31,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.associations.begin_delete(
+    client.associations.begin_delete(
         scope="scope",
         association_name="associationName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/preview/2018-09-01-preview/examples/deleteAssociation.json
+# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/CustomProviders/preview/2018-09-01-preview/examples/deleteAssociation.json
 if __name__ == "__main__":
     main()
