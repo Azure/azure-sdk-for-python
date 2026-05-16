@@ -288,11 +288,40 @@ class AgentServerHost(Starlette):
             **kwargs,
         )
 
-        # Instrument the Starlette app with OpenTelemetry so that every
-        # incoming HTTP request gets a real SERVER span with proper trace
-        # context propagation from the incoming traceparent header.
+        # Instrument the Starlette app with OpenTelemetry so that protocol
+        # routes (/responses, /invocations) get a real SERVER span with proper
+        # trace context propagation.  Health/readiness endpoints are excluded.
+        #
+        # The ASGI middleware creates noisy per-event INTERNAL spans (http
+        # receive / http send) for every ASGI event.  We suppress them by
+        # patching OpenTelemetryMiddleware.__init__ to set
+        # exclude_receive_span / exclude_send_span — the same approach used
+        # by ADOT (aws-otel-python-instrumentation).  Once upstream exposes
+        # this via the Starlette instrumentor constructor (tracked in
+        # opentelemetry-python-contrib#3725) the patch can be removed.
         try:
+            import os as _os
+            from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
             from opentelemetry.instrumentation.starlette import StarletteInstrumentor
+
+            # Exclude health/readiness probes
+            _os.environ.setdefault(
+                "OTEL_PYTHON_STARLETTE_EXCLUDED_URLS",
+                "readiness,health,liveness,ready,alive",
+            )
+
+            # Patch: suppress ASGI receive/send internal spans
+            _original_otel_mw_init = OpenTelemetryMiddleware.__init__
+
+            def _patched_otel_mw_init(mw_self: Any, app: Any, **kwargs: Any) -> None:
+                _original_otel_mw_init(mw_self, app, **kwargs)
+                if hasattr(mw_self, "exclude_receive_span"):
+                    mw_self.exclude_receive_span = True
+                if hasattr(mw_self, "exclude_send_span"):
+                    mw_self.exclude_send_span = True
+
+            OpenTelemetryMiddleware.__init__ = _patched_otel_mw_init  # type: ignore[assignment]
+
             StarletteInstrumentor.instrument_app(self)
             logger.info("Starlette OpenTelemetry instrumentation enabled.")
         except ImportError:
