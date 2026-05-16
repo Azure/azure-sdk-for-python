@@ -39,7 +39,6 @@ from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=impo
 from typing import Any, Optional, Union
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
-from opentelemetry.baggage.propagation import W3CBaggagePropagator
 
 from . import _config
 
@@ -260,9 +259,6 @@ class TraceContextMiddleware:
 
     def __init__(self, app: Any) -> None:
         self.app = app
-        from opentelemetry.trace.propagation import TraceContextTextMapPropagator  # pylint: disable=import-outside-toplevel
-        self._trace_propagator = TraceContextTextMapPropagator()
-        self._baggage_propagator = W3CBaggagePropagator()
 
     async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
         if scope["type"] != "http":
@@ -276,11 +272,9 @@ class TraceContextMiddleware:
             for k, v in raw_headers
         }
 
-        # Extract trace context (traceparent/tracestate) first
-        ctx = self._trace_propagator.extract(carrier=headers)
-
-        # Then extract baggage on top of the trace context
-        ctx = self._baggage_propagator.extract(carrier=headers, context=ctx)
+        # Use the global propagator to extract trace context + baggage
+        from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+        ctx = extract(carrier=headers)
 
         # Add x-request-id as baggage for downstream propagation
         x_request_id = headers.get("x-request-id")
