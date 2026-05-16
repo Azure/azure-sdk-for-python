@@ -242,9 +242,15 @@ class BaseSampleExecutor:
         """Capture logger DEBUG output into the same array used for print capture."""
 
         bearer_token_pattern = re.compile(r"(?i)(Bearer\s+)([^\s\"',;]+)")
+        # Matches raw JWT-like tokens assigned to an "authorization" JSON field
+        # (e.g., when a sample passes `authorization=token` to MCPTool, the request
+        # body is logged as `"authorization": "eyJ..."` without a "Bearer " prefix).
+        json_authorization_pattern = re.compile(r"(?i)(\"authorization\"\s*:\s*\")([^\"]+)(\")")
 
         def _sanitize_log_message(message: str) -> str:
-            return bearer_token_pattern.sub(r"\1<REDACTED>", message)
+            message = bearer_token_pattern.sub(r"\1<REDACTED>", message)
+            message = json_authorization_pattern.sub(r"\1<REDACTED>\3", message)
+            return message
 
         class _PrintCaptureLogHandler(logging.Handler):
             def __init__(self, sink: list[str]):
@@ -1044,13 +1050,11 @@ def _resolve_additional_env_vars(
 
     resolved: dict[str, str] = {}
     if _is_live_mode():
-        for env_key, _ in playback_values.items():
+        for env_key, playback_value in playback_values.items():
             live_value = os.environ.get(env_key)
             if not live_value:
-                raise ValueError(
-                    f"Missing required environment variable '{env_key}' for live recording of sample '{sample_filename}'. "
-                    "Either set it in your environment/.env file or run in playback mode."
-                )
+                resolved[env_key] = playback_value
+                continue
             resolved[env_key] = live_value
     else:
         resolved.update(playback_values)
