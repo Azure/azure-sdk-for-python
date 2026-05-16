@@ -283,7 +283,6 @@ class AgentServerHost(Starlette):
                     get_server_version=self._build_server_version,
                 ),
                 Middleware(_RequestIdMiddleware),  # type: ignore[arg-type]
-                Middleware(_tracing.BaggageMiddleware),  # type: ignore[arg-type]
             ],
             **kwargs,
         )
@@ -295,20 +294,21 @@ class AgentServerHost(Starlette):
         # The ASGI middleware creates noisy per-event INTERNAL spans (http
         # receive / http send) for every ASGI event.  We suppress them by
         # patching OpenTelemetryMiddleware.__init__ to set
-        # exclude_receive_span / exclude_send_span — the same approach used
-        # by ADOT (aws-otel-python-instrumentation).  Once upstream exposes
+        # exclude_receive_span / exclude_send_span.  Once upstream exposes
         # this via the Starlette instrumentor constructor (tracked in
         # opentelemetry-python-contrib#3725) the patch can be removed.
         try:
             import os as _os
-            from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
-            from opentelemetry.instrumentation.starlette import StarletteInstrumentor
 
-            # Exclude health/readiness probes
+            # Excluded URLs must be set BEFORE importing the Starlette
+            # instrumentor because it reads the env var at module level.
             _os.environ.setdefault(
                 "OTEL_PYTHON_STARLETTE_EXCLUDED_URLS",
                 "readiness,health,liveness,ready,alive",
             )
+
+            from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
+            from opentelemetry.instrumentation.starlette import StarletteInstrumentor
 
             # Patch: suppress ASGI receive/send internal spans
             _original_otel_mw_init = OpenTelemetryMiddleware.__init__
