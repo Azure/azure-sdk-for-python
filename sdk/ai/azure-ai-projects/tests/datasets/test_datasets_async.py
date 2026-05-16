@@ -51,6 +51,8 @@ class TestDatasetsAsync(TestBase):
                 version=str(dataset_version),
                 file_path=data_file1,
                 connection_name=connection_name,
+                max_concurrency=2,
+                timeout=5,                
             )
             print(dataset)
             TestBase.validate_dataset(
@@ -177,7 +179,9 @@ class TestDatasetsAsync(TestBase):
                 connection_name=connection_name,
                 file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
                 progress_callback=progress_callback,
-                # max_concurrency=4, # To test with non-default values
+                max_workers=2,
+                max_concurrency=2,
+                timeout=5,
             )
             print(dataset)
             TestBase.validate_dataset(
