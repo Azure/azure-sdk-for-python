@@ -11,7 +11,6 @@ logic lives in :class:`_ResponseOrchestrator`.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-import contextlib
 import contextvars
 import logging
 import threading
