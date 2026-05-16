@@ -88,6 +88,7 @@ setup(
         "opentelemetry-instrumentation-django==0.61b0",
         "opentelemetry-instrumentation-fastapi==0.61b0",
         "opentelemetry-instrumentation-flask==0.61b0",
+        "opentelemetry-instrumentation-httpx==0.61b0",
         "opentelemetry-instrumentation-psycopg2==0.61b0",
         "opentelemetry-instrumentation-requests==0.61b0",
         "opentelemetry-instrumentation-urllib==0.61b0",
