@@ -242,9 +242,15 @@ class BaseSampleExecutor:
         """Capture logger DEBUG output into the same array used for print capture."""
 
         bearer_token_pattern = re.compile(r"(?i)(Bearer\s+)([^\s\"',;]+)")
+        # Matches raw JWT-like tokens assigned to an "authorization" JSON field
+        # (e.g., when a sample passes `authorization=token` to MCPTool, the request
+        # body is logged as `"authorization": "eyJ..."` without a "Bearer " prefix).
+        json_authorization_pattern = re.compile(r"(?i)(\"authorization\"\s*:\s*\")([^\"]+)(\")")
 
         def _sanitize_log_message(message: str) -> str:
-            return bearer_token_pattern.sub(r"\1<REDACTED>", message)
+            message = bearer_token_pattern.sub(r"\1<REDACTED>", message)
+            message = json_authorization_pattern.sub(r"\1<REDACTED>\3", message)
+            return message
 
         class _PrintCaptureLogHandler(logging.Handler):
             def __init__(self, sink: list[str]):
