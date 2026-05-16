@@ -25,7 +25,7 @@ from typing import Any, Optional
 
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import OP_CREATE_ITEM
+from azure.cosmos._backend.base import OP_CREATE_ITEM, recover_backend_response_from_driver_error
 from azure.cosmos._backend.constants import BACKEND_NAME_RUST
 
 from .base import AsyncCosmosBackend, BackendResponse, PreparedRequest
@@ -99,9 +99,19 @@ class AsyncRustBackend(AsyncCosmosBackend):
         handle = await self._ensure_handle()
         loop = asyncio.get_running_loop()
         if prepared.op == OP_CREATE_ITEM:
-            status_code, sub_status, headers, body = await loop.run_in_executor(
-                None, _rust_module.create_item, handle, prepared
-            )
+            try:
+                status_code, sub_status, headers, body = await loop.run_in_executor(
+                    None, _rust_module.create_item, handle, prepared
+                )
+            except RuntimeError as exc:
+                # See sync sibling for rationale: the binding wraps every
+                # driver error as RuntimeError today, including non-2xx
+                # HTTP responses. Recover so the helper-layer parser can
+                # route the response through the typed-exception mapping.
+                recovered = recover_backend_response_from_driver_error(exc)
+                if recovered is None:
+                    raise
+                return recovered
         else:
             raise NotImplementedError(
                 "AsyncRustBackend.execute does not yet support op={!r}.".format(prepared.op)

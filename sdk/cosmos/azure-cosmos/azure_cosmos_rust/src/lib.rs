@@ -24,9 +24,14 @@
 //!         `CosmosResponse` into a 4-tuple matching the Python
 //!         `BackendResponse` dataclass.
 //!
-//! Only `x-ms-activity-id` and `x-ms-session-token` are forwarded
-//! from the request headers dict, because the driver's typed
-//! `CosmosRequestHeaders` struct only accepts those two today.
+//! `x-ms-activity-id` and `x-ms-session-token` are forwarded to the
+//! driver's typed operation fields. `responsePayloadOnWriteDisabled`
+//! is lifted to the typed `OperationOptions::content_response_on_write`
+//! field. Every other per-request header (intended-collection-rid,
+//! indexing directive, pre/post triggers, priority, throughput bucket,
+//! plus any already-`x-ms-...`-named entry) is pushed through the
+//! driver's `OperationOptions::with_custom_headers` escape hatch so
+//! it lands on the wire.
 
 use std::collections::HashMap;
 use std::sync::{Arc, OnceLock, RwLock};
@@ -35,13 +40,14 @@ use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyTuple};
 
+use azure_core::http::headers::{HeaderName, HeaderValue};
 use azure_data_cosmos_driver::{
     driver::{CosmosDriver, CosmosDriverRuntime},
     models::{
         AccountReference, ActivityId, CosmosOperation, ItemReference, PartitionKey,
-        SessionToken,
+        PartitionKeyValue, SessionToken,
     },
-    options::OperationOptions,
+    options::{ContentResponseOnWrite, OperationOptionsBuilder},
 };
 use tokio::runtime::Runtime as TokioRuntime;
 use url::Url;
@@ -55,7 +61,10 @@ use url::Url;
 // call and live for the lifetime of the Python process.
 
 static TOKIO_RUNTIME: OnceLock<TokioRuntime> = OnceLock::new();
-static DRIVER_RUNTIME: OnceLock<CosmosDriverRuntime> = OnceLock::new();
+// `Arc<...>` because the external driver's `get_or_create_driver` takes
+// `self: &Arc<Self>`, and `CosmosDriverRuntimeBuilder::build()` returns an
+// `Arc<CosmosDriverRuntime>` directly.
+static DRIVER_RUNTIME: OnceLock<Arc<CosmosDriverRuntime>> = OnceLock::new();
 static DRIVERS: OnceLock<RwLock<HashMap<String, Arc<CosmosDriver>>>> = OnceLock::new();
 
 fn drivers() -> &'static RwLock<HashMap<String, Arc<CosmosDriver>>> {
@@ -169,14 +178,82 @@ fn create_item<'py>(
 
     let mut activity_header: Option<String> = None;
     let mut session_header: Option<String> = None;
+    // The Python helper writes the *internal option-key name*
+    // ``responsePayloadOnWriteDisabled`` into PreparedRequest.headers
+    // when the customer passed ``no_response=True``. The driver's
+    // ``OperationOptions::content_response_on_write`` defaults to
+    // ``Disabled`` ("suppresses the body to reduce bandwidth"); to
+    // make a successful create return the created item the binding
+    // must explicitly map ``no_response`` → ``Enabled`` / ``Disabled``
+    // here. ``None`` (kwarg never set) is treated as the customer
+    // wanting the body, so we default to Enabled.
+    let mut content_response_on_write: ContentResponseOnWrite =
+        ContentResponseOnWrite::Enabled;
+    // Custom headers the binding pushes through the driver's
+    // ``OperationOptions::with_custom_headers`` escape hatch. Used for
+    // every per-request header that the driver does not yet model as
+    // a typed field of its own (intended-collection-rid, indexing
+    // directive, pre/post triggers, priority, throughput bucket).
+    // Closes the headers half of gap C1.
+    let mut custom_headers: HashMap<HeaderName, HeaderValue> = HashMap::new();
     for (key, value) in headers_dict.iter() {
         let key_str: String = key.extract()?;
         let lower = key_str.to_ascii_lowercase();
+        // Headers the driver already exposes as typed fields on the
+        // operation itself — handled out of band, not via custom_headers.
         if lower == "x-ms-activity-id" {
             activity_header = Some(value.extract()?);
-        } else if lower == "x-ms-session-token" {
-            session_header = Some(value.extract()?);
+            continue;
         }
+        if lower == "x-ms-session-token" {
+            session_header = Some(value.extract()?);
+            continue;
+        }
+        // ``no_response`` lifted to the typed options field (see above).
+        if lower == "responsepayloadonwritedisabled" {
+            // Truthy → caller asked for "no body"; falsy → caller
+            // explicitly asked for the body (today indistinguishable
+            // from omission). ``bool`` lift via PyAny.is_truthy().
+            content_response_on_write = if value.is_truthy().unwrap_or(false) {
+                ContentResponseOnWrite::Disabled
+            } else {
+                ContentResponseOnWrite::Enabled
+            };
+            continue;
+        }
+        // Everything else: translate the Python helper's option-key
+        // name (or accept an already-wire-name string) to the
+        // ``x-ms-...`` header the service expects, then push onto the
+        // custom-headers map. Unknown keys are skipped silently — the
+        // legacy ``_base.GetHeaders`` mapping table also drops keys
+        // it does not recognise, so the rust path matches that
+        // behaviour rather than 500ing on a stray option.
+        let wire_name: Option<&'static str> = match lower.as_str() {
+            "pretriggerinclude" => Some("x-ms-documentdb-pre-trigger-include"),
+            "posttriggerinclude" => Some("x-ms-documentdb-post-trigger-include"),
+            "indexingdirective" => Some("x-ms-indexing-directive"),
+            "prioritylevel" => Some("x-ms-cosmos-priority-level"),
+            "throughputbucket" => Some("x-ms-cosmos-throughput-bucket"),
+            "containerrid" => Some("x-ms-cosmos-intended-collection-rid"),
+            // Already a wire-name header (e.g. caller-supplied
+            // initial_headers, or a future site that writes the
+            // x-ms-... name directly). Forward as-is. We exclude the
+            // two typed-field names handled above.
+            other if other.starts_with("x-ms-") || other == "prefer" => None,
+            _ => continue,
+        };
+        // Stringify the value. Python may have written a non-str
+        // (e.g. an int for indexing_directive); we coerce via str()
+        // to match what the legacy path emits on the wire.
+        let value_str: String = match value.extract::<String>() {
+            Ok(s) => s,
+            Err(_) => value.str()?.to_string(),
+        };
+        let header_name = match wire_name {
+            Some(name) => HeaderName::from_static(name),
+            None => HeaderName::from(lower),
+        };
+        custom_headers.insert(header_name, HeaderValue::from(value_str));
     }
 
     let driver = drivers()
@@ -216,7 +293,26 @@ fn create_item<'py>(
                 op = op.with_session_token(SessionToken::from(session));
             }
 
-            driver.execute_operation(op, OperationOptions::new()).await
+            // Build OperationOptions with the field(s) the binding maps
+            // from the Python side:
+            //   * ``content_response_on_write`` — from ``no_response``.
+            //   * ``custom_headers`` — every per-request header the
+            //     driver does not yet model as a typed field of its own
+            //     (intended-collection-rid, indexing directive,
+            //     pre/post triggers, priority, throughput bucket; plus
+            //     any caller-supplied ``x-ms-...`` / ``prefer`` key
+            //     that flowed through PreparedRequest.headers).
+            // Other fields stay ``None`` and the driver fills them
+            // from account / runtime / env defaults (the layered-
+            // options model — see ``OperationOptions`` doc).
+            let mut builder = OperationOptionsBuilder::new()
+                .with_content_response_on_write(content_response_on_write);
+            if !custom_headers.is_empty() {
+                builder = builder.with_custom_headers(custom_headers);
+            }
+            let options = builder.build();
+
+            driver.execute_operation(op, options).await
         })
     });
 
@@ -228,10 +324,15 @@ fn create_item<'py>(
     let status_code = u16::from(status.status_code()) as i64;
     let sub_status = status.sub_status().map(u32::from).unwrap_or(0) as i64;
 
-    // The driver's CosmosResponseHeaders only exposes typed accessors today
-    // and does not surface the raw header map, so this dict is empty for
-    // now. The Python parser falls back to body fields where it can.
+    // Copy the driver's typed CosmosResponseHeaders fields into a Python
+    // dict keyed by the actual `x-ms-...` wire-header names. This is what
+    // the Python parser (`_helpers/_response_parse.py`) reads to populate
+    // `client_connection.last_response_headers`, so customer code that
+    // does e.g. `last_response_headers["etag"]` keeps working on the
+    // Rust path.
+    let driver_headers = response.headers();
     let response_headers = PyDict::new_bound(py);
+    write_response_headers(&response_headers, driver_headers)?;
 
     let body_vec = response.into_body();
     let body_py = PyBytes::new_bound(py, &body_vec);
@@ -243,6 +344,138 @@ fn create_item<'py>(
         body_py.into_any().unbind(),
     ];
     Ok(PyTuple::new_bound(py, &items))
+}
+
+/// Copy every populated field on the driver's `CosmosResponseHeaders` into a
+/// Python dict keyed by the wire-header name the Python parser expects.
+///
+/// Only fields that are `Some(_)` are written, so callers that read a missing
+/// header get `KeyError` rather than `None` (matches what the legacy
+/// core-Python path emits today).
+fn write_response_headers(
+    out: &Bound<'_, PyDict>,
+    h: &azure_data_cosmos_driver::models::CosmosResponseHeaders,
+) -> PyResult<()> {
+    if let Some(v) = h.activity_id.as_ref() {
+        out.set_item("x-ms-activity-id", v.as_str())?;
+    }
+    if let Some(v) = h.request_charge {
+        // RequestCharge wraps an f64; render with the same formatting as the
+        // legacy path (no trailing zero stripping; let Display do its job).
+        out.set_item("x-ms-request-charge", format!("{}", f64::from(v)))?;
+    }
+    if let Some(v) = h.session_token.as_ref() {
+        out.set_item("x-ms-session-token", v.as_str())?;
+    }
+    if let Some(v) = h.etag.as_ref() {
+        out.set_item("etag", v.as_str())?;
+    }
+    if let Some(v) = h.continuation.as_ref() {
+        out.set_item("x-ms-continuation", v.as_str())?;
+    }
+    if let Some(v) = h.item_count {
+        out.set_item("x-ms-item-count", v)?;
+    }
+    if let Some(v) = h.substatus {
+        out.set_item("x-ms-substatus", u32::from(v))?;
+    }
+    if let Some(v) = h.index_metrics.as_ref() {
+        out.set_item("x-ms-cosmos-index-utilization", v.as_str())?;
+    }
+    if let Some(v) = h.query_metrics.as_ref() {
+        out.set_item("x-ms-documentdb-query-metrics", v.as_str())?;
+    }
+    if let Some(v) = h.server_duration_ms {
+        out.set_item("x-ms-request-duration-ms", v)?;
+    }
+    if let Some(v) = h.lsn {
+        out.set_item("lsn", v)?;
+    }
+    if let Some(v) = h.item_lsn {
+        out.set_item("x-ms-item-lsn", v)?;
+    }
+    if let Some(v) = h.local_lsn {
+        out.set_item("x-ms-cosmos-llsn", v)?;
+    }
+    if let Some(v) = h.item_local_lsn {
+        out.set_item("x-ms-cosmos-item-llsn", v)?;
+    }
+    if let Some(v) = h.global_committed_lsn {
+        out.set_item("x-ms-global-committed-lsn", v)?;
+    }
+    if let Some(v) = h.quorum_acked_lsn {
+        out.set_item("x-ms-quorum-acked-lsn", v)?;
+    }
+    if let Some(v) = h.quorum_acked_local_lsn {
+        out.set_item("x-ms-cosmos-quorum-acked-llsn", v)?;
+    }
+    if let Some(v) = h.retry_after_ms {
+        out.set_item("x-ms-retry-after-ms", v)?;
+    }
+    if let Some(v) = h.correlated_activity_id.as_ref() {
+        out.set_item("x-ms-cosmos-correlated-activityid", v.as_str())?;
+    }
+    if let Some(v) = h.transport_request_id {
+        out.set_item("x-ms-transport-request-id", v)?;
+    }
+    if let Some(v) = h.number_of_read_regions {
+        out.set_item("x-ms-number-of-read-regions", v)?;
+    }
+    if let Some(v) = h.last_state_change_utc.as_ref() {
+        out.set_item("x-ms-last-state-change-utc", v.as_str())?;
+    }
+    if let Some(v) = h.offer_replace_pending {
+        out.set_item("x-ms-offer-replace-pending", v)?;
+    }
+    // C2 — additional modeled fields the driver populates that the
+    // legacy core-Python path also surfaces in `last_response_headers`.
+    // Customer-visible categories:
+    //   * routing diagnostics: partition-key-range id, internal
+    //     partition id;
+    //   * capacity dashboards: resource-quota, resource-usage;
+    //   * service-version reporting: gatewayversion, serviceversion;
+    //   * script + write semantics: log-results,
+    //     allow-tentative-writes;
+    //   * indexing progress: collection-index-transformation-progress,
+    //     collection-lazy-indexing-progress.
+    // Two more fields (`x-ms-alt-content-path`, `x-ms-content-path`)
+    // are still `pub(crate)` on the driver's `CosmosResponseHeaders`
+    // (`owner_full_name`, `owner_id`) and remain blocked on the
+    // driver opening them up.
+    if let Some(v) = h.gateway_version.as_ref() {
+        out.set_item("x-ms-gatewayversion", v.as_str())?;
+    }
+    if let Some(v) = h.service_version.as_ref() {
+        out.set_item("x-ms-serviceversion", v.as_str())?;
+    }
+    if let Some(v) = h.resource_quota.as_ref() {
+        out.set_item("x-ms-resource-quota", v.as_str())?;
+    }
+    if let Some(v) = h.resource_usage.as_ref() {
+        out.set_item("x-ms-resource-usage", v.as_str())?;
+    }
+    if let Some(v) = h.has_tentative_writes {
+        out.set_item("x-ms-cosmos-allow-tentative-writes", v)?;
+    }
+    if let Some(v) = h.partition_key_range_id.as_ref() {
+        out.set_item("x-ms-documentdb-partitionkeyrangeid", v.as_str())?;
+    }
+    if let Some(v) = h.internal_partition_id.as_ref() {
+        out.set_item("x-ms-cosmos-internal-partition-id", v.as_str())?;
+    }
+    if let Some(v) = h.log_results.as_ref() {
+        out.set_item("x-ms-documentdb-script-log-results", v.as_str())?;
+    }
+    if let Some(v) = h.collection_index_transformation_progress {
+        out.set_item(
+            "x-ms-documentdb-collection-index-transformation-progress",
+            v,
+        )?;
+    }
+    if let Some(v) = h.collection_lazy_indexing_progress {
+        out.set_item("x-ms-documentdb-collection-lazy-indexing-progress", v)?;
+    }
+    Ok(())
 }
 
 // ---------------------------------------------------------------------------
@@ -261,45 +494,73 @@ fn parse_container_link(link: &str) -> PyResult<(String, String)> {
     }
 }
 
-/// Parse the JSON-array partition-key header into a typed PartitionKey.
-/// Supports the four scalar variants (string, number, bool, null) for a
-/// single-value partition key. Hierarchical partition keys (lists with
-/// 2 or 3 elements) and the `[{}]` / `[]` shapes are rejected here
-/// because the driver's public API does not expose `PartitionKeyValue`,
-/// so we cannot construct a multi-component PartitionKey from outside
-/// the driver crate today.
+/// Parse the JSON-array partition-key header into a typed `PartitionKey`.
+///
+/// Accepts every shape the Python helper (`_helpers/_pk_wire.py`) emits:
+///
+///   * Single scalar:                 `["customerA"]`, `[123]`, `[true]`, `[null]`
+///   * Undefined (PK path missing):   `[{}]`        -> `PartitionKeyValue::undefined()`
+///   * Hierarchical (2 or 3 levels):  `["t1","r1"]`, `["t1","r1","s1"]`
+///   * Hierarchical with missing leaf: `["t1",null]`
+///
+/// The one shape we still reject is the bare empty array `[]`, which the
+/// driver overloads to mean "cross-partition query" (`PartitionKey::EMPTY`
+/// emits the `x-ms-documentdb-query-enablecrosspartition` header instead of
+/// `x-ms-documentdb-partitionkey: []`). Until the driver splits those two
+/// concepts, we fail fast here so a partitionless-container write cannot
+/// silently land in the wrong place.
 fn parse_partition_key_header(header: &str) -> PyResult<PartitionKey> {
     let parsed: Vec<serde_json::Value> = serde_json::from_str(header).map_err(|e| {
         PyValueError::new_err(format!("invalid partition_key_header {header:?}: {e}"))
     })?;
 
-    if parsed.len() != 1 {
+    if parsed.is_empty() {
+        return Err(PyValueError::new_err(
+            "partition_key_header `[]` (NonePartitionKey / partitionless container) \
+             is not yet supported on the Rust path: the driver overloads `PartitionKey::EMPTY` \
+             to mean cross-partition query, so emitting it would target the wrong header. \
+             Use the legacy backend for partitionless containers until the driver splits \
+             the two concepts (tracked as C5b)."
+                .to_string(),
+        ));
+    }
+    if parsed.len() > 3 {
         return Err(PyValueError::new_err(format!(
-            "rust backend currently only supports single-value partition keys; \
-             got {} components in {header:?}",
+            "partition_key_header has {} components; Cosmos partition keys can have at most 3 levels",
             parsed.len()
         )));
     }
-    let value = parsed.into_iter().next().unwrap();
-    let pk: PartitionKey = match value {
-        serde_json::Value::Null => PartitionKey::from(None::<String>),
-        serde_json::Value::Bool(b) => PartitionKey::from(b),
+
+    let mut components: Vec<PartitionKeyValue> = Vec::with_capacity(parsed.len());
+    for value in parsed {
+        components.push(json_value_to_pk_component(value)?);
+    }
+    Ok(PartitionKey::from(components))
+}
+
+/// Convert a single JSON-array element into a `PartitionKeyValue`.
+fn json_value_to_pk_component(value: serde_json::Value) -> PyResult<PartitionKeyValue> {
+    match value {
+        // JSON null -> typed Null. Goes through the `From<Option<T>>` impl
+        // which maps None -> InnerPartitionKeyValue::Null.
+        serde_json::Value::Null => Ok(PartitionKeyValue::from(None::<String>)),
+        serde_json::Value::Bool(b) => Ok(PartitionKeyValue::from(b)),
         serde_json::Value::Number(n) => match n.as_f64() {
-            Some(f) => PartitionKey::from(f),
-            None => {
-                return Err(PyValueError::new_err(format!(
-                    "non-finite number in partition key header: {n}"
-                )))
-            }
+            Some(f) => Ok(PartitionKeyValue::from(f)),
+            None => Err(PyValueError::new_err(format!(
+                "non-finite number in partition key header: {n}"
+            ))),
         },
-        serde_json::Value::String(s) => PartitionKey::from(s),
-        other => {
-            return Err(PyValueError::new_err(format!(
-                "unsupported partition key value: {other}"
-            )))
-        }
-    };
-    Ok(pk)
+        serde_json::Value::String(s) => Ok(PartitionKeyValue::from(s)),
+        // Empty JSON object `{}` is the wire shape for "PK path missing on
+        // this document" (Python's `_Undefined`). The driver has a dedicated
+        // representation for this.
+        serde_json::Value::Object(obj) if obj.is_empty() => Ok(PartitionKeyValue::undefined()),
+        // Anything else is not a valid partition-key component on the wire.
+        other => Err(PyValueError::new_err(format!(
+            "unsupported partition key value: {other}"
+        ))),
+    }
 }
 
 /// Read the document `id` out of a JSON body. The Python helper layer

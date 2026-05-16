@@ -38,7 +38,6 @@ from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
 from .. import _utils as utils
 from .._availability_strategy_config import _validate_request_hedging_strategy
-from .._backend.constants import REQUEST_OPTION_BACKEND_KEY
 from .._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput,
                      build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk

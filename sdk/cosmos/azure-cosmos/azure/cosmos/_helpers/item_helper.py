@@ -22,8 +22,10 @@ Flow per call:
   4. Hand the ``PreparedRequest`` to the backend's ``execute``.
      - ``RustBackend.execute(prepared)`` calls the PyO3 binding and
        returns a real ``BackendResponse``.
-     - ``CorePythonBackend.execute(prepared)`` returns ``None`` today
-       — signal to fall through to the legacy ``CreateItem`` path.
+     - When ``self._backend is None`` (the "core-python" selection,
+       which is no longer wrapped in a class), the helper skips
+       dispatch and falls through directly to the legacy ``CreateItem``
+       path below.
   5. When a real ``BackendResponse`` comes back, parse it via
      ``parse_backend_response`` into a ``CosmosDict`` and raise typed
      exceptions for non-2xx replies — same shape customer code has
@@ -41,7 +43,6 @@ from __future__ import annotations
 from typing import Any, Callable, Dict, Optional
 
 from .._backend.base import CosmosBackend
-from .._backend.constants import REQUEST_OPTION_BACKEND_KEY
 from .._constants import _Constants as Constants
 from ..partition_key import _Empty
 from ._item_dispatch import build_create_item_request_options
@@ -99,10 +100,6 @@ class ItemHelper:
         **kwargs: Any,
     ) -> Any:
         """Run a single ``create_item`` call end to end."""
-        if self._backend is not None:
-            # Stamp the chosen backend's name so the user-agent policy
-            # can append ``backend=<name>`` to the outgoing request.
-            kwargs[REQUEST_OPTION_BACKEND_KEY] = self._backend.name
 
         # Build legacy-shape request_options (used by the fall-through
         # legacy path AND consumed for partition-key extraction below).
@@ -136,9 +133,10 @@ class ItemHelper:
             container_rid = None
 
         # Backend dispatch path. Build the PreparedRequest, hand it to
-        # ``backend.execute``. The CorePythonBackend's execute returns
-        # ``None`` today (placeholder); the RustBackend returns a real
-        # BackendResponse.
+        # ``backend.execute``. ``self._backend is None`` means the
+        # "core-python" selection (no Rust backend wired); the helper
+        # falls through to the legacy ``CreateItem`` below. The
+        # RustBackend returns a real BackendResponse.
         if self._backend is not None:
             partition_key_value = self._extract_partition_key_value(
                 container_link, body, request_options

@@ -27,7 +27,7 @@ What they cover, grouped by responsibility:
      whichever one wins. If the value it ends up with is not exactly
      ``"core-python"`` or ``"rust"``, it raises ``ValueError`` right
      there at client construction time so a typo cannot silently fall
-     back to the default. The tests in this group pin every one of
+     back to the default. The tests in this group cover every one of
      those rules down: default with nothing set, env var honored,
      kwarg overrides env var, both invalid-value paths.
 
@@ -35,16 +35,7 @@ What they cover, grouped by responsibility:
      The container's ``create_item`` reads the two type-named attributes
      on ``client_connection`` (``_rust_backend``, ``_core_python_backend``)
      and routes to whichever one is wired (Rust if present, core-python
-     otherwise). The dispatch site also stamps the chosen backend's
-     name into ``**kwargs`` under ``REQUEST_OPTION_BACKEND_KEY`` so
-     that ``CosmosUserAgentPolicy`` can append it to the User-Agent
-     header.
-
-  4. User-agent policy.
-     Two small tests verify the policy reads the per-request stamp from
-     ``request.context.options`` and writes ``backend=<name>`` into the
-     final User-Agent header — and that the absence of a stamp produces
-     no ``backend=`` token at all.
+     otherwise).
 """
 from __future__ import annotations
 
@@ -60,12 +51,9 @@ from azure.cosmos._backend.constants import (
     BACKEND_ENV_VAR,
     BACKEND_NAME_CORE_PYTHON,
     BACKEND_NAME_RUST,
-    REQUEST_OPTION_BACKEND_KEY,
 )
-from azure.cosmos._backend.core_python import CorePythonBackend
 from azure.cosmos._backend.factory import make_backend
 from azure.cosmos._backend.rust import RustBackend
-from azure.cosmos.aio._backend.core_python import AsyncCorePythonBackend
 from azure.cosmos.aio._backend.factory import make_async_backend
 from azure.cosmos.aio._backend.rust import AsyncRustBackend
 
@@ -74,7 +62,9 @@ from azure.cosmos.aio._backend.rust import AsyncRustBackend
 # Import-guard
 # ---------------------------------------------------------------------------
 
-_PKG_ROOT = Path(__file__).resolve().parents[1] / "azure" / "cosmos"
+# This file lives at tests/common/, so we walk up two parents to reach the
+# repo root, then descend into azure/cosmos/.
+_PKG_ROOT = Path(__file__).resolve().parents[2] / "azure" / "cosmos"
 
 # Each entry maps a guarded name (the compiled PyO3 module, or a concrete
 # backend class) to the set of package-relative file paths that are allowed
@@ -85,21 +75,12 @@ _ALLOWED = {
         Path("_backend") / "rust.py",
         Path("aio") / "_backend" / "rust.py",
     },
-    # Concrete backend classes are imported by the factory (which constructs
-    # them) and by the client (which holds them in two type-named attributes
-    # — _core_python_backend and _rust_backend — and uses isinstance to
-    # decide which slot the factory's return value belongs in).
-    "CorePythonBackend": {
-        Path("_backend") / "factory.py",
-        Path("cosmos_client.py"),
-    },
+    # The Rust backend class is imported by the factory (which constructs
+    # it) and by the client (which holds it on a ``_rust_backend`` attribute
+    # and uses isinstance to confirm what the factory returned).
     "RustBackend": {
         Path("_backend") / "factory.py",
         Path("cosmos_client.py"),
-    },
-    "AsyncCorePythonBackend": {
-        Path("aio") / "_backend" / "factory.py",
-        Path("aio") / "_cosmos_client.py",
     },
     "AsyncRustBackend": {
         Path("aio") / "_backend" / "factory.py",
@@ -169,14 +150,14 @@ def test_import_guard(guarded_name, allowed_files):
 # It returns whichever one wins, after checking that the value is exactly
 # ``"core-python"`` or ``"rust"``. Any other value raises ``ValueError``
 # at client construction time so a typo cannot silently fall back to the
-# default. The tests below pin every one of those rules down.
+# default. The tests below cover every one of those rules down.
 
-def test_factory_default_is_core_python(monkeypatch):
-    """With no kwarg and no env var, the factory must pick core-python."""
+def test_factory_default_returns_none(monkeypatch):
+    """With no kwarg and no env var, the factory must pick core-python,
+    which is now represented by ``None`` (no backend class wraps it)."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     backend = make_backend(None)
-    assert isinstance(backend, CorePythonBackend)
-    assert backend.name == BACKEND_NAME_CORE_PYTHON
+    assert backend is None
 
 
 def test_factory_env_var_picks_rust(monkeypatch):
@@ -196,7 +177,7 @@ def test_factory_kwarg_overrides_env(monkeypatch):
     """An explicit kwarg always wins over the env var."""
     monkeypatch.setenv(BACKEND_ENV_VAR, BACKEND_NAME_RUST)
     backend = make_backend(BACKEND_NAME_CORE_PYTHON)
-    assert isinstance(backend, CorePythonBackend)
+    assert backend is None
 
 
 def test_factory_invalid_value_fails_loud(monkeypatch):
@@ -223,9 +204,10 @@ def test_factory_rust_without_master_key_fails_loud(monkeypatch):
 
 
 def test_async_factory_returns_async_backends(monkeypatch):
-    """The async factory must return the async backend classes."""
+    """The async factory must return ``None`` for the default selection
+    and an ``AsyncRustBackend`` instance when Rust is asked for."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    assert isinstance(make_async_backend(None), AsyncCorePythonBackend)
+    assert make_async_backend(None) is None
     assert isinstance(
         make_async_backend(
             BACKEND_NAME_RUST,
@@ -409,17 +391,12 @@ def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
     assert result["id"] == "order-42"
 
 
-def test_core_python_backend_create_item_returns_none():
-    """Today, returning None is how core-python tells the dispatch site
-    to fall through to the existing in-place create_item code."""
-    assert CorePythonBackend().execute(prepared=None) is None
-
-
-def test_async_core_python_backend_create_item_returns_none():
-    """Same fall-through contract on the async side."""
-    async def _run():
-        assert await AsyncCorePythonBackend().execute(prepared=None) is None
-    asyncio.run(_run())
+# NOTE: The historical ``test_core_python_backend_create_item_returns_none``
+# test was removed. ``CorePythonBackend`` / ``AsyncCorePythonBackend`` no
+# longer exist; the "fall through to legacy" signal is now the absence of
+# any backend on the connection (``_rust_backend is None``), and the helper
+# handles that directly. See the fall-through tests in
+# ``test_item_helper_unit.py``.
 
 
 def test_dataclasses_are_frozen():
@@ -456,11 +433,7 @@ def test_dataclasses_are_frozen():
 #
 # When a container's ``create_item`` runs, it reads both attributes
 # and picks Rust if it is wired, core-python otherwise. The decision
-# is per-client (made once at construction), not per-call. After
-# deciding, the dispatch site stamps the chosen backend's name into
-# ``**kwargs`` under ``REQUEST_OPTION_BACKEND_KEY`` so that
-# ``CosmosUserAgentPolicy`` can append ``backend=<name>`` to the
-# User-Agent header for that single request.
+# is per-client (made once at construction), not per-call.
 #
 # The tests below cover: routing to Rust on a Rust-default client,
 # the safety net that lets a ``Container`` whose ``client_connection``
@@ -474,7 +447,9 @@ def _make_sync_container_with_backends(rust_backend, core_python_backend):
 
     Pass ``rust_backend=None`` to model a client whose default is
     core-python; pass a ``RustBackend`` instance to model a Rust-default
-    client. ``core_python_backend`` is always present.
+    client. ``core_python_backend`` is kept for historical test signatures
+    — it is no longer a real class today, so callers pass ``None`` (the
+    "no backend wired, fall through to legacy" signal).
     """
     from azure.cosmos.container import ContainerProxy
     mock_cc = MagicMock()
@@ -507,7 +482,7 @@ def test_container_dispatch_routes_to_rust_backend(monkeypatch):
     fake_module.create_item.return_value = (201, 0, {}, b"{}")
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
-    container = _make_sync_container_with_backends(_new_rust_backend(), CorePythonBackend())
+    container = _make_sync_container_with_backends(_new_rust_backend(), None)
     try:
         container.create_item(body={"id": "x", "pk": "a"})
     except Exception:
@@ -548,7 +523,7 @@ def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
 
     mock_cc = MagicMock()
     mock_cc._rust_backend = _new_async_rust_backend()
-    mock_cc._core_python_backend = AsyncCorePythonBackend()
+    mock_cc._core_python_backend = None
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.client_connection = mock_cc
     container.id = "test"
@@ -563,88 +538,4 @@ def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
         assert fake_module.create_item.called, "async Rust path should have been taken"
 
     asyncio.run(_run())
-
-
-# ---------------------------------------------------------------------------
-# How the chosen backend's name reaches the User-Agent header
-# ---------------------------------------------------------------------------
-#
-# ``CosmosUserAgentPolicy`` is the place where the per-request backend
-# tag actually shows up on the wire. The policy reads a single key
-# (``REQUEST_OPTION_BACKEND_KEY``, currently ``"cosmos_backend"``) out
-# of the request's context options and, if it finds one, appends
-# ``backend=<name>`` to the User-Agent header right before the request
-# leaves the SDK.
-#
-# That key is written by the container's dispatch site so the
-# server-side log reflects which backend ran the request. The tests
-# below cover both halves of that round-trip independently: two tests
-# prove the policy reacts correctly to the presence and absence of the
-# stamp, and one more proves that the dispatch site sets the stamp to
-# the name of the backend that actually handled the call.
-# ---------------------------------------------------------------------------
-
-def _make_ua_policy_request(options):
-    """Build a minimal request stand-in exposing ``context.options`` as a
-    plain dict and ``http_request.headers`` as a plain dict.
-
-    The real ``PipelineContext.options`` is built from constructor kwargs
-    and not all azure-core versions let arbitrary keys round-trip; we
-    only need the policy to see a mutable mapping on each side, so a
-    MagicMock with two real dicts hung off it is the cleanest fixture.
-    """
-    request = MagicMock()
-    request.context.options = dict(options)
-    request.http_request.headers = {}
-    return request
-
-
-def test_user_agent_policy_appends_backend_suffix():
-    """A per-request backend stamp must surface in the final User-Agent
-    header as ``backend=<name>``."""
-    from azure.cosmos._user_agent_policy import CosmosUserAgentPolicy
-    policy = CosmosUserAgentPolicy(base_user_agent="azsdk-python-cosmos/4.x")
-    request = _make_ua_policy_request({REQUEST_OPTION_BACKEND_KEY: BACKEND_NAME_RUST})
-    policy.on_request(request)
-    # The base UserAgentPolicy consumes ``user_agent`` from options and
-    # writes the final value into the request's User-Agent header.
-    ua = request.http_request.headers.get("User-Agent", "")
-    assert "backend={}".format(BACKEND_NAME_RUST) in ua, (
-        "expected backend={} in UA, got: {!r}".format(BACKEND_NAME_RUST, ua)
-    )
-
-
-def test_user_agent_policy_no_backend_suffix_when_unset():
-    """Without a stamp, the UA must not carry a ``backend=`` token."""
-    from azure.cosmos._user_agent_policy import CosmosUserAgentPolicy
-    policy = CosmosUserAgentPolicy(base_user_agent="azsdk-python-cosmos/4.x")
-    request = _make_ua_policy_request({})
-    policy.on_request(request)
-    ua = request.http_request.headers.get("User-Agent", "")
-    assert "backend=" not in ua
-
-
-def test_container_dispatch_stamps_backend_in_kwargs():
-    """The dispatch site must inject the backend name into kwargs under
-    REQUEST_OPTION_BACKEND_KEY so the user-agent policy can pick it up.
-    Default client (no Rust backend) → stamps ``core-python``."""
-    container = _make_sync_container_with_backends(None, CorePythonBackend())
-    captured = {}
-
-    def fake_create_item(**kwargs):
-        captured.update(kwargs)
-        return MagicMock()
-
-    container.client_connection.CreateItem = fake_create_item
-    # Avoid the container-properties cache lookup by short-circuiting it.
-    container._get_properties_with_options = lambda _opts: None  # type: ignore[attr-defined]
-    container._ContainerProxy__get_client_container_caches = lambda: {  # type: ignore[attr-defined]
-        container.container_link: {"_rid": "rid"}
-    }
-    try:
-        container.create_item(body={"id": "x", "pk": "a"})
-    except Exception:
-        pass
-    assert captured.get(REQUEST_OPTION_BACKEND_KEY) == BACKEND_NAME_CORE_PYTHON
-
 

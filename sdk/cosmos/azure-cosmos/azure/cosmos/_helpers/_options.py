@@ -35,7 +35,7 @@ from .._constants import _Constants as Constants
 #
 # NOTE: This dict is deliberately public *within the _helpers package*
 # (no leading underscore) because it is consumed from outside this
-# module â—” both ``_base.build_options`` (legacy path) and the future
+# module — both ``_base.build_options`` (legacy path) and the future
 # item helper read it. The leading-underscore alias ``_COMMON_OPTIONS``
 # is kept in ``_base.py`` for source compatibility with anything that
 # still grepped the old name.

@@ -6,7 +6,7 @@
 """Turn a ``BackendResponse`` into the same ``CosmosDict`` v4 returned.
 
 The five wire-prep helpers prepare a request; this module is the other
-side of the seam â—” it converts the backend's response back into the
+side of the seam — it converts the backend's response back into the
 shape customer code expects:
 
 * On success, build a ``CosmosDict`` from the JSON body plus the
@@ -25,11 +25,12 @@ The function is pure with one explicit side effect: assigning to
 ``client_connection.last_response_headers``. That side effect is
 documented and matches the legacy behaviour byte-for-byte.
 
-This module does not have any production callers yet. Like the
-wire-prep helpers, it sits unwired until ``CorePythonBackend.create_item``
-becomes a real adapter that returns ``BackendResponse`` (the
-deferred adapter step on the core-python backend). Tests in ``tests/test_response_parse_unit.py``
-exercise every branch in isolation today.
+This module is the parser the helper runs whenever a backend returns
+a real ``BackendResponse`` (today: only ``RustBackend``). The
+"core-python" selection bypasses this module entirely — it forwards
+straight to legacy ``client_connection.CreateItem``, which produces
+its own ``CosmosDict``. Tests in ``tests/test_response_parse_unit.py``
+exercise every branch in isolation.
 """
 from __future__ import annotations
 

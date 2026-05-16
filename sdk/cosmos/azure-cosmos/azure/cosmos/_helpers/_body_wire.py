@@ -93,7 +93,7 @@ def serialize_body_to_bytes(body: Any) -> bytes:
         return json.dumps(body, separators=_COMPACT_SEPARATORS).encode("utf-8")
 
     # Anything else is a programming error in the caller. Raise rather
-    # than swallow â—” see the module docstring for the rationale.
+    # than swallow — see the module docstring for the rationale.
     raise TypeError(
         "Cannot serialize request body of type "
         f"{type(body).__name__!r}; expected dict, list, tuple, str, "

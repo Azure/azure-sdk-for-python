@@ -142,7 +142,7 @@ def map_backend_response_to_exception(
     invoking a ``response_hook`` first).
 
     :param response: The non-2xx ``BackendResponse``. The function
-        does not check that ``status_code`` is actually >= 400 â—” that
+        does not check that ``status_code`` is actually >= 400 — that
         is the caller's job. Calling this on a 2xx response is a
         programming error and produces a misleading exception.
     :type response: BackendResponse
@@ -189,7 +189,7 @@ def extract_message_from_body(body: bytes) -> str:
     in its exception text. This helper pulls the ``message`` field if
     the body parses as JSON and contains it; otherwise returns the
     body bytes decoded as UTF-8 (or an empty string for an empty
-    body). Never raises â—” a malformed error body should not mask the
+    body). Never raises — a malformed error body should not mask the
     underlying error.
 
     :param body: The response body bytes.

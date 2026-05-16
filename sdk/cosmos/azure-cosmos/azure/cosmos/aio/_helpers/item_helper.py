@@ -25,7 +25,6 @@ from ..._helpers._request_prep import build_create_item_prepared
 from ..._helpers._response_parse import parse_backend_response
 from ...partition_key import _Empty
 from .._backend.base import AsyncCosmosBackend
-from azure.cosmos._backend.constants import REQUEST_OPTION_BACKEND_KEY
 
 
 class AsyncItemHelper:
@@ -71,8 +70,6 @@ class AsyncItemHelper:
         **kwargs: Any,
     ) -> Any:
         """Run a single async ``create_item`` call end to end."""
-        if self._backend is not None:
-            kwargs[REQUEST_OPTION_BACKEND_KEY] = self._backend.name
 
         request_options = build_create_item_request_options(
             kwargs,

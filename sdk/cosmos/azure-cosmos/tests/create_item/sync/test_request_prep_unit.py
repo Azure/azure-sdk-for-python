@@ -3,13 +3,33 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for ``_helpers/_request_prep.py`` â—” no network, no Cosmos emulator.
+"""In-process unit tests for ``_helpers/_request_prep.py`` — no network, no Cosmos emulator.
 
-These tests exercise the *composition* of the five wire-prep helpers
-(B1 options, B2 container rid, B3 auto-id, B4 PK wire, B5 body wire)
-into a single ``PreparedRequest``. Each individual helper has its
-own dedicated test module; this module covers only the joining logic
-and the round-trips that depend on more than one helper.
+``build_create_item_prepared`` is the one function that takes a
+customer ``create_item`` call and assembles everything the backend
+needs to send the request. It glues together five smaller helpers:
+
+* **B1 options** — turn customer kwargs (``pre_trigger_include=…``,
+  ``priority=…``, …) into the internal option-key dict.
+* **B2 container rid** — stamp the immutable container resource id
+  into the headers under ``Constants.ContainerRID`` (so the service
+  notices a recreated-container mismatch).
+* **B3 auto-id** — mint a UUID4 ``id`` if the body has none and
+  generation is enabled.
+* **B4 PK request-byte** — turn the partition-key value into the JSON-array
+  string the ``x-ms-documentdb-partitionkey`` header expects.
+* **B5 body request-byte** — serialise the body dict into the exact compact
+  JSON bytes that go on the network.
+
+Each helper has its own dedicated test module that covers its
+behaviour in isolation. *This* file covers only the **composition** —
+that the prep function calls the right helpers in the right order
+and assembles the result into a ``PreparedRequest`` whose fields
+line up. It also covers the round-trips that span more than one
+helper (e.g. minted id appears identically in the body, the bytes,
+and the return value).
+
+Pure in-process; runs in milliseconds.
 """
 import json
 import re
@@ -27,9 +47,16 @@ _UUID4_PATTERN = re.compile(
 
 
 class TestHappyPathComposition(unittest.TestCase):
-    """The common case: simple body, scalar PK, all kwargs known."""
+    """The common case: simple body, scalar PK, all kwargs known.
+
+    These three tests prove the prep function returns a fully-formed
+    ``PreparedRequest``, that the kwargs dict is consumed (so the
+    caller doesn't double-forward), and that the body bytes round-trip
+    cleanly back to the dict the body now carries.
+    """
 
     def test_returns_prepared_request_and_id(self):
+        """Happy-path call → ``PreparedRequest`` with every field correctly populated by the five helpers."""
         prepared, item_id = build_create_item_prepared(
             container_link="dbs/db/colls/orders",
             body={"id": "order-42", "pk": "customerA", "total": 99.5},
@@ -38,39 +65,26 @@ class TestHappyPathComposition(unittest.TestCase):
             kwargs={"pre_trigger_include": "validateOrder"},
         )
 
-        # The PreparedRequest is the immutable backend-facing shape.
+        # Immutable backend-facing shape.
         self.assertIsInstance(prepared, PreparedRequest)
-
-        # The container link passes straight through.
+        # Container link passes straight through.
         self.assertEqual(prepared.container_link, "dbs/db/colls/orders")
-
-        # The item id is what the body had.
+        # Item id comes from the body (not minted; the body had one).
         self.assertEqual(item_id, "order-42")
-
-        # Body bytes are the compact-JSON form (B5).
+        # B5: body bytes are the compact-JSON form.
         self.assertEqual(
             prepared.body_bytes,
             b'{"id":"order-42","pk":"customerA","total":99.5}',
         )
-
-        # PK header is the wire shape (B4) â—” single string value.
+        # B4: PK header is the byte shape — single string value.
         self.assertEqual(prepared.partition_key_header, '["customerA"]')
-
-        # The B1 kwarg shortcut landed in headers under the
-        # internal-option-key name.
+        # B1: kwarg shortcut landed under the internal-option-key name.
         self.assertEqual(prepared.headers["preTriggerInclude"], "validateOrder")
-
-        # B2 stamped the rid into the headers map under the constant
-        # key the rest of the SDK reads.
-        self.assertEqual(
-            prepared.headers[Constants.ContainerRID],
-            "rid-orders-1",
-        )
+        # B2: rid stamped into headers under the constant key the SDK reads.
+        self.assertEqual(prepared.headers[Constants.ContainerRID], "rid-orders-1")
 
     def test_kwargs_dict_is_consumed_by_compose_step(self):
-        # B1 pops every recognised key out of the kwargs dict the
-        # caller passed in â—” so the caller can forward the remaining
-        # kwargs to azure-core without double-handling.
+        """B1 pops every recognised kwarg out of the input dict so the caller doesn't double-forward to azure-core."""
         kwargs = {
             "pre_trigger_include": "validateOrder",
             "priority": "High",
@@ -83,17 +97,14 @@ class TestHappyPathComposition(unittest.TestCase):
             container_rid="rid",
             kwargs=kwargs,
         )
-        # Recognised kwargs are gone.
         self.assertNotIn("pre_trigger_include", kwargs)
         self.assertNotIn("priority", kwargs)
         # Unrecognised survive.
         self.assertEqual(kwargs, {"extra_unknown": "left-alone"})
 
     def test_body_bytes_are_json_round_trippable(self):
-        # Sanity check on B5 composition: the bytes the helper
-        # produced parse back into the dict the body now carries
-        # (after auto-id mutation, when applicable).
-        body = {"v": 1}  # No id â—” B3 will mint one.
+        """The serialised body bytes parse back into the (post-auto-id) dict the body now carries."""
+        body = {"v": 1}  # No id — B3 will mint one.
         prepared, item_id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body=body,
@@ -106,9 +117,15 @@ class TestHappyPathComposition(unittest.TestCase):
 
 
 class TestAutoIdGeneration(unittest.TestCase):
-    """B3 (auto-id) interaction with the prep helper."""
+    """B3 (auto-id) interaction with the prep helper.
+
+    Covers the four cases of the auto-id contract through the prep
+    pipeline: missing id minted, generation disabled, and the two
+    values of the ``disableAutomaticIdGeneration`` option flag.
+    """
 
     def test_missing_id_mints_uuid_and_writes_into_body(self):
+        """No id on the body → B3 mints a UUID4, writes it into the body, returns it, and embeds it in the bytes."""
         body = {"total": 99.5}
         prepared, item_id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
@@ -116,14 +133,12 @@ class TestAutoIdGeneration(unittest.TestCase):
             partition_key_value="pk",
             container_rid="rid",
         )
-        # The minted id is in body, the return tuple, and the bytes.
         self.assertRegex(item_id, _UUID4_PATTERN)
         self.assertEqual(body["id"], item_id)
         self.assertIn(f'"id":"{item_id}"', prepared.body_bytes.decode())
 
     def test_disabled_id_generation_leaves_body_without_id(self):
-        # The customer asked us not to mint. We emit an empty string
-        # for the item_id so the return type stays str.
+        """``enable_automatic_id_generation=False`` → no id minted; body stays bare; ``item_id`` is empty string."""
         body = {"total": 99.5}
         prepared, item_id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
@@ -134,14 +149,10 @@ class TestAutoIdGeneration(unittest.TestCase):
         )
         self.assertEqual(item_id, "")
         self.assertNotIn("id", body)
-        # Body bytes also lack the id field â—” what the legacy path does.
         self.assertNotIn(b'"id"', prepared.body_bytes)
 
     def test_disable_flag_lands_in_options(self):
-        # disableAutomaticIdGeneration is the negation of the kwarg;
-        # the legacy path writes both forms. Make sure the helper
-        # writes the same option-key the legacy GetHeaders consumer
-        # reads.
+        """``enable_automatic_id_generation=False`` → header ``disableAutomaticIdGeneration`` is True (legacy parity)."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -152,7 +163,7 @@ class TestAutoIdGeneration(unittest.TestCase):
         self.assertTrue(prepared.headers["disableAutomaticIdGeneration"])
 
     def test_enabled_flag_lands_in_options(self):
-        # And the True default also lands explicitly.
+        """``enable_automatic_id_generation=True`` → header ``disableAutomaticIdGeneration`` is False (explicit)."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -164,9 +175,16 @@ class TestAutoIdGeneration(unittest.TestCase):
 
 
 class TestPartitionKeyShapes(unittest.TestCase):
-    """B4 (PK wire serialization) interaction."""
+    """B4 (PK request-byte serialization) interaction with the prep helper.
+
+    Smoke-tests the four PK shapes through the composition: scalar,
+    hierarchical, ``_Undefined`` sentinel, ``_Empty`` sentinel.
+    Exhaustive coverage of each shape lives in
+    ``test_pk_wire_unit.py``.
+    """
 
     def test_scalar_pk_renders_as_one_element_array(self):
+        """Scalar integer PK → ``"[42]"`` in the partition-key header."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -176,6 +194,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
         self.assertEqual(prepared.partition_key_header, "[42]")
 
     def test_hierarchical_pk_renders_in_order(self):
+        """Hierarchical PK list → JSON array in the supplied order."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -185,6 +204,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
         self.assertEqual(prepared.partition_key_header, '["t1","r1"]')
 
     def test_undefined_pk_renders_reserved_shape(self):
+        """``_Undefined`` PK → reserved ``"[{}]"`` shape."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -194,6 +214,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
         self.assertEqual(prepared.partition_key_header, "[{}]")
 
     def test_empty_pk_renders_reserved_shape(self):
+        """``_Empty`` PK → reserved ``"[]"`` shape (legacy partitionless container)."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -204,11 +225,17 @@ class TestPartitionKeyShapes(unittest.TestCase):
 
 
 class TestContainerRidOptional(unittest.TestCase):
-    """B2 (container rid) interaction â—” including the None-skip path."""
+    """B2 (container rid) interaction — including the None-skip path.
+
+    The prep helper accepts ``container_rid=None`` and skips
+    stamping rather than inventing a value. That's how a test
+    fixture (or a future caller that doesn't have a rid yet) can
+    drive the prep without violating the helper's "never invent
+    state" rule.
+    """
 
     def test_none_rid_skips_stamping(self):
-        # A test fixture / future caller may not have a rid. The
-        # helper does not invent one; it skips stamping entirely.
+        """``container_rid=None`` → ``Constants.ContainerRID`` is not in the headers map."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -218,6 +245,7 @@ class TestContainerRidOptional(unittest.TestCase):
         self.assertNotIn(Constants.ContainerRID, prepared.headers)
 
     def test_supplied_rid_lands_in_headers_under_constant_key(self):
+        """A supplied rid lands in the headers under ``Constants.ContainerRID``."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -228,9 +256,16 @@ class TestContainerRidOptional(unittest.TestCase):
 
 
 class TestIndexingDirective(unittest.TestCase):
-    """``indexing_directive`` is not a kwarg-shortcut; it lands directly."""
+    """``indexing_directive`` is a direct option (not a kwarg shortcut).
+
+    Unlike the B1 kwarg shortcuts (which translate snake_case →
+    camelCase via the COMMON_OPTIONS table), ``indexing_directive``
+    flows through as its own explicit prep parameter and lands under
+    ``"indexingDirective"`` only when supplied.
+    """
 
     def test_indexing_directive_lands_when_supplied(self):
+        """A supplied ``indexing_directive=N`` lands in headers as ``"indexingDirective"``."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -241,7 +276,7 @@ class TestIndexingDirective(unittest.TestCase):
         self.assertEqual(prepared.headers["indexingDirective"], 1)
 
     def test_indexing_directive_omitted_when_not_supplied(self):
-        # Default is None â—” no key added.
+        """Default (``None``) → no ``"indexingDirective"`` key in the headers."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -252,24 +287,31 @@ class TestIndexingDirective(unittest.TestCase):
 
 
 class TestPreparedRequestImmutability(unittest.TestCase):
-    """The returned ``PreparedRequest`` is frozen; the caller cannot mutate it."""
+    """The returned ``PreparedRequest`` is a frozen dataclass; the caller cannot mutate it."""
 
     def test_assigning_to_field_raises(self):
+        """Assigning to any field on the returned ``PreparedRequest`` raises (frozen dataclass)."""
         prepared, _id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
         )
-        # frozen=True dataclasses raise on attribute assignment.
-        with self.assertRaises(Exception):
+        with self.assertRaises(Exception):  # FrozenInstanceError
             prepared.container_link = "dbs/db/colls/other"  # type: ignore[misc]
 
 
 class TestRoundTripWithMintedId(unittest.TestCase):
-    """End-to-end: minted id is consistent across body, bytes, and return."""
+    """End-to-end: a minted id appears identically in three places.
+
+    The auto-id contract only works if the same string ends up in the
+    body dict, the serialised bytes, and the helper's return value.
+    Drift between any two of those would produce duplicate documents
+    on retry. This test covers all three to the same value.
+    """
 
     def test_minted_id_appears_identically_in_three_places(self):
+        """Minted UUID4 id appears in body dict, serialised bytes, and return value — all the same string."""
         body = {"pk": "customerA", "total": 99.5}
         prepared, item_id = build_create_item_prepared(
             container_link="dbs/db/colls/c",
@@ -277,14 +319,10 @@ class TestRoundTripWithMintedId(unittest.TestCase):
             partition_key_value="customerA",
             container_rid="rid",
         )
-        # 1. Returned by the helper.
         self.assertIsInstance(item_id, str)
-        # 2. Written into the body dict.
         self.assertEqual(body["id"], item_id)
-        # 3. Present in the serialized bytes.
         decoded = json.loads(prepared.body_bytes)
         self.assertEqual(decoded["id"], item_id)
-        # And the value is a UUID4.
         self.assertEqual(uuid.UUID(item_id).version, 4)
 
 

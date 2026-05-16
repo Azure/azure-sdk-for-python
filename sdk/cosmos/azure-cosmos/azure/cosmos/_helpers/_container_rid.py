@@ -47,7 +47,7 @@ def stamp_container_rid(
     The function is idempotent: if a caller has already set
     ``Constants.ContainerRID`` (test fixture, replay scenario, manual
     pre-build), the existing value is preserved. The legacy
-    ``Container.create_item`` always overwrote â—” which is a small
+    ``Container.create_item`` always overwrote — which is a small
     inconsistency with ``scripts._ensure_container_rid`` (which skips
     if set). This helper picks the defensive form. Callers that want
     the old "always overwrite" behaviour should set the option key
@@ -55,7 +55,7 @@ def stamp_container_rid(
     actually relies on overwriting.
 
     :param options: The internal options dict the request will use.
-        Mutated in place â—” the only side effect.
+        Mutated in place — the only side effect.
     :type options: Dict[str, Any]
     :param container_link: Self-link of the container, e.g.
         ``"dbs/{db}/colls/{coll}"``. Passed straight to ``get_rid``;
@@ -78,7 +78,7 @@ def stamp_container_rid(
         return
 
     # ``get_rid`` may raise (cache miss + refresh failure, network
-    # blip, etc.). Letting it propagate is intentional â—” the request
+    # blip, etc.). Letting it propagate is intentional — the request
     # cannot proceed without a rid, and a half-stamped options dict
     # would be worse than a clean failure. We deliberately do not
     # write a sentinel value on failure.

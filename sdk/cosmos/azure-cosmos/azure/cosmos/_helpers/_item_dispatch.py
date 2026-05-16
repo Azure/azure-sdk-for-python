@@ -86,27 +86,26 @@ def pick_backend(client_connection: Any) -> Optional[CosmosBackend]:
     never reconsidered per call:
 
     * If a Rust backend is wired on this connection, use it.
-    * Otherwise use the always-present core-python backend.
+    * Otherwise return ``None`` — the helper treats that as the signal
+      to fall through to the legacy ``client_connection.CreateItem``
+      path. There is no "core-python backend" class wrapping the
+      ``None``; the absence of a Rust backend is the absence of any
+      backend, by design (see ``_backend/factory.py``).
 
     The Rust backend's per-feature support level is a property of the
     backend itself, not of the call. If a kwarg the Rust backend does
     not honor reaches the wire, that is either a known limitation or
-    a bug to fix in the Rust path; the dispatch site
-    does not silently re-route to a different backend.
+    a bug to fix in the Rust path; the dispatch site does not silently
+    re-route to a different backend.
 
-    :param client_connection: The connection that owns the two backend
-        attributes (``_rust_backend`` and ``_core_python_backend``).
-        Either may be missing on a connection built outside
-        ``CosmosClient`` (some unit tests); the function tolerates
-        that and returns ``None`` so the caller falls through to the
-        legacy code path.
-    :returns: The chosen backend instance, or ``None`` when neither
-        backend is wired on the connection.
+    :param client_connection: The connection that owns the
+        ``_rust_backend`` attribute. The attribute may be missing on a
+        connection built outside ``CosmosClient`` (some unit tests);
+        the function tolerates that and returns ``None`` so the caller
+        falls through to the legacy code path.
+    :returns: The Rust backend instance when wired, otherwise ``None``.
     """
-    rust_backend = getattr(client_connection, "_rust_backend", None)
-    if rust_backend is not None:
-        return rust_backend
-    return getattr(client_connection, "_core_python_backend", None)
+    return getattr(client_connection, "_rust_backend", None)
 
 
 def build_create_item_request_options(

@@ -1,15 +1,16 @@
 # Cargo workspace root for the azure-cosmos Python SDK.
 #
-# Two member crates live under this root:
-#   - azure_data_cosmos_driver/   the driver (HTTP, routing, retries, session)
-#   - azure_cosmos_rust/          the PyO3 binding compiled into _rust.pyd
+# One member crate lives under this root:
+#   - azure_cosmos_rust/   the PyO3 binding compiled into _rust.pyd
 #
-# `maturin develop` (run from the repo root) compiles both into one
-# cdylib that gets dropped into azure/cosmos/ next to the .py files.
+# The driver crate (azure_data_cosmos_driver) is no longer in-tree. It is
+# pulled in as a path dependency from a sibling clone of azure-sdk-for-rust;
+# see azure_cosmos_rust/Cargo.toml for the exact path. `maturin develop`
+# (run from this directory) compiles the binding plus the external driver
+# into one cdylib that gets dropped into azure/cosmos/ next to the .py files.
 
 [workspace]
 members = [
-    "azure_data_cosmos_driver",
     "azure_cosmos_rust",
 ]
 resolver = "2"
@@ -29,25 +30,22 @@ rust-version = "1.75"
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(test_category, values("emulator", "multi_write"))'] }
 
 # -----------------------------------------------------------------------------
-# Workspace-level dependencies. The driver references these via `.workspace = true`
-# in its own Cargo.toml. Versions chosen to match what the driver was developed
-# against; bump in lockstep with the driver if it changes.
+# Workspace-level dependencies. Used by the binding crate (azure_cosmos_rust)
+# via `.workspace = true`.
 #
-# NOTE on `azure_core` / `azure_identity`: these come from the azure-sdk-for-rust
-# monorepo and are NOT on crates.io as the versions the driver wants. Two options:
-#
-#   (a) git ref (what's set below). Slow first build, no extra setup required.
-#   (b) Local clone of azure-sdk-for-rust. Replace the `git = ...` lines below
-#       with something like:
-#           azure_core = { path = "../../../../../azure-sdk-for-rust/sdk/core/azure_core", features = [...] }
-#       The `path` is relative to THIS Cargo.toml.
+# IMPORTANT: `azure_core` and `azure_identity` MUST resolve to the same crate
+# instances the external driver uses, otherwise types like `azure_core::Result`
+# and `azure_core::Error` end up duplicated and the binding fails to compile
+# with "expected struct `azure_core::Error`, found struct `azure_core::Error`".
+# Both repos are expected to live side-by-side under the same parent directory
+# (e.g. ~/source/repos/). If you keep them elsewhere, edit these paths.
 # -----------------------------------------------------------------------------
 [workspace.dependencies]
-# --- azure-sdk-for-rust crates (see NOTE above) ---
-azure_core     = { git = "https://github.com/Azure/azure-sdk-for-rust", branch = "main" }
-azure_identity = { git = "https://github.com/Azure/azure-sdk-for-rust", branch = "main" }
+# --- azure-sdk-for-rust crates, sourced from the sibling clone ---
+azure_core     = { path = "../../../../azure-sdk-for-rust/sdk/core/azure_core" }
+azure_identity = { path = "../../../../azure-sdk-for-rust/sdk/identity/azure_identity" }
 
-# --- crates.io deps the driver uses ---
+# --- crates.io deps the binding uses ---
 async-lock   = "3"
 async-trait  = "0.1"
 base64       = "0.22"

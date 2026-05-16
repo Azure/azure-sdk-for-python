@@ -32,7 +32,7 @@ __all__ = ["AsyncCosmosBackend", "PreparedRequest", "BackendResponse"]
 class AsyncCosmosBackend(abc.ABC):
     """Abstract dispatch target for any async Cosmos operation.
 
-    Every async backend (``AsyncCorePythonBackend``, ``AsyncRustBackend``)
+    Every async backend (today: ``AsyncRustBackend`` only)
     inherits from this class. The async helper holds one of these by
     interface and awaits ``execute`` on it without knowing which
     concrete backend it has. The operation kind is on ``prepared.op``;

@@ -27,9 +27,7 @@ from __future__ import annotations
 # ---------------------------------------------------------------------------
 #
 # The two values that the user can set on the constructor kwarg ``_backend``
-# or in the ``COSMOS_BACKEND`` environment variable. They also show up in
-# the per-request user-agent suffix (``backend=core-python`` or
-# ``backend=rust``) so the server-side log knows which path handled a call.
+# or in the ``COSMOS_BACKEND`` environment variable.
 
 #: The default backend. Routes through the existing in-tree azure-core
 #: pipeline plus the ``CosmosClientConnection`` helpers. This is *not*
@@ -64,20 +62,4 @@ DEFAULT_BACKEND_NAME = BACKEND_NAME_CORE_PYTHON
 #: constructor kwarg  >  this env var  >  ``DEFAULT_BACKEND_NAME``.
 BACKEND_ENV_VAR = "COSMOS_BACKEND"
 
-
-# ---------------------------------------------------------------------------
-# Per-request stamp
-# ---------------------------------------------------------------------------
-
-#: Key the container dispatch site writes into ``**kwargs`` (which become
-#: the azure-core request-context options) recording which backend
-#: actually handled a single call. ``CosmosUserAgentPolicy`` reads it from
-#: there and appends ``backend=<name>`` to the User-Agent header.
-#:
-#: The value carried under this key is one of ``BACKEND_NAME_CORE_PYTHON``
-#: or ``BACKEND_NAME_RUST``. It is the name of the backend the client
-#: was configured with at construction time; the dispatch site does not
-#: re-route per call, so the stamped value is stable across every
-#: request a single client makes.
-REQUEST_OPTION_BACKEND_KEY = "cosmos_backend"
 

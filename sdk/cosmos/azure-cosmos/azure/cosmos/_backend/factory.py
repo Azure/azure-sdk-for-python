@@ -22,11 +22,18 @@ factory raises ``ValueError`` immediately at client construction time.
 Failing loud is intentional — a typo'd value silently falling back to
 the default would mask configuration drift in production.
 
-When ``rust`` is the chosen backend, the factory also needs the account
-endpoint and a master key — the binding's ``init_client`` requires both
-to construct the underlying ``CosmosDriver``. The factory accepts them
-as keyword arguments and surfaces a clear ``ValueError`` if Rust was
-requested without a master-key credential.
+When ``rust`` is selected, the factory needs the account endpoint and a
+master key — the binding's ``init_client`` requires both to construct
+the underlying ``CosmosDriver``. The factory accepts them as keyword
+arguments and surfaces a clear ``ValueError`` if Rust was requested
+without a master-key credential.
+
+When ``core-python`` is selected, the factory returns ``None``. There is
+no class wrapping it: the helper layer (`_helpers/_item_dispatch.py`)
+treats "no backend" as the signal to forward to the legacy
+``client_connection.CreateItem`` path. A class would have been a
+placeholder whose only job was returning ``None`` from ``execute`` —
+the same thing the dispatch logic does itself.
 """
 from __future__ import annotations
 
@@ -40,7 +47,6 @@ from .constants import (
     DEFAULT_BACKEND_NAME,
     VALID_BACKEND_NAMES,
 )
-from .core_python import CorePythonBackend
 from .rust import RustBackend
 
 
@@ -90,13 +96,18 @@ def make_backend(
     *,
     url: Optional[str] = None,
     credential: Any = None,
-) -> CosmosBackend:
-    """Build the single backend instance a sync ``CosmosClient`` will hold.
+) -> Optional[CosmosBackend]:
+    """Build the backend instance a sync ``CosmosClient`` will hold.
 
     ``explicit`` is what the caller passed as ``_backend=`` (or ``None`` if
     they passed nothing — in which case the env var, then the default, are
     consulted). ``url`` and ``credential`` come from the same client
     constructor and are only used when the chosen backend is ``rust``.
+
+    Returns a :class:`RustBackend` when Rust is selected, or ``None`` when
+    core-python is selected. ``None`` is the signal to the dispatch layer
+    that no Rust adapter is wired and calls should go through the legacy
+    ``client_connection.CreateItem`` path.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:
@@ -105,5 +116,6 @@ def make_backend(
                 "_backend='rust' requires the account endpoint URL."
             )
         return RustBackend(endpoint=url, master_key=_master_key_or_raise(credential))
-    return CorePythonBackend()
+    return None
+
 

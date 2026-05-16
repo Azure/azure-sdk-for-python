@@ -35,7 +35,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.cosmos.offer import ThroughputProperties
 from ._backend.factory import make_async_backend
-from ._backend.core_python import AsyncCorePythonBackend
 from ._backend.rust import AsyncRustBackend
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from ._database import DatabaseProxy, _get_database_link
@@ -219,24 +218,21 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""
-        # Pick which backends this client will hold. Two attributes, named
-        # after the two backend types:
-        #   - _core_python_backend: always present. The default, and the
-        #     always-available path for any request whose kwargs the Rust
-        #     backend doesn't support yet.
-        #   - _rust_backend: present only when Rust is selected as default.
-        #     Its presence (vs None) is the "Rust is default" signal.
+        # Pick which backend this client will hold. The factory returns
+        # either an AsyncRustBackend (when the caller selected ``rust``)
+        # or ``None`` (the default ``core-python`` selection — no class
+        # wraps it; ``None`` means "fall through to the legacy
+        # ``client_connection.CreateItem`` path"). Container methods
+        # read ``client_connection._rust_backend`` and dispatch
+        # accordingly.
         backend_choice = kwargs.pop("_backend", None)
         chosen = make_async_backend(backend_choice, url=url, credential=credential)
-        self._core_python_backend: AsyncCorePythonBackend = (
-            chosen if isinstance(chosen, AsyncCorePythonBackend) else AsyncCorePythonBackend()
-        )
         self._rust_backend: Optional[AsyncRustBackend] = (
             chosen if isinstance(chosen, AsyncRustBackend) else None
         )
         logging.getLogger(__name__).info(
             "Cosmos client constructed with default backend=%s",
-            chosen.name,
+            chosen.name if chosen is not None else "core-python",
         )
 
         auth = _build_auth(credential)
@@ -250,9 +246,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             availability_strategy_max_concurrency=availability_strategy_max_concurrency,
             **kwargs
         )
-        # Expose both backends on client_connection so async Container
-        # methods (which only see client_connection) can dispatch.
-        self.client_connection._core_python_backend = self._core_python_backend  # pylint: disable=protected-access
+        # Expose the chosen backend on client_connection so async
+        # Container methods (which only see client_connection) can
+        # dispatch on it.
         self.client_connection._rust_backend = self._rust_backend  # pylint: disable=protected-access
 
     def __repr__(self) -> str:

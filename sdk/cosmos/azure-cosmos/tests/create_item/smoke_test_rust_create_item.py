@@ -1,28 +1,41 @@
-"""End-to-end smoke test for the Rust binding's create_item.
+"""End-to-end smoke test for the Rust binding's ``create_item``.
 
-Run after `maturin develop`. Targets either the local Cosmos DB
-Emulator (default) or any account whose endpoint + key you set via
-env vars.
+What this script does\n---------------------\nThis is a one-shot manual smoke test you run after ``maturin develop``
+to prove the *whole* Rust path actually works against a live Cosmos
+account: Python → PyO3 binding → Rust driver → HTTPS → Cosmos →
+back. It is deliberately *not* a pytest test — it expects a real
+account (or the local emulator) and produces visible printed output
+so you can tell at a glance whether the round-trip succeeded.
 
-Prerequisites:
-  - `maturin develop` succeeded → azure/cosmos/_rust.pyd exists
-  - Cosmos DB Emulator running locally on https://localhost:8081
-    OR set COSMOS_ENDPOINT + COSMOS_KEY env vars to a real account
-  - A database `pyo3test` and container `items` (partitioned on /pk)
-    already exist in the target account. Create with the portal, the
-    emulator's Data Explorer, or:
-        az cosmosdb sql database create -a <acct> -g <rg> -n pyo3test
-        az cosmosdb sql container create -a <acct> -g <rg> -d pyo3test \
-            -n items --partition-key-path /pk
+It bypasses the Python helper layer that would normally build the
+``PreparedRequest`` (request-prep / options / PK serialization /
+body request-byte / etc.). Building the prepared request by hand keeps the
+failure mode focused on the binding and the driver — if this fails,
+you know the problem is below the helper layer, not above it.
 
-What this test does:
-  1. Builds a PreparedRequest by hand (Python helper layer would
-     normally build it; we skip that here to keep the test focused
-     on the binding).
-  2. Constructs RustBackend with the endpoint+key.
-  3. Calls .execute(prepared) → goes through PyO3 → driver →
-     real HTTP to Cosmos.
-  4. Prints the BackendResponse it gets back.
+Defaults target the local Cosmos DB Emulator. Override with
+``COSMOS_ENDPOINT``, ``COSMOS_KEY``, ``COSMOS_DB`` and
+``COSMOS_COLL`` env vars to point at a real account.
+
+Prerequisites
+-------------
+* ``maturin develop`` has been run, so ``azure/cosmos/_rust.pyd`` exists.
+* The Cosmos DB Emulator is running on https://localhost:8081, **or**
+  ``COSMOS_ENDPOINT`` + ``COSMOS_KEY`` are set to a real account.
+* A database (default ``pyo3test``) and a container (default ``items``,
+  partitioned on ``/pk``) already exist. Create with the portal, the
+  emulator's Data Explorer, or the Azure CLI::
+
+      az cosmosdb sql database create -a <acct> -g <rg> -n pyo3test
+      az cosmosdb sql container create -a <acct> -g <rg> -d pyo3test \\
+          -n items --partition-key-path /pk
+
+Exit codes
+----------
+* 0 — round trip succeeded with a 2xx response.
+* 1 — the binding executed but the service returned non-2xx, or the
+       backend produced no response.
+* 2 — the compiled ``_rust`` module is missing (run ``maturin develop``).
 """
 from __future__ import annotations
 
@@ -41,6 +54,7 @@ COLL = os.environ.get("COSMOS_COLL", "items")
 
 
 def main() -> int:
+    """Run the smoke test and return a process exit code (see module docstring)."""
     # 1. The binding must be importable. If not, maturin develop hasn't run.
     try:
         from azure.cosmos import _rust  # noqa: F401
@@ -53,6 +67,8 @@ def main() -> int:
     from azure.cosmos._backend.rust import RustBackend
 
     # 2. Build a PreparedRequest by hand (one create, single-string PK).
+    #    The Python helper layer would normally do this; building it
+    #    inline keeps the failure mode focused on the binding + driver.
     item_id = f"smoke-{uuid.uuid4()}"
     prepared = PreparedRequest(
         op=OP_CREATE_ITEM,
@@ -62,7 +78,7 @@ def main() -> int:
         headers={},
     )
 
-    # 3. Hand it to the backend.
+    # 3. Hand it to the backend and round-trip it through PyO3 → driver → Cosmos.
     print(f"Endpoint : {ENDPOINT}")
     print(f"Container: dbs/{DB}/colls/{COLL}")
     print(f"Item id  : {item_id}")
@@ -79,7 +95,7 @@ def main() -> int:
         print("FAIL: backend returned None (no PreparedRequest dispatched).", file=sys.stderr)
         return 1
 
-    # 4. Inspect.
+    # 4. Print the response so a human can eyeball the result.
     print(f"\nstatus_code = {resp.status_code}")
     print(f"sub_status  = {resp.sub_status}")
     print(f"body        = {resp.body[:200]!r}")
@@ -92,4 +108,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

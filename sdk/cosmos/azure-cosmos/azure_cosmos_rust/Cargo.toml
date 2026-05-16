@@ -25,8 +25,11 @@ crate-type = ["cdylib"]
 #                      one wheel per platform works for every Python 3.9+.
 pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
 
-# The driver crate, in-tree as a workspace member.
-azure_data_cosmos_driver = { path = "../azure_data_cosmos_driver" }
+# The driver crate, pulled in as a path dependency from a sibling clone of
+# the azure-sdk-for-rust repo. Both repos are expected to live side-by-side
+# under the same parent directory (e.g. ~/source/repos/). If you keep them
+# elsewhere, edit this path or change it to a `git = ...` dependency.
+azure_data_cosmos_driver = { path = "../../../../../azure-sdk-for-rust/sdk/cosmos/azure_data_cosmos_driver" }
 
 # Tokio runtime. Lives here, not in the driver, because the binding is
 # what bridges Python's sync call into Rust's async world.

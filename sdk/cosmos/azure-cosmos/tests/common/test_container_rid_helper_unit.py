@@ -3,16 +3,32 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for ``_helpers/_container_rid.py`` â—” no network, no Cosmos emulator.
+"""In-process unit tests for ``_helpers/_container_rid.py`` — no network, no Cosmos emulator.
 
-The helper is small but the failure mode it prevents is severe (items
-silently land in the wrong container after a recreate). These tests
-pin the contract by which the future item helper invokes it:
+Every Cosmos container has an immutable internal id called the *rid*
+(resource id). When a customer's deploy pipeline drops and recreates
+a container with the same name (e.g. ``orders2026``), the new
+container has a brand-new rid. If the SDK still has the old rid
+cached and does not send it on the next request, the request lands
+at the recreated (empty) container and the customer's freshly
+written item appears to "vanish."
+
+The fix is the ``x-ms-cosmos-intended-collection-rid`` header: when
+the SDK sends the rid it currently believes a container has, the
+service notices a mismatch, the SDK refreshes its caches, and the
+request is retried against the right container.
+
+``stamp_container_rid`` is the one helper that writes that rid into
+the request-options dict. These tests cover its contract:
 
 * Stamps the rid into options when missing.
-* Skips when already present (defensive idempotency).
-* Calls the ``get_rid`` callback exactly when needed.
-* Leaves options untouched if the callback raises.
+* Skips when a rid is already present (defensive idempotency, so
+  tests / replay scenarios can pre-set it).
+* Calls the ``get_rid`` callback exactly when needed and at most
+  once per call (the callback can be expensive — cache refresh).
+* Leaves the options dict untouched if the callback raises.
+
+Pure in-process; runs in milliseconds.
 """
 import unittest
 
@@ -21,12 +37,15 @@ from azure.cosmos._helpers._container_rid import stamp_container_rid
 
 
 class TestStampContainerRid(unittest.TestCase):
-    """Behaviour of ``stamp_container_rid``."""
+    """Direct behaviour of ``stamp_container_rid``.
+
+    These tests cover the helper in isolation: stamping, idempotency,
+    callback invocation count, exception propagation, and the
+    "leaves other keys alone" contract.
+    """
 
     def test_stamps_rid_into_empty_options(self):
-        # The common case: no prior rid in options. Helper looks it up
-        # via the callback and writes it under the constant key the
-        # rest of the SDK reads.
+        """Empty options + working callback → the looked-up rid appears under the constant key."""
         options = {}
         stamp_container_rid(
             options,
@@ -36,9 +55,7 @@ class TestStampContainerRid(unittest.TestCase):
         self.assertEqual(options, {Constants.ContainerRID: "rid-orders-1"})
 
     def test_skips_when_rid_already_present(self):
-        # A caller (test fixture, replay scenario) has already set the
-        # rid. We do not overwrite â—” the legacy
-        # ``scripts._ensure_container_rid`` form is the right one.
+        """A pre-existing rid is preserved; the callback is not invoked at all."""
         options = {Constants.ContainerRID: "rid-pre-existing"}
         stamp_container_rid(
             options,
@@ -48,8 +65,7 @@ class TestStampContainerRid(unittest.TestCase):
         self.assertEqual(options, {Constants.ContainerRID: "rid-pre-existing"})
 
     def test_get_rid_callback_receives_container_link(self):
-        # The container_link argument is passed straight through. The
-        # helper does not interpret or normalise it.
+        """The ``container_link`` argument is passed straight through to the callback, unchanged."""
         seen = {}
 
         def capture(link):
@@ -60,9 +76,7 @@ class TestStampContainerRid(unittest.TestCase):
         self.assertEqual(seen["link"], "dbs/db/colls/orders2026")
 
     def test_get_rid_callback_called_only_once_when_needed(self):
-        # Helpful invariant: the callback runs at most once per call.
-        # Some real callbacks trigger a network refresh, so calling
-        # them more than necessary would inflate latency.
+        """The callback is invoked exactly once per stamp call (real callbacks may hit the network)."""
         call_count = {"n": 0}
 
         def counting_get_rid(_link):
@@ -73,9 +87,7 @@ class TestStampContainerRid(unittest.TestCase):
         self.assertEqual(call_count["n"], 1)
 
     def test_get_rid_callback_not_called_when_rid_already_set(self):
-        # The skip path is the whole point of the idempotency contract:
-        # a pre-set rid means we must not even invoke the callback,
-        # because the callback may be expensive (cache refresh).
+        """A pre-set rid means we must not even invoke the (potentially expensive) callback."""
         call_count = {"n": 0}
 
         def counting_get_rid(_link):
@@ -87,9 +99,11 @@ class TestStampContainerRid(unittest.TestCase):
         self.assertEqual(call_count["n"], 0)
 
     def test_options_untouched_when_callback_raises(self):
-        # If the callback raises (cache miss + refresh failure), we
-        # propagate the exception and leave options exactly as it was.
-        # No sentinel value, no half-stamped state.
+        """If the callback raises, the exception propagates and the options dict is left as-is.
+
+        No sentinel value, no half-stamped state — a clean failure is
+        preferable to a request going out with a placeholder rid.
+        """
         options = {"existing": "value"}
 
         def failing_get_rid(_link):
@@ -97,11 +111,10 @@ class TestStampContainerRid(unittest.TestCase):
 
         with self.assertRaises(RuntimeError):
             stamp_container_rid(options, "dbs/db/colls/c", get_rid=failing_get_rid)
-        # The options dict is unchanged.
         self.assertEqual(options, {"existing": "value"})
 
     def test_stamping_does_not_disturb_other_options(self):
-        # Other keys in the options dict are preserved.
+        """Other keys in the options dict are preserved alongside the new rid."""
         options = {"preTriggerInclude": "validateOrder", "priorityLevel": "High"}
         stamp_container_rid(
             options,
@@ -118,9 +131,7 @@ class TestStampContainerRid(unittest.TestCase):
         )
 
     def test_returns_none(self):
-        # The helper mutates in place and returns nothing. Make the
-        # contract explicit so a caller cannot accidentally chain on
-        # the return value.
+        """The helper mutates in place and returns ``None`` (no chaining on the return value)."""
         result = stamp_container_rid(
             {},
             "dbs/db/colls/c",
@@ -130,17 +141,18 @@ class TestStampContainerRid(unittest.TestCase):
 
 
 class TestParityWithLegacyEnsureContainerRid(unittest.TestCase):
-    """Cross-check against ``scripts._ensure_container_rid``.
+    """Cross-check ``stamp_container_rid`` against the legacy ``scripts._ensure_container_rid``.
 
     The legacy method does the same job but with the cache + refresh
-    plumbing inlined. Reproducing it here as a callback composition
-    proves the helper is a clean refactor of the legacy shape.
+    plumbing inlined (no callback inversion). Reproducing the legacy
+    shape inline as a callback composition proves the new helper is
+    a clean refactor and produces identical options-dict mutations
+    for the cache-hit and cache-miss-then-refresh paths.
     """
 
     @staticmethod
     def _legacy_ensure(options, container_link, *, cache, on_cache_miss):
-        # Replicates scripts._ensure_container_rid in the test so the
-        # comparison is self-contained.
+        """Inline reproduction of ``scripts._ensure_container_rid``."""
         if Constants.ContainerRID in options:
             return
         if container_link not in cache:
@@ -148,8 +160,7 @@ class TestParityWithLegacyEnsureContainerRid(unittest.TestCase):
         options[Constants.ContainerRID] = cache[container_link]["_rid"]
 
     def test_helper_matches_legacy_for_cache_hit(self):
-        # Cache already populated. Legacy and helper produce the same
-        # options-dict mutation.
+        """Cache hit: legacy and helper produce the same options-dict mutation."""
         cache = {"dbs/db/colls/c": {"_rid": "rid-cached"}}
 
         legacy_options = {}
@@ -170,8 +181,7 @@ class TestParityWithLegacyEnsureContainerRid(unittest.TestCase):
         self.assertEqual(legacy_options, helper_options)
 
     def test_helper_matches_legacy_for_cache_miss_then_refresh(self):
-        # Cache empty initially; refresh callback populates it. Both
-        # legacy and helper end with the rid stamped.
+        """Cache miss + refresh: legacy and helper both end with the refreshed rid stamped."""
         cache = {}
 
         def refresh(link):
