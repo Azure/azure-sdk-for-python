@@ -21,7 +21,7 @@ class TestDevTestLabsArmTemplatesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_arm_templates_list(self, resource_group):
         response = self.client.arm_templates.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -34,7 +34,7 @@ class TestDevTestLabsArmTemplatesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_arm_templates_get(self, resource_group):
         response = await self.client.arm_templates.get(
             resource_group_name=resource_group.name,
             lab_name="str",
