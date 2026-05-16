@@ -81,7 +81,15 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
     @distributed_trace
     def upload_file(
-        self, *, name: str, version: str, file_path: str, connection_name: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        name: str,
+        version: str,
+        file_path: str,
+        connection_name: Optional[str] = None,
+        max_concurrency: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> FileDatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
@@ -96,6 +104,14 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :keyword connection_name: The name of an Azure Storage Account connection, where the file should be uploaded.
          If not specified, the default Azure Storage Account connection will be used. Optional.
         :paramtype connection_name: str
+        :keyword max_concurrency: Maximum number of parallel connections to use when transferring
+         the blob in chunks. Passed to the `upload_blob` method of `BlobClient` from the azure-storage-blob package.
+         Defaults to 1 (single connection). Optional.
+        :paramtype max_concurrency: int
+        :keyword timeout: Sets the server-side timeout for the operation in seconds. Passed to the
+         `upload_blob` method of `BlobClient` from the azure-storage-blob package. This value is not
+         tracked or validated on the client. Defaults to None (no timeout). Optional.
+        :paramtype timeout: int
         :return: The created dataset version.
         :rtype: ~azure.ai.projects.models.FileDatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
@@ -123,7 +139,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 )
 
                 # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
-                with container_client.upload_blob(name=blob_name, data=data, **kwargs) as blob_client:
+                with container_client.upload_blob(
+                    name=blob_name, data=data, max_concurrency=max_concurrency, timeout=timeout, **kwargs
+                ) as blob_client:
                     logger.debug("[upload_file] Done uploading")
 
                     # Remove the SAS token from the URL (remove all query strings).
@@ -151,7 +169,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         folder: str,
         connection_name: Optional[str] = None,
         file_pattern: Optional[re.Pattern] = None,
+        max_workers: Optional[int] = None,
         max_concurrency: Optional[int] = None,
+        timeout: Optional[int] = None,
         progress_callback: Optional[Callable[[DatasetsFolderUploadProgress], None]] = None,
         **kwargs: Any,
     ) -> FolderDatasetVersion:
@@ -173,9 +193,17 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :keyword file_pattern: A regex pattern to filter files to be uploaded. Only files matching the pattern
          will be uploaded. Optional.
         :paramtype file_pattern: re.Pattern
-        :keyword max_concurrency: Maximum number of parallel upload threads. If None (the default),
-         uses ThreadPoolExecutor's `max_workers` default of min(32, cpu_count + 4). Optional.
+        :keyword max_workers: Maximum number of threads to use for uploading files in parallel. Passed to
+         the constructor of `ThreadPoolExecutor`. Defaults to min(32, cpu_count + 4). Optional.
+        :paramtype max_workers: int
+        :keyword max_concurrency: Maximum number of parallel connections to use when transferring
+         each blob in chunks. Passed to the `upload_blob` method of `BlobClient` from the azure-storage-blob
+         package. Defaults to 1 (single connection). Optional.
         :paramtype max_concurrency: int
+        :keyword timeout: Sets the server-side timeout for the operation in seconds. Passed to the
+         `upload_blob` method of `BlobClient` from the azure-storage-blob package. This value is not
+         tracked or validated on the client. Defaults to None (no timeout). Optional.
+        :paramtype timeout: int
         :keyword progress_callback: A callback function that receives a DatasetsFolderUploadProgress object
          after each file upload completes. Optional.
         :paramtype progress_callback: Callable[[DatasetsFolderUploadProgress], None]
@@ -217,7 +245,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             try:
                 with open(file=file_path, mode="rb") as data:
                     # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
-                    container_client.upload_blob(name=blob_name, data=data, **kwargs)
+                    container_client.upload_blob(
+                        name=blob_name, data=data, max_concurrency=max_concurrency, timeout=timeout, **kwargs
+                    )
                 logger.debug("[upload_folder] Done uploading file `%s`.", blob_name)
             except Exception as e:
                 with progress_lock:
@@ -254,9 +284,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             total_files = len(files_to_upload)
 
             # Upload files in parallel using ThreadPoolExecutor
-            with ThreadPoolExecutor(max_workers=max_concurrency) as executor:
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
                 logger.debug(
-                    "[upload_folder] Starting parallel upload of %d files with max_concurrency=%s.",
+                    "[upload_folder] Starting parallel upload of %d files with max_workers=%s.",
                     total_files,
                     executor._max_workers,  # pylint: disable=protected-access
                 )
