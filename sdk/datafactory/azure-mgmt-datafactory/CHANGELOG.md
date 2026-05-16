@@ -1,5 +1,9 @@
 # Release History
 
+## 9.4.0b1 (2026-05-07)
+
+change log generation was timeout!!! You need to write it manually!!!
+
 ## 9.3.0 (2026-03-10)
 
 ### Features Added
