@@ -108,6 +108,7 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
+    @_skip_scope_tests_on_non_emulator
     async def test_aad_credentials_async(self):
         print("Container info: " + str(await self.container.read()))
         await self.container.create_item(get_test_item(0))

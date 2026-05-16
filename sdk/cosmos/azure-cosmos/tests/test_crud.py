@@ -30,14 +30,13 @@ from azure.cosmos.partition_key import PartitionKey
 
 # Server-side scripts CRUD (sproc/trigger/UDF create/list/get/replace/delete),
 # users, and permissions are not in the AAD/RBAC data-plane action set today.
-# Empirically the service returns: "Request blocked by Auth ... cannot be
-# authorized by AAD token in data plane. Learn more: https://aka.ms/cosmos-native-rbac."
+# Empirically these operations return 403 under AAD in data-plane tests.
 # Stored procedure EXECUTE is currently also skipped under AAD in this class.
 # TODO: re-enable these under AAD once the service exposes RBAC actions for these APIs.
 _skip_under_aad = pytest.mark.skipif(
     test_config.TestConfig.data_auth_mode == 'aad',
     reason="server-side scripts CRUD / users / permissions are not authorized via AAD/RBAC "
-           "data plane today (403). See https://aka.ms/cosmos-native-rbac.",
+           "data plane today (403).",
 )
 
 

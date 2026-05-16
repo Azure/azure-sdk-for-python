@@ -179,8 +179,12 @@ class TestPreferredLocationsAsync:
                 # Validate the response comes from another region meaning that the account locations were used
                 assert request.url.startswith(expected)
             except ServiceRequestError:
-                # Some live paths surface immediate service-request failure instead of a successful failover write.
-                pass
+                # Key-auth lane is deterministic: any ServiceRequestError here is a real regression
+                # in write-failover routing and must fail the test. The AAD live lane can surface
+                # immediate service-request failures during RBAC token propagation, so tolerate
+                # them only in that mode.
+                if test_config.TestConfig.data_auth_mode != 'aad':
+                    raise
 
             # should fail if using excluded locations because no where to failover to
             with pytest.raises(ServiceRequestError):
