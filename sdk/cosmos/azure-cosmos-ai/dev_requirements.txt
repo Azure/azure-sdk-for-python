@@ -1,4 +1,5 @@
 ../azure-cosmos
 ../../core/azure-core
+../../identity/azure-identity
 openai>=1.0.0
 -e ../../../eng/tools/azure-sdk-tools

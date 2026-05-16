@@ -19,4 +19,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION = "1.0.0b1"
+"""Test fixtures for azure-cosmos-ai.
+
+Until ``azure-cosmos`` 4.16.0b3 (PR #46902) is released, ``EmbeddingResult``
+isn't available from ``azure.cosmos`` in our checkout. Inject a minimal stub
+on import so the provider modules — which ``from azure.cosmos import
+EmbeddingResult`` at module load — work in CI/local dev. Once the dependency
+ships, this stub becomes a no-op (the real class wins).
+"""
+
+from dataclasses import dataclass
+from typing import List, Optional
+
+import azure.cosmos as _cosmos
+
+if not hasattr(_cosmos, "EmbeddingResult"):
+
+    @dataclass
+    class EmbeddingResult:  # pylint: disable=too-few-public-methods
+        vectors: List[List[float]]
+        total_tokens: Optional[int] = None
+
+    _cosmos.EmbeddingResult = EmbeddingResult  # type: ignore[attr-defined]

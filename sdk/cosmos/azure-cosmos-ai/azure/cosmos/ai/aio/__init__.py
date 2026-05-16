@@ -19,4 +19,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-VERSION = "1.0.0b1"
+from ._azure_openai_provider import AzureOpenAIEmbeddingProvider
+
+__all__ = ["AzureOpenAIEmbeddingProvider"]

@@ -1,5 +1,5 @@
 # The MIT License (MIT)
-# Copyright (c) 2014 Microsoft Corporation
+# Copyright (c) 2023 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,8 @@
 # SOFTWARE.
 
 from ._version import VERSION
+from ._azure_openai_provider import AzureOpenAIEmbeddingProvider
 
 
 __version__ = VERSION
-__all__: list = []
+__all__ = ["AzureOpenAIEmbeddingProvider"]

@@ -4,7 +4,8 @@
 
 ### Features Added
 
-- Initial preview release of the `azure-cosmos-ai` package, a companion to `azure-cosmos` that will host AI-related extensions including the default Azure OpenAI implementation of the `EmbeddingProvider` Protocol.
+- Initial preview release of the `azure-cosmos-ai` package, a companion to `azure-cosmos`.
+- Added `azure.cosmos.ai.AzureOpenAIEmbeddingProvider` (sync) and `azure.cosmos.ai.aio.AzureOpenAIEmbeddingProvider` (async): the default Azure OpenAI implementation of the `EmbeddingProvider` Protocol introduced in `azure-cosmos`.
 
 ### Breaking Changes
 
