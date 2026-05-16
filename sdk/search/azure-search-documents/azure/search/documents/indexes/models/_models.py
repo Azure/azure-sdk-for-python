@@ -24,7 +24,6 @@ from ._enums import (
 
 if TYPE_CHECKING:
     from .. import models as _models
-    from ......search import models as _search_models6
     from ...knowledgebases import models as _knowledgebases_models3
 
 
@@ -2355,7 +2354,8 @@ class ContentUnderstandingSkillChunkingProperties(_Model):  # pylint: disable=na
 
     :ivar method: The chunking strategy. 'fixedSize' (default) or 'semantic'. Known values are:
      "fixedSize" and "semantic".
-    :vartype method: str or ~search.models.ContentUnderstandingSkillChunkingMethod
+    :vartype method: str or
+     ~azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingMethod
     :ivar unit: The unit of the chunk. Known values are: "characters" and "tokens".
     :vartype unit: str or
      ~azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingUnit
@@ -2365,7 +2365,7 @@ class ContentUnderstandingSkillChunkingProperties(_Model):  # pylint: disable=na
     :vartype overlap_length: int
     """
 
-    method: Optional[Union[str, "_search_models6.ContentUnderstandingSkillChunkingMethod"]] = rest_field(
+    method: Optional[Union[str, "_models.ContentUnderstandingSkillChunkingMethod"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The chunking strategy. 'fixedSize' (default) or 'semantic'. Known values are: \"fixedSize\" and
@@ -2387,7 +2387,7 @@ class ContentUnderstandingSkillChunkingProperties(_Model):  # pylint: disable=na
     def __init__(
         self,
         *,
-        method: Optional[Union[str, "_search_models6.ContentUnderstandingSkillChunkingMethod"]] = None,
+        method: Optional[Union[str, "_models.ContentUnderstandingSkillChunkingMethod"]] = None,
         unit: Optional[Union[str, "_models.ContentUnderstandingSkillChunkingUnit"]] = None,
         maximum_length: Optional[int] = None,
         overlap_length: Optional[int] = None,
@@ -9258,7 +9258,7 @@ class SearchIndex(_Model):
      registration for the index, enabling document-level permissions from SharePoint. If provided,
      the applicationId and federatedCredentialId properties are required.
     :vartype share_point_connector_app_registration:
-     ~search.models.SharePointConnectorAppRegistration
+     ~azure.search.documents.indexes.models.SharePointConnectorAppRegistration
     :ivar e_tag: The ETag of the index.
     :vartype e_tag: str
     """
@@ -9340,7 +9340,7 @@ class SearchIndex(_Model):
         name="purviewEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value indicating whether Purview is enabled for the index."""
-    share_point_connector_app_registration: Optional["_search_models6.SharePointConnectorAppRegistration"] = rest_field(
+    share_point_connector_app_registration: Optional["_models.SharePointConnectorAppRegistration"] = rest_field(
         name="sharePointConnectorAppRegistration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Configures a SharePoint connector app registration for the index, enabling document-level
@@ -9371,7 +9371,7 @@ class SearchIndex(_Model):
         vector_search: Optional["_models.VectorSearch"] = None,
         permission_filter_option: Optional[Union[str, "_models.SearchIndexPermissionFilterOption"]] = None,
         purview_enabled: Optional[bool] = None,
-        share_point_connector_app_registration: Optional["_search_models6.SharePointConnectorAppRegistration"] = None,
+        share_point_connector_app_registration: Optional["_models.SharePointConnectorAppRegistration"] = None,
         e_tag: Optional[str] = None,
     ) -> None: ...
 
@@ -11667,6 +11667,51 @@ class ShaperSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.Shap
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.odata_type = "#Microsoft.Skills.Util.ShaperSkill"  # type: ignore
+
+
+class SharePointConnectorAppRegistration(_Model):
+    """Configures a SharePoint connector app registration for the index, enabling document-level
+    permissions from SharePoint.
+
+    :ivar application_id: The application (client) ID of the app registration used to connect to
+     SharePoint. Required.
+    :vartype application_id: str
+    :ivar federated_credential_id: The federated credential ID configured on the app registration.
+     Required.
+    :vartype federated_credential_id: str
+    :ivar tenant_id: The tenant ID of the app registration. If not specified, the tenant of the
+     search service is used.
+    :vartype tenant_id: str
+    """
+
+    application_id: str = rest_field(name="applicationId", visibility=["read", "create", "update", "delete", "query"])
+    """The application (client) ID of the app registration used to connect to SharePoint. Required."""
+    federated_credential_id: str = rest_field(
+        name="federatedCredentialId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The federated credential ID configured on the app registration. Required."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the app registration. If not specified, the tenant of the search service is
+     used."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_id: str,
+        federated_credential_id: str,
+        tenant_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ShingleTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.ShingleTokenFilter"):

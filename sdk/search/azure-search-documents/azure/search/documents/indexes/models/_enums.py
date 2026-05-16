@@ -180,6 +180,15 @@ class CjkBigramTokenFilterScripts(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ignore Hangul script when forming bigrams of CJK terms."""
 
 
+class ContentUnderstandingSkillChunkingMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The chunking strategy used by the Content Understanding skill. Default is 'fixedSize'."""
+
+    FIXED_SIZE = "fixedSize"
+    """Fixed-size character-based windowed chunking."""
+    SEMANTIC = "semantic"
+    """Layout-aware, paragraph-boundary-respecting chunking."""
+
+
 class ContentUnderstandingSkillChunkingUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Controls the cardinality of the chunk unit. Default is 'characters'."""
 

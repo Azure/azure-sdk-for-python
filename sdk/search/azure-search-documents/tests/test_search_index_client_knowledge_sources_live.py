@@ -6,24 +6,38 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from azure.core import MatchConditions
-from azure.search.documents.indexes.models import (
-    KnowledgeSourceKind,
-    WebKnowledgeSource,
-    WebKnowledgeSourceDomain,
-    WebKnowledgeSourceDomains,
-    WebKnowledgeSourceParameters,
-)
 from devtools_testutils import AzureRecordedTestCase
 
+from _capabilities import require_capability
 from _search_helpers import live_test, make_index_client, safe_delete
 
 WEB_DOMAIN_ADDRESS = "https://learn.microsoft.com"
 WEB_KNOWLEDGE_SOURCE_DESCRIPTION = "Web knowledge source for SearchIndexClient live coverage"
 REPLACEMENT_WEB_KNOWLEDGE_SOURCE_DESCRIPTION = "Web knowledge source replacement for SearchIndexClient live coverage"
+_WEB_KNOWLEDGE_SOURCE_MODEL_CAPABILITIES = (
+    "azure.search.documents.indexes.models.KnowledgeSourceKind.WEB",
+    "azure.search.documents.indexes.models.WebKnowledgeSource",
+    "azure.search.documents.indexes.models.WebKnowledgeSourceDomain",
+    "azure.search.documents.indexes.models.WebKnowledgeSourceDomains",
+    "azure.search.documents.indexes.models.WebKnowledgeSourceParameters",
+)
 
 
-def _build_web_knowledge_source(knowledge_source_name: str) -> WebKnowledgeSource:
+def _require_web_knowledge_source_capabilities(*methods: str) -> None:
+    require_capability(*_WEB_KNOWLEDGE_SOURCE_MODEL_CAPABILITIES, *methods)
+
+
+def _build_web_knowledge_source(knowledge_source_name: str) -> Any:
+    from azure.search.documents.indexes.models import (
+        WebKnowledgeSource,
+        WebKnowledgeSourceDomain,
+        WebKnowledgeSourceDomains,
+        WebKnowledgeSourceParameters,
+    )
+
     return WebKnowledgeSource(
         name=knowledge_source_name,
         description=WEB_KNOWLEDGE_SOURCE_DESCRIPTION,
@@ -40,7 +54,9 @@ def _build_web_knowledge_source(knowledge_source_name: str) -> WebKnowledgeSourc
     )
 
 
-def _assert_web_knowledge_source(result: WebKnowledgeSource, knowledge_source_name: str) -> None:
+def _assert_web_knowledge_source(result: Any, knowledge_source_name: str) -> None:
+    from azure.search.documents.indexes.models import KnowledgeSourceKind
+
     assert result.name == knowledge_source_name
     assert result.kind == KnowledgeSourceKind.WEB
     assert result.description == WEB_KNOWLEDGE_SOURCE_DESCRIPTION
@@ -54,6 +70,10 @@ def _assert_web_knowledge_source(result: WebKnowledgeSource, knowledge_source_na
 class TestSearchIndexClientWebKnowledgeSources(AzureRecordedTestCase):
     @live_test()
     def test_create_knowledge_source_returns_web_source(self, endpoint: str) -> None:
+        _require_web_knowledge_source_capabilities(
+            "azure.search.documents.indexes.SearchIndexClient.create_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source",
+        )
         knowledge_source_name = self.get_resource_name("knowledge-source-create-web")
 
         with make_index_client(endpoint) as client:
@@ -67,6 +87,13 @@ class TestSearchIndexClientWebKnowledgeSources(AzureRecordedTestCase):
 
     @live_test()
     def test_create_or_update_knowledge_source_uses_model_name_and_etag(self, endpoint: str) -> None:
+        _require_web_knowledge_source_capabilities(
+            "azure.search.documents.indexes.SearchIndexClient.create_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.create_or_update_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source",
+        )
+        from azure.search.documents.indexes.models import KnowledgeSourceKind, WebKnowledgeSource
+
         knowledge_source_name = self.get_resource_name("knowledge-source-create-or-update-web")
 
         with make_index_client(endpoint) as client:
@@ -93,6 +120,11 @@ class TestSearchIndexClientWebKnowledgeSources(AzureRecordedTestCase):
 
     @live_test()
     def test_get_knowledge_source_returns_named_web_source(self, endpoint: str) -> None:
+        _require_web_knowledge_source_capabilities(
+            "azure.search.documents.indexes.SearchIndexClient.create_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.get_knowledge_source",
+        )
         knowledge_source_name = self.get_resource_name("knowledge-source-get-web")
 
         with make_index_client(endpoint) as client:
@@ -107,6 +139,11 @@ class TestSearchIndexClientWebKnowledgeSources(AzureRecordedTestCase):
 
     @live_test()
     def test_list_knowledge_sources_includes_created_web_source(self, endpoint: str) -> None:
+        _require_web_knowledge_source_capabilities(
+            "azure.search.documents.indexes.SearchIndexClient.create_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.list_knowledge_sources",
+        )
         knowledge_source_name = self.get_resource_name("knowledge-source-list-web")
 
         with make_index_client(endpoint) as client:
@@ -121,6 +158,11 @@ class TestSearchIndexClientWebKnowledgeSources(AzureRecordedTestCase):
 
     @live_test()
     def test_delete_knowledge_source_accepts_model_and_etag(self, endpoint: str) -> None:
+        _require_web_knowledge_source_capabilities(
+            "azure.search.documents.indexes.SearchIndexClient.create_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.list_knowledge_sources",
+        )
         knowledge_source_name = self.get_resource_name("knowledge-source-delete-web")
 
         with make_index_client(endpoint) as client:
@@ -140,6 +182,13 @@ class TestSearchIndexClientWebKnowledgeSources(AzureRecordedTestCase):
 
     @live_test()
     def test_get_knowledge_source_status_returns_web_status(self, endpoint: str) -> None:
+        _require_web_knowledge_source_capabilities(
+            "azure.search.documents.indexes.SearchIndexClient.create_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source",
+            "azure.search.documents.indexes.SearchIndexClient.get_knowledge_source_status",
+        )
+        from azure.search.documents.indexes.models import KnowledgeSourceKind
+
         knowledge_source_name = self.get_resource_name("knowledge-source-get-status-web")
 
         with make_index_client(endpoint) as client:

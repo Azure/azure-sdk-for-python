@@ -26,6 +26,7 @@ def _surface(owner: str, kwargs: tuple = (), available_from: str = PREVIEW) -> M
 # Module aliases to keep the table compact.
 _IM = "azure.search.documents.indexes.models"
 _KBM = "azure.search.documents.knowledgebases.models"
+_KB = "azure.search.documents.knowledgebases"
 _M = "azure.search.documents.models"
 _IDX = "azure.search.documents.indexes"
 
@@ -42,6 +43,14 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         f"{_IM}.ContentColumnMapping",
         f"{_IM}.EmbeddingColumnMapping",
         # WorkIQ (parameters live in knowledgebases.models)
+        f"{_IM}.KnowledgeBase",
+        f"{_IM}.KnowledgeSourceReference",
+        f"{_IM}.SearchIndexKnowledgeSource",
+        f"{_IM}.SearchIndexKnowledgeSourceParameters",
+        f"{_IM}.WebKnowledgeSource",
+        f"{_IM}.WebKnowledgeSourceDomain",
+        f"{_IM}.WebKnowledgeSourceDomains",
+        f"{_IM}.WebKnowledgeSourceParameters",
         f"{_IM}.WorkIQKnowledgeSource",
         f"{_KBM}.WorkIQKnowledgeSourceParams",
         # File
@@ -74,6 +83,7 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         f"{_IM}.IndexedSharePointKnowledgeSourceParameters",
         f"{_IM}.RemoteSharePointKnowledgeSource",
         f"{_IM}.RemoteSharePointKnowledgeSourceParameters",
+        f"{_IM}.SharePointConnectorAppRegistration",
         # Skills
         f"{_IM}.AzureMachineLearningSkill",
         f"{_IM}.ChatCompletionSkill",
@@ -89,6 +99,9 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         f"{_KBM}.AIServices",
         f"{_KBM}.AssetStore",
         f"{_KBM}.FreshnessPolicy",
+        f"{_KBM}.KnowledgeBaseRetrievalRequest",
+        f"{_KBM}.KnowledgeBaseRetrievalResponse",
+        f"{_KBM}.KnowledgeRetrievalSemanticIntent",
         f"{_KBM}.KnowledgeSourceIngestionParameters",
         f"{_KBM}.KnowledgeRetrievalLowReasoningEffort",
         f"{_KBM}.KnowledgeRetrievalMediumReasoningEffort",
@@ -207,9 +220,13 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         (f"{_IM}.ChatCompletionResponseFormatType", "TEXT"),
         (f"{_IM}.ChatCompletionResponseFormatType", "JSON_OBJECT"),
         (f"{_IM}.ChatCompletionResponseFormatType", "JSON_SCHEMA"),
+        (f"{_IM}.ContentUnderstandingSkillChunkingMethod", "FIXED_SIZE"),
+        (f"{_IM}.ContentUnderstandingSkillChunkingMethod", "SEMANTIC"),
         (f"{_IM}.ContentUnderstandingSkillChunkingUnit", "TOKENS"),
         (f"{_IM}.KnowledgeSourceKind", "INDEXED_SQL"),
         (f"{_IM}.KnowledgeSourceKind", "REMOTE_SHARE_POINT"),
+        (f"{_IM}.KnowledgeSourceKind", "SEARCH_INDEX"),
+        (f"{_IM}.KnowledgeSourceKind", "WEB"),
         (f"{_IM}.KnowledgeSourceKind", "WORK_IQ"),
         (f"{_IM}.KnowledgeSourceKind", "FILE"),
         (f"{_IM}.KnowledgeSourceKind", "MCP_SERVER"),
@@ -243,10 +260,34 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
     entries: dict = {}
     # Sync clients.
     method_existence = [
+        f"{_KB}.KnowledgeBaseRetrievalClient.retrieve",
+        f"{_KB}.aio.KnowledgeBaseRetrievalClient.retrieve",
+        f"{_IDX}.SearchIndexClient.create_knowledge_base",
+        f"{_IDX}.SearchIndexClient.create_knowledge_source",
+        f"{_IDX}.SearchIndexClient.create_or_update_knowledge_base",
+        f"{_IDX}.SearchIndexClient.create_or_update_knowledge_source",
+        f"{_IDX}.SearchIndexClient.delete_knowledge_base",
+        f"{_IDX}.SearchIndexClient.delete_knowledge_source",
+        f"{_IDX}.SearchIndexClient.get_knowledge_base",
+        f"{_IDX}.SearchIndexClient.get_knowledge_source",
+        f"{_IDX}.SearchIndexClient.get_knowledge_source_status",
+        f"{_IDX}.SearchIndexClient.list_knowledge_bases",
+        f"{_IDX}.SearchIndexClient.list_knowledge_sources",
         f"{_IDX}.SearchIndexerClient.resync",
         f"{_IDX}.SearchIndexerClient.reset_documents",
         f"{_IDX}.SearchIndexerClient.reset_skills",
         f"{_IDX}.SearchIndexClient.list_index_stats_summary",
+        f"{_IDX}.aio.SearchIndexClient.create_knowledge_base",
+        f"{_IDX}.aio.SearchIndexClient.create_knowledge_source",
+        f"{_IDX}.aio.SearchIndexClient.create_or_update_knowledge_base",
+        f"{_IDX}.aio.SearchIndexClient.create_or_update_knowledge_source",
+        f"{_IDX}.aio.SearchIndexClient.delete_knowledge_base",
+        f"{_IDX}.aio.SearchIndexClient.delete_knowledge_source",
+        f"{_IDX}.aio.SearchIndexClient.get_knowledge_base",
+        f"{_IDX}.aio.SearchIndexClient.get_knowledge_source",
+        f"{_IDX}.aio.SearchIndexClient.get_knowledge_source_status",
+        f"{_IDX}.aio.SearchIndexClient.list_knowledge_bases",
+        f"{_IDX}.aio.SearchIndexClient.list_knowledge_sources",
         f"{_IDX}.aio.SearchIndexerClient.resync",
         f"{_IDX}.aio.SearchIndexerClient.reset_documents",
         f"{_IDX}.aio.SearchIndexerClient.reset_skills",
@@ -303,7 +344,7 @@ _CAPS: dict = {
     "SearchClient.search.query_source_authorization": _surface(
         "azure.search.documents.SearchClient.search", ("query_source_authorization",)
     ),
-    "SearchItemPaged.get_debug_info": _surface("azure.search.documents.SearchItemPaged", ("get_debug_info",)),
+    "SearchItemPaged.get_debug_info": _surface("azure.search.documents.SearchItemPaged.get_debug_info"),
     "KnowledgeBaseRetrievalClient": _surface("azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient"),
     "KnowledgeBaseRetrievalClient.aio": _surface(
         "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient"

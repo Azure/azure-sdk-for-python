@@ -277,7 +277,7 @@
         "azure.search.documents.indexes.models.SentimentSkillV3": "Search.SentimentSkillV3",
         "azure.search.documents.indexes.models.ServiceIndexersRuntime": "Search.ServiceIndexersRuntime",
         "azure.search.documents.indexes.models.ShaperSkill": "Search.ShaperSkill",
-        "search.models.SharePointConnectorAppRegistration": "Search.SharePointConnectorAppRegistration",
+        "azure.search.documents.indexes.models.SharePointConnectorAppRegistration": "Search.SharePointConnectorAppRegistration",
         "azure.search.documents.indexes.models.ShingleTokenFilter": "Search.ShingleTokenFilter",
         "azure.search.documents.models.SingleVectorFieldResult": "Search.SingleVectorFieldResult",
         "azure.search.documents.indexes.models.SkillNames": "Search.SkillNames",

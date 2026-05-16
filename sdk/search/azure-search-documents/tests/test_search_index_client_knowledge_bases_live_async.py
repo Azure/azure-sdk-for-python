@@ -7,14 +7,27 @@
 from __future__ import annotations
 
 from azure.core import MatchConditions
-from azure.search.documents.indexes.models import KnowledgeBase, KnowledgeSourceKind, KnowledgeSourceReference
 from devtools_testutils import AzureRecordedTestCase
 
+from _capabilities import require_capability
 from _search_helpers_async import knowledge_base_resources, live_test, poll_until
 
 KNOWLEDGE_BASE_DESCRIPTION = "Knowledge base for SearchIndexClient live coverage"
 KNOWLEDGE_SOURCE_DESCRIPTION = "Knowledge source for SearchIndexClient knowledge base coverage"
 REPLACEMENT_KNOWLEDGE_BASE_DESCRIPTION = "Knowledge base replacement for SearchIndexClient live coverage"
+_KNOWLEDGE_BASE_MODEL_CAPABILITIES = (
+    "azure.search.documents.indexes.models.KnowledgeBase",
+    "azure.search.documents.indexes.models.KnowledgeSourceReference",
+    "azure.search.documents.indexes.models.SearchIndexKnowledgeSource",
+    "azure.search.documents.indexes.models.SearchIndexKnowledgeSourceParameters",
+)
+_KNOWLEDGE_BASE_RESOURCE_CAPABILITIES = (
+    *_KNOWLEDGE_BASE_MODEL_CAPABILITIES,
+    "azure.search.documents.indexes.aio.SearchIndexClient.create_knowledge_base",
+    "azure.search.documents.indexes.aio.SearchIndexClient.create_knowledge_source",
+    "azure.search.documents.indexes.aio.SearchIndexClient.delete_knowledge_base",
+    "azure.search.documents.indexes.aio.SearchIndexClient.delete_knowledge_source",
+)
 
 
 def _knowledge_base_resources(test_case: AzureRecordedTestCase, endpoint: str, *, sdk_verb: str, scenario: str = ""):
@@ -33,6 +46,7 @@ def _knowledge_base_resources(test_case: AzureRecordedTestCase, endpoint: str, *
 class TestSearchIndexClientKnowledgeBasesAsync(AzureRecordedTestCase):
     @live_test()
     async def test_create_knowledge_base_returns_resource(self, endpoint: str) -> None:
+        require_capability(*_KNOWLEDGE_BASE_RESOURCE_CAPABILITIES)
         async with _knowledge_base_resources(self, endpoint, sdk_verb="create") as context:
             knowledge_base_name = context.knowledge_base_name
             knowledge_source_name = context.knowledge_source_name
@@ -46,6 +60,12 @@ class TestSearchIndexClientKnowledgeBasesAsync(AzureRecordedTestCase):
 
     @live_test()
     async def test_create_or_update_knowledge_base_uses_model_name_and_etag(self, endpoint: str) -> None:
+        require_capability(
+            *_KNOWLEDGE_BASE_RESOURCE_CAPABILITIES,
+            "azure.search.documents.indexes.aio.SearchIndexClient.create_or_update_knowledge_base",
+        )
+        from azure.search.documents.indexes.models import KnowledgeBase, KnowledgeSourceReference
+
         async with _knowledge_base_resources(self, endpoint, sdk_verb="create-or-update") as context:
             knowledge_base_name = context.knowledge_base_name
             knowledge_source_name = context.knowledge_source_name
@@ -69,6 +89,10 @@ class TestSearchIndexClientKnowledgeBasesAsync(AzureRecordedTestCase):
 
     @live_test()
     async def test_get_knowledge_base_returns_named_resource(self, endpoint: str) -> None:
+        require_capability(
+            *_KNOWLEDGE_BASE_RESOURCE_CAPABILITIES,
+            "azure.search.documents.indexes.aio.SearchIndexClient.get_knowledge_base",
+        )
         async with _knowledge_base_resources(self, endpoint, sdk_verb="get") as context:
             knowledge_base_name = context.knowledge_base_name
             knowledge_source_name = context.knowledge_source_name
@@ -82,6 +106,10 @@ class TestSearchIndexClientKnowledgeBasesAsync(AzureRecordedTestCase):
 
     @live_test()
     async def test_list_knowledge_bases_includes_created_resource(self, endpoint: str) -> None:
+        require_capability(
+            *_KNOWLEDGE_BASE_RESOURCE_CAPABILITIES,
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_knowledge_bases",
+        )
         async with _knowledge_base_resources(self, endpoint, sdk_verb="list") as context:
             knowledge_base_name = context.knowledge_base_name
 
@@ -91,6 +119,10 @@ class TestSearchIndexClientKnowledgeBasesAsync(AzureRecordedTestCase):
 
     @live_test()
     async def test_delete_knowledge_base_accepts_model_and_etag(self, endpoint: str) -> None:
+        require_capability(
+            *_KNOWLEDGE_BASE_RESOURCE_CAPABILITIES,
+            "azure.search.documents.indexes.aio.SearchIndexClient.list_knowledge_bases",
+        )
         async with _knowledge_base_resources(self, endpoint, sdk_verb="delete") as context:
             knowledge_base_name = context.knowledge_base_name
 
@@ -107,6 +139,13 @@ class TestSearchIndexClientKnowledgeBasesAsync(AzureRecordedTestCase):
 class TestSearchIndexClientKnowledgeSourceStatusAsync(AzureRecordedTestCase):
     @live_test()
     async def test_get_knowledge_source_status_reaches_active_search_index_source(self, endpoint: str) -> None:
+        require_capability(
+            *_KNOWLEDGE_BASE_RESOURCE_CAPABILITIES,
+            "azure.search.documents.indexes.aio.SearchIndexClient.get_knowledge_source_status",
+            "azure.search.documents.indexes.models.KnowledgeSourceKind.SEARCH_INDEX",
+        )
+        from azure.search.documents.indexes.models import KnowledgeSourceKind
+
         async with _knowledge_base_resources(self, endpoint, sdk_verb="get", scenario="source-status") as context:
             knowledge_source_name = context.knowledge_source_name
 

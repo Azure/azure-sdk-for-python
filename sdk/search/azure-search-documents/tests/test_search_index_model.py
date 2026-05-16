@@ -2,17 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Unit tests for ``SearchIndex`` helper serialization and preview surfaces.
-
-Preview-gated round-trip tests live alongside the GA helper tests and use
-``require_capability`` so the file remains import-safe on GA branches.
-"""
+"""Unit tests for ``SearchIndex`` helper serialization."""
 
 from __future__ import annotations
 
 from azure.search.documents.indexes.models import (
     ComplexField,
-    CorsOptions,
     SearchFieldDataType,
     SearchIndex,
     SearchableField,
@@ -43,7 +38,6 @@ def create_search_index(index_name=INDEX_NAME):
     return SearchIndex(
         name=index_name,
         fields=create_hotel_fields(),
-        cors_options=CorsOptions(allowed_origins=["https://portal.contoso.example"], max_age_in_seconds=60),
     )
 
 
@@ -89,10 +83,6 @@ class TestSearchIndexSerialization:
                 "retrievable": True,
             },
         ]
-        assert serialized["corsOptions"] == {
-            "allowedOrigins": ["https://portal.contoso.example"],
-            "maxAgeInSeconds": 60,
-        }
 
     def test_search_index_round_trips_helper_field_wire_shape(self):
         serialized = create_search_index().as_dict()
@@ -107,5 +97,3 @@ class TestSearchIndexSerialization:
         assert index.fields[2].analyzer_name == "en.lucene"
         assert index.fields[3].type == "Collection(Edm.String)"
         assert index.fields[4].fields[1].name == "State"
-        assert index.cors_options.allowed_origins == ["https://portal.contoso.example"]
-        assert index.cors_options.max_age_in_seconds == 60

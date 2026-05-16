@@ -14,19 +14,15 @@ from copy import deepcopy
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from typing import Any, Callable, Iterator, Optional
+from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import IndexDocumentsBatch, SearchClient, SearchIndexingBufferedSender
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 from azure.search.documents.indexes.models import (
-    KnowledgeBase,
-    KnowledgeSourceReference,
     SearchField,
     SearchFieldDataType,
     SearchIndex,
-    SearchIndexKnowledgeSource,
-    SearchIndexKnowledgeSourceParameters,
     SearchSuggester,
     SemanticConfiguration,
     SemanticField,
@@ -36,6 +32,9 @@ from azure.search.documents.indexes.models import (
 from devtools_testutils import get_credential, recorded_by_proxy
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
+
+if TYPE_CHECKING:
+    from azure.search.documents.indexes.models import KnowledgeBase, SearchIndexKnowledgeSource
 
 
 KNOWLEDGE_BASE_DESCRIPTION = "Search knowledge base description"
@@ -293,6 +292,8 @@ def build_knowledge_source(
     *,
     description: str = KNOWLEDGE_SOURCE_DESCRIPTION,
 ) -> SearchIndexKnowledgeSource:
+    from azure.search.documents.indexes.models import SearchIndexKnowledgeSource, SearchIndexKnowledgeSourceParameters
+
     return SearchIndexKnowledgeSource(
         name=knowledge_source_name,
         description=description,
@@ -306,6 +307,8 @@ def build_knowledge_base(
     *,
     description: str = KNOWLEDGE_BASE_DESCRIPTION,
 ) -> KnowledgeBase:
+    from azure.search.documents.indexes.models import KnowledgeBase, KnowledgeSourceReference
+
     return KnowledgeBase(
         name=knowledge_base_name,
         description=description,

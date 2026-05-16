@@ -13,7 +13,6 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import (
     AnalyzeTextOptions,
-    CorsOptions,
     FreshnessScoringFunction,
     FreshnessScoringParameters,
     ScoringFunctionAggregation,
@@ -28,7 +27,6 @@ from _search_helpers_async import live_test, make_index_client, safe_delete
 
 INDEX_DESCRIPTION = "Hotel index"
 REPLACEMENT_INDEX_DESCRIPTION = "Replacement hotel index"
-CORS_OPTIONS = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
 SCORING_PROFILE_NAME = "scoring-profile"
 REPLACEMENT_SCORING_PROFILE_NAME = "replacement-scoring-profile"
 
@@ -45,14 +43,12 @@ def _build_hotel_index(
     *,
     description: str = INDEX_DESCRIPTION,
     scoring_profiles: list[ScoringProfile] | None = None,
-    cors_options: CorsOptions | None = CORS_OPTIONS,
 ) -> SearchIndex:
     return SearchIndex(
         name=index_name,
         fields=_build_hotel_fields(),
         description=description,
         scoring_profiles=scoring_profiles or [],
-        cors_options=cors_options,
     )
 
 
@@ -96,8 +92,6 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
             assert created_index.name == index_name
             assert created_index.description == INDEX_DESCRIPTION
             assert created_index.scoring_profiles[0].name == SCORING_PROFILE_NAME
-            assert created_index.cors_options.allowed_origins == CORS_OPTIONS.allowed_origins
-            assert created_index.cors_options.max_age_in_seconds == CORS_OPTIONS.max_age_in_seconds
 
             retrieved_index = await client.get_index(index_name)
             assert retrieved_index.name == index_name

@@ -7,19 +7,34 @@
 from __future__ import annotations
 
 from azure.core import MatchConditions
-from azure.search.documents.indexes.models import KnowledgeBase, KnowledgeSourceReference
 from devtools_testutils import AzureRecordedTestCase
 
+from _capabilities import require_capability
 from _search_helpers import knowledge_base_resources, live_test
 
 KNOWLEDGE_BASE_CONFIGURATION_DESCRIPTION = "Knowledge base configuration before replacement"
 KNOWLEDGE_SOURCE_CONFIGURATION_DESCRIPTION = "Knowledge source for knowledge base configuration coverage"
 REPLACEMENT_KNOWLEDGE_BASE_CONFIGURATION_DESCRIPTION = "Knowledge base configuration after replacement"
+_KNOWLEDGE_BASE_CONFIGURATION_CAPABILITIES = (
+    "azure.search.documents.indexes.SearchIndexClient.create_knowledge_base",
+    "azure.search.documents.indexes.SearchIndexClient.create_knowledge_source",
+    "azure.search.documents.indexes.SearchIndexClient.create_or_update_knowledge_base",
+    "azure.search.documents.indexes.SearchIndexClient.delete_knowledge_base",
+    "azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source",
+    "azure.search.documents.indexes.SearchIndexClient.get_knowledge_base",
+    "azure.search.documents.indexes.models.KnowledgeBase",
+    "azure.search.documents.indexes.models.KnowledgeSourceReference",
+    "azure.search.documents.indexes.models.SearchIndexKnowledgeSource",
+    "azure.search.documents.indexes.models.SearchIndexKnowledgeSourceParameters",
+)
 
 
 class TestKnowledgeBaseConfiguration(AzureRecordedTestCase):
     @live_test()
     def test_create_or_update_knowledge_base_round_trips_references_description_and_etag(self, endpoint: str) -> None:
+        require_capability(*_KNOWLEDGE_BASE_CONFIGURATION_CAPABILITIES)
+        from azure.search.documents.indexes.models import KnowledgeBase, KnowledgeSourceReference
+
         with knowledge_base_resources(
             self,
             endpoint,

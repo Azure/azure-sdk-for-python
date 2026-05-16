@@ -8,20 +8,19 @@ from __future__ import annotations
 
 import asyncio
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator, Awaitable, Callable, Optional
+from typing import TYPE_CHECKING, Any, AsyncIterator, Awaitable, Callable, Optional
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import IndexDocumentsBatch
 from azure.search.documents.aio import SearchClient, SearchIndexingBufferedSender
 from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
-from azure.search.documents.indexes.models import (
-    KnowledgeBase,
-    SearchIndexKnowledgeSource,
-)
 from devtools_testutils import get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
+
+if TYPE_CHECKING:
+    from azure.search.documents.indexes.models import KnowledgeBase, SearchIndexKnowledgeSource
 
 from _search_helpers import (
     HOTEL_DOCUMENT_COUNT,
