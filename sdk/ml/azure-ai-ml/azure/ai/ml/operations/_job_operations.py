@@ -452,6 +452,26 @@ class JobOperations(_ScopeDependentOperations):
             results.append(result)
         return results
 
+    @distributed_trace
+    @monitor_with_telemetry_mixin(ops_logger, "Job.Delete", ActivityType.PUBLICAPI)
+    def delete(self, name: str, **kwargs: Any) -> LROPoller[None]:
+        """Deletes a job.
+
+        :param name: The name of the job.
+        :type name: str
+        :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
+        :raises azure.core.exceptions.HttpResponseError: Raised for other service-side errors.
+        :return: A poller to track the operation status.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        """
+        return self._operation_2023_02_preview.begin_delete(
+            id=name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            **self._kwargs,
+            **kwargs,
+        )
+
     def _try_get_compute_arm_id(self, compute: Union[Compute, str]) -> Optional[Union[Compute, str]]:
         # pylint: disable=too-many-return-statements
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
