@@ -19,7 +19,6 @@ from typing import TYPE_CHECKING, Any, cast
 
 from opentelemetry import baggage as _otel_baggage
 from opentelemetry import context as _otel_context
-from opentelemetry.baggage.propagation import W3CBaggagePropagator
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
@@ -274,7 +273,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type response_headers: dict[str, str]
         :param sse_headers: SSE-specific headers (e.g. connection, cache-control).
         :type sse_headers: dict[str, str]
-        :param host: The ``ResponsesAgentServerHost`` instance (provides ``request_context``).
+        :param host: The ``ResponsesAgentServerHost`` instance.
         :type host: ResponsesAgentServerHost
         :param provider: Persistence provider for response envelopes and input items.
         :type provider: ResponseProviderProtocol
@@ -638,142 +637,133 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         span.set_tags(build_create_span_tags(ctx, request_id=request_id, project_id=_project_id))
 
-        # Attach incoming W3C trace context (no span created).
-        _has_req_ctx = hasattr(self._host, "request_context")
-        _ctx_mgr = self._host.request_context(request.headers) if _has_req_ctx else contextlib.nullcontext()
-        with _ctx_mgr:
-            # Set W3C baggage per spec §7.3
-            # Extract incoming baggage from request headers (only baggage, not traceparent)
-            # to preserve parent-child span relationships while inheriting caller's baggage entries.
-            _incoming_baggage_ctx = W3CBaggagePropagator().extract(
-                carrier={"baggage": request.headers.get("baggage", "")}
-            )
-            bag_ctx = _otel_context.get_current()
-            # Merge incoming baggage entries (e.g. user.id) onto current context
-            for _bkey, _bval in _otel_baggage.get_all(context=_incoming_baggage_ctx).items():
-                bag_ctx = _otel_baggage.set_baggage(_bkey, _bval, context=bag_ctx)
+        # Set W3C baggage per spec §7.3
+        # Incoming baggage and trace context are already attached by
+        # BaggageMiddleware and the Starlette OTel instrumentor.
+        # Add protocol-specific baggage entries for this response.
+        bag_ctx = _otel_context.get_current()
 
-            bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.response_id", response_id, context=bag_ctx)
-            bag_ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.conversation_id", ctx.conversation_id or "", context=bag_ctx
-            )
-            bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.streaming", str(ctx.stream), context=bag_ctx)
-            if request_id:
-                bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.x-request-id", request_id, context=bag_ctx)
-            baggage_token = _otel_context.attach(bag_ctx)
+        bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.response_id", response_id, context=bag_ctx)
+        bag_ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.conversation_id", ctx.conversation_id or "", context=bag_ctx
+        )
+        bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.streaming", str(ctx.stream), context=bag_ctx)
+        if request_id:
+            bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.x-request-id", request_id, context=bag_ctx)
+        baggage_token = _otel_context.attach(bag_ctx)
 
-            # Set structured log scope per spec §7.4
-            _ensure_response_log_filter()
-            rid_token = _response_id_var.set(response_id)
-            cid_token = _conversation_id_var.set(ctx.conversation_id or "")
-            str_token = _streaming_var.set(str(ctx.stream).lower())
+        # Set structured log scope per spec §7.4
+        _ensure_response_log_filter()
+        rid_token = _response_id_var.set(response_id)
+        cid_token = _conversation_id_var.set(ctx.conversation_id or "")
+        str_token = _streaming_var.set(str(ctx.stream).lower())
 
-            disconnect_task: asyncio.Task[None] | None = None
-            try:
-                if ctx.stream:
-                    body_iter = self._orchestrator.run_stream(ctx)
+        disconnect_task: asyncio.Task[None] | None = None
+        try:
+            if ctx.stream:
+                body_iter = self._orchestrator.run_stream(ctx)
 
-                    # B17: monitor client disconnect for non-background streams
-                    if not ctx.background:
-                        disconnect_task = asyncio.create_task(
-                            self._monitor_disconnect(request, ctx.cancellation_signal)
-                        )
-                        raw_iter = body_iter
-
-                        async def _iter_with_cleanup():  # type: ignore[return]
-                            try:
-                                async for chunk in raw_iter:
-                                    yield chunk
-                            finally:
-                                if disconnect_task and not disconnect_task.done():
-                                    disconnect_task.cancel()
-
-                        body_iter = _iter_with_cleanup()
-
-                    sse_response = StreamingResponse(
-                        body_iter,
-                        media_type="text/event-stream",
-                        headers={**self._sse_headers, **self._session_headers(agent_session_id)},
-                    )
-                    return sse_response
-
+                # B17: monitor client disconnect for non-background streams
                 if not ctx.background:
-                    disconnect_task = asyncio.create_task(self._monitor_disconnect(request, ctx.cancellation_signal))
-                    try:
-                        snapshot = await self._orchestrator.run_sync(ctx)
-                        logger.info(
-                            "Response %s completed: status=%s output_count=%d",
-                            ctx.response_id,
-                            snapshot.get("status"),
-                            len(snapshot.get("output", [])),
-                        )
-                        return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
-                    except _HandlerError as exc:
-                        logger.error(
-                            "Handler error in sync create (response_id=%s)",
-                            ctx.response_id,
-                            exc_info=exc.original,
-                        )
-                        # Handler errors are server-side faults, not client errors
-                        err_body = {
-                            "error": {
-                                "message": "internal server error",
-                                "type": "server_error",
-                                "code": "server_error",
-                                "param": None,
-                            }
-                        }
-                        return JSONResponse(
-                            err_body,
-                            status_code=500,
-                            headers=_apply_error_source_headers(
-                                self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
-                            ),
-                        )
-                    finally:
-                        disconnect_task.cancel()
+                    disconnect_task = asyncio.create_task(
+                        self._monitor_disconnect(request, ctx.cancellation_signal)
+                    )
+                    raw_iter = body_iter
 
-                snapshot = await self._orchestrator.run_background(ctx)
-                logger.info(
-                    "Background response created for %s: status=%s",
-                    ctx.response_id,
-                    snapshot.get("status"),
+                    async def _iter_with_cleanup():  # type: ignore[return]
+                        try:
+                            async for chunk in raw_iter:
+                                yield chunk
+                        finally:
+                            if disconnect_task and not disconnect_task.done():
+                                disconnect_task.cancel()
+
+                    body_iter = _iter_with_cleanup()
+
+                sse_response = StreamingResponse(
+                    body_iter,
+                    media_type="text/event-stream",
+                    headers={**self._sse_headers, **self._session_headers(agent_session_id)},
                 )
-                return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
-            except _HandlerError as exc:
-                logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
-                # Handler errors are server-side faults, not client errors
-                err_body = {
-                    "error": {
-                        "message": "internal server error",
-                        "type": "server_error",
-                        "code": "server_error",
-                        "param": None,
-                    }
-                }
-                return JSONResponse(
-                    err_body,
-                    status_code=500,
-                    headers=_apply_error_source_headers(
-                        self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
-                    ),
-                )
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
-                raise
-            finally:
-                _response_id_var.reset(rid_token)
-                _conversation_id_var.reset(cid_token)
-                _streaming_var.reset(str_token)
-                # Flush pending spans before the response is sent.
-                # BatchSpanProcessor exports on a timer; in hosted sandboxes
-                # the platform may freeze the process after the HTTP response,
-                # losing any buffered spans (e.g. LangGraph per-node spans).
-                flush_spans()
+                return sse_response
+
+            if not ctx.background:
+                disconnect_task = asyncio.create_task(self._monitor_disconnect(request, ctx.cancellation_signal))
                 try:
-                    _otel_context.detach(baggage_token)
-                except ValueError:
-                    pass
+                    snapshot = await self._orchestrator.run_sync(ctx)
+                    logger.info(
+                        "Response %s completed: status=%s output_count=%d",
+                        ctx.response_id,
+                        snapshot.get("status"),
+                        len(snapshot.get("output", [])),
+                    )
+                    return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
+                except _HandlerError as exc:
+                    logger.error(
+                        "Handler error in sync create (response_id=%s)",
+                        ctx.response_id,
+                        exc_info=exc.original,
+                    )
+                    # Handler errors are server-side faults, not client errors
+                    err_body = {
+                        "error": {
+                            "message": "internal server error",
+                            "type": "server_error",
+                            "code": "server_error",
+                            "param": None,
+                        }
+                    }
+                    return JSONResponse(
+                        err_body,
+                        status_code=500,
+                        headers=_apply_error_source_headers(
+                            self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
+                        ),
+                    )
+                finally:
+                    disconnect_task.cancel()
+
+            snapshot = await self._orchestrator.run_background(ctx)
+            logger.info(
+                "Background response created for %s: status=%s",
+                ctx.response_id,
+                snapshot.get("status"),
+            )
+            return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
+        except _HandlerError as exc:
+            logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
+            # Handler errors are server-side faults, not client errors
+            err_body = {
+                "error": {
+                    "message": "internal server error",
+                    "type": "server_error",
+                    "code": "server_error",
+                    "param": None,
+                }
+            }
+            return JSONResponse(
+                err_body,
+                status_code=500,
+                headers=_apply_error_source_headers(
+                    self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
+                ),
+            )
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
+            raise
+        finally:
+            _response_id_var.reset(rid_token)
+            _conversation_id_var.reset(cid_token)
+            _streaming_var.reset(str_token)
+            # Flush pending spans before the response is sent.
+            # BatchSpanProcessor exports on a timer; in hosted sandboxes
+            # the platform may freeze the process after the HTTP response,
+            # losing any buffered spans (e.g. LangGraph per-node spans).
+            flush_spans()
+            try:
+                _otel_context.detach(baggage_token)
+            except ValueError:
+                pass
 
     async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-branches
         """Route handler for ``GET /responses/{response_id}``.

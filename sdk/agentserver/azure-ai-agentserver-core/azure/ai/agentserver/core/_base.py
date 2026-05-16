@@ -283,6 +283,7 @@ class AgentServerHost(Starlette):
                     get_server_version=self._build_server_version,
                 ),
                 Middleware(_RequestIdMiddleware),  # type: ignore[arg-type]
+                Middleware(_tracing.BaggageMiddleware),  # type: ignore[arg-type]
             ],
             **kwargs,
         )
@@ -340,25 +341,6 @@ class AgentServerHost(Starlette):
     # ------------------------------------------------------------------
     # Tracing (for protocol subclasses)
     # ------------------------------------------------------------------
-
-    @contextlib.contextmanager
-    def request_context(
-        self,
-        headers: Any,
-    ) -> Any:
-        """Extract W3C trace context and attach as the current OTel context.
-
-        Delegates to :func:`_tracing.request_context`.  No span is created —
-        this only ensures downstream framework spans are correctly parented
-        under the caller's trace context.
-
-        :param headers: HTTP request headers.
-        :type headers: any
-        :return: Context manager (yields nothing).
-        :rtype: any
-        """
-        with _tracing.request_context(headers):
-            yield
 
     # ------------------------------------------------------------------
     # Shutdown handler (server-level lifecycle)

@@ -6,7 +6,6 @@
 Provides the invocation protocol endpoints and handler decorators
 as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
-import contextlib
 import contextvars
 import inspect
 import logging
@@ -17,7 +16,6 @@ from collections.abc import Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
-from opentelemetry.baggage.propagation import W3CBaggagePropagator
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
@@ -361,72 +359,65 @@ class InvocationAgentServerHost(AgentServerHost):
         request.state.user_isolation_key = request.headers.get(USER_ISOLATION_KEY, "")
         request.state.chat_isolation_key = request.headers.get(CHAT_ISOLATION_KEY, "")
 
-        with self.request_context(request.headers) if hasattr(self, "request_context") else contextlib.nullcontext():
-            # Propagate invocation/session IDs as W3C baggage so downstream
-            # services receive them automatically via the baggage header.
-            # Extract incoming baggage from request headers (only baggage, not traceparent)
-            # to preserve parent-child span relationships while inheriting caller's baggage entries.
-            _incoming_baggage_ctx = W3CBaggagePropagator().extract(
-                carrier={"baggage": request.headers.get("baggage", "")}
-            )
-            ctx = _otel_context.get_current()
-            for _bkey, _bval in _otel_baggage.get_all(context=_incoming_baggage_ctx).items():
-                ctx = _otel_baggage.set_baggage(_bkey, _bval, context=ctx)
-            ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
-            )
-            ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.session_id", session_id, context=ctx,
-            )
-            baggage_token = _otel_context.attach(ctx)
+        # Incoming baggage and trace context are already attached by
+        # BaggageMiddleware and the Starlette OTel instrumentor.
+        # Add protocol-specific baggage entries for this invocation.
+        ctx = _otel_context.get_current()
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
+        )
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id", session_id, context=ctx,
+        )
+        baggage_token = _otel_context.attach(ctx)
 
-            # Set structured logging context (concurrency-safe via contextvars)
-            _ensure_log_filter()
-            inv_token = _invocation_id_var.set(invocation_id)
-            session_token = _session_id_var.set(session_id)
+        # Set structured logging context (concurrency-safe via contextvars)
+        _ensure_log_filter()
+        inv_token = _invocation_id_var.set(invocation_id)
+        session_token = _session_id_var.set(session_id)
+        try:
+            response = await self._dispatch_invoke(request)
+            response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
+            response.headers[InvocationConstants.SESSION_ID_HEADER] = session_id
+        except NotImplementedError as exc:
+            logger.error("Invocation %s failed: %s", invocation_id, exc)
+            return create_error_response(
+                "not_implemented",
+                str(exc),
+                status_code=501,
+                headers=_apply_error_source_headers(
+                    {
+                        InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
+                        InvocationConstants.SESSION_ID_HEADER: session_id,
+                    },
+                    _ERROR_SOURCE_UPSTREAM,
+                ),
+            )
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            error_source, error_detail = _classify_error(exc)
+            logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
+            return create_error_response(
+                "internal_error",
+                "Internal server error",
+                status_code=500,
+                headers=_apply_error_source_headers(
+                    {
+                        InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
+                        InvocationConstants.SESSION_ID_HEADER: session_id,
+                    },
+                    error_source,
+                    error_detail,
+                ),
+            )
+        finally:
+            _invocation_id_var.reset(inv_token)
+            _session_id_var.reset(session_token)
             try:
-                response = await self._dispatch_invoke(request)
-                response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
-                response.headers[InvocationConstants.SESSION_ID_HEADER] = session_id
-            except NotImplementedError as exc:
-                logger.error("Invocation %s failed: %s", invocation_id, exc)
-                return create_error_response(
-                    "not_implemented",
-                    str(exc),
-                    status_code=501,
-                    headers=_apply_error_source_headers(
-                        {
-                            InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
-                            InvocationConstants.SESSION_ID_HEADER: session_id,
-                        },
-                        _ERROR_SOURCE_UPSTREAM,
-                    ),
-                )
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                error_source, error_detail = _classify_error(exc)
-                logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
-                return create_error_response(
-                    "internal_error",
-                    "Internal server error",
-                    status_code=500,
-                    headers=_apply_error_source_headers(
-                        {
-                            InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
-                            InvocationConstants.SESSION_ID_HEADER: session_id,
-                        },
-                        error_source,
-                        error_detail,
-                    ),
-                )
-            finally:
-                _invocation_id_var.reset(inv_token)
-                _session_id_var.reset(session_token)
-                try:
-                    _otel_context.detach(baggage_token)
-                except ValueError:
-                    pass
+                _otel_context.detach(baggage_token)
+            except ValueError:
+                pass
 
-            return response
+        return response
 
     async def _traced_invocation_endpoint(
         self,
@@ -441,30 +432,29 @@ class InvocationAgentServerHost(AgentServerHost):
         raw_session_id = request.query_params.get("agent_session_id", "")
         session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
 
-        with self.request_context(request.headers) if hasattr(self, "request_context") else contextlib.nullcontext():
-            _ensure_log_filter()
-            inv_token = _invocation_id_var.set(invocation_id)
-            session_token = _session_id_var.set(session_id)
-            try:
-                response = await dispatch(request)
-                response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
-                return response
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                error_source, error_detail = _classify_error(exc)
-                logger.error("Error in %s %s: %s", span_operation, invocation_id, exc, exc_info=True)
-                return create_error_response(
-                    "internal_error",
-                    "Internal server error",
-                    status_code=500,
-                    headers=_apply_error_source_headers(
-                        {InvocationConstants.INVOCATION_ID_HEADER: invocation_id},
-                        error_source,
-                        error_detail,
-                    ),
-                )
-            finally:
-                _invocation_id_var.reset(inv_token)
-                _session_id_var.reset(session_token)
+        _ensure_log_filter()
+        inv_token = _invocation_id_var.set(invocation_id)
+        session_token = _session_id_var.set(session_id)
+        try:
+            response = await dispatch(request)
+            response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
+            return response
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            error_source, error_detail = _classify_error(exc)
+            logger.error("Error in %s %s: %s", span_operation, invocation_id, exc, exc_info=True)
+            return create_error_response(
+                "internal_error",
+                "Internal server error",
+                status_code=500,
+                headers=_apply_error_source_headers(
+                    {InvocationConstants.INVOCATION_ID_HEADER: invocation_id},
+                    error_source,
+                    error_detail,
+                ),
+            )
+        finally:
+            _invocation_id_var.reset(inv_token)
+            _session_id_var.reset(session_token)
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:
         return await self._traced_invocation_endpoint(

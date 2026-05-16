@@ -24,8 +24,8 @@ tracing exporters, and span operations:
 
 **Span operations:**
 
-- :func:`request_context` — extract W3C trace context from headers and attach
-  as the current OTel context (no span is created)
+- :class:`BaggageMiddleware` — ASGI middleware that extracts W3C baggage and
+  x-request-id from incoming headers
 - :func:`end_span` / :func:`record_error` — span lifecycle helpers
 - :func:`trace_stream` — wrap streaming responses with span lifecycle
 - :func:`set_current_span` / :func:`detach_context` — explicit context management
@@ -35,14 +35,11 @@ real spans.  Azure Monitor export is optional (auto-configured by the distro).
 """
 import logging
 import os
-from collections.abc import AsyncIterable, AsyncIterator, Mapping  # pylint: disable=import-error
-from contextlib import contextmanager
-from typing import Any, Iterator, Optional, Union
+from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
+from typing import Any, Optional, Union
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 from opentelemetry.baggage.propagation import W3CBaggagePropagator
-from opentelemetry.propagate import composite
-from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
 from . import _config
 
@@ -79,12 +76,6 @@ _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
 _GEN_AI_PROVIDER_NAME_VALUE = "AzureAI Hosted Agents"
 
 logger = logging.getLogger("azure.ai.agentserver")
-
-# Composite propagator handles both traceparent/tracestate AND baggage
-_propagator = composite.CompositePropagator([
-    TraceContextTextMapPropagator(),
-    W3CBaggagePropagator(),
-])
 
 
 # ======================================================================
@@ -251,53 +242,57 @@ def _setup_distro_export(
 # ======================================================================
 
 
-@contextmanager
-def request_context(
-    headers: Mapping[str, str],
-) -> Iterator[None]:
-    """Extract W3C trace context from *headers* and attach as the current context.
+class BaggageMiddleware:
+    """Pure-ASGI middleware that extracts W3C baggage and x-request-id.
 
-    No span is created — this only propagates the incoming ``traceparent``,
-    ``tracestate``, and ``baggage`` so that spans created by downstream
-    frameworks (e.g. LangChain, Semantic Kernel) are correctly parented
-    under the caller's span.
+    Extracts the ``baggage`` header using the W3C Baggage propagator and
+    adds ``x-request-id`` as a baggage entry.  The resulting context is
+    attached for the duration of the request so that downstream spans
+    and log records can access baggage values.
 
-    Also propagates ``x-request-id`` as baggage for downstream services.
+    Trace context (``traceparent``/``tracestate``) is **not** handled here
+    — that is the responsibility of the Starlette OTel instrumentor which
+    creates a SERVER span with proper trace parenting.
 
-    :param headers: HTTP request headers.
-    :type headers: Mapping[str, str]
-    :return: Context manager (yields nothing).
-    :rtype: Iterator[None]
+    :param app: The inner ASGI application.
+    :type app: ASGIApp
     """
-    # Debug: log raw incoming trace headers
-    _raw_tp = headers.get("traceparent")
-    _raw_flags = _raw_tp.split("-")[3] if _raw_tp and _raw_tp.count("-") >= 3 else "N/A"
-    logger.error(
-        "request_context incoming headers: traceparent=%s trace_flags=%s tracestate=%s baggage=%s x-request-id=%s",
-        _raw_tp,
-        _raw_flags,
-        headers.get("tracestate"),
-        headers.get("baggage"),
-        headers.get("x-request-id"),
-    )
 
-    # Extract W3C trace context (traceparent + tracestate + baggage)
-    ctx = _propagator.extract(carrier=headers)
+    def __init__(self, app: Any) -> None:
+        self.app = app
+        self._baggage_propagator = W3CBaggagePropagator()
 
-    # Add x-request-id to baggage for downstream propagation
-    x_request_id = headers.get("x-request-id")
-    if x_request_id:
-        ctx = _otel_baggage.set_baggage("x_request_id", x_request_id, context=ctx)
+    async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
 
-    token = _otel_context.attach(ctx)
+        # Build a simple dict of headers for the propagator
+        raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
+        headers = {
+            k.decode("latin-1"): v.decode("latin-1")
+            for k, v in raw_headers
+        }
 
-    try:
-        yield
-    finally:
+        # Extract baggage from the current context (which already has
+        # trace context attached by the Starlette instrumentor)
+        ctx = self._baggage_propagator.extract(carrier=headers)
+
+        # Add x-request-id as baggage for downstream propagation
+        x_request_id = headers.get("x-request-id")
+        if x_request_id:
+            ctx = _otel_baggage.set_baggage(
+                "x_request_id", x_request_id, context=ctx,
+            )
+
+        token = _otel_context.attach(ctx)
         try:
-            _otel_context.detach(token)
-        except ValueError:
-            pass
+            await self.app(scope, receive, send)
+        finally:
+            try:
+                _otel_context.detach(token)
+            except ValueError:
+                pass
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
