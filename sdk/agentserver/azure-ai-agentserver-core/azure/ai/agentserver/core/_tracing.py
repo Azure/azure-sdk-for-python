@@ -24,8 +24,8 @@ tracing exporters, and span operations:
 
 **Span operations:**
 
-- :class:`BaggageMiddleware` — ASGI middleware that extracts W3C baggage and
-  x-request-id from incoming headers
+- :class:`TraceContextMiddleware` — ASGI middleware that extracts W3C trace
+  context and baggage from incoming headers
 - :func:`end_span` / :func:`record_error` — span lifecycle helpers
 - :func:`trace_stream` — wrap streaming responses with span lifecycle
 - :func:`set_current_span` / :func:`detach_context` — explicit context management
@@ -242,17 +242,17 @@ def _setup_distro_export(
 # ======================================================================
 
 
-class BaggageMiddleware:
-    """Pure-ASGI middleware that extracts W3C baggage and x-request-id.
+class TraceContextMiddleware:
+    """Pure-ASGI middleware that propagates W3C trace context and baggage.
 
-    Extracts the ``baggage`` header using the W3C Baggage propagator and
-    adds ``x-request-id`` as a baggage entry.  The resulting context is
-    attached for the duration of the request so that downstream spans
-    and log records can access baggage values.
+    Extracts ``traceparent``, ``tracestate``, and ``baggage`` headers from
+    incoming HTTP requests using the standard W3C propagators and attaches
+    the resulting context for the duration of the request.  This ensures
+    that any spans created downstream (e.g. by agent-framework / MAF) are
+    automatically children of the caller's trace.
 
-    Trace context (``traceparent``/``tracestate``) is **not** handled here
-    — that is the responsibility of the Starlette OTel instrumentor which
-    creates a SERVER span with proper trace parenting.
+    This middleware does **not** create its own span — it only propagates
+    the incoming context so that downstream instrumentation inherits it.
 
     :param app: The inner ASGI application.
     :type app: ASGIApp
@@ -260,6 +260,8 @@ class BaggageMiddleware:
 
     def __init__(self, app: Any) -> None:
         self.app = app
+        from opentelemetry.trace.propagation import TraceContextTextMapPropagator  # pylint: disable=import-outside-toplevel
+        self._trace_propagator = TraceContextTextMapPropagator()
         self._baggage_propagator = W3CBaggagePropagator()
 
     async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
@@ -267,16 +269,18 @@ class BaggageMiddleware:
             await self.app(scope, receive, send)
             return
 
-        # Build a simple dict of headers for the propagator
+        # Build a simple dict of headers for the propagators
         raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
         headers = {
             k.decode("latin-1"): v.decode("latin-1")
             for k, v in raw_headers
         }
 
-        # Extract baggage from the current context (which already has
-        # trace context attached by the Starlette instrumentor)
-        ctx = self._baggage_propagator.extract(carrier=headers)
+        # Extract trace context (traceparent/tracestate) first
+        ctx = self._trace_propagator.extract(carrier=headers)
+
+        # Then extract baggage on top of the trace context
+        ctx = self._baggage_propagator.extract(carrier=headers, context=ctx)
 
         # Add x-request-id as baggage for downstream propagation
         x_request_id = headers.get("x-request-id")

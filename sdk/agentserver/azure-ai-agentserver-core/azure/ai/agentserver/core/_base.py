@@ -287,47 +287,12 @@ class AgentServerHost(Starlette):
             **kwargs,
         )
 
-        # Instrument the Starlette app with OpenTelemetry so that protocol
-        # routes (/responses, /invocations) get a real SERVER span with proper
-        # trace context propagation.  Health/readiness endpoints are excluded.
-        #
-        # The ASGI middleware creates noisy per-event INTERNAL spans (http
-        # receive / http send) for every ASGI event.  We suppress them by
-        # patching OpenTelemetryMiddleware.__init__ to set
-        # exclude_receive_span / exclude_send_span.  Once upstream exposes
-        # this via the Starlette instrumentor constructor (tracked in
-        # opentelemetry-python-contrib#3725) the patch can be removed.
-        try:
-            import os as _os
-
-            # Excluded URLs must be set BEFORE importing the Starlette
-            # instrumentor because it reads the env var at module level.
-            _os.environ.setdefault(
-                "OTEL_PYTHON_STARLETTE_EXCLUDED_URLS",
-                "readiness,health,liveness,ready,alive",
-            )
-
-            from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
-            from opentelemetry.instrumentation.starlette import StarletteInstrumentor
-
-            # Patch: suppress ASGI receive/send internal spans
-            _original_otel_mw_init = OpenTelemetryMiddleware.__init__
-
-            def _patched_otel_mw_init(mw_self: Any, app: Any, **kwargs: Any) -> None:
-                _original_otel_mw_init(mw_self, app, **kwargs)
-                if hasattr(mw_self, "exclude_receive_span"):
-                    mw_self.exclude_receive_span = True
-                if hasattr(mw_self, "exclude_send_span"):
-                    mw_self.exclude_send_span = True
-
-            OpenTelemetryMiddleware.__init__ = _patched_otel_mw_init  # type: ignore[assignment]
-
-            StarletteInstrumentor.instrument_app(self)
-            logger.info("Starlette OpenTelemetry instrumentation enabled.")
-        except ImportError:
-            logger.debug("opentelemetry-instrumentation-starlette not installed — skipping.")
-        except Exception:  # pylint: disable=broad-exception-caught
-            logger.warning("Failed to instrument Starlette app", exc_info=True)
+        # Extract W3C trace context (traceparent/tracestate) and baggage
+        # from incoming HTTP requests so that any spans created downstream
+        # (e.g. by MAF / agent-framework) are children of the caller's trace.
+        # We do NOT create a SERVER span ourselves — we only propagate context.
+        from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
+        self.add_middleware(TraceContextMiddleware)
 
     # ------------------------------------------------------------------
     # Server version (x-platform-server header)
