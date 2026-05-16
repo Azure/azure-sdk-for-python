@@ -203,3 +203,61 @@ function Add-RetentionLease {
           -MaximumRetryCount 3 `
           -ContentType "application/json"
 }
+
+function Set-PackageUpstreamingFlag {
+  param (
+    [Parameter(Mandatory = $true)]
+    [string]$Organization,
+    [Parameter(Mandatory = $true)]
+    [string]$Project,
+    [Parameter(Mandatory = $true)]
+    [string]$FeedName,
+    [Parameter(Mandatory = $true)]
+    [string]$PackageName,
+    [Parameter(Mandatory = $true)]
+    [ValidateSet("npm", "nuget", "maven", "python")]
+    [string]$Protocol = "npm",
+    [Parameter(Mandatory = $true)]
+    [bool]$AllowExternallySourcedVersions,
+    $Base64EncodedToken = $null,
+    $BearerToken = $null
+  )
+
+  $visibility = if ($AllowExternallySourcedVersions) {
+    "allowExternalVersions"
+  } else {
+    "auto"
+  }
+
+  # Build package path per API contract:
+  # unscoped: /packages/{packageName}/upstreaming
+  # scoped:   /packages/@{scope}/{unscopedPackageName}/upstreaming
+  if ($PackageName.StartsWith("@")) {
+    $parts = $PackageName.TrimStart("@").Split("/", 2)
+    if ($parts.Length -ne 2) {
+      throw "Invalid scoped package name: $PackageName. Expected @scope/name."
+    }
+
+    $packageScope = [System.Uri]::EscapeDataString($parts[0])
+    $unscopedName = [System.Uri]::EscapeDataString($parts[1])
+    $packagePath = "@$packageScope/$unscopedName"
+  } else {
+    $packagePath = [System.Uri]::EscapeDataString($PackageName)
+  }
+
+  $uri = "https://pkgs.dev.azure.com/$Organization/$Project/_apis/packaging/feeds/$FeedName/$Protocol/packages/$packagePath/upstreaming?api-version=7.2-preview.1"
+
+  $body = @{
+    versionsFromExternalUpstreams = $visibility
+  }
+
+  $headers = Get-DevOpsApiHeaders -Base64EncodedToken $Base64EncodedToken -BearerToken $BearerToken
+
+  return Invoke-RestMethod `
+    -Method PATCH `
+    -Body ($body | ConvertTo-Json) `
+    -Uri $uri `
+    -Headers $headers `
+    -MaximumRetryCount 3 `
+    -ContentType "application/json"
+}
