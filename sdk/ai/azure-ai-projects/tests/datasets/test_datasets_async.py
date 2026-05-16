@@ -52,7 +52,7 @@ class TestDatasetsAsync(TestBase):
                 file_path=data_file1,
                 connection_name=connection_name,
                 max_concurrency=2,
-                timeout=5,                
+                timeout=5,
             )
             print(dataset)
             TestBase.validate_dataset(

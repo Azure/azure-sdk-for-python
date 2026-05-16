@@ -286,8 +286,11 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 raise ValueError("The provided folder is empty.")
 
             total_files = len(files_to_upload)
-            logger.debug("[upload_folder] Starting parallel upload of %d files with max_workers=%s.",
-                        total_files, effective_max_workers)
+            logger.debug(
+                "[upload_folder] Starting parallel upload of %d files with max_workers=%s.",
+                total_files,
+                effective_max_workers,
+            )
 
             # Upload all files concurrently using asyncio.gather
             await asyncio.gather(*[upload_single_file(f, total_files) for f in files_to_upload])
