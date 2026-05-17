@@ -130,7 +130,7 @@ def _make_echo_app_with_child_span():
         req_id = str(uuid.uuid4())
         request_ids.append(req_id)
         with child_tracer.start_as_current_span("framework_child") as child:
-            child_span_ids.append(format(child.context.span_id, "016x"))
+            child_span_ids.append(format(child.get_span_context().span_id, "016x"))
             body = await request.body()
             resp = Response(content=body, media_type="application/octet-stream")
             resp.headers["x-request-id"] = req_id
