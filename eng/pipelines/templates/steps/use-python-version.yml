@@ -12,60 +12,58 @@ steps:
       }
     displayName: 'Use Public Feed'
 
-  # Workaround for https://github.com/Azure/azure-sdk-for-python/issues/<TBD>:
-  # PyPy 7.3.21 (currently in the hosted toolcache for Python 3.11.15) crashes
-  # with `Fatal RPython error: AssertionError` from
+  # Optional override for the hosted toolcache PyPy build. Activated when the
+  # matrix entry sets:
+  #   OverridePyPyVersion: "true"
+  #   PyPyBuildVersion: "v7.3.22"   (or any release from downloads.python.org/pypy)
+  #   PyPyLangVersion:  "3.11.15"   (the Python language version directory in the toolcache)
+  # Rationale: PyPy 7.3.21 (currently in the hosted toolcache for Python 3.11.15)
+  # crashes with `Fatal RPython error: AssertionError` from
   # `PythonCodeMaker_duplicate_exits_without_lineno` while compiling
-  # `azure.ai.ml`. PyPy 7.3.22+ does not exhibit this bug. When the requested
-  # interpreter is pypy3.11, overlay PyPy 7.3.22 onto the toolcache so
-  # UsePythonVersion@0 resolves to the patched build.
+  # `azure.ai.ml`. PyPy 7.3.22+ does not exhibit this bug.
   - bash: |
       set -euo pipefail
-      VERSION_SPEC="${{ parameters.versionSpec }}"
-      case "$VERSION_SPEC" in
-        pypy3.11*)
-          PYPY_BUILD=v7.3.22
-          PY_LANG=3.11.15
-          TARGET=/opt/hostedtoolcache/PyPy/${PY_LANG}/x64
-          if [ -x "${TARGET}/bin/python3" ]; then
-            CURRENT=$("${TARGET}/bin/python3" -c 'import sys; v=sys.pypy_version_info; print(f"{v.major}.{v.minor}.{v.micro}")') || CURRENT="unknown"
-            echo "Existing toolcache PyPy: ${CURRENT}"
-            if [ "$CURRENT" = "7.3.22" ]; then
-              echo "PyPy 7.3.22 already installed; nothing to do."
-              exit 0
-            fi
-          fi
-          echo "Installing PyPy ${PYPY_BUILD} for Python ${PY_LANG} into ${TARGET}..."
-          TARBALL="pypy3.11-${PYPY_BUILD}-linux64.tar.bz2"
-          cd /tmp
-          curl -sSLO "https://downloads.python.org/pypy/${TARBALL}"
-          tar xjf "${TARBALL}"
-          sudo rm -rf "${TARGET}"
-          sudo mkdir -p "$(dirname "${TARGET}")"
-          sudo mv "pypy3.11-${PYPY_BUILD}-linux64" "${TARGET}"
-          # Recreate the python3/python symlinks that the upstream toolcache layout provides.
-          if [ ! -e "${TARGET}/bin/python3" ]; then
-            sudo ln -sf "${TARGET}/bin/pypy3.11" "${TARGET}/bin/python3"
-          fi
-          if [ ! -e "${TARGET}/bin/python" ]; then
-            sudo ln -sf "${TARGET}/bin/pypy3.11" "${TARGET}/bin/python"
-          fi
-          sudo touch "${TARGET}.complete"
-          "${TARGET}/bin/python3" --version
-          # The plain pypy tarball does not include pip; the Azure hosted
-          # toolcache build does. Bootstrap pip via ensurepip so downstream
-          # steps (e.g. `python -m pip install uv`) keep working.
-          if ! "${TARGET}/bin/python3" -c "import pip" >/dev/null 2>&1; then
-            echo "Bootstrapping pip via ensurepip..."
-            sudo "${TARGET}/bin/python3" -m ensurepip --upgrade
-          fi
-          "${TARGET}/bin/python3" -m pip --version
-          ;;
-        *)
-          echo "versionSpec '${VERSION_SPEC}' is not pypy; nothing to do."
-          ;;
-      esac
-    displayName: 'Pin PyPy to v7.3.22 (workaround for RPython AssertionError in 7.3.21)'
+      PYPY_BUILD="${PYPY_BUILD_VERSION:?PyPyBuildVersion must be set in the matrix when OverridePyPyVersion=true}"
+      PY_LANG="${PYPY_LANG_VERSION:?PyPyLangVersion must be set in the matrix when OverridePyPyVersion=true}"
+      TARGET="/opt/hostedtoolcache/PyPy/${PY_LANG}/x64"
+      WANT_MICRO="${PYPY_BUILD#v}"
+      if [ -x "${TARGET}/bin/python3" ]; then
+        CURRENT=$("${TARGET}/bin/python3" -c 'import sys; v=sys.pypy_version_info; print(f"{v.major}.{v.minor}.{v.micro}")') || CURRENT="unknown"
+        echo "Existing toolcache PyPy: ${CURRENT}"
+        if [ "$CURRENT" = "$WANT_MICRO" ]; then
+          echo "PyPy ${WANT_MICRO} already installed; nothing to do."
+          exit 0
+        fi
+      fi
+      echo "Installing PyPy ${PYPY_BUILD} for Python ${PY_LANG} into ${TARGET}..."
+      TARBALL="pypy3.11-${PYPY_BUILD}-linux64.tar.bz2"
+      cd /tmp
+      curl -sSLO "https://downloads.python.org/pypy/${TARBALL}"
+      tar xjf "${TARBALL}"
+      sudo rm -rf "${TARGET}"
+      sudo mkdir -p "$(dirname "${TARGET}")"
+      sudo mv "pypy3.11-${PYPY_BUILD}-linux64" "${TARGET}"
+      # Recreate the python3/python symlinks that the upstream toolcache layout provides.
+      if [ ! -e "${TARGET}/bin/python3" ]; then
+        sudo ln -sf "${TARGET}/bin/pypy3.11" "${TARGET}/bin/python3"
+      fi
+      if [ ! -e "${TARGET}/bin/python" ]; then
+        sudo ln -sf "${TARGET}/bin/pypy3.11" "${TARGET}/bin/python"
+      fi
+      sudo touch "${TARGET}.complete"
+      "${TARGET}/bin/python3" --version
+      # The plain pypy tarball does not include pip; the Azure hosted
+      # toolcache build does. Bootstrap pip via ensurepip so downstream
+      # steps (e.g. `python -m pip install uv`) keep working.
+      if ! "${TARGET}/bin/python3" -c "import pip" >/dev/null 2>&1; then
+        echo "Bootstrapping pip via ensurepip..."
+        sudo "${TARGET}/bin/python3" -m ensurepip --upgrade
+      fi
+      "${TARGET}/bin/python3" -m pip --version
+    env:
+      PYPY_BUILD_VERSION: $(PyPyBuildVersion)
+      PYPY_LANG_VERSION: $(PyPyLangVersion)
+    displayName: 'Override hosted toolcache PyPy build'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'), eq(variables['OverridePyPyVersion'], 'true'))
 
   - task: UsePythonVersion@0

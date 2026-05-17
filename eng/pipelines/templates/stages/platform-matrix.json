@@ -33,7 +33,9 @@
           "PythonVersion": "pypy3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "OverridePyPyVersion": "true"
+          "OverridePyPyVersion": "true",
+          "PyPyBuildVersion": "v7.3.22",
+          "PyPyLangVersion": "3.11.15"
         }
       }
     },
