@@ -277,12 +277,19 @@ class TestAppInsightsIngestionE2E:
         This simulates a direct call (e.g. health check, load balancer probe)
         that does not carry W3C trace context.  The framework (MAF) should still
         be able to create spans that are exported to App Insights as new traces.
+
+        Uses span_id and trace_id to confirm the exact span made it to App Insights.
         """
-        unique_span_name = f"NoContext-{uuid.uuid4().hex[:8]}"
+        span_name = f"NoContext-{uuid.uuid4().hex[:8]}"
         framework_tracer = trace.get_tracer("test.framework.no_context")
+        captured_span_id: list[str] = []
+        captured_trace_id: list[str] = []
 
         async def handler(request: Request) -> Response:
-            with framework_tracer.start_as_current_span(unique_span_name):
+            with framework_tracer.start_as_current_span(span_name) as span:
+                span_ctx = span.get_span_context()
+                captured_span_id.append(format(span_ctx.span_id, "016x"))
+                captured_trace_id.append(format(span_ctx.trace_id, "032x"))
                 body = await request.body()
             return Response(content=body, media_type="application/octet-stream")
 
@@ -295,15 +302,21 @@ class TestAppInsightsIngestionE2E:
         assert resp.status_code == 200
         _flush_provider()
 
+        span_id = captured_span_id[-1]
+        trace_id = captured_trace_id[-1]
+
+        # Query by span_id (mapped to 'id' in App Insights dependencies table)
+        # and operation_Id (trace_id) for precise matching
         query = (
             "dependencies "
-            f"| where name == '{unique_span_name}' "
-            "| project name, timestamp, operation_Id "
+            f"| where id == '{span_id}' "
+            f"| where operation_Id == '{trace_id}' "
+            "| project id, name, operation_Id, timestamp "
             "| take 1"
         )
         rows = _poll_appinsights(logs_query_client, appinsights_resource_id, query)
         assert len(rows) > 0, (
-            f"Framework span '{unique_span_name}' not found in App Insights "
-            f"dependencies table after {_APPINSIGHTS_POLL_TIMEOUT}s. "
+            f"Framework span (id={span_id}, trace_id={trace_id}) not found in "
+            f"App Insights dependencies table after {_APPINSIGHTS_POLL_TIMEOUT}s. "
             "Spans should be emitted even without incoming trace context."
         )
