@@ -23,9 +23,11 @@ import asyncio
 import logging
 from typing import Any, Optional
 
-from azure.core.utils import CaseInsensitiveDict
-
-from azure.cosmos._backend.base import OP_CREATE_ITEM, recover_backend_response_from_driver_error
+from azure.cosmos._backend.base import (
+    OP_CREATE_ITEM,
+    normalize_response_headers,
+    recover_backend_response_from_driver_error,
+)
 from azure.cosmos._backend.constants import BACKEND_NAME_RUST
 
 from .base import AsyncCosmosBackend, BackendResponse, PreparedRequest
@@ -120,7 +122,7 @@ class AsyncRustBackend(AsyncCosmosBackend):
         return BackendResponse(
             status_code=int(status_code),
             sub_status=int(sub_status),
-            headers=CaseInsensitiveDict(headers) if headers else None,
+            headers=normalize_response_headers(headers),
             body=bytes(body) if body else b"",
             diagnostics=None,
         )

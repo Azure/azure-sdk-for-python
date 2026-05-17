@@ -22,13 +22,13 @@ from __future__ import annotations
 import logging
 from typing import Any, Optional
 
-from azure.core.utils import CaseInsensitiveDict
 
 from .base import (
     OP_CREATE_ITEM,
     BackendResponse,
     CosmosBackend,
     PreparedRequest,
+    normalize_response_headers,
     recover_backend_response_from_driver_error,
 )
 from .constants import BACKEND_NAME_RUST
@@ -122,7 +122,7 @@ class RustBackend(CosmosBackend):
         return BackendResponse(
             status_code=int(status_code),
             sub_status=int(sub_status),
-            headers=CaseInsensitiveDict(headers) if headers else None,
+            headers=normalize_response_headers(headers),
             body=bytes(body) if body else b"",
             diagnostics=None,
         )

@@ -210,33 +210,35 @@ def test_L2_intended_collection_rid_present_on_wire(container_for):
     echo it back, so validating it on the response is the wrong
     channel — we have to look at the outgoing request.
 
-    The two backends are observed through different lenses because the
-    rust path bypasses azure-core entirely:
+    Both backends are observed by temporarily swapping in a recording
+    wrapper around the function that actually sees the fully-built
+    request, so the two paths use the same symmetric capture pattern:
 
-      * **core-python** — a ``SansIOHTTPPolicy`` on the azure-core
-        pipeline captures the outgoing HTTP request headers. The
-        ``x-ms-cosmos-intended-collection-rid`` header must be present
-        with the container's ``_rid`` as its value.
-      * **rust** — the binding consumes a ``PreparedRequest`` whose
-        ``headers`` map already carries the container rid under the
-        ``containerRID`` option-key (see ``_Constants.ContainerRID``).
-        The lib.rs header loop translates this exact key to the
+      * **core-python** — wrap
+        ``CosmosClientConnection._CosmosClientConnection__Post`` (the
+        name-mangled ``__Post`` method) so it records ``req_headers``
+        before delegating to the original implementation. The intended-rid
+        header is already populated by the time ``__Post`` runs.
+        (Note: the previous revision of this test tried to use the
+        azure-core ``per_call_policies`` kwarg on the ``CosmosClient``
+        constructor for this, but ``CosmosClient`` doesn't intercept
+        that kwarg — it leaks through to the bottom-of-stack
+        ``Session.request`` and raises ``TypeError``. Wrapping the
+        helper-level method directly is the correct symmetric approach.)
+      * **rust** — wrap ``RustBackend.execute`` the same way to capture
+        the ``PreparedRequest`` the helper hands the binding. The
+        intended rid is carried under the ``containerRID`` option-key;
+        the binding's lib.rs header loop translates that key to the
         ``x-ms-cosmos-intended-collection-rid`` wire header before
-        handing the call to the driver. We monkey-patch
-        ``RustBackend.execute`` to capture the PreparedRequest the
-        helper hands it and assert the key is populated. The
-        Rust-side wire mapping itself is exercised by the binding's
-        own unit tests and the service-side acceptance suite.
+        handing the call to the driver. The Rust-side wire mapping
+        itself is exercised by the binding's own unit tests and the
+        service-side acceptance suite.
 
-    A previous revision skipped this test because the
-    ``SansIOHTTPPolicy`` cannot observe the rust wire. That skip was a
-    test-instrumentation gap, not a missing binding feature — the
-    binding has always emitted the header. This rewrite removes the
-    skip by observing the binding's *input* instead of trying to
-    observe its output.
+    Both wrappers are installed inside a ``try``/``finally`` so the
+    originals are always restored, regardless of test outcome.
     """
-    from azure.core.pipeline.policies import SansIOHTTPPolicy
     from azure.cosmos import CosmosClient
+    from azure.cosmos import _cosmos_client_connection as _ccc_module
     from azure.cosmos._backend import rust as _rust_backend_module
     from azure.cosmos._constants import _Constants
     import os
@@ -246,19 +248,22 @@ def test_L2_intended_collection_rid_present_on_wire(container_for):
     core_request_headers: Dict[str, Any] = {}
     rust_prepared_headers: Dict[str, Any] = {}
 
-    class _CaptureCoreRequestHeaders(SansIOHTTPPolicy):
-        def on_request(self, request):  # type: ignore[override]
-            # Only keep the last create_item request; trivia like
-            # account-metadata pre-flight reads also flow through this
-            # policy and would otherwise overwrite our capture.
-            url = getattr(request.http_request, "url", "")
-            if "/docs" in url:
-                core_request_headers.update(dict(request.http_request.headers))
+    # Capture on the core-python side: ``__Post`` is the legacy
+    # method that receives ``req_headers`` already fully populated
+    # (intended-rid included) right before it hands the request to the
+    # azure-core pipeline. Patching it on the class is symmetric with
+    # how we patch ``RustBackend.execute`` below.
+    original_post = _ccc_module.CosmosClientConnection._CosmosClientConnection__Post  # type: ignore[attr-defined]
 
-    # Monkey-patch RustBackend.execute for the duration of the call so
-    # we can grab the PreparedRequest the helper handed it. We restore
-    # the original method in a finally block so other tests in the
-    # session see the unpatched class.
+    def _capturing_post(self, path, request_params, body, req_headers, **kwargs):  # type: ignore[no-redef]
+        # Only keep the last create_item POST; account-metadata pre-flight
+        # reads and other internal POSTs flow through here too and would
+        # otherwise overwrite our capture.
+        if "/docs" in path:
+            core_request_headers.clear()
+            core_request_headers.update(dict(req_headers))
+        return original_post(self, path, request_params, body, req_headers, **kwargs)
+
     original_execute = _rust_backend_module.RustBackend.execute
 
     def _capturing_execute(self, prepared):  # type: ignore[no-redef]
@@ -271,7 +276,6 @@ def test_L2_intended_collection_rid_present_on_wire(container_for):
             os.environ["ACCOUNT_URI"],
             os.environ["ACCOUNT_KEY"],
             _backend="core-python",  # type: ignore[arg-type]
-            per_call_policies=[_CaptureCoreRequestHeaders()],
         )
 
     def _rust_factory(_backend_name: str):
@@ -289,11 +293,9 @@ def test_L2_intended_collection_rid_present_on_wire(container_for):
         )
         return cont.create_item(body=body)
 
+    _ccc_module.CosmosClientConnection._CosmosClientConnection__Post = _capturing_post  # type: ignore[attr-defined]
     _rust_backend_module.RustBackend.execute = _capturing_execute  # type: ignore[method-assign]
     try:
-        # Run core-python and rust through ``run_on_both_backends`` so
-        # the structured PARITY CALL report still lands in the
-        # transcript. The wrapper picks the right factory per backend.
         def _factory(backend_name: str):
             return (
                 _core_factory(backend_name)
@@ -309,9 +311,10 @@ def test_L2_intended_collection_rid_present_on_wire(container_for):
         )
         cmp.print_report()
     finally:
+        _ccc_module.CosmosClientConnection._CosmosClientConnection__Post = original_post  # type: ignore[attr-defined]
         _rust_backend_module.RustBackend.execute = original_execute  # type: ignore[method-assign]
 
-    # core-python: the wire header itself.
+    # core-python: the wire header itself, captured from __Post's req_headers.
     core_val = core_request_headers.get(intended_rid_header)
     assert core_val, (
         "core-python must stamp {!r} on the outgoing request; "
@@ -319,8 +322,8 @@ def test_L2_intended_collection_rid_present_on_wire(container_for):
     )
 
     # rust: the PreparedRequest's option-key the binding translates to
-    # the wire header. We assert *both* the option-key form (what the
-    # helper writes) and the lowercase wire-name form (in case a
+    # the wire header. We accept either the option-key form (what the
+    # helper writes today) or the lowercase wire-name form (in case a
     # future helper revision writes the wire-name directly) — exactly
     # one of them must be present and equal to core-python's value.
     rust_val = (

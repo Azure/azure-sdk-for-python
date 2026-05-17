@@ -279,51 +279,78 @@ _VALUE_VOLATILE_REQUIRED_HEADERS = frozenset({
     "x-ms-number-of-read-regions",
     "x-ms-transport-request-id",
     "lsn",
-})
-
-# Headers whose *presence itself* is environment-, replica-, topology-, or
-# transport-dependent — both the value and the presence are dropped from
-# the diff. These either have legitimate naming conflicts across the two
-# backends, surface only on certain account configurations, or come from
-# the underlying HTTP transport rather than from Cosmos.
-_FULLY_IGNORED_HEADERS = frozenset({
-    # Body field, not a response header — leftover in the original ignore
-    # set from when body and header filtering shared code.
-    "_etag",
-    # HTTP ``date`` header: emitted by every HTTP server, but the rust
-    # driver does not yet expose it (HTTP-framing headers need a
-    # ``raw_headers()`` accessor that hasn't landed). Once the driver
-    # surfaces it, move this back to the value-volatile bucket.
+    # HTTP transport-layer headers core-python surfaces via azure-core's
+    # underlying HTTP transport. Values are legitimately noisy (``date``
+    # ticks every second; ``server`` identifies the transport / gateway
+    # software and differs between core-python and rust), but customer
+    # code and ops dashboards read them, so the parity contract is
+    # "both backends must surface *some* value." Presence is enforced.
+    # On the Rust path today both are missing because the binding only
+    # projects fields the driver explicitly models in ``cosmos_headers.rs``
+    # and HTTP-framing headers aren't modeled. That's a binding-projection
+    # gap (the driver needs a raw-headers accessor on its response so the
+    # binding can forward them) — the failing presence check is the
+    # signal that closes the loop.
     "date",
-    # Per-container counters that tick up with each create. When the parity
-    # harness runs the same call against both backends consecutively, the
-    # second backend's response shows the count after the first backend's
-    # insert — so value-diffs here are harness artefacts, not backend
-    # divergences.
-    "x-ms-resource-usage",
+    "server",
+    # Resource accounting — capacity dashboards read these. Values tick
+    # up between the two back-to-back parity calls because the first
+    # call creates the item the second call's response then sees, so
+    # the value diff has to skip; both backends must surface them.
     "x-ms-resource-quota",
-    "x-ms-session-token-rid",
-    # Cross-backend naming wart: the legacy core-python path emits this
-    # *without* the ``cosmos-`` prefix and the rust path emits it *with*
-    # (see lib.rs::write_response_headers). We can't presence-check
-    # because the *names* differ; fully ignored until the binding aligns.
-    "x-ms-cosmos-llsn",
+    "x-ms-resource-usage",
+    # LSN family — replica/replication-progress counters. Different
+    # replicas legitimately answer different calls so the value
+    # legitimately differs, but the presence is part of the diagnostics
+    # contract. The Rust binding rewrites the ``cosmos-``-prefixed
+    # spellings (``x-ms-cosmos-llsn`` etc.) to the un-prefixed legacy
+    # names in ``_backend/base.py::normalize_response_headers``, so a
+    # single canonical name is checked here.
+    "x-ms-llsn",
+    "x-ms-item-llsn",
     "x-ms-quorum-acked-lsn",
-    "x-ms-cosmos-quorum-acked-lsn",
-    "x-ms-cosmos-item-llsn",
-    "x-ms-cosmos-quorum-acked-llsn",
-    # Replica / topology diagnostics — presence varies with account
-    # configuration and routing decisions.
+    "x-ms-quorum-acked-llsn",
+    # Topology / diagnostic IDs — which replica answered, the routing
+    # decision the gateway made, the schema version of the responding
+    # replica. Values differ across replicas / calls; presence is part
+    # of the diagnostics contract customer ops code and the SDK's own
+    # routing logic depend on.
+    "x-ms-documentdb-partitionkeyrangeid",
+    "x-ms-cosmos-physical-partition-id",
     "x-ms-current-write-quorum",
     "x-ms-current-replica-set-size",
     "x-ms-xp-role",
-    "x-ms-cosmos-physical-partition-id",
-    "x-ms-cosmos-replica-side-cache-token",
     "x-ms-schemaversion",
-    # HTTP ``server`` header: differs by transport (azure-core uses
-    # urllib3 / requests; rust transport uses reqwest), no parity
-    # guarantee on presence.
-    "server",
+})
+
+# Headers (and one body-field leftover) where both value and presence
+# are dropped from the diff. The bar for adding to this set is very
+# high: an entry only qualifies if *neither* backend can plausibly
+# surface the value to a customer. "Undocumented" alone is not enough,
+# because the core-python transport copies *every* response header the
+# service returns through to ``last_response_headers`` (the request
+# path does ``headers = copy.copy(response.headers)`` on both sync and
+# async), so any header the gateway emits can legitimately appear on
+# the Python side — and silently ignoring it here would mask a real
+# Python↔Rust header-surface drift (the binding dropping something the
+# legacy path is surfacing).
+#
+# Two entries that previously lived here — ``x-ms-session-token-rid``
+# and ``x-ms-cosmos-replica-side-cache-token`` — have been moved out
+# for exactly that reason: both *can* appear in core-python's
+# ``last_response_headers`` whenever the gateway echoes them, so they
+# belong in the full presence-and-value diff bucket (the implicit
+# "everything else" population). The parity diff will tell us how
+# often they actually appear and whether either backend needs a tweak.
+_FULLY_IGNORED_HEADERS = frozenset({
+    # Body field, not a response header (the ``etag`` response header
+    # is a separate key). Leftover from when body and header filtering
+    # shared code; lives here as a defence-in-depth belt-and-braces
+    # with ``_DEFAULT_IGNORED_BODY_FIELDS`` below in case a future
+    # caller wires the body field set into the header filter by
+    # mistake. Safe to keep because it is structurally not a header
+    # name either backend could ever surface from a response.
+    "_etag",
 })
 
 # Combined set used to filter the value-diff. Tests that want a custom

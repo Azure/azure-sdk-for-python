@@ -212,3 +212,90 @@ def recover_backend_response_from_driver_error(
     )
 
 
+# ---------------------------------------------------------------------------
+# Response-header name normalisation (Rust binding → legacy spelling)
+# ---------------------------------------------------------------------------
+#
+# The legacy core-python path surfaces some replication-progress headers
+# *without* a ``cosmos-`` prefix (e.g. ``x-ms-llsn``,
+# ``x-ms-quorum-acked-llsn``). The Rust driver models the same physical
+# fields under their ``cosmos-``-prefixed wire names and the binding
+# forwards them as-is. The two backends are emitting the *same* data
+# under *different* keys, which would otherwise show up as "header only
+# on rust" / "header only on core-python" parity failures even when both
+# backends are working correctly.
+#
+# This helper makes the un-prefixed legacy spelling **also** available on
+# the Rust path's response-headers dict. It is an **alias-add**, not a
+# rename: the original ``cosmos-``-prefixed key stays in place, and the
+# un-prefixed legacy name is added as a second key pointing at the same
+# value. Customer code that reads either spelling works on both backends.
+#
+# Why alias-add and not rename?
+#
+#   * On the legacy core-python path the gateway emits the *prefixed*
+#     names today (``x-ms-cosmos-llsn`` etc.), and azure-core's transport
+#     surfaces them verbatim. A pure rename on the Rust side would make
+#     ``x-ms-llsn`` appear only on Rust and ``x-ms-cosmos-llsn`` appear
+#     only on core-python — the exact mismatch this helper was meant to
+#     eliminate.
+#   * Customer code in the wild reads *both* spellings depending on when
+#     it was written. Surfacing both keys means no caller breaks.
+#   * The parity diff matches because both backends now expose the
+#     prefixed key (already true for core-python; alias-add provides it
+#     on Rust too).
+#
+# Add a new entry only when you can name (a) the wire-level header on
+# both sides and (b) the customer-facing read site that depends on the
+# legacy spelling. Adding a one-way alias here without those two
+# anchors makes the parity diff lie.
+
+_RUST_PREFIXED_TO_LEGACY_ALIASES: Mapping[str, str] = {
+    # LSN family — replica/replication-progress counters Cosmos has
+    # historically surfaced under the un-prefixed name on the legacy
+    # azure-core path. Customer monitoring code reads these for
+    # replication-lag diagnostics.
+    "x-ms-cosmos-llsn": "x-ms-llsn",
+    "x-ms-cosmos-quorum-acked-llsn": "x-ms-quorum-acked-llsn",
+    "x-ms-cosmos-item-llsn": "x-ms-item-llsn",
+    # ``x-ms-cosmos-quorum-acked-lsn`` (no second L) → un-prefixed form
+    # also used by some legacy callers.
+    "x-ms-cosmos-quorum-acked-lsn": "x-ms-quorum-acked-lsn",
+}
+
+
+def normalize_response_headers(
+    headers: Optional[Mapping[str, Any]],
+) -> Optional[CaseInsensitiveDict]:
+    """Add legacy-name aliases for the Rust binding's ``cosmos-``-prefixed LSN headers.
+
+    Returns a fresh ``CaseInsensitiveDict`` that contains every key from
+    the input *plus* an extra entry for each known prefixed→legacy alias,
+    so customer code that reads either spelling on the Rust path finds
+    the value. If the legacy alias is already present in the input
+    (driver started emitting it on its own), the existing value wins.
+
+    Passing ``None`` or an empty mapping returns ``None`` so callers can
+    keep their existing ``if response.headers:`` guards unchanged.
+
+    Lives at the backend boundary deliberately: applying the alias in
+    the binding's own response path keeps every layer above it
+    (``BackendResponse`` consumers, response parser,
+    ``last_response_headers``, the parity harness) seeing both spellings,
+    so they don't each have to re-implement the map.
+    """
+    if not headers:
+        return None
+    # Copy all original keys first, preserving insertion order.
+    result = CaseInsensitiveDict()
+    for raw_key, value in headers.items():
+        result[raw_key] = value
+    # Then add legacy-name aliases for any prefixed key the table knows
+    # about, but never clobber a key that's already present.
+    for prefixed, legacy in _RUST_PREFIXED_TO_LEGACY_ALIASES.items():
+        if prefixed in result and legacy not in result:
+            result[legacy] = result[prefixed]
+    return result
+
+
+
