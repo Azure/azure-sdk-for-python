@@ -46,6 +46,16 @@ class _Constants:
     # x-ms-cosmos-intended-collection-rid header for container-recreate detection).
     ContainerRID: Literal["containerRID"] = "containerRID"
 
+    # When the customer passes a ``timeout=<seconds>`` kwarg to an item
+    # operation, the helper layer stashes the value in the prepared
+    # request under this key so the Rust backend can pick it up. The
+    # binding does not put it on the wire as a header -- it converts
+    # the number into the driver's typed end-to-end timeout option
+    # instead. The name starts with a double underscore so it stands
+    # out from the real ``x-ms-...`` headers in the same dictionary
+    # and a stray copy onto the wire would be easy to notice.
+    OVERALL_TIMEOUT_SECONDS: Literal["__overall_timeout_seconds"] = "__overall_timeout_seconds"
+
     # GlobalDB related constants
     WritableLocations: Literal["writableLocations"] = "writableLocations"
     ReadableLocations: Literal["readableLocations"] = "readableLocations"

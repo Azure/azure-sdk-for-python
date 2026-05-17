@@ -71,6 +71,13 @@ class AsyncItemHelper:
     ) -> Any:
         """Run a single async ``create_item`` call end to end."""
 
+        # Snapshot kwargs before the legacy options build drains them — see
+        # the sync sibling for the full rationale. Without this snapshot,
+        # ``pre_trigger_include`` / ``no_response`` / ``priority`` / etc.
+        # never reach the binding because ``_base.build_options`` pops
+        # every recognized key out of the dict.
+        kwargs_for_rust_prep = dict(kwargs)
+
         request_options = build_create_item_request_options(
             kwargs,
             enable_automatic_id_generation=enable_automatic_id_generation,
@@ -107,7 +114,7 @@ class AsyncItemHelper:
                 container_rid=container_rid,
                 enable_automatic_id_generation=enable_automatic_id_generation,
                 indexing_directive=indexing_directive,
-                kwargs=dict(kwargs),
+                kwargs=kwargs_for_rust_prep,
             )
             backend_response = await self._backend.execute(prepared)
             if backend_response is not None:

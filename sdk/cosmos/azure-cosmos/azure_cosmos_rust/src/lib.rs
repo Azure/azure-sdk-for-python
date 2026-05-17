@@ -35,6 +35,7 @@
 
 use std::collections::HashMap;
 use std::sync::{Arc, OnceLock, RwLock};
+use std::time::Duration;
 
 use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
@@ -47,7 +48,7 @@ use azure_data_cosmos_driver::{
         AccountReference, ActivityId, CosmosOperation, ItemReference, PartitionKey,
         PartitionKeyValue, SessionToken,
     },
-    options::{ContentResponseOnWrite, OperationOptionsBuilder},
+    options::{ContentResponseOnWrite, EndToEndOperationLatencyPolicy, ExcludedRegions, OperationOptionsBuilder},
 };
 use tokio::runtime::Runtime as TokioRuntime;
 use url::Url;
@@ -189,12 +190,37 @@ fn create_item<'py>(
     // wanting the body, so we default to Enabled.
     let mut content_response_on_write: ContentResponseOnWrite =
         ContentResponseOnWrite::Enabled;
+    // ``excluded_locations`` (Python kwarg) → driver
+    // ``OperationOptions::excluded_regions``. The Python helper writes
+    // the kwarg into ``PreparedRequest.headers`` under the internal
+    // option-key name ``excludedLocations`` (see
+    // ``_helpers/_options.COMMON_OPTIONS``) with the *raw value* — a
+    // ``Sequence[str]`` of region display names like
+    // ``["East US", "West US 2"]``. The driver models this as a typed
+    // field (``ExcludedRegions(Vec<Region>)``) and ``Region`` is
+    // case/whitespace-normalising via its ``From<String>`` impl, so we
+    // hand the strings straight in. ``None`` here means "kwarg never
+    // set" and the driver inherits from a lower-priority layer
+    // (account/runtime/env) per the layered-options model.
+    let mut excluded_regions_value: Option<ExcludedRegions> = None;
+    // ``timeout`` (Python kwarg, seconds) → driver
+    // ``OperationOptions::end_to_end_latency_policy``. The Python
+    // helper writes the value under the sentinel header name
+    // ``__overall_timeout_seconds`` (see
+    // ``_constants._Constants.OVERALL_TIMEOUT_SECONDS``). The legacy
+    // core-Python path consumes ``timeout`` via the azure-core
+    // pipeline; the rust path bypasses that pipeline entirely, so the
+    // binding lifts the value into the driver's typed end-to-end
+    // latency policy here. Sub-second values are clamped by the
+    // driver to its 1-second minimum (see
+    // ``EndToEndOperationLatencyPolicy::new``); ``None`` means
+    // "kwarg never set" and the driver inherits from a lower layer.
+    let mut end_to_end_timeout: Option<EndToEndOperationLatencyPolicy> = None;
     // Custom headers the binding pushes through the driver's
     // ``OperationOptions::with_custom_headers`` escape hatch. Used for
     // every per-request header that the driver does not yet model as
     // a typed field of its own (intended-collection-rid, indexing
     // directive, pre/post triggers, priority, throughput bucket).
-    // Closes the headers half of gap C1.
     let mut custom_headers: HashMap<HeaderName, HeaderValue> = HashMap::new();
     for (key, value) in headers_dict.iter() {
         let key_str: String = key.extract()?;
@@ -205,7 +231,14 @@ fn create_item<'py>(
             activity_header = Some(value.extract()?);
             continue;
         }
-        if lower == "x-ms-session-token" {
+        // Accept both the wire-name (`x-ms-session-token`) and the Python
+        // helper's camelCase option-key (`sessionToken`, produced by
+        // `_options.COMMON_OPTIONS` when the customer passes
+        // `session_token=`). The legacy core-Python path translates the
+        // option-key to the wire header via `_base.GetHeaders`; the Rust
+        // path does the same translation here so the kwarg is not
+        // silently lost on the way to the driver.
+        if lower == "x-ms-session-token" || lower == "sessiontoken" {
             session_header = Some(value.extract()?);
             continue;
         }
@@ -219,6 +252,37 @@ fn create_item<'py>(
             } else {
                 ContentResponseOnWrite::Enabled
             };
+            continue;
+        }
+        // ``excludedLocations`` (option-key form of the ``excluded_locations``
+        // kwarg) → typed ``ExcludedRegions`` on the driver. We accept any
+        // Python iterable of strings (the Python type is
+        // ``Sequence[str]``); each element is fed through ``Region::from``
+        // (case- and whitespace-normalising). Stripped from custom-headers
+        // because the driver does not want it on the wire as a header.
+        if lower == "excludedlocations" {
+            let regions: Vec<String> = value.extract().map_err(|e| {
+                PyValueError::new_err(format!(
+                    "excluded_locations must be a sequence of region name strings: {e}"
+                ))
+            })?;
+            excluded_regions_value =
+                Some(regions.into_iter().collect::<ExcludedRegions>());
+            continue;
+        }
+        // Sentinel header carrying the customer's ``timeout`` kwarg
+        // (overall operation timeout, seconds). Accepts int or float;
+        // negative / zero / non-finite values are ignored (treated
+        // as "kwarg never set") rather than surfaced as an error
+        // because the legacy path silently ignores them too.
+        if lower == "__overall_timeout_seconds" {
+            if let Ok(seconds) = value.extract::<f64>() {
+                if seconds.is_finite() && seconds > 0.0 {
+                    end_to_end_timeout = Some(EndToEndOperationLatencyPolicy::new(
+                        Duration::from_secs_f64(seconds),
+                    ));
+                }
+            }
             continue;
         }
         // Everything else: translate the Python helper's option-key
@@ -307,6 +371,12 @@ fn create_item<'py>(
             // options model — see ``OperationOptions`` doc).
             let mut builder = OperationOptionsBuilder::new()
                 .with_content_response_on_write(content_response_on_write);
+            if let Some(regions) = excluded_regions_value {
+                builder = builder.with_excluded_regions(regions);
+            }
+            if let Some(policy) = end_to_end_timeout {
+                builder = builder.with_end_to_end_latency_policy(policy);
+            }
             if !custom_headers.is_empty() {
                 builder = builder.with_custom_headers(custom_headers);
             }
@@ -427,8 +497,8 @@ fn write_response_headers(
     if let Some(v) = h.offer_replace_pending {
         out.set_item("x-ms-offer-replace-pending", v)?;
     }
-    // C2 — additional modeled fields the driver populates that the
-    // legacy core-Python path also surfaces in `last_response_headers`.
+    // Additional modeled fields the driver populates that the legacy
+    // core-Python path also surfaces in ``last_response_headers``.
     // Customer-visible categories:
     //   * routing diagnostics: partition-key-range id, internal
     //     partition id;
@@ -438,10 +508,10 @@ fn write_response_headers(
     //     allow-tentative-writes;
     //   * indexing progress: collection-index-transformation-progress,
     //     collection-lazy-indexing-progress.
-    // Two more fields (`x-ms-alt-content-path`, `x-ms-content-path`)
-    // are still `pub(crate)` on the driver's `CosmosResponseHeaders`
-    // (`owner_full_name`, `owner_id`) and remain blocked on the
-    // driver opening them up.
+    // Two more fields (``x-ms-alt-content-path``, ``x-ms-content-path``)
+    // are still ``pub(crate)`` on the driver's ``CosmosResponseHeaders``
+    // (``owner_full_name``, ``owner_id``) and surface here once the
+    // driver makes them public.
     if let Some(v) = h.gateway_version.as_ref() {
         out.set_item("x-ms-gatewayversion", v.as_str())?;
     }
@@ -520,7 +590,7 @@ fn parse_partition_key_header(header: &str) -> PyResult<PartitionKey> {
              is not yet supported on the Rust path: the driver overloads `PartitionKey::EMPTY` \
              to mean cross-partition query, so emitting it would target the wrong header. \
              Use the legacy backend for partitionless containers until the driver splits \
-             the two concepts (tracked as C5b)."
+             those two concepts."
                 .to_string(),
         ));
     }

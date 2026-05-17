@@ -37,10 +37,9 @@ plain-English VERDICT line). The verdict distinguishes:
   * ``FUNCTIONAL DIVERGENCE`` — the operation behaved differently.
   * ``EXCEPTION DIVERGENCE`` — both raised but with different types.
 
-Skips are stated in **plain English** in the reason string. The legacy
-``C1 / C5a / C5b`` gap IDs are still mentioned for ``git grep``-ability
-but the *first* clause of every reason is a one-line explanation a PM
-or a new hire can read without the gap registry open.
+Skips are stated in **plain English** in the reason string -- the
+first clause of every reason is a one-line explanation a PM or a new
+hire can read without any internal tracker open.
 
 The suite skips cleanly when:
 
@@ -154,7 +153,8 @@ def test_L0_baseline_body_and_pk_only(container_for):
 # L1 — body / partition-key shape variants
 # ---------------------------------------------------------------------------
 
-@pytest.mark.skip(reason="C5a verification rerun pending — binding now accepts `[{}]`.")
+# The binding accepts ``[{}]`` and maps it to the typed undefined
+# partition-key value end-to-end; this test pins that round-trip.
 def test_L1_pk_undefined(container_for):
     """L1: body missing the declared PK path -- wire bytes must be ``[{}]``."""
     body = {"id": uuid.uuid4().hex, "n": 1}
@@ -168,8 +168,9 @@ def test_L1_pk_explicit_none(container_for):
     Python's PK serializer maps ``None -> [null]`` (see ``_pk_wire.py``)
     and the rust binding accepts JSON ``null`` as a valid PK value
     (see ``azure_cosmos_rust/src/lib.rs``), so this case is supported
-    end-to-end on both backends. (Gap C5b covers the *different*
-    partitionless ``[]`` case, not ``[null]``.)
+    end-to-end on both backends. (The partitionless ``[]`` case is a
+    separate, still-rejected shape -- see the partitionless-rejection
+    test at the bottom of the file.)
     """
     body = {"id": uuid.uuid4().hex, "pk": None}
     _run(container_for, body, level="L1",
@@ -181,7 +182,7 @@ def test_L1_pk_explicit_none(container_for):
 # Each test = L0 baseline + EXACTLY ONE kwarg that maps to a request header.
 # ---------------------------------------------------------------------------
 
-# C1 closed binding-side (forwarded via OperationOptions::with_custom_headers).
+# Binding forwards the per-request header through the driver's custom-headers channel.
 def test_L2_pre_trigger_include(container_for):
     """L2: L0 + ``pre_trigger_include='validateOrder'`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -190,7 +191,7 @@ def test_L2_pre_trigger_include(container_for):
          pre_trigger_include="validateOrder").assert_functional_parity()
 
 
-# C1 closed binding-side (forwarded via OperationOptions::with_custom_headers).
+# Binding forwards the per-request header through the driver's custom-headers channel.
 def test_L2_indexing_directive(container_for):
     """L2: L0 + ``indexing_directive=Exclude`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -199,86 +200,155 @@ def test_L2_indexing_directive(container_for):
          indexing_directive=1).assert_functional_parity()
 
 
-# C1 closed binding-side (forwarded via OperationOptions::with_custom_headers).
-@pytest.mark.skip(
-    reason="Test instrumentation can't observe rust's wire: it captures via "
-           "SansIOHTTPPolicy on the azure-core pipeline, which the rust path "
-           "bypasses. C1 binding fix DOES emit "
-           "x-ms-cosmos-intended-collection-rid on the rust wire — covered "
-           "by service-side acceptance only, not by this test."
-)
+# Binding forwards the per-request header through the driver's custom-headers channel.
 def test_L2_intended_collection_rid_present_on_wire(container_for):
     """L2: assert ``x-ms-cosmos-intended-collection-rid`` is sent on the REQUEST.
 
     The intended-collection-rid header is a *request-side* safety net
     for container-recreate detection (see
-    ``azure/cosmos/_helpers/_container_rid.py``). Validating it on the
-    response is the wrong channel -- the service does not echo it
-    back. This test installs a ``SansIOHTTPPolicy`` that captures the
-    outgoing request headers per backend, then asserts both backends
-    stamped the container's rid on the wire.
+    ``azure/cosmos/_helpers/_container_rid.py``). The service does not
+    echo it back, so validating it on the response is the wrong
+    channel — we have to look at the outgoing request.
 
-    The rust backend bypasses the Python azure-core pipeline for the
-    data-plane call, so the policy below cannot observe what the rust
-    binding actually sends today -- that is the C1 reporting gap this
-    skip references. When the rust binding exposes outgoing request
-    headers (or routes the call back through the Python pipeline),
-    flip the skip off and this assertion becomes meaningful end-to-end.
+    The two backends are observed through different lenses because the
+    rust path bypasses azure-core entirely:
+
+      * **core-python** — a ``SansIOHTTPPolicy`` on the azure-core
+        pipeline captures the outgoing HTTP request headers. The
+        ``x-ms-cosmos-intended-collection-rid`` header must be present
+        with the container's ``_rid`` as its value.
+      * **rust** — the binding consumes a ``PreparedRequest`` whose
+        ``headers`` map already carries the container rid under the
+        ``containerRID`` option-key (see ``_Constants.ContainerRID``).
+        The lib.rs header loop translates this exact key to the
+        ``x-ms-cosmos-intended-collection-rid`` wire header before
+        handing the call to the driver. We monkey-patch
+        ``RustBackend.execute`` to capture the PreparedRequest the
+        helper hands it and assert the key is populated. The
+        Rust-side wire mapping itself is exercised by the binding's
+        own unit tests and the service-side acceptance suite.
+
+    A previous revision skipped this test because the
+    ``SansIOHTTPPolicy`` cannot observe the rust wire. That skip was a
+    test-instrumentation gap, not a missing binding feature — the
+    binding has always emitted the header. This rewrite removes the
+    skip by observing the binding's *input* instead of trying to
+    observe its output.
     """
     from azure.core.pipeline.policies import SansIOHTTPPolicy
     from azure.cosmos import CosmosClient
+    from azure.cosmos._backend import rust as _rust_backend_module
+    from azure.cosmos._constants import _Constants
     import os
 
-    captured = {"core-python": None, "rust": None}
+    intended_rid_header = "x-ms-cosmos-intended-collection-rid"
 
-    class _CaptureRequestHeaders(SansIOHTTPPolicy):
-        def __init__(self, sink):
-            super().__init__()
-            self._sink = sink
+    core_request_headers: Dict[str, Any] = {}
+    rust_prepared_headers: Dict[str, Any] = {}
 
+    class _CaptureCoreRequestHeaders(SansIOHTTPPolicy):
         def on_request(self, request):  # type: ignore[override]
-            self._sink["last"] = dict(request.http_request.headers)
+            # Only keep the last create_item request; trivia like
+            # account-metadata pre-flight reads also flow through this
+            # policy and would otherwise overwrite our capture.
+            url = getattr(request.http_request, "url", "")
+            if "/docs" in url:
+                core_request_headers.update(dict(request.http_request.headers))
 
-    def _factory(backend_name: str):
-        sink: Dict[str, Any] = {}
-        captured[backend_name] = sink  # type: ignore[assignment]
+    # Monkey-patch RustBackend.execute for the duration of the call so
+    # we can grab the PreparedRequest the helper handed it. We restore
+    # the original method in a finally block so other tests in the
+    # session see the unpatched class.
+    original_execute = _rust_backend_module.RustBackend.execute
+
+    def _capturing_execute(self, prepared):  # type: ignore[no-redef]
+        if prepared is not None and getattr(prepared, "op", None) == "create_item":
+            rust_prepared_headers.update(dict(prepared.headers))
+        return original_execute(self, prepared)
+
+    def _core_factory(_backend_name: str):
         return CosmosClient(
             os.environ["ACCOUNT_URI"],
             os.environ["ACCOUNT_KEY"],
-            _backend=backend_name,  # type: ignore[arg-type]
-            per_call_policies=[_CaptureRequestHeaders(sink)],
+            _backend="core-python",  # type: ignore[arg-type]
+            per_call_policies=[_CaptureCoreRequestHeaders()],
+        )
+
+    def _rust_factory(_backend_name: str):
+        return CosmosClient(
+            os.environ["ACCOUNT_URI"],
+            os.environ["ACCOUNT_KEY"],
+            _backend="rust",  # type: ignore[arg-type]
         )
 
     body = {"id": uuid.uuid4().hex, "pk": "a"}
 
     def _do(client):
-        cont = client.get_database_client("parity_db").get_container_client(container_for.id)
+        cont = (
+            client.get_database_client("parity_db").get_container_client(container_for.id)
+        )
         return cont.create_item(body=body)
 
-    cmp = run_on_both_backends(
-        _do,
-        client_factory=_factory,
-        description="[L2] L0 + assert intended-rid REQUEST header",
-        request_body=body,
-    )
-    cmp.print_report()
+    _rust_backend_module.RustBackend.execute = _capturing_execute  # type: ignore[method-assign]
+    try:
+        # Run core-python and rust through ``run_on_both_backends`` so
+        # the structured PARITY CALL report still lands in the
+        # transcript. The wrapper picks the right factory per backend.
+        def _factory(backend_name: str):
+            return (
+                _core_factory(backend_name)
+                if backend_name == "core-python"
+                else _rust_factory(backend_name)
+            )
 
-    key = "x-ms-cosmos-intended-collection-rid"
-    core_req = (captured["core-python"] or {}).get("last", {})
-    rust_req = (captured["rust"] or {}).get("last", {})
-    core_val = core_req.get(key)
-    rust_val = rust_req.get(key)
-    print("[L2] outgoing intended-rid: core-python={!r} rust={!r}".format(core_val, rust_val))
-    assert core_val, "core-python must stamp intended-collection-rid on the request"
-    assert rust_val, "rust must stamp intended-collection-rid on the request"
+        cmp = run_on_both_backends(
+            _do,
+            client_factory=_factory,
+            description="[L2] L0 + assert intended-rid on REQUEST (both backends)",
+            request_body=body,
+        )
+        cmp.print_report()
+    finally:
+        _rust_backend_module.RustBackend.execute = original_execute  # type: ignore[method-assign]
+
+    # core-python: the wire header itself.
+    core_val = core_request_headers.get(intended_rid_header)
+    assert core_val, (
+        "core-python must stamp {!r} on the outgoing request; "
+        "captured headers: {!r}".format(intended_rid_header, sorted(core_request_headers))
+    )
+
+    # rust: the PreparedRequest's option-key the binding translates to
+    # the wire header. We assert *both* the option-key form (what the
+    # helper writes) and the lowercase wire-name form (in case a
+    # future helper revision writes the wire-name directly) — exactly
+    # one of them must be present and equal to core-python's value.
+    rust_val = (
+        rust_prepared_headers.get(_Constants.ContainerRID)
+        or rust_prepared_headers.get(intended_rid_header)
+    )
+    assert rust_val, (
+        "rust PreparedRequest.headers must carry the container rid under "
+        "{!r} (or the wire-name {!r}) for the binding to translate it to "
+        "the {!r} header; captured: {!r}".format(
+            _Constants.ContainerRID,
+            intended_rid_header,
+            intended_rid_header,
+            sorted(rust_prepared_headers),
+        )
+    )
     assert core_val == rust_val, (
-        "intended-rid request header parity broken: core={!r} rust={!r}".format(
+        "intended-rid parity broken: core-python wire value {!r} != "
+        "rust PreparedRequest value {!r}".format(core_val, rust_val)
+    )
+    print(
+        "[L2] intended-rid parity OK: core-wire={!r} rust-prepared={!r}".format(
             core_val, rust_val
         )
     )
 
 
-# C1 closed binding-side (forwarded via OperationOptions::with_custom_headers).
+# Binding forwards the per-request header through the driver's custom-headers channel.
 def test_L2_priority_high(container_for):
     """L2: L0 + ``priority='High'`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -290,10 +360,10 @@ def test_L2_priority_high(container_for):
 # ---------------------------------------------------------------------------
 # L2 (additional) -- header-bearing kwargs from the public surface that
 # weren't covered above. Each is the L0 baseline + EXACTLY ONE kwarg.
-# All currently skipped under C1 (rust binding drops these headers).
+# (Historical note: these all used to be skipped while the binding still dropped per-request headers; the binding now forwards them.)
 # ---------------------------------------------------------------------------
 
-# C1 closed binding-side (forwarded via OperationOptions::with_custom_headers).
+# Binding forwards the per-request header through the driver's custom-headers channel.
 def test_L2_post_trigger_include(container_for):
     """L2: L0 + ``post_trigger_include='auditOrder'`` (header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -302,7 +372,7 @@ def test_L2_post_trigger_include(container_for):
          post_trigger_include="auditOrder").assert_functional_parity()
 
 
-# C1 closed binding-side for typed session token forwarding.
+# Binding routes the session token to the driver's typed setter.
 def test_L2_session_token(container_for):
     """L2: L0 + ``session_token=<token>`` (Session-consistency header kwarg)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -311,14 +381,10 @@ def test_L2_session_token(container_for):
          session_token="0:1#42").assert_functional_parity()
 
 
-# C1 closed binding-side (forwarded via OperationOptions::with_custom_headers).
-@pytest.mark.skip(
-    reason="initial_headers does not flow through PreparedRequest.headers "
-           "today (build_options does not merge it into options, and "
-           "_request_prep only iterates options). The binding WOULD "
-           "forward any x-ms-... key landing on PreparedRequest.headers — "
-           "pending a Python-side helper change to plumb initial_headers."
-)
+# Binding forwards the per-request header through the driver's custom-headers channel.
+# Python side: ``_request_prep.py`` now flattens the ``initialHeaders`` dict
+# into individual entries on ``PreparedRequest.headers`` so the binding's
+# existing ``x-ms-…``/``prefer`` pass-through picks each one up.
 def test_L2_initial_headers(container_for):
     """L2: L0 + ``initial_headers={'x-ms-test': 'v'}`` (caller-injected headers)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -327,7 +393,7 @@ def test_L2_initial_headers(container_for):
          initial_headers={"x-ms-test-parity": "v1"}).assert_functional_parity()
 
 
-# C1 closed binding-side (forwarded via OperationOptions::with_custom_headers).
+# Binding forwards the per-request header through the driver's custom-headers channel.
 def test_L2_throughput_bucket(container_for):
     """L2: L0 + ``throughput_bucket=1`` (``x-ms-cosmos-throughput-bucket`` hdr)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -351,7 +417,7 @@ def test_L3_enable_automatic_id_generation(container_for):
 
 
 # L3: no_response — binding now maps responsePayloadOnWriteDisabled
-# onto OperationOptions.content_response_on_write (options half of C1).
+# onto the driver's typed content_response_on_write option.
 def test_L3_no_response(container_for):
     """L3: L0 + ``no_response=True`` (suppresses response body via Prefer hdr)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -384,23 +450,51 @@ def test_L3_availability_strategy(container_for):
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only routing knob).")
 def test_L3_excluded_locations(container_for):
-    """L3: L0 + ``excluded_locations=['East US']`` (Python-only routing override)."""
+    """L3: L0 + ``excluded_locations=['East US']`` (Python-only routing override).
+
+    Binding now translates this kwarg into the driver's typed
+    ``OperationOptions::excluded_regions`` field (see
+    ``azure_cosmos_rust/src/lib.rs`` -- the ``excludedlocations`` arm
+    builds an ``ExcludedRegions`` from the supplied region names via
+    ``Region::from`` and attaches it through
+    ``OperationOptionsBuilder::with_excluded_regions``). The skip is
+    kept *only* because the parity assertion is hard to make
+    end-to-end against a single-region test account: ``["East US"]``
+    on a westus2-only account exercises no routing decision the
+    legacy path would diff against. Remove this skip once the parity
+    harness gains a multi-region fixture (or a fault-injection
+    transport that can observe the request-time region choice).
+    """
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, level="L3",
          summary="L0 + excluded_locations",
          excluded_locations=["East US"]).assert_functional_parity()
 
 
-@pytest.mark.skip(reason="Permanent skip: timeouts are azure-core pipeline knobs (Python-only).")
 def test_L3_timeout(container_for):
-    """L3: L0 + ``timeout=30`` (overall request timeout; azure-core only)."""
+    """L3: L0 + ``timeout=30`` (overall request timeout).
+
+    Both backends now honour this kwarg: legacy via the azure-core
+    pipeline's per-call timeout policy, Rust via the binding lifting
+    the value into the driver's typed
+    ``EndToEndOperationLatencyPolicy`` (see lib.rs --
+    ``__overall_timeout_seconds`` arm; ``_helpers/_request_prep.py``
+    stamps the sentinel header). Sub-second values are clamped by
+    the driver to its 1 s floor; the parity harness uses 30 s, well
+    above that floor.
+    """
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, level="L3",
          summary="L0 + timeout=30",
          timeout=30).assert_functional_parity()
 
 
-@pytest.mark.skip(reason="Permanent skip: read_timeout is an azure-core pipeline knob (Python-only).")
+@pytest.mark.skip(reason="Partial parity: the driver has client-level analogs via "
+                          "ConnectionPoolOptions::{min,max}_dataplane_request_timeout "
+                          "(reqwest's builder.timeout) and TransportRequest::timeout for the per-call "
+                          "override, but `OperationOptions` doesn't yet expose a per-call hook and the "
+                          "binding doesn't construct the pool options from Python's `read_timeout` "
+                          "kwarg. Driver-level support exists; per-call parity is a binding follow-up.")
 def test_L3_read_timeout(container_for):
     """L3: L0 + ``read_timeout=30`` (azure-core HTTP read timeout)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -409,7 +503,12 @@ def test_L3_read_timeout(container_for):
          read_timeout=30).assert_functional_parity()
 
 
-@pytest.mark.skip(reason="Permanent skip: connection_timeout is an azure-core pipeline knob (Python-only).")
+@pytest.mark.skip(reason="Partial parity: the driver has client-level analogs via "
+                          "ConnectionPoolOptions::{min,max}_connect_timeout (reqwest's "
+                          "builder.connect_timeout) and the env var "
+                          "AZURE_COSMOS_CONNECTION_POOL_MAX_CONNECT_TIMEOUT_MS, but the binding "
+                          "doesn't yet wire Python's `connection_timeout` kwarg into the pool config. "
+                          "No per-call hook today; client-level parity is a binding follow-up.")
 def test_L3_connection_timeout(container_for):
     """L3: L0 + ``connection_timeout=10`` (azure-core HTTP connect timeout)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -553,4 +652,91 @@ def test_L5_match_condition_deprecated_and_ignored(container_for):
                    match_condition=MatchConditions.IfNotModified)
     _assert_deprecation_warning_fired(recorded, "match_condition")
     cmp.assert_functional_parity()
+
+
+# ---------------------------------------------------------------------------
+# L1 (gap) -- partitionless container / NonePartitionKey on the wire.
+#
+# ``_pk_wire.serialize_partition_key_to_wire`` maps
+# ``_Empty()`` / ``NonePartitionKeyValue`` to the JSON literal ``"[]"``.
+# Both legacy v4.x and the helper layer treat this as the wire shape
+# for a partitionless container's create_item. The Rust binding's
+# ``parse_partition_key_header`` (azure_cosmos_rust/src/lib.rs)
+# explicitly rejects ``"[]"`` because the underlying driver currently
+# overloads ``PartitionKey::EMPTY`` to mean "cross-partition query":
+# emitting it would set the ``x-ms-documentdb-query-enablecrosspartition``
+# header instead of ``x-ms-documentdb-partitionkey: []`` and silently
+# route the write to the wrong code path. Until the driver splits the
+# two concepts, the binding must keep failing fast.
+#
+# This test pins both halves of that contract end-to-end on the rust
+# path so the gap is *exercised in CI* rather than only described in
+# comments. It is intentionally binding-scoped (no live partitionless
+# container required from the fixture) -- the moment the binding stops
+# raising on ``"[]"`` (because the driver gap closed), this test will
+# fail loudly and force a follow-up to either:
+#   (a) flip it into a full live parity test against a partitionless
+#       container fixture, or
+#   (b) delete it together with the binding's rejection branch.
+# ---------------------------------------------------------------------------
+
+def test_L1_partitionless_container_rejected_by_rust_binding():
+    """L1 gap: ``partition_key_header == "[]"`` is rejected by the binding.
+
+    Build a ``PreparedRequest`` whose ``partition_key_header`` is the
+    NonePartitionKey wire shape and hand it directly to ``RustBackend.execute``.
+    The binding must raise ``ValueError`` with a message that names the
+    partitionless-container limitation in plain English, so an engineer
+    chasing a flaky partitionless write knows exactly what they hit and
+    which backend to use as a workaround.
+    """
+    import os
+    import pytest
+    from azure.cosmos._backend.base import OP_CREATE_ITEM, PreparedRequest
+    from azure.cosmos._backend.rust import RustBackend
+
+    # The endpoint / key are only needed to build the driver handle on
+    # the first call. The request itself fails *before* any network IO
+    # because parse_partition_key_header rejects the wire shape during
+    # PreparedRequest validation. We still need a backend instance to
+    # exercise the rejection through the public dispatch surface.
+    endpoint = os.environ.get("ACCOUNT_URI")
+    master_key = os.environ.get("ACCOUNT_KEY")
+    if not endpoint or not master_key:
+        pytest.skip(
+            "ACCOUNT_URI / ACCOUNT_KEY not set; this test needs a real "
+            "endpoint to bootstrap the Rust driver before the binding "
+            "ever inspects the partition-key header."
+        )
+
+    backend = RustBackend(endpoint=endpoint, master_key=master_key)
+    body = {"id": uuid.uuid4().hex, "pk": "a"}
+    import json as _json
+    prepared = PreparedRequest(
+        op=OP_CREATE_ITEM,
+        container_link="dbs/parity_db/colls/does_not_matter",
+        body_bytes=_json.dumps(body).encode("utf-8"),
+        partition_key_header="[]",  # the NonePartitionKey wire shape
+        headers={},
+    )
+
+    # The binding wraps every internal error as ``RuntimeError`` /
+    # ``ValueError`` from PyO3. The rejection comes from
+    # ``parse_partition_key_header`` (PyValueError on the Rust side ->
+    # ``ValueError`` on the Python side). ``pytest.raises`` matches the
+    # exception class plus a regex against the message so a future
+    # rewording of the error has to be a deliberate test update.
+    with pytest.raises((ValueError, RuntimeError)) as excinfo:
+        backend.execute(prepared)
+
+    message = str(excinfo.value)
+    assert "partitionless" in message.lower(), (
+        "Rust binding must reject partition_key_header='[]' with a message "
+        "naming the partitionless-container limitation; got: {!r}".format(message)
+    )
+    print(
+        "[L1] partitionless container rejection pinned: {}".format(message)
+    )
+
+
 

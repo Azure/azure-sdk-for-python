@@ -175,6 +175,21 @@ def build_create_item_prepared(
     # helper returns wire-ready headers directly.
     headers: Dict[str, str] = {}
     for option_key, option_value in options.items():
+        # ``initial_headers`` arrives as a dict-valued option under the
+        # ``"initialHeaders"`` key (see ``_options.COMMON_OPTIONS``). The
+        # legacy ``_base.GetHeaders`` merges it into the outgoing HTTP
+        # headers; on the Rust path the binding has no recognizer for
+        # the *wrapping* key, so we flatten it here so each inner
+        # ``x-ms-…`` (or any caller-supplied) header lands directly on
+        # ``PreparedRequest.headers``. The binding's existing
+        # ``x-ms-…``/``prefer`` pass-through then forwards each one
+        # through ``OperationOptions::with_custom_headers``. Customer-
+        # set entries override anything the helper had already written
+        # (matches legacy precedence).
+        if option_key == "initialHeaders" and isinstance(option_value, dict):
+            for inner_name, inner_value in option_value.items():
+                headers[inner_name] = inner_value
+            continue
         headers[option_key] = option_value
     if container_rid is not None:
         # Mirror the constant key the rest of the SDK reads. Belt-and-
@@ -182,6 +197,29 @@ def build_create_item_prepared(
         # options, but the headers map gets its own copy so a future
         # backend that bypasses options still has the rid.
         headers[Constants.ContainerRID] = container_rid
+
+    # Overall operation timeout (the customer-facing ``timeout`` kwarg
+    # — seconds, float). On the legacy core-Python path this is
+    # consumed by the azure-core pipeline (per-call ``timeout`` policy
+    # knob) and never lands in the request body or headers. The Rust
+    # path bypasses that pipeline entirely, so without forwarding the
+    # value here the kwarg would be silently dropped on the rust side
+    # and the driver would fall back to its own (account/runtime)
+    # default — observable as a parity gap on
+    # ``test_L3_timeout``.
+    #
+    # We do NOT pop ``timeout`` from ``kwargs`` because the legacy
+    # path still needs it intact (it falls through into
+    # ``client_connection.CreateItem(..., **kwargs)`` and from there
+    # into azure-core). We just *peek* and stamp the value into the
+    # headers map under a sentinel name the binding recognises. The
+    # name is intentionally not an ``x-ms-...`` header — the binding
+    # lifts it to a typed driver option (``EndToEndOperationLatencyPolicy``)
+    # rather than emitting it on the wire as a header.
+    if kwargs is not None and "timeout" in kwargs:
+        timeout_value = kwargs.get("timeout")
+        if timeout_value is not None:
+            headers[Constants.OVERALL_TIMEOUT_SECONDS] = timeout_value
 
     prepared = PreparedRequest(
         op=OP_CREATE_ITEM,

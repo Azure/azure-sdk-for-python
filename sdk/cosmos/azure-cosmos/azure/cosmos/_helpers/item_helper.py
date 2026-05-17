@@ -101,6 +101,22 @@ class ItemHelper:
     ) -> Any:
         """Run a single ``create_item`` call end to end."""
 
+        # Snapshot the kwargs BEFORE the legacy options build drains them.
+        # ``_base.build_options`` (called inside
+        # ``build_create_item_request_options`` below) pops every recognized
+        # kwarg out of the dict — ``pre_trigger_include``, ``no_response``,
+        # ``priority``, ``session_token``, ``throughput_bucket``,
+        # ``initial_headers``, etc. all leave by the time it returns. The
+        # Rust path needs to see them later (it calls
+        # ``compose_options_from_kwargs`` against this dict to build its own
+        # option-keys for ``PreparedRequest.headers``), so we keep a fresh
+        # copy here. Without this snapshot, the option-keys never reach the
+        # binding, the binding never translates them to wire headers, and
+        # parity tests for every header-bearing kwarg flip red while
+        # core-python tests stay green — exactly the regression we saw
+        # before adding it.
+        kwargs_for_rust_prep = dict(kwargs)
+
         # Build legacy-shape request_options (used by the fall-through
         # legacy path AND consumed for partition-key extraction below).
         request_options = build_create_item_request_options(
@@ -148,7 +164,7 @@ class ItemHelper:
                 container_rid=container_rid,
                 enable_automatic_id_generation=enable_automatic_id_generation,
                 indexing_directive=indexing_directive,
-                kwargs=dict(kwargs),
+                kwargs=kwargs_for_rust_prep,
             )
             backend_response = self._backend.execute(prepared)
             if backend_response is not None:

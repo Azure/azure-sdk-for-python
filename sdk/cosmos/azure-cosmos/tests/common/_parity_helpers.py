@@ -36,12 +36,12 @@ This file implements:
     and outputs (run pytest with ``-s`` to see it).
 
 For tests that hit a known driver-side gap, mark them with pytest's
-built-in ``@pytest.mark.skip(reason="C5b pending")`` (with the gap ID
-in the reason string). ``git grep "C5b pending"`` then finds every
-test waiting on that item, and when the gap closes you remove the
-marker by hand. With only ~3 open driver-team gaps today, a custom
-xfail-with-strict-mode marker would be more machinery than the
-problem warrants.
+built-in ``@pytest.mark.skip(reason="...")`` and use the *reason* string
+to name the specific limitation in plain English (e.g. "binding does
+not yet wire <X>"). A grep against a phrase from any one reason then
+finds every test waiting on the same fix. With only a handful of open
+driver-team gaps today, a custom xfail-with-strict-mode marker would be
+more machinery than the problem warrants.
 
 The suite skips cleanly when no Cosmos account is configured. A real
 parity run needs both the emulator (or a real account) **and** the
@@ -51,6 +51,7 @@ not fail.
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 
@@ -260,45 +261,76 @@ class BackendComparison:
         print(self.format_report())
 
 
-# Headers that legitimately differ per request even on the same backend
-# (request charges, activity ids, dates). Excluded from header diffs by
-# default; tests that care about them can pass their own ignore list.
-_DEFAULT_IGNORED_HEADERS = frozenset({
+# Response headers Cosmos guarantees on every successful response (and that
+# customer code reads back) — the *value* is per-request noisy (a fresh
+# request charge / activity id / etag / etc. every call) but the *header*
+# must be present on both backends. ``diff_outcomes`` skips these in the
+# value-diff but enforces presence: if one backend emits the header and the
+# other doesn't, that's a parity failure.
+_VALUE_VOLATILE_REQUIRED_HEADERS = frozenset({
     "x-ms-request-charge",
     "x-ms-activity-id",
     "x-ms-session-token",
-    "x-ms-cosmos-llsn",
-    "x-ms-session-token-rid",
     "etag",
-    "_etag",
-    "date",
-    "lsn",
-    "x-ms-current-write-quorum",
-    "x-ms-current-replica-set-size",
-    "x-ms-xp-role",
+    "x-ms-serviceversion",
+    "x-ms-gatewayversion",
+    "x-ms-request-duration-ms",
     "x-ms-global-committed-lsn",
     "x-ms-number-of-read-regions",
     "x-ms-transport-request-id",
-    "x-ms-cosmos-physical-partition-id",
-    "x-ms-serviceversion",
-    "x-ms-gatewayversion",
-    "x-ms-schemaversion",
-    "x-ms-cosmos-quorum-acked-lsn",
-    # Per-replica LSN value: the legacy core-python path emits this
-    # *without* the ``cosmos-`` prefix and the rust path emits it
-    # *with* (see lib.rs::write_response_headers). Both forms are
-    # legitimately per-request-noisy on real Cosmos accounts —
-    # the value reflects which replica handled the request.
+    "lsn",
+})
+
+# Headers whose *presence itself* is environment-, replica-, topology-, or
+# transport-dependent — both the value and the presence are dropped from
+# the diff. These either have legitimate naming conflicts across the two
+# backends, surface only on certain account configurations, or come from
+# the underlying HTTP transport rather than from Cosmos.
+_FULLY_IGNORED_HEADERS = frozenset({
+    # Body field, not a response header — leftover in the original ignore
+    # set from when body and header filtering shared code.
+    "_etag",
+    # HTTP ``date`` header: emitted by every HTTP server, but the rust
+    # driver does not yet expose it (HTTP-framing headers need a
+    # ``raw_headers()`` accessor that hasn't landed). Once the driver
+    # surfaces it, move this back to the value-volatile bucket.
+    "date",
+    # Per-container counters that tick up with each create. When the parity
+    # harness runs the same call against both backends consecutively, the
+    # second backend's response shows the count after the first backend's
+    # insert — so value-diffs here are harness artefacts, not backend
+    # divergences.
+    "x-ms-resource-usage",
+    "x-ms-resource-quota",
+    "x-ms-session-token-rid",
+    # Cross-backend naming wart: the legacy core-python path emits this
+    # *without* the ``cosmos-`` prefix and the rust path emits it *with*
+    # (see lib.rs::write_response_headers). We can't presence-check
+    # because the *names* differ; fully ignored until the binding aligns.
+    "x-ms-cosmos-llsn",
     "x-ms-quorum-acked-lsn",
-    # Server-measured request duration in milliseconds. Naturally
-    # different between two real round-trips, same noise category
-    # as ``x-ms-request-charge``.
-    "x-ms-request-duration-ms",
+    "x-ms-cosmos-quorum-acked-lsn",
     "x-ms-cosmos-item-llsn",
     "x-ms-cosmos-quorum-acked-llsn",
+    # Replica / topology diagnostics — presence varies with account
+    # configuration and routing decisions.
+    "x-ms-current-write-quorum",
+    "x-ms-current-replica-set-size",
+    "x-ms-xp-role",
+    "x-ms-cosmos-physical-partition-id",
     "x-ms-cosmos-replica-side-cache-token",
+    "x-ms-schemaversion",
+    # HTTP ``server`` header: differs by transport (azure-core uses
+    # urllib3 / requests; rust transport uses reqwest), no parity
+    # guarantee on presence.
     "server",
 })
+
+# Combined set used to filter the value-diff. Tests that want a custom
+# scope can pass their own frozenset to ``diff_outcomes(ignored_headers=...)``.
+# The presence check below always runs against ``_VALUE_VOLATILE_REQUIRED_HEADERS``
+# regardless of what's passed for ``ignored_headers``.
+_DEFAULT_IGNORED_HEADERS = _VALUE_VOLATILE_REQUIRED_HEADERS | _FULLY_IGNORED_HEADERS
 
 # Body fields that legitimately differ between create calls and so
 # are excluded from return-value diffs by default:
@@ -311,15 +343,28 @@ _DEFAULT_IGNORED_HEADERS = frozenset({
 #   - ``id`` — for create-style parity tests the test harness in
 #     ``test_create_item_parity.py::_call`` deep-copies the body
 #     template and rewrites ``id`` with a fresh UUID4 *per backend
-#     invocation* (see the H.4 harness fix). That keeps the second
-#     backend from getting a 409 on what would otherwise look like
-#     a duplicate create. The cost is that backend 1 and backend 2
-#     genuinely create different items, so their returned ``id``
-#     values differ by construction. That's a harness artefact, not
+#     invocation*. That keeps the second backend from getting a 409
+#     on what would otherwise look like a duplicate create. The cost
+#     is that backend 1 and backend 2 genuinely create different
+#     items, so their returned ``id`` values differ by construction.
+#     That's a harness artefact, not
 #     a backend-behaviour difference, so the diff ignores it.
-#     Customer-level "the id we sent matches the id we got back"
-#     is covered by the unit tests in ``test_request_prep_unit.py``
-#     and ``test_auto_id_unit.py``.
+#
+#     KNOWN COVERAGE GAP: because ``id`` is rewritten per-backend AND
+#     ignored on the return-value diff, the create-item parity suite
+#     CANNOT detect id-handling parity bugs end-to-end -- e.g. a
+#     binding that silently lower-cased the id, or stripped a
+#     trailing space, or rejected a legitimate id format. Customer-
+#     level "the id we sent matches the id we got back" is therefore
+#     covered separately by the unit tests in
+#     ``test_request_prep_unit.py`` and ``test_auto_id_unit.py``,
+#     which build a ``PreparedRequest`` deterministically and assert
+#     on the body bytes before any backend dispatch. If a parity gap
+#     opens up specifically around id round-tripping, add a focused
+#     test that uses ``id_factory_per_backend=lambda: SAME_ID`` (or
+#     equivalent) and removes ``"id"`` from ``ignored_body_fields``
+#     for just that one assertion -- do NOT broaden the default
+#     ignore-set here.
 _DEFAULT_IGNORED_BODY_FIELDS = frozenset({
     "id",
     "_rid", "_self", "_ts", "_etag", "_attachments",
@@ -337,6 +382,48 @@ def _filtered_body(b: Any, ignored: frozenset) -> Any:
     if isinstance(b, dict):
         return {k: v for k, v in b.items() if k not in ignored}
     return b
+
+
+# Patterns used to scrub per-request noise out of exception messages
+# before comparing them across backends. Each entry is (regex, replacement).
+# Order matters only inasmuch as later substitutions see the output of
+# earlier ones. The intent is "two backends raising semantically the
+# same error produce the same normalised text" -- *not* byte-identity
+# of the raw ``str(exc)``.
+_EXCEPTION_MESSAGE_NOISE = [
+    # Activity / correlation IDs, transport request IDs, RIDs, etc. --
+    # any UUID-shaped token. Covers both lowercase (azure-core default)
+    # and uppercase variants the driver sometimes emits.
+    (re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b"), "<uuid>"),
+    # Cosmos resource ids (base64-ish, often 8-22 chars with == padding)
+    # that appear inside diagnostics blobs and self-links.
+    (re.compile(r"\b[A-Za-z0-9+/]{8,}={0,2}\b"), "<rid>"),
+    # ISO-8601 timestamps the driver embeds in diagnostics summaries.
+    (re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"), "<ts>"),
+    # Numeric durations / counters that appear in diagnostics
+    # ("duration in milliseconds":1.9737, "Count":1, etc.).
+    (re.compile(r":\s*\d+(?:\.\d+)?"), ":<n>"),
+    # Collapse any whitespace run -- including embedded newlines from
+    # the driver's multi-line diagnostics dump -- to a single space so
+    # platform line-endings don't matter.
+    (re.compile(r"\s+"), " "),
+]
+
+
+def _normalize_exception_message(exc: BaseException) -> str:
+    """Strip per-request noise out of an exception's text for diffing.
+
+    Replaces UUIDs, RIDs, timestamps, and numeric counters with stable
+    placeholders. Truncates after the first 240 characters so an
+    arbitrarily long diagnostics blob does not dominate the report.
+    """
+    if exc is None:
+        return ""
+    text = str(exc)
+    for pattern, replacement in _EXCEPTION_MESSAGE_NOISE:
+        text = pattern.sub(replacement, text)
+    text = text.strip()
+    return text[:240]
 
 
 def diff_outcomes(
@@ -364,7 +451,14 @@ def diff_outcomes(
         return diffs  # downstream comparisons are meaningless if outcomes differ
 
     if not core.succeeded:
-        # Both raised — compare exception type + sub_status + message.
+        # Both raised -- compare exception type, status_code, sub_status,
+        # and a normalised form of the message. The raw ``str(exc)`` is
+        # full of per-request noise (activity-ids, RIDs, timestamps,
+        # transport-request-ids, free-form diagnostics blobs) that would
+        # diff on every run even at true parity, so we strip those
+        # before comparing. The goal is to catch *semantic* message
+        # divergence ("BadRequest: trigger not present" vs "Unknown
+        # 409") -- not to enforce byte-identical exception text.
         if type(core.raised) is not type(rust.raised):
             diffs.append(
                 "exception type: core-python {} / rust {}".format(
@@ -376,6 +470,12 @@ def diff_outcomes(
             rv = getattr(rust.raised, attr, None)
             if cv != rv:
                 diffs.append("exception.{}: core-python {!r} / rust {!r}".format(attr, cv, rv))
+        cm = _normalize_exception_message(core.raised)
+        rm = _normalize_exception_message(rust.raised)
+        if cm != rm:
+            diffs.append(
+                "exception.message (normalised): core-python {!r} / rust {!r}".format(cm, rm)
+            )
         return diffs
 
     # 2. Both succeeded — diff filtered body and headers.
@@ -396,6 +496,30 @@ def diff_outcomes(
     for k in set(ch) & set(rh):
         if ch[k] != rh[k]:
             diffs.append("header {}: core-python {!r} / rust {!r}".format(k, ch[k], rh[k]))
+
+    # Presence check for the value-volatile headers Cosmos guarantees on
+    # every successful response. Without this loop, the filter above drops
+    # those headers from both sides before the key-set diff, so a binding
+    # silently dropping (say) ``x-ms-request-charge`` would go undetected.
+    # The presence check runs against the *unfiltered* response headers and
+    # uses ``_VALUE_VOLATILE_REQUIRED_HEADERS`` regardless of the
+    # ``ignored_headers`` override, since those headers are part of the
+    # cross-backend contract.
+    core_names = {k.lower() for k in (core.response_headers or {})}
+    rust_names = {k.lower() for k in (rust.response_headers or {})}
+    for header in sorted(_VALUE_VOLATILE_REQUIRED_HEADERS):
+        in_core = header in core_names
+        in_rust = header in rust_names
+        if in_core and not in_rust:
+            diffs.append(
+                "value-volatile header {!r}: present on core-python, missing on rust"
+                .format(header)
+            )
+        elif in_rust and not in_core:
+            diffs.append(
+                "value-volatile header {!r}: present on rust, missing on core-python"
+                .format(header)
+            )
 
     return diffs
 
