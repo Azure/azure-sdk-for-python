@@ -39,6 +39,26 @@ def create_database_account(enable_multiple_writable_locations):
     return db_acc
 
 
+canonical_location1_name = "East US 2"
+canonical_location2_name = "West US 3"
+canonical_location1_endpoint = "https://eastus2.documents.azure.com"
+canonical_location2_endpoint = "https://westus3.documents.azure.com"
+
+
+def create_database_account_with_canonical_regions(enable_multiple_writable_locations):
+    db_acc = DatabaseAccount()
+    db_acc._WritableLocations = [
+        {"name": canonical_location1_name, "databaseAccountEndpoint": canonical_location1_endpoint},
+        {"name": canonical_location2_name, "databaseAccountEndpoint": canonical_location2_endpoint},
+    ]
+    db_acc._ReadableLocations = [
+        {"name": canonical_location1_name, "databaseAccountEndpoint": canonical_location1_endpoint},
+        {"name": canonical_location2_name, "databaseAccountEndpoint": canonical_location2_endpoint},
+    ]
+    db_acc._EnableMultipleWritableLocations = enable_multiple_writable_locations
+    return db_acc
+
+
 def refresh_location_cache(preferred_locations, use_multiple_write_locations, connection_policy=documents.ConnectionPolicy()):
     connection_policy.PreferredLocations = preferred_locations
     connection_policy.UseMultipleWriteLocations = use_multiple_write_locations
@@ -669,6 +689,111 @@ class TestLocationCache:
 
         assert read_after_second == [ctx.get_primary() for ctx in expected_read]
         assert write_after_second == [ctx.get_primary() for ctx in expected_write]
+
+    def test_resolve_endpoint_without_preferred_locations_supports_normalized_exclusions(self):
+        # This specifically exercises _resolve_endpoint_without_preferred_locations by
+        # setting use_preferred_locations=False.
+        lc = refresh_location_cache(
+            preferred_locations=[],
+            use_multiple_write_locations=True,
+        )
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_request.use_preferred_locations = False
+        write_request.excluded_locations = ["east-us-2"]
+
+        assert lc.resolve_service_endpoint(write_request) == canonical_location2_endpoint
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_request.use_preferred_locations = False
+        read_request.excluded_locations = ["west_us_3"]
+
+        assert lc.resolve_service_endpoint(read_request) == canonical_location1_endpoint
+
+    def test_preferred_locations_support_normalized_region_names(self):
+        # Preferred locations should match account region names even with case/spacing/separator variations.
+        lc = refresh_location_cache(["east-us-2", " west_us_3 "], True)
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        write_contexts = lc.get_write_regional_routing_contexts()
+        read_contexts = lc.get_read_regional_routing_contexts()
+
+        assert write_contexts[0].get_primary() == canonical_location1_endpoint
+        assert write_contexts[1].get_primary() == canonical_location2_endpoint
+        assert read_contexts[0].get_primary() == canonical_location1_endpoint
+        assert read_contexts[1].get_primary() == canonical_location2_endpoint
+
+    def test_excluded_locations_support_normalized_region_names(self):
+        # Excluded locations should filter regions even when normalized names are used.
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.ExcludedLocations = ["east-us-2"]
+
+        lc = refresh_location_cache([canonical_location1_name, canonical_location2_name], True, connection_policy)
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_request.excluded_locations = ["west_us_3"]
+
+        assert lc.resolve_service_endpoint(read_request) == canonical_location2_endpoint
+        assert lc.resolve_service_endpoint(write_request) == canonical_location1_endpoint
+
+    def test_should_refresh_endpoints_handles_normalized_preferred_region(self):
+        # should_refresh_endpoints must match canonical region keys even when the
+        # customer's preferred location uses non-canonical spelling.
+        lc = refresh_location_cache(["east-us-2"], True)
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Most-preferred is already the primary; no background refresh should be triggered.
+        assert lc.should_refresh_endpoints() is False
+
+    def test_get_locational_endpoint_normalizes_customer_region_string(self):
+        # GetLocationalEndpoint is used during bootstrap fallback with the customer-supplied
+        # preferred region string. It must produce the canonical regional URL for any
+        # accepted normalization variant.
+        default_endpoint_url = "https://contoso.documents.azure.com:443/"
+        expected_endpoint = "https://contoso-eastus2.documents.azure.com:443/"
+
+        for region_input in ("East US 2", "east us 2", "eastus2", "east-us-2", "east_us_2", " EastUs2 "):
+            assert LocationCache.GetLocationalEndpoint(default_endpoint_url, region_input) == expected_endpoint
+
+    def test_unmatched_excluded_locations_warning_is_deduped(self, caplog):
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.ExcludedLocations = ["unknown-region"]
+        lc = refresh_location_cache([canonical_location1_name], True, connection_policy)
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        with caplog.at_level("WARNING", logger="azure.cosmos.LocationCache"):
+            lc.perform_on_database_account_read(db_acc)
+            request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+            lc.resolve_service_endpoint(request)
+            lc.resolve_service_endpoint(request)
+            # Simulate a periodic refresh with unchanged topology and config.
+            lc.perform_on_database_account_read(db_acc)
+
+        unmatched_logs = [
+            record for record in caplog.records
+            if "Ignoring excluded_locations entries" in record.getMessage()
+        ]
+        assert len(unmatched_logs) == 1
+
+    def test_unmatched_preferred_locations_warning_is_deduped(self, caplog):
+        with caplog.at_level("WARNING", logger="azure.cosmos.LocationCache"):
+            lc = refresh_location_cache(["unknown-region"], True)
+            db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+            lc.perform_on_database_account_read(db_acc)
+            # Simulate a periodic refresh with unchanged topology and config.
+            lc.perform_on_database_account_read(db_acc)
+
+        unmatched_logs = [
+            record for record in caplog.records
+            if "Ignoring preferred_locations entries" in record.getMessage()
+        ]
+        assert len(unmatched_logs) == 1
 
 if __name__ == "__main__":
     unittest.main()
