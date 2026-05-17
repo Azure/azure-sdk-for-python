@@ -32,7 +32,8 @@
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "pypy3.11",
           "CoverageArg": "--disablecov",
-          "TestSamples": "false"
+          "TestSamples": "false",
+          "OverridePyPyVersion": "true"
         }
       }
     },
