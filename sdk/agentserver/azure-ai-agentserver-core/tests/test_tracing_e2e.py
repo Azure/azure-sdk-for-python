@@ -65,25 +65,27 @@ def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_P
 
 
 # ---------------------------------------------------------------------------
-# Minimal echo app factories using core's AgentServerHost + request_context()
+# Minimal echo app factories using core's AgentServerHost
 # ---------------------------------------------------------------------------
 
 def _make_echo_app():
-    """Create an AgentServerHost with a POST /echo route that uses request_context.
+    """Create an AgentServerHost with a POST /echo route.
 
     Returns (app, request_ids) where request_ids is a list that collects the
     unique ID assigned to each request (for later App Insights correlation).
+
+    TraceContextMiddleware automatically propagates W3C trace context from
+    incoming request headers, so handlers don't need to call request_context().
     """
     request_ids: list[str] = []
 
     async def echo_handler(request: Request) -> Response:
         req_id = str(uuid.uuid4())
         request_ids.append(req_id)
-        with app.request_context(dict(request.headers)):
-            body = await request.body()
-            resp = Response(content=body, media_type="application/octet-stream")
-            resp.headers["x-request-id"] = req_id
-            return resp
+        body = await request.body()
+        resp = Response(content=body, media_type="application/octet-stream")
+        resp.headers["x-request-id"] = req_id
+        return resp
 
     routes = [Route("/echo", echo_handler, methods=["POST"])]
     app = AgentServerHost(routes=routes)
@@ -97,12 +99,12 @@ def _make_streaming_echo_app():
     async def stream_handler(request: Request) -> StreamingResponse:
         req_id = str(uuid.uuid4())
         request_ids.append(req_id)
-        with app.request_context(dict(request.headers)):
-            async def generate():
-                for chunk in [b"chunk1\n", b"chunk2\n", b"chunk3\n"]:
-                    yield chunk
 
-            return StreamingResponse(generate(), media_type="application/x-ndjson")
+        async def generate():
+            for chunk in [b"chunk1\n", b"chunk2\n", b"chunk3\n"]:
+                yield chunk
+
+        return StreamingResponse(generate(), media_type="application/x-ndjson")
 
     routes = [Route("/echo", stream_handler, methods=["POST"])]
     app = AgentServerHost(routes=routes)
@@ -110,12 +112,15 @@ def _make_streaming_echo_app():
 
 
 def _make_echo_app_with_child_span():
-    """Create an AgentServerHost whose handler creates a child span inside request_context.
+    """Create an AgentServerHost whose handler creates a child span.
 
     Returns (app, request_ids, child_span_ids).  The child span simulates a
     framework creating its own span inside the propagated context.
     ``child_span_ids`` captures the hex span-id of each child so the test can
     query App Insights by that value.
+
+    TraceContextMiddleware propagates context automatically — the child span
+    becomes a child of the caller's trace without explicit request_context().
     """
     request_ids: list[str] = []
     child_span_ids: list[str] = []
@@ -124,13 +129,12 @@ def _make_echo_app_with_child_span():
     async def echo_handler(request: Request) -> Response:
         req_id = str(uuid.uuid4())
         request_ids.append(req_id)
-        with app.request_context(dict(request.headers)):
-            with child_tracer.start_as_current_span("framework_child") as child:
-                child_span_ids.append(format(child.context.span_id, "016x"))
-                body = await request.body()
-                resp = Response(content=body, media_type="application/octet-stream")
-                resp.headers["x-request-id"] = req_id
-                return resp
+        with child_tracer.start_as_current_span("framework_child") as child:
+            child_span_ids.append(format(child.context.span_id, "016x"))
+            body = await request.body()
+            resp = Response(content=body, media_type="application/octet-stream")
+            resp.headers["x-request-id"] = req_id
+            return resp
 
     routes = [Route("/echo", echo_handler, methods=["POST"])]
     app = AgentServerHost(routes=routes)
@@ -138,19 +142,18 @@ def _make_echo_app_with_child_span():
 
 
 def _make_failing_echo_app():
-    """Create an app whose handler raises inside request_context. Returns (app, request_ids)."""
+    """Create an app whose handler raises an error. Returns (app, request_ids)."""
     request_ids: list[str] = []
 
     async def fail_handler(request: Request) -> Response:
         req_id = str(uuid.uuid4())
         request_ids.append(req_id)
-        with app.request_context(dict(request.headers)):
-            try:
-                raise ValueError("e2e error test")
-            except ValueError:
-                resp = JSONResponse({"error": "e2e error test"}, status_code=500)
-                resp.headers["x-request-id"] = req_id
-                return resp
+        try:
+            raise ValueError("e2e error test")
+        except ValueError:
+            resp = JSONResponse({"error": "e2e error test"}, status_code=500)
+            resp.headers["x-request-id"] = req_id
+            return resp
 
     routes = [Route("/echo", fail_handler, methods=["POST"])]
     app = AgentServerHost(routes=routes)
@@ -162,8 +165,8 @@ def _make_failing_echo_app():
 # ---------------------------------------------------------------------------
 
 class TestAppInsightsIngestionE2E:
-    """Query Application Insights to confirm spans created inside
-    ``request_context`` are actually ingested and enriched."""
+    """Query Application Insights to confirm spans created inside handlers
+    are actually ingested and enriched via TraceContextMiddleware propagation."""
 
     def test_child_span_in_appinsights(
         self,
@@ -171,7 +174,7 @@ class TestAppInsightsIngestionE2E:
         appinsights_resource_id,
         logs_query_client,
     ):
-        """Create a framework child span inside request_context and verify it
+        """Create a framework child span and verify it
         appears in the App Insights ``dependencies`` table."""
         app, request_ids, child_span_ids = _make_echo_app_with_child_span()
         client = TestClient(app)
@@ -236,7 +239,7 @@ class TestAppInsightsIngestionE2E:
         appinsights_resource_id,
         logs_query_client,
     ):
-        """Verify a child span created inside request_context is exported to App Insights.
+        """Verify a child span created inside the handler is exported to App Insights.
 
         With context-only propagation, the child (framework_child, SpanKind.INTERNAL)
         lands in ``dependencies``.  We verify it appears using its locally-captured span-id.
