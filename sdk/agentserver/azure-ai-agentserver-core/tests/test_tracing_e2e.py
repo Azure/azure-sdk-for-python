@@ -264,3 +264,46 @@ class TestAppInsightsIngestionE2E:
             f"Child framework_child span (id={child_span_id}) not found in "
             f"dependencies table after {_APPINSIGHTS_POLL_TIMEOUT}s"
         )
+
+    def test_span_emitted_without_incoming_trace_context(
+        self,
+        appinsights_connection_string,
+        appinsights_resource_id,
+        logs_query_client,
+    ):
+        """Verify that spans created by downstream frameworks are exported even
+        when the incoming request has NO traceparent/tracestate/baggage headers.
+
+        This simulates a direct call (e.g. health check, load balancer probe)
+        that does not carry W3C trace context.  The framework (MAF) should still
+        be able to create spans that are exported to App Insights as new traces.
+        """
+        unique_span_name = f"NoContext-{uuid.uuid4().hex[:8]}"
+        framework_tracer = trace.get_tracer("test.framework.no_context")
+
+        async def handler(request: Request) -> Response:
+            with framework_tracer.start_as_current_span(unique_span_name):
+                body = await request.body()
+            return Response(content=body, media_type="application/octet-stream")
+
+        routes = [Route("/echo", handler, methods=["POST"])]
+        app = AgentServerHost(routes=routes)
+        client = TestClient(app)
+
+        # Send request with NO traceparent/tracestate/baggage headers
+        resp = client.post("/echo", content=b"no context test")
+        assert resp.status_code == 200
+        _flush_provider()
+
+        query = (
+            "dependencies "
+            f"| where name == '{unique_span_name}' "
+            "| project name, timestamp, operation_Id "
+            "| take 1"
+        )
+        rows = _poll_appinsights(logs_query_client, appinsights_resource_id, query)
+        assert len(rows) > 0, (
+            f"Framework span '{unique_span_name}' not found in App Insights "
+            f"dependencies table after {_APPINSIGHTS_POLL_TIMEOUT}s. "
+            "Spans should be emitted even without incoming trace context."
+        )
