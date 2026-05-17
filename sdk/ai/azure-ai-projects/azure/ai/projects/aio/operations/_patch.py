@@ -18,15 +18,17 @@ from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_sessions_async import BetaAgentsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
+    BetaAgentOptimizationJobsOperations,
     BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
+    BetaModelsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
+    BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
-    BetaToolboxesOperations,
 )
 
 
@@ -50,16 +52,20 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaInsightsOperations` operations"""
     memory_stores: BetaMemoryStoresOperations
     """:class:`~azure.ai.projects.aio.operations.BetaMemoryStoresOperations` operations"""
+    models: BetaModelsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaModelsOperations` operations"""
     red_teams: BetaRedTeamsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaRedTeamsOperations` operations"""
+    routines: BetaRoutinesOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaRoutinesOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
-    toolboxes: BetaToolboxesOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaToolboxesOperations` operations"""
     skills: BetaSkillsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaDatasetsOperations` operations"""
+    agent_optimization_jobs: BetaAgentOptimizationJobsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaAgentOptimizationJobsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -80,17 +86,19 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "BetaAgentOptimizationJobsOperations",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
+    "BetaModelsOperations",
     "BetaOperations",
     "BetaRedTeamsOperations",
+    "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
-    "BetaToolboxesOperations",
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
