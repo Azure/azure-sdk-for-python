@@ -20,15 +20,22 @@ def pytest_configure(config):
 
 
 @pytest.fixture(autouse=True, scope="session")
-def _prevent_distro_setup():
+def _prevent_distro_setup(request):
     """Prevent microsoft-opentelemetry distro from contaminating global OTel
     state during tests.  Without this, CI environments that have the distro
     installed and APPLICATIONINSIGHTS_CONNECTION_STRING set would trigger
     ``use_microsoft_opentelemetry()`` on the first server construction,
     installing a global TracerProvider that breaks later traceparent-
-    propagation tests."""
-    with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+    propagation tests.
+
+    When running E2E tracing tests (``-m tracing_e2e``), the real distro
+    export is needed so spans actually reach Application Insights."""
+    markexpr = request.config.getoption("-m", default="")
+    if "tracing_e2e" in markexpr:
         yield
+    else:
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+            yield
 
 
 # ---------------------------------------------------------------------------
