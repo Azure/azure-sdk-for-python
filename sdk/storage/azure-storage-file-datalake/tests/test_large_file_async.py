@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
+
 import platform
 import re
 import unittest
@@ -11,13 +11,15 @@ from io import BytesIO
 from os import urandom
 
 import pytest
+
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
 from azure.core.exceptions import ResourceExistsError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.filedatalake.aio import DataLakeServiceClient
 
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
@@ -32,9 +34,11 @@ class TestLargeFileAsync(AsyncStorageRecordedTestCase):
         url = self.account_url(account_name, 'dfs')
         self.payload_dropping_policy = PayloadDroppingPolicy()
         credential_policy = _format_shared_key_credential(account_name, account_key.secret)
-        self.dsc = DataLakeServiceClient(url,
-                                         credential=account_key.secret,
-                                         _additional_pipeline_policies=[self.payload_dropping_policy, credential_policy])
+        self.dsc = DataLakeServiceClient(
+            url,
+            credential=account_key.secret,
+            _additional_pipeline_policies=[self.payload_dropping_policy, credential_policy]
+        )
 
         self.config = self.dsc._config
 
@@ -47,17 +51,6 @@ class TestLargeFileAsync(AsyncStorageRecordedTestCase):
 
             except ResourceExistsError:
                 pass
-
-    def tearDown(self):
-        if not self.is_playback():
-            try:
-                loop = asyncio.get_event_loop()
-                loop.run_until_complete(self.dsc.delete_file_system(self.file_system_name))
-                loop.run_until_complete(self.dsc.__aexit__())
-            except:
-                pass
-
-        return super(TestLargeFileAsync, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
     def _get_directory_reference(self, prefix=TEST_DIRECTORY_PREFIX):
@@ -90,7 +83,10 @@ class TestLargeFileAsync(AsyncStorageRecordedTestCase):
         assert self.payload_dropping_policy.append_counter == 1
         assert self.payload_dropping_policy.append_sizes[0] == LARGEST_BLOCK_SIZE
 
-    @pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="Test failing on Pypy3 Linux, skip to investigate")
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Test failing on Pypy3 Linux, skip to investigate"
+    )
     @pytest.mark.live_test_only
     @DataLakePreparer()
     async def test_upload_large_stream_without_network(self, **kwargs):
@@ -159,7 +155,8 @@ class PayloadDroppingPolicy(SansIOHTTPPolicy):
         if _is_append_request(request):
             if request.http_request.body:
                 position = self.append_counter*len(self.dummy_body)
-                request.http_request.url = re.sub(r'position=\d+', "position=" + str(position), request.http_request.url)
+                request.http_request.url = re.sub(
+                    r'position=\d+', "position=" + str(position), request.http_request.url)
                 self.append_sizes.append(_get_body_length(request))
                 replacement = self.dummy_body
                 request.http_request.body = replacement
@@ -167,7 +164,8 @@ class PayloadDroppingPolicy(SansIOHTTPPolicy):
                 self.append_counter = self.append_counter + 1
         elif _is_flush_request(request):
             position = self.append_counter * len(self.dummy_body)
-            request.http_request.url = re.sub(r'position=\d+', "position=" + str(position), request.http_request.url)
+            request.http_request.url = re.sub(
+                r'position=\d+', "position=" + str(position), request.http_request.url)
 
 
 def _is_append_request(request):

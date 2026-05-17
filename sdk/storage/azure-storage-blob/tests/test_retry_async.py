@@ -5,12 +5,18 @@
 # --------------------------------------------------------------------------
 import asyncio
 import functools
-import pytest
 from typing import NamedTuple
 from unittest import mock
 
+import pytest
+
 from aiohttp.client_exceptions import ServerTimeoutError
 from aiohttp.streams import StreamReader
+from devtools_testutils import ResponseCallback, RetryCounter
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -20,26 +26,22 @@ from azure.core.exceptions import (
     ServiceResponseError,
     ServiceResponseTimeoutError
 )
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
 from azure.storage.blob import LocationMode
 from azure.storage.blob._shared.authentication import AzureSigningError
 from azure.storage.blob._shared.models import StorageErrorCode
 from azure.storage.blob._shared.policies_async import ExponentialRetry, LinearRetry
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
-from devtools_testutils import ResponseCallback, RetryCounter
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import BlobPreparer
-
 
 class TimeoutAioHttpTransport(AioHttpTransport):
     """Transport to test read timeout"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.count = 0
 
-    async def send(self, request, **config):
+    async def send(self, request, **config):  # pylint: disable=unused-argument
         self.count += 1
         timeout_error = ServerTimeoutError("Timeout on reading data from socket")
         raise ServiceResponseError(timeout_error, error=timeout_error) from timeout_error
@@ -183,7 +185,6 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         service = self._create_storage_service(
             BlobServiceClient, storage_account_name, storage_account_key, retry_total=0)
 
-
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
 
@@ -253,15 +254,12 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_exponential_retry_interval(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
+    async def test_exponential_retry_interval(self):
         # Arrange
         retry_policy = ExponentialRetry(initial_backoff=1, increment_base=3, random_jitter_range=3)
         context_stub = {}
 
-        for i in range(10):
+        for _ in range(10):
             # Act
             context_stub['count'] = 0
             backoff = retry_policy.get_backoff_time(context_stub)
@@ -292,14 +290,11 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_linear_retry_interval(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
+    async def test_linear_retry_interval(self):
         # Arrange
         context_stub = {}
 
-        for i in range(10):
+        for _ in range(10):
             # Act
             retry_policy = LinearRetry(backoff=1, random_jitter_range=3)
             backoff = retry_policy.get_backoff_time(context_stub)
@@ -358,7 +353,7 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
             BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
 
         try:
-            created = await service.create_container(container_name)
+            await service.create_container(container_name)
 
             # Act
             callback = ResponseCallback(status=200, new_status=408).override_first_status
@@ -374,10 +369,7 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_retry_secondary(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
+    async def test_retry_secondary(self, **kwargs):  # pylint: disable=too-many-statements
         """Secondary location test.
 
         This test is special, since in practical term, we don't have time to wait
@@ -390,12 +382,16 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         Might be changed to live only as loooooong test with a polling on
         the current geo-replication status.
         """
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         # Fail the first request and set the retry policy to retry to secondary
         # The given test account must be GRS
         class MockTransport(AioHttpTransport):
             CALL_NUMBER = 1
             ENABLE = False
+
             async def send(self, request, **kwargs):
                 if MockTransport.ENABLE:
                     if MockTransport.CALL_NUMBER == 2:
@@ -431,7 +427,7 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         # Assert
 
         # Try put
-        def put_retry_callback(retry_count=None, location_mode=None, **kwargs):
+        def put_retry_callback(retry_count=None, location_mode=None, **kwargs):  # pylint: disable=unused-argument
             # This call should be called once, with the decision to try secondary
             put_retry_callback.called = True
             if MockTransport.CALL_NUMBER == 1:
@@ -443,10 +439,10 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         put_retry_callback.called = False
 
         container = service.get_container_client('containername')
-        created = await container.create_container(retry_hook=put_retry_callback)
+        await container.create_container(retry_hook=put_retry_callback)
         assert put_retry_callback.called
 
-        def retry_callback(retry_count=None, location_mode=None, **kwargs):
+        def retry_callback(retry_count=None, location_mode=None, **kwargs):  # pylint: disable=unused-argument
             # This call should be called once, with the decision to try secondary
             retry_callback.called = True
             if MockTransport.CALL_NUMBER == 1:
@@ -508,12 +504,12 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_streaming_retry(self, **kwargs):
+        """Test that retry mechanisms are working when streaming data."""
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        """Test that retry mechanisms are working when streaming data."""
-        container_name = self.get_resource_name('utcontainer') 
-        retry = LinearRetry(backoff = 0.1, random_jitter_range=0)
+        container_name = self.get_resource_name('utcontainer')
+        retry = LinearRetry(backoff=0.1, random_jitter_range=0)
 
         service = self._create_storage_service(
             BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
@@ -653,13 +649,16 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
             conn_error = AzureError("Connection reset by peer")
             if retry_counter.count == 1:
                 raise ServiceResponseError(conn_error, error=conn_error)
-            elif retry_counter.count == 2:
+            if retry_counter.count == 2:
                 raise ServiceResponseTimeoutError(conn_error, error=conn_error)
             return await real_process_content(response, start_offset, end_offset, encryption)
 
         # Act
         try:
-            with mock.patch('azure.storage.blob.aio._download_async.process_content', side_effect=mock_process_content_with_error):
+            with mock.patch(
+                'azure.storage.blob.aio._download_async.process_content',
+                side_effect=mock_process_content_with_error
+            ):
                 downloaded_data = await (await blob.download_blob()).readall()
             assert downloaded_data == data
             assert retry_counter.count >= 3

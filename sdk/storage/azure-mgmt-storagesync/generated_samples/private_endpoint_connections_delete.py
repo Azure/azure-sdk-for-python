@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.storagesync import MicrosoftStorageSync
 
 """
@@ -29,14 +31,13 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.private_endpoint_connections.begin_delete(
+    client.private_endpoint_connections.begin_delete(
         resource_group_name="res6977",
         storage_sync_service_name="sss2527",
         private_endpoint_connection_name="{privateEndpointConnectionName}",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/storagesync/resource-manager/Microsoft.StorageSync/stable/2022-06-01/examples/PrivateEndpointConnections_Delete.json
+# x-ms-original-file: specification/storagesync/resource-manager/Microsoft.StorageSync/StorageSync/stable/2020-09-01/examples/PrivateEndpointConnections_Delete.json
 if __name__ == "__main__":
     main()

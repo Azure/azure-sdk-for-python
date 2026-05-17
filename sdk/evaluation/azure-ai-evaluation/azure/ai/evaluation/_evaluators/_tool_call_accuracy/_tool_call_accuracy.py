@@ -233,7 +233,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if _is_intermediate_response(eval_input.get("response")):
             return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
-                self.threshold,
+                self._threshold,
             )
 
         # Preprocess messages if they are lists
@@ -260,7 +260,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             llm_status = llm_output.get("status", "completed")
             if llm_status == "skipped":
                 reason = llm_output.get("reason", "")
-                return self._return_not_applicable_result(reason, self.threshold)
+                return self._return_not_applicable_result(reason, self._threshold)
 
             score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(
@@ -279,7 +279,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             # Format the output
             reason = llm_output.get("reason", "")
             score = float(score)
-            score_result = "pass" if score >= self.threshold else "fail"
+            score_result = "pass" if score >= self._threshold else "fail"
             llm_properties = llm_output.get("properties", {}) or {}
             llm_properties.update(
                 {
@@ -329,7 +329,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._return_not_applicable_result(eval_input.get("error_message"), self.threshold)
+            return self._return_not_applicable_result(eval_input.get("error_message"), self._threshold)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

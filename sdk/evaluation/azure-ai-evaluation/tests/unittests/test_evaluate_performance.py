@@ -52,8 +52,8 @@ class TestEvaluatePerformance:
 
         assert diff < max_duration
         row_result_df = pd.DataFrame(result["rows"])
-        assert "outputs.f1.f1_score" in row_result_df.columns
-        assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
+        assert "outputs.f1.f1_score_score" in row_result_df.columns
+        assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score_score"])
 
     def test_evaluate_parallelism(self, ten_queries_file):
         """Test that ensures that parallelism speeds up evaluation as expected by running
