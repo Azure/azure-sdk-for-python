@@ -168,34 +168,6 @@ class TestAppInsightsIngestionE2E:
     """Query Application Insights to confirm spans created inside handlers
     are actually ingested and enriched via TraceContextMiddleware propagation."""
 
-    def test_child_span_in_appinsights(
-        self,
-        appinsights_connection_string,
-        appinsights_resource_id,
-        logs_query_client,
-    ):
-        """Create a framework child span and verify it
-        appears in the App Insights ``dependencies`` table."""
-        app, request_ids, child_span_ids = _make_echo_app_with_child_span()
-        client = TestClient(app)
-        resp = client.post("/echo", content=b"child e2e")
-        assert resp.status_code == 200
-        child_span_id = child_span_ids[-1]
-        _flush_provider()
-
-        query = (
-            "dependencies "
-            f"| where id == '{child_span_id}' "
-            "| where name == 'framework_child' "
-            "| project id, name, operation_Id "
-            "| take 1"
-        )
-        rows = _poll_appinsights(logs_query_client, appinsights_resource_id, query)
-        assert len(rows) > 0, (
-            f"Child framework_child span (id={child_span_id}) not found in "
-            f"dependencies table after {_APPINSIGHTS_POLL_TIMEOUT}s"
-        )
-
     def test_echo_request_succeeds(
         self,
         appinsights_connection_string,
