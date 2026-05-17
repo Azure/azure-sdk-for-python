@@ -576,4 +576,3 @@ def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] =
             provider.add_span_processor(proc)
         provider._agentserver_processors_added = True  # type: ignore[attr-defined]  # pylint: disable=protected-access
     return provider
-
