@@ -11,7 +11,6 @@ Selected by ``pytest -m tracing_e2e`` and skipped when
 ``APPLICATIONINSIGHTS_CONNECTION_STRING`` is not set.
 """
 import time
-import uuid
 from datetime import timedelta
 
 import pytest
@@ -61,53 +60,6 @@ def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_P
 # ---------------------------------------------------------------------------
 # E2E test
 # ---------------------------------------------------------------------------
-
-class TestInvocationTracingE2E:
-    """Verify that user-created spans inside InvocationAgentServerHost handlers land in App Insights."""
-
-    @pytest.mark.asyncio
-    async def test_handler_span_in_appinsights(
-        self,
-        appinsights_connection_string,
-        appinsights_resource_id,
-        logs_query_client,
-    ):
-        """POST to /invocations with a handler that creates a span, verify it appears in App Insights.
-
-        The InvocationAgentServerHost propagates W3C trace context but does not
-        create its own invoke_agent span.  This test verifies that a user-created
-        span inside the handler is correctly exported to App Insights.
-        """
-        handler_tracer = trace.get_tracer("test.invocation.handler")
-        unique_span_name = f"HandlerWork-{uuid.uuid4().hex[:8]}"
-
-        app = InvocationAgentServerHost()
-
-        @app.invoke_handler
-        async def handle(request: Request) -> Response:
-            with handler_tracer.start_as_current_span(unique_span_name):
-                body = await request.body()
-            return Response(content=body, media_type="application/octet-stream")
-
-        transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-            resp = await client.post("/invocations", content=b"hello e2e")
-
-        assert resp.status_code == 200
-        _flush_provider()
-
-        query = (
-            "dependencies "
-            f"| where name == '{unique_span_name}' "
-            "| project name, timestamp, duration, success, operation_Id "
-            "| take 1"
-        )
-        rows = _poll_appinsights(logs_query_client, appinsights_resource_id, query)
-        assert len(rows) > 0, (
-            f"Handler span '{unique_span_name}' not found in "
-            f"App Insights dependencies table after {_APPINSIGHTS_POLL_TIMEOUT}s"
-        )
-
 
 class TestSpanParentingE2E:
     """Verify that a child span created inside the invocation handler is
