@@ -1,0 +1,176 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/projects/test-project/investigations/test-invst/tasks?api-version=2026-02-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "Content-Length": "230",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": {
+        "title": "task-for-update-test",
+        "priority": "High",
+        "description": "Test task for Python SDK",
+        "assignedTo": {
+          "id": "Sanitized",
+          "type": "Application"
+        },
+        "investigationId": "/projects/test-project/investigations/test-invst"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 May 2026 23:59:06 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": {
+        "name": "5299108449331521209",
+        "title": "task-for-update-test",
+        "priority": "High",
+        "description": "Test task for Python SDK",
+        "validationRequirements": [],
+        "parentId": null,
+        "dependsOn": [],
+        "relatedTo": [],
+        "assignedTo": {
+          "id": "Sanitized",
+          "type": "Application"
+        },
+        "comments": [],
+        "createdByType": "User",
+        "status": "New",
+        "createdAt": "2026-05-15T23:59:06.406667Z",
+        "lastModifiedAt": "2026-05-15T23:59:06.406667Z",
+        "executionHistory": [
+          {
+            "createdAt": "2026-05-15T23:59:06.406667Z",
+            "action": "taskCreated",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "summary": "Task created: task-for-update-test"
+          }
+        ],
+        "taskCollectionId": "5215043646661345540",
+        "investigationId": "/projects/test-project/investigations/test-invst",
+        "taskResult": {
+          "text": "",
+          "storageAssetIds": [],
+          "citations": []
+        },
+        "storageAssetIds": [],
+        "lastModifiedByType": "User",
+        "lastModifiedBy": "Sanitized",
+        "createdBy": "Sanitized",
+        "foundryConversationId": null
+      }
+    },
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/projects/test-project/investigations/test-invst/tasks/5299108449331521209?api-version=2026-02-01-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "Content-Length": "82",
+        "Content-Type": "application/merge-patch+json",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": {
+        "title": "Updated sdk task title",
+        "description": "Updated sdk task description"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 May 2026 23:59:08 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": {
+        "name": "5299108449331521209",
+        "title": "Updated sdk task title",
+        "priority": "High",
+        "description": "Updated sdk task description",
+        "validationRequirements": [],
+        "parentId": null,
+        "dependsOn": [],
+        "relatedTo": [],
+        "assignedTo": {
+          "id": "Sanitized",
+          "type": "Application"
+        },
+        "comments": [],
+        "createdByType": "User",
+        "status": "New",
+        "createdAt": "2026-05-15T23:59:06.406667Z",
+        "lastModifiedAt": "2026-05-15T23:59:08.4057078Z",
+        "executionHistory": [
+          {
+            "createdAt": "2026-05-15T23:59:06.406667Z",
+            "action": "taskCreated",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "summary": "Task created: task-for-update-test"
+          },
+          {
+            "createdAt": "2026-05-15T23:59:08.4057069Z",
+            "action": "taskUpdated",
+            "createdBy": "Sanitized",
+            "createdByType": "Application",
+            "summary": "Task updated: title, description",
+            "additionalDetails": {
+              "titleFrom": "task-for-update-test",
+              "titleTo": "Updated sdk task title",
+              "descriptionChanged": true
+            }
+          }
+        ],
+        "taskCollectionId": "5215043646661345540",
+        "investigationId": "/projects/test-project/investigations/test-invst",
+        "taskResult": {
+          "text": "",
+          "storageAssetIds": [],
+          "citations": []
+        },
+        "storageAssetIds": [],
+        "lastModifiedByType": "User",
+        "lastModifiedBy": "Sanitized",
+        "createdBy": "Sanitized",
+        "foundryConversationId": null
+      }
+    },
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/projects/test-project/investigations/test-invst/tasks/5299108449331521209?api-version=2026-02-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Date": "Fri, 15 May 2026 23:59:10 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

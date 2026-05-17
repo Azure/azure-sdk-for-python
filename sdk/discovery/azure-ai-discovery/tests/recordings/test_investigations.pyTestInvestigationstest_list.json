@@ -1,0 +1,27 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/projects/test-project/investigations?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 May 2026 23:55:12 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": "[{\"name\":\"test-create-new\",\"projectName\":\"test-project\",\"description\":\"Updated description\",\"tags\":null,\"createdBy\":\"Sanitized\",\"createdByType\":null,\"createdAt\":\"2026-04-30T01:40:34.0199451+00:00\",\"lastModifiedAt\":\"2026-05-07T23:48:53.9038453+00:00\",\"lastModifiedBy\":\"Sanitized\",\"lastModifiedByType\":null,\"displayName\":\"Updated Test\",\"status\":\"Created\"},{\"name\":\"sdk-test-investig-c072bb\",\"projectName\":\"test-project\",\"description\":\"Updated investigation\",\"tags\":[],\"createdBy\":\"Sanitized\",\"createdByType\":null,\"createdAt\":\"2026-05-01T01:14:24.699907+00:00\",\"lastModifiedAt\":\"2026-05-08T00:28:22.442912+00:00\",\"lastModifiedBy\":\"Sanitized\",\"lastModifiedByType\":null,\"displayName\":\"Updated Test\",\"status\":\"Created\"},{\"name\":\"test-invst\",\"projectName\":\"test-project\",\"description\":\"New investigation\",\"tags\":null,\"createdBy\":\"Sanitized\",\"createdByType\":null,\"createdAt\":\"2026-05-07T22:53:08.7591754+00:00\",\"lastModifiedAt\":\"2026-05-15T23:55:09.6607558+00:00\",\"lastModifiedBy\":\"Sanitized\",\"lastModifiedByType\":null,\"displayName\":\"New Test\",\"status\":\"Created\"},{\"name\":\"test-create-replace\",\"projectName\":\"test-project\",\"description\":\"Test investigation\",\"tags\":null,\"createdBy\":\"Sanitized\",\"createdByType\":null,\"createdAt\":\"2026-05-12T00:28:05.634114+00:00\",\"lastModifiedAt\":\"2026-05-12T00:33:40.3010494+00:00\",\"lastModifiedBy\":\"Sanitized\",\"lastModifiedByType\":null,\"displayName\":\"Test\",\"status\":\"Created\"},{\"name\":\"java-test-cr\",\"projectName\":\"test-project\",\"description\":\"Java SDK test investigation\",\"tags\":null,\"createdBy\":\"Sanitized\",\"createdByType\":null,\"createdAt\":\"2026-05-14T04:44:15.3052129+00:00\",\"lastModifiedAt\":\"2026-05-15T01:26:20.1524137+00:00\",\"lastModifiedBy\":\"Sanitized\",\"lastModifiedByType\":null,\"displayName\":\"Java SDK test create-replace\",\"status\":\"Created\"}]"
+    }
+  ],
+  "Variables": {}
+}

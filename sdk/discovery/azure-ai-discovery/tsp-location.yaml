@@ -1,0 +1,3 @@
+batch:
+  - ./azure/ai/discovery/_workspace
+  - ./azure/ai/discovery/_bookshelf
