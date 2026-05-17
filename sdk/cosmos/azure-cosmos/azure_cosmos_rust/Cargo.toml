@@ -1,0 +1,49 @@
+[package]
+name        = "azure_cosmos_rust"
+version     = "0.1.0"
+description = "PyO3 binding that exposes the azure_data_cosmos_driver crate to the azure-cosmos Python SDK"
+authors.workspace      = true
+edition.workspace      = true
+license.workspace      = true
+repository.workspace   = true
+rust-version.workspace = true
+publish = false
+
+# `cdylib` is the load-bearing line: tells Cargo to produce a C-compatible
+# dynamic library that Python can load via the import machinery. Maturin
+# then renames the resulting .dll/.so/.dylib to _rust.{pyd,so}
+# and drops it into azure/cosmos/ next to the .py files.
+[lib]
+name       = "azure_cosmos_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+# PyO3 makes Rust functions Python-callable.
+#
+# `extension-module` : build a Python extension (no link to libpython).
+# `abi3-py39`        : target the stable ABI from Python 3.9 onward, so
+#                      one wheel per platform works for every Python 3.9+.
+pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
+
+# The driver crate, pulled in as a path dependency from a sibling clone of
+# the azure-sdk-for-rust repo. Both repos are expected to live side-by-side
+# under the same parent directory (e.g. ~/source/repos/). If you keep them
+# elsewhere, edit this path or change it to a `git = ...` dependency.
+azure_data_cosmos_driver = { path = "../../../../../azure-sdk-for-rust/sdk/cosmos/azure_data_cosmos_driver" }
+
+# Tokio runtime. Lives here, not in the driver, because the binding is
+# what bridges Python's sync call into Rust's async world.
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+
+# Parsing the account endpoint when constructing AccountReference.
+url = { workspace = true }
+
+# Helpers in lib.rs parse the partition-key header and extract the body id.
+serde_json = { workspace = true }
+
+# Parsing an activity-id header into a typed UUID.
+uuid = { workspace = true }
+
+# Surfaced at the binding boundary when forwarding driver errors.
+azure_core = { workspace = true }
+

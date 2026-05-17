@@ -43,6 +43,9 @@ from .._base import (_build_properties_cache, _deserialize_throughput, _replace_
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
+from .._helpers._item_dispatch import merge_create_item_explicit_kwargs
+from ._helpers.item_helper import AsyncItemHelper
+from .._helpers._item_dispatch import pick_backend
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
@@ -284,35 +287,41 @@ class ContainerProxy:
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        request_options = _build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
-        if indexing_directive is not None:
-            request_options["indexingDirective"] = indexing_directive
-        await self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        result = await self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
+        # Move the explicit-keyword shortcuts into the kwargs dict so
+        # the AsyncItemHelper sees a single uniform source of truth.
+        # Shared with the sync sibling via ``_item_dispatch`` so the
+        # option-name mapping cannot drift between the two.
+        merge_create_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
         )
-        return result
+
+        # Hand off to the async per-call item helper. It owns the
+        # backend dispatch, request-options build, container-rid
+        # stamp, and the legacy ``CreateItem`` call. The
+        # ``ensure_container_cached`` callback delegates the
+        # cache-populate step back to this proxy so per-call options
+        # like ``excluded_locations`` and timeouts flow into the cache
+        # refresh exactly the way the legacy code path did.
+        return await AsyncItemHelper(
+            pick_backend(self.client_connection),
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).create_item(
+            container_link=self.container_link,
+            body=body,
+            indexing_directive=indexing_directive,
+            enable_automatic_id_generation=enable_automatic_id_generation,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def read_item(

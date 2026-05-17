@@ -43,6 +43,12 @@ from ._constants import _Constants as Constants
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
+# COMMON_OPTIONS (kwarg name -> internal option-key) lives in
+# ``_helpers/_options.py`` so the future rust-backend item helper and the
+# existing core-python ``build_options`` consume the same mapping table.
+# The leading-underscore alias is kept here for source compatibility with
+# anything still grepping the old name.
+from ._helpers._options import COMMON_OPTIONS as _COMMON_OPTIONS
 
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
@@ -55,28 +61,6 @@ if TYPE_CHECKING:
 # pylint: disable=protected-access
 #cspell:ignore PPAF, ppaf
 
-_COMMON_OPTIONS = {
-    'initial_headers': 'initialHeaders',
-    'pre_trigger_include': 'preTriggerInclude',
-    'post_trigger_include': 'postTriggerInclude',
-    'access_condition': 'accessCondition',
-    'session_token': 'sessionToken',
-    'resource_token_expiry_seconds': 'resourceTokenExpirySeconds',
-    'offer_enable_ru_per_minute_throughput': 'offerEnableRUPerMinuteThroughput',
-    'disable_ru_per_minute_usage': 'disableRUPerMinuteUsage',
-    'continuation': 'continuation',
-    'content_type': 'contentType',
-    'is_query_plan_request': 'isQueryPlanRequest',
-    'supported_query_features': 'supportedQueryFeatures',
-    'query_version': 'queryVersion',
-    'priority': 'priorityLevel',
-    'no_response': 'responsePayloadOnWriteDisabled',
-    'retry_write': Constants.Kwargs.RETRY_WRITE,
-    'max_item_count': 'maxItemCount',
-    'throughput_bucket': 'throughputBucket',
-    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
-    "availability_strategy": Constants.Kwargs.AVAILABILITY_STRATEGY
-}
 
 # Cosmos resource ID validation regex breakdown:
 # ^ Match start of string.
