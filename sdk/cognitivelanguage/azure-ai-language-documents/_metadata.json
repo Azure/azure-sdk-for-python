@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2026-05-01",
+  "apiVersions": {
+    "Language.AnalyzeDocuments": "2026-05-01"
+  },
+  "commit": "3f4fd636cd148b5789a937001fb38f79e298ad8d",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/cognitiveservices/data-plane/LanguageAnalyzeDocuments",
+  "emitterVersion": "0.61.3"
+}
