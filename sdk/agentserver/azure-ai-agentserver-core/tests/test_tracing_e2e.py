@@ -65,6 +65,55 @@ def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_P
 
 
 # ---------------------------------------------------------------------------
+# Warm-up fixture: initialize app and wait for App Insights to be ready
+# ---------------------------------------------------------------------------
+
+@pytest.fixture(scope="module", autouse=True)
+def _warmup_appinsights():
+    """Initialize the application and send a warm-up span to App Insights.
+
+    App Insights has a cold-start ingestion delay for the first telemetry
+    session — data can take 5+ minutes to become queryable.  This module-scoped
+    fixture initializes the host (configuring the exporter), sends a dummy span,
+    and polls until App Insights confirms ingestion.  Real tests then run against
+    a "warm" pipeline with fast ingestion.
+    """
+    import os
+
+    conn_str = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
+    resource_id = os.environ.get("APPLICATIONINSIGHTS_RESOURCE_ID")
+    if not conn_str or not resource_id:
+        yield
+        return
+
+    # Initialize the application — triggers configure_observability() which
+    # sets up the TracerProvider with the App Insights exporter.
+    AgentServerHost()
+
+    # Send a warmup span
+    warmup_name = f"warmup-{uuid.uuid4().hex[:8]}"
+    tracer = trace.get_tracer("test.warmup")
+    with tracer.start_as_current_span(warmup_name):
+        pass
+    _flush_provider()
+
+    # Poll until App Insights ingests the warm-up span (up to 360s)
+    from azure.monitor.query import LogsQueryClient
+
+    if os.environ.get("AZURESUBSCRIPTION_TENANT_ID"):
+        from azure.identity import AzurePowerShellCredential
+        credential = AzurePowerShellCredential(tenant_id=os.environ["AZURESUBSCRIPTION_TENANT_ID"])
+    else:
+        from azure.identity import DefaultAzureCredential
+        credential = DefaultAzureCredential()
+
+    client = LogsQueryClient(credential)
+    query = f"dependencies | where name == '{warmup_name}' | take 1"
+    _poll_appinsights(client, resource_id, query, timeout=360)
+    yield
+
+
+# ---------------------------------------------------------------------------
 # Minimal echo app factories using core's AgentServerHost
 # ---------------------------------------------------------------------------
 
