@@ -209,8 +209,6 @@ def emit_human_evaluation_event(
 if __name__ == "__main__":
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
-    print("Point A")
-
     with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
@@ -220,11 +218,7 @@ if __name__ == "__main__":
         # below will be exported to Application Insights.
         connection_string = project_client.telemetry.get_application_insights_connection_string()
 
-        print("Point B")
-
         configure_azure_monitor(connection_string=connection_string)
-
-        print("Point C")
 
         # Optional: Derive the Foundry Project's resource id from any connection. The
         # endpoint URL alone only gives us the account + project names, but every
