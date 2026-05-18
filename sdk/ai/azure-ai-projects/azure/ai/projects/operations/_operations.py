@@ -3906,7 +3906,7 @@ def build_beta_jobs_list_request(
     _url = "/jobs"
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
     if job_type is not None:
         _params["jobType"] = _SERIALIZER.query("job_type", job_type, "str")
     if tag is not None:
@@ -3938,7 +3938,7 @@ def build_beta_jobs_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -3964,7 +3964,7 @@ def build_beta_jobs_show_services_request(name: str, run_id: str, node_id: int, 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -3989,7 +3989,7 @@ def build_beta_jobs_get_run_details_request(name: str, run_id: str, **kwargs: An
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -4014,7 +4014,7 @@ def build_beta_jobs_get_run_request(name: str, run_id: str, **kwargs: Any) -> Ht
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -4049,7 +4049,7 @@ def build_beta_jobs_list_artifacts_request(
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
     if path is not None:
         _params["path"] = _SERIALIZER.query("path", path, "str")
     if continuation_token_parameter is not None:
@@ -4091,7 +4091,7 @@ def build_beta_jobs_get_artifact_content_information_request(  # pylint: disable
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
     if path is not None:
         _params["path"] = _SERIALIZER.query("path", path, "str")
     if continuation_token_parameter is not None:
@@ -4122,7 +4122,7 @@ def build_beta_jobs_create_or_update_request(name: str, **kwargs: Any) -> HttpRe
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     # Construct headers
     if content_type is not None:
@@ -4145,7 +4145,7 @@ def build_beta_jobs_begin_delete_request(name: str, **kwargs: Any) -> HttpReques
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
@@ -4163,7 +4163,7 @@ def build_beta_jobs_begin_cancel_request(name: str, **kwargs: Any) -> HttpReques
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
@@ -18778,7 +18778,7 @@ class BetaJobsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
+                _next_request_params["api-version"] = "2026-01-15-preview"
                 _request = HttpRequest(
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),

@@ -27,6 +27,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import ContainerClient
 
 from ._operations import BetaJobsOperations as _GeneratedJobsOps
+from ._operations import BetaModelsOperations as _GeneratedModelsOps
 from ._patch_datasets import DatasetsOperations
 from ._job_helper import (
     _TERMINAL_JOB_STATUSES,
@@ -59,6 +60,8 @@ from ..models._models import BlobReference
 from ..models._models import Job as _RestJob
 from ..models._models import Input as _Input
 from ..models._models import Output as _Output
+from ..models._models import ModelCredentialRequest as _ModelCredentialRequest
+from ..models._enums import AssetTypes
 from ..models._patch_jobs import CommandJob, ServiceInstance, ValidationResult
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from ..models._enums import _FoundryFeaturesOptInKeys
@@ -84,6 +87,7 @@ class JobsOperations(_GeneratedJobsOps):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self._models = _GeneratedModelsOps(self._client, self._config, self._serialize, self._deserialize)
 
     @distributed_trace
     def validate(
@@ -546,12 +550,18 @@ class JobsOperations(_GeneratedJobsOps):
         :type output: ~azure.ai.projects.models.Output
         :return: A blob reference describing the storage location and SAS credential.
         :rtype: ~azure.ai.projects.models.BlobReference
-        :raises NotImplementedError: If the output type requires Models operations
-            not yet generated in this SDK build.
         """
         _validate_output_for_download(output_name, output)
         assert output.asset_name is not None and output.asset_version is not None
-        credential = self._datasets.get_credentials(name=output.asset_name, version=output.asset_version)
+        if output.type == AssetTypes.SAFETENSORS_MODEL:
+            model_version = self._models.get(name=output.asset_name, version=output.asset_version)
+            credential = self._models.get_credentials(
+                name=output.asset_name,
+                version=output.asset_version,
+                body=_ModelCredentialRequest(blob_uri=model_version.blob_uri),
+            )
+        else:
+            credential = self._datasets.get_credentials(name=output.asset_name, version=output.asset_version)
         return credential.blob_reference
 
     def _download_blob_reference(self, blob_ref: BlobReference, destination: Path) -> Tuple[int, int]:
@@ -698,8 +708,6 @@ class JobsOperations(_GeneratedJobsOps):
         :type dest_root: ~pathlib.Path
         :raises ValueError: If the output cannot be resolved to a blob reference, or
             if the resolved blob reference is missing the SAS URI / blob URI.
-        :raises NotImplementedError: If the output type requires Models operations
-            not yet generated in this SDK build.
         """
         blob_ref = self._resolve_output_to_blob_ref(output_name, output)
         destination = dest_root / _NAMED_OUTPUTS_DIR / output_name

@@ -170,18 +170,12 @@ def _validate_output_for_download(output_name: str, output: _Output) -> None:
         )
 
     out_type = output.type
-    if out_type in (AssetTypes.URI_FILE, AssetTypes.URI_FOLDER):
+    if out_type in (AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.SAFETENSORS_MODEL):
         return
 
-    if out_type == AssetTypes.SAFETENSORS_MODEL:
-        raise NotImplementedError(
-            f"Output '{output_name}' is a 'safetensors_model'. Downloading model outputs is not yet "
-            "supported \u2014 the required Models operations and AssetCredentialRequest model are not "
-            "available in this SDK build."
-        )
-
     raise ValueError(
-        f"Output '{output_name}' has unsupported jobOutputType '{out_type}'. " f"Supported types: uri_file, uri_folder."
+        f"Output '{output_name}' has unsupported jobOutputType '{out_type}'. "
+        "Supported types: uri_file, uri_folder, safetensors_model."
     )
 
 

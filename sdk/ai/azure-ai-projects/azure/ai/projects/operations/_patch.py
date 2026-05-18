@@ -29,7 +29,7 @@ from ._operations import (
     BetaRedTeamsOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
-    BetaToolboxesOperations,
+    ToolboxesOperations as BetaToolboxesOperations,
 )
 
 
@@ -129,6 +129,8 @@ class BetaOperations(GeneratedBetaOperations):
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that adds flat CustomTrainingJob UX and auto header injection
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Toolboxes was promoted out of beta in generated code; re-attach under beta for backward compat
+        self.toolboxes = BetaToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(

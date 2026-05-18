@@ -53,6 +53,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AGENTS_OPTIMIZATION_V1_PREVIEW."""
     JOBS_V1_PREVIEW = "Jobs=V1Preview"
     """JOBS_V1_PREVIEW."""
+    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
+    """TOOLBOXES_V1_PREVIEW."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
