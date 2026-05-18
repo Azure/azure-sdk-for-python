@@ -1,5 +1,15 @@
 ## Release History
 
+### 4.14.8 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
 ### 4.14.7 (2026-05-18)
 
 #### Bugs Fixed
