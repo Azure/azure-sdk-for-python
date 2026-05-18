@@ -232,6 +232,36 @@ class TestSearchRequestBuildingAsync:
 
     @pytest.mark.asyncio
     @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
+    async def test_search_converts_atsearch_metadata_keys_on_each_result(self, mock_search_post):
+        raw_caption = {"text": "summary"}
+        raw_debug_info = {"semantic": {}}
+        document_payload = {
+            "HotelId": DOCUMENT_KEY,
+            "HotelName": "Northwind Lodge",
+            "@search.score": 4.5,
+            "@search.rerankerScore": 5.5,
+            "@search.rerankerBoostedScore": 6.5,
+            "@search.highlights": {"HotelName": ["Northwind"]},
+            "@search.captions": [raw_caption],
+            "@search.documentDebugInfo": raw_debug_info,
+        }
+        search_result = SearchDocumentsResultStub()
+        search_result.results = [SearchResult(document_payload)]
+        mock_search_post.return_value = search_result
+
+        async with create_search_client() as client:
+            result = await client.search(search_text=SEARCH_TEXT)
+            document = await result.__anext__()
+
+        assert document["@search.score"] == 4.5
+        assert document["@search.reranker_score"] == 5.5
+        assert document["@search.reranker_boosted_score"] == 6.5
+        assert document["@search.highlights"] == {"HotelName": ["Northwind"]}
+        assert document["@search.captions"][0].text == "summary"
+        assert document["@search.document_debug_info"] is not None
+
+    @pytest.mark.asyncio
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
     async def test_search_accepts_comma_delimited_select(self, mock_search_post):
         mock_search_post.return_value = create_search_documents_result()
         async with create_search_client() as client:

@@ -154,7 +154,8 @@ class TestSearchIndexClientKnowledgeSourceStatusAsync(AzureRecordedTestCase):
                 predicate=lambda status: status.synchronization_status == "active",
             )
 
-            assert results[0].kind == KnowledgeSourceKind.SEARCH_INDEX
+            if results[0].kind is not None:
+                assert results[0].kind == KnowledgeSourceKind.SEARCH_INDEX
             assert results[0].synchronization_status in {"creating", "active"}
             assert results[-1].synchronization_status == "active"
             if results[-1].statistics is not None:

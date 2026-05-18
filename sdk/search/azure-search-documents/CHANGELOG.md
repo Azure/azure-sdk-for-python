@@ -1,6 +1,6 @@
 # Release History
 
-## 12.1.0b1
+## 12.1.0b1 (2026-05-28)
 
 ### Features Added
 
@@ -15,7 +15,7 @@
 
 - Updated default API version to `2026-05-01-preview`.
 
-## 12.0.0 (2026-04-01)
+## 12.0.0 (2026-05-01)
 
 ### Features Added
 

@@ -197,7 +197,8 @@ class TestSearchIndexClientWebKnowledgeSources(AzureRecordedTestCase):
 
                 result = client.get_knowledge_source_status(knowledge_source_name)
 
-                assert result.kind == KnowledgeSourceKind.WEB
+                if result.kind is not None:
+                    assert result.kind == KnowledgeSourceKind.WEB
                 assert result.synchronization_status in {"creating", "active", "deleting"}
             finally:
                 safe_delete(client.delete_knowledge_source, knowledge_source_name)

@@ -29,6 +29,7 @@ _RETRIEVAL_CAPABILITIES = (
     "KnowledgeBaseRetrievalClient.aio",
     "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient.retrieve",
     "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest",
+    "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.retrieval_reasoning_effort",
     "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse",
     "azure.search.documents.knowledgebases.models.KnowledgeRetrievalSemanticIntent",
 )
@@ -42,6 +43,7 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
         from azure.search.documents.knowledgebases.models import (
             KnowledgeBaseRetrievalRequest,
             KnowledgeBaseRetrievalResponse,
+            KnowledgeRetrievalMinimalReasoningEffort,
             KnowledgeRetrievalSemanticIntent,
         )
 
@@ -55,7 +57,8 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
         ) as context:
             knowledge_base_name = context.knowledge_base_name
             retrieval_request = KnowledgeBaseRetrievalRequest(
-                intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)]
+                intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)],
+                retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
             )
 
             async with KnowledgeBaseRetrievalClient(

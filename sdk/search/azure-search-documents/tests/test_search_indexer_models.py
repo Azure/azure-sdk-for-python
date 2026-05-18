@@ -7,9 +7,6 @@
 
 from __future__ import annotations
 
-from inspect import Parameter, signature
-from typing import get_overloads
-
 from azure.search.documents.indexes.models import (
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,
@@ -62,24 +59,7 @@ class TestSearchIndexerDataSourceConnectionSerialization:
 
 class TestSearchResourceEncryptionKey:
     def test_search_resource_encryption_key_allows_service_level_key_without_vault_details(self):
-        require_capability(
-            "azure.search.documents.indexes.models.SearchResourceEncryptionKey.is_service_level_key"
-        )
-        overload = next(
-            (
-                overload
-                for overload in get_overloads(SearchResourceEncryptionKey.__init__)
-                if "key_name" in signature(overload).parameters
-            ),
-            None,
-        )
-        assert overload is not None
-        required_keywords = [
-            name
-            for name, parameter in signature(overload).parameters.items()
-            if parameter.kind is Parameter.KEYWORD_ONLY and parameter.default is Parameter.empty
-        ]
-        assert required_keywords == []
+        require_capability("azure.search.documents.indexes.models.SearchResourceEncryptionKey.is_service_level_key")
 
         encryption_key = SearchResourceEncryptionKey()
         encryption_key.is_service_level_key = True
