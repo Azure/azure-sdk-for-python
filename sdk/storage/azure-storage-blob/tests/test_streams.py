@@ -11,6 +11,8 @@ from io import BytesIO, UnsupportedOperation, SEEK_CUR, SEEK_END, SEEK_SET
 from typing import Iterator, List, Optional, Tuple, Union
 
 import pytest
+from test_helpers import NonSeekableStream
+
 from azure.storage.blob._shared.streams import (
     StructuredMessageConstants,
     StructuredMessageDecoder,
@@ -18,8 +20,6 @@ from azure.storage.blob._shared.streams import (
     StructuredMessageProperties,
 )
 from azure.storage.extensions import crc64
-
-from test_helpers import NonSeekableStream
 
 
 def _iter_bytes(data: bytes, chunk_size: int = 1024) -> Iterator[bytes]:
@@ -83,12 +83,12 @@ def _build_structured_message(
 
             segment_crc = None
             if StructuredMessageProperties.CRC64 in flags:
-                segment_crc = crc64.compute(segment_data, 0)
+                segment_crc = crc64.compute(segment_data, 0)  # pylint: disable=I1101
                 if i == invalidate_crc_segment:
                     segment_crc += 5
             _write_segment(i, segment_data, segment_crc, message)
 
-            message_crc = crc64.compute(segment_data, message_crc)
+            message_crc = crc64.compute(segment_data, message_crc)  # pylint: disable=I1101
 
     # Message footer
     if StructuredMessageProperties.CRC64 in flags:

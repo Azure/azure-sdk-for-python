@@ -7,11 +7,11 @@
 from io import BytesIO
 
 import pytest
-from azure.storage.fileshare import ShareClient, ShareServiceClient
-
 from devtools_testutils import is_live, recorded_by_proxy
 from devtools_testutils.storage import GenericTestProxyParametrize1, StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
+
+from azure.storage.fileshare import ShareClient, ShareServiceClient
 
 
 def assert_content_md5(request):

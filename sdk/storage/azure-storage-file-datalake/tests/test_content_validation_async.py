@@ -7,9 +7,6 @@
 from io import BytesIO
 
 import pytest
-from azure.storage.filedatalake import FileSystemClient as SyncFileSystemClient
-from azure.storage.filedatalake.aio import DataLakeServiceClient
-
 from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase, GenericTestProxyParametrize1
@@ -21,6 +18,9 @@ from test_content_validation import (
     assert_structured_message,
     assert_structured_message_get,
 )
+
+from azure.storage.filedatalake import FileSystemClient as SyncFileSystemClient
+from azure.storage.filedatalake.aio import DataLakeServiceClient
 
 
 class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):

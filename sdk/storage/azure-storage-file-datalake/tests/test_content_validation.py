@@ -7,11 +7,11 @@
 from io import BytesIO
 
 import pytest
-from azure.storage.filedatalake import DataLakeServiceClient
-
 from devtools_testutils import is_live, recorded_by_proxy
 from devtools_testutils.storage import GenericTestProxyParametrize1, StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
+
+from azure.storage.filedatalake import DataLakeServiceClient
 
 
 def assert_content_md5(request):

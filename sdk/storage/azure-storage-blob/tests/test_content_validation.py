@@ -7,17 +7,17 @@
 from io import BytesIO
 
 import pytest
-from azure.core.exceptions import ResourceExistsError
-from azure.storage.blob import BlobBlock, BlobClient, BlobServiceClient, BlobType, ContainerClient
 from devtools_testutils import is_live, recorded_by_proxy
 from devtools_testutils.storage import (
     GenericTestProxyParametrize1,
     GenericTestProxyParametrize2,
     StorageRecordedTestCase,
 )
-
 from encryption_test_helper import KeyWrapper
 from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import BlobBlock, BlobClient, BlobServiceClient, BlobType, ContainerClient
 
 
 def assert_content_md5(request):

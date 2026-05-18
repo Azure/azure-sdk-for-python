@@ -7,9 +7,6 @@
 from io import BytesIO
 
 import pytest
-from azure.core.exceptions import ResourceExistsError
-from azure.storage.blob import BlobBlock, BlobType, ContainerClient as SyncContainerClient
-from azure.storage.blob.aio import BlobClient, BlobServiceClient, ContainerClient
 from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import (
@@ -19,7 +16,6 @@ from devtools_testutils.storage.aio import (
 )
 from encryption_test_helper import KeyWrapper
 from settings.testcase import BlobPreparer
-
 from test_content_validation import (
     assert_content_crc64,
     assert_content_md5,
@@ -28,6 +24,10 @@ from test_content_validation import (
     assert_structured_message_get,
     TestIter,
 )
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import BlobBlock, BlobType, ContainerClient as SyncContainerClient
+from azure.storage.blob.aio import BlobClient, BlobServiceClient, ContainerClient
 
 
 class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
