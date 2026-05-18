@@ -184,7 +184,8 @@ class TestAzurePersonalVoiceConfiguration:
         models = [
             PersonalVoiceModels.DRAGON_LATEST_NEURAL,
             PersonalVoiceModels.PHOENIX_LATEST_NEURAL,
-            PersonalVoiceModels.PHOENIX_V2_NEURAL,
+            PersonalVoiceModels.DRAGON_HD_OMNI_LATEST_NEURAL,
+            PersonalVoiceModels.MAI_VOICE1,
         ]
 
         for model in models:
@@ -195,7 +196,7 @@ class TestAzurePersonalVoiceConfiguration:
 
     def test_azure_personal_voice_inheritance(self):
         """Test that Azure personal voice inherits from AzureVoice."""
-        voice = AzurePersonalVoice(name="personal-voice", model=PersonalVoiceModels.PHOENIX_V2_NEURAL)
+        voice = AzurePersonalVoice(name="personal-voice", model=PersonalVoiceModels.DRAGON_HD_OMNI_LATEST_NEURAL)
 
         assert isinstance(voice, AzureVoice)
         assert isinstance(voice, AzurePersonalVoice)
@@ -277,13 +278,13 @@ class TestVoiceConfigurationInSession:
     def test_request_session_with_azure_personal_voice(self):
         """Test RequestSession with Azure personal voice."""
         voice = AzurePersonalVoice(
-            name="my-personal-voice", model=PersonalVoiceModels.PHOENIX_V2_NEURAL, temperature=0.9
+            name="my-personal-voice", model=PersonalVoiceModels.DRAGON_HD_OMNI_LATEST_NEURAL, temperature=0.9
         )
         session = RequestSession(model="gpt-4o-realtime-preview", voice=voice)
 
         assert session.voice == voice
         assert session.voice.type == AzureVoiceType.AZURE_PERSONAL
-        assert session.voice.model == PersonalVoiceModels.PHOENIX_V2_NEURAL
+        assert session.voice.model == PersonalVoiceModels.DRAGON_HD_OMNI_LATEST_NEURAL
         assert session.voice.temperature == 0.9
 
     def test_response_session_with_voice(self):

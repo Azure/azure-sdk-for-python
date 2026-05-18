@@ -21,7 +21,7 @@ class TestDevTestLabsPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_policies_list(self, resource_group):
         response = self.client.policies.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -34,7 +34,7 @@ class TestDevTestLabsPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_policies_get(self, resource_group):
         response = await self.client.policies.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -48,7 +48,7 @@ class TestDevTestLabsPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_policies_create_or_update(self, resource_group):
         response = await self.client.policies.create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -78,7 +78,7 @@ class TestDevTestLabsPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_policies_delete(self, resource_group):
         response = await self.client.policies.delete(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -92,7 +92,7 @@ class TestDevTestLabsPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_policies_update(self, resource_group):
         response = await self.client.policies.update(
             resource_group_name=resource_group.name,
             lab_name="str",
