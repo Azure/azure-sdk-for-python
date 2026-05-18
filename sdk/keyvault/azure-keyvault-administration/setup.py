@@ -11,10 +11,9 @@ import os
 import re
 from setuptools import setup, find_packages
 
-
 PACKAGE_NAME = "azure-keyvault-administration"
 PACKAGE_PPRINT_NAME = "Key Vault Administration"
-PACKAGE_NAMESPACE = "azure.keyvault.administration"
+PACKAGE_NAMESPACE = "azure.keyvault.administration._generated"
 
 # a.b.c => a/b/c
 package_folder_path = PACKAGE_NAMESPACE.replace(".", "/")
@@ -43,7 +42,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -53,21 +51,21 @@ setup(
     zip_safe=False,
     packages=find_packages(
         exclude=[
-            "samples",
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.keyvault",
+            "azure.keyvault.administration",
         ]
     ),
     include_package_data=True,
     package_data={
-        "azure.keyvault.administration": ["py.typed"],
+        "azure.keyvault.administration._generated": ["py.typed"],
     },
     install_requires=[
         "isodate>=0.6.1",
-        "azure-core>=1.38.0",
+        "azure-core>=1.37.0",
         "typing-extensions>=4.6.0",
     ],
-    python_requires=">=3.9",
+    python_requires=">=3.10",
 )
