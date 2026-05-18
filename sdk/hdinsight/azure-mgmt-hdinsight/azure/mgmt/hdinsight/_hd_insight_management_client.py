@@ -42,30 +42,30 @@ if TYPE_CHECKING:
 class HDInsightManagementClient:  # pylint: disable=too-many-instance-attributes
     """HDInsight Management Client.
 
-    :ivar applications: ApplicationsOperations operations
-    :vartype applications: azure.mgmt.hdinsight.operations.ApplicationsOperations
     :ivar clusters: ClustersOperations operations
     :vartype clusters: azure.mgmt.hdinsight.operations.ClustersOperations
+    :ivar applications: ApplicationsOperations operations
+    :vartype applications: azure.mgmt.hdinsight.operations.ApplicationsOperations
+    :ivar locations: LocationsOperations operations
+    :vartype locations: azure.mgmt.hdinsight.operations.LocationsOperations
     :ivar configurations: ConfigurationsOperations operations
     :vartype configurations: azure.mgmt.hdinsight.operations.ConfigurationsOperations
     :ivar extensions: ExtensionsOperations operations
     :vartype extensions: azure.mgmt.hdinsight.operations.ExtensionsOperations
-    :ivar locations: LocationsOperations operations
-    :vartype locations: azure.mgmt.hdinsight.operations.LocationsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.hdinsight.operations.Operations
-    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections:
-     azure.mgmt.hdinsight.operations.PrivateEndpointConnectionsOperations
-    :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.hdinsight.operations.PrivateLinkResourcesOperations
     :ivar script_actions: ScriptActionsOperations operations
     :vartype script_actions: azure.mgmt.hdinsight.operations.ScriptActionsOperations
     :ivar script_execution_history: ScriptExecutionHistoryOperations operations
     :vartype script_execution_history:
      azure.mgmt.hdinsight.operations.ScriptExecutionHistoryOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.hdinsight.operations.Operations
     :ivar virtual_machines: VirtualMachinesOperations operations
     :vartype virtual_machines: azure.mgmt.hdinsight.operations.VirtualMachinesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.hdinsight.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.hdinsight.operations.PrivateLinkResourcesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription credentials which uniquely identify Microsoft Azure
@@ -76,8 +76,8 @@ class HDInsightManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2025-01-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-06-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -129,23 +129,23 @@ class HDInsightManagementClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.applications = ApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.applications = ApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.script_actions = ScriptActionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.script_execution_history = ScriptExecutionHistoryOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machines = VirtualMachinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
