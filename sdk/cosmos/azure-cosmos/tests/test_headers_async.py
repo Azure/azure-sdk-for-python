@@ -270,5 +270,28 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 priority=request_priority,
                 raw_response_hook=request_priority_raw_response_hook)
 
+    def side_effect_async_query_with_bypass_and_shard_key(self, *args, **kwargs):
+        # Extract request headers from args - for query it's args[3]
+        assert args[3]["x-ms-dedicatedgateway-bypass-cache"] == "true"
+        assert args[3]["x-ms-dedicatedgateway-shard-key"] == "async-query-shard-999"
+        raise StopIteration
+
+    async def test_async_query_with_bypass_and_shard_key(self):
+        query = 'SELECT * from c'
+        cosmos_client_connection = self.container.client_connection
+        original_connection_post = cosmos_client_connection._CosmosClientConnection__Post
+        cosmos_client_connection._CosmosClientConnection__Post = MagicMock(
+            side_effect=self.side_effect_async_query_with_bypass_and_shard_key)
+        try:
+            async for _ in self.container.query_items(query=query, partition_key="pk-1",
+                                                      bypass_integrated_cache=True,
+                                                      dedicated_gateway_shard_key="async-query-shard-999"):
+                pass
+        except StopIteration:
+            pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Post = original_connection_post
+
+
 if __name__ == "__main__":
     unittest.main()

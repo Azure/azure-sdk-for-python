@@ -35,7 +35,7 @@ from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, vali
 from . import _utils as utils
 from ._availability_strategy_config import _validate_request_hedging_strategy
 from ._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput, build_options,
-                    GenerateGuidId, validate_cache_staleness_value)
+                    GenerateGuidId, validate_cache_staleness_value, validate_shard_key_value)
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
@@ -224,6 +224,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        bypass_integrated_cache: Optional[bool] = None,
+        dedicated_gateway_shard_key: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
@@ -246,6 +248,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword bool bypass_integrated_cache: If set to True, the read will be served by the backend and won't be
+            cached in the dedicated gateway. If set to False or not provided, the integrated cache will be used if
+            configured. This option only applies to accounts configured with dedicated gateway.
+        :keyword str dedicated_gateway_shard_key: The shard key to use for the dedicated gateway request. Specifying
+            the shard key will help route the request to an instance that has cached data for this shard or bypass
+            the SQLx cache if the correlated instance is down. If not specified, the request will fall back to
+            randomly selecting an instance. This option only applies to accounts configured with dedicated gateway.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -298,6 +307,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+        if bypass_integrated_cache is not None:
+            request_options["bypassIntegratedCache"] = bypass_integrated_cache
+        if dedicated_gateway_shard_key is not None:
+            validate_shard_key_value(dedicated_gateway_shard_key)
+            request_options["dedicatedGatewayShardKey"] = dedicated_gateway_shard_key
         self._get_properties_with_options(request_options)
         request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
@@ -392,6 +406,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        bypass_integrated_cache: Optional[bool] = None,
+        dedicated_gateway_shard_key: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
@@ -408,6 +424,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword bool bypass_integrated_cache: If set to True, the read will be served by the backend and won't be
+            cached in the dedicated gateway. If set to False or not provided, the integrated cache will be used if
+            configured. This option only applies to accounts configured with dedicated gateway.
+        :keyword str dedicated_gateway_shard_key: The shard key to use for the dedicated gateway request. Specifying
+            the shard key will help route the request to an instance that has cached data for this shard or bypass
+            the SQLx cache if the correlated instance is down. If not specified, the request will fall back to
+            randomly selecting an instance. This option only applies to accounts configured with dedicated gateway.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -446,9 +469,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning,
             )
             feed_options["populateQueryMetrics"] = populate_query_metrics
-        if max_integrated_cache_staleness_in_ms:
+        if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+        if bypass_integrated_cache is not None:
+            feed_options["bypassIntegratedCache"] = bypass_integrated_cache
+        if dedicated_gateway_shard_key is not None:
+            validate_shard_key_value(dedicated_gateway_shard_key)
+            feed_options["dedicatedGatewayShardKey"] = dedicated_gateway_shard_key
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
 
@@ -755,6 +783,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            bypass_integrated_cache: Optional[bool] = None,
+            dedicated_gateway_shard_key: Optional[str] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_advice: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
@@ -808,6 +838,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword bool bypass_integrated_cache: If set to True, the read will be served by the backend and won't be
+            cached in the dedicated gateway. If set to False or not provided, the integrated cache will be used if
+            configured. This option only applies to accounts configured with dedicated gateway.
+        :keyword str dedicated_gateway_shard_key: The shard key to use for the dedicated gateway request. Specifying
+            the shard key will help route the request to an instance that has cached data for this shard or bypass
+            the SQLx cache if the correlated instance is down. If not specified, the request will fall back to
+            randomly selecting an instance. This option only applies to accounts configured with dedicated gateway.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -854,6 +891,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            bypass_integrated_cache: Optional[bool] = None,
+            dedicated_gateway_shard_key: Optional[str] = None,
             max_item_count: Optional[int] = None,
             parameters: Optional[list[dict[str, object]]] = None,
             populate_index_metrics: Optional[bool] = None,
@@ -972,6 +1011,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword bool bypass_integrated_cache: If set to True, the read will be served by the backend and won't be
+            cached in the dedicated gateway. If set to False or not provided, the integrated cache will be used if
+            configured. This option only applies to accounts configured with dedicated gateway.
+        :keyword str dedicated_gateway_shard_key: The shard key to use for the dedicated gateway request. Specifying
+            the shard key will help route the request to an instance that has cached data for this shard or bypass
+            the SQLx cache if the correlated instance is down. If not specified, the request will fall back to
+            randomly selecting an instance. This option only applies to accounts configured with dedicated gateway.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
@@ -1050,6 +1096,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_integrated_cache_staleness_in_ms = kwargs.pop("max_integrated_cache_staleness_in_ms")
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+        if utils.valid_key_value_exist(kwargs, "bypass_integrated_cache"):
+            bypass_integrated_cache = kwargs.pop("bypass_integrated_cache")
+            feed_options["bypassIntegratedCache"] = bypass_integrated_cache
+        if utils.valid_key_value_exist(kwargs, "dedicated_gateway_shard_key"):
+            dedicated_gateway_shard_key = kwargs.pop("dedicated_gateway_shard_key")
+            validate_shard_key_value(dedicated_gateway_shard_key)
+            feed_options["dedicatedGatewayShardKey"] = dedicated_gateway_shard_key
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
         if utils.valid_key_value_exist(kwargs, "full_text_score_scope"):
