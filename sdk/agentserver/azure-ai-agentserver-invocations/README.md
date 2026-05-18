@@ -226,32 +226,11 @@ app.run()
 - Emits a structured close-event log line carrying `azure.ai.agentserver.invocations_ws.session_id`, `azure.ai.agentserver.invocations_ws.close_code`, and `azure.ai.agentserver.invocations_ws.duration_ms`. The same fields are recorded as OpenTelemetry span attributes so the connection lifetime is visible end-to-end.
 - Inherits `/readiness`, OpenTelemetry export, graceful shutdown, and the `x-platform-server` identity header from `azure-ai-agentserver-core`.
 
-### Per-turn tracing with `app.ws_invocation`
+### Per-connection tracing
 
-A long-lived WebSocket connection is wrapped by the SDK in a connection-scoped `websocket_session` span. Each *logical turn* (typically one inbound prompt + its reply stream) should be wrapped in `app.ws_invocation(websocket)` so dashboards aggregate equally across the HTTP `POST /invocations` and WebSocket transports — both produce one `invoke_agent` span per turn carrying the same GenAI semantic-convention attributes.
+A WebSocket connection is wrapped by the SDK in a single connection-scoped `websocket_session` OpenTelemetry span. The span carries the GenAI semantic-convention attributes plus `azure.ai.agentserver.invocations_ws.session_id`, `close_code`, and `duration_ms`. Any child spans your handler opens — e.g. via `opentelemetry.trace.get_tracer(...).start_as_current_span(...)` — are automatically parented to the connection span.
 
-```python
-@app.ws_handler
-async def handle(websocket: WebSocket) -> None:
-    async for msg in websocket.iter_text():
-        async with app.ws_invocation(websocket) as turn:
-            # All OpenTelemetry spans you open inside this block are
-            # parented to the per-turn ``invoke_agent`` span.
-            result = await run_agent(msg)
-            await websocket.send_json({
-                "invocation_id": turn.invocation_id,
-                "result": result,
-            })
-```
-
-The yielded `WSInvocationContext` exposes:
-
-| Field | Description |
-|---|---|
-| `invocation_id` | UUID identifying this single turn — recorded on the `invoke_agent` span as `azure.ai.agentserver.invocations_ws.invocation_id`. Echo it in your reply frame so clients can correlate request/response. |
-| `session_id` | Per-connection session ID (matches the HTTP `FOUNDRY_AGENT_SESSION_ID` precedence). |
-
-> `GET /invocations/{id}` and `POST /invocations/{id}/cancel` are HTTP-only endpoints — they apply to *long-running* HTTP invocations. WebSocket clients observe status via reply frames and cancel by closing the socket (the handler observes `asyncio.CancelledError`).
+There is no per-message `invocation_id` for WebSocket: a WS connection is a single long-lived session, not a sequence of independently-identifiable HTTP invocations. The HTTP-only endpoints `GET /invocations/{id}` and `POST /invocations/{id}/cancel` do not apply to WS sessions — clients observe status via reply frames and cancel by closing the socket (the handler observes `asyncio.CancelledError`).
 
 ### Handler signature
 

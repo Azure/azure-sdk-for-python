@@ -39,7 +39,6 @@ class InvocationsWSConstants:
 
     # Span attribute keys
     ATTR_SPAN_SESSION_ID = "azure.ai.agentserver.invocations_ws.session_id"
-    ATTR_SPAN_INVOCATION_ID = "azure.ai.agentserver.invocations_ws.invocation_id"
     ATTR_SPAN_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.close_code"
     ATTR_SPAN_DURATION_MS = "azure.ai.agentserver.invocations_ws.duration_ms"
     ATTR_SPAN_ERROR_CODE = "azure.ai.agentserver.invocations_ws.error.code"
