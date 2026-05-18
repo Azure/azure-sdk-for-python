@@ -87,6 +87,7 @@ class TestSamples(AzureRecordedTestCase):
             samples_to_skip=[
                 "sample_workflow_multi_agent.py",  # No issue to run.  Just postpone recording.
                 "sample_workflow_multi_agent_with_mcp_approval.py",  # No issue to run.  Just postpone recording.
+                "sample_toolboxes_with_search_preview.py",
             ],
         ),
     )

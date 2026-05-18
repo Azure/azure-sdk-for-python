@@ -2131,7 +2131,7 @@ class DatasetsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResponse:
+    ) -> _models.PendingUploadResult:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
@@ -2143,8 +2143,8 @@ class DatasetsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2157,7 +2157,7 @@ class DatasetsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResponse:
+    ) -> _models.PendingUploadResult:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
@@ -2169,8 +2169,8 @@ class DatasetsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2183,7 +2183,7 @@ class DatasetsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResponse:
+    ) -> _models.PendingUploadResult:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
@@ -2195,8 +2195,8 @@ class DatasetsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2207,7 +2207,7 @@ class DatasetsOperations:
         version: str,
         pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.PendingUploadResponse:
+    ) -> _models.PendingUploadResult:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
@@ -2218,8 +2218,8 @@ class DatasetsOperations:
          types: PendingUploadRequest, JSON, IO[bytes] Required.
         :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
          IO[bytes]
-        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2234,7 +2234,7 @@ class DatasetsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PendingUploadResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -2277,7 +2277,7 @@ class DatasetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.PendingUploadResponse, response.json())
+            deserialized = _deserialize(_models.PendingUploadResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3018,7 +3018,7 @@ class BetaAgentsOperations:
         agent_name: str,
         *,
         content_type: str = "application/merge-patch+json",
-        agent_endpoint: Optional[_models.AgentEndpoint] = None,
+        agent_endpoint: Optional[_models.AgentEndpointConfig] = None,
         agent_card: Optional[_models.AgentCard] = None,
         **kwargs: Any
     ) -> _models.AgentDetails:
@@ -3030,7 +3030,7 @@ class BetaAgentsOperations:
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
-        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
+        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
         :keyword agent_card: Optional agent card for the agent. Default value is None.
         :paramtype agent_card: ~azure.ai.projects.models.AgentCard
         :return: AgentDetails. The AgentDetails is compatible with MutableMapping
@@ -3080,7 +3080,7 @@ class BetaAgentsOperations:
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        agent_endpoint: Optional[_models.AgentEndpoint] = None,
+        agent_endpoint: Optional[_models.AgentEndpointConfig] = None,
         agent_card: Optional[_models.AgentCard] = None,
         **kwargs: Any
     ) -> _models.AgentDetails:
@@ -3091,7 +3091,7 @@ class BetaAgentsOperations:
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
-        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
+        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
         :keyword agent_card: Optional agent card for the agent. Default value is None.
         :paramtype agent_card: ~azure.ai.projects.models.AgentCard
         :return: AgentDetails. The AgentDetails is compatible with MutableMapping
@@ -3171,7 +3171,6 @@ class BetaAgentsOperations:
         self,
         agent_name: str,
         *,
-        isolation_key: str,
         version_indicator: _models.VersionIndicator,
         content_type: str = "application/json",
         agent_session_id: Optional[str] = None,
@@ -3183,9 +3182,6 @@ class BetaAgentsOperations:
 
         :param agent_name: The name of the agent to create a session for. Required.
         :type agent_name: str
-        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
-         for session-mutating operations. Required.
-        :paramtype isolation_key: str
         :keyword version_indicator: Determines which agent version backs the session. Required.
         :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3201,7 +3197,7 @@ class BetaAgentsOperations:
 
     @overload
     async def create_session(
-        self, agent_name: str, body: JSON, *, isolation_key: str, content_type: str = "application/json", **kwargs: Any
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentSessionResource:
         """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
         from ``version_indicator`` and enforces session ownership using the provided isolation key for
@@ -3211,9 +3207,6 @@ class BetaAgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: JSON
-        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
-         for session-mutating operations. Required.
-        :paramtype isolation_key: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3224,13 +3217,7 @@ class BetaAgentsOperations:
 
     @overload
     async def create_session(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        isolation_key: str,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentSessionResource:
         """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
         from ``version_indicator`` and enforces session ownership using the provided isolation key for
@@ -3240,9 +3227,6 @@ class BetaAgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: IO[bytes]
-        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
-         for session-mutating operations. Required.
-        :paramtype isolation_key: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3257,7 +3241,6 @@ class BetaAgentsOperations:
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        isolation_key: str,
         version_indicator: _models.VersionIndicator = _Unset,
         agent_session_id: Optional[str] = None,
         **kwargs: Any
@@ -3270,9 +3253,6 @@ class BetaAgentsOperations:
         :type agent_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
-         for session-mutating operations. Required.
-        :paramtype isolation_key: str
         :keyword version_indicator: Determines which agent version backs the session. Required.
         :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
         :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
@@ -3310,7 +3290,6 @@ class BetaAgentsOperations:
 
         _request = build_beta_agents_create_session_request(
             agent_name=agent_name,
-            isolation_key=isolation_key,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3422,7 +3401,7 @@ class BetaAgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_session(self, agent_name: str, session_id: str, *, isolation_key: str, **kwargs: Any) -> None:
+    async def delete_session(self, agent_name: str, session_id: str, **kwargs: Any) -> None:
         """Deletes a session synchronously. Returns 204 No Content when the session is deleted or does not
         exist.
 
@@ -3430,9 +3409,6 @@ class BetaAgentsOperations:
         :type agent_name: str
         :param session_id: The session identifier. Required.
         :type session_id: str
-        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
-         for session-mutating operations. Required.
-        :paramtype isolation_key: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3453,7 +3429,6 @@ class BetaAgentsOperations:
         _request = build_beta_agents_delete_session_request(
             agent_name=agent_name,
             session_id=session_id,
-            isolation_key=isolation_key,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3679,7 +3654,7 @@ class BetaAgentsOperations:
     @distributed_trace_async
     async def _upload_session_file(
         self, agent_name: str, agent_session_id: str, content: bytes, *, path: str, **kwargs: Any
-    ) -> _models.SessionFileWriteResponse:
+    ) -> _models.SessionFileWriteResult:
         """Upload a file to the session sandbox via binary stream. Maximum file size is 50 MB. Uploads
         exceeding this limit return 413 Payload Too Large.
 
@@ -3692,9 +3667,8 @@ class BetaAgentsOperations:
         :keyword path: The destination file path within the sandbox, relative to the session home
          directory. Required.
         :paramtype path: str
-        :return: SessionFileWriteResponse. The SessionFileWriteResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionFileWriteResponse
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3709,7 +3683,7 @@ class BetaAgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
-        cls: ClsType[_models.SessionFileWriteResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SessionFileWriteResult] = kwargs.pop("cls", None)
 
         _content = content
 
@@ -3752,7 +3726,7 @@ class BetaAgentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SessionFileWriteResponse, response.json())
+            deserialized = _deserialize(_models.SessionFileWriteResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3833,7 +3807,7 @@ class BetaAgentsOperations:
     @distributed_trace_async
     async def get_session_files(
         self, agent_name: str, agent_session_id: str, *, path: str, **kwargs: Any
-    ) -> _models.SessionDirectoryListResponse:
+    ) -> _models.SessionDirectoryListResult:
         """List files and directories at a given path in the session sandbox. Returns only the immediate
         children of the specified directory (non-recursive).
 
@@ -3843,9 +3817,9 @@ class BetaAgentsOperations:
         :type agent_session_id: str
         :keyword path: The directory path to list, relative to the session home directory. Required.
         :paramtype path: str
-        :return: SessionDirectoryListResponse. The SessionDirectoryListResponse is compatible with
+        :return: SessionDirectoryListResult. The SessionDirectoryListResult is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionDirectoryListResponse
+        :rtype: ~azure.ai.projects.models.SessionDirectoryListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3859,7 +3833,7 @@ class BetaAgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SessionDirectoryListResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SessionDirectoryListResult] = kwargs.pop("cls", None)
 
         _request = build_beta_agents_get_session_files_request(
             agent_name=agent_name,
@@ -3898,7 +3872,7 @@ class BetaAgentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SessionDirectoryListResponse, response.json())
+            deserialized = _deserialize(_models.SessionDirectoryListResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4196,14 +4170,14 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def create(
-        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, taxonomy: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: ~azure.ai.projects.models.EvaluationTaxonomy
+        :param taxonomy: The evaluation taxonomy. Required.
+        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4214,14 +4188,14 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def create(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, taxonomy: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: JSON
+        :param taxonomy: The evaluation taxonomy. Required.
+        :type taxonomy: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4232,14 +4206,14 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def create(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, taxonomy: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: IO[bytes]
+        :param taxonomy: The evaluation taxonomy. Required.
+        :type taxonomy: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4250,15 +4224,15 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace_async
     async def create(
-        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, taxonomy: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param body: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
+        :param taxonomy: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy,
+         JSON, IO[bytes] Required.
+        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4279,10 +4253,10 @@ class BetaEvaluationTaxonomiesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(taxonomy, (IOBase, bytes)):
+            _content = taxonomy
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(taxonomy, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_evaluation_taxonomies_create_request(
             name=name,
@@ -4326,14 +4300,14 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def update(
-        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, taxonomy: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: ~azure.ai.projects.models.EvaluationTaxonomy
+        :param taxonomy: The evaluation taxonomy. Required.
+        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4344,14 +4318,14 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, taxonomy: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: JSON
+        :param taxonomy: The evaluation taxonomy. Required.
+        :type taxonomy: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4362,14 +4336,14 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def update(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, taxonomy: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: IO[bytes]
+        :param taxonomy: The evaluation taxonomy. Required.
+        :type taxonomy: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4380,15 +4354,15 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace_async
     async def update(
-        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, taxonomy: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
-        :param body: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
+        :param taxonomy: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy,
+         JSON, IO[bytes] Required.
+        :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4409,10 +4383,10 @@ class BetaEvaluationTaxonomiesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(taxonomy, (IOBase, bytes)):
+            _content = taxonomy
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(taxonomy, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_evaluation_taxonomies_update_request(
             name=name,
@@ -8061,7 +8035,7 @@ class BetaSkillsOperations:
         instructions: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.SkillObject:
+    ) -> _models.SkillDetails:
         """Creates a skill.
 
         :keyword name: The unique name of the skill. Required.
@@ -8081,13 +8055,15 @@ class BetaSkillsOperations:
          Keys are strings with a maximum length of 64 characters. Values are strings
          with a maximum length of 512 characters. Default value is None.
         :paramtype metadata: dict[str, str]
-        :return: SkillObject. The SkillObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillObject
+        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.SkillObject:
+    async def create(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.SkillDetails:
         """Creates a skill.
 
         :param body: Required.
@@ -8095,15 +8071,15 @@ class BetaSkillsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SkillObject. The SkillObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillObject
+        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.SkillObject:
+    ) -> _models.SkillDetails:
         """Creates a skill.
 
         :param body: Required.
@@ -8111,8 +8087,8 @@ class BetaSkillsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SkillObject. The SkillObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillObject
+        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -8126,7 +8102,7 @@ class BetaSkillsOperations:
         instructions: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.SkillObject:
+    ) -> _models.SkillDetails:
         """Creates a skill.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -8145,8 +8121,8 @@ class BetaSkillsOperations:
          Keys are strings with a maximum length of 64 characters. Values are strings
          with a maximum length of 512 characters. Default value is None.
         :paramtype metadata: dict[str, str]
-        :return: SkillObject. The SkillObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillObject
+        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8161,7 +8137,7 @@ class BetaSkillsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SkillDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if name is _Unset:
@@ -8211,7 +8187,7 @@ class BetaSkillsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SkillObject, response.json())
+            deserialized = _deserialize(_models.SkillDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8219,13 +8195,13 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def create_from_package(self, body: bytes, **kwargs: Any) -> _models.SkillObject:
+    async def create_from_package(self, content: bytes, **kwargs: Any) -> _models.SkillDetails:
         """Creates a skill from a zip package.
 
-        :param body: The zip package used to create the skill. Required.
-        :type body: bytes
-        :return: SkillObject. The SkillObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillObject
+        :param content: The zip package used to create the skill. Required.
+        :type content: bytes
+        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8240,9 +8216,9 @@ class BetaSkillsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/zip"))
-        cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SkillDetails] = kwargs.pop("cls", None)
 
-        _content = body
+        _content = content
 
         _request = build_beta_skills_create_from_package_request(
             content_type=content_type,
@@ -8280,7 +8256,7 @@ class BetaSkillsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SkillObject, response.json())
+            deserialized = _deserialize(_models.SkillDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8288,13 +8264,13 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, name: str, **kwargs: Any) -> _models.SkillObject:
+    async def get(self, name: str, **kwargs: Any) -> _models.SkillDetails:
         """Retrieves a skill.
 
         :param name: The unique name of the skill. Required.
         :type name: str
-        :return: SkillObject. The SkillObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillObject
+        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8308,7 +8284,7 @@ class BetaSkillsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SkillDetails] = kwargs.pop("cls", None)
 
         _request = build_beta_skills_get_request(
             name=name,
@@ -8345,7 +8321,7 @@ class BetaSkillsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SkillObject, response.json())
+            deserialized = _deserialize(_models.SkillDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8425,7 +8401,7 @@ class BetaSkillsOperations:
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.SkillObject"]:
+    ) -> AsyncItemPaged["_models.SkillDetails"]:
         """Returns the list of all skills.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -8442,14 +8418,14 @@ class BetaSkillsOperations:
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of SkillObject
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.SkillObject]
+        :return: An iterator like instance of SkillDetails
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.SkillDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SkillObject]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.SkillDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8479,7 +8455,7 @@ class BetaSkillsOperations:
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.SkillObject],
+                List[_models.SkillDetails],
                 deserialized.get("data", []),
             )
             if cls:
@@ -8517,7 +8493,7 @@ class BetaSkillsOperations:
         instructions: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.SkillObject:
+    ) -> _models.SkillDetails:
         """Updates an existing skill.
 
         :param name: The unique name of the skill. Required.
@@ -8537,15 +8513,15 @@ class BetaSkillsOperations:
          Keys are strings with a maximum length of 64 characters. Values are strings
          with a maximum length of 512 characters. Default value is None.
         :paramtype metadata: dict[str, str]
-        :return: SkillObject. The SkillObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillObject
+        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def update(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.SkillObject:
+    ) -> _models.SkillDetails:
         """Updates an existing skill.
 
         :param name: The unique name of the skill. Required.
@@ -8555,15 +8531,15 @@ class BetaSkillsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SkillObject. The SkillObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillObject
+        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def update(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.SkillObject:
+    ) -> _models.SkillDetails:
         """Updates an existing skill.
 
         :param name: The unique name of the skill. Required.
@@ -8573,8 +8549,8 @@ class BetaSkillsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SkillObject. The SkillObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillObject
+        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -8588,7 +8564,7 @@ class BetaSkillsOperations:
         instructions: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.SkillObject:
+    ) -> _models.SkillDetails:
         """Updates an existing skill.
 
         :param name: The unique name of the skill. Required.
@@ -8607,8 +8583,8 @@ class BetaSkillsOperations:
          Keys are strings with a maximum length of 64 characters. Values are strings
          with a maximum length of 512 characters. Default value is None.
         :paramtype metadata: dict[str, str]
-        :return: SkillObject. The SkillObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SkillObject
+        :return: SkillDetails. The SkillDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8623,7 +8599,7 @@ class BetaSkillsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SkillDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"description": description, "instructions": instructions, "metadata": metadata}
@@ -8672,7 +8648,7 @@ class BetaSkillsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SkillObject, response.json())
+            deserialized = _deserialize(_models.SkillDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8680,13 +8656,13 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, name: str, **kwargs: Any) -> _models.DeleteSkillResponse:
+    async def delete(self, name: str, **kwargs: Any) -> _models.DeleteSkillResult:
         """Deletes a skill.
 
         :param name: The unique name of the skill. Required.
         :type name: str
-        :return: DeleteSkillResponse. The DeleteSkillResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteSkillResponse
+        :return: DeleteSkillResult. The DeleteSkillResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DeleteSkillResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8700,7 +8676,7 @@ class BetaSkillsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteSkillResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeleteSkillResult] = kwargs.pop("cls", None)
 
         _request = build_beta_skills_delete_request(
             name=name,
@@ -8737,7 +8713,7 @@ class BetaSkillsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteSkillResponse, response.json())
+            deserialized = _deserialize(_models.DeleteSkillResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

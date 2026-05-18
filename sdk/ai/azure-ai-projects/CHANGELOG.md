@@ -1,5 +1,39 @@
 # Release History
 
+## 2.2.0 (Unreleased)
+
+### Features Added
+
+* New Agent tools `WorkIQPreviewTool`, `FabricIQPreviewTool` and `ToolboxSearchPreviewTool`.
+* New optional string properties `description` and `name` added to Agent tools which did not have them already.
+
+### Breaking Changes
+
+Breaking changes in beta methods:
+* Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
+* Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
+* Argument `body` in method `.beta.skills.create_from_package()` renamed to `content`.
+
+Breaking changes classes used by beta features:
+* Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
+* Optional property `code_configuration` removed from class `HostedAgentDefinition`.
+* Renamed class `AgentEndpoint` to `AgentEndpointConfig`.
+* Renamed class `DeleteSkillResponse` to `DeleteSkillResult`.
+* Renamed class `PendingUploadResponse` to `PendingUploadResult`.
+* Renamed class `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
+* Renamed class `SessionFileWriteResponse` to `SessionFileWriteResult`.
+* Renamed class `SkillObject` to `SkillDetails`.
+* Renamed class `Target` to `EvaluationTarget`.
+* Renamed class `TargetConfig` to `RedTeamTargetConfig`.
+
+### Bugs Fixed
+
+* Fixed telemetry instrumentor to correctly call is_recording() as a method on spans, ensuring non-recording spans are properly skipped (e.g., when sampling is configured) ([GitHub issue 46544](https://github.com/Azure/azure-sdk-for-python/issues/46544)).
+
+### Sample updates
+
+* Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
+
 ## 2.1.0 (2026-04-20)
 
 ### Features Added
