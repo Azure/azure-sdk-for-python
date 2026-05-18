@@ -1290,9 +1290,7 @@ def _log_events_to_app_insights(
                     # them in App Insights. Keys with dedicated named attributes above are
                     # excluded to avoid duplicate emission.
                     extra_properties = {
-                        k: v
-                        for k, v in properties.items()
-                        if k not in _DEDICATED_EVALUATION_PROPERTY_KEYS
+                        k: v for k, v in properties.items() if k not in _DEDICATED_EVALUATION_PROPERTY_KEYS
                     }
                     if extra_properties:
                         try:
