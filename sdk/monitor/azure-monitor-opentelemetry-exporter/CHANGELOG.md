@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- The sdkversion should only show the exporter/distro version which emits the sdkstats. Removed the AZURE_MONITOR_DISTRO_VERSION variable
 
 ### Other Changes
 

@@ -806,11 +806,6 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.ext_version",
         "1.0.0b21",
     )
-    @patch.dict(
-        "azure.monitor.opentelemetry.exporter._utils.environ",
-        {},
-        clear=True,
-    )
     def test_get_sdk_version_default(self, mock_python_version, mock_prefix):
         result = _utils._get_sdk_version()
         self.assertEqual(result, "uum_py3.11.0:otel1.20.0:ext1.0.0b21")
@@ -829,12 +824,11 @@ class TestUtils(unittest.TestCase):
     )
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"AZURE_MONITOR_DISTRO_VERSION": "1.8.8"},
         clear=True,
     )
     def test_get_sdk_version_distro(self, mock_python_version, mock_prefix):
         result = _utils._get_sdk_version()
-        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:dst1.8.8")
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:ext1.0.0b53")
 
     @patch(
         "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
@@ -872,7 +866,6 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
-            "AZURE_MONITOR_DISTRO_VERSION": "1.8.8",
             "MICROSOFT_OPENTELEMETRY_VERSION": "2.0.0",
         },
         clear=True,

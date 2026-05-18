@@ -23,7 +23,6 @@ from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
-    _AZURE_MONITOR_DISTRO_VERSION,
     _DEFAULT_AAD_SCOPE,
     _FUNCTIONS_WORKER_RUNTIME,
     _INSTRUMENTATIONS_BIT_MAP,
@@ -120,7 +119,6 @@ def _get_sdk_version_prefix():
 
 def _get_sdk_version():
     prefix = _get_sdk_version_prefix()
-    distro_version = environ.get(_AZURE_MONITOR_DISTRO_VERSION)
     ms_otel_version = environ.get(_MICROSOFT_OPENTELEMETRY_VERSION)
     if ms_otel_version:
         return "{}py{}:otel{}:mot{}".format(
@@ -128,13 +126,6 @@ def _get_sdk_version():
             platform.python_version(),
             opentelemetry_version,
             ms_otel_version,
-        )
-    if distro_version:
-        return "{}py{}:otel{}:dst{}".format(
-            prefix,
-            platform.python_version(),
-            opentelemetry_version,
-            distro_version,
         )
     return "{}py{}:otel{}:ext{}".format(
         prefix,
