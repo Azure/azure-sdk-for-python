@@ -20,6 +20,8 @@ DESCRIPTION:
     Python `logging`, which `azure.monitor.opentelemetry.configure_azure_monitor` 
     routes through OpenTelemetry to Application Insights.
 
+    NOTE: Human evaluations is in preview, and carries the risk of breaking changes.
+
 USAGE:
     python sample_human_evaluations.py
 
