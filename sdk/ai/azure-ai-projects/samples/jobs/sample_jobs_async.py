@@ -39,6 +39,7 @@ from azure.ai.projects.models import (
     Output,
     AssetTypes,
     InputOutputModes,
+    load_job,
 )
 
 load_dotenv()
@@ -82,6 +83,13 @@ async def main() -> None:
         )
         created_job = await project_client.beta.jobs.create_or_update(name=job_name, job=job)
         print(created_job)
+
+        # --- Create a job from a YAML file ---
+        print("\nCreate a job from a YAML file:")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        yaml_job = load_job(os.path.join(script_dir, "yaml_jobs", "sample_job.yml"))
+        yaml_created_job = await project_client.beta.jobs.create_or_update(name="sample-command-job-from-yaml", job=yaml_job)
+        print(yaml_created_job)
 
         # --- Get a job ---
         print(f"\nGet job `{job_name}`:")
