@@ -1,0 +1,19 @@
+{
+    "CrossLanguagePackageId": "Azure.Contoso.WidgetManager",
+    "CrossLanguageDefinitionId": {
+        "azure.contoso.widgetmanager.models.FakedSharedModel": "FakedSharedModel",
+        "azure.contoso.widgetmanager.models.ResourceOperationStatusWidgetSuiteWidgetSuiteError": "Azure.Core.ResourceOperationStatus",
+        "azure.contoso.widgetmanager.models.WidgetSuite": "Azure.Contoso.WidgetManager.WidgetSuite",
+        "azure.contoso.widgetmanager.models.OperationState": "Azure.Core.Foundations.OperationState",
+        "azure.contoso.widgetmanager.operations.WidgetsOperations.get_widget": "Azure.Contoso.WidgetManager.Widgets.getWidget",
+        "azure.contoso.widgetmanager.aio.operations.WidgetsOperations.get_widget": "Azure.Contoso.WidgetManager.Widgets.getWidget",
+        "azure.contoso.widgetmanager.operations.WidgetsOperations.get_widget_operation_status": "Azure.Contoso.WidgetManager.Widgets.getWidgetOperationStatus",
+        "azure.contoso.widgetmanager.aio.operations.WidgetsOperations.get_widget_operation_status": "Azure.Contoso.WidgetManager.Widgets.getWidgetOperationStatus",
+        "azure.contoso.widgetmanager.operations.WidgetsOperations.begin_create_or_update_widget": "Azure.Contoso.WidgetManager.Widgets.createOrUpdateWidget",
+        "azure.contoso.widgetmanager.aio.operations.WidgetsOperations.begin_create_or_update_widget": "Azure.Contoso.WidgetManager.Widgets.createOrUpdateWidget",
+        "azure.contoso.widgetmanager.operations.WidgetsOperations.begin_delete_widget": "Azure.Contoso.WidgetManager.Widgets.deleteWidget",
+        "azure.contoso.widgetmanager.aio.operations.WidgetsOperations.begin_delete_widget": "Azure.Contoso.WidgetManager.Widgets.deleteWidget",
+        "azure.contoso.widgetmanager.operations.WidgetsOperations.list_widgets": "Azure.Contoso.WidgetManager.Widgets.listWidgets",
+        "azure.contoso.widgetmanager.aio.operations.WidgetsOperations.list_widgets": "Azure.Contoso.WidgetManager.Widgets.listWidgets"
+    }
+}
