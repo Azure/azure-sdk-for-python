@@ -83,6 +83,7 @@ is_stable = true
 is_arm = true
 title = "ManagedServicesClient"
 need_msrestazure = false
+no_sub = true
 need_azuremgmtcore = true
 sample_link = ""
 exclude_folders = ""
