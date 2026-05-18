@@ -17,7 +17,7 @@ DESCRIPTION:
     those inner tools.
 
     Toolboxes and tool search are preview features. CRUD goes through
-    'project_client.beta.toolboxes'.
+    'project_client.toolboxes'.
 
 USAGE:
     python sample_toolboxes_with_search_preview_async.py
@@ -73,7 +73,7 @@ async def main() -> None:
             project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
         )
 
-        toolbox_version = await project_client.beta.toolboxes.create_version(
+        toolbox_version = await project_client.toolboxes.create_version(
             name=TOOLBOX_NAME,
             description=f"Toolbox with `{INNER_MCP_LABEL}` MCP server and tool search enabled.",
             tools=[inner_mcp_tool, ToolboxSearchPreviewTool()],

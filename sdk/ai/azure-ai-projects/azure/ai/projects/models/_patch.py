@@ -46,14 +46,19 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
     "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
-    "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
     "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
+    "models": _FoundryFeaturesOptInKeys.MODELS_V1_PREVIEW.value,
+    "routines": _FoundryFeaturesOptInKeys.ROUTINES_V1_PREVIEW.value,
+    "agent_optimization_jobs": _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V1_PREVIEW.value,
     "agents": ",".join(
         [
             _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
             _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
             _AgentDefinitionOptInKeys.CODE_AGENTS_V1_PREVIEW.value,
+            _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
+            _AgentDefinitionOptInKeys.CONTAINER_AGENTS_V1_PREVIEW.value,
+            _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
         ]
     ),
 }

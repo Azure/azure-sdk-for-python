@@ -20,15 +20,17 @@ from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_sessions import BetaAgentsOperations
 from ._operations import (
+    BetaAgentOptimizationJobsOperations,
     BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
+    BetaModelsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
+    BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
-    BetaToolboxesOperations,
 )
 
 
@@ -105,16 +107,20 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.operations.BetaInsightsOperations` operations"""
     memory_stores: BetaMemoryStoresOperations
     """:class:`~azure.ai.projects.operations.BetaMemoryStoresOperations` operations"""
+    models: BetaModelsOperations
+    """:class:`~azure.ai.projects.operations.BetaModelsOperations` operations"""
     red_teams: BetaRedTeamsOperations
     """:class:`~azure.ai.projects.operations.BetaRedTeamsOperations` operations"""
+    routines: BetaRoutinesOperations
+    """:class:`~azure.ai.projects.operations.BetaRoutinesOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.operations.BetaSchedulesOperations` operations"""
-    toolboxes: BetaToolboxesOperations
-    """:class:`~azure.ai.projects.operations.BetaToolboxesOperations` operations"""
     skills: BetaSkillsOperations
     """:class:`~azure.ai.projects.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
     """:class:`~azure.ai.projects.operations.BetaDatasetsOperations` operations"""
+    agent_optimization_jobs: BetaAgentOptimizationJobsOperations
+    """:class:`~azure.ai.projects.operations.BetaAgentOptimizationJobsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -135,17 +141,19 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "BetaAgentOptimizationJobsOperations",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
+    "BetaModelsOperations",
     "BetaOperations",
     "BetaRedTeamsOperations",
+    "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
-    "BetaToolboxesOperations",
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",

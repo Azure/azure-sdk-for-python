@@ -41,10 +41,12 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "memory_stores": "MemoryStores=V1Preview",
     "red_teams": "RedTeams=V1Preview",
     "schedules": "Schedules=V1Preview",
-    "toolboxes": "Toolboxes=V1Preview",
     "skills": "Skills=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "HostedAgents=V1Preview,AgentEndpoints=V1Preview,CodeAgents=V1Preview",
+    "models": "Models=V1Preview",
+    "routines": "Routines=V1Preview",
+    "agent_optimization_jobs": "AgentsOptimization=V1Preview",
+    "agents": "HostedAgents=V1Preview,AgentEndpoints=V1Preview,CodeAgents=V1Preview,WorkflowAgents=V1Preview,ContainerAgents=V1Preview,ExternalAgents=V1Preview",
 }
 
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.

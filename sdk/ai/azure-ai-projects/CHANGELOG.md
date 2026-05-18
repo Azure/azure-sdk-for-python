@@ -11,6 +11,11 @@
 * New evaluator generation job operations on `.beta.evaluators`: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New methods on `.beta.agents` sub-client for code-based hosted agents: `update_agent_from_code()`, `create_agent_version_from_code()`, `download_agent_version_code()`, `download_agent_code()`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
+* New `.beta.models` sub-client with model management operations: `create_async`, `get`, `list`, `list_versions`, `update`, `delete`, `get_credentials`, `pending_upload`.
+* New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `list`, `list_runs`, `delete`, `enable`, `disable`, `dispatch_async`.
+* New `.beta.agent_optimization_jobs` sub-client with agent optimization operations: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `delete_optimization_job`, `get_optimization_candidate`, `get_optimization_candidate_config`, `get_optimization_candidate_results`, `list_optimization_candidates`.
+* `toolboxes` sub-client promoted from `.beta.toolboxes` to GA at `.toolboxes`.
+* New agent feature opt-in headers for workflow agents, container agents, and external agents.
 
 ### Breaking Changes
 
@@ -18,6 +23,7 @@ Breaking changes in beta methods:
 * Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
 * Argument `body` in method `.beta.skills.create_from_package()` renamed to `content`.
+* `.beta.toolboxes` has been removed; use `.toolboxes` directly on the client instead (promoted to GA).
 
 Breaking changes in beta classes:
 * Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
