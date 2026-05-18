@@ -129,7 +129,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
                 _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING, ""),
             otlp_endpoint=os.environ.get(_ENV_OTEL_EXPORTER_OTLP_ENDPOINT, ""),
             sse_keepalive_interval=resolve_sse_keepalive_interval(None),
-            ws_ping_interval=resolve_ws_ping_interval(None),
+            ws_ping_interval=resolve_ws_ping_interval(),
         )
 
 
@@ -331,43 +331,38 @@ def resolve_otlp_endpoint() -> Optional[str]:
     return value if value else None
 
 
-def resolve_ws_ping_interval(interval: Optional[float] = None) -> float:
-    """Resolve the WebSocket Ping/Pong keep-alive interval.
+def resolve_ws_ping_interval() -> float:
+    """Resolve the WebSocket Ping/Pong keep-alive interval from the env var.
 
-    Resolution order: explicit *interval* → ``WS_KEEPALIVE_INTERVAL`` env
-    var → ``0.0`` (disabled).  ``0`` (from any source) disables
-    keep-alive.
+    Reads the ``WS_KEEPALIVE_INTERVAL`` environment variable (auto-injected
+    by AgentService into hosted-agent containers) and returns the parsed
+    value in seconds.  ``0`` (or unset) disables keep-alive.
 
-    :param interval: Explicitly requested interval in seconds, or None.
-    :type interval: Optional[float]
+    The keep-alive interval is intentionally env-only — there is no
+    programmatic constructor argument to override it.  Hosted agents
+    inherit the platform-injected value automatically; in tests, set the
+    env var (e.g. via ``monkeypatch.setenv``).
+
     :return: The resolved interval in seconds (``0`` means disabled).
     :rtype: float
-    :raises ValueError: If the resolved value is negative, non-finite, or
-        (for the env var) not parseable as a number.
+    :raises ValueError: If the env var is set but not parseable as a
+        non-negative finite number.
     """
     import math  # local import — only used here
 
-    if interval is not None:
-        try:
-            resolved = float(interval)
-        except (TypeError, ValueError) as exc:
-            raise ValueError(
-                f"ws_ping_interval must be a number, got {interval!r}"
-            ) from exc
-    else:
-        env_raw = os.environ.get(_ENV_WS_KEEPALIVE_INTERVAL)
-        if env_raw is None or env_raw == "":
-            return _DEFAULT_WS_PING_INTERVAL
-        try:
-            resolved = float(env_raw)
-        except ValueError as exc:
-            raise ValueError(
-                f"Invalid value for {_ENV_WS_KEEPALIVE_INTERVAL}: "
-                f"{env_raw!r} (expected a non-negative number)"
-            ) from exc
+    env_raw = os.environ.get(_ENV_WS_KEEPALIVE_INTERVAL)
+    if env_raw is None or env_raw == "":
+        return _DEFAULT_WS_PING_INTERVAL
+    try:
+        resolved = float(env_raw)
+    except ValueError as exc:
+        raise ValueError(
+            f"Invalid value for {_ENV_WS_KEEPALIVE_INTERVAL}: "
+            f"{env_raw!r} (expected a non-negative number)"
+        ) from exc
     if math.isnan(resolved) or math.isinf(resolved) or resolved < 0.0:
         raise ValueError(
-            f"ws_ping_interval must be a non-negative finite number, "
-            f"got {interval if interval is not None else env_raw!r}"
+            f"Invalid value for {_ENV_WS_KEEPALIVE_INTERVAL}: "
+            f"{env_raw!r} (expected a non-negative finite number)"
         )
     return resolved
