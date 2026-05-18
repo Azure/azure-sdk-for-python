@@ -828,7 +828,7 @@ class TestUtils(unittest.TestCase):
     )
     def test_get_sdk_version_distro(self, mock_python_version, mock_prefix):
         result = _utils._get_sdk_version()
-        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:ext1.0.0b53")
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:ext{}".format(_utils.ext_version))
 
     @patch(
         "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
