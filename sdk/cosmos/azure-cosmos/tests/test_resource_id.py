@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -41,7 +41,7 @@ class TestResourceIds(unittest.TestCase):
             u'\u0930\u093e\u0937\u094d\u091f\u094d\u0930\u0940\u092f '
             u'\u092d\u093e\u0937\u093e '
             u'\u0939\u0948'
-        ) + str(uuid.uuid4())  # cspell:disable-line
+        ) + str(uuid.uuid4())
 
         # Special allowed chars for Id
         resource_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>" + str(uuid.uuid4())

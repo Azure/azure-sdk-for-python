@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -94,6 +94,8 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Current default keeps `database_for_test = key_databaseForTest` for stability.
         self.key_client, self.key_databaseForTest, self.client, self.data_databaseForTest = (
             test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
+        await self.key_client.__aenter__()
+        await self.client.__aenter__()
         self.database_for_test = self.key_databaseForTest
 
     async def _create_container_for_test(self, *args, **kwargs):

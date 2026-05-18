@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
 import uuid
@@ -25,6 +25,8 @@ class TestReadItemsPartitionSplitScenarios(unittest.IsolatedAsyncioTestCase):
         # Control-plane: key-auth (container lifecycle + replace_throughput inside trigger_split_async)
         self.key_client, self.key_database, self.client, self.database = (
             test_config.TestConfig.create_test_clients_async(self.TEST_DATABASE_ID))
+        await self.key_client.__aenter__()
+        await self.client.__aenter__()
 
     async def asyncTearDown(self):
         await self.client.close()

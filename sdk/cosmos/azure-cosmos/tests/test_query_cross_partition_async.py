@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import os
@@ -52,6 +52,8 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         # Key-auth client for control-plane operations (create/delete containers)
         self.key_client, self.key_db, self.client, self.created_db = (
             test_config.TestConfig.create_test_clients_async(self.TEST_DATABASE_ID, multiple_write_locations=use_multiple_write_locations))
+        await self.key_client.__aenter__()
+        await self.client.__aenter__()
         # Create container via key-auth (control-plane), get data container via data client
         created_container_ref = await self.key_db.create_container(
             self.TEST_CONTAINER_ID,

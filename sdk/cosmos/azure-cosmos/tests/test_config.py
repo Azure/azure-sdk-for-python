@@ -69,6 +69,19 @@ class TestConfig(object):
         return CosmosClient(cls.host, cls.masterKey, **kwargs)
 
     @classmethod
+    def create_data_client_for_endpoint(cls, endpoint, **kwargs):
+        """Return a sync data-plane Cosmos client for a specific endpoint.
+
+        Uses AAD when configured via ``COSMOS_TEST_DATA_AUTH_MODE=aad`` and key auth
+        otherwise, matching :meth:`create_data_client` behavior while allowing
+        endpoint overrides for regional-endpoint tests.
+        """
+        resolved_endpoint = endpoint or cls.host
+        if cls.data_auth_mode == 'aad':
+            return CosmosClient(resolved_endpoint, cls.credential, **kwargs)
+        return CosmosClient(resolved_endpoint, cls.masterKey, **kwargs)
+
+    @classmethod
     def create_data_client_async(cls, **kwargs):
         """Return an async data-plane Cosmos client using AAD when configured, else key auth.
 
@@ -94,6 +107,21 @@ class TestConfig(object):
         if cls.data_auth_mode == 'aad':
             return AsyncCosmosClient(cls.host, cls.credential_async, **kwargs)
         return AsyncCosmosClient(cls.host, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_data_client_async_for_endpoint(cls, endpoint, **kwargs):
+        """Return an async data-plane Cosmos client for a specific endpoint.
+
+        Uses AAD when configured via ``COSMOS_TEST_DATA_AUTH_MODE=aad`` and key auth
+        otherwise, matching :meth:`create_data_client_async` behavior while allowing
+        endpoint overrides for regional-endpoint tests.
+        """
+        from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+        resolved_endpoint = endpoint or cls.host
+        if cls.data_auth_mode == 'aad':
+            return AsyncCosmosClient(resolved_endpoint, cls.credential_async, **kwargs)
+        return AsyncCosmosClient(resolved_endpoint, cls.masterKey, **kwargs)
 
     @classmethod
     def create_test_clients(cls, database_id, **kwargs):

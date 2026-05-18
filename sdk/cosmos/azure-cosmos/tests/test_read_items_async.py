@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -44,6 +44,8 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         # key-auth client for container lifecycle (control-plane)
         self.key_client, self.key_database, self.client, self.database = (
             test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
+        await self.key_client.__aenter__()
+        await self.client.__aenter__()
         # container creation is control-plane
         container_ref = await self.key_database.create_container(
             id='read_container_' + str(uuid.uuid4()),

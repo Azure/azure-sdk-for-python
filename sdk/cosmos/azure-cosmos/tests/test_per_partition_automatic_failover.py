@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
 import uuid
@@ -6,7 +6,6 @@ import uuid
 import pytest
 import test_config
 from azure.core.exceptions import ServiceResponseError
-from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 from test_per_partition_circuit_breaker_mm import (REGION_1, REGION_2, PK_VALUE, BATCH,
@@ -61,10 +60,7 @@ class TestPerPartitionAutomaticFailover:
             "transport": custom_transport,
             **kwargs,
         }
-        if endpoint != self.host:
-            client = CosmosClient(endpoint, self.master_key, **client_kwargs)
-        else:
-            client = test_config.TestConfig.create_data_client(**client_kwargs)
+        client = test_config.TestConfig.create_data_client_for_endpoint(endpoint, **client_kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}

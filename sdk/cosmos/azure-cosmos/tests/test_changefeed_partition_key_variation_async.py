@@ -1,4 +1,4 @@
-﻿import unittest
+import unittest
 import uuid
 import pytest
 from azure.cosmos.aio import CosmosClient
@@ -74,6 +74,8 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         # Key-auth setup client is used for container lifecycle (control-plane) in this test.
         self.key_client, self.key_db, self.client, self.db = (
             test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
+        await self.key_client.__aenter__()
+        await self.client.__aenter__()
 
     async def asyncTearDown(self):
         await self.client.close()

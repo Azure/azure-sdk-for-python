@@ -34,8 +34,12 @@ class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         # Single key-auth client is sufficient for this emulator-focused test class.
         self.client = CosmosClient(self.host, self.masterKey)
-        self.database_for_test = self.client.get_database_client(self.TEST_DATABASE_ID)
-        self.container_for_test = self.database_for_test.get_container_client(self.TEST_CONTAINER_ID)
+        # Ensure database/container exist — TEST_DATABASE_ID defaults to a per-process UUID
+        # and nothing else in this file pre-provisions these resources.
+        self.database_for_test = await self.client.create_database_if_not_exists(self.TEST_DATABASE_ID)
+        self.container_for_test = await self.database_for_test.create_container_if_not_exists(
+            self.TEST_CONTAINER_ID, PartitionKey(path="/id")
+        )
 
     async def asyncTearDown(self):
         await self.client.close()

@@ -1,8 +1,7 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # cspell:ignore rerank reranker reranking
 import json
-import os
 import unittest
 
 import azure.cosmos.exceptions as exceptions
@@ -40,6 +39,9 @@ class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
         )
         await self.key_client.__aenter__()
         await self.client.__aenter__()
+        # Ensure the test database exists; TEST_DATABASE_ID defaults to a per-process UUID
+        # and is not guaranteed to be pre-provisioned by a shared fixture.
+        await self.key_client.create_database_if_not_exists(id=self.TEST_DATABASE_ID)
         await self.key_db.create_container_if_not_exists(
             id=self.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path='/' + self.TEST_CONTAINER_PARTITION_KEY, kind='Hash')
@@ -50,6 +52,10 @@ class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
         """Async teardown for each test."""
         try:
             await self.key_db.delete_container(self.TEST_CONTAINER_ID)
+        except exceptions.CosmosHttpResponseError:
+            pass
+        try:
+            await self.key_client.delete_database(self.TEST_DATABASE_ID)
         except exceptions.CosmosHttpResponseError:
             pass
         finally:

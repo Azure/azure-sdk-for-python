@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
 import os
@@ -43,10 +43,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
             "transport": custom_transport,
             **kwargs,
         }
-        if endpoint != self.host:
-            client = CosmosClient(endpoint, self.master_key, **client_kwargs)
-        else:
-            client = test_config.TestConfig.create_data_client_async(**client_kwargs)
+        client = test_config.TestConfig.create_data_client_async_for_endpoint(endpoint, **client_kwargs)
         await client.__aenter__()
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)

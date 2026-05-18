@@ -73,8 +73,13 @@ class TestFullTextPolicy(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        # Guard against setUpClass failures that occur before cls.test_db is assigned;
+        # we don't want a teardown AttributeError to mask the real setUp exception.
+        test_db = getattr(cls, "test_db", None)
+        if test_db is None or cls.client is None:
+            return
         try:
-            cls.client.delete_database(cls.test_db.id)
+            cls.client.delete_database(test_db.id)
         except exceptions.CosmosResourceNotFoundError:
             pass
 

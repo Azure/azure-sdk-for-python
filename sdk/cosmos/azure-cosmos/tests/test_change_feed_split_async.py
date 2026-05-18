@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import time
@@ -38,6 +38,8 @@ class TestPartitionSplitChangeFeedAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.key_client, self.key_database, self.client, self.created_database = (
             test_config.TestConfig.create_test_clients_async(self.TEST_DATABASE_ID))
+        await self.key_client.__aenter__()
+        await self.client.__aenter__()
 
     async def asyncTearDown(self):
         await self.client.close()

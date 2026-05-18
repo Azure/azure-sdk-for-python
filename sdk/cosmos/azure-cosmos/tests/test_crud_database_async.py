@@ -88,6 +88,8 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # operations in this file. AAD data-plane tokens cannot authorize control-plane.
         self.key_client, self.database_for_test, self.client, self.data_database_for_test = (
             test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
+        await self.key_client.__aenter__()
+        await self.client.__aenter__()
 
     async def asyncTearDown(self):
         await self.key_client.close()

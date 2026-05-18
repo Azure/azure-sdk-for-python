@@ -1,8 +1,7 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # cspell:ignore rerank reranker reranking
 import json
-import os
 import unittest
 
 import azure.cosmos.cosmos_client as cosmos_client
@@ -35,6 +34,9 @@ class TestSemanticReranker(unittest.TestCase):
         cls.key_client, cls.key_db, cls.client, cls.created_db = test_config.TestConfig.create_test_clients(
             cls.TEST_DATABASE_ID
         )
+        # Ensure the test database exists; TEST_DATABASE_ID defaults to a per-process UUID
+        # and is not guaranteed to be pre-provisioned by a shared fixture.
+        cls.key_client.create_database_if_not_exists(id=cls.TEST_DATABASE_ID)
         cls.key_db.create_container_if_not_exists(
             id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash')
@@ -47,6 +49,7 @@ class TestSemanticReranker(unittest.TestCase):
             cls.key_db.delete_container(cls.TEST_CONTAINER_ID)
         except exceptions.CosmosHttpResponseError:
             pass
+        test_config.TestConfig.try_delete_database(cls.key_client)
 
     def test_semantic_reranker(self):
         documents = self._get_documents(document_type="string")

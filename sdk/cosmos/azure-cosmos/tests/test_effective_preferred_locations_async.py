@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import asyncio
@@ -12,7 +12,7 @@ import test_config
 from azure.cosmos import DatabaseAccount, _location_cache
 from azure.cosmos._location_cache import RegionalRoutingContext
 
-from azure.cosmos.aio import _global_endpoint_manager_async, _cosmos_client_connection_async, CosmosClient
+from azure.cosmos.aio import _global_endpoint_manager_async, _cosmos_client_connection_async
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from test_circuit_breaker_emulator import COLLECTION
@@ -74,10 +74,7 @@ class TestPreferredLocationsAsync:
             "transport": custom_transport,
             **kwargs,
         }
-        if endpoint != self.host:
-            client = CosmosClient(endpoint, self.master_key, **client_kwargs)
-        else:
-            client = test_config.TestConfig.create_data_client_async(**client_kwargs)
+        client = test_config.TestConfig.create_data_client_async_for_endpoint(endpoint, **client_kwargs)
         await client.__aenter__()
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
@@ -93,10 +90,9 @@ class TestPreferredLocationsAsync:
         _cosmos_client_connection_async.CosmosClientConnection.health_check = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
         client = None
         try:
-            if default_endpoint != self.host:
-                client = CosmosClient(default_endpoint, self.master_key, preferred_locations=preferred_location)
-            else:
-                client = test_config.TestConfig.create_data_client_async(preferred_locations=preferred_location)
+            client = test_config.TestConfig.create_data_client_async_for_endpoint(
+                default_endpoint, preferred_locations=preferred_location
+            )
             # this will setup the location cache
             await client.__aenter__()
         finally:
