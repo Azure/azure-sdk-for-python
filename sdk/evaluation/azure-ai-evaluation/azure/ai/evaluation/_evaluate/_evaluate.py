@@ -1264,10 +1264,11 @@ def _log_events_to_app_insights(
                 if error:
                     standard_log_attributes["error.type"] = error
 
-                # Handle redteam attack properties if present
-                if "properties" in event_data:
-                    properties = event_data["properties"]
-
+                # Handle evaluator-specific structured properties (red-team attack metadata,
+                # rubric dimension scores, etc.). Guard the whole block with an isinstance
+                # check so unexpected payload shapes (None, list, str, ...) cannot raise here.
+                properties = event_data.get("properties")
+                if isinstance(properties, dict):
                     if "attack_success" in properties:
                         internal_log_attributes["gen_ai.redteam.attack.success"] = str(properties["attack_success"])
 
@@ -1288,30 +1289,38 @@ def _log_events_to_app_insights(
                     # ``dimension_scores``) as a single JSON attribute so consumers can query
                     # them in App Insights. Keys with dedicated named attributes above are
                     # excluded to avoid duplicate emission.
-                    if isinstance(properties, dict):
-                        extra_properties = {
-                            k: v
-                            for k, v in properties.items()
-                            if k not in _DEDICATED_EVALUATION_PROPERTY_KEYS
-                        }
-                        if extra_properties:
-                            try:
-                                properties_json = json.dumps(extra_properties, default=str)
-                            except (TypeError, ValueError) as ex:
+                    extra_properties = {
+                        k: v
+                        for k, v in properties.items()
+                        if k not in _DEDICATED_EVALUATION_PROPERTY_KEYS
+                    }
+                    if extra_properties:
+                        try:
+                            properties_json = json.dumps(extra_properties, default=str)
+                        except (TypeError, ValueError) as ex:
+                            LOGGER.warning(
+                                "Failed to serialize evaluator properties for App Insights: %s",
+                                ex,
+                            )
+                        else:
+                            if len(properties_json) > _MAX_EVALUATION_PROPERTIES_JSON_LEN:
+                                # Slicing the JSON string would produce an unterminated, invalid
+                                # payload that downstream ``json.loads`` consumers cannot parse.
+                                # Emit a small, valid JSON marker instead so consumers can detect
+                                # the drop and reason about it.
                                 LOGGER.warning(
-                                    "Failed to serialize evaluator properties for App Insights: %s",
-                                    ex,
+                                    "Evaluator properties JSON length %d exceeds %d; "
+                                    "dropping payload from App Insights and emitting truncation marker.",
+                                    len(properties_json),
+                                    _MAX_EVALUATION_PROPERTIES_JSON_LEN,
                                 )
-                            else:
-                                if len(properties_json) > _MAX_EVALUATION_PROPERTIES_JSON_LEN:
-                                    LOGGER.warning(
-                                        "Evaluator properties JSON length %d exceeds %d; "
-                                        "truncating for App Insights.",
-                                        len(properties_json),
-                                        _MAX_EVALUATION_PROPERTIES_JSON_LEN,
-                                    )
-                                    properties_json = properties_json[:_MAX_EVALUATION_PROPERTIES_JSON_LEN]
-                                internal_log_attributes["gen_ai.evaluation.properties"] = properties_json
+                                properties_json = json.dumps(
+                                    {
+                                        "truncated": True,
+                                        "original_size_bytes": len(properties_json),
+                                    }
+                                )
+                            internal_log_attributes["gen_ai.evaluation.properties"] = properties_json
 
                 # Add data source item attributes if present
                 if response_id:
