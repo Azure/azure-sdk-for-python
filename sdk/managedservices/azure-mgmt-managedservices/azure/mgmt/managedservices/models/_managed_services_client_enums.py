@@ -10,15 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource."""
-
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-
 class MultiFactorAuthProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The multi-factor authorization provider to be used for just-in-time access requests."""
 
