@@ -265,4 +265,4 @@ with any additional questions or comments.
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/discovery/azure-ai-discovery
 [pypi]: https://pypi.org/project/azure-ai-discovery/
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/discovery/azure-ai-discovery/samples
-[product_docs]: https://learn.microsoft.com/azure/ai-discovery
+[product_docs]: https://learn.microsoft.com/azure/microsoft-discovery/
