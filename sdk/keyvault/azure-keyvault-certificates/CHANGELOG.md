@@ -1,12 +1,11 @@
 # Release History
 
-## 4.12.0b1 (2026-05-18)
-
-skip changelog generation for data-plane package and please add changelog manually.
-
 ## 4.11.2 (Unreleased)
 
 ### Features Added
+
+- Added support for service API version `2026-03-01-preview`
+- Added `PlatformManaged` property to `CertificatePolicy`
 
 ### Breaking Changes
 
