@@ -73,6 +73,24 @@ METRIC_COLUMN_NAME_REPLACEMENTS = {
     "groundedness_pro_label": "groundedness_pro_passing_rate",
 }
 
+# Property keys that already have dedicated named attributes in
+# ``_log_events_to_app_insights``. They are excluded from the generic
+# ``gen_ai.evaluation.properties`` JSON forwarder so the data is not emitted
+# twice.
+_DEDICATED_EVALUATION_PROPERTY_KEYS = frozenset(
+    (
+        "attack_success",
+        "attack_technique",
+        "attack_complexity",
+        "attack_success_threshold",
+    )
+)
+
+# Maximum serialized length of the ``gen_ai.evaluation.properties`` attribute
+# payload. App Insights caps individual attribute values around 8 KiB; we
+# truncate slightly below that to leave headroom for OTel framing.
+_MAX_EVALUATION_PROPERTIES_JSON_LEN = 7500
+
 
 class __EvaluatorInfo(TypedDict):
     result: pd.DataFrame
@@ -1265,6 +1283,35 @@ def _log_events_to_app_insights(
                         internal_log_attributes["gen_ai.redteam.attack.success_threshold"] = str(
                             properties["attack_success_threshold"]
                         )
+
+                    # Forward any other evaluator-specific structured properties (e.g. rubric
+                    # ``dimension_scores``) as a single JSON attribute so consumers can query
+                    # them in App Insights. Keys with dedicated named attributes above are
+                    # excluded to avoid duplicate emission.
+                    if isinstance(properties, dict):
+                        extra_properties = {
+                            k: v
+                            for k, v in properties.items()
+                            if k not in _DEDICATED_EVALUATION_PROPERTY_KEYS
+                        }
+                        if extra_properties:
+                            try:
+                                properties_json = json.dumps(extra_properties, default=str)
+                            except (TypeError, ValueError) as ex:
+                                LOGGER.warning(
+                                    "Failed to serialize evaluator properties for App Insights: %s",
+                                    ex,
+                                )
+                            else:
+                                if len(properties_json) > _MAX_EVALUATION_PROPERTIES_JSON_LEN:
+                                    LOGGER.warning(
+                                        "Evaluator properties JSON length %d exceeds %d; "
+                                        "truncating for App Insights.",
+                                        len(properties_json),
+                                        _MAX_EVALUATION_PROPERTIES_JSON_LEN,
+                                    )
+                                    properties_json = properties_json[:_MAX_EVALUATION_PROPERTIES_JSON_LEN]
+                                internal_log_attributes["gen_ai.evaluation.properties"] = properties_json
 
                 # Add data source item attributes if present
                 if response_id:
