@@ -186,14 +186,6 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     :param openapi_spec: Optional OpenAPI spec dict.  When provided, the spec
         is served at ``GET /invocations/docs/openapi.json``.
     :type openapi_spec: Optional[dict[str, Any]]
-    :param ws_ping_interval: Seconds between WebSocket protocol Ping frames
-        on ``/invocations_ws``. ``None`` (default) reads the
-        ``WS_KEEPALIVE_INTERVAL`` environment variable (auto-injected by
-        AgentService into hosted-agent containers); when neither is set,
-        keep-alive is disabled. ``0`` disables keep-alive. Configured on
-        the underlying Hypercorn server so the framing is opcode 0x9 /
-        0xA, not application JSON.
-    :type ws_ping_interval: Optional[float]
     """
 
     _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.Invocations"
@@ -202,7 +194,6 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         self,
         *,
         openapi_spec: Optional[dict[str, Any]] = None,
-        ws_ping_interval: Optional[float] = None,
         **kwargs: Any,
     ) -> None:
         self._invoke_fn: Optional[Callable] = None
@@ -210,8 +201,10 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         self._cancel_invocation_fn: Optional[Callable] = None
         self._openapi_spec = openapi_spec
 
-        # Initialise WS handler slots (raises ValueError on a bad interval).
-        self._init_ws_state(ws_ping_interval)
+        # Initialise WS handler slots (no parameters — the keep-alive
+        # interval lives on ``AgentConfig`` and is wired into Hypercorn
+        # by ``AgentServerHost._build_hypercorn_config``).
+        self._init_ws_state()
 
         # Build invocation routes and pass to parent via routes kwarg
         invocation_routes: list[Any] = [
@@ -247,45 +240,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
 
         # --- Invocations startup configuration logging ---
         logger.info(
-            "Invocations protocol: openapi_spec_configured=%s, "
-            "ws_ping_interval=%s",
+            "Invocations protocol: openapi_spec_configured=%s",
             self._openapi_spec is not None,
-            (
-                "disabled"
-                if self._ws_ping_interval == 0
-                else f"{self._ws_ping_interval}s"
-            ),
         )
-
-    # ------------------------------------------------------------------
-    # Hypercorn server config (WebSocket Ping/Pong keep-alive)
-    # ------------------------------------------------------------------
-
-    def _build_hypercorn_config(self, host: str, port: int) -> object:
-        """Extend the base Hypercorn config with the WebSocket Ping interval.
-
-        Hypercorn sends WS protocol Ping frames every
-        ``websocket_ping_interval`` seconds on every active WebSocket
-        connection — exactly the keep-alive the ``invocations_ws`` spec
-        requires.  ``ws_ping_interval=0`` explicitly disables keep-alive
-        by setting the attribute to ``None``.
-
-        ``azure-ai-agentserver-core`` pins ``hypercorn>=0.17.0``, which
-        is guaranteed to expose ``websocket_ping_interval``.
-
-        :param host: Network interface to bind.
-        :type host: str
-        :param port: Port to bind.
-        :type port: int
-        :return: The configured Hypercorn config.
-        :rtype: hypercorn.config.Config
-        """
-        config = super()._build_hypercorn_config(host, port)
-        # Positive float enables protocol-level Ping; None disables.
-        config.websocket_ping_interval = (  # type: ignore[attr-defined]
-            self._ws_ping_interval if self._ws_ping_interval > 0 else None
-        )
-        return config
 
     # ------------------------------------------------------------------
     # Handler decorators

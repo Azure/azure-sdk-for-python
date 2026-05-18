@@ -49,11 +49,17 @@ async def handle_ws(websocket: WebSocket) -> None:
     runs and will close it cleanly on return.  An uncaught exception is
     mapped to RFC 6455 close code 1011.  WebSocket protocol-level Ping/Pong
     keep-alive is disabled by default; enable it by setting the
-    ``WS_KEEPALIVE_INTERVAL`` environment variable or by passing
-    ``InvocationAgentServerHost(ws_ping_interval=<seconds>)``.
+    ``WS_KEEPALIVE_INTERVAL`` environment variable.
+
+    Each inbound frame opens a per-turn ``invoke_agent`` span via
+    ``app.ws_invocation`` so traces line up 1:1 with the HTTP
+    ``POST /invocations`` endpoint above.
     """
     async for message in websocket.iter_text():
-        await websocket.send_text(message)
+        async with app.ws_invocation(websocket) as turn:
+            await websocket.send_text(
+                f"[{turn.invocation_id}] {message}"
+            )
 
 
 if __name__ == "__main__":

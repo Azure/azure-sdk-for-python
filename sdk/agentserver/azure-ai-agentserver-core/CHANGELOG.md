@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added `_platform_headers` module with cross-cutting protocol header name constants (`x-request-id`, `x-platform-server`, `x-agent-session-id`, `x-platform-error-source`, `x-platform-error-detail`, and others). Protocol packages now import shared header name strings from core instead of maintaining their own copies.
+- `AgentConfig.ws_ping_interval` — new field resolved from the `WS_KEEPALIVE_INTERVAL` environment variable (auto-injected by AgentService into hosted-agent containers). `0` disables; negative/non-finite values raise `ValueError` at startup. `AgentServerHost._build_hypercorn_config` wires this into Hypercorn's `websocket_ping_interval` so any protocol package serving WebSocket routes inherits keep-alive without per-package wiring.
 
 ## 2.0.0b3 (2026-04-22)
 

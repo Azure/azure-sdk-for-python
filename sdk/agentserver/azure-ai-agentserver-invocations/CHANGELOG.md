@@ -6,9 +6,10 @@
 
 - Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Developer handler exceptions and missing handler registrations are classified as `upstream`. Exceptions tagged with the platform error tag are classified as `platform` and additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics.
 - WebSocket protocol support — `InvocationAgentServerHost` now hosts `/invocations_ws` alongside `POST /invocations`. Register the handler with the new `@app.ws_handler` decorator. The route is registered lazily on first decoration, so hosts without a registered handler return HTTP 404.
-- WebSocket Ping/Pong keep-alive — disabled by default; enable by passing `InvocationAgentServerHost(ws_ping_interval=<seconds>)` or by setting the `WS_KEEPALIVE_INTERVAL` env var (auto-injected by AgentService into hosted-agent containers). The constructor argument takes precedence; `0` (or unset) disables keep-alive. Wired through to Hypercorn's `websocket_ping_interval`.
-- WebSocket telemetry — structured close-event log line and OpenTelemetry span attributes `azure.ai.agentserver.invocations_ws.{session_id,close_code,duration_ms}`. Session ID honours the `FOUNDRY_AGENT_SESSION_ID` env var for HTTP/WS correlation.
-- New samples: `samples/ws_invoke_agent/` (echo) and `samples/ws_bidirectional_streaming_agent/` (concurrent token streaming with cancel/bye control messages).
+- WebSocket Ping/Pong keep-alive — disabled by default; enable by setting the `WS_KEEPALIVE_INTERVAL` env var (auto-injected by AgentService into hosted-agent containers; surfaced on `app.config.ws_ping_interval` in `azure-ai-agentserver-core>=2.0.0b4`). `0` (or unset) disables keep-alive. Wired through to Hypercorn's `websocket_ping_interval` by `AgentServerHost._build_hypercorn_config`.
+- WebSocket per-turn tracing — `app.ws_invocation(websocket)` async context manager opens an `invoke_agent` child span (parity with `POST /invocations`) parented to the connection-level `websocket_session` span, mints a per-turn `invocation_id`, and propagates the OpenTelemetry context through all `await`s inside the block.
+- WebSocket telemetry — structured close-event log line and OpenTelemetry span attributes `azure.ai.agentserver.invocations_ws.{session_id, invocation_id, close_code, duration_ms}`. Session ID honours the `FOUNDRY_AGENT_SESSION_ID` env var for HTTP/WS correlation.
+- New samples: `samples/ws_invoke_agent/` (echo) and `samples/ws_bidirectional_streaming_agent/` (concurrent token streaming with cancel/bye control messages). Both demonstrate `app.ws_invocation`.
 
 ### Breaking Changes
 

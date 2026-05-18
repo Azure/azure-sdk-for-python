@@ -20,13 +20,13 @@ the user handler with:
   ``azure.ai.agentserver.invocations_ws.duration_ms``.
 """
 
+import contextlib
 import inspect
 import logging
-import math
-import os
 import time
 import uuid
-from collections.abc import Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Optional
 
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
@@ -53,6 +53,25 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 
 WSHandler = Callable[[WebSocket], Awaitable[None]]
+
+
+@dataclass(frozen=True)
+class WSInvocationContext:
+    """Per-turn context yielded by :meth:`_WSHandlerMixin.ws_invocation`.
+
+    :ivar invocation_id: UUID identifying this single user-handler turn.
+        Echo it in your reply frame so clients can correlate request/response
+        and so it surfaces in OpenTelemetry as the ``invoke_agent`` span's
+        ``azure.ai.agentserver.invocations_ws.invocation_id`` attribute.
+    :vartype invocation_id: str
+    :ivar session_id: Per-connection session ID (shared across all turns on
+        the same WebSocket connection; matches the HTTP
+        ``FOUNDRY_AGENT_SESSION_ID`` precedence).
+    :vartype session_id: str
+    """
+
+    invocation_id: str
+    session_id: str
 
 
 def _safe_set_attrs(span: Any, attrs: dict[str, Any]) -> None:
@@ -87,61 +106,16 @@ class _WSHandlerMixin(_MixinBase):
 
     # Slots populated by __init__.
     _ws_fn: Optional[WSHandler]
-    _ws_ping_interval: float
 
-    def _init_ws_state(self, ws_ping_interval: Optional[float]) -> None:
+    def _init_ws_state(self) -> None:
         """Initialize WS handler slots.
 
-        Resolution order for the keep-alive interval:
-
-        1. Explicit *ws_ping_interval* constructor argument (when not ``None``).
-        2. ``WS_KEEPALIVE_INTERVAL`` environment variable (auto-injected by
-           AgentService into every hosted-agent container).
-        3. Disabled (``0``) — no Ping/Pong frames are sent.
-
-        ``0`` (from any source) disables keep-alive entirely.
-
-        :param ws_ping_interval: Seconds between WS protocol Ping frames.
-            ``None`` selects the env var or the default.
-        :type ws_ping_interval: Optional[float]
-        :raises ValueError: If the resolved value is negative, non-finite,
-            or (for the env var) not parseable as a number.
+        The keep-alive interval lives on :class:`AgentConfig` and is
+        wired into Hypercorn by
+        :meth:`AgentServerHost._build_hypercorn_config` — there is no
+        per-mixin state to populate here besides the handler slot.
         """
         self._ws_fn = None
-        if ws_ping_interval is None:
-            env_raw = os.environ.get(InvocationsWSConstants.ENV_WS_KEEPALIVE_INTERVAL)
-            if env_raw is None or env_raw == "":
-                resolved = 0.0
-            else:
-                try:
-                    resolved = float(env_raw)
-                except ValueError as exc:
-                    raise ValueError(
-                        f"Invalid value for "
-                        f"{InvocationsWSConstants.ENV_WS_KEEPALIVE_INTERVAL}: "
-                        f"{env_raw!r} (expected a non-negative number)"
-                    ) from exc
-                if math.isnan(resolved) or math.isinf(resolved) or resolved < 0.0:
-                    raise ValueError(
-                        f"Invalid value for "
-                        f"{InvocationsWSConstants.ENV_WS_KEEPALIVE_INTERVAL}: "
-                        f"{env_raw!r} (expected a non-negative finite number)"
-                    )
-        else:
-            try:
-                resolved = float(ws_ping_interval)
-            except (TypeError, ValueError) as exc:
-                raise ValueError(
-                    f"ws_ping_interval must be a number, got {ws_ping_interval!r}"
-                ) from exc
-            # Reject negative / NaN / inf — those are programming errors that
-            # would silently mis-configure the keep-alive.
-            if math.isnan(resolved) or math.isinf(resolved) or resolved < 0.0:
-                raise ValueError(
-                    f"ws_ping_interval must be a non-negative finite number, "
-                    f"got {ws_ping_interval!r}"
-                )
-        self._ws_ping_interval = resolved
 
     # ------------------------------------------------------------------
     # Public configuration accessor
@@ -151,10 +125,12 @@ class _WSHandlerMixin(_MixinBase):
     def ws_ping_interval(self) -> float:
         """Configured WebSocket Ping interval in seconds (``0`` = disabled).
 
+        Convenience alias for ``self.config.ws_ping_interval``.
+
         :return: The configured interval, or ``0`` when keep-alive is disabled.
         :rtype: float
         """
-        return self._ws_ping_interval
+        return float(self.config.ws_ping_interval)
 
     # ------------------------------------------------------------------
     # Decorator
@@ -216,6 +192,86 @@ class _WSHandlerMixin(_MixinBase):
         # accepting and immediately closing with code 1011.
         self._ensure_ws_route_registered()
         return fn
+
+    # ------------------------------------------------------------------
+    # Per-turn tracing helper
+    # ------------------------------------------------------------------
+
+    @contextlib.asynccontextmanager
+    async def ws_invocation(
+        self,
+        websocket: WebSocket,
+        *,
+        session_id: Optional[str] = None,
+        operation_name: str = "invoke_agent",
+    ) -> AsyncIterator[WSInvocationContext]:
+        """Open a per-turn ``invoke_agent`` span for a single WebSocket exchange.
+
+        A long-lived WebSocket connection is wrapped in a connection-scoped
+        ``websocket_session`` span by the SDK.  Each *logical turn* on the
+        connection (e.g. one inbound prompt frame and its reply stream) is
+        a child ``invoke_agent`` span — matching the HTTP ``POST /invocations``
+        tracing model so dashboards aggregate equally over both transports.
+        ``ws_invocation`` is the opt-in helper that opens that child span and
+        propagates the OpenTelemetry context through every ``await`` inside
+        the ``async with`` block.
+
+        Usage::
+        
+            @app.ws_handler
+            async def handle(websocket: WebSocket) -> None:
+                async for msg in websocket.iter_text():
+                    async with app.ws_invocation(websocket) as turn:
+                        # All child spans created here are parented to the
+                        # per-turn ``invoke_agent`` span.
+                        result = await run_agent(msg)
+                        await websocket.send_json(
+                            {"invocation_id": turn.invocation_id, "result": result}
+                        )
+
+        :param websocket: The accepted WebSocket (used to honour the client's
+            ``traceparent`` for the initial connection; per-turn spans inherit
+            the connection's active span automatically).
+        :type websocket: ~starlette.websockets.WebSocket
+        :keyword session_id: Override the connection-level session ID for this
+            turn (rarely needed).  Defaults to ``self.config.session_id`` or
+            a freshly generated UUID.
+        :paramtype session_id: Optional[str]
+        :keyword operation_name: ``gen_ai.operation.name`` attribute value.
+            Defaults to ``"invoke_agent"`` for parity with HTTP invocations.
+        :paramtype operation_name: str
+        :return: An async context manager yielding a :class:`WSInvocationContext`.
+        :rtype: AsyncIterator[WSInvocationContext]
+        """
+        invocation_id = str(uuid.uuid4())
+        resolved_session_id = session_id or self.config.session_id or str(uuid.uuid4())
+        # ``request_span`` uses ``start_as_current_span``, so awaits inside
+        # the ``with`` see the span as the active OTel context.  We honour
+        # ``websocket.headers`` only as a fallback parent (the connection
+        # span is already current, so it wins for child parenting).
+        with self.request_span(
+            websocket.headers,
+            invocation_id,
+            "invoke_agent",
+            operation_name=operation_name,
+            session_id=resolved_session_id,
+        ) as otel_span:
+            _safe_set_attrs(otel_span, {
+                InvocationsWSConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
+                InvocationsWSConstants.ATTR_SPAN_SESSION_ID: resolved_session_id,
+            })
+            try:
+                yield WSInvocationContext(
+                    invocation_id=invocation_id,
+                    session_id=resolved_session_id,
+                )
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                # ``request_span`` records the exception via OTel's standard
+                # context-manager protocol on __exit__; nothing extra needed.
+                _safe_set_attrs(otel_span, {
+                    "error.type": type(exc).__name__,
+                })
+                raise
 
     def _ensure_ws_route_registered(self) -> None:
         """Append the ``/invocations_ws`` WebSocketRoute to the router (idempotent).

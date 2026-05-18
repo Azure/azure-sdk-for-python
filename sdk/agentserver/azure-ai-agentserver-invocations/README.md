@@ -221,10 +221,37 @@ app.run()
 
 - Registers `/invocations_ws` on the same Starlette host as `/invocations` and `/readiness`.
 - Calls `await websocket.accept()` before invoking your handler.
-- Runs WebSocket Ping/Pong keep-alive in the background — disabled by default; enable by setting the `WS_KEEPALIVE_INTERVAL` environment variable (auto-injected by AgentService into hosted-agent containers) or by passing `InvocationAgentServerHost(ws_ping_interval=...)`. Set the value to `0` (in any source) to disable. Frames are sent at the WebSocket protocol layer (RFC 6455 opcode `0x9`/`0xA`) by the underlying Hypercorn server, which keeps the connection alive across Azure APIM and Azure Load Balancer's ~4 minute idle timeout without any extra application traffic.
+- Runs WebSocket Ping/Pong keep-alive in the background — disabled by default; enable by setting the `WS_KEEPALIVE_INTERVAL` environment variable (auto-injected by AgentService into hosted-agent containers). Set the value to `0` to disable. Frames are sent at the WebSocket protocol layer (RFC 6455 opcode `0x9`/`0xA`) by the underlying Hypercorn server, which keeps the connection alive across Azure APIM and Azure Load Balancer's ~4 minute idle timeout without any extra application traffic.
 - Closes the connection cleanly on handler return (close code `1000`) or maps an uncaught handler exception to close code `1011`.
 - Emits a structured close-event log line carrying `azure.ai.agentserver.invocations_ws.session_id`, `azure.ai.agentserver.invocations_ws.close_code`, and `azure.ai.agentserver.invocations_ws.duration_ms`. The same fields are recorded as OpenTelemetry span attributes so the connection lifetime is visible end-to-end.
 - Inherits `/readiness`, OpenTelemetry export, graceful shutdown, and the `x-platform-server` identity header from `azure-ai-agentserver-core`.
+
+### Per-turn tracing with `app.ws_invocation`
+
+A long-lived WebSocket connection is wrapped by the SDK in a connection-scoped `websocket_session` span. Each *logical turn* (typically one inbound prompt + its reply stream) should be wrapped in `app.ws_invocation(websocket)` so dashboards aggregate equally across the HTTP `POST /invocations` and WebSocket transports — both produce one `invoke_agent` span per turn carrying the same GenAI semantic-convention attributes.
+
+```python
+@app.ws_handler
+async def handle(websocket: WebSocket) -> None:
+    async for msg in websocket.iter_text():
+        async with app.ws_invocation(websocket) as turn:
+            # All OpenTelemetry spans you open inside this block are
+            # parented to the per-turn ``invoke_agent`` span.
+            result = await run_agent(msg)
+            await websocket.send_json({
+                "invocation_id": turn.invocation_id,
+                "result": result,
+            })
+```
+
+The yielded `WSInvocationContext` exposes:
+
+| Field | Description |
+|---|---|
+| `invocation_id` | UUID identifying this single turn — recorded on the `invoke_agent` span as `azure.ai.agentserver.invocations_ws.invocation_id`. Echo it in your reply frame so clients can correlate request/response. |
+| `session_id` | Per-connection session ID (matches the HTTP `FOUNDRY_AGENT_SESSION_ID` precedence). |
+
+> `GET /invocations/{id}` and `POST /invocations/{id}/cancel` are HTTP-only endpoints — they apply to *long-running* HTTP invocations. WebSocket clients observe status via reply frames and cancel by closing the socket (the handler observes `asyncio.CancelledError`).
 
 ### Handler signature
 
@@ -234,13 +261,9 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 
 ### Reference: configuration
 
-| Constructor argument | Default | Description |
-|---|---|---|
-| `ws_ping_interval` | `0` (disabled) | WebSocket protocol Ping interval in seconds. `0` disables keep-alive. Negative or non-finite values are rejected. When `None`, the SDK reads the `WS_KEEPALIVE_INTERVAL` env var before falling back to disabled. |
-
 | Environment variable | Default | Description |
 |---|---|---|
-| `WS_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected override for the WebSocket Ping interval (seconds). `0` disables keep-alive. Ignored when `ws_ping_interval=` is set explicitly. |
+| `WS_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected WebSocket Ping interval, in seconds. `0` disables keep-alive. Surfaced on `app.config.ws_ping_interval` and wired into Hypercorn's `websocket_ping_interval` by `AgentServerHost`. |
 
 ### Reference: close codes
 

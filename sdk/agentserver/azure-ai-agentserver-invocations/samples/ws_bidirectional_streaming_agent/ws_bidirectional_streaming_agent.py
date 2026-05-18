@@ -127,6 +127,10 @@ async def _stream_tokens(
 ) -> None:
     """Stream tokens for one prompt; cancellable via ``asyncio.CancelledError``.
 
+    Each prompt is wrapped in a per-turn ``invoke_agent`` span via
+    ``app.ws_invocation`` so dashboards aggregate equally across the WS and
+    HTTP transports.
+
     :param websocket: The accepted WebSocket.
     :type websocket: ~starlette.websockets.WebSocket
     :param prompt_id: Caller-supplied prompt identifier (echoed in events).
@@ -134,30 +138,35 @@ async def _stream_tokens(
     :param text: The user prompt to "generate" against.
     :type text: str
     """
-    try:
-        async for token in _generate_tokens(text):
+    async with app.ws_invocation(websocket) as turn:
+        try:
+            async for token in _generate_tokens(text):
+                await websocket.send_json(
+                    {"type": "token", "id": prompt_id, "token": token,
+                     "invocation_id": turn.invocation_id},
+                )
             await websocket.send_json(
-                {"type": "token", "id": prompt_id, "token": token},
+                {"type": "done", "id": prompt_id,
+                 "invocation_id": turn.invocation_id},
             )
-        await websocket.send_json({"type": "done", "id": prompt_id})
-    except asyncio.CancelledError:
-        # Best-effort: tell the client we honoured their cancel.  Suppress
-        # ordinary send errors (the socket may already be closed) and re-raise
-        # so the caller observes the cancellation.  We deliberately do NOT
-        # catch ``BaseException`` here so process-level signals
-        # (``KeyboardInterrupt`` / ``SystemExit``) propagate normally.
-        with contextlib.suppress(Exception):
-            await websocket.send_json({"type": "cancelled", "id": prompt_id})
-        raise
-    except Exception as exc:  # pylint: disable=broad-exception-caught
-        # Surface generation errors to the client as a structured frame so
-        # the connection survives a single-prompt failure (parity with the
-        # ``error`` reply the reader emits on bad input).
-        with contextlib.suppress(Exception):
-            await websocket.send_json(
-                {"type": "error", "id": prompt_id, "message": str(exc)},
-            )
-        logger.exception("_stream_tokens failed for prompt %s", prompt_id)
+        except asyncio.CancelledError:
+            # Best-effort: tell the client we honoured their cancel.  Suppress
+            # ordinary send errors (the socket may already be closed) and re-raise
+            # so the caller observes the cancellation.  We deliberately do NOT
+            # catch ``BaseException`` here so process-level signals
+            # (``KeyboardInterrupt`` / ``SystemExit``) propagate normally.
+            with contextlib.suppress(Exception):
+                await websocket.send_json({"type": "cancelled", "id": prompt_id})
+            raise
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            # Surface generation errors to the client as a structured frame so
+            # the connection survives a single-prompt failure (parity with the
+            # ``error`` reply the reader emits on bad input).
+            with contextlib.suppress(Exception):
+                await websocket.send_json(
+                    {"type": "error", "id": prompt_id, "message": str(exc)},
+                )
+            logger.exception("_stream_tokens failed for prompt %s", prompt_id)
 
 
 async def _reader(

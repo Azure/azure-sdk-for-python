@@ -32,9 +32,11 @@ _ENV_PORT = "PORT"
 _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING = "APPLICATIONINSIGHTS_CONNECTION_STRING"
 _ENV_OTEL_EXPORTER_OTLP_ENDPOINT = "OTEL_EXPORTER_OTLP_ENDPOINT"
 _ENV_SSE_KEEPALIVE_INTERVAL = "SSE_KEEPALIVE_INTERVAL"
+_ENV_WS_KEEPALIVE_INTERVAL = "WS_KEEPALIVE_INTERVAL"
 
 _DEFAULT_PORT = 8088
 _DEFAULT_SSE_KEEPALIVE_INTERVAL = 0
+_DEFAULT_WS_PING_INTERVAL = 0.0
 
 
 # ======================================================================
@@ -64,6 +66,8 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
     :param appinsights_connection_string: Application Insights connection string.
     :param otlp_endpoint: OTLP exporter endpoint.
     :param sse_keepalive_interval: SSE keep-alive interval in seconds (0 = disabled).
+    :param ws_ping_interval: WebSocket protocol Ping interval in seconds
+        (``0`` disables keep-alive).
     """
 
     def __init__(
@@ -80,6 +84,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         appinsights_connection_string: str,
         otlp_endpoint: str,
         sse_keepalive_interval: int,
+        ws_ping_interval: float = 0.0,
     ) -> None:
         self.agent_name = agent_name
         self.agent_version = agent_version
@@ -92,6 +97,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         self.appinsights_connection_string = appinsights_connection_string
         self.otlp_endpoint = otlp_endpoint
         self.sse_keepalive_interval = sse_keepalive_interval
+        self.ws_ping_interval = ws_ping_interval
 
     @classmethod
     def from_env(cls) -> Self:
@@ -123,6 +129,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
                 _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING, ""),
             otlp_endpoint=os.environ.get(_ENV_OTEL_EXPORTER_OTLP_ENDPOINT, ""),
             sse_keepalive_interval=resolve_sse_keepalive_interval(None),
+            ws_ping_interval=resolve_ws_ping_interval(None),
         )
 
 
@@ -322,3 +329,45 @@ def resolve_otlp_endpoint() -> Optional[str]:
     """
     value = os.environ.get(_ENV_OTEL_EXPORTER_OTLP_ENDPOINT, "")
     return value if value else None
+
+
+def resolve_ws_ping_interval(interval: Optional[float] = None) -> float:
+    """Resolve the WebSocket Ping/Pong keep-alive interval.
+
+    Resolution order: explicit *interval* → ``WS_KEEPALIVE_INTERVAL`` env
+    var → ``0.0`` (disabled).  ``0`` (from any source) disables
+    keep-alive.
+
+    :param interval: Explicitly requested interval in seconds, or None.
+    :type interval: Optional[float]
+    :return: The resolved interval in seconds (``0`` means disabled).
+    :rtype: float
+    :raises ValueError: If the resolved value is negative, non-finite, or
+        (for the env var) not parseable as a number.
+    """
+    import math  # local import — only used here
+
+    if interval is not None:
+        try:
+            resolved = float(interval)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                f"ws_ping_interval must be a number, got {interval!r}"
+            ) from exc
+    else:
+        env_raw = os.environ.get(_ENV_WS_KEEPALIVE_INTERVAL)
+        if env_raw is None or env_raw == "":
+            return _DEFAULT_WS_PING_INTERVAL
+        try:
+            resolved = float(env_raw)
+        except ValueError as exc:
+            raise ValueError(
+                f"Invalid value for {_ENV_WS_KEEPALIVE_INTERVAL}: "
+                f"{env_raw!r} (expected a non-negative number)"
+            ) from exc
+    if math.isnan(resolved) or math.isinf(resolved) or resolved < 0.0:
+        raise ValueError(
+            f"ws_ping_interval must be a non-negative finite number, "
+            f"got {interval if interval is not None else env_raw!r}"
+        )
+    return resolved
