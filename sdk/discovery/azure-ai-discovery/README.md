@@ -1,4 +1,4 @@
-# Azure AI Discovery Client Library for Python
+# Azure AI Discovery client library for Python
 
 The Azure AI Discovery client library for Python provides two clients for interacting with Azure AI Discovery services:
 
@@ -7,7 +7,7 @@ The Azure AI Discovery client library for Python provides two clients for intera
 
 [Source code][source_code] | [Package (PyPI)][pypi] | [Samples][samples]
 
-## Getting Started
+## Getting started
 
 ### Install the Package
 
@@ -44,7 +44,7 @@ bookshelf_client = BookshelfClient(
 )
 ```
 
-## Key Concepts
+## Key concepts
 
 ### WorkspaceClient
 
@@ -233,7 +233,7 @@ except ResourceNotFoundError as e:
     print(f"Investigation not found: {e.message}")
 ```
 
-## Next Steps
+## Next steps
 
 - [Samples][samples] — runnable code examples for common scenarios.
 - [Azure AI Discovery documentation][product_docs]
