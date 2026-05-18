@@ -84,5 +84,6 @@ package_doc_id = ""
 title = "ACEProvisioningManagementPartnerAPI"
 need_msrestazure = false
 need_azuremgmtcore = true
+no_sub = true
 sample_link = ""
 exclude_folders = ""
