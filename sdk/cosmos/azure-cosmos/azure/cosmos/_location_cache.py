@@ -38,6 +38,21 @@ from .http_constants import ResourceType
 logger = logging.getLogger("azure.cosmos.LocationCache")
 
 
+def _clean_location_list(locations: Optional[list[Optional[str]]]) -> list[str]:
+    """Drop ``None``/empty/whitespace-only entries from a location list.
+
+    We filter these out at every intake point because the region normalizer
+    turns ``None`` (and empty/whitespace input) into an empty string. If such
+    a value were allowed into an exclusion list, every endpoint that wasn't
+    found in our by-endpoint lookup map — which also returns an empty string
+    as its default — would compare equal to it and get silently excluded.
+    Stripping the bad inputs once, at the boundary, prevents that collision.
+    """
+    if not locations:
+        return []
+    return [loc for loc in locations if loc and str(loc).strip()]
+
+
 def _normalize_region_name(region_name: Optional[str]) -> str:
     if region_name is None:
         return ""
@@ -133,9 +148,10 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: list[Re
     :return: A filtered and reordered list of regional routing contexts.
     :rtype: list[RegionalRoutingContext]
     """
-    normalized_excluded_locations = {_normalize_region_name(location) for location in exclude_location_list}
+    normalized_excluded_locations = {_normalize_region_name(location)
+                                     for location in _clean_location_list(exclude_location_list)}
     normalized_circuit_breaker_locations = {
-        _normalize_region_name(location) for location in circuit_breaker_exclude_list
+        _normalize_region_name(location) for location in _clean_location_list(circuit_breaker_exclude_list)
     }
 
     # filter endpoints by excluded locations
@@ -196,8 +212,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self._write_locations_by_normalized: dict[str, RegionalRoutingContext] = {}
         self._normalized_location_by_read_endpoint: dict[str, str] = {}
         self._normalized_location_by_write_endpoint: dict[str, str] = {}
-        self._normalized_name_by_read_location: dict[str, str] = {}
-        self._normalized_name_by_write_location: dict[str, str] = {}
         self.connection_policy: ConnectionPolicy = connection_policy
         self._config_mismatch_warning_dedupe: set[tuple[str, tuple[str, ...], tuple[str, ...]]] = set()
 
@@ -254,13 +268,18 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             else:
                 excluded_locations = []
 
-        return excluded_locations
+        # Strip None / empty / whitespace-only entries so they never reach the
+        # normalization layer (where they would collapse to "" and silently
+        # match unknown endpoints whose by-endpoint lookup also defaults to "").
+        return _clean_location_list(excluded_locations)
 
     def _emit_config_mismatch_warning_once(
             self,
             configured_locations: list[str],
             available_locations: list[str],
             setting_name: str):
+        configured_locations = _clean_location_list(configured_locations)
+        available_locations = _clean_location_list(available_locations)
         if not configured_locations:
             return
 
@@ -351,8 +370,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         ordered_locations = self.account_write_locations if is_write else self.account_read_locations
         all_contexts_by_loc = (self.account_write_regional_routing_contexts_by_location if is_write
                                else self.account_read_regional_routing_contexts_by_location)
-        normalized_name_by_location = (self._normalized_name_by_write_location if is_write
-                                       else self._normalized_name_by_read_location)
 
         # Safety check: if endpoint discovery is off or location cache isn't populated, fallback.
         if not self.connection_policy.EnableEndpointDiscovery or not ordered_locations:
@@ -368,7 +385,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         # For reads or multi-write, filter locations by user and circuit-breaker exclusions.
         excluded_locations = self._get_configured_excluded_locations(request)
-        circuit_breaker_excluded_locations = request.excluded_locations_circuit_breaker or []
+        circuit_breaker_excluded_locations = _clean_location_list(request.excluded_locations_circuit_breaker)
 
         normalized_excluded_locations = {_normalize_region_name(location) for location in excluded_locations}
         normalized_circuit_breaker_locations = {
@@ -380,7 +397,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         for loc_name in ordered_locations:
             if loc_name in all_contexts_by_loc:
                 context = all_contexts_by_loc[loc_name]
-                normalized_location_name = normalized_name_by_location.get(loc_name, "")
+                normalized_location_name = _normalize_region_name(loc_name)
                 if normalized_location_name in normalized_excluded_locations:
                     continue  # Skip user-excluded locations
                 if normalized_location_name in normalized_circuit_breaker_locations:
@@ -560,14 +577,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self._normalized_location_by_write_endpoint = {
             endpoint: _normalize_region_name(name)
             for endpoint, name in self.account_locations_by_write_endpoints.items()
-        }
-        self._normalized_name_by_read_location = {
-            name: _normalize_region_name(name)
-            for name in self.account_read_regional_routing_contexts_by_location
-        }
-        self._normalized_name_by_write_location = {
-            name: _normalize_region_name(name)
-            for name in self.account_write_regional_routing_contexts_by_location
         }
 
         # if preferred locations is empty and the default endpoint is a global endpoint,
