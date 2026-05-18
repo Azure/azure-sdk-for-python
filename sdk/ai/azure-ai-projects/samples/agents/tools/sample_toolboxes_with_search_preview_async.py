@@ -87,7 +87,6 @@ async def main() -> None:
             server_label=TOOLBOX_MCP_LABEL,
             server_url=toolbox_mcp_url,
             authorization=token,
-            headers={"Foundry-Features": "Toolboxes=V1Preview"},
             require_approval="never",
         )
 
