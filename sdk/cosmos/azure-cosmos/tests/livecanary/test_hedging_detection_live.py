@@ -46,8 +46,11 @@ pytestmark = pytest.mark.skipif(
 
 @pytest.fixture(scope="module")
 def client():
-    c = CosmosClient(ENDPOINT, credential=KEY)
-    yield c
+    # Use the client as a context manager so connection-pool / transport
+    # resources are released even if a test in this module fails. The yield
+    # keeps the fixture's module scope.
+    with CosmosClient(ENDPOINT, credential=KEY) as c:
+        yield c
 
 
 @pytest.fixture(scope="module")

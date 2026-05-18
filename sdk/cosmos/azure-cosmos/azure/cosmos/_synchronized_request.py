@@ -366,12 +366,9 @@ def _resolve_region_name(global_endpoint_manager, request_params) -> str:
                 return name
         # Fall back to the global endpoint manager's preferred read/write region.
         if hasattr(global_endpoint_manager, "get_write_endpoint_region"):
-            try:
-                name = global_endpoint_manager.get_write_endpoint_region()
-                if name:
-                    return name
-            except Exception:  # pylint: disable=broad-except
-                pass
+            name = global_endpoint_manager.get_write_endpoint_region()
+            if name:
+                return name
+        return ""
     except Exception:  # pylint: disable=broad-except
         return ""
-    return ""

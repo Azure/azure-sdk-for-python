@@ -11,6 +11,7 @@ Explicitly avoids the anti-patterns called out in public-spec §7:
   * no monkey-patching of the enum to exercise ``_missing_``
 """
 
+import dataclasses
 import enum
 import pickle
 import pytest
@@ -71,9 +72,12 @@ class TestRequestedRegion:
 
     def test_is_frozen(self):
         r = RequestedRegion("East US", RequestedRegionReason.INITIAL)
-        # Frozen dataclass — assignment must raise. Dataclasses raise
-        # ``FrozenInstanceError`` (subclass of ``AttributeError``).
-        with pytest.raises((AttributeError, Exception)):
+        # Frozen dataclass — assignment must raise the exact dataclasses
+        # exception. ``FrozenInstanceError`` subclasses ``AttributeError``,
+        # but matching it directly guarantees the dataclass machinery is
+        # what's rejecting the write (not some unrelated AttributeError
+        # from a typo on the attribute name).
+        with pytest.raises(dataclasses.FrozenInstanceError):
             r.region_name = "West US"  # type: ignore[misc]
 
     def test_equality_and_hash(self):
@@ -90,7 +94,7 @@ class TestRequestedRegion:
         assert len(s) == 3
 
     def test_pickleable(self):
-        # Frozen slots dataclasses must remain pickleable for users that store
+        # Frozen dataclasses must remain pickleable for users that store
         # diagnostics state (e.g., for offline replay). Not part of the public
         # wire contract — purely a Python-language invariant for value types.
         r = RequestedRegion("East US", RequestedRegionReason.HEDGING)

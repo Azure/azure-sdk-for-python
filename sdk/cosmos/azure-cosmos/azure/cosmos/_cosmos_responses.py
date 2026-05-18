@@ -7,7 +7,11 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.paging import ItemPaged
 from azure.core.utils import CaseInsensitiveDict
 
-from ._diagnostics import _HedgingDetectionAccessorsMixin, _pop_state_from_headers
+from ._diagnostics import (
+    HEDGING_STATE_HEADER_KEY,
+    _HedgingDetectionAccessorsMixin,
+    _pop_state_from_headers,
+)
 
 
 class CosmosItemPaged(_HedgingDetectionAccessorsMixin, ItemPaged[dict[str, Any]]):
@@ -78,7 +82,6 @@ class CosmosItemPaged(_HedgingDetectionAccessorsMixin, ItemPaged[dict[str, Any]]
         if not self._response_headers_list:
             return
         for h in reversed(self._response_headers_list):
-            from ._diagnostics import HEDGING_STATE_HEADER_KEY
             state = h.get(HEDGING_STATE_HEADER_KEY) if h is not None else None
             if state is not None:
                 self._hedging_state = state
@@ -99,7 +102,6 @@ class CosmosItemPaged(_HedgingDetectionAccessorsMixin, ItemPaged[dict[str, Any]]
         """
         if headers is None:
             return CaseInsensitiveDict()
-        from ._diagnostics import HEDGING_STATE_HEADER_KEY
         copied = headers.copy()
         try:
             copied.pop(HEDGING_STATE_HEADER_KEY, None)
@@ -164,7 +166,6 @@ class CosmosAsyncItemPaged(_HedgingDetectionAccessorsMixin, AsyncItemPaged[dict[
         if not self._response_headers_list:
             return
         for h in reversed(self._response_headers_list):
-            from ._diagnostics import HEDGING_STATE_HEADER_KEY
             state = h.get(HEDGING_STATE_HEADER_KEY) if h is not None else None
             if state is not None:
                 self._hedging_state = state
@@ -185,7 +186,6 @@ class CosmosAsyncItemPaged(_HedgingDetectionAccessorsMixin, AsyncItemPaged[dict[
         """
         if headers is None:
             return CaseInsensitiveDict()
-        from ._diagnostics import HEDGING_STATE_HEADER_KEY
         copied = headers.copy()
         try:
             copied.pop(HEDGING_STATE_HEADER_KEY, None)

@@ -255,6 +255,13 @@ def _pop_state_from_headers(headers):
     private state sentinel from a response-headers dict. Returns ``None`` if
     no state is attached. Also accepts ``None`` headers safely.
 
+    .. note::
+        **Mutates ``headers`` in place** — if the sentinel key is present it
+        is removed from the passed-in dict (this is what keeps the private
+        key from leaking through ``CosmosDict.get_response_headers()``).
+        Callers that need to preserve the original headers should pass a
+        copy.
+
     :param headers: Response-headers dict to pop the sentinel from. May be
         ``None``, in which case ``None`` is returned without raising.
     :type headers: Optional[MutableMapping[str, Any]]

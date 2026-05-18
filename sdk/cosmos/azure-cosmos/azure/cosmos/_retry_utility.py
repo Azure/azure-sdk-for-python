@@ -370,13 +370,17 @@ def _record_retry_diagnostics_and_attach(
                 pass
             return
 
-        # Determine reason from the policy class name (avoids importing every
-        # policy module at this layer; matches landscape-research-python.md
-        # citations).
-        cls_name = type(retry_policy).__name__
-        if cls_name in (
-                "_TimeoutFailoverRetryPolicy",
-                "EndpointDiscoveryRetryPolicy",
+        # Failover-class retries (region-redirect or endpoint-discovery) map
+        # to REGION_FAILOVER; everything else is OPERATION_RETRY. The two
+        # policy modules are already imported at the top of this file, so
+        # ``isinstance`` is both cheaper and refactor-safe vs. a class-name
+        # string match.
+        if isinstance(
+            retry_policy,
+            (
+                _timeout_failover_retry_policy._TimeoutFailoverRetryPolicy,  # pylint: disable=protected-access
+                _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy,
+            ),
         ):
             reason = RequestedRegionReason.REGION_FAILOVER
         else:

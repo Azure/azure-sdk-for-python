@@ -254,7 +254,7 @@ class TestNoPhantomEntriesAsync:
             raise AssertionError("execute_fn must not run when cancelled before delay")
 
         handler = CrossRegionAsyncHedgingHandler()
-        with pytest.raises((asyncio.CancelledError, BaseException)) as ei:
+        with pytest.raises(asyncio.CancelledError):
             await handler.execute_single_request_with_delay(
                 request_params=request_params,
                 request=SimpleNamespace(headers={}, url="x"),
@@ -345,8 +345,9 @@ class TestSyncAsyncParity:
 
     def test_parity_class_coverage(self):
         import importlib
-        sync_mod = importlib.import_module("test_hedging_detection")
-        async_mod = importlib.import_module("test_hedging_detection_async")
+
+        sync_mod = _import_sibling_test_module("test_hedging_detection")
+        async_mod = _import_sibling_test_module("test_hedging_detection_async")
 
         sync_classes = {
             n for n in dir(sync_mod)
@@ -368,9 +369,8 @@ class TestSyncAsyncParity:
         )
 
     def test_parity_method_coverage(self):
-        import importlib
-        sync_mod = importlib.import_module("test_hedging_detection")
-        async_mod = importlib.import_module("test_hedging_detection_async")
+        sync_mod = _import_sibling_test_module("test_hedging_detection")
+        async_mod = _import_sibling_test_module("test_hedging_detection_async")
 
         missing = []
         for sn in dir(sync_mod):
@@ -391,3 +391,26 @@ class TestSyncAsyncParity:
         assert missing == [], (
             "Sync test methods without _async twin: " + repr(missing)
         )
+
+
+def _import_sibling_test_module(name):
+    """Import a sibling test module by name, failing loud if it can't be found.
+
+    The Cosmos tests directory is added to ``sys.path`` by pytest's rootdir
+    discovery so ``importlib.import_module(name)`` normally works. If that
+    fallback ever stops working (e.g., a different invocation moves the
+    rootdir), this helper raises ``AssertionError`` with the exact module
+    name we were after and the underlying error, instead of letting a bare
+    ``ModuleNotFoundError`` propagate as if it were a parity failure.
+    """
+    import importlib
+
+    try:
+        return importlib.import_module(name)
+    except ImportError as exc:  # pragma: no cover - hardening
+        raise AssertionError(
+            "Parity test could not import sibling module '"
+            + name
+            + "'. The Cosmos tests directory must be on sys.path. "
+            "Original error: " + repr(exc)
+        ) from exc

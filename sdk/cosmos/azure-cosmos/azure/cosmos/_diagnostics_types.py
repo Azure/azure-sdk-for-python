@@ -95,7 +95,7 @@ class RequestedRegionReason(Enum):
         return cls.UNKNOWN
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class RequestedRegion:
     """A single entry in :meth:`get_requested_regions`.
 
