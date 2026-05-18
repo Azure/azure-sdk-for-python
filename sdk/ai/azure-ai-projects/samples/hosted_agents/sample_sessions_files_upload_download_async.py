@@ -26,8 +26,8 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
 
-    If you don't have a Hosted Agent, run `sample_hosted_agent_create.py` first
-    to create one as a prerequisite.
+    If you don't have a Hosted Agent, run `sample_create_hosted_agent_async.py` or
+    `sample_create_hosted_agent_from_code_async.py` first to create one as a prerequisite.
 """
 
 import asyncio

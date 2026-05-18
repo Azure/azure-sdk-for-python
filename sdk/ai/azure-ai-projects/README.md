@@ -22,6 +22,7 @@ resources in your Microsoft Foundry Project. Use it to:
   * Microsoft SharePoint (Preview)
   * Model Context Protocol (MCP)
   * OpenAPI
+  * Toolbox Search (Preview)
   * Web Search
   * Web Search (Preview)
   * Work IQ (Preview)
