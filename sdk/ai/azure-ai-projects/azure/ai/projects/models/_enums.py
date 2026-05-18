@@ -18,8 +18,6 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HOSTED_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
-    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
-    """CONTAINER_AGENTS_V1_PREVIEW."""
     AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
     """AGENT_ENDPOINT_V1_PREVIEW."""
     CODE_AGENTS_V1_PREVIEW = "CodeAgents=V1Preview"
