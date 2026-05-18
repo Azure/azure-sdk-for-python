@@ -8,6 +8,7 @@
 
 ### Bugs Fixed
 - The sdkversion should only show the exporter/distro version which emits the sdkstats. Removed the AZURE_MONITOR_DISTRO_VERSION variable
+  ([#46963](https://github.com/Azure/azure-sdk-for-python/pull/46963))
 
 ### Other Changes
 
