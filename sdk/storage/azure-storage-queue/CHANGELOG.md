@@ -3,6 +3,7 @@
 ## 12.18.0b1 (Unreleased)
 
 ### Features Added
+- Stable release of features from 12.17.0b1
 
 ## 12.16.0 (2026-05-14)
 
