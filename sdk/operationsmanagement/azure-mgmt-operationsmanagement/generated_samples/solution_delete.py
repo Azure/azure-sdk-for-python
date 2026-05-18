@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.operationsmanagement import OperationsManagementClient
 
 """
@@ -29,13 +31,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.solutions.begin_delete(
+    client.solutions.begin_delete(
         resource_group_name="rg1",
         solution_name="solution1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/operationsmanagement/resource-manager/Microsoft.OperationsManagement/preview/2015-11-01-preview/examples/SolutionDelete.json
+# x-ms-original-file: specification/operationsmanagement/resource-manager/Microsoft.OperationsManagement/OperationsManagement/preview/2015-11-01-preview/examples/SolutionDelete.json
 if __name__ == "__main__":
     main()
