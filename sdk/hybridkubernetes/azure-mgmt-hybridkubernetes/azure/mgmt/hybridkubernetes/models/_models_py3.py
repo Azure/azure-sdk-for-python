@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,199 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
-
-
-class AadProfile(_serialization.Model):
-    """AAD Profile specifies attributes for Azure Active Directory integration.
-
-    :ivar enable_azure_rbac: Whether to enable Azure RBAC for Kubernetes authorization.
-    :vartype enable_azure_rbac: bool
-    :ivar admin_group_object_i_ds: The list of AAD group object IDs that will have admin role of
-     the cluster.
-    :vartype admin_group_object_i_ds: list[str]
-    :ivar tenant_id: The AAD tenant ID to use for authentication. If not specified, will use the
-     tenant of the deployment subscription.
-    :vartype tenant_id: str
-    """
-
-    _attribute_map = {
-        "enable_azure_rbac": {"key": "enableAzureRBAC", "type": "bool"},
-        "admin_group_object_i_ds": {"key": "adminGroupObjectIDs", "type": "[str]"},
-        "tenant_id": {"key": "tenantID", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        enable_azure_rbac: Optional[bool] = None,
-        admin_group_object_i_ds: Optional[List[str]] = None,
-        tenant_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword enable_azure_rbac: Whether to enable Azure RBAC for Kubernetes authorization.
-        :paramtype enable_azure_rbac: bool
-        :keyword admin_group_object_i_ds: The list of AAD group object IDs that will have admin role of
-         the cluster.
-        :paramtype admin_group_object_i_ds: list[str]
-        :keyword tenant_id: The AAD tenant ID to use for authentication. If not specified, will use the
-         tenant of the deployment subscription.
-        :paramtype tenant_id: str
-        """
-        super().__init__(**kwargs)
-        self.enable_azure_rbac = enable_azure_rbac
-        self.admin_group_object_i_ds = admin_group_object_i_ds
-        self.tenant_id = tenant_id
-
-
-class AgentError(_serialization.Model):
-    """Agent Errors if any during agent or system component upgrade.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar message: Agent error message.
-    :vartype message: str
-    :ivar severity: Severity of the error message.
-    :vartype severity: str
-    :ivar component: Agent component where error message occured.
-    :vartype component: str
-    :ivar time: The timestamp of error occured (UTC).
-    :vartype time: ~datetime.datetime
-    """
-
-    _validation = {
-        "message": {"readonly": True},
-        "severity": {"readonly": True},
-        "component": {"readonly": True},
-        "time": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "message": {"key": "message", "type": "str"},
-        "severity": {"key": "severity", "type": "str"},
-        "component": {"key": "component", "type": "str"},
-        "time": {"key": "time", "type": "iso-8601"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.message = None
-        self.severity = None
-        self.component = None
-        self.time = None
-
-
-class ArcAgentProfile(_serialization.Model):
-    """Defines the Arc Agent properties for the clusters.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar desired_agent_version: Version of the Arc agents to be installed on the cluster resource.
-    :vartype desired_agent_version: str
-    :ivar agent_auto_upgrade: Indicates whether the Arc agents on the be upgraded automatically to
-     the latest version. Defaults to Enabled. Known values are: "Enabled" and "Disabled".
-    :vartype agent_auto_upgrade: str or ~azure.mgmt.hybridkubernetes.models.AutoUpgradeOptions
-    :ivar system_components: List of system extensions that are installed on the cluster resource.
-    :vartype system_components: list[~azure.mgmt.hybridkubernetes.models.SystemComponent]
-    :ivar agent_errors: List of arc agentry and system components errors on the cluster resource.
-    :vartype agent_errors: list[~azure.mgmt.hybridkubernetes.models.AgentError]
-    :ivar agent_state: Represents the current state of the Arc agentry and its dependent
-     components.
-    :vartype agent_state: str
-    """
-
-    _validation = {
-        "agent_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "desired_agent_version": {"key": "desiredAgentVersion", "type": "str"},
-        "agent_auto_upgrade": {"key": "agentAutoUpgrade", "type": "str"},
-        "system_components": {"key": "systemComponents", "type": "[SystemComponent]"},
-        "agent_errors": {"key": "agentErrors", "type": "[AgentError]"},
-        "agent_state": {"key": "agentState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        desired_agent_version: Optional[str] = None,
-        agent_auto_upgrade: Union[str, "_models.AutoUpgradeOptions"] = "Enabled",
-        system_components: Optional[List["_models.SystemComponent"]] = None,
-        agent_errors: Optional[List["_models.AgentError"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword desired_agent_version: Version of the Arc agents to be installed on the cluster
-         resource.
-        :paramtype desired_agent_version: str
-        :keyword agent_auto_upgrade: Indicates whether the Arc agents on the be upgraded automatically
-         to the latest version. Defaults to Enabled. Known values are: "Enabled" and "Disabled".
-        :paramtype agent_auto_upgrade: str or ~azure.mgmt.hybridkubernetes.models.AutoUpgradeOptions
-        :keyword system_components: List of system extensions that are installed on the cluster
-         resource.
-        :paramtype system_components: list[~azure.mgmt.hybridkubernetes.models.SystemComponent]
-        :keyword agent_errors: List of arc agentry and system components errors on the cluster
-         resource.
-        :paramtype agent_errors: list[~azure.mgmt.hybridkubernetes.models.AgentError]
-        """
-        super().__init__(**kwargs)
-        self.desired_agent_version = desired_agent_version
-        self.agent_auto_upgrade = agent_auto_upgrade
-        self.system_components = system_components
-        self.agent_errors = agent_errors
-        self.agent_state = None
-
-
-class ArcAgentryConfigurations(_serialization.Model):
-    """ArcAgentryConfigurations.
-
-    :ivar feature: Specifies the name of the feature for the configuration setting.
-    :vartype feature: str
-    :ivar settings: The configuration settings for the feature that do not contain any sensitive or
-     secret information.
-    :vartype settings: dict[str, str]
-    :ivar protected_settings: The configuration settings for the feature that contain any sensitive
-     or secret information.
-    :vartype protected_settings: dict[str, str]
-    """
-
-    _attribute_map = {
-        "feature": {"key": "feature", "type": "str"},
-        "settings": {"key": "settings", "type": "{str}"},
-        "protected_settings": {"key": "protectedSettings", "type": "{str}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        feature: Optional[str] = None,
-        settings: Optional[Dict[str, str]] = None,
-        protected_settings: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword feature: Specifies the name of the feature for the configuration setting.
-        :paramtype feature: str
-        :keyword settings: The configuration settings for the feature that do not contain any sensitive
-         or secret information.
-        :paramtype settings: dict[str, str]
-        :keyword protected_settings: The configuration settings for the feature that contain any
-         sensitive or secret information.
-        :paramtype protected_settings: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.feature = feature
-        self.settings = settings
-        self.protected_settings = protected_settings
+JSON = MutableMapping[str, Any]
 
 
 class Resource(_serialization.Model):
@@ -208,7 +24,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -232,9 +48,9 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class TrackedResource(Resource):
@@ -246,7 +62,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -274,7 +90,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -294,7 +110,7 @@ class ConnectedCluster(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -307,8 +123,6 @@ class ConnectedCluster(TrackedResource):
     :vartype location: str
     :ivar identity: The identity of the connected cluster. Required.
     :vartype identity: ~azure.mgmt.hybridkubernetes.models.ConnectedClusterIdentity
-    :ivar kind: The kind of connected cluster. Known values are: "ProvisionedCluster" and "AWS".
-    :vartype kind: str or ~azure.mgmt.hybridkubernetes.models.ConnectedClusterKind
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.hybridkubernetes.models.SystemData
     :ivar agent_public_key_certificate: Base64 encoded public certificate used by the agent to do
@@ -327,8 +141,6 @@ class ConnectedCluster(TrackedResource):
     :vartype provisioning_state: str or ~azure.mgmt.hybridkubernetes.models.ProvisioningState
     :ivar distribution: The Kubernetes distribution running on this connected cluster.
     :vartype distribution: str
-    :ivar distribution_version: The Kubernetes distribution version on this connected cluster.
-    :vartype distribution_version: str
     :ivar infrastructure: The infrastructure on which the Kubernetes cluster represented by this
      connected cluster is running on.
     :vartype infrastructure: str
@@ -341,33 +153,8 @@ class ConnectedCluster(TrackedResource):
      from the cluster.
     :vartype last_connectivity_time: ~datetime.datetime
     :ivar connectivity_status: Represents the connectivity status of the connected cluster. Known
-     values are: "Connecting", "Connected", "Offline", "Expired", and "AgentNotInstalled".
+     values are: "Connecting", "Connected", "Offline", and "Expired".
     :vartype connectivity_status: str or ~azure.mgmt.hybridkubernetes.models.ConnectivityStatus
-    :ivar private_link_state: Property which describes the state of private link on a connected
-     cluster resource. Known values are: "Enabled" and "Disabled".
-    :vartype private_link_state: str or ~azure.mgmt.hybridkubernetes.models.PrivateLinkState
-    :ivar private_link_scope_resource_id: This is populated only if privateLinkState is enabled.
-     The resource id of the private link scope this connected cluster is assigned to, if any.
-    :vartype private_link_scope_resource_id: str
-    :ivar azure_hybrid_benefit: Indicates whether Azure Hybrid Benefit is opted in. Known values
-     are: "True", "False", and "NotApplicable".
-    :vartype azure_hybrid_benefit: str or ~azure.mgmt.hybridkubernetes.models.AzureHybridBenefit
-    :ivar aad_profile: AAD profile for the connected cluster.
-    :vartype aad_profile: ~azure.mgmt.hybridkubernetes.models.AadProfile
-    :ivar arc_agent_profile: Arc agentry configuration for the provisioned cluster.
-    :vartype arc_agent_profile: ~azure.mgmt.hybridkubernetes.models.ArcAgentProfile
-    :ivar security_profile: Security profile for the connected cluster.
-    :vartype security_profile: ~azure.mgmt.hybridkubernetes.models.SecurityProfile
-    :ivar oidc_issuer_profile: Open ID Connect (OIDC) Issuer Profile for the connected cluster.
-    :vartype oidc_issuer_profile: ~azure.mgmt.hybridkubernetes.models.OidcIssuerProfile
-    :ivar gateway: Details of the gateway used by the Arc router for connectivity.
-    :vartype gateway: ~azure.mgmt.hybridkubernetes.models.Gateway
-    :ivar arc_agentry_configurations: Configuration settings for customizing the behavior of the
-     connected cluster.
-    :vartype arc_agentry_configurations:
-     list[~azure.mgmt.hybridkubernetes.models.ArcAgentryConfigurations]
-    :ivar miscellaneous_properties: More properties related to the Connected Cluster.
-    :vartype miscellaneous_properties: dict[str, str]
     """
 
     _validation = {
@@ -386,7 +173,6 @@ class ConnectedCluster(TrackedResource):
         "managed_identity_certificate_expiration_time": {"readonly": True},
         "last_connectivity_time": {"readonly": True},
         "connectivity_status": {"readonly": True},
-        "miscellaneous_properties": {"readonly": True},
     }
 
     _attribute_map = {
@@ -396,7 +182,6 @@ class ConnectedCluster(TrackedResource):
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "identity": {"key": "identity", "type": "ConnectedClusterIdentity"},
-        "kind": {"key": "kind", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "agent_public_key_certificate": {"key": "properties.agentPublicKeyCertificate", "type": "str"},
         "kubernetes_version": {"key": "properties.kubernetesVersion", "type": "str"},
@@ -405,7 +190,6 @@ class ConnectedCluster(TrackedResource):
         "agent_version": {"key": "properties.agentVersion", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "distribution": {"key": "properties.distribution", "type": "str"},
-        "distribution_version": {"key": "properties.distributionVersion", "type": "str"},
         "infrastructure": {"key": "properties.infrastructure", "type": "str"},
         "offering": {"key": "properties.offering", "type": "str"},
         "managed_identity_certificate_expiration_time": {
@@ -414,42 +198,18 @@ class ConnectedCluster(TrackedResource):
         },
         "last_connectivity_time": {"key": "properties.lastConnectivityTime", "type": "iso-8601"},
         "connectivity_status": {"key": "properties.connectivityStatus", "type": "str"},
-        "private_link_state": {"key": "properties.privateLinkState", "type": "str"},
-        "private_link_scope_resource_id": {"key": "properties.privateLinkScopeResourceId", "type": "str"},
-        "azure_hybrid_benefit": {"key": "properties.azureHybridBenefit", "type": "str"},
-        "aad_profile": {"key": "properties.aadProfile", "type": "AadProfile"},
-        "arc_agent_profile": {"key": "properties.arcAgentProfile", "type": "ArcAgentProfile"},
-        "security_profile": {"key": "properties.securityProfile", "type": "SecurityProfile"},
-        "oidc_issuer_profile": {"key": "properties.oidcIssuerProfile", "type": "OidcIssuerProfile"},
-        "gateway": {"key": "properties.gateway", "type": "Gateway"},
-        "arc_agentry_configurations": {
-            "key": "properties.arcAgentryConfigurations",
-            "type": "[ArcAgentryConfigurations]",
-        },
-        "miscellaneous_properties": {"key": "properties.miscellaneousProperties", "type": "{str}"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         location: str,
         identity: "_models.ConnectedClusterIdentity",
         agent_public_key_certificate: str,
-        tags: Optional[Dict[str, str]] = None,
-        kind: Optional[Union[str, "_models.ConnectedClusterKind"]] = None,
+        tags: Optional[dict[str, str]] = None,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         distribution: Optional[str] = None,
-        distribution_version: Optional[str] = None,
         infrastructure: Optional[str] = None,
-        private_link_state: Union[str, "_models.PrivateLinkState"] = "Disabled",
-        private_link_scope_resource_id: Optional[str] = None,
-        azure_hybrid_benefit: Optional[Union[str, "_models.AzureHybridBenefit"]] = None,
-        aad_profile: Optional["_models.AadProfile"] = None,
-        arc_agent_profile: Optional["_models.ArcAgentProfile"] = None,
-        security_profile: Optional["_models.SecurityProfile"] = None,
-        oidc_issuer_profile: Optional["_models.OidcIssuerProfile"] = None,
-        gateway: Optional["_models.Gateway"] = None,
-        arc_agentry_configurations: Optional[List["_models.ArcAgentryConfigurations"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -459,8 +219,6 @@ class ConnectedCluster(TrackedResource):
         :paramtype location: str
         :keyword identity: The identity of the connected cluster. Required.
         :paramtype identity: ~azure.mgmt.hybridkubernetes.models.ConnectedClusterIdentity
-        :keyword kind: The kind of connected cluster. Known values are: "ProvisionedCluster" and "AWS".
-        :paramtype kind: str or ~azure.mgmt.hybridkubernetes.models.ConnectedClusterKind
         :keyword agent_public_key_certificate: Base64 encoded public certificate used by the agent to
          do the initial handshake to the backend services in Azure. Required.
         :paramtype agent_public_key_certificate: str
@@ -469,62 +227,25 @@ class ConnectedCluster(TrackedResource):
         :paramtype provisioning_state: str or ~azure.mgmt.hybridkubernetes.models.ProvisioningState
         :keyword distribution: The Kubernetes distribution running on this connected cluster.
         :paramtype distribution: str
-        :keyword distribution_version: The Kubernetes distribution version on this connected cluster.
-        :paramtype distribution_version: str
         :keyword infrastructure: The infrastructure on which the Kubernetes cluster represented by this
          connected cluster is running on.
         :paramtype infrastructure: str
-        :keyword private_link_state: Property which describes the state of private link on a connected
-         cluster resource. Known values are: "Enabled" and "Disabled".
-        :paramtype private_link_state: str or ~azure.mgmt.hybridkubernetes.models.PrivateLinkState
-        :keyword private_link_scope_resource_id: This is populated only if privateLinkState is enabled.
-         The resource id of the private link scope this connected cluster is assigned to, if any.
-        :paramtype private_link_scope_resource_id: str
-        :keyword azure_hybrid_benefit: Indicates whether Azure Hybrid Benefit is opted in. Known values
-         are: "True", "False", and "NotApplicable".
-        :paramtype azure_hybrid_benefit: str or ~azure.mgmt.hybridkubernetes.models.AzureHybridBenefit
-        :keyword aad_profile: AAD profile for the connected cluster.
-        :paramtype aad_profile: ~azure.mgmt.hybridkubernetes.models.AadProfile
-        :keyword arc_agent_profile: Arc agentry configuration for the provisioned cluster.
-        :paramtype arc_agent_profile: ~azure.mgmt.hybridkubernetes.models.ArcAgentProfile
-        :keyword security_profile: Security profile for the connected cluster.
-        :paramtype security_profile: ~azure.mgmt.hybridkubernetes.models.SecurityProfile
-        :keyword oidc_issuer_profile: Open ID Connect (OIDC) Issuer Profile for the connected cluster.
-        :paramtype oidc_issuer_profile: ~azure.mgmt.hybridkubernetes.models.OidcIssuerProfile
-        :keyword gateway: Details of the gateway used by the Arc router for connectivity.
-        :paramtype gateway: ~azure.mgmt.hybridkubernetes.models.Gateway
-        :keyword arc_agentry_configurations: Configuration settings for customizing the behavior of the
-         connected cluster.
-        :paramtype arc_agentry_configurations:
-         list[~azure.mgmt.hybridkubernetes.models.ArcAgentryConfigurations]
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
-        self.kind = kind
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.agent_public_key_certificate = agent_public_key_certificate
-        self.kubernetes_version = None
-        self.total_node_count = None
-        self.total_core_count = None
-        self.agent_version = None
+        self.kubernetes_version: Optional[str] = None
+        self.total_node_count: Optional[int] = None
+        self.total_core_count: Optional[int] = None
+        self.agent_version: Optional[str] = None
         self.provisioning_state = provisioning_state
         self.distribution = distribution
-        self.distribution_version = distribution_version
         self.infrastructure = infrastructure
-        self.offering = None
-        self.managed_identity_certificate_expiration_time = None
-        self.last_connectivity_time = None
-        self.connectivity_status = None
-        self.private_link_state = private_link_state
-        self.private_link_scope_resource_id = private_link_scope_resource_id
-        self.azure_hybrid_benefit = azure_hybrid_benefit
-        self.aad_profile = aad_profile
-        self.arc_agent_profile = arc_agent_profile
-        self.security_profile = security_profile
-        self.oidc_issuer_profile = oidc_issuer_profile
-        self.gateway = gateway
-        self.arc_agentry_configurations = arc_agentry_configurations
-        self.miscellaneous_properties = None
+        self.offering: Optional[str] = None
+        self.managed_identity_certificate_expiration_time: Optional[datetime.datetime] = None
+        self.last_connectivity_time: Optional[datetime.datetime] = None
+        self.connectivity_status: Optional[Union[str, "_models.ConnectivityStatus"]] = None
 
 
 class ConnectedClusterIdentity(_serialization.Model):
@@ -566,8 +287,8 @@ class ConnectedClusterIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.hybridkubernetes.models.ResourceIdentityType
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
 
 
@@ -576,7 +297,7 @@ class ConnectedClusterList(_serialization.Model):
 
     :ivar value: The list of connected clusters.
     :vartype value: list[~azure.mgmt.hybridkubernetes.models.ConnectedCluster]
-    :ivar next_link: The link to fetch the next page of connected clusters.
+    :ivar next_link: The link to fetch the next page of connected cluster.
     :vartype next_link: str
     """
 
@@ -588,14 +309,14 @@ class ConnectedClusterList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ConnectedCluster"]] = None,
+        value: Optional[list["_models.ConnectedCluster"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of connected clusters.
         :paramtype value: list[~azure.mgmt.hybridkubernetes.models.ConnectedCluster]
-        :keyword next_link: The link to fetch the next page of connected clusters.
+        :keyword next_link: The link to fetch the next page of connected cluster.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -608,49 +329,29 @@ class ConnectedClusterPatch(_serialization.Model):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar distribution: Represents the distribution of the connected cluster.
-    :vartype distribution: str
-    :ivar distribution_version: Represents the Kubernetes distribution version on this connected
-     cluster.
-    :vartype distribution_version: str
-    :ivar azure_hybrid_benefit: Indicates whether Azure Hybrid Benefit is opted in. Known values
-     are: "True", "False", and "NotApplicable".
-    :vartype azure_hybrid_benefit: str or ~azure.mgmt.hybridkubernetes.models.AzureHybridBenefit
+    :ivar properties: Describes the connected cluster resource properties that can be updated
+     during PATCH operation.
+    :vartype properties: JSON
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
-        "distribution": {"key": "properties.distribution", "type": "str"},
-        "distribution_version": {"key": "properties.distributionVersion", "type": "str"},
-        "azure_hybrid_benefit": {"key": "properties.azureHybridBenefit", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
     def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        distribution: Optional[str] = None,
-        distribution_version: Optional[str] = None,
-        azure_hybrid_benefit: Optional[Union[str, "_models.AzureHybridBenefit"]] = None,
-        **kwargs: Any
+        self, *, tags: Optional[dict[str, str]] = None, properties: Optional[JSON] = None, **kwargs: Any
     ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword distribution: Represents the distribution of the connected cluster.
-        :paramtype distribution: str
-        :keyword distribution_version: Represents the Kubernetes distribution version on this connected
-         cluster.
-        :paramtype distribution_version: str
-        :keyword azure_hybrid_benefit: Indicates whether Azure Hybrid Benefit is opted in. Known values
-         are: "True", "False", and "NotApplicable".
-        :paramtype azure_hybrid_benefit: str or ~azure.mgmt.hybridkubernetes.models.AzureHybridBenefit
+        :keyword properties: Describes the connected cluster resource properties that can be updated
+         during PATCH operation.
+        :paramtype properties: JSON
         """
         super().__init__(**kwargs)
         self.tags = tags
-        self.distribution = distribution
-        self.distribution_version = distribution_version
-        self.azure_hybrid_benefit = azure_hybrid_benefit
+        self.properties = properties
 
 
 class CredentialResult(_serialization.Model):
@@ -677,8 +378,8 @@ class CredentialResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.value = None
+        self.name: Optional[str] = None
+        self.value: Optional[bytes] = None
 
 
 class CredentialResults(_serialization.Model):
@@ -706,8 +407,8 @@ class CredentialResults(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.hybrid_connection_config = None
-        self.kubeconfigs = None
+        self.hybrid_connection_config: Optional["_models.HybridConnectionConfig"] = None
+        self.kubeconfigs: Optional[list["_models.CredentialResult"]] = None
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -734,8 +435,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -774,11 +475,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -802,32 +503,6 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
-class Gateway(_serialization.Model):
-    """Gateway.
-
-    :ivar enabled: Indicates whether the gateway for arc router connectivity is enabled.
-    :vartype enabled: bool
-    :ivar resource_id: The resource ID of the gateway used for the Arc router feature.
-    :vartype resource_id: str
-    """
-
-    _attribute_map = {
-        "enabled": {"key": "enabled", "type": "bool"},
-        "resource_id": {"key": "resourceId", "type": "str"},
-    }
-
-    def __init__(self, *, enabled: Optional[bool] = None, resource_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword enabled: Indicates whether the gateway for arc router connectivity is enabled.
-        :paramtype enabled: bool
-        :keyword resource_id: The resource ID of the gateway used for the Arc router feature.
-        :paramtype resource_id: str
-        """
-        super().__init__(**kwargs)
-        self.enabled = enabled
-        self.resource_id = resource_id
-
-
 class HybridConnectionConfig(_serialization.Model):
     """Contains the REP (rendezvous endpoint) and “Sender” access token.
 
@@ -841,10 +516,6 @@ class HybridConnectionConfig(_serialization.Model):
     :vartype relay: str
     :ivar token: Sender access token.
     :vartype token: str
-    :ivar relay_tid: TenantID of the relay.
-    :vartype relay_tid: str
-    :ivar relay_type: Type of relay.
-    :vartype relay_type: str
     """
 
     _validation = {
@@ -852,8 +523,6 @@ class HybridConnectionConfig(_serialization.Model):
         "hybrid_connection_name": {"readonly": True},
         "relay": {"readonly": True},
         "token": {"readonly": True},
-        "relay_tid": {"readonly": True},
-        "relay_type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -861,19 +530,15 @@ class HybridConnectionConfig(_serialization.Model):
         "hybrid_connection_name": {"key": "hybridConnectionName", "type": "str"},
         "relay": {"key": "relay", "type": "str"},
         "token": {"key": "token", "type": "str"},
-        "relay_tid": {"key": "relayTid", "type": "str"},
-        "relay_type": {"key": "relayType", "type": "str"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.expiration_time = None
-        self.hybrid_connection_name = None
-        self.relay = None
-        self.token = None
-        self.relay_tid = None
-        self.relay_type = None
+        self.expiration_time: Optional[int] = None
+        self.hybrid_connection_name: Optional[str] = None
+        self.relay: Optional[str] = None
+        self.token: Optional[str] = None
 
 
 class ListClusterUserCredentialProperties(_serialization.Model):
@@ -916,47 +581,6 @@ class ListClusterUserCredentialProperties(_serialization.Model):
         self.client_proxy = client_proxy
 
 
-class OidcIssuerProfile(_serialization.Model):
-    """OIDC Issuer Profile specifies attributes for workload identity integration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar enabled: Whether to enable oidc issuer for workload identity integration.
-    :vartype enabled: bool
-    :ivar issuer_url: The issuer url for hybrid clusters connected to Arc used for the workload
-     identity feature.
-    :vartype issuer_url: str
-    :ivar self_hosted_issuer_url: The issuer url for public cloud clusters - AKS, EKS, GKE - used
-     for the workload identity feature.
-    :vartype self_hosted_issuer_url: str
-    """
-
-    _validation = {
-        "issuer_url": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "enabled": {"key": "enabled", "type": "bool"},
-        "issuer_url": {"key": "issuerUrl", "type": "str"},
-        "self_hosted_issuer_url": {"key": "selfHostedIssuerUrl", "type": "str"},
-    }
-
-    def __init__(
-        self, *, enabled: Optional[bool] = None, self_hosted_issuer_url: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword enabled: Whether to enable oidc issuer for workload identity integration.
-        :paramtype enabled: bool
-        :keyword self_hosted_issuer_url: The issuer url for public cloud clusters - AKS, EKS, GKE -
-         used for the workload identity feature.
-        :paramtype self_hosted_issuer_url: str
-        """
-        super().__init__(**kwargs)
-        self.enabled = enabled
-        self.issuer_url = None
-        self.self_hosted_issuer_url = self_hosted_issuer_url
-
-
 class Operation(_serialization.Model):
     """The Connected cluster API operation.
 
@@ -981,14 +605,14 @@ class Operation(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.display = None
+        self.name: Optional[str] = None
+        self.display: Optional["_models.OperationDisplay"] = None
 
 
 class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
-    :ivar provider: Service provider: Microsoft.Kubernetes.
+    :ivar provider: Service provider: Microsoft.connectedClusters.
     :vartype provider: str
     :ivar resource: Connected Cluster Resource on which the operation is performed.
     :vartype resource: str
@@ -1015,7 +639,7 @@ class OperationDisplay(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword provider: Service provider: Microsoft.Kubernetes.
+        :keyword provider: Service provider: Microsoft.connectedClusters.
         :paramtype provider: str
         :keyword resource: Connected Cluster Resource on which the operation is performed.
         :paramtype resource: str
@@ -1057,105 +681,8 @@ class OperationList(_serialization.Model):
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[list["_models.Operation"]] = None
         self.next_link = next_link
-
-
-class SecurityProfile(_serialization.Model):
-    """Security Profile specifies attributes for cluster security features.
-
-    :ivar workload_identity: The workload identity feature webhook.
-    :vartype workload_identity: ~azure.mgmt.hybridkubernetes.models.SecurityProfileWorkloadIdentity
-    """
-
-    _attribute_map = {
-        "workload_identity": {"key": "workloadIdentity", "type": "SecurityProfileWorkloadIdentity"},
-    }
-
-    def __init__(
-        self, *, workload_identity: Optional["_models.SecurityProfileWorkloadIdentity"] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword workload_identity: The workload identity feature webhook.
-        :paramtype workload_identity:
-         ~azure.mgmt.hybridkubernetes.models.SecurityProfileWorkloadIdentity
-        """
-        super().__init__(**kwargs)
-        self.workload_identity = workload_identity
-
-
-class SecurityProfileWorkloadIdentity(_serialization.Model):
-    """The workload identity feature webhook.
-
-    :ivar enabled: Whether to enable or disable the workload identity Webhook.
-    :vartype enabled: bool
-    """
-
-    _attribute_map = {
-        "enabled": {"key": "enabled", "type": "bool"},
-    }
-
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
-        """
-        :keyword enabled: Whether to enable or disable the workload identity Webhook.
-        :paramtype enabled: bool
-        """
-        super().__init__(**kwargs)
-        self.enabled = enabled
-
-
-class SystemComponent(_serialization.Model):
-    """System extensions and its current versions installed on the cluster resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: Type of the system extension.
-    :vartype type: str
-    :ivar user_specified_version: Version of the system extension to be installed on the cluster
-     resource.
-    :vartype user_specified_version: str
-    :ivar major_version: Major Version of the system extension that is currently installed on the
-     cluster resource.
-    :vartype major_version: int
-    :ivar current_version: Version of the system extension that is currently installed on the
-     cluster resource.
-    :vartype current_version: str
-    """
-
-    _validation = {
-        "current_version": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "user_specified_version": {"key": "userSpecifiedVersion", "type": "str"},
-        "major_version": {"key": "majorVersion", "type": "int"},
-        "current_version": {"key": "currentVersion", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        user_specified_version: Optional[str] = None,
-        major_version: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword type: Type of the system extension.
-        :paramtype type: str
-        :keyword user_specified_version: Version of the system extension to be installed on the cluster
-         resource.
-        :paramtype user_specified_version: str
-        :keyword major_version: Major Version of the system extension that is currently installed on
-         the cluster resource.
-        :paramtype major_version: int
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.user_specified_version = user_specified_version
-        self.major_version = major_version
-        self.current_version = None
 
 
 class SystemData(_serialization.Model):

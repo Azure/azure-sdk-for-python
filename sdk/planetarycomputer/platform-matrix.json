@@ -9,7 +9,7 @@
       "ubuntu-24.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
       "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" }
     },
-    "PythonVersion": [ "3.10", "3.12" ],
+    "PythonVersion": [ "3.12" ],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },
@@ -27,10 +27,10 @@
     },
     {
       "CoverageConfig": {
-        "ubuntu2404_39_coverage": {
+        "ubuntu2404_310_coverage": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "3.10",
           "CoverageArg": "",
           "TestSamples": "false"
         }

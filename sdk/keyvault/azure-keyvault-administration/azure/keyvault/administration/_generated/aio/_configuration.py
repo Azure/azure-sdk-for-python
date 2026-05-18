@@ -22,17 +22,19 @@ class KeyVaultClientConfiguration:  # pylint: disable=too-many-instance-attribut
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param vault_base_url: Required.
+    :param vault_base_url: The base URL of the Key Vault instance (e.g.
+     `https://myvault.vault.azure.net/ <https://myvault.vault.azure.net/>`_). Required.
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "7.6". Note
-     that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-07-01".
+     Default value is "2025-07-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, vault_base_url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "7.6")
+        api_version: str = kwargs.pop("api_version", "2025-07-01")
 
         if vault_base_url is None:
             raise ValueError("Parameter 'vault_base_url' must not be None.")

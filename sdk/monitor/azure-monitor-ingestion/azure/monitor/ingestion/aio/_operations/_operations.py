@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -31,10 +31,10 @@ from ..._utils.utils import ClientMixinABC
 from .._configuration import LogsIngestionClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class LogsIngestionClientOperationsMixin(
+class _LogsIngestionClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], LogsIngestionClientConfiguration]
 ):
 
@@ -43,7 +43,7 @@ class LogsIngestionClientOperationsMixin(
         self,
         rule_id: str,
         stream_name: str,
-        body: List[Dict[str, Any]],
+        body: list[dict[str, Any]],
         *,
         content_encoding: Optional[str] = None,
         content_type: str = "application/json",
@@ -66,7 +66,7 @@ class LogsIngestionClientOperationsMixin(
         self,
         rule_id: str,
         stream_name: str,
-        body: Union[List[Dict[str, Any]], IO[bytes]],
+        body: Union[list[dict[str, Any]], IO[bytes]],
         *,
         content_encoding: Optional[str] = None,
         **kwargs: Any

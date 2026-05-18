@@ -33,11 +33,11 @@ def main():
     response = client.mongo_clusters.begin_update(
         resource_group_name="TestResourceGroup",
         mongo_cluster_name="myMongoCluster",
-        properties={"properties": {"administrator": {"password": "password", "userName": "mongoAdmin"}}},
+        properties={"properties": {"administrator": {"password": "********", "userName": "mongoAdmin"}}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/MongoClusters_ResetPassword.json
+# x-ms-original-file: 2026-02-01-preview/MongoClusters_ResetPassword.json
 if __name__ == "__main__":
     main()

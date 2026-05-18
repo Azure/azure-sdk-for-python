@@ -65,7 +65,7 @@ Read the issue to understand which files/modules and specific error codes to fix
 # Activate the provided virtual environment (e.g., envml, env, venv)
 .\<venv-name>\Scripts\Activate.ps1
 
-# If creating new virtual environment (Python 3.9+):
+# If creating new virtual environment (Python 3.10+):
 python -m venv env
 .\env\Scripts\Activate.ps1
 ```
@@ -85,7 +85,7 @@ pip install -r dev_requirements.txt
 pip install -e .
 ```
 
-**Important:** Use Python 3.9 compatible environment for mypy checks.
+**Important:** Use Python 3.10 compatible environment for mypy checks.
 
 ### Step 3: Identify Target Files (within activated venv)
 
@@ -300,7 +300,7 @@ azpysdk mypy .
 
 - Always read the existing code to understand type annotation patterns before making changes
 - Prefer following existing patterns over adding new complex types
-- Use Python 3.9+ compatible type hints (use `Optional[X]` instead of `X | None`)
+- Use Python 3.10+ compatible type hints (use `Optional[X]` instead of `X | None`)
 - If unsure about a fix, mark it for manual review
 - Some errors may require architectural changes - don't force fixes
 - Test the code after fixing to ensure functionality is preserved

@@ -72,8 +72,14 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                             "cpuCfsQuotaPeriod": "str",
                             "cpuManagerPolicy": "str",
                             "failSwapOn": bool,
+                            "hardEvictionThreshold": {
+                                "memoryAvailable": "str",
+                                "nodeFsAvailable": "str",
+                                "nodeFsInodesFree": "str",
+                            },
                             "imageGcHighThreshold": 0,
                             "imageGcLowThreshold": 0,
+                            "kubeReserved": {"cpuMillicores": 0, "memoryMB": 0},
                             "podMaxPids": 0,
                             "seccompDefault": "str",
                             "topologyManagerPolicy": "str",
@@ -150,9 +156,12 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "networkProfile": {
                             "allowedHostPorts": [{"portEnd": 0, "portStart": 0, "protocol": "str"}],
                             "applicationSecurityGroups": ["str"],
+                            "nodePublicIPPrefixIDs": ["str"],
                             "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
+                            "secondaryNetworkInterfaces": [
+                                {"enableAcceleratedNetworking": bool, "type": "str", "vnetSubnetId": "str"}
+                            ],
                         },
-                        "nodeCustomizationProfile": {"nodeCustomizationId": "str"},
                         "nodeImageVersion": "str",
                         "nodeInitializationTaints": ["str"],
                         "nodeLabels": {"str": "str"},
@@ -166,6 +175,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "podIPAllocationMode": "str",
                         "podSubnetID": "str",
                         "powerState": {"code": "str"},
+                        "preparedImageSpecificationProfile": {"preparedImageSpecificationId": "str"},
                         "provisioningState": "str",
                         "proximityPlacementGroupID": "str",
                         "scaleDownMode": "str",
@@ -202,7 +212,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "virtualMachineNodesStatus": [{"count": 0, "size": "str"}],
                         "virtualMachinesProfile": {
                             "scale": {
-                                "autoscale": {"maxCount": 0, "minCount": 0, "size": "str"},
+                                "autoscale": [{"maxCount": 0, "minCount": 0, "size": "str"}],
                                 "manual": [{"count": 0, "size": "str"}],
                             }
                         },

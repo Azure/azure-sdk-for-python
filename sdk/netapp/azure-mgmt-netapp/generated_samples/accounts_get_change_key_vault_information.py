@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-12-15-preview/Accounts_GetChangeKeyVaultInformation.json
+# x-ms-original-file: 2026-01-01/Accounts_GetChangeKeyVaultInformation.json
 if __name__ == "__main__":
     main()

@@ -1,0 +1,4 @@
+directory: specification/eventgrid/resource-manager/Microsoft.EventGrid/EventGrid
+commit: 2d53f6db3bcf50413c9cd56ab6c22c8ec28fcd65
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

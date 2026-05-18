@@ -7,191 +7,165 @@ from openai.types.eval_create_params import DataSourceConfigCustom
 
 evaluator_to_data_source_config = {
     "coherence": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
-                "required": ["query", "response"],
-            },
-            "include_sample_schema": True,
-        }
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
+            "required": ["query", "response"],
+        },
+        include_sample_schema=True,
     ),
     "fluency": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
-                "required": ["response"],
-            },
-            "include_sample_schema": True,
-        }
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
+            "required": ["response"],
+        },
+        include_sample_schema=True,
     ),
     "groundedness": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "context": {"type": "string"},
-                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "tool_definitions": {
-                        "anyOf": [
-                            {"type": "string"},
-                            {"type": "object"},
-                            {"type": "array", "items": {"type": "object"}},
-                        ]
-                    },
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "context": {"type": "string"},
+                "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "tool_definitions": {
+                    "anyOf": [
+                        {"type": "string"},
+                        {"type": "object"},
+                        {"type": "array", "items": {"type": "object"}},
+                    ]
                 },
-                "required": ["response"],
             },
-            "include_sample_schema": True,
-        }
+            "required": ["response"],
+        },
+        include_sample_schema=True,
     ),
     "intent_resolution": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                },
-                "required": ["query", "response"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["query", "response"],
+        },
+        include_sample_schema=True,
     ),
     "relevance": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
-                "required": ["query", "response"],
-            },
-            "include_sample_schema": True,
-        }
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
+            "required": ["query", "response"],
+        },
+        include_sample_schema=True,
     ),
     "response_completeness": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {"ground_truth": {"type": "string"}, "response": {"type": "string"}},
-                "required": ["ground_truth", "response"],
-            },
-            "include_sample_schema": True,
-        }
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {"ground_truth": {"type": "string"}, "response": {"type": "string"}},
+            "required": ["ground_truth", "response"],
+        },
+        include_sample_schema=True,
     ),
     "task_adherence": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                },
-                "required": ["query", "response"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["query", "response"],
+        },
+        include_sample_schema=True,
     ),
     "task_completion": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                },
-                "required": ["query", "response"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["query", "response"],
+        },
+        include_sample_schema=True,
     ),
     "tool_call_accuracy": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                    "tool_calls": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                },
-                "required": ["query", "tool_definitions"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
+                "tool_calls": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
+                "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["query", "tool_definitions"],
+        },
+        include_sample_schema=True,
     ),
     "tool_input_accuracy": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                },
-                "required": ["query", "response", "tool_definitions"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["query", "response", "tool_definitions"],
+        },
+        include_sample_schema=True,
     ),
     "tool_output_utilization": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                },
-                "required": ["query", "response"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["query", "response"],
+        },
+        include_sample_schema=True,
     ),
     "tool_selection": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    "tool_calls": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                },
-                "required": ["query", "response", "tool_definitions"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                "tool_calls": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
+                "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["query", "response", "tool_definitions"],
+        },
+        include_sample_schema=True,
     ),
     "tool_success": DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                },
-                "required": ["response"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
+                "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["response"],
+        },
+        include_sample_schema=True,
     ),
 }
 

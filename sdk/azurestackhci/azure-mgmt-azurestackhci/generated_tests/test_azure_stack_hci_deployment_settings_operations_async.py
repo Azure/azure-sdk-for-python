@@ -90,6 +90,24 @@ class TestAzureStackHCIDeploymentSettingsOperationsAsync(AzureMgmtRecordedTestCa
                                                     },
                                                 }
                                             ],
+                                            "sanNetworks": {
+                                                "clusterNetworkConfig": {
+                                                    "adapterIPConfig": [
+                                                        {
+                                                            "addressPrefix": "str",
+                                                            "name": "str",
+                                                            "networkAdapterName": "str",
+                                                            "vlanId": 0,
+                                                        }
+                                                    ],
+                                                    "adapterProperties": {
+                                                        "bandwidthPercentageSmb": 0,
+                                                        "jumboPacket": 0,
+                                                        "priorityValue8021ActionCluster": 0,
+                                                        "priorityValue8021ActionSmb": 0,
+                                                    },
+                                                }
+                                            },
                                             "storageConnectivitySwitchless": bool,
                                             "storageNetworks": [
                                                 {
@@ -153,7 +171,12 @@ class TestAzureStackHCIDeploymentSettingsOperationsAsync(AzureMgmtRecordedTestCa
                                             "smbSigningEnforced": bool,
                                             "wdacEnforced": bool,
                                         },
-                                        "storage": {"configurationMode": "str"},
+                                        "storage": {
+                                            "configurationMode": "str",
+                                            "s2d": {"overprovisioningRatio": "str", "volumeType": "str"},
+                                            "san": {"infraPerfLunId": "str", "infraVolLunId": "str"},
+                                            "storageType": "str",
+                                        },
                                     },
                                     "sbePartnerInfo": {
                                         "credentialList": [

@@ -132,3 +132,15 @@ class TestAzureStackHCIUpdatesOperations(AzureMgmtRecordedTestCase):
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_updates_begin_prepare(self, resource_group):
+        response = self.client.updates.begin_prepare(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            update_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...

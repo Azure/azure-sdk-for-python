@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import pytest
-from azure.ai.projects import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
@@ -18,8 +16,8 @@ class TestDeployments(TestBase):
     def test_deployments(self, **kwargs):
 
         model_publisher = "OpenAI"
-        model_name = kwargs.get("azure_ai_model_deployment_name")
-        model_deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        model_name = kwargs.get("foundry_model_name")
+        model_deployment_name = kwargs.get("foundry_model_name")
 
         with self.create_client(**kwargs) as project_client:
 

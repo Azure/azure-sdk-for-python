@@ -6,11 +6,14 @@
         "azure.mgmt.computelimit.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
         "azure.mgmt.computelimit.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.computelimit.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
+        "azure.mgmt.computelimit.models.Feature": "Microsoft.ComputeLimit.Feature",
+        "azure.mgmt.computelimit.models.FeatureProperties": "Microsoft.ComputeLimit.FeatureProperties",
         "azure.mgmt.computelimit.models.GuestSubscription": "Microsoft.ComputeLimit.GuestSubscription",
         "azure.mgmt.computelimit.models.GuestSubscriptionProperties": "Microsoft.ComputeLimit.GuestSubscriptionProperties",
         "azure.mgmt.computelimit.models.LimitName": "Microsoft.ComputeLimit.LimitName",
         "azure.mgmt.computelimit.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
         "azure.mgmt.computelimit.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.computelimit.models.OperationStatusResult": "Azure.ResourceManager.CommonTypes.OperationStatusResult",
         "azure.mgmt.computelimit.models.SharedLimit": "Microsoft.ComputeLimit.SharedLimit",
         "azure.mgmt.computelimit.models.SharedLimitProperties": "Microsoft.ComputeLimit.SharedLimitProperties",
         "azure.mgmt.computelimit.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
@@ -18,6 +21,7 @@
         "azure.mgmt.computelimit.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
         "azure.mgmt.computelimit.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
         "azure.mgmt.computelimit.models.ResourceProvisioningState": "Azure.ResourceManager.ResourceProvisioningState",
+        "azure.mgmt.computelimit.models.FeatureState": "Microsoft.ComputeLimit.FeatureState",
         "azure.mgmt.computelimit.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.computelimit.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.computelimit.operations.GuestSubscriptionsOperations.get": "Microsoft.ComputeLimit.GuestSubscriptions.get",
@@ -35,6 +39,12 @@
         "azure.mgmt.computelimit.operations.SharedLimitsOperations.delete": "Microsoft.ComputeLimit.SharedLimits.delete",
         "azure.mgmt.computelimit.aio.operations.SharedLimitsOperations.delete": "Microsoft.ComputeLimit.SharedLimits.delete",
         "azure.mgmt.computelimit.operations.SharedLimitsOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.SharedLimits.listBySubscriptionLocationResource",
-        "azure.mgmt.computelimit.aio.operations.SharedLimitsOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.SharedLimits.listBySubscriptionLocationResource"
+        "azure.mgmt.computelimit.aio.operations.SharedLimitsOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.SharedLimits.listBySubscriptionLocationResource",
+        "azure.mgmt.computelimit.operations.FeaturesOperations.get": "Microsoft.ComputeLimit.Features.get",
+        "azure.mgmt.computelimit.aio.operations.FeaturesOperations.get": "Microsoft.ComputeLimit.Features.get",
+        "azure.mgmt.computelimit.operations.FeaturesOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.Features.listBySubscriptionLocationResource",
+        "azure.mgmt.computelimit.aio.operations.FeaturesOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.Features.listBySubscriptionLocationResource",
+        "azure.mgmt.computelimit.operations.FeaturesOperations.begin_enable": "Microsoft.ComputeLimit.Features.enable",
+        "azure.mgmt.computelimit.aio.operations.FeaturesOperations.begin_enable": "Microsoft.ComputeLimit.Features.enable"
     }
 }

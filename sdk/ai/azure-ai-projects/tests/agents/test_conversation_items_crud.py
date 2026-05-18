@@ -7,7 +7,6 @@
 
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-import pytest
 
 
 class TestConversationItemsCrud(TestBase):
@@ -45,7 +44,7 @@ class TestConversationItemsCrud(TestBase):
             print(f"Created conversation (id: {conversation.id})")
 
             try:
-                print(f"Test create_items")
+                print("Test create_items")
                 # Create items with short-form and long-form text message as Dict
                 # See https://platform.openai.com/docs/api-reference/conversations/create-items
                 items = [
@@ -58,7 +57,7 @@ class TestConversationItemsCrud(TestBase):
                 )
                 assert items.has_more is False
                 item_list = items.data
-                print(f"Created item with short-form and long form text messages as Dict")
+                print("Created item with short-form and long form text messages as Dict")
                 assert len(item_list) == 2
                 self._validate_conversation_item(
                     item_list[0],
@@ -106,7 +105,7 @@ class TestConversationItemsCrud(TestBase):
                 # item3_id = item_list[0].id
                 # item4_id = item_list[1].id
 
-                print(f"Test retrieve item")
+                print("Test retrieve item")
                 item = client.conversations.items.retrieve(conversation_id=conversation.id, item_id=item1_id)
                 self._validate_conversation_item(
                     item,
@@ -117,14 +116,14 @@ class TestConversationItemsCrud(TestBase):
                     expected_content_text="first message",
                 )
 
-                print(f"Test list items")
+                print("Test list items")
                 item_count = 0
                 for item in client.conversations.items.list(conversation.id):
                     item_count += 1
                     self._validate_conversation_item(item)
                 assert item_count == 2
 
-                print(f"Test delete item")
+                print("Test delete item")
                 # result = client.conversations.items.delete(conversation_id=conversation.id, item_id=item4_id)
                 # assert result.id == conversation.id
                 result = client.conversations.items.delete(conversation_id=conversation.id, item_id=item2_id)

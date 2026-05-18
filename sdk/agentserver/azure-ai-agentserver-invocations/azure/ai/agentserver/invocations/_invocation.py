@@ -29,10 +29,65 @@ from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     set_current_span,
     trace_stream,
 )
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
+    CHAT_ISOLATION_KEY,
+    ERROR_DETAIL,
+    ERROR_SOURCE,
+    MAX_ERROR_DETAIL_LENGTH,
+    PLATFORM_ERROR_TAG,
+    USER_ISOLATION_KEY,
+)
 
 from ._constants import InvocationConstants
+from ._invocation_ws import _WSHandlerMixin
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+# ---------------------------------------------------------------------------
+# Internal error-source classification
+# ---------------------------------------------------------------------------
+
+_ERROR_SOURCE_UPSTREAM: str = "upstream"
+_ERROR_SOURCE_PLATFORM: str = "platform"
+
+
+def _apply_error_source_headers(
+    headers: dict[str, str],
+    error_source: str,
+    error_detail: Optional[str] = None,
+) -> dict[str, str]:
+    """Return a new dict with error source classification headers merged in.
+
+    :param headers: Base headers to merge into.
+    :type headers: dict[str, str]
+    :param error_source: The error source value (user/platform/upstream).
+    :type error_source: str
+    :param error_detail: Optional detail string for platform errors.
+    :type error_detail: str or None
+    :return: A new dict containing the original headers plus error source headers.
+    :rtype: dict[str, str]
+    """
+    merged = {**headers, ERROR_SOURCE: error_source}
+    if error_detail:
+        merged[ERROR_DETAIL] = error_detail
+    return merged
+
+
+def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
+    """Classify an exception: platform-tagged → (platform, detail), else → (upstream, None).
+
+    :param exc: The exception to classify.
+    :type exc: BaseException
+    :return: A tuple of (error_source, error_detail).
+    :rtype: tuple[str, str or None]
+    """
+    if getattr(exc, PLATFORM_ERROR_TAG, False) is True:
+        detail = f"{type(exc).__name__}: {exc}"
+        if len(detail) > MAX_ERROR_DETAIL_LENGTH:
+            suffix = "...[truncated]"
+            detail = detail[: MAX_ERROR_DETAIL_LENGTH - len(suffix)] + suffix
+        return _ERROR_SOURCE_PLATFORM, detail
+    return _ERROR_SOURCE_UPSTREAM, None
 
 # Maximum length and allowed characters for user-provided IDs (defense in depth).
 _MAX_ID_LENGTH = 256
@@ -93,12 +148,17 @@ def _sanitize_id(value: str, fallback: str) -> str:
     return value
 
 
-class InvocationAgentServerHost(AgentServerHost):
+class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     """Invocation protocol host for Azure AI Hosted Agents.
 
     A :class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds
     the invocation protocol endpoints.  Use the decorator methods to wire
     handler functions to the endpoints.
+
+    The same host object also exposes the ``invocations_ws`` (WebSocket)
+    transport at :data:`/invocations_ws` — register a handler with the
+    :meth:`ws_handler` decorator.  Multi-protocol agents share a single
+    host, session, and process.
 
     For multi-protocol agents, compose via cooperative inheritance::
 
@@ -108,12 +168,18 @@ class InvocationAgentServerHost(AgentServerHost):
     Usage::
 
         from azure.ai.agentserver.invocations import InvocationAgentServerHost
+        from starlette.websockets import WebSocket
 
         app = InvocationAgentServerHost()
 
-        @app.invoke_handler
+        @app.invoke_handler                  # POST /invocations
         async def handle(request):
             return JSONResponse({"ok": True})
+
+        @app.ws_handler                      # /invocations_ws
+        async def ws(websocket: WebSocket) -> None:
+            async for message in websocket.iter_text():
+                await websocket.send_text(message)
 
         app.run()
 
@@ -135,8 +201,13 @@ class InvocationAgentServerHost(AgentServerHost):
         self._cancel_invocation_fn: Optional[Callable] = None
         self._openapi_spec = openapi_spec
 
+        # Initialise WS handler slots (no parameters — the keep-alive
+        # interval lives on ``AgentConfig`` and is wired into Hypercorn
+        # by ``AgentServerHost._build_hypercorn_config``).
+        self._init_ws_state()
+
         # Build invocation routes and pass to parent via routes kwarg
-        invocation_routes = [
+        invocation_routes: list[Any] = [
             Route(
                 "/invocations/docs/openapi.json",
                 self._get_openapi_spec_endpoint,
@@ -166,6 +237,12 @@ class InvocationAgentServerHost(AgentServerHost):
         # Merge with any routes from sibling mixins via cooperative init
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + invocation_routes, **kwargs)
+
+        # --- Invocations startup configuration logging ---
+        logger.info(
+            "Invocations protocol: openapi_spec_configured=%s",
+            self._openapi_spec is not None,
+        )
 
     # ------------------------------------------------------------------
     # Handler decorators
@@ -248,12 +325,20 @@ class InvocationAgentServerHost(AgentServerHost):
     async def _dispatch_get_invocation(self, request: Request) -> Response:
         if self._get_invocation_fn is not None:
             return await self._get_invocation_fn(request)
-        return create_error_response("not_found", "get_invocation not implemented", status_code=404)
+        return create_error_response(
+            "not_found", "get_invocation not implemented",
+            status_code=404,
+            headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
+        )
 
     async def _dispatch_cancel_invocation(self, request: Request) -> Response:
         if self._cancel_invocation_fn is not None:
             return await self._cancel_invocation_fn(request)
-        return create_error_response("not_found", "cancel_invocation not implemented", status_code=404)
+        return create_error_response(
+            "not_found", "cancel_invocation not implemented",
+            status_code=404,
+            headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
+        )
 
     def get_openapi_spec(self) -> Optional[dict[str, Any]]:
         """Return the stored OpenAPI spec, or None."""
@@ -327,7 +412,11 @@ class InvocationAgentServerHost(AgentServerHost):
     async def _get_openapi_spec_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
         spec = self.get_openapi_spec()
         if spec is None:
-            return create_error_response("not_found", "No OpenAPI spec registered", status_code=404)
+            return create_error_response(
+                "not_found", "No OpenAPI spec registered",
+                status_code=404,
+                headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
+            )
         return JSONResponse(spec)
 
     async def _create_invocation_endpoint(self, request: Request) -> Response:
@@ -346,8 +435,8 @@ class InvocationAgentServerHost(AgentServerHost):
         request.state.session_id = session_id
 
         # Platform isolation headers — expose to handlers
-        request.state.user_isolation_key = request.headers.get("x-agent-user-isolation-key", "")
-        request.state.chat_isolation_key = request.headers.get("x-agent-chat-isolation-key", "")
+        request.state.user_isolation_key = request.headers.get(USER_ISOLATION_KEY, "")
+        request.state.chat_isolation_key = request.headers.get(CHAT_ISOLATION_KEY, "")
 
         with self.request_span(
             request.headers, invocation_id, "invoke_agent",
@@ -389,12 +478,16 @@ class InvocationAgentServerHost(AgentServerHost):
                     "not_implemented",
                     str(exc),
                     status_code=501,
-                    headers={
-                        InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
-                        InvocationConstants.SESSION_ID_HEADER: session_id,
-                    },
+                    headers=_apply_error_source_headers(
+                        {
+                            InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
+                            InvocationConstants.SESSION_ID_HEADER: session_id,
+                        },
+                        _ERROR_SOURCE_UPSTREAM,
+                    ),
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
+                error_source, error_detail = _classify_error(exc)
                 self._safe_set_attrs(otel_span, {
                     InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
                     InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
@@ -405,10 +498,14 @@ class InvocationAgentServerHost(AgentServerHost):
                     "internal_error",
                     "Internal server error",
                     status_code=500,
-                    headers={
-                        InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
-                        InvocationConstants.SESSION_ID_HEADER: session_id,
-                    },
+                    headers=_apply_error_source_headers(
+                        {
+                            InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
+                            InvocationConstants.SESSION_ID_HEADER: session_id,
+                        },
+                        error_source,
+                        error_detail,
+                    ),
                 )
             finally:
                 _invocation_id_var.reset(inv_token)
@@ -453,6 +550,7 @@ class InvocationAgentServerHost(AgentServerHost):
                 response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
                 return response
             except Exception as exc:  # pylint: disable=broad-exception-caught
+                error_source, error_detail = _classify_error(exc)
                 self._safe_set_attrs(_otel_span, {
                     InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
                     InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
@@ -463,7 +561,11 @@ class InvocationAgentServerHost(AgentServerHost):
                     "internal_error",
                     "Internal server error",
                     status_code=500,
-                    headers={InvocationConstants.INVOCATION_ID_HEADER: invocation_id},
+                    headers=_apply_error_source_headers(
+                        {InvocationConstants.INVOCATION_ID_HEADER: invocation_id},
+                        error_source,
+                        error_detail,
+                    ),
                 )
             finally:
                 _invocation_id_var.reset(inv_token)

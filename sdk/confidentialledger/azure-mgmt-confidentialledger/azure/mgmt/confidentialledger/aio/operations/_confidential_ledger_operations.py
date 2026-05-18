@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -31,10 +31,13 @@ from ...operations._confidential_ledger_operations import build_check_name_avail
 from .._configuration import ConfidentialLedgerConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
-class ConfidentialLedgerOperationsMixin(ClientMixinABC[AsyncPipelineClient, ConfidentialLedgerConfiguration]):
+class _ConfidentialLedgerOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ConfidentialLedgerConfiguration]
+):
 
     @overload
     async def check_name_availability(
@@ -130,7 +133,10 @@ class ConfidentialLedgerOperationsMixin(ClientMixinABC[AsyncPipelineClient, Conf
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("CheckNameAvailabilityResponse", pipeline_response.http_response)

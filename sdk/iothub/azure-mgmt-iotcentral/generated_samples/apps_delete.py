@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.iotcentral import IotCentralClient
 
 """
@@ -29,13 +31,12 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.apps.begin_delete(
+    client.apps.begin_delete(
         resource_group_name="resRg",
         resource_name="myIoTCentralApp",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/iotcentral/resource-manager/Microsoft.IoTCentral/stable/2021-06-01/examples/Apps_Delete.json
+# x-ms-original-file: specification/iotcentral/resource-manager/Microsoft.IoTCentral/IoTCentral/stable/2021-06-01/examples/Apps_Delete.json
 if __name__ == "__main__":
     main()

@@ -42,12 +42,13 @@ def main():
                     "sourceLocation": "eastus",
                     "sourceResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/TestResourceGroup/providers/Microsoft.DocumentDB/mongoClusters/mySourceMongoCluster",
                 },
+                "storage": {"type": "PremiumSSDv2"},
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/MongoClusters_CreateGeoReplica.json
+# x-ms-original-file: 2026-02-01-preview/MongoClusters_CreateGeoReplica.json
 if __name__ == "__main__":
     main()

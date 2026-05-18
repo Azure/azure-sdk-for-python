@@ -1,0 +1,11 @@
+{
+  "commit": "e97cc19d5ddcd6bec4f9198a73ba310440be0baf",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.50.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/hybridkubernetes/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/home/codespace/workspace/sdk --tag=package-2021-10-01 --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/hybridkubernetes/resource-manager/readme.md"
+}

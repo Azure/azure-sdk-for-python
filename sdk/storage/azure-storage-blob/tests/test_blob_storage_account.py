@@ -3,12 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.storage.blob import BlobServiceClient, StandardBlobTier
-from azure.storage.blob._generated.models import RehydratePriority
+# pylint: disable=attribute-defined-outside-init
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import BlobServiceClient, StandardBlobTier
+from azure.storage.blob._generated.models import RehydratePriority
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -22,7 +25,7 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     # --Helpers-----------------------------------------------------------------

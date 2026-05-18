@@ -9,7 +9,6 @@ import io
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
-import pytest
 
 
 class TestAgentCrud(TestBase):
@@ -39,7 +38,7 @@ class TestAgentCrud(TestBase):
         GET    /agents/{agent_name}/versions/{agent_version} project_client.agents.get_version()
         """
         print("\n")
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         project_client = self.create_client(operation_group="agents", **kwargs)
         first_agent_name = "MyAgent1"
         second_agent_name = "MyAgent2"

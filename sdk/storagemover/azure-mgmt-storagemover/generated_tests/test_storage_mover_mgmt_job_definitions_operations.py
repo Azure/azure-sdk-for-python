@@ -56,13 +56,13 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
                     "preservePermissions": bool,
                     "provisioningState": "str",
                     "schedule": {
-                        "frequency": "str",
-                        "isActive": bool,
                         "cronExpression": "str",
                         "daysOfMonth": [0],
                         "daysOfWeek": ["str"],
                         "endDate": "2020-02-20 00:00:00",
                         "executionTime": {"hour": 0, "minute": 0},
+                        "frequency": "str",
+                        "isActive": bool,
                         "startDate": "2020-02-20 00:00:00",
                     },
                     "sourceResourceId": "str",
@@ -123,6 +123,16 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
                     "copyMode": "str",
                     "dataIntegrityValidation": "str",
                     "description": "str",
+                    "schedule": {
+                        "cronExpression": "str",
+                        "daysOfMonth": [0],
+                        "daysOfWeek": ["str"],
+                        "endDate": "2020-02-20 00:00:00",
+                        "executionTime": {"hour": 0, "minute": 0},
+                        "frequency": "str",
+                        "isActive": bool,
+                        "startDate": "2020-02-20 00:00:00",
+                    },
                 }
             },
         )

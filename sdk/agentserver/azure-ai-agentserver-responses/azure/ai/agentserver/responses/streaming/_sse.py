@@ -7,11 +7,37 @@ from __future__ import annotations
 import itertools
 import json
 from contextvars import ContextVar
+from datetime import date, datetime, time, timedelta
 from typing import Any, Mapping
 
 from ..models._generated import ResponseStreamEvent
 
 _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_var")
+
+
+def _json_default(o: Any) -> Any:
+    """JSON encoder default for datetime and bytes.
+
+    Handles datetime objects that leak through model ``as_dict()`` calls
+    by serializing to ISO-8601 strings (or Unix timestamps for datetime).
+
+    :param o: The object to encode.
+    :type o: Any
+    :returns: A JSON-serializable representation.
+    :rtype: Any
+    :raises TypeError: If the object type is not supported.
+    """
+    if isinstance(o, datetime):
+        return int(o.timestamp())
+    if isinstance(o, (date, time)):
+        return o.isoformat()
+    if isinstance(o, timedelta):
+        return o.total_seconds()
+    if isinstance(o, (bytes, bytearray)):
+        import base64  # pylint: disable=import-outside-toplevel
+
+        return base64.b64encode(o).decode("ascii")
+    raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
 
 
 def new_stream_counter() -> None:
@@ -104,7 +130,7 @@ def _build_sse_frame(event_type: str, payload: dict[str, Any]) -> str:
     # Sanitize event_type to prevent SSE response splitting via newline injection
     event_type = event_type.replace("\n", "").replace("\r", "")
     lines = [f"event: {event_type}"]
-    lines.append(f"data: {json.dumps(payload)}")
+    lines.append(f"data: {json.dumps(payload, default=_json_default)}")
     lines.append("")
     lines.append("")
     return "\n".join(lines)

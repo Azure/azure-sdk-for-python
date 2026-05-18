@@ -1,3 +1,4 @@
+# pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype,name-too-long
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------

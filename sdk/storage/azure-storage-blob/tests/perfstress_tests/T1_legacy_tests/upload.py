@@ -15,7 +15,7 @@ class LegacyUploadTest(_LegacyContainerTest):
         super().__init__(arguments)
         self.blob_name = "blobtest-" + str(uuid.uuid4())
         self.upload_stream = RandomStream(self.args.size)
-    
+
     def run_sync(self):
         self.upload_stream.reset()
         self.service_client.create_blob_from_stream(

@@ -278,12 +278,12 @@ class KnowledgeBaseActivityRecord(_Model):
     operations.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    KnowledgeBaseAgenticReasoningActivityRecord
+    KnowledgeBaseAgenticReasoningActivityRecord, KnowledgeBaseModelWebSummarizationActivityRecord
 
     :ivar id: The ID of the activity record. Required.
     :vartype id: int
     :ivar type: The type of the activity record. Required. Known values are: "searchIndex",
-     "azureBlob", "indexedOneLake", "web", and "agenticReasoning".
+     "azureBlob", "indexedOneLake", "web", "modelWebSummarization", and "agenticReasoning".
     :vartype type: str or
      ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordType
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
@@ -298,7 +298,7 @@ class KnowledgeBaseActivityRecord(_Model):
     """The ID of the activity record. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of the activity record. Required. Known values are: \"searchIndex\", \"azureBlob\",
-     \"indexedOneLake\", \"web\", and \"agenticReasoning\"."""
+     \"indexedOneLake\", \"web\", \"modelWebSummarization\", and \"agenticReasoning\"."""
     elapsed_ms: Optional[int] = rest_field(name="elapsedMs", visibility=["read", "create", "update", "delete", "query"])
     """The elapsed time in milliseconds for the retrieval activity."""
     error: Optional["_models.KnowledgeBaseErrorDetail"] = rest_field(
@@ -740,6 +740,60 @@ class KnowledgeBaseMessageTextContent(KnowledgeBaseMessageContent, discriminator
         self.type = KnowledgeBaseMessageContentType.TEXT  # type: ignore
 
 
+class KnowledgeBaseModelWebSummarizationActivityRecord(
+    KnowledgeBaseActivityRecord, discriminator="modelWebSummarization"
+):  # pylint: disable=name-too-long
+    """Represents an LLM web summarization activity record.
+
+    :ivar id: The ID of the activity record. Required.
+    :vartype id: int
+    :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
+    :vartype elapsed_ms: int
+    :ivar error: The error detail explaining why the operation failed. This property is only
+     included when the activity does not succeed.
+    :vartype error: ~azure.search.documents.knowledgebases.models.KnowledgeBaseErrorDetail
+    :ivar type: The discriminator value. Required. LLM web summarization activity.
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.MODEL_WEB_SUMMARIZATION
+    :ivar input_tokens_count: The number of input tokens for the LLM web summarization activity.
+    :vartype input_tokens_count: int
+    :ivar output_tokens_count: The number of output tokens for the LLM web summarization activity.
+    :vartype output_tokens_count: int
+    """
+
+    type: Literal[KnowledgeBaseActivityRecordType.MODEL_WEB_SUMMARIZATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. LLM web summarization activity."""
+    input_tokens_count: Optional[int] = rest_field(
+        name="inputTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of input tokens for the LLM web summarization activity."""
+    output_tokens_count: Optional[int] = rest_field(
+        name="outputTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of output tokens for the LLM web summarization activity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: int,  # pylint: disable=redefined-builtin
+        elapsed_ms: Optional[int] = None,
+        error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
+        input_tokens_count: Optional[int] = None,
+        output_tokens_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = KnowledgeBaseActivityRecordType.MODEL_WEB_SUMMARIZATION  # type: ignore
+
+
 class KnowledgeBaseRetrievalRequest(_Model):
     """The input contract for the retrieval request.
 
@@ -1158,10 +1212,6 @@ class KnowledgeSourceIngestionParameters(_Model):
     :vartype disable_image_verbalization: bool
     :ivar ingestion_schedule: Optional schedule for data ingestion.
     :vartype ingestion_schedule: ~azure.search.documents.indexes.models.IndexingSchedule
-    :ivar ingestion_permission_options: Optional list of permission types to ingest together with
-     document content. If specified, it will set the indexer permission options for the data source.
-    :vartype ingestion_permission_options: list[str or
-     ~azure.search.documents.indexes.models.KnowledgeSourceIngestionPermissionOption]
     :ivar content_extraction_mode: Optional content extraction mode. Default is 'minimal'. Known
      values are: "minimal" and "standard".
     :vartype content_extraction_mode: str or
@@ -1190,11 +1240,6 @@ class KnowledgeSourceIngestionParameters(_Model):
         name="ingestionSchedule", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional schedule for data ingestion."""
-    ingestion_permission_options: Optional[
-        list[Union[str, "_indexes_models3.KnowledgeSourceIngestionPermissionOption"]]
-    ] = rest_field(name="ingestionPermissionOptions", visibility=["read", "create", "update", "delete", "query"])
-    """Optional list of permission types to ingest together with document content. If specified, it
-     will set the indexer permission options for the data source."""
     content_extraction_mode: Optional[Union[str, "_indexes_models3.KnowledgeSourceContentExtractionMode"]] = rest_field(
         name="contentExtractionMode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1214,9 +1259,6 @@ class KnowledgeSourceIngestionParameters(_Model):
         chat_completion_model: Optional["_indexes_models3.KnowledgeBaseModel"] = None,
         disable_image_verbalization: Optional[bool] = None,
         ingestion_schedule: Optional["_indexes_models3.IndexingSchedule"] = None,
-        ingestion_permission_options: Optional[
-            list[Union[str, "_indexes_models3.KnowledgeSourceIngestionPermissionOption"]]
-        ] = None,
         content_extraction_mode: Optional[Union[str, "_indexes_models3.KnowledgeSourceContentExtractionMode"]] = None,
         ai_services: Optional["_models.AIServices"] = None,
     ) -> None: ...

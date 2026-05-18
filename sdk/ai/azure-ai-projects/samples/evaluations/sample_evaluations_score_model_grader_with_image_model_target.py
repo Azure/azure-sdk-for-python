@@ -43,7 +43,6 @@ from openai.types.responses import EasyInputMessageParam
 from openai.types.eval_create_params import DataSourceConfigCustom
 from dotenv import load_dotenv
 
-
 load_dotenv()
 file_path = os.path.abspath(__file__)
 folder_path = os.path.dirname(file_path)

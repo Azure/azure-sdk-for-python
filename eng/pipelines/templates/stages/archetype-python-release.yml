@@ -124,17 +124,16 @@ stages:
                 runOnce:
                   deploy:
                     steps:
-
-                      - task: UsePythonVersion@0
-                        inputs:
-                          versionSpec: '3.9'
-
                       - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
                         parameters:
                           DevFeedName: ${{ parameters.DevFeedName }}
                           EnableTwineAuth: false
                           EnablePipAuth: true
                           EnableUvAuth: false
+
+                      - task: UsePythonVersion@0
+                        inputs:
+                          versionSpec: '3.10'
 
                       - script: |
                           python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
@@ -199,9 +198,16 @@ stages:
                 artifact: ${{parameters.ArtifactName}}
                 timeoutInMinutes: 5
 
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+                  EnableTwineAuth: false
+                  EnablePipAuth: true
+                  EnableUvAuth: false
+
               - task: UsePythonVersion@0
                 inputs:
-                  versionSpec: '3.9'
+                  versionSpec: '3.10'
 
               - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
                 parameters:

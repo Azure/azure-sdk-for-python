@@ -46,9 +46,6 @@ jobs:
       matrix:
         Python_310_Linux (AzureCloud):
           PythonVersion: '3.10'
-        ${{ if eq(parameters.Daily, true) }}:
-          Python_39_Linux (AzureCloud):
-            PythonVersion: '3.9'
 
     pool:
       name: $(LINUXPOOL)
@@ -82,8 +79,6 @@ jobs:
         matrix:
             Python_310_Windows (AzureCloud):
               PythonVersion: '3.10'
-            Python_39_Windows (AzureCloud):
-              PythonVersion: '3.9'
 
       pool:
         name: $(WINDOWSPOOL)
@@ -114,8 +109,6 @@ jobs:
         matrix:
             Python_310_Mac (AzureCloud):
               PythonVersion: '3.10'
-            Python_39_Mac (AzureCloud):
-              PythonVersion: '3.9'
 
       pool:
         name: $(MACPOOL)

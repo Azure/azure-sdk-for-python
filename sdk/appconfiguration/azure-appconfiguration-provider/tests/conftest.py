@@ -57,6 +57,7 @@ def add_sanitizers(test_proxy):
         regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "https://sanitized.azconfig.io"),
     )
     add_uri_string_sanitizer()
+    # Register the longer URL2 sanitizer FIRST to prevent URL1's sanitizer from partially matching within URL2
     add_general_string_sanitizer(
         value="https://sanitized.vault.azure.net/secrets/fake-secret/",
         target=os.environ.get(
@@ -74,3 +75,14 @@ def add_sanitizers(test_proxy):
     #  - AZSDK3430: $..id
     #  - AZSDK3447: $.key
     remove_batch_sanitizers(["AZSDK3430", "AZSDK3447"])
+
+
+@pytest.fixture(autouse=True)
+def no_startup_backoff(request, monkeypatch):
+    """Skip startup backoff delays in all tests except those testing backoff directly."""
+    if request.fspath.basename == "test_startup_retry.py":  # cspell:ignore fspath
+        return
+    monkeypatch.setattr(
+        "azure.appconfiguration.provider._azureappconfigurationprovider.get_startup_backoff",
+        lambda *args, **kwargs: (0, False),
+    )

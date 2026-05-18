@@ -20,8 +20,9 @@ only_default = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 class TestExamplesTests(KeyVaultTestCase):
     def create_key_client(self, vault_uri, **kwargs):
         from azure.keyvault.keys.aio import KeyClient
+
         credential = self.get_credential(KeyClient, is_async=True)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", only_default)

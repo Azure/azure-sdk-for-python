@@ -35,6 +35,7 @@ def main():
         cluster_name="myCluster",
         cluster={
             "identity": {"type": "SystemAssigned"},
+            "kind": "AzureLocal",
             "location": "East US",
             "properties": {
                 "aadClientId": "24a6e53d-04e5-44d2-b7cc-1b732a847dfc",
@@ -46,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/CreateCluster.json
+# x-ms-original-file: 2026-04-01-preview/CreateCluster.json
 if __name__ == "__main__":
     main()

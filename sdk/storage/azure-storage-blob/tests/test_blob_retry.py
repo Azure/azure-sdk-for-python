@@ -3,17 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 from io import BytesIO
 
 import pytest
-from azure.core.exceptions import ResourceExistsError
-from azure.storage.blob import BlobServiceClient, ExponentialRetry
 
 from devtools_testutils import ResponseCallback
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers import NonSeekableStream
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import BlobServiceClient, ExponentialRetry
 
 # test constants
 PUT_BLOCK_SIZE = 4 * 1024

@@ -18,7 +18,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry portal.
     2) MODEL_NAME - Optional. The base model name to use for fine-tuning. Default to the `Ministral-3B` model.
     3) TRAINING_FILE_PATH - Optional. Path to the training data file. Default to the `data` folder.
@@ -28,13 +28,13 @@ USAGE:
 import os
 import asyncio
 from dotenv import load_dotenv
+from fine_tuning_sample_helper import resolve_data_file_path  # pylint: disable=import-error
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from fine_tuning_sample_helper import resolve_data_file_path
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ.get("MODEL_NAME", "Ministral-3B")
 training_file_path = resolve_data_file_path(__file__, "TRAINING_FILE_PATH", "sft_training_set.jsonl")
 validation_file_path = resolve_data_file_path(__file__, "VALIDATION_FILE_PATH", "sft_validation_set.jsonl")

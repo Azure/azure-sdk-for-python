@@ -5,23 +5,23 @@
 # ------------------------------------
 
 import os
-import pytest
 from typing import Tuple
-from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.core.settings import settings
+import pytest
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 from opentelemetry import metrics
 from openai import OpenAI
 from test_base import servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from test_ai_instrumentor_base import (
+from test_ai_instrumentor_base import (  # pylint: disable=import-error
     TestAiAgentsInstrumentorBase,
     CONTENT_TRACING_ENV_VARIABLE,
 )
+from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.core.settings import settings
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()
+_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 
 # Set up global metrics collection like in the sample
 global_metric_reader = InMemoryMetricReader()
@@ -41,7 +41,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         openai_client = project_client.get_openai_client()
 
         # Get the model deployment name from test parameters
-        model_deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        model_deployment_name = kwargs.get("foundry_model_name")
 
         return openai_client, model_deployment_name
 
@@ -182,7 +182,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         # Get OpenAI client and deployment
-        client, deployment_name = self._get_openai_client_and_deployment(**kwargs)
+        client, _ = self._get_openai_client_and_deployment(**kwargs)
 
         # Create a conversation
         conversation = client.conversations.create()

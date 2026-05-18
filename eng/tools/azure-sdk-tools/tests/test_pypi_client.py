@@ -133,7 +133,7 @@ class TestPyPIOnlyMethods:
 
     @SKIP_IN_CI
     def test_project_returns_info_and_releases(self):
-        client = PyPIClient()
+        client = _make_client(PYPI_HOST)
         result = client.project(WELL_KNOWN_PACKAGE)
 
         assert result["info"]["name"] == WELL_KNOWN_PACKAGE
@@ -145,7 +145,7 @@ class TestPyPIOnlyMethods:
     @patch("pypi_tools.pypi.sys")
     def test_filter_packages_for_compatibility(self, mock_sys):
         mock_sys.version_info = (2, 7, 0)
-        client = PyPIClient()
+        client = _make_client(PYPI_HOST)
         filtered = client.get_ordered_versions(WELL_KNOWN_PACKAGE, True)
         unfiltered = client.get_ordered_versions(WELL_KNOWN_PACKAGE, False)
         assert len(filtered) < len(unfiltered)

@@ -6531,7 +6531,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem, disc
      specific types in the polymorphic chain of types. Required. Default value is
      "AzureVmWorkloadSQLDatabase".
     :vartype protected_item_type: str
-    :ivar parent_protected_item: Parent Protected item in case protected as part of a parent.
+    :ivar parent_protected_item: Name of the parent protected item (e.g., SQL Instance name) when
+     this database is protected as part of a parent.
     :vartype parent_protected_item: str
     :ivar protection_level: Protection type in case protected as part of a parent. Known values
      are: "Database" and "DatabaseUnderInstance".
@@ -6544,7 +6545,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem, disc
     parent_protected_item: Optional[str] = rest_field(
         name="parentProtectedItem", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Parent Protected item in case protected as part of a parent."""
+    """Name of the parent protected item (e.g., SQL Instance name) when this database is protected as
+     part of a parent."""
     protection_level: Optional[Union[str, "_models.ProtectionLevel"]] = rest_field(
         name="protectionLevel", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8963,7 +8965,24 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class BackupEngineBaseResource(Resource):
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicesbackup.models.SystemData
+    """
+
+
+class BackupEngineBaseResource(ProxyResource):
     """The base backup engine class. All workload specific backup engines derive from this class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9286,7 +9305,7 @@ class BackupResourceConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceConfigResource(Resource):
+class BackupResourceConfigResource(ProxyResource):
     """The resource storage details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9461,7 +9480,7 @@ class BackupResourceEncryptionConfigExtended(BackupResourceEncryptionConfig):
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceEncryptionConfigExtendedResource(Resource):  # pylint: disable=name-too-long
+class BackupResourceEncryptionConfigExtendedResource(ProxyResource):  # pylint: disable=name-too-long
     """BackupResourceEncryptionConfigExtendedResource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9475,7 +9494,7 @@ class BackupResourceEncryptionConfigExtendedResource(Resource):  # pylint: disab
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.recoveryservicesbackup.models.SystemData
-    :ivar properties: BackupResourceEncryptionConfigExtendedResource properties.
+    :ivar properties: The properties of the backup resource encryption config extended resource.
     :vartype properties:
      ~azure.mgmt.recoveryservicesbackup.models.BackupResourceEncryptionConfigExtended
     :ivar tags: Resource tags.
@@ -9489,7 +9508,7 @@ class BackupResourceEncryptionConfigExtendedResource(Resource):  # pylint: disab
     properties: Optional["_models.BackupResourceEncryptionConfigExtended"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """BackupResourceEncryptionConfigExtendedResource properties."""
+    """The properties of the backup resource encryption config extended resource."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create"])
@@ -9532,7 +9551,7 @@ class BackupResourceEncryptionConfigResource(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.recoveryservicesbackup.models.SystemData
-    :ivar properties: BackupResourceEncryptionConfigResource properties.
+    :ivar properties: The properties of the backup resource encryption config.
     :vartype properties: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceEncryptionConfig
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -9545,7 +9564,7 @@ class BackupResourceEncryptionConfigResource(Resource):
     properties: Optional["_models.BackupResourceEncryptionConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """BackupResourceEncryptionConfigResource properties."""
+    """The properties of the backup resource encryption config."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create"])
@@ -9666,7 +9685,7 @@ class BackupResourceVaultConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupResourceVaultConfigResource(Resource):
+class BackupResourceVaultConfigResource(ProxyResource):
     """Backup resource vault config details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13005,7 +13024,7 @@ class InstantRPAdditionalDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobResource(Resource):
+class JobResource(ProxyResource):
     """Defines workload agnostic properties for a job.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14255,10 +14274,6 @@ class NameInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OkResponse(_Model):
-    """The request has succeeded."""
-
-
 class OperationResultInfo(OperationResultInfoBase, discriminator="OperationResultInfo"):
     """Operation result info.
 
@@ -15181,7 +15196,7 @@ class PrivateEndpointConnection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionResource(Resource):
+class PrivateEndpointConnectionResource(ProxyResource):
     """Private Endpoint Connection Response Properties.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15338,7 +15353,7 @@ class ProtectableContainerResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectedItemResource(Resource):
+class ProtectedItemResource(ProxyResource):
     """Base class for backup items.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15394,7 +15409,7 @@ class ProtectedItemResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionContainerResource(Resource):
+class ProtectionContainerResource(ProxyResource):
     """Base class for container with backup items. Containers with specific workloads are derived from
     this class.
 
@@ -15451,7 +15466,7 @@ class ProtectionContainerResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionIntentResource(Resource):
+class ProtectionIntentResource(ProxyResource):
     """Base class for backup ProtectionIntent.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15507,7 +15522,7 @@ class ProtectionIntentResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionPolicyResource(Resource):
+class ProtectionPolicyResource(ProxyResource):
     """Base class for backup policy. Workload-specific backup policies are derived from this class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15730,7 +15745,7 @@ class RecoveryPointRehydrationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointResource(Resource):
+class RecoveryPointResource(ProxyResource):
     """Base class for backup copies. Workload-specific backup copies are derived from this class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15949,7 +15964,7 @@ class ResourceGuardProxyBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGuardProxyBaseResource(Resource):
+class ResourceGuardProxyBaseResource(ProxyResource):
     """ResourceGuardProxyBaseResource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -

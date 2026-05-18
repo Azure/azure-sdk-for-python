@@ -16,7 +16,7 @@ class RequestValidationError(ValueError):
         self,
         message: str,
         *,
-        code: str = "invalid_request",
+        code: str = "invalid_request_error",
         param: str | None = None,
         error_type: str = "invalid_request_error",
         debug_info: dict[str, Any] | None = None,

@@ -381,7 +381,7 @@ def start_test_proxy(request) -> None:
             root = os.getenv("BUILD_SOURCESDIRECTORY", repo_root)
             _LOGGER.info("{} is calculated repo root".format(root))
 
-            # If we're in CI, allow for tox environment parallelization and write proxy output to a log file
+            # If we're in CI, allow for check parallelization and write proxy output to a log file
             log = None
             if in_ci():
                 log_suffix = _get_proxy_log_suffix()

@@ -25,6 +25,117 @@ def _safe_tqdm_write(msg: str) -> None:
         tqdm.write(msg.encode(sys.stdout.encoding or "utf-8", errors="replace").decode(sys.stdout.encoding or "utf-8"))
 
 
+def _is_affected_pyrit_version() -> bool:
+    """Return True if the installed PyRIT version contains the bugs these patches work around.
+
+    The bugs targeted by ``_patch_set_system_prompt_for_prepended_conversations`` and
+    ``_patch_red_teaming_attack_duplicate_message`` were introduced in PyRIT 0.11. If a future
+    PyRIT release fixes the bugs (or changes the method semantics/signature), we should not silently
+    keep patching — that would risk masking a real fix or breaking on a renamed/refactored method.
+    """
+    try:
+        from importlib.metadata import version as _pkg_version, PackageNotFoundError
+    except ImportError:  # pragma: no cover - importlib.metadata is stdlib on 3.8+
+        return False
+    try:
+        installed = _pkg_version("pyrit")
+    except PackageNotFoundError:
+        return False
+    return installed.startswith("0.11.")
+
+
+def _patch_set_system_prompt_for_prepended_conversations(target, logger) -> None:
+    """Patch ``set_system_prompt`` on a PromptChatTarget instance to tolerate existing conversations.
+
+    Workaround for PyRIT 0.11 bug in ``RedTeamingAttack._setup_async()``: it adds
+    ``prepended_conversation`` messages to the adversarial chat target's memory BEFORE calling
+    ``set_system_prompt()``. The default ``PromptChatTarget.set_system_prompt`` then raises
+    ``RuntimeError("Conversation already exists, system prompt needs to be set at the beginning")``,
+    which kills multi-turn red teaming attacks that have any context (e.g. seed-based context items).
+
+    ``CrescendoAttack`` avoids this by embedding prepended conversation as text inside the system
+    prompt template, so it never triggers the bug.
+
+    This patch replaces ``set_system_prompt`` on the given instance with a tolerant version that
+    inserts the system message into memory even when prior messages exist, instead of raising.
+    Scope is limited to the instance passed in (no global monkey-patch of PyRIT classes).
+    """
+    if not _is_affected_pyrit_version():
+        return
+    try:
+        from pyrit.models import MessagePiece
+    except ImportError:
+        logger.warning("Could not import MessagePiece from pyrit.models; skipping set_system_prompt patch.")
+        return
+
+    def _tolerant_set_system_prompt(
+        *,
+        system_prompt: str,
+        conversation_id: str,
+        attack_identifier=None,
+        labels=None,
+    ) -> None:
+        existing = target._memory.get_conversation(conversation_id=conversation_id)
+        if existing:
+            logger.debug(
+                "Adversarial chat conversation %s already has %d message(s) (prepended_conversation). "
+                "Inserting system prompt without raising (PyRIT 0.11 RedTeamingAttack workaround).",
+                conversation_id,
+                len(existing),
+            )
+        target._memory.add_message_to_memory(
+            request=MessagePiece(
+                role="system",
+                conversation_id=conversation_id,
+                original_value=system_prompt,
+                converted_value=system_prompt,
+                prompt_target_identifier=target.get_identifier(),
+                attack_identifier=attack_identifier,
+                labels=labels,
+            ).to_message()
+        )
+
+    target.set_system_prompt = _tolerant_set_system_prompt
+
+
+def _patch_red_teaming_attack_duplicate_message() -> None:
+    """Module-level monkey-patch for PyRIT 0.11 ``RedTeamingAttack._generate_next_prompt_async``.
+
+    In PyRIT 0.11, ``RedTeamingAttack._generate_next_prompt_async`` returns ``context.next_message``
+    directly without calling ``.duplicate_message()``. ``PromptSendingAttack._build_message`` (the
+    single-turn counterpart) uses ``context.next_message.duplicate_message()`` — the intended
+    pattern. The missing duplicate causes ``sqlite3.IntegrityError: UNIQUE constraint failed:
+    PromptMemoryEntries.id`` when ``PromptNormalizer.send_prompt_async`` deepcopies the message
+    (preserving the ``MessagePiece`` id) and the normalizer inserts it into memory — any repeat
+    insertion of an identical id hits the UNIQUE constraint and crashes the attack.
+
+    This patch wraps the method so the returned message always carries fresh piece ids.
+    The patch is idempotent and applied once at SDK module load.
+    """
+    if not _is_affected_pyrit_version():
+        return
+    try:
+        from pyrit.executor.attack.multi_turn.red_teaming import RedTeamingAttack
+    except ImportError:
+        return
+
+    original = getattr(RedTeamingAttack, "_generate_next_prompt_async", None)
+    if original is None or getattr(original, "_az_eval_patched", False):
+        return
+
+    async def _patched_generate_next_prompt_async(self, context):
+        msg = await original(self, context)
+        if msg is not None and hasattr(msg, "duplicate_message"):
+            return msg.duplicate_message()
+        return msg
+
+    _patched_generate_next_prompt_async._az_eval_patched = True  # type: ignore[attr-defined]
+    RedTeamingAttack._generate_next_prompt_async = _patched_generate_next_prompt_async
+
+
+_patch_red_teaming_attack_duplicate_message()
+
+
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
@@ -1764,6 +1875,12 @@ class RedTeam:
                 is_one_dp_project=self._one_dp_project,
                 crescendo_format=is_crescendo,
             )
+
+            # Workaround for PyRIT 0.11 RedTeamingAttack._setup_async bug: it adds
+            # prepended_conversation to memory before calling set_system_prompt(),
+            # which then raises "Conversation already exists". Without this patch,
+            # multi-turn attacks fail whenever the seed has context items.
+            _patch_set_system_prompt_for_prepended_conversations(adversarial_chat, self.logger)
 
             foundry_manager = FoundryExecutionManager(
                 credential=self.credential,

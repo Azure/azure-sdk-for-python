@@ -25,6 +25,7 @@
 """
 import logging
 import os
+import threading
 import urllib.parse
 import uuid
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -262,8 +263,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         )
 
         self._inference_service: Optional[_InferenceService] = None
-        if self.aad_credentials:
-            self._inference_service = _InferenceService(self)
+        self._inference_service_lock = threading.Lock()
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
@@ -332,7 +332,18 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.session = None
 
     def _get_inference_service(self) -> Optional[_InferenceService]:
-        """Get inference service instance"""
+        """Get inference service instance, lazily initializing on first access."""
+        if self._inference_service is None and self.aad_credentials:
+            with self._inference_service_lock:
+                if self._inference_service is None:
+                    try:
+                        self._inference_service = _InferenceService(self)
+                    except ValueError as e:
+                        raise exceptions.CosmosHttpResponseError(
+                            message=f"Failed to initialize inference service: {e}",
+                            response=None,
+                            status_code=http_constants.StatusCodes.BAD_REQUEST
+                        ) from e
         return self._inference_service
 
     @property
@@ -3580,7 +3591,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         If collection_link is provided, refreshes only that collection.
         When previous_routing_map is provided this is incremental; otherwise this is a collection-scoped repopulation.
-        Without collection_link, it creates a new provider instance for a full refresh.
+        Without collection_link, it clears the shared routing-map cache in place
+        so the next request for any collection re-fetches from the service.
 
         :param str collection_link: The collection link.
         :param object previous_routing_map: The routing map that is considered stale.
@@ -3623,12 +3635,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     status_code,
                 )
         else:
-            # Full refresh - create a new provider instance. This clears all cached routing maps.
-            self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+            # Full refresh - clear the shared routing-map cache in place so all
+            # clients sharing this endpoint re-fetch on next use. The provider
+            # instance itself is preserved (shared cache design).
+            self._routing_map_provider.clear_cache()
             return
 
         # Fallback to full refresh when targeted refresh fails transiently.
-        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+        self._routing_map_provider.clear_cache()
 
     def _refresh_container_properties_cache(self, container_link: str):
         # If container properties cache is stale, refresh it by reading the container.

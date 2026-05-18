@@ -7,23 +7,26 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, List, Mapping, Optional, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, overload
 
 from .._utils.model_base import Model as _Model, rest_field
+
+if TYPE_CHECKING:
+    from .. import models as _models
 
 
 class AddToGroupsRequest(_Model):
     """Request object to add connections to groups.
 
-    :ivar groups: Target groups.
+    :ivar groups: Target groups. Required.
     :vartype groups: list[str]
     :ivar filter: Following OData filter syntax to filter out the subscribers receiving the
      messages.
     :vartype filter: str
     """
 
-    groups: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Target groups."""
+    groups: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Target groups. Required."""
     filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Following OData filter syntax to filter out the subscribers receiving the messages."""
 
@@ -31,7 +34,7 @@ class AddToGroupsRequest(_Model):
     def __init__(
         self,
         *,
-        groups: Optional[List[str]] = None,
+        groups: list[str],
         filter: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
@@ -49,18 +52,68 @@ class AddToGroupsRequest(_Model):
 class ClientTokenResponse(_Model):
     """The response object containing the client access token.
 
-    :ivar token: Access token for the client to connect Azure Web PubSub service.
+    :ivar token: Access token for the client to connect Azure Web PubSub service. Required.
     :vartype token: str
     """
 
-    token: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Access token for the client to connect Azure Web PubSub service."""
+    token: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Access token for the client to connect Azure Web PubSub service. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        token: Optional[str] = None,
+        token: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ErrorDetail(_Model):
+    """The error object.
+
+    :ivar code: One of a server-defined set of error codes.
+    :vartype code: str
+    :ivar message: A human-readable representation of the error.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    :ivar details: An array of details about specific errors that led to this reported error.
+    :vartype details: list[~azure.messaging.webpubsubservice.models.ErrorDetail]
+    :ivar inner: An object containing more specific information about the error.
+    :vartype inner: ~azure.messaging.webpubsubservice.models.InnerError
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """One of a server-defined set of error codes."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable representation of the error."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target of the error."""
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An array of details about specific errors that led to this reported error."""
+    inner: Optional["_models.InnerError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An object containing more specific information about the error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        target: Optional[str] = None,
+        details: Optional[list["_models.ErrorDetail"]] = None,
+        inner: Optional["_models.InnerError"] = None,
     ) -> None: ...
 
     @overload
@@ -107,18 +160,51 @@ class GroupMember(_Model):
         super().__init__(*args, **kwargs)
 
 
+class InnerError(_Model):
+    """Inner error detail.
+
+    :ivar code: A more specific error code than was provided by the containing error.
+    :vartype code: str
+    :ivar inner: Inner error.
+    :vartype inner: ~azure.messaging.webpubsubservice.models.InnerError
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A more specific error code than was provided by the containing error."""
+    inner: Optional["_models.InnerError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Inner error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        inner: Optional["_models.InnerError"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RemoveFromGroupsRequest(_Model):
     """Request object to remove connections from groups.
 
-    :ivar groups: Target groups.
+    :ivar groups: Target groups. Required.
     :vartype groups: list[str]
     :ivar filter: Following OData filter syntax to filter out the subscribers receiving the
      messages.
     :vartype filter: str
     """
 
-    groups: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Target groups."""
+    groups: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Target groups. Required."""
     filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Following OData filter syntax to filter out the subscribers receiving the messages."""
 
@@ -126,7 +212,7 @@ class RemoveFromGroupsRequest(_Model):
     def __init__(
         self,
         *,
-        groups: Optional[List[str]] = None,
+        groups: list[str],
         filter: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 

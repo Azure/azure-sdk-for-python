@@ -115,48 +115,54 @@ def _validate_receipt_content(receipt: Dict[str, Any]):
     :param dict[str, any] receipt: Receipt dictionary
     """
 
+    def _check(condition: bool) -> None:
+        if not condition:
+            raise ValueError("The receipt content is invalid.")
+
     try:
-        assert "cert" in receipt
-        assert isinstance(receipt["cert"], str)
+        _check("cert" in receipt)
+        _check(isinstance(receipt["cert"], str))
 
-        assert "leafComponents" in receipt
-        assert isinstance(receipt["leafComponents"], dict)
+        _check("leafComponents" in receipt)
+        _check(isinstance(receipt["leafComponents"], dict))
 
-        assert "claimsDigest" in receipt["leafComponents"]
-        assert isinstance(receipt["leafComponents"]["claimsDigest"], str)
+        _check("claimsDigest" in receipt["leafComponents"])
+        _check(isinstance(receipt["leafComponents"]["claimsDigest"], str))
 
-        assert "commitEvidence" in receipt["leafComponents"]
-        assert isinstance(receipt["leafComponents"]["commitEvidence"], str)
+        _check("commitEvidence" in receipt["leafComponents"])
+        _check(isinstance(receipt["leafComponents"]["commitEvidence"], str))
 
-        assert "writeSetDigest" in receipt["leafComponents"]
-        assert isinstance(receipt["leafComponents"]["writeSetDigest"], str)
+        _check("writeSetDigest" in receipt["leafComponents"])
+        _check(isinstance(receipt["leafComponents"]["writeSetDigest"], str))
 
-        assert "proof" in receipt
-        assert isinstance(receipt["proof"], list)
+        _check("proof" in receipt)
+        _check(isinstance(receipt["proof"], list))
 
         # Validate elements in proof
         for elem in receipt["proof"]:
-            assert "left" in elem or "right" in elem
+            _check("left" in elem or "right" in elem)
             if "left" in elem:
-                assert isinstance(elem["left"], str)
+                _check(isinstance(elem["left"], str))
             if "right" in elem:
-                assert isinstance(elem["right"], str)
+                _check(isinstance(elem["right"], str))
 
-        assert "signature" in receipt
-        assert isinstance(receipt["signature"], str)
+        _check("signature" in receipt)
+        _check(isinstance(receipt["signature"], str))
 
         # Validate nodeId, if present
         if "nodeId" in receipt:
-            assert isinstance(receipt["nodeId"], str)
+            _check(isinstance(receipt["nodeId"], str))
 
         # Validate serviceEndorsements, if present
         if "serviceEndorsements" in receipt:
-            assert isinstance(receipt["serviceEndorsements"], list)
+            _check(isinstance(receipt["serviceEndorsements"], list))
 
             # Validate elements in serviceEndorsements
             for elem in receipt["serviceEndorsements"]:
-                assert isinstance(elem, str)
+                _check(isinstance(elem, str))
 
+    except ValueError:
+        raise
     except Exception as exception:
         raise ValueError("The receipt content is invalid.") from exception
 
@@ -178,7 +184,10 @@ def _verify_signature_over_root_node_hash(
         public_key_bytes = node_cert.public_key().public_bytes(Encoding.DER, PublicFormat.SubjectPublicKeyInfo)
 
         if node_id is not None:
-            assert sha256(public_key_bytes).digest() == bytes.fromhex(node_id)
+            if sha256(public_key_bytes).digest() != bytes.fromhex(node_id):
+                raise ValueError(
+                    "Node certificate public key hash does not match the receipt nodeId."
+                )
 
         # Verify signature over root node hash using node certificate public key
         _verify_ec_signature(
@@ -368,7 +377,8 @@ def _load_and_verify_pem_certificate(cert_str: str) -> Certificate:
         cert = load_pem_x509_certificate(cert_str.encode())
 
         # Verify public key is of the correct type
-        assert isinstance(cert.public_key(), ec.EllipticCurvePublicKey)
+        if not isinstance(cert.public_key(), ec.EllipticCurvePublicKey):
+            raise ValueError(f"PEM certificate {cert_str} does not contain an EC public key.")
 
         return cert
 

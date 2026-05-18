@@ -466,6 +466,7 @@ def test_create__returns_400_for_empty_body() -> None:
     payload = response.json()
     assert isinstance(payload.get("error"), dict)
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
 def test_create__returns_400_for_invalid_json_body() -> None:
@@ -482,6 +483,7 @@ def test_create__returns_400_for_invalid_json_body() -> None:
     payload = response.json()
     assert isinstance(payload.get("error"), dict)
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
 def test_create__ignores_unknown_fields_in_request_body() -> None:
@@ -535,6 +537,11 @@ def test_sync_handler_exception_returns_500() -> None:
     )
 
     assert response.status_code == 500
+    # Server errors must return a structured error envelope
+    payload = response.json()
+    assert isinstance(payload.get("error"), dict), "500 must include a JSON error envelope"
+    assert payload["error"].get("type") == "server_error"
+    assert payload["error"].get("code") == "server_error"
 
 
 def test_sync_no_terminal_event_still_completes() -> None:

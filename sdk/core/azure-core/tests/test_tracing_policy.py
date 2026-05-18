@@ -9,7 +9,7 @@ import urllib
 from unittest import mock
 
 from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
-from azure.core.pipeline.policies import DistributedTracingPolicy, UserAgentPolicy, RetryPolicy
+from azure.core.pipeline.policies import DistributedTracingPolicy, HttpLoggingPolicy, UserAgentPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from azure.core.settings import settings
 from azure.core.tracing._models import SpanKind
@@ -55,7 +55,7 @@ class TestTracingPolicyPluginImplementation:
         network_span = root_span.children[0]
         assert network_span.name == "GET"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_METHOD) == "GET"
-        assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost/temp?query=query"
+        assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost/temp?query=REDACTED"
         assert network_span.attributes.get(HttpSpanMixin._NET_PEER_NAME) == "localhost"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_USER_AGENT) is None
         assert network_span.attributes.get(policy._RESPONSE_ID_ATTR) == "some request id"
@@ -67,7 +67,7 @@ class TestTracingPolicyPluginImplementation:
         network_span = root_span.children[1]
         assert network_span.name == "GET"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_METHOD) == "GET"
-        assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost/temp?query=query"
+        assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost/temp?query=REDACTED"
         assert network_span.attributes.get(policy._REQUEST_ID_ATTR) == "some client request id"
         assert network_span.attributes.get(HttpSpanMixin._HTTP_USER_AGENT) is None
         assert network_span.attributes.get(policy._RESPONSE_ID_ATTR) == None
@@ -387,7 +387,7 @@ class TestTracingPolicyNativeTracing:
         assert traceparent.split("-")[2] == format_span_id(span_context.span_id)
 
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
-        assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?query=query"
+        assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?query=REDACTED"
         assert finished_spans[0].attributes.get(policy._SERVER_ADDRESS) == "localhost"
         assert finished_spans[0].attributes.get(policy._USER_AGENT_ORIGINAL) is None
         assert finished_spans[0].attributes.get(policy._HTTP_RESPONSE_STATUS_CODE) == 202
@@ -508,7 +508,7 @@ class TestTracingPolicyNativeTracing:
         assert traceparent.split("-")[2] == format_span_id(span_context.span_id)
 
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
-        assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?query=query"
+        assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?query=REDACTED"
         assert finished_spans[0].attributes.get(policy._SERVER_ADDRESS) == "localhost"
         assert finished_spans[0].attributes.get(policy._USER_AGENT_ORIGINAL) is not None
         assert finished_spans[0].attributes.get(policy._USER_AGENT_ORIGINAL).endswith("test-user-agent")
@@ -592,7 +592,7 @@ class TestTracingPolicyNativeTracing:
         assert finished_spans[0].parent is root_span.get_span_context()
 
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
-        assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?query=query"
+        assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?query=REDACTED"
         assert finished_spans[0].attributes.get(policy._SERVER_ADDRESS) == "localhost"
         assert finished_spans[0].attributes.get(policy._USER_AGENT_ORIGINAL) is None
         assert finished_spans[0].attributes.get(policy._HTTP_RESPONSE_STATUS_CODE) == 202
@@ -666,3 +666,176 @@ class TestTracingPolicyNativeTracing:
         network_span = root_span.children[0]
         assert network_span.name == "GET"
         assert network_span.kind == SpanKind.CLIENT
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+    def test_url_full_sanitized_default(self, tracing_helper, http_request, http_response):
+        """Test that url.full redacts query params not in the default allowlist."""
+        with tracing_helper.tracer.start_as_current_span("Root"):
+            policy = DistributedTracingPolicy()
+
+            request = http_request("GET", "http://localhost/temp?api-version=2024-01-01&secret=mysecret&token=abc")
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            policy.on_request(pipeline_request)
+
+            response = create_http_response(http_response, request, None)
+            response.headers = request.headers
+            response.status_code = 200
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+        finished_spans = tracing_helper.exporter.get_finished_spans()
+        assert (
+            finished_spans[0].attributes.get(policy._URL_FULL)
+            == "http://localhost/temp?api-version=2024-01-01&secret=REDACTED&token=REDACTED"
+        )
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+    def test_url_full_sanitized_custom_allowed(self, tracing_helper, http_request, http_response):
+        """Test that custom additional_allowed_query_params are additive to the default allowlist."""
+        with tracing_helper.tracer.start_as_current_span("Root"):
+            policy = DistributedTracingPolicy(additional_allowed_query_params=["token"])
+
+            request = http_request("GET", "http://localhost/temp?api-version=2024-01-01&secret=mysecret&token=abc")
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            policy.on_request(pipeline_request)
+
+            response = create_http_response(http_response, request, None)
+            response.headers = request.headers
+            response.status_code = 200
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+        finished_spans = tracing_helper.exporter.get_finished_spans()
+        assert (
+            finished_spans[0].attributes.get(policy._URL_FULL)
+            == "http://localhost/temp?api-version=2024-01-01&secret=REDACTED&token=abc"
+        )
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+    def test_url_full_sanitized_case_insensitive(self, tracing_helper, http_request, http_response):
+        """Test that additional_allowed_query_params matching is case-insensitive."""
+        with tracing_helper.tracer.start_as_current_span("Root"):
+            policy = DistributedTracingPolicy(additional_allowed_query_params=["MyParam"])
+
+            request = http_request("GET", "http://localhost/temp?myparam=value1&other=value2")
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            policy.on_request(pipeline_request)
+
+            response = create_http_response(http_response, request, None)
+            response.headers = request.headers
+            response.status_code = 200
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+        finished_spans = tracing_helper.exporter.get_finished_spans()
+        assert (
+            finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp?myparam=value1&other=REDACTED"
+        )
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+    def test_url_full_no_query_params(self, tracing_helper, http_request, http_response):
+        """Test that URLs without query params are unchanged."""
+        with tracing_helper.tracer.start_as_current_span("Root"):
+            policy = DistributedTracingPolicy()
+
+            request = http_request("GET", "http://localhost/temp")
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            policy.on_request(pipeline_request)
+
+            response = create_http_response(http_response, request, None)
+            response.headers = request.headers
+            response.status_code = 200
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+        finished_spans = tracing_helper.exporter.get_finished_spans()
+        assert finished_spans[0].attributes.get(policy._URL_FULL) == "http://localhost/temp"
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+    def test_url_full_allowed_query_params_additive(self, tracing_helper, http_request, http_response):
+        """Test that allowed_query_params can be updated after construction."""
+        with tracing_helper.tracer.start_as_current_span("Root"):
+            policy = DistributedTracingPolicy()
+            policy.allowed_query_params.add("custom")
+
+            request = http_request("GET", "http://localhost/temp?api-version=v1&custom=val&other=secret")
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            policy.on_request(pipeline_request)
+
+            response = create_http_response(http_response, request, None)
+            response.headers = request.headers
+            response.status_code = 200
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+        finished_spans = tracing_helper.exporter.get_finished_spans()
+        assert (
+            finished_spans[0].attributes.get(policy._URL_FULL)
+            == "http://localhost/temp?api-version=v1&custom=val&other=REDACTED"
+        )
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+    def test_client_pipeline_respects_allowed_query_params(self, tracing_helper, http_request, http_response):
+        """Test that both HttpLoggingPolicy and DistributedTracingPolicy respect
+        additional_allowed_query_params when constructed via a client that propagates **kwargs,
+        mirroring how generated SDK clients work."""
+
+        class MockTransport(HttpTransport):
+            def __init__(self):
+                self._count = 0
+
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                pass
+
+            def close(self):
+                pass
+
+            def open(self):
+                pass
+
+            def send(self, request, **kwargs):
+                self._count += 1
+                response = create_http_response(http_response, request, None)
+                response.status_code = 200
+                return response
+
+        mock_handler = logging.Handler()
+        mock_handler.emit = mock.MagicMock()
+        logger = logging.getLogger("test_sdk_client_pipeline")
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        class MockClient:
+
+            def __init__(self, **kwargs):
+                # This mirrors how generated clients build policies.
+                self.http_logging_policy = HttpLoggingPolicy(logger=logger, **kwargs)
+                _policies = [
+                    self.http_logging_policy,
+                    DistributedTracingPolicy(**kwargs),
+                ]
+                self._pipeline = Pipeline(MockTransport(), policies=_policies)
+
+            def make_request(self, request, **kwargs):
+                return self._pipeline.run(request, **kwargs)
+
+        # User passes additional_allowed_query_params once at the client level.
+        client = MockClient(additional_allowed_query_params=["customParam", "token"])
+
+        url = "http://localhost/temp?api-version=2024-01-01&customParam=myvalue&token=abc123&secret=hidden"
+
+        with tracing_helper.tracer.start_as_current_span("Root"):
+            client.make_request(http_request("GET", url))
+
+        # Verify DistributedTracingPolicy respected additional_allowed_query_params.
+        finished_spans = tracing_helper.exporter.get_finished_spans()
+        assert len(finished_spans) == 2
+        assert finished_spans[0].name == "GET"
+        assert (
+            finished_spans[0].attributes.get("url.full")
+            == "http://localhost/temp?api-version=2024-01-01&customParam=myvalue&token=abc123&secret=REDACTED"
+        )
+
+        # Verify HttpLoggingPolicy respected additional_allowed_query_params.
+        logged_messages = [call.args[0].message for call in mock_handler.emit.call_args_list]
+        request_log = logged_messages[0]
+        assert "api-version=2024-01-01" in request_log
+        assert "customParam=myvalue" in request_log
+        assert "token=abc123" in request_log
+        assert "secret=REDACTED" in request_log
+        assert "secret=hidden" not in request_log
