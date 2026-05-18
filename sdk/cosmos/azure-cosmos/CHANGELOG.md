@@ -3,6 +3,7 @@
 ### 4.16.0b3 (Unreleased)
 
 #### Features Added
+* Added optional Fabric Mirror query routing via `use_mirror_serving` parameter in `query_items()`. When enabled with `mirror_config` on `CosmosClient`, queries can be routed to a Fabric warehouse. See [PR 45864](https://github.com/Azure/azure-sdk-for-python/pull/45864)
 
 #### Breaking Changes
 

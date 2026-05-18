@@ -154,6 +154,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.availability_strategy: Union[CrossRegionHedgingStrategy, None] =\
             validate_client_hedging_strategy(availability_strategy)
         self.availability_strategy_executor: Optional[ThreadPoolExecutor] = availability_strategy_executor
+
+        # Mirror serving configuration (for per-request routing)
+        self._mirror_config = kwargs.pop('mirror_config', None)
+        self._mirror_driver_client = None
+
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[TokenCredential] = None
@@ -279,6 +284,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Use database_account if no consistency passed in to verify consistency level to be used
         self.session: Optional[_session.Session] = None
         self._set_client_consistency_level(database_account, consistency_level)
+
+    @property
+    def mirror_config(self):
+        """Fabric mirror configuration for per-request query routing.
+
+        :rtype: Optional[dict[str, Any]]
+        """
+        return self._mirror_config
 
     @property
     def _container_properties_cache(self) -> dict[str, dict[str, Any]]:
