@@ -39,6 +39,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
 )
 
 from ._constants import InvocationConstants
+from ._invocation_ws import _WSHandlerMixin
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -147,12 +148,17 @@ def _sanitize_id(value: str, fallback: str) -> str:
     return value
 
 
-class InvocationAgentServerHost(AgentServerHost):
+class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     """Invocation protocol host for Azure AI Hosted Agents.
 
     A :class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds
     the invocation protocol endpoints.  Use the decorator methods to wire
     handler functions to the endpoints.
+
+    The same host object also exposes the ``invocations_ws`` (WebSocket)
+    transport at :data:`/invocations_ws` — register a handler with the
+    :meth:`ws_handler` decorator.  Multi-protocol agents share a single
+    host, session, and process.
 
     For multi-protocol agents, compose via cooperative inheritance::
 
@@ -162,12 +168,18 @@ class InvocationAgentServerHost(AgentServerHost):
     Usage::
 
         from azure.ai.agentserver.invocations import InvocationAgentServerHost
+        from starlette.websockets import WebSocket
 
         app = InvocationAgentServerHost()
 
-        @app.invoke_handler
+        @app.invoke_handler                  # POST /invocations
         async def handle(request):
             return JSONResponse({"ok": True})
+
+        @app.ws_handler                      # /invocations_ws
+        async def ws(websocket: WebSocket) -> None:
+            async for message in websocket.iter_text():
+                await websocket.send_text(message)
 
         app.run()
 
@@ -189,8 +201,13 @@ class InvocationAgentServerHost(AgentServerHost):
         self._cancel_invocation_fn: Optional[Callable] = None
         self._openapi_spec = openapi_spec
 
+        # Initialise WS handler slots (no parameters — the keep-alive
+        # interval lives on ``AgentConfig`` and is wired into Hypercorn
+        # by ``AgentServerHost._build_hypercorn_config``).
+        self._init_ws_state()
+
         # Build invocation routes and pass to parent via routes kwarg
-        invocation_routes = [
+        invocation_routes: list[Any] = [
             Route(
                 "/invocations/docs/openapi.json",
                 self._get_openapi_spec_endpoint,
