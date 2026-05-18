@@ -15,30 +15,30 @@ async def flow_side_effect(timeout, **kwargs):
 
     # Simple logic to determine success based on keywords in query and response
     if "complete" in str(response).lower() or "done" in str(response).lower():
-        success = 1
-        explanation = "Task was completed successfully with all requirements met."
-        details = {
+        score = 1
+        reason = "Task was completed successfully with all requirements met."
+        properties = {
             "task_requirements": "The requirements for the task.",
             "delivered_outcome": "The final deliverable of the task.",
             "completion_gaps": "complete",
         }
     elif "partial" in str(response).lower():
-        success = 0
-        explanation = "Task was only partially completed, missing key requirements."
-        details = {
+        score = 0
+        reason = "Task was only partially completed, missing key requirements."
+        properties = {
             "task_requirements": "The requirements for the task.",
             "delivered_outcome": "The final deliverable of the task.",
             "completion_gaps": "incomplete",
         }
     elif "invalid" in str(response).lower():
         # Return invalid output to test error handling
-        success = "invalid_value"
-        explanation = "This is an invalid response."
-        details = {}
+        score = "invalid_value"
+        reason = "This is an invalid response."
+        properties = {}
     else:
-        success = 0
-        explanation = "Task was not completed."
-        details = {
+        score = 0
+        reason = "Task was not completed."
+        properties = {
             "task_requirements": "The requirements for the task.",
             "delivered_outcome": "none",
             "completion_gaps": "failed",
@@ -46,9 +46,9 @@ async def flow_side_effect(timeout, **kwargs):
 
     return {
         "llm_output": {
-            "success": success,
-            "explanation": explanation,
-            "details": details,
+            "score": score,
+            "reason": reason,
+            "properties": properties,
         },
     }
 
@@ -67,14 +67,15 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
-        assert f"{key}_reason" in result
-        assert "completed successfully" in result[f"{key}_reason"]
-        assert f"{key}_details" in result
-        assert isinstance(result[f"{key}_details"], dict)
+        assert result[f"{prefix}_passed"] is True
+        assert f"{prefix}_reason" in result
+        assert "completed successfully" in result[f"{prefix}_reason"]
+        assert f"{prefix}_properties" in result
+        assert isinstance(result[f"{prefix}_properties"], dict)
 
     def test_task_not_completed(self, mock_model_config):
         """Test when task is not completed"""
@@ -87,12 +88,13 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
-        assert f"{key}_reason" in result
-        assert f"{key}_details" in result
+        assert result[f"{prefix}_passed"] is False
+        assert f"{prefix}_reason" in result
+        assert f"{prefix}_properties" in result
 
     def test_task_partially_completed(self, mock_model_config):
         """Test when task is only partially completed"""
@@ -105,12 +107,13 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
-        assert "partial" in result[f"{key}_reason"].lower()
-        assert f"{key}_details" in result
+        assert result[f"{prefix}_passed"] is False
+        assert "partial" in result[f"{prefix}_reason"].lower()
+        assert f"{prefix}_properties" in result
 
     def test_with_tool_definitions(self, mock_model_config):
         """Test evaluation with tool definitions provided"""
@@ -143,10 +146,11 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{prefix}_passed"] is True
 
     def test_with_conversation_history(self, mock_model_config):
         """Test evaluation with conversation history as list of messages"""
@@ -166,10 +170,11 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{prefix}_passed"] is True
 
     def test_missing_query_and_response(self, mock_model_config):
         """Test that missing both query and response raises an exception"""
@@ -188,9 +193,9 @@ class TestTaskCompletionEvaluator:
         async def string_true_flow(timeout, **kwargs):
             return {
                 "llm_output": {
-                    "success": "TRUE",
-                    "explanation": "Task completed",
-                    "details": {},
+                    "score": 1,
+                    "reason": "Task completed",
+                    "properties": {},
                 }
             }
 
@@ -201,8 +206,9 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{prefix}_passed"] is True
 
     def test_string_success_value_false(self, mock_model_config):
         """Test handling of string 'FALSE' as success value"""
@@ -211,9 +217,9 @@ class TestTaskCompletionEvaluator:
         async def string_false_flow(timeout, **kwargs):
             return {
                 "llm_output": {
-                    "success": "FALSE",
-                    "explanation": "Task not completed",
-                    "details": {},
+                    "score": 0,
+                    "reason": "Task not completed",
+                    "properties": {},
                 }
             }
 
@@ -224,8 +230,9 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
+        assert result[f"{prefix}_passed"] is False
 
     def test_invalid_llm_output_format(self, mock_model_config):
         """Test handling when LLM output is not a dictionary"""
@@ -250,8 +257,8 @@ class TestTaskCompletionEvaluator:
         async def no_success_flow(timeout, **kwargs):
             return {
                 "llm_output": {
-                    "explanation": "No success field provided",
-                    "details": {},
+                    "reason": "No score field provided",
+                    "properties": {},
                 }
             }
 
@@ -262,8 +269,9 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
+        assert result[f"{prefix}_passed"] is False
 
     def test_complex_response_with_tool_calls(self, mock_model_config):
         """Test evaluation with response containing tool calls"""
@@ -307,10 +315,11 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{prefix}_passed"] is True
 
     def test_numeric_success_values(self, mock_model_config):
         """Test that numeric 0 and 1 values work correctly"""
@@ -320,9 +329,9 @@ class TestTaskCompletionEvaluator:
             # Return 1 for success
             return {
                 "llm_output": {
-                    "success": 1,
-                    "explanation": "Task completed",
-                    "details": {},
+                    "score": 1,
+                    "reason": "Task completed",
+                    "properties": {},
                 }
             }
 
@@ -333,19 +342,20 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{prefix}_passed"] is True
 
     def test_empty_details(self, mock_model_config):
-        """Test handling of empty details field"""
+        """Test handling of empty properties field"""
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
 
         async def empty_details_flow(timeout, **kwargs):
             return {
                 "llm_output": {
-                    "success": 1,
-                    "explanation": "Task completed",
-                    # No details field
+                    "score": 1,
+                    "reason": "Task completed",
+                    # No properties field
                 }
             }
 
@@ -356,19 +366,20 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"] == ""
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
+        assert f"{prefix}_properties" in result
+        assert isinstance(result[f"{prefix}_properties"], dict)
 
     def test_empty_explanation(self, mock_model_config):
-        """Test handling of missing explanation field"""
+        """Test handling of missing reason field"""
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
 
         async def no_explanation_flow(timeout, **kwargs):
             return {
                 "llm_output": {
-                    "success": 1,
-                    "details": {},
-                    # No explanation field
+                    "score": 1,
+                    "properties": {},
+                    # No reason field
                 }
             }
 
@@ -379,5 +390,6 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        assert f"{key}_reason" in result
-        assert result[f"{key}_reason"] == ""
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
+        assert f"{prefix}_reason" in result
+        assert result[f"{prefix}_reason"] == ""

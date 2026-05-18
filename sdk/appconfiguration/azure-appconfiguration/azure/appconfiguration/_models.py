@@ -602,6 +602,7 @@ class ConfigurationSettingPropertiesPagedBase:  # pylint:disable=too-many-instan
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._tags = kwargs.get("tags")
+        self._snapshot = kwargs.get("snapshot")
         self._etags: List[str] = kwargs.get("etags", [])
         self._current_etag = 0
         self._match_condition = kwargs.get("match_condition")
@@ -669,6 +670,7 @@ class ConfigurationSettingPropertiesPaged(
             accept_datetime=self._accept_datetime,
             select=self._select,
             tags=self._tags,
+            snapshot=self._snapshot,
             etag=etag,
             match_condition=self._match_condition,
             continuation_token=continuation_token,
@@ -729,6 +731,7 @@ class ConfigurationSettingPropertiesPagedAsync(
             accept_datetime=self._accept_datetime,
             select=self._select,
             tags=self._tags,
+            snapshot=self._snapshot,
             etag=etag,
             match_condition=self._match_condition,
             continuation_token=continuation_token,
@@ -772,7 +775,7 @@ class ConfigurationSettingPropertiesPagedAsync(
         return self._current_page
 
 
-class ConfigurationSettingPaged(ItemPaged):
+class ConfigurationSettingPaged(ItemPaged[ConfigurationSetting]):
     """
     An iterable of ConfigurationSettings that supports etag-based change detection.
 
@@ -781,6 +784,9 @@ class ConfigurationSettingPaged(ItemPaged):
     it only returns pages that have changed since the provided ETags were collected.
 
     Example:
+
+    .. code-block:: python
+
         # Get initial page ETags
         items = client.list_configuration_settings(key_filter="sample_*")
         match_conditions = [page.etag for page in items.by_page()]
@@ -788,8 +794,8 @@ class ConfigurationSettingPaged(ItemPaged):
         # Later, check for changes - only changed pages are returned
         items = client.list_configuration_settings(key_filter="sample_*")
         for page in items.by_page(match_conditions=match_conditions):
-             # Process only changed pages
-             pass
+            # Process only changed pages
+            pass
     """
 
     def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
@@ -811,7 +817,7 @@ class ConfigurationSettingPaged(ItemPaged):
         return self._page_iterator_class(continuation_token=continuation_token, *self._args, **self._kwargs)
 
 
-class ConfigurationSettingPagedAsync(AsyncItemPaged):
+class AsyncConfigurationSettingPaged(AsyncItemPaged[ConfigurationSetting]):
     """
     An async iterable of ConfigurationSettings that supports etag-based change detection.
 
@@ -820,9 +826,11 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
     the `by_page` method, you can efficiently detect and retrieve only those pages that have changed
     since your last retrieval.
 
-    Example usage:
+    Example:
 
-        async for setting in ConfigurationSettingPagedAsync(...):
+    .. code-block:: python
+
+        async for setting in AsyncConfigurationSettingPaged(...):
             # Process each setting asynchronously
             print(setting)
 

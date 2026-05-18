@@ -3,16 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
-import jwt
 import unittest
 import uuid
 from datetime import datetime, timedelta
 from time import sleep
 
+import jwt
 import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
 from azure.core import MatchConditions
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.storage.filedatalake import (
     AccessPolicy,
     AccountSasPermissions,
@@ -24,14 +28,16 @@ from azure.storage.filedatalake import (
     generate_file_sas,
     generate_file_system_sas,
     PublicAccess,
-    ResourceTypes
+    ResourceTypes,
 )
-from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient, DataLakeServiceClient, FileSystemClient
 from azure.storage.filedatalake._models import FileSasPermissions
+from azure.storage.filedatalake.aio import (
+    DataLakeDirectoryClient,
+    DataLakeFileClient,
+    DataLakeServiceClient,
+    FileSystemClient,
+)
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
@@ -45,16 +51,6 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         self.config = self.dsc._config
         self.test_file_systems = []
 
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            try:
-                for file_system in self.test_file_systems:
-                    loop.run_until_complete(self.dsc.delete_file_system(file_system))
-                loop.run_until_complete(self.fsc.__aexit__())
-            except:
-                pass
-
     # --Helpers-----------------------------------------------------------------
     def _get_file_system_reference(self, prefix=TEST_FILE_SYSTEM_PREFIX):
         file_system_name = self.get_resource_name(prefix)
@@ -62,7 +58,11 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         return file_system_name
 
     async def _create_file_system(self, file_system_prefix=TEST_FILE_SYSTEM_PREFIX):
-        return await self.dsc.create_file_system(self._get_file_system_reference(prefix=file_system_prefix))
+        file_system_name = self._get_file_system_reference(prefix=file_system_prefix)
+        try:
+            return await self.dsc.create_file_system(file_system_name)
+        except ResourceExistsError:
+            return self.dsc.get_file_system_client(file_system_name)
 
     async def _to_list(self, async_iterator):
         result = []
@@ -1174,8 +1174,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         paths = []
         async for path in sas_directory_client.get_paths():
             paths.append(path)
-
-        assert 0 == 0
+        assert not paths
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -1277,7 +1276,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         fsc = FileSystemClient(
             url, file_system_name,
             credential=token_credential,
-            audience=f'https://badaudience.blob.core.windows.net/'
+            audience='https://badaudience.blob.core.windows.net/'
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
@@ -1344,7 +1343,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_datalake_cross_tenant_delegation_sas(self, **kwargs):
+    async def test_datalake_cross_tenant_delegation_sas(self, **kwargs):  # pylint: disable=too-many-locals
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
 
         token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
@@ -1362,7 +1361,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
         token = await token_credential.get_token("https://storage.azure.com/.default")
-        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        decoded = jwt.decode(token.token, options={"verify_signature": False})  # pylint: disable=no-member
         user_delegation_oid = decoded.get("oid")
         delegated_user_tid = decoded.get("tid")
         user_delegation_key = await dsc.get_user_delegation_key(

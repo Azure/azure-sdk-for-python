@@ -3,14 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import jwt
 import unittest
 from datetime import datetime, timedelta
 from time import sleep
 
+import jwt
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
 from azure.core import MatchConditions
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.storage.filedatalake import (
     AccessPolicy,
     AccountSasPermissions,
@@ -25,13 +30,10 @@ from azure.storage.filedatalake import (
     generate_file_sas,
     generate_file_system_sas,
     PublicAccess,
-    ResourceTypes
+    ResourceTypes,
 )
 from azure.storage.filedatalake._models import FileSasPermissions
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
@@ -60,10 +62,11 @@ class TestFileSystem(StorageRecordedTestCase):
         return file_system_name
 
     def _create_file_system(self, file_system_prefix=TEST_FILE_SYSTEM_PREFIX):
+        file_system_name = self._get_file_system_reference(prefix=file_system_prefix)
         try:
-            return self.dsc.create_file_system(self._get_file_system_reference(prefix=file_system_prefix))
-        except:
-            pass
+            return self.dsc.create_file_system(file_system_name)
+        except ResourceExistsError:
+            return self.dsc.get_file_system_client(file_system_name)
 
     def _is_almost_equal(self, first, second, delta):
         if first == second:
@@ -73,7 +76,6 @@ class TestFileSystem(StorageRecordedTestCase):
             if diff <= delta:
                 return True
         return False
-
 
     # --Test cases for file system ---------------------------------------------
 
@@ -1145,7 +1147,7 @@ class TestFileSystem(StorageRecordedTestCase):
         fsc = FileSystemClient(
             url, file_system_name,
             credential=token_credential,
-            audience=f'https://badaudience.blob.core.windows.net/'
+            audience='https://badaudience.blob.core.windows.net/'
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
@@ -1212,7 +1214,7 @@ class TestFileSystem(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    def test_datalake_cross_tenant_delegation_sas(self, **kwargs):
+    def test_datalake_cross_tenant_delegation_sas(self, **kwargs):  # pylint: disable=too-many-locals
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
 
         token_credential = self.get_credential(DataLakeServiceClient)
@@ -1230,7 +1232,7 @@ class TestFileSystem(StorageRecordedTestCase):
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
         token = token_credential.get_token("https://storage.azure.com/.default")
-        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        decoded = jwt.decode(token.token, options={"verify_signature": False})  # pylint: disable=no-member
         user_delegation_oid = decoded.get("oid")
         delegated_user_tid = decoded.get("tid")
         user_delegation_key = dsc.get_user_delegation_key(

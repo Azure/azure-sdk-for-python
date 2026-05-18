@@ -5,12 +5,12 @@ model:
   api: chat
   parameters:
     temperature: 0.0
-    max_tokens: 1
+    max_tokens: 800
     top_p: 1.0
     presence_penalty: 0
     frequency_penalty: 0
     response_format:
-      type: text
+      type: json_object
 
 inputs:
   query:
@@ -63,4 +63,10 @@ stars: 5
 question: {{query}}
 correct answer:{{ground_truth}}
 predicted answer: {{response}}
-stars:
+
+Your output must be a valid JSON object with exactly these keys:
+  - reason: a brief explanation of your assessment. When status is "skipped", explain why evaluation was skipped.
+  - score: an integer value between 1 and 5 representing the equivalence metric. Set to null when status is "skipped".
+  - status: a string indicating the evaluation status. Must be one of:
+      - "completed": evaluation was performed normally.
+      - "skipped": evaluation was not performed because the query, response, or ground_truth is empty or not provided. When skipped, set score to null.

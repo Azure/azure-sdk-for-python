@@ -7,6 +7,8 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
+from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
+
 if TYPE_CHECKING:
     from azure.core.rest import HttpResponse
 
@@ -56,7 +58,11 @@ def raise_for_storage_error(response: "HttpResponse") -> None:
         raise FoundryResourceNotFoundError(message, response_body=body)
     if status in (400, 409):
         raise FoundryBadRequestError(message, response_body=body)
-    raise FoundryApiError(message, response_body=body)
+    exc = FoundryApiError(message, response_body=body)
+    # Tag non-client storage errors as platform errors so the error source
+    # classification in response headers correctly reports "platform".
+    setattr(exc, PLATFORM_ERROR_TAG, True)
+    raise exc
 
 
 def _extract_error_message(response: "HttpResponse", status: int) -> tuple[str, dict[str, Any] | None]:
