@@ -24,9 +24,7 @@ from azure.planetarycomputer.models import ColorMapNames
 import logging
 
 # Enable HTTP request/response logging
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
-    logging.ERROR
-)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -40,7 +38,7 @@ def get_class_map_legend(client: PlanetaryComputerProClient):
 
 def get_interval_legend(client: PlanetaryComputerProClient):
     """Get an interval legend (continuous color map)."""
-    result = client.data.get_interval_legend(classmap_name=ColorMapNames.MODIS64_A1)
+    result = client.data.get_interval_legend(classmap_name=ColorMapNames.MODIS_64A1)
     logging.info(result)
 
 
@@ -63,9 +61,7 @@ def main():
     if not endpoint:
         raise ValueError("PLANETARYCOMPUTER_ENDPOINT environment variable must be set")
 
-    client = PlanetaryComputerProClient(
-        endpoint=endpoint, credential=DefaultAzureCredential()
-    )
+    client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     get_class_map_legend(client)
     get_interval_legend(client)
