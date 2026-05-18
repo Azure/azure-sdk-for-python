@@ -905,8 +905,8 @@ class TestUtils(unittest.TestCase):
         clear=True,
     )
     def test_attach_type_integrated_auto_functions_no_enable_telemetry(self):
-        # IntegratedAuto but ENABLE_TELEMETRY not set - should be false
-        self.assertFalse(_utils._is_attach_enabled())
+        # IntegratedAuto but ENABLE_TELEMETRY not set. Should be true. Env var overwrites other factors.
+        self.assertTrue(_utils._is_attach_enabled())
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
@@ -917,8 +917,8 @@ class TestUtils(unittest.TestCase):
         clear=True,
     )
     def test_attach_type_integrated_auto_aks_no_arm_namespace(self):
-        # IntegratedAuto but AKS_ARM_NAMESPACE_ID not set - should be false
-        self.assertFalse(_utils._is_attach_enabled())
+        # IntegratedAuto but AKS_ARM_NAMESPACE_ID not set. Should be true. Env var overwrites other factors.
+        self.assertTrue(_utils._is_attach_enabled())
 
     # Synthetic
 

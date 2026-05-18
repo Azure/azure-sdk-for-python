@@ -73,14 +73,8 @@ def _is_attach_enabled():
     if attach_type is not None:
         # If the env var is set, attach is only enabled if the value is
         # "IntegratedAuto" AND the existing per-RP logic is satisfied.
-        if attach_type != "IntegratedAuto":
-            return False
-        if _is_on_functions():
-            return environ.get(_PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY) == "true"
-        if _is_on_app_service():
+        if attach_type == "IntegratedAuto":
             return True
-        if _is_on_aks():
-            return _AKS_ARM_NAMESPACE_ID in environ
         return False
     # Fallback to legacy logic when the env var is not set
     if _is_on_functions():
