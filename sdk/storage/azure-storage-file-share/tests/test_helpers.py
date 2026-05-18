@@ -4,14 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, Optional
-
-from requests import Response
+from typing import Any, Dict, Iterator, Optional
 from typing_extensions import Self
-from urllib3 import HTTPResponse
 
-from azure.core.pipeline.transport import HttpTransport, RequestsTransportResponse  # pylint: disable=no-name-in-module
+from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest
+from azure.core.rest._http_response_impl import HttpResponseImpl
 
 
 class ProgressTracker:
@@ -32,34 +30,52 @@ class ProgressTracker:
         assert self.total == self.current
 
 
-class MockHttpClientResponse(Response):
-    def __init__(
-        self, url: str,
-        body_bytes: bytes,
-        headers: Dict[str, Any],
-        status: int = 200,
-        reason: str = "OK"
-    ) -> None:
-        super(MockHttpClientResponse).__init__()
-        self._url = url
-        self._body = body_bytes
-        self._content = body_bytes
-        self._cache = {}
-        self._loop = None
-        self._content_consumed = True
-        self.headers = headers
-        self.status_code = status
-        self.reason = reason
-        self.raw = HTTPResponse()
+def _mock_stream_generator(data: bytes):
+    """Simple generator that yields data in a single chunk."""
+
+    def generator(response, **kwargs):
+        yield data
+
+    return generator
+
+
+class _MockInternalResponse:
+    """Minimal internal response object for HttpResponseImpl."""
+
+    def close(self):
+        pass
+
+
+def _make_rest_response(
+    request: HttpRequest,
+    body: bytes,
+    headers: Dict[str, Any],
+    status_code: int = 200,
+    reason: str = "OK",
+) -> HttpResponseImpl:
+    """Create an azure.core.rest HttpResponse with iter_bytes/iter_raw support."""
+    content_type = headers.get("Content-Type", "application/octet-stream")
+    resp = HttpResponseImpl(
+        request=request,
+        internal_response=_MockInternalResponse(),
+        status_code=status_code,
+        reason=reason,
+        content_type=content_type,
+        headers=headers,
+        stream_download_generator=_mock_stream_generator(body),
+    )
+    resp._content = body  # pylint: disable=protected-access
+    return resp
 
 
 class MockStorageTransport(HttpTransport):
     """
-    This transport returns legacy http response objects from azure core and is
-    intended only to test our backwards compatibility support.
+    This transport returns azure.core.rest HttpResponse objects for
+    compatibility with TypeSpec-generated code that uses iter_bytes/iter_raw.
     """
-    def send(self, request: HttpRequest, **kwargs: Any) -> RequestsTransportResponse:
-        if request.method == 'GET':
+
+    def send(self, request: HttpRequest, **kwargs: Any) -> HttpResponseImpl:
+        if request.method == "GET":
             # download_file
             headers = {
                 "Content-Type": "application/octet-stream",
@@ -70,54 +86,34 @@ class MockStorageTransport(HttpTransport):
             if "x-ms-range-get-content-md5" in request.headers:
                 headers["Content-MD5"] = "7Qdih1MuhjZehB6Sv8UNjA=="  # cspell:disable-line
 
-            rest_response = RequestsTransportResponse(
-                request=request,
-                requests_response=MockHttpClientResponse(
-                    request.url,
-                    b"Hello World!",
-                    headers,
-                )
-            )
-        elif request.method == 'HEAD':
+            rest_response = _make_rest_response(request, b"Hello World!", headers)
+        elif request.method == "HEAD":
             # get_file_properties
-            rest_response = RequestsTransportResponse(
-                request=request,
-                requests_response=MockHttpClientResponse(
-                    request.url,
-                    b"",
-                    {
-                        "Content-Type": "application/octet-stream",
-                        "Content-Length": "1024",
-                    },
-                )
+            rest_response = _make_rest_response(
+                request,
+                b"",
+                {
+                    "Content-Type": "application/octet-stream",
+                    "Content-Length": "1024",
+                },
             )
-        elif request.method == 'PUT':
+        elif request.method == "PUT":
             # upload_file
-            rest_response = RequestsTransportResponse(
-                request=request,
-                requests_response=MockHttpClientResponse(
-                    request.url,
-                    b"",
-                    {
-                        "Content-Length": "0",
-                    },
-                    201,
-                    "Created"
-                )
+            rest_response = _make_rest_response(
+                request,
+                b"",
+                {"Content-Length": "0"},
+                201,
+                "Created",
             )
-        elif request.method == 'DELETE':
+        elif request.method == "DELETE":
             # delete_file
-            rest_response = RequestsTransportResponse(
-                request=request,
-                internal_response=MockHttpClientResponse(
-                    request.url,
-                    b"",
-                    {
-                        "Content-Length": "0",
-                    },
-                    202,
-                    "Accepted"
-                )
+            rest_response = _make_rest_response(
+                request,
+                b"",
+                {"Content-Length": "0"},
+                202,
+                "Accepted",
             )
         else:
             raise ValueError("The request is not accepted as part of MockStorageTransport.")

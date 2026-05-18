@@ -6,11 +6,6 @@
 import os
 
 import pytest
-
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import FileSharePreparer
-
 from azure.core.exceptions import HttpResponseError
 from azure.storage.fileshare import (
     CorsRule,
@@ -23,6 +18,9 @@ from azure.storage.fileshare import (
     SmbMultichannel,
 )
 
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
 
@@ -39,6 +37,7 @@ class TestFileServiceProperties(StorageRecordedTestCase):
                 os.remove(FILE_PATH)
             except:
                 pass
+
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):
         if metrics1 is None or metrics2 is None:
@@ -57,7 +56,8 @@ class TestFileServiceProperties(StorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i, rule1 in enumerate(cors1):
+        for i in range(0, len(cors1)):
+            rule1 = cors1[i]
             rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
@@ -81,45 +81,40 @@ class TestFileServiceProperties(StorageRecordedTestCase):
         protocol_properties1 = ShareProtocolSettings(
             smb=ShareSmbSettings(
                 multichannel=SmbMultichannel(enabled=False),
-                encryption_in_transit=SmbEncryptionInTransit(required=False)
+                encryption_in_transit=SmbEncryptionInTransit(required=False),
             )
         )
         protocol_properties2 = ShareProtocolSettings(
             smb=ShareSmbSettings(
-                multichannel=SmbMultichannel(enabled=True),
-                encryption_in_transit=SmbEncryptionInTransit(required=True)
+                multichannel=SmbMultichannel(enabled=True), encryption_in_transit=SmbEncryptionInTransit(required=True)
             )
         )
 
         resp = self.fsc.set_service_properties(
-            hour_metrics=Metrics(),
-            minute_metrics=Metrics(),
-            cors=[],
-            protocol=protocol_properties1
+            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=[], protocol=protocol_properties1
         )
         assert resp is None
         props = self.fsc.get_service_properties()
-        self._assert_metrics_equal(props['hour_metrics'], Metrics())
-        self._assert_metrics_equal(props['minute_metrics'], Metrics())
-        self._assert_cors_equal(props['cors'], [])
-        assert props['protocol'].smb.multichannel.enabled == False
-        assert props['protocol'].smb.encryption_in_transit.required == False
+        self._assert_metrics_equal(props["hour_metrics"], Metrics())
+        self._assert_metrics_equal(props["minute_metrics"], Metrics())
+        self._assert_cors_equal(props["cors"], [])
+        assert props["protocol"].smb.multichannel.enabled == False
+        assert props["protocol"].smb.encryption_in_transit.required == False
 
+        with pytest.raises(TypeError):
+            ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel()))
         with pytest.raises(ValueError):
             ShareProtocolSettings(smb=ShareSmbSettings())
         with pytest.raises(ValueError):
             ShareProtocolSettings()
 
         resp = self.fsc.set_service_properties(
-            hour_metrics=Metrics(),
-            minute_metrics=Metrics(),
-            cors=[],
-            protocol=protocol_properties2
+            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=[], protocol=protocol_properties2
         )
         assert resp is None
         props = self.fsc.get_service_properties()
-        assert props['protocol'].smb.multichannel.enabled == True
-        assert props['protocol'].smb.encryption_in_transit.required == True
+        assert props["protocol"].smb.multichannel.enabled == True
+        assert props["protocol"].smb.encryption_in_transit.required == True
 
     # --Test cases per feature ---------------------------------------
     @FileSharePreparer()
@@ -136,7 +131,7 @@ class TestFileServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = self.fsc.get_service_properties()
-        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
+        self._assert_metrics_equal(received_props["hour_metrics"], hour_metrics)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -145,15 +140,16 @@ class TestFileServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=5))
+        minute_metrics = Metrics(
+            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+        )
 
         # Act
         self.fsc.set_service_properties(minute_metrics=minute_metrics)
 
         # Assert
         received_props = self.fsc.get_service_properties()
-        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
+        self._assert_metrics_equal(received_props["minute_metrics"], minute_metrics)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -162,10 +158,10 @@ class TestFileServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
+        cors_rule1 = CorsRule(["www.xyz.com"], ["GET"])
 
-        allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-        allowed_methods = ['GET', 'PUT']
+        allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
+        allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
@@ -174,7 +170,8 @@ class TestFileServiceProperties(StorageRecordedTestCase):
             allowed_methods,
             max_age_in_seconds=max_age_in_seconds,
             exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers)
+            allowed_headers=allowed_headers,
+        )
 
         cors = [cors_rule1, cors_rule2]
 
@@ -183,7 +180,7 @@ class TestFileServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = self.fsc.get_service_properties()
-        self._assert_cors_equal(received_props['cors'], cors)
+        self._assert_cors_equal(received_props["cors"], cors)
 
     # --Test cases for errors ---------------------------------------
     @FileSharePreparer()
@@ -194,9 +191,7 @@ class TestFileServiceProperties(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         # Assert
-        pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
+        pytest.raises(ValueError, RetentionPolicy, True, None)
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -207,9 +202,10 @@ class TestFileServiceProperties(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         cors = []
         for i in range(0, 6):
-            cors.append(CorsRule(['www.xyz.com'], ['GET']))
+            cors.append(CorsRule(["www.xyz.com"], ["GET"]))
 
         # Assert
         pytest.raises(HttpResponseError, self.fsc.set_service_properties, None, None, cors)
+
 
 # ------------------------------------------------------------------------------

@@ -4,16 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import asyncio
-from collections import deque
-from typing import Any, Dict, Optional
+from typing import Any, AsyncIterator, Dict, Optional
 
-from aiohttp import ClientResponse
-from aiohttp.client_proto import ResponseHandler
-from aiohttp.streams import StreamReader
-
-from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport  # pylint: disable=no-name-in-module
+from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.rest import HttpRequest
+from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
 
 
 class ProgressTracker:
@@ -54,35 +49,52 @@ class AsyncStream:
         return data
 
 
-class MockAioHttpClientResponse(ClientResponse):
-    def __init__(
-        self, url: str,
-        body_bytes: bytes,
-        headers: Dict[str, Any],
-        status: int = 200,
-        reason: str = "OK"
-    ) -> None:
-        super(MockAioHttpClientResponse).__init__()
-        self._url = url
-        self._body = body_bytes
-        self._headers = headers
-        self._cache = {}
-        self._loop = None
-        self.status = status
-        self.reason = reason
-        self.content = StreamReader(ResponseHandler(asyncio.get_event_loop()), 65535)
-        self.content.total_bytes = len(body_bytes)
-        self.content._buffer = deque([body_bytes])
-        self.content._eof = True
+def _mock_async_stream_generator(data: bytes):
+    """Simple async generator that yields data in a single chunk."""
+
+    async def generator(response, **kwargs) -> AsyncIterator[bytes]:
+        yield data
+
+    return generator
+
+
+class _MockInternalResponse:
+    """Minimal internal response object for AsyncHttpResponseImpl."""
+
+    async def close(self):
+        pass
+
+
+def _make_async_rest_response(
+    request: HttpRequest,
+    body: bytes,
+    headers: Dict[str, Any],
+    status_code: int = 200,
+    reason: str = "OK",
+) -> AsyncHttpResponseImpl:
+    """Create an azure.core.rest async HttpResponse with iter_bytes/iter_raw support."""
+    content_type = headers.get("Content-Type", "application/octet-stream")
+    resp = AsyncHttpResponseImpl(
+        request=request,
+        internal_response=_MockInternalResponse(),
+        status_code=status_code,
+        reason=reason,
+        content_type=content_type,
+        headers=headers,
+        stream_download_generator=_mock_async_stream_generator(body),
+    )
+    resp._content = body  # pylint: disable=protected-access
+    return resp
 
 
 class MockStorageTransport(AsyncHttpTransport):
     """
-    This transport returns legacy http response objects from azure core and is 
-    intended only to test our backwards compatibility support.
+    This transport returns azure.core.rest async HttpResponse objects for
+    compatibility with TypeSpec-generated code that uses iter_bytes/iter_raw.
     """
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
-        if request.method == 'GET':
+
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponseImpl:
+        if request.method == "GET":
             # download_file
             headers = {
                 "Content-Type": "application/octet-stream",
@@ -93,63 +105,37 @@ class MockStorageTransport(AsyncHttpTransport):
             if "x-ms-range-get-content-md5" in request.headers:
                 headers["Content-MD5"] = "I3pVbaOCUTom+G9F9uKFoA=="
 
-            rest_response = AioHttpTransportResponse(
-                request=request,
-                aiohttp_response=MockAioHttpClientResponse(
-                    request.url,
-                    b"Hello Async World!",
-                    headers,
-                ),
-                decompress=False
-            )
-        elif request.method == 'HEAD':
+            rest_response = _make_async_rest_response(request, b"Hello Async World!", headers)
+        elif request.method == "HEAD":
             # get_file_properties
-            rest_response = AioHttpTransportResponse(
-                request=request,
-                aiohttp_response=MockAioHttpClientResponse(
-                    request.url,
-                    b"",
-                    {
-                        "Content-Type": "application/octet-stream",
-                        "Content-Length": "1024",
-                    },
-                ),
-                decompress=False
+            rest_response = _make_async_rest_response(
+                request,
+                b"",
+                {
+                    "Content-Type": "application/octet-stream",
+                    "Content-Length": "1024",
+                },
             )
-        elif request.method == 'PUT':
+        elif request.method == "PUT":
             # upload_file
-            rest_response = AioHttpTransportResponse(
-                request=request,
-                aiohttp_response=MockAioHttpClientResponse(
-                    request.url,
-                    b"",
-                    {
-                        "Content-Length": "0",
-                    },
-                    201,
-                    "Created"
-                ),
-                decompress=False
+            rest_response = _make_async_rest_response(
+                request,
+                b"",
+                {"Content-Length": "0"},
+                201,
+                "Created",
             )
-        elif request.method == 'DELETE':
+        elif request.method == "DELETE":
             # delete_file
-            rest_response = AioHttpTransportResponse(
-                request=request,
-                aiohttp_response=MockAioHttpClientResponse(
-                    request.url,
-                    b"",
-                    {
-                        "Content-Length": "0",
-                    },
-                    202,
-                    "Accepted"
-                ),
-                decompress=False
+            rest_response = _make_async_rest_response(
+                request,
+                b"",
+                {"Content-Length": "0"},
+                202,
+                "Accepted",
             )
         else:
             raise ValueError("The request is not accepted as part of MockStorageTransport.")
-
-        await rest_response.load_body()
         return rest_response
 
     async def __aenter__(self):
