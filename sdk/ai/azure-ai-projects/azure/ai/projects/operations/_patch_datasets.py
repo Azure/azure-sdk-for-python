@@ -11,7 +11,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import re
 import logging
-from typing import Any, Tuple, Optional
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any, Tuple, Optional, List, Callable
 from pathlib import Path
 from urllib.parse import urlsplit
 from azure.storage.blob import ContainerClient
@@ -24,6 +26,7 @@ from ..models._models import (
     PendingUploadResult,
     PendingUploadType,
 )
+from ..models._patch import DatasetsFolderUploadProgress
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +81,15 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
     @distributed_trace
     def upload_file(
-        self, *, name: str, version: str, file_path: str, connection_name: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        name: str,
+        version: str,
+        file_path: str,
+        connection_name: Optional[str] = None,
+        max_concurrency: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> FileDatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
@@ -93,6 +104,14 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :keyword connection_name: The name of an Azure Storage Account connection, where the file should be uploaded.
          If not specified, the default Azure Storage Account connection will be used. Optional.
         :paramtype connection_name: str
+        :keyword max_concurrency: Maximum number of parallel connections to use when transferring
+         the blob in chunks. Passed to the `upload_blob` method of `BlobClient` from the azure-storage-blob package.
+         Defaults to 1 (single connection). Optional.
+        :paramtype max_concurrency: int
+        :keyword timeout: Sets the server-side timeout for the operation in seconds. Passed to the
+         `upload_blob` method of `BlobClient` from the azure-storage-blob package. This value is not
+         tracked or validated on the client. Defaults to None (no timeout). Optional.
+        :paramtype timeout: int
         :return: The created dataset version.
         :rtype: ~azure.ai.projects.models.FileDatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
@@ -120,7 +139,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 )
 
                 # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
-                with container_client.upload_blob(name=blob_name, data=data, **kwargs) as blob_client:
+                with container_client.upload_blob(
+                    name=blob_name, data=data, max_concurrency=max_concurrency, timeout=timeout, **kwargs
+                ) as blob_client:
                     logger.debug("[upload_file] Done uploading")
 
                     # Remove the SAS token from the URL (remove all query strings).
@@ -140,7 +161,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         return dataset_version  # type: ignore
 
     @distributed_trace
-    def upload_folder(
+    def upload_folder(  # pylint: disable=too-many-locals
         self,
         *,
         name: str,
@@ -148,12 +169,17 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         folder: str,
         connection_name: Optional[str] = None,
         file_pattern: Optional[re.Pattern] = None,
+        max_workers: Optional[int] = None,
+        max_concurrency: Optional[int] = None,
+        timeout: Optional[int] = None,
+        progress_callback: Optional[Callable[[DatasetsFolderUploadProgress], None]] = None,
         **kwargs: Any,
     ) -> FolderDatasetVersion:
         """Upload all files in a folder and its sub folders to a blob storage, while maintaining
         relative paths, and create a dataset that references this folder.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
-        to upload each file. Any keyword arguments provided will be passed to the `upload_blob` method.
+        to upload each file in parallel. Any keyword arguments provided will be passed to the
+        `upload_blob` method.
 
         :keyword name: The name of the dataset. Required.
         :paramtype name: str
@@ -167,6 +193,20 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :keyword file_pattern: A regex pattern to filter files to be uploaded. Only files matching the pattern
          will be uploaded. Optional.
         :paramtype file_pattern: re.Pattern
+        :keyword max_workers: Maximum number of threads to use for uploading files in parallel. Passed to
+         the constructor of `ThreadPoolExecutor`. Defaults to min(32, cpu_count + 4). Optional.
+        :paramtype max_workers: int
+        :keyword max_concurrency: Maximum number of parallel connections to use when transferring
+         each blob in chunks. Passed to the `upload_blob` method of `BlobClient` from the azure-storage-blob
+         package. Defaults to 1 (single connection). Optional.
+        :paramtype max_concurrency: int
+        :keyword timeout: Sets the server-side timeout for the operation in seconds. Passed to the
+         `upload_blob` method of `BlobClient` from the azure-storage-blob package. This value is not
+         tracked or validated on the client. Defaults to None (no timeout). Optional.
+        :paramtype timeout: int
+        :keyword progress_callback: A callback function that receives a DatasetsFolderUploadProgress object
+         after each file upload completes. Optional.
+        :paramtype progress_callback: Callable[[DatasetsFolderUploadProgress], None]
         :return: The created dataset version.
         :rtype: ~azure.ai.projects.models.FolderDatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
@@ -183,30 +223,78 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             connection_name=connection_name,
         )
 
-        with container_client:
+        # Thread-safe progress tracking
+        progress_lock = threading.Lock()
+        completed_count = 0
+        failed_count = 0
 
-            # Recursively traverse all files in the folder
-            files_uploaded: bool = False
+        def upload_single_file(file_info: Tuple[str, str], total_files: int) -> str:
+            """Upload a single file and update progress.
+
+            :param file_info: A tuple containing the local file path and the blob name.
+            :type file_info: Tuple[str, str]
+            :param total_files: The total number of files to upload.
+            :type total_files: int
+            :return: The blob name of the uploaded file.
+            :rtype: str
+            """
+            nonlocal completed_count, failed_count
+            file_path, blob_name = file_info
+
+            logger.debug("[upload_folder] Start uploading file `%s` as blob `%s`.", file_path, blob_name)
+            try:
+                with open(file=file_path, mode="rb") as data:
+                    # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
+                    container_client.upload_blob(
+                        name=blob_name, data=data, max_concurrency=max_concurrency, timeout=timeout, **kwargs
+                    )
+                logger.debug("[upload_folder] Done uploading file `%s`.", blob_name)
+            except Exception as e:
+                with progress_lock:
+                    failed_count += 1
+                raise e
+            finally:
+                with progress_lock:
+                    completed_count += 1
+                    if progress_callback:
+                        progress_callback(
+                            DatasetsFolderUploadProgress(
+                                total_files=total_files,
+                                completed_files=completed_count,
+                                current_file=blob_name,
+                                failed_files=failed_count,
+                            )
+                        )
+            return blob_name
+
+        with container_client:
+            # Collect all files to upload first
+            files_to_upload: List[Tuple[str, str]] = []
             for root, _, files in os.walk(folder):
                 for file in files:
                     if file_pattern and not file_pattern.search(file):
                         continue  # Skip files that do not match the pattern
                     file_path = os.path.join(root, file)
                     blob_name = os.path.relpath(file_path, folder).replace("\\", "/")  # Ensure correct format for Azure
-                    logger.debug(
-                        "[upload_folder] Start uploading file `%s` as blob `%s`.",
-                        file_path,
-                        blob_name,
-                    )
-                    with open(file=file_path, mode="rb") as data:  # Open the file for reading in binary mode
-                        # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-upload-blob
-                        container_client.upload_blob(name=str(blob_name), data=data, **kwargs)
-                    logger.debug("[upload_folder] Done uploading file")
-                    files_uploaded = True
-            logger.debug("[upload_folder] Done uploaded.")
+                    files_to_upload.append((file_path, blob_name))
 
-            if not files_uploaded:
+            if not files_to_upload:
                 raise ValueError("The provided folder is empty.")
+
+            total_files = len(files_to_upload)
+
+            # Upload files in parallel using ThreadPoolExecutor
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                logger.debug(
+                    "[upload_folder] Starting parallel upload of %d files with max_workers=%s.",
+                    total_files,
+                    executor._max_workers,  # pylint: disable=protected-access
+                )
+                futures = {executor.submit(upload_single_file, f, total_files): f for f in files_to_upload}
+                for future in as_completed(futures):
+                    future.result()  # Raises exception if upload failed
+
+            logger.debug("[upload_folder] Done uploading all %d files.", total_files)
 
             # Remove the SAS token from the URL (remove all query strings).
             # The resulting format should be "https://<account>.blob.core.windows.net/<container>"
