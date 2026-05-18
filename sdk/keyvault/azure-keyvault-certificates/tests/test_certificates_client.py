@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -41,7 +42,6 @@ import pytest
 from _shared.test_case import KeyVaultTestCase
 from _test_case import get_decorator, CertificatesClientPreparer
 from certs import CERT_CONTENT_PASSWORD_ENCODED, CERT_CONTENT_NOT_PASSWORD_ENCODED
-
 
 all_api_versions = get_decorator()
 only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
@@ -817,9 +817,7 @@ class TestCertificateClient(KeyVaultTestCase):
             content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
-        create_certificate_poller = client.begin_create_certificate(
-            certificate_name=cert_name, policy=cert_policy
-        )
+        create_certificate_poller = client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy)
         result = create_certificate_poller.result()
         # The operation should indicate that certificate creation is in progress and requires a merge to complete
         assert isinstance(result, CertificateOperation)
