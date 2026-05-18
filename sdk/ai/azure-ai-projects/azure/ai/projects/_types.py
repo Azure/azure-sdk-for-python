@@ -13,4 +13,4 @@ if TYPE_CHECKING:
 Filters = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
 ToolCallOutputContent = Union[dict[str, Any], str, list[Any]]
 EvalItemContentItem = Union[str, "_models.EvalItemContentItemObject"]
-EvalItemContent = Union["_types.EvalItemContentItem", list["_types.EvalItemContentItem"]]
+EvalItemContent = Union["EvalItemContentItem", list["EvalItemContentItem"]]
