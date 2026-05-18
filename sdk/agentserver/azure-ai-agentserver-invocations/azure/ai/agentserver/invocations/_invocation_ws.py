@@ -11,7 +11,7 @@ the user handler with:
 * WebSocket protocol-level Ping/Pong keep-alive (disabled by default;
   enable via the ``WS_KEEPALIVE_INTERVAL`` environment variable surfaced
   on ``AgentConfig.ws_ping_interval``) so idle connections can survive
-  Azure APIM / Azure Load Balancer's ~4-minute idle timeout;
+  upstream proxy / load-balancer idle timeouts;
 * a clean close on handler return (code 1000) or a 1011 close on uncaught
   handler exceptions;
 * a structured close-event log line and OTel span attributes carrying

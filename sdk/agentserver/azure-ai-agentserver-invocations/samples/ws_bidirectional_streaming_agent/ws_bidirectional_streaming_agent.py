@@ -23,8 +23,8 @@ The handler runs two groups of coroutines in parallel:
    (opcode 0x9) every ``ws_ping_interval`` seconds (disabled by default;
    enable by setting ``WS_KEEPALIVE_INTERVAL`` or by passing
    ``InvocationAgentServerHost(ws_ping_interval=<seconds>)``).  When
-   enabled, that is enough to survive Azure APIM / Azure Load Balancer's
-   ~4-minute idle timeout without your handler having to push any
+   enabled, that is enough to survive upstream proxy / load-balancer
+   idle timeouts without your handler having to push any
    application-level heartbeat messages of its own.
 
 Wire protocol (JSON over text frames)
