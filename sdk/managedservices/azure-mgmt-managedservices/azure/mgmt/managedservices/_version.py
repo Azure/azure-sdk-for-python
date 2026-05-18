@@ -6,4 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "7.0.0b2"
+
+VERSION = "6.0.1"
