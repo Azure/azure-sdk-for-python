@@ -1,0 +1,8 @@
+-e ../../../eng/tools/azure-sdk-tools
+-e ../azure-ai-agentserver-core
+httpx
+hypercorn
+openai
+pytest
+pytest-asyncio
+starlette

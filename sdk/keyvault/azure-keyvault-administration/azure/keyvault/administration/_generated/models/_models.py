@@ -8,7 +8,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -135,18 +135,18 @@ class Permission(_Model):
      ~azure.keyvault.administration._generated.models.DataAction]
     """
 
-    actions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    actions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Action permissions that are granted."""
-    not_actions: Optional[List[str]] = rest_field(
+    not_actions: Optional[list[str]] = rest_field(
         name="notActions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Action permissions that are excluded but not denied. They may be granted by other role
      definitions assigned to a principal."""
-    data_actions: Optional[List[Union[str, "_models.DataAction"]]] = rest_field(
+    data_actions: Optional[list[Union[str, "_models.DataAction"]]] = rest_field(
         name="dataActions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Data action permissions that are granted."""
-    not_data_actions: Optional[List[Union[str, "_models.DataAction"]]] = rest_field(
+    not_data_actions: Optional[list[Union[str, "_models.DataAction"]]] = rest_field(
         name="notDataActions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Data action permissions that are excluded but not denied. They may be granted by other role
@@ -156,10 +156,10 @@ class Permission(_Model):
     def __init__(
         self,
         *,
-        actions: Optional[List[str]] = None,
-        not_actions: Optional[List[str]] = None,
-        data_actions: Optional[List[Union[str, "_models.DataAction"]]] = None,
-        not_data_actions: Optional[List[Union[str, "_models.DataAction"]]] = None,
+        actions: Optional[list[str]] = None,
+        not_actions: Optional[list[str]] = None,
+        data_actions: Optional[list[Union[str, "_models.DataAction"]]] = None,
+        not_data_actions: Optional[list[Union[str, "_models.DataAction"]]] = None,
     ) -> None: ...
 
     @overload
@@ -633,11 +633,11 @@ class RoleDefinitionProperties(_Model):
         name="type", visibility=["read", "create", "update", "delete", "query"]
     )
     """The role type. Known values are: \"AKVBuiltInRole\" and \"CustomRole\"."""
-    permissions: Optional[List["_models.Permission"]] = rest_field(
+    permissions: Optional[list["_models.Permission"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Role definition permissions."""
-    assignable_scopes: Optional[List[Union[str, "_models.RoleScope"]]] = rest_field(
+    assignable_scopes: Optional[list[Union[str, "_models.RoleScope"]]] = rest_field(
         name="assignableScopes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Role definition assignable scopes."""
@@ -649,8 +649,8 @@ class RoleDefinitionProperties(_Model):
         role_name: Optional[str] = None,
         description: Optional[str] = None,
         role_type: Optional[Union[str, "_models.RoleType"]] = None,
-        permissions: Optional[List["_models.Permission"]] = None,
-        assignable_scopes: Optional[List[Union[str, "_models.RoleScope"]]] = None,
+        permissions: Optional[list["_models.Permission"]] = None,
+        assignable_scopes: Optional[list[Union[str, "_models.RoleScope"]]] = None,
     ) -> None: ...
 
     @overload
@@ -861,7 +861,7 @@ class SettingsListResult(_Model):
     :vartype settings: list[~azure.keyvault.administration._generated.models.Setting]
     """
 
-    settings: Optional[List["_models.Setting"]] = rest_field(visibility=["read"])
+    settings: Optional[list["_models.Setting"]] = rest_field(visibility=["read"])
     """A response message containing a list of account settings with their associated value."""
 
 

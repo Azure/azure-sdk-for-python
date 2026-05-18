@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/Agents_CreateOrUpdate_MinimumSet.json
+# x-ms-original-file: 2025-12-01/Agents_CreateOrUpdate_MinimumSet.json
 if __name__ == "__main__":
     main()

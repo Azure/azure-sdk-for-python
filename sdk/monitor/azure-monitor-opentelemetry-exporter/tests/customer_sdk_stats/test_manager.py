@@ -36,6 +36,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
 
         # Get a fresh manager instance
         self.manager = CustomerSdkStatsManager()
+        self.mock_credential = Mock()
 
     def tearDown(self):
         """Clean up test environment."""
@@ -92,8 +93,8 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
 
         connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
 
-        # Test initialization
-        result = self.manager.initialize(connection_string)
+        # Test initialization with credential
+        result = self.manager.initialize(connection_string, credential=self.mock_credential)
 
         self.assertTrue(result)
         self.assertEqual(self.manager.status, CustomerSdkStatsStatus.ACTIVE)
@@ -101,7 +102,11 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
         self.assertFalse(self.manager.is_shutdown)
 
         # Verify mocks were called
-        mock_exporter.assert_called_once()
+        mock_exporter.assert_called_once_with(
+            connection_string=connection_string,
+            is_customer_sdkstats=True,
+            credential=self.mock_credential,
+        )
         mock_metric_reader.assert_called_once()
         mock_meter_provider.assert_called_once()
         self.assertEqual(mock_meter.create_observable_gauge.call_count, 3)
@@ -128,6 +133,49 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
 
         self.assertFalse(result)
         self.assertEqual(self.manager.status, CustomerSdkStatsStatus.UNINITIALIZED)
+
+    @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider")
+    def test_initialize_with_credential(self, mock_meter_provider, mock_metric_reader, mock_exporter):
+        """Test that credential is passed through to the exporter during initialization."""
+        mock_meter = Mock()
+        mock_meter_provider_instance = Mock()
+        mock_meter_provider_instance.get_meter.return_value = mock_meter
+        mock_meter_provider.return_value = mock_meter_provider_instance
+
+        connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+        mock_credential = Mock()
+
+        result = self.manager.initialize(connection_string, credential=mock_credential)
+
+        self.assertTrue(result)
+        self.assertTrue(self.manager.is_initialized)
+        mock_exporter.assert_called_once_with(
+            connection_string=connection_string,
+            is_customer_sdkstats=True,
+            credential=mock_credential,
+        )
+
+    @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider")
+    def test_initialize_without_credential(self, mock_meter_provider, mock_metric_reader, mock_exporter):
+        """Test that credential is not passed to the exporter when not provided."""
+        mock_meter = Mock()
+        mock_meter_provider_instance = Mock()
+        mock_meter_provider_instance.get_meter.return_value = mock_meter
+        mock_meter_provider.return_value = mock_meter_provider_instance
+
+        connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
+
+        result = self.manager.initialize(connection_string)
+
+        self.assertTrue(result)
+        mock_exporter.assert_called_once_with(
+            connection_string=connection_string,
+            is_customer_sdkstats=True,
+        )
 
     def test_initialize_multiple_calls(self):
         """Test that multiple initialization calls are handled correctly."""

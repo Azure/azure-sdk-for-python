@@ -19,7 +19,10 @@ def collect_customer_sdkstats(exporter: "BaseExporter") -> None:  # type: ignore
     # Check if already initialized (thread-safe check)
     if not customer_stats.is_initialized:
         # The initialize method is thread-safe and handles double-initialization
-        customer_stats.initialize(connection_string=exporter._connection_string)  # type: ignore
+        customer_stats.initialize(
+            connection_string=exporter._connection_string,  # type: ignore
+            credential=exporter._credential,  # type: ignore
+        )
 
 
 def shutdown_customer_sdkstats_metrics() -> None:

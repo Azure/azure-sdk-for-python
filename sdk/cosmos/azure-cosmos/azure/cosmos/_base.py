@@ -443,8 +443,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
     # refreshed.
-    if resource_type != 'dbs' and options.get("containerRID"):
-        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
+    if resource_type != 'dbs' and options.get(Constants.ContainerRID):
+        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options[Constants.ContainerRID]
 
     if resource_type == "":
         resource_type = http_constants.ResourceType.DatabaseAccount
@@ -1079,8 +1079,8 @@ def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
     """
     pk_range_options: dict[str, Any] = {}
     if query_options is not None:
-        if "containerRID" in query_options:
-            pk_range_options["containerRID"] = query_options["containerRID"]
+        if Constants.ContainerRID in query_options:
+            pk_range_options[Constants.ContainerRID] = query_options[Constants.ContainerRID]
         if "excludedLocations" in query_options:
             pk_range_options["excludedLocations"] = query_options["excludedLocations"]
     return pk_range_options

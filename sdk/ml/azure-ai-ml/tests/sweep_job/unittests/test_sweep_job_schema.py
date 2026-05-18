@@ -190,7 +190,7 @@ class TestSweepJobSchema:
         assert rest.properties.search_space["ss"] == expected_rest
         assert vars(sweep.search_space["ss"]) == expected_ss
         for var in rest.properties.search_space["ss"][1]:
-            assert type(var) == int
+            assert isinstance(var, int)
 
     def test_sweep_with_floats(self):
         expected_rest = ["quniform", [1.1, 100.12, 1]]
@@ -215,7 +215,7 @@ class TestSweepJobSchema:
         assert vars(sweep.search_space["ss"]) == expected_ss
         # Ensure that min_value and max_value are floats, ignoring q
         for var in rest.properties.search_space["ss"][1][:2]:
-            assert type(var) == float
+            assert isinstance(var, float)
 
     def test_sweep_with_string(self):
         expected_rest = ["choice", [["gbdt", "dart"]]]
@@ -310,7 +310,7 @@ class TestSweepJobSchema:
         assert vars(sweep.search_space["ss"]) == expected_ss
         # Ensure that all elements of values are dicts
         for var in rest.properties.search_space["ss"][1][0]:
-            assert type(var) == dict
+            assert isinstance(var, dict)
 
     def test_sweep_termination_roundtrip(self):
         paths = [

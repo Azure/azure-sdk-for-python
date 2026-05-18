@@ -42,19 +42,13 @@ def main():
                 },
             },
             "location": "eastus2",
-            "properties": {
-                "discovery": {
-                    "addRecommendedSignals": "Enabled",
-                    "identity": "SystemAssigned",
-                    "scope": "/providers/Microsoft.Management/serviceGroups/myServiceGroup",
-                }
-            },
+            "properties": {},
             "tags": {"key2961": "hbljozzkqrpcthsjtfkyozpwyx"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/HealthModels_Create.json
+# x-ms-original-file: 2026-01-01-preview/HealthModels_Create.json
 if __name__ == "__main__":
     main()

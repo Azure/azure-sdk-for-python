@@ -1,14 +1,24 @@
 ## Release History
 
-### 4.16.0b2 (Unreleased)
+### 4.16.0b3 (Unreleased)
 
 #### Features Added
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where `CosmosClient` construction with AAD credentials would crash at startup if the semantic reranking inference endpoint environment variable was not set, even when semantic reranking was not being used. The inference service is now lazily initialized on first use. See [PR 46243](https://github.com/Azure/azure-sdk-for-python/pull/46243)
 
 #### Other Changes
+* Reduced per-client memory overhead when partition-level circuit breaker (PPCB) is enabled by sharing the partition key range routing map cache across CosmosClient instances connected to the same endpoint, and stripping unused fields from cached partition key ranges using compact PKRange namedtuples. See [PR 46297](https://github.com/Azure/azure-sdk-for-python/pull/46297)
+
+### 4.16.0b2 (2026-04-04)
+
+#### Bugs Fixed
+* Fixed bug where container-focused requests using name-based addressing did not consistently populate the `x-ms-cosmos-intended-collection-rid` header. See [PR 44080](https://github.com/Azure/azure-sdk-for-python/pull/44080)
+
+#### Other Changes
+* Updated partition key range routing map refresh to use change-feed-based refresh flow instead of feed-range reads, improving internal refresh behavior for split/stale routing scenarios. See [PR 44080](https://github.com/Azure/azure-sdk-for-python/pull/44080)
 
 ### 4.16.0b1 (2026-03-21)
 

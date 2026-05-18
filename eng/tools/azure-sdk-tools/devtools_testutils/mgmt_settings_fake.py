@@ -31,7 +31,7 @@ ENABLE_LOGGING = True
 AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"
 
 # Read for details of this file:
-# https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests
+# https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md
 
 
 def get_azure_core_credentials(**kwargs):

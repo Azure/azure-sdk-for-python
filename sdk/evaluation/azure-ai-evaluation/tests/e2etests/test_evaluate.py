@@ -115,8 +115,8 @@ class TestEvaluate:
                 evaluators={"f1": f1_score_eval},
             )
             row_result_df = pd.DataFrame(result["rows"])
-            assert "outputs.f1.f1_score" in row_result_df.columns
-            assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
+            assert "outputs.f1.f1_score_score" in row_result_df.columns
+            assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score_score"])
         finally:
             os.chdir(original_working_dir)
 
@@ -202,8 +202,8 @@ class TestEvaluate:
         assert "outputs.response" in row_result_df.columns
         assert "outputs.answer.length" in row_result_df.columns
         assert list(row_result_df["outputs.answer.length"]) == [28, 76, 22]
-        assert "outputs.f1.f1_score" in row_result_df.columns
-        assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
+        assert "outputs.f1.f1_score_score" in row_result_df.columns
+        assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score_score"])
 
     # TODO move to unit test, rename to column mapping focus
     @pytest.mark.parametrize(
@@ -300,10 +300,10 @@ class TestEvaluate:
         assert row_result_df.shape[0] == len(input_data)
 
         assert "outputs.answer.length" in row_result_df.columns.to_list()
-        assert "outputs.f1_score.f1_score" in row_result_df.columns.to_list()
+        assert "outputs.f1_score.f1_score_score" in row_result_df.columns.to_list()
 
         assert "answer.length" in metrics.keys()
-        assert "f1_score.f1_score" in metrics.keys()
+        assert "f1_score.f1_score_score" in metrics.keys()
 
     @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
     @pytest.mark.azuretest
@@ -337,8 +337,8 @@ class TestEvaluate:
 
         assert "outputs.answer.length" in row_result_df.columns
         assert list(row_result_df["outputs.answer.length"]) == [28, 76, 22]
-        assert "outputs.f1.f1_score" in row_result_df.columns
-        assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
+        assert "outputs.f1.f1_score_score" in row_result_df.columns
+        assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score_score"])
         assert result["studio_url"] is not None
 
         # get remote run and validate if it exists
@@ -380,10 +380,12 @@ class TestEvaluate:
         assert result is not None
         assert result["rows"] is not None
         assert row_result_df.shape[0] == len(input_data)
-        assert "outputs.f1_score.f1_score" in row_result_df.columns.to_list()
-        assert "f1_score.f1_score" in metrics.keys()
-        assert metrics.get("f1_score.f1_score") == list_mean_nan_safe(row_result_df["outputs.f1_score.f1_score"])
-        assert row_result_df["outputs.f1_score.f1_score"][2] == 1
+        assert "outputs.f1_score.f1_score_score" in row_result_df.columns.to_list()
+        assert "f1_score.f1_score_score" in metrics.keys()
+        assert metrics.get("f1_score.f1_score_score") == list_mean_nan_safe(
+            row_result_df["outputs.f1_score.f1_score_score"]
+        )
+        assert row_result_df["outputs.f1_score.f1_score_score"][2] == 1
         assert result["studio_url"] is not None
 
         # get remote run and validate if it exists
@@ -490,22 +492,22 @@ class TestEvaluate:
             jsonl_row_result_df.shape[0] == len(jsonl_input_data) == csv_row_result_df.shape[0] == len(csv_input_data)
         )
 
-        assert "outputs.f1_score.f1_score" in jsonl_row_result_df.columns.to_list()
-        assert "outputs.f1_score.f1_score" in csv_row_result_df.columns.to_list()
+        assert "outputs.f1_score.f1_score_score" in jsonl_row_result_df.columns.to_list()
+        assert "outputs.f1_score.f1_score_score" in csv_row_result_df.columns.to_list()
 
-        assert "f1_score.f1_score" in jsonl_metrics.keys()
-        assert "f1_score.f1_score" in csv_metrics.keys()
+        assert "f1_score.f1_score_score" in jsonl_metrics.keys()
+        assert "f1_score.f1_score_score" in csv_metrics.keys()
 
-        assert jsonl_metrics.get("f1_score.f1_score") == list_mean_nan_safe(
-            jsonl_row_result_df["outputs.f1_score.f1_score"]
+        assert jsonl_metrics.get("f1_score.f1_score_score") == list_mean_nan_safe(
+            jsonl_row_result_df["outputs.f1_score.f1_score_score"]
         )
-        assert csv_metrics.get("f1_score.f1_score") == list_mean_nan_safe(
-            csv_row_result_df["outputs.f1_score.f1_score"]
+        assert csv_metrics.get("f1_score.f1_score_score") == list_mean_nan_safe(
+            csv_row_result_df["outputs.f1_score.f1_score_score"]
         )
 
         assert (
-            jsonl_row_result_df["outputs.f1_score.f1_score"][2]
-            == csv_row_result_df["outputs.f1_score.f1_score"][2]
+            jsonl_row_result_df["outputs.f1_score.f1_score_score"][2]
+            == csv_row_result_df["outputs.f1_score.f1_score_score"][2]
             == 1
         )
         assert jsonl_result["studio_url"] == csv_result["studio_url"] == None

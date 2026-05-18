@@ -16,7 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import MetricsClientConfiguration
-from ._operations._operations import _MetricsClientOperationsMixin
+from ._operations import _MetricsClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -27,14 +27,14 @@ class MetricsClient(_MetricsClientOperationsMixin):
 
     :param endpoint: The regional endpoint to use, for example
      `https://eastus.metrics.monitor.azure.com <https://eastus.metrics.monitor.azure.com>`_. The
-     region should match
-     the region of the requested resources. For global resources, the region should be 'global'.
-     Required.
+     region should match the region of the requested resources. For global resources, the region
+     should be 'global'. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-02-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2024-02-01".
+     Default value is "2024-02-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 

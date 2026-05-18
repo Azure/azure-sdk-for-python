@@ -52,7 +52,6 @@ readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
 exclude = [
-    "agent-scripts*",
     "azure.ai",
     "azure",
     "doc*",

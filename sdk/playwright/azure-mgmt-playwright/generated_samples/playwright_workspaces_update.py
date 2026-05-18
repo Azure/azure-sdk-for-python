@@ -33,11 +33,14 @@ def main():
     response = client.playwright_workspaces.update(
         resource_group_name="dummyrg",
         playwright_workspace_name="myWorkspace",
-        properties={"properties": {"regionalAffinity": "Disabled"}, "tags": {"Division": "LT", "Team": "Dev Exp"}},
+        properties={
+            "properties": {"regionalAffinity": "Disabled", "reporting": "Disabled"},
+            "tags": {"Division": "LT", "Team": "Dev Exp"},
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/PlaywrightWorkspaces_Update.json
+# x-ms-original-file: 2026-02-01-preview/PlaywrightWorkspaces_Update.json
 if __name__ == "__main__":
     main()

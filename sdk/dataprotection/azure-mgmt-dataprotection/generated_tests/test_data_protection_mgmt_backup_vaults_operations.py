@@ -38,7 +38,6 @@ class TestDataProtectionMgmtBackupVaultsOperations(AzureMgmtRecordedTestCase):
             parameters={
                 "location": "str",
                 "properties": {
-                    "storageSettings": [{"datastoreType": "str", "type": "str"}],
                     "bcdrSecurityLevel": "str",
                     "featureSettings": {
                         "crossRegionRestoreSettings": {"state": "str"},
@@ -68,6 +67,7 @@ class TestDataProtectionMgmtBackupVaultsOperations(AzureMgmtRecordedTestCase):
                         "immutabilitySettings": {"state": "str"},
                         "softDeleteSettings": {"retentionDurationInDays": 0.0, "state": "str"},
                     },
+                    "storageSettings": [{"datastoreType": "str", "type": "str"}],
                 },
                 "eTag": "str",
                 "id": "str",

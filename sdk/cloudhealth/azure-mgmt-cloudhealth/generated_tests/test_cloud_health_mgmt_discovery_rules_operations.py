@@ -32,8 +32,8 @@ class TestCloudHealthMgmtDiscoveryRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_discovery_rules_create_or_update(self, resource_group):
-        response = self.client.discovery_rules.create_or_update(
+    def test_discovery_rules_begin_create_or_update(self, resource_group):
+        response = self.client.discovery_rules.begin_create_or_update(
             resource_group_name=resource_group.name,
             health_model_name="str",
             discovery_rule_name="str",
@@ -45,11 +45,9 @@ class TestCloudHealthMgmtDiscoveryRulesOperations(AzureMgmtRecordedTestCase):
                     "authenticationSetting": "str",
                     "discoverRelationships": "str",
                     "entityName": "str",
-                    "resourceGraphQuery": "str",
-                    "deletionDate": "2020-02-20 00:00:00",
+                    "specification": "discovery_rule_specification",
                     "displayName": "str",
-                    "errorMessage": "str",
-                    "numberOfDiscoveredEntities": 0,
+                    "error": {"message": "str", "context": ["str"]},
                     "provisioningState": "str",
                 },
                 "systemData": {
@@ -62,19 +60,19 @@ class TestCloudHealthMgmtDiscoveryRulesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_discovery_rules_delete(self, resource_group):
-        response = self.client.discovery_rules.delete(
+    def test_discovery_rules_begin_delete(self, resource_group):
+        response = self.client.discovery_rules.begin_delete(
             resource_group_name=resource_group.name,
             health_model_name="str",
             discovery_rule_name="str",
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

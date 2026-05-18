@@ -1,0 +1,7 @@
+include *.md
+include LICENSE
+include authentication/noauth/union/py.typed
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include authentication/__init__.py
+include authentication/noauth/__init__.py

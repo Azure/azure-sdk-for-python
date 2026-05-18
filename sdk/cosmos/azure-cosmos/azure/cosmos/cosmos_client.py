@@ -256,7 +256,24 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return self
 
     def __exit__(self, *args):
-        return self.client_connection.pipeline_client.__exit__(*args)
+        try:
+            return self.client_connection.pipeline_client.__exit__(*args)
+        finally:
+            try:
+                self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
+            except Exception:  # pylint: disable=broad-except
+                pass
+
+    def close(self) -> None:
+        """Close this instance of CosmosClient.
+
+        Provides a deterministic teardown path equivalent to using the client
+        as a context manager. Releases pipeline resources and decrements the
+        process-global shared partition-key-range cache refcount for this
+        endpoint (see ``_routing.routing_map_provider`` module docstring).
+        Safe to call multiple times.
+        """
+        self.__exit__(None, None, None)  # pylint: disable=specify-parameter-names-in-call
 
     @classmethod
     def from_connection_string(

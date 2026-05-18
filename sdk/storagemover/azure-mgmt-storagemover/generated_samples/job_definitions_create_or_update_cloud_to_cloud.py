@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,6 +39,9 @@ def main():
         job_definition={
             "properties": {
                 "agentName": "dummy-agent",
+                "connections": [
+                    "/subscriptions/60bcfc77-6589-4da2-b7fd-f9ec9322cf95/resourceGroups/examples-rg/providers/Microsoft.StorageMover/storageMovers/examples-storageMoverName/connections/example-connection"
+                ],
                 "copyMode": "Additive",
                 "description": "Example Job Definition Description",
                 "jobType": "CloudToCloud",
@@ -51,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/JobDefinitions_CreateOrUpdate_CloudToCloud.json
+# x-ms-original-file: 2025-12-01/JobDefinitions_CreateOrUpdate_CloudToCloud.json
 if __name__ == "__main__":
     main()

@@ -17,7 +17,7 @@ Common uses of Queue storage include:
 ## Getting started
 
 ### Prerequisites
-* Python 3.9 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+* Python 3.9 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://learn.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
@@ -154,7 +154,7 @@ The following components make up the Azure Queue Service:
 The Azure Storage Queues client library for Python allows you to interact with each of these components through the
 use of a dedicated client object.
 
-### Async Clients 
+### Async Clients
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
@@ -306,7 +306,7 @@ Other optional configuration keyword arguments that can be specified on the clie
 * __connection_timeout__ (int): The number of seconds the client will wait to establish a connection to the server.
 Defaults to 20 seconds.
 * __read_timeout__ (int): The number of seconds the client will wait, between consecutive read operations, for a
-response from the server. This is a socket level timeout and is not affected by overall data size. Client-side read 
+response from the server. This is a socket level timeout and is not affected by overall data size. Client-side read
 timeouts will be automatically retried. Defaults to 60 seconds.
 * __transport__ (Any): User-provided transport to send the HTTP request.
 

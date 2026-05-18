@@ -1,0 +1,11 @@
+{
+  "commit": "fbf077ba62b92296441fb3793608929d9765b54c",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.50.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/baremetalinfrastructure/resource-manager/Microsoft.BareMetalInfrastructure/BareMetalInfrastructure/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\azure-sdk-for-python\\sdk --tag=package-2021-08-09 --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/baremetalinfrastructure/resource-manager/Microsoft.BareMetalInfrastructure/BareMetalInfrastructure/readme.md"
+}

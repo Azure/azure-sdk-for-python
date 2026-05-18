@@ -102,6 +102,17 @@ class TestConversationBot:
         assert isinstance(bot.conversation_template, jinja2.Template)
 
     @pytest.mark.asyncio
+    async def test_conversation_bot_blocks_unsafe_template(self, bot_user_params):
+        """Regression test: sandbox must block SSTI payloads at render time (CWE-1336)."""
+        malicious_template = "{{ ''.__class__.__mro__ }}"
+        params = {**bot_user_params, "conversation_template": malicious_template}
+        from jinja2.exceptions import SecurityError
+
+        bot = ConversationBot(**params)
+        with pytest.raises(SecurityError):
+            bot.conversation_template.render()
+
+    @pytest.mark.asyncio
     async def test_generate_response_first_turn_with_starter(self, bot_user_params):
         bot = ConversationBot(**bot_user_params)
         session = AsyncMock()

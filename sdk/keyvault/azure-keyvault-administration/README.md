@@ -24,7 +24,7 @@ create, manage, and deploy public and private SSL/TLS certificates
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691._
-_Python 3.9 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
+_Python 3.9 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md)._
 
 ## Getting started
 ### Install packages
@@ -193,8 +193,7 @@ role_definition = client.set_role_definition(scope=scope, role_name=role_name, p
 ```python
 new_permissions = [
     KeyVaultPermission(
-        data_actions=[KeyVaultDataAction.READ_HSM_KEY],
-        not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
+        data_actions=[KeyVaultDataAction.READ_HSM_KEY], not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
     )
 ]
 unique_definition_name = role_definition.name

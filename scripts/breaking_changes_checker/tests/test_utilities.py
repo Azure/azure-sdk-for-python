@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from _models import RegexSuppression
+from breaking_changes_checker._models import RegexSuppression
 
 def test_regex_suppressions():
     regex_suppression = RegexSuppression(".*")

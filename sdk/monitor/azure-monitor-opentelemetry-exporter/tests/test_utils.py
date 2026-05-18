@@ -50,23 +50,23 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(len(filtered), 2)
         self.assertIn("valid_key", filtered)
-        self.assertEqual(len(filtered["valid_key"]), 9000)
+        self.assertEqual(len(filtered["valid_key"]), 8192)
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
 
-    def test_custom_properties_gen_ai_attributes_not_truncated_at_64kb(self):
-        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 64kb but at > 256kb
-        large_value = "x" * (64 * 1024 + 1000)
+    def test_custom_properties_gen_ai_attributes_not_truncated_at_8kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 8kb but at > 256kb
+        large_value = "x" * (8 * 1024 + 1000)
         properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
         filtered = _utils._filter_custom_properties(properties)
         for key in _GEN_AI_ATTRIBUTES:
             with self.subTest(key=key):
                 self.assertIn(key, filtered)
-                self.assertEqual(len(filtered[key]), 64 * 1024 + 1000)
+                self.assertEqual(len(filtered[key]), 8 * 1024 + 1000)
 
-    def test_filter_custom_properties_non_gen_ai_truncated_at_64kb(self):
-        # Regular properties exceeding 64kb should be truncated
-        max_length = 64 * 1024
+    def test_filter_custom_properties_non_gen_ai_truncated_at_8kb(self):
+        # Regular properties exceeding 8kb should be truncated
+        max_length = 8 * 1024
         large_value = "y" * (max_length + 2000)
         properties = {
             "span_kind": large_value,
@@ -81,8 +81,8 @@ class TestUtils(unittest.TestCase):
                 self.assertEqual(len(filtered[key]), max_length)
 
     def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
-        # Gen AI attributes truncated at 256kb, regular ones are truncated at 64kb
-        max_length = 64 * 1024
+        # Gen AI attributes truncated at 256kb, regular ones are truncated at 8kb
+        max_length = 8 * 1024
         max_length_for_gen_ai_attributes = 256 * 1024
         large_value = "z" * (1024 * 1024 + 3000)
         properties = {
@@ -788,6 +788,99 @@ class TestUtils(unittest.TestCase):
         properties = {"user_agent.synthetic.type": "test"}
         self.assertTrue(_utils._is_synthetic_source(properties))
 
+    # SDK Version
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.ext_version",
+        "1.0.0b21",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {},
+        clear=True,
+    )
+    def test_get_sdk_version_default(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:ext1.0.0b21")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"AZURE_MONITOR_DISTRO_VERSION": "1.8.8"},
+        clear=True,
+    )
+    def test_get_sdk_version_distro(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:dst1.8.8")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"MICROSOFT_OPENTELEMETRY_VERSION": "2.0.0"},
+        clear=True,
+    )
+    def test_get_sdk_version_microsoft_opentelemetry(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:mot2.0.0")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "AZURE_MONITOR_DISTRO_VERSION": "1.8.8",
+            "MICROSOFT_OPENTELEMETRY_VERSION": "2.0.0",
+        },
+        clear=True,
+    )
+    def test_get_sdk_version_microsoft_opentelemetry_takes_priority(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:mot2.0.0")
+
     def test_is_synthetic_source_none(self):
         properties = {}
         self.assertFalse(_utils._is_synthetic_source(properties))
@@ -834,3 +927,47 @@ class TestUtils(unittest.TestCase):
     def test_is_any_synthetic_source_none(self):
         properties = {"http.user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
         self.assertFalse(_utils._is_any_synthetic_source(properties))
+
+    # _is_status_code_success tests
+
+    def test_is_status_code_success_none(self):
+        self.assertFalse(_utils._is_status_code_success(None))
+        self.assertIsInstance(_utils._is_status_code_success(None), bool)
+
+    def test_is_status_code_success_zero(self):
+        self.assertFalse(_utils._is_status_code_success(0))
+        self.assertIsInstance(_utils._is_status_code_success(0), bool)
+
+    def test_is_status_code_success_200(self):
+        self.assertTrue(_utils._is_status_code_success(200))
+        self.assertTrue(_utils._is_status_code_success(200, is_trace=True))
+
+    def test_is_status_code_success_4xx_metrics(self):
+        self.assertFalse(_utils._is_status_code_success(400))
+        self.assertFalse(_utils._is_status_code_success(404))
+        self.assertFalse(_utils._is_status_code_success(499))
+
+    def test_is_status_code_success_4xx_trace(self):
+        self.assertFalse(_utils._is_status_code_success(400, is_trace=True))
+        self.assertFalse(_utils._is_status_code_success(404, is_trace=True))
+        self.assertFalse(_utils._is_status_code_success(499, is_trace=True))
+
+    def test_is_status_code_success_5xx_metrics(self):
+        # Metrics: 5xx is failure (code >= 400)
+        self.assertFalse(_utils._is_status_code_success(500))
+        self.assertFalse(_utils._is_status_code_success(503))
+
+    def test_is_status_code_success_5xx_trace(self):
+        # Trace: 5xx is NOT failure (only 4xx range is failure)
+        self.assertTrue(_utils._is_status_code_success(500, is_trace=True))
+        self.assertTrue(_utils._is_status_code_success(503, is_trace=True))
+
+    def test_is_status_code_success_3xx(self):
+        self.assertTrue(_utils._is_status_code_success(301))
+        self.assertTrue(_utils._is_status_code_success(301, is_trace=True))
+
+    def test_is_status_code_success_returns_bool(self):
+        self.assertIsInstance(_utils._is_status_code_success(200), bool)
+        self.assertIsInstance(_utils._is_status_code_success(0), bool)
+        self.assertIsInstance(_utils._is_status_code_success(None), bool)
+        self.assertIsInstance(_utils._is_status_code_success(500, is_trace=True), bool)

@@ -6,7 +6,6 @@
 # cSpell:disable
 
 import os
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
@@ -42,7 +41,7 @@ class TestAgentFileSearchStream(TestBase):
         DELETE /vector_stores/{id}                           openai_client.vector_stores.delete()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

@@ -97,7 +97,7 @@ class CertificateOperationError(object):
     :type inner_error: ~azure.keyvault.certificates.CertificateOperationError or None
     """
 
-    def __init__(self, code: str, message: str, inner_error: "Optional[CertificateOperationError]") -> None:
+    def __init__(self, code: str, message: str, inner_error: "Optional[CertificateOperationError]" = None) -> None:
         self._code = code
         self._message = message
         self._inner_error = inner_error

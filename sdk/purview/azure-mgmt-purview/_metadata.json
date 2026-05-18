@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-04-01-preview",
+  "apiVersions": {
+    "Microsoft.Purview": "2024-04-01-preview"
+  },
+  "commit": "f2012bb6d1aab240f459e8bb4237f8e7e5b92ebb",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/purview/resource-manager/Microsoft.Purview/Purview",
+  "emitterVersion": "0.61.2"
+}

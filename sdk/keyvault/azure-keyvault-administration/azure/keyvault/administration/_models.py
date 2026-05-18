@@ -70,9 +70,11 @@ class KeyVaultRoleAssignment(object):
             role_assignment_id=role_assignment.id,
             name=role_assignment.name,
             assignment_type=role_assignment.type,
-            properties=KeyVaultRoleAssignmentProperties._from_generated(role_assignment.properties)
-            if role_assignment.properties
-            else KeyVaultRoleAssignmentProperties(),
+            properties=(
+                KeyVaultRoleAssignmentProperties._from_generated(role_assignment.properties)
+                if role_assignment.properties
+                else KeyVaultRoleAssignmentProperties()
+            ),
         )
 
 
@@ -144,9 +146,11 @@ class KeyVaultRoleDefinition(object):
             description=definition.properties.description if definition.properties else None,
             id=definition.id,
             name=definition.name,
-            permissions=[KeyVaultPermission._from_generated(p) for p in definition.properties.permissions or []]
-            if definition.properties
-            else None,
+            permissions=(
+                [KeyVaultPermission._from_generated(p) for p in definition.properties.permissions or []]
+                if definition.properties
+                else None
+            ),
             role_name=definition.properties.role_name if definition.properties else None,
             role_type=definition.properties.role_type if definition.properties else None,
             type=definition.type,

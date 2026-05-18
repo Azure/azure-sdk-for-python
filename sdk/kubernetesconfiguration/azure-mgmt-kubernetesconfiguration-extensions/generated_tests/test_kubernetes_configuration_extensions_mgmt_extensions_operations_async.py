@@ -46,6 +46,7 @@ class TestKubernetesConfigurationExtensionsMgmtExtensionsOperationsAsync(AzureMg
                 extension={
                     "id": "str",
                     "identity": {"principalId": "str", "tenantId": "str", "type": "str"},
+                    "managedBy": "str",
                     "name": "str",
                     "plan": {
                         "name": "str",
@@ -55,8 +56,17 @@ class TestKubernetesConfigurationExtensionsMgmtExtensionsOperationsAsync(AzureMg
                         "version": "str",
                     },
                     "properties": {
-                        "aksAssignedIdentity": {"principalId": "str", "tenantId": "str", "type": "str"},
+                        "additionalDetails": {"docs": "str", "releaseNotes": "str", "troubleshootingGuide": "str"},
+                        "aksAssignedIdentity": {
+                            "clientId": "str",
+                            "objectId": "str",
+                            "principalId": "str",
+                            "resourceId": "str",
+                            "tenantId": "str",
+                            "type": "str",
+                        },
                         "autoUpgradeMinorVersion": bool,
+                        "autoUpgradeMode": "str",
                         "configurationProtectedSettings": {"str": "str"},
                         "configurationSettings": {"str": "str"},
                         "currentVersion": "str",
@@ -68,8 +78,13 @@ class TestKubernetesConfigurationExtensionsMgmtExtensionsOperationsAsync(AzureMg
                             "message": "str",
                             "target": "str",
                         },
+                        "extensionState": "str",
                         "extensionType": "str",
                         "isSystemExtension": bool,
+                        "managementDetails": {
+                            "accessDetails": [{"allowedActions": ["str"], "description": "str", "entity": "str"}],
+                            "category": "str",
+                        },
                         "packageUri": "str",
                         "provisioningState": "str",
                         "releaseTrain": "str",
@@ -108,6 +123,7 @@ class TestKubernetesConfigurationExtensionsMgmtExtensionsOperationsAsync(AzureMg
                 patch_extension={
                     "properties": {
                         "autoUpgradeMinorVersion": bool,
+                        "autoUpgradeMode": "str",
                         "configurationProtectedSettings": {"str": "str"},
                         "configurationSettings": {"str": "str"},
                         "releaseTrain": "str",

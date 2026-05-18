@@ -1,12 +1,112 @@
 # Release History
 
-## 1.2.0b5 (Unreleased)
+## 1.2.0 (Unreleased)
 
 ### Features Added
 
+- **Web Search & File Search**: Added support for built-in web search and file search tools:
+  - New item types: `ResponseWebSearchCallItem`, `ResponseFileSearchCallItem`
+  - New server events for web/file search lifecycle (`searching`, `in_progress`, `completed`)
+  - New models: `ActionFind`, `ActionOpenPage`, `ActionSearch`, `ActionSearchSource`, `FileSearchResult`
+  - New enum values: `ItemType.WEB_SEARCH_CALL`, `ItemType.FILE_SEARCH_CALL`
+  - New `SessionIncludeOption` enum for controlling what data is included in session responses
+- **MCP (Model Context Protocol) Support**: Added comprehensive support for Model Context Protocol integration:
+  - `MCPServer` tool type for defining MCP server configurations with authorization, headers, and approval requirements
+  - `MCPTool` model for representing MCP tool definitions with input schemas and annotations
+  - `MCPApprovalType` enum for controlling approval workflows (`never`, `always`, or tool-specific)
+  - New item types for MCP approval and call workflows
+  - New server events for MCP tool listing, call lifecycle, and approval flows
+- **Avatar Enhancements**:
+  - Added `AzureAvatarVoiceSyncVoice` for avatar voice sync configuration
+  - Added `ServerEventSessionAvatarSwitchToIdle` and `ServerEventSessionAvatarSwitchToSpeaking` events
+  - Added `ServerEventResponseVideoDelta` for avatar video frame streaming
+  - Added `ClientEventOutputAudioBufferClear` and `ServerEventOutputAudioBufferCleared` for output buffer management
+  - Added `AvatarConfigTypes` enum with support for `video-avatar` and `photo-avatar` types
+  - Added `AvatarOutputProtocol` enum for avatar streaming protocols (`webrtc`, `websocket`)
+  - Added `Scene` model for controlling avatar zoom, position, rotation, and movement amplitude
+  - Added `output_audit_audio` field to `AvatarConfig`
+- **OpenTelemetry Tracing Support**: Added `VoiceLiveInstrumentor` for opt-in OpenTelemetry-based
+  tracing of VoiceLive WebSocket connections, following Azure SDK and GenAI semantic conventions.
+  - Enable via `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true` environment variable
+  - Content recording controlled by `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`
+  - Comprehensive session-level telemetry: session ID, audio format, first-token latency,
+    turn count, interruption count, audio bytes sent/received, message size
+  - Response & function call ID tracking for end-to-end tracing
+  - Agent v2 telemetry with agent identity and configuration tracking
+  - MCP telemetry with tool call and approval flow tracking
+- **Agent Session Configuration**: Added `AgentSessionConfig` for configuring Azure AI Foundry agents
+  at connection time with `agent_name`, `project_name`, `agent_version`, `conversation_id`, and more
+- **Transcription Improvements**:
+  - Added `TranscriptionPhrase` and `TranscriptionWord` models for detailed transcription data
+  - Added `ServerEventResponseAudioTranscriptAnnotationAdded` event
+  - Added `gpt-4o-transcribe-diarize` and `mai-transcribe-1` transcription model support
+- **Interim Response Configuration**: Added `StaticInterimResponseConfig` and `LlmInterimResponseConfig`
+  for generating interim responses during latency or tool calls
+- **Image Content Support**: Added `RequestImageContentPart` for image inputs in conversations
+- **Reasoning Effort Control**: Added `reasoning_effort` field with `ReasoningEffort` enum
+- **Response Metadata**: Added `metadata` field to `Response` and `ResponseCreateParams`
+- **Server Warning Events**: Added `ServerEventWarning` for handling non-fatal warnings
+- **Personal Voice Models**: Added `DragonHDOmniLatestNeural` and `MAI-Voice-1` model options
+- **Enhanced OpenAI Voices**: Added `marin` and `cedar` voices to `OpenAIVoiceName` enum
+- **Enhanced Azure Personal Voice**: Added `custom_lexicon_url`, `prefer_locales`, `locale`, `style`,
+  `pitch`, `rate`, and `volume` properties
+- **Pre-generated Assistant Messages**: Added `pre_generated_assistant_message` in `ResponseCreateParams`
+- **Explicit Null Values**: Enhanced `RequestSession` to properly serialize explicitly set `None` values
+
 ### Breaking Changes
 
-### Bugs Fixed
+- Removed Foundry Agent Tool classes (`FoundryAgentTool`, `ResponseFoundryAgentCallItem`, etc.) —
+  use `AgentSessionConfig` with `connect()` instead
+
+### Other Changes
+
+- Updated default API version to `2026-04-10`
+
+## 1.2.0b5 (2026-04-06)
+
+### Features Added
+
+- **OpenTelemetry Tracing Support**: Added `VoiceLiveInstrumentor` for opt-in OpenTelemetry-based
+  tracing of VoiceLive WebSocket connections, following Azure SDK and GenAI semantic conventions
+  (v1.34.0). Instrumentation covers connection lifecycle (`connect`, `close`), message send/receive,
+  and captures voice-specific attributes (`gen_ai.voice.session_id`, `gen_ai.voice.event_type`).
+  - Enable via `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true` environment variable.
+  - Content recording controlled by `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`.
+  - Aligned with `azure-ai-agents` / `azure-ai-projects` tracing model.
+- **Enhanced Telemetry Tracking**: Added comprehensive session-level and per-message telemetry:
+  - **Session ID**: Automatically captured from `session.created`/`session.updated` events and set on
+    the parent connect span (`gen_ai.voice.session_id`).
+  - **Audio format/codec**: Input and output audio formats extracted from `session.update` sends
+    (`gen_ai.voice.input_audio_format`, `gen_ai.voice.output_audio_format`).
+  - **First-token latency**: Time from `response.create` to first `response.audio.delta` or
+    `response.text.delta`, recorded as `gen_ai.voice.first_token_latency_ms`.
+    `response.text.delta` is used for latency detection only and is not tracked as a normal recv event.
+  - **Turn count**: Number of completed responses (`response.done`) per session
+    (`gen_ai.voice.turn_count`).
+  - **Interruption count**: Number of `response.cancel` sends per session
+    (`gen_ai.voice.interruption_count`).
+  - **Audio bytes sent/received**: Total audio payload bytes transferred
+    (`gen_ai.voice.audio_bytes_sent`, `gen_ai.voice.audio_bytes_received`).
+  - **Message size**: WebSocket message size on each send/recv span
+    (`gen_ai.voice.message_size`).
+  - **Rate limit / error events**: Server `error` and `rate_limits.updated` events recorded as
+    span events with error codes and rate limit details.
+- **Response & Function Call ID Tracking**: All recv and send spans now carry correlation IDs for
+  end-to-end tracing across events:
+  - `gen_ai.response.id`, `gen_ai.conversation.id`, `gen_ai.voice.call_id`, `gen_ai.voice.item_id`,
+    `gen_ai.voice.previous_item_id`, `gen_ai.voice.output_index` extracted from top-level and nested
+    fields on every event span.
+  - `gen_ai.response.finish_reasons` from `response.done` events (also propagated to the connect span).
+- **Agent v2 Telemetry**: Added agent identity and configuration tracking on the connect span:
+  - `gen_ai.agent.id` and `gen_ai.agent.thread_id` extracted from `session.created`/`session.updated`
+    server events.
+  - `gen_ai.agent.version` and `gen_ai.agent.project_name` from `AgentSessionConfig` at connect time.
+- **MCP (Model Context Protocol) Telemetry**: Added tracking for MCP tool calls and approval flows:
+  - Per-event: `gen_ai.voice.mcp.server_label`, `gen_ai.voice.mcp.tool_name`,
+    `gen_ai.voice.mcp.approval_request_id`, `gen_ai.voice.mcp.approve` on recv/send spans.
+  - Session-level: `gen_ai.voice.mcp.call_count` and `gen_ai.voice.mcp.list_tools_count` counters
+    flushed on session close.
+  - Nested item extraction is guarded by event type to prevent forward-compatibility issues.
 
 ### Other Changes
 

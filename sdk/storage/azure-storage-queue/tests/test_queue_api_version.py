@@ -5,10 +5,12 @@
 # --------------------------------------------------------------------------
 
 import pytest
+
+from devtools_testutils.storage import StorageRecordedTestCase
+
 from azure.storage.queue import QueueClient, QueueServiceClient
 from azure.storage.queue._shared.constants import X_MS_VERSION
 
-from devtools_testutils.storage import StorageRecordedTestCase
 
 # ------------------------------------------------------------------------------
 

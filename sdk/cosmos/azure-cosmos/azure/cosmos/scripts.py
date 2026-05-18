@@ -30,6 +30,7 @@ from azure.cosmos import CosmosDict
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
+from ._constants import _Constants as Constants
 from .partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key, PartitionKeyType
 
 # pylint: disable=protected-access
@@ -63,6 +64,15 @@ class ScriptsProxy:
             return "{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
+    def _ensure_container_rid(self, options: dict[str, Any]) -> None:
+        if Constants.ContainerRID in options:
+            return
+        if self.container_link not in self.client_connection._container_properties_cache:
+            self.client_connection._refresh_container_properties_cache(self.container_link)
+        options[Constants.ContainerRID] = self.client_connection._container_properties_cache[
+            self.container_link
+        ]["_rid"]
+
     @distributed_trace
     def list_stored_procedures(
         self,
@@ -78,6 +88,7 @@ class ScriptsProxy:
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        self._ensure_container_rid(feed_options)
 
         return self.client_connection.ReadStoredProcedures(
             collection_link=self.container_link, options=feed_options, **kwargs
@@ -103,6 +114,7 @@ class ScriptsProxy:
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        self._ensure_container_rid(feed_options)
         return self.client_connection.QueryStoredProcedures(
             collection_link=self.container_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},
@@ -125,6 +137,7 @@ class ScriptsProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
 
         return self.client_connection.ReadStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
@@ -146,6 +159,7 @@ class ScriptsProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
 
         return self.client_connection.CreateStoredProcedure(
             collection_link=self.container_link, sproc=body, options=request_options, **kwargs
@@ -171,6 +185,7 @@ class ScriptsProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
         return self.client_connection.ReplaceStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
             sproc=body,
@@ -195,6 +210,7 @@ class ScriptsProxy:
         :rtype: None
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
         self.client_connection.DeleteStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
@@ -233,6 +249,7 @@ class ScriptsProxy:
             )
         if enable_script_logging is not None:
             request_options["enableScriptLogging"] = enable_script_logging
+        self._ensure_container_rid(request_options)
 
         return self.client_connection.ExecuteStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
@@ -256,6 +273,7 @@ class ScriptsProxy:
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        self._ensure_container_rid(feed_options)
 
         return self.client_connection.ReadTriggers(
             collection_link=self.container_link, options=feed_options, **kwargs
@@ -281,6 +299,7 @@ class ScriptsProxy:
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        self._ensure_container_rid(feed_options)
 
         return self.client_connection.QueryTriggers(
             collection_link=self.container_link,
@@ -304,6 +323,7 @@ class ScriptsProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
 
         return self.client_connection.ReadTrigger(
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
@@ -325,6 +345,7 @@ class ScriptsProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
         return self.client_connection.CreateTrigger(
             collection_link=self.container_link, trigger=body, options=request_options, **kwargs
         )
@@ -349,6 +370,7 @@ class ScriptsProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
 
         return self.client_connection.ReplaceTrigger(
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger),
@@ -374,6 +396,7 @@ class ScriptsProxy:
         :rtype: None
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
         self.client_connection.DeleteTrigger(
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
@@ -393,6 +416,7 @@ class ScriptsProxy:
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        self._ensure_container_rid(feed_options)
 
         return self.client_connection.ReadUserDefinedFunctions(
             collection_link=self.container_link, options=feed_options, **kwargs
@@ -418,6 +442,7 @@ class ScriptsProxy:
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        self._ensure_container_rid(feed_options)
 
         return self.client_connection.QueryUserDefinedFunctions(
             collection_link=self.container_link,
@@ -441,6 +466,7 @@ class ScriptsProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
         return self.client_connection.ReadUserDefinedFunction(
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )
@@ -461,6 +487,7 @@ class ScriptsProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
         return self.client_connection.CreateUserDefinedFunction(
             collection_link=self.container_link, udf=body, options=request_options, **kwargs
         )
@@ -485,6 +512,7 @@ class ScriptsProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
         return self.client_connection.ReplaceUserDefinedFunction(
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
             udf=body,
@@ -509,6 +537,7 @@ class ScriptsProxy:
         :rtype: None
         """
         request_options = build_options(kwargs)
+        self._ensure_container_rid(request_options)
         self.client_connection.DeleteUserDefinedFunction(
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )

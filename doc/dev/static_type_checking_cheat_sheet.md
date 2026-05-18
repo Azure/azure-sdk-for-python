@@ -85,14 +85,19 @@ class Tree:
 - Do use the latest typing features available. If not supported by older versions of Python, consider taking a dependency and importing from `typing-extensions`.
 
 ```python
-# from typing import TypedDict Python >3.8
-from typing_extensions import TypedDict
+# Self was added to typing in 3.11, so import from typing_extensions on 3.10
+from typing_extensions import Self
+
+class Tree:
+    @classmethod
+    def build(cls) -> Self:
+        return cls()
 ```
 
 ### Importing types
 
 - Do use only publicly exposed client library types in type hints.
-- Do import types from modules such as `typing`, `typing_extensions`, `collections`, and `collections.abc`(Note that indexing support for generic collection types from `collections.abc` is only supported on Python 3.9+).
+- Do import types from modules such as `typing`, `typing_extensions`, `collections`, and `collections.abc`. Generic collection types from `collections.abc` support `[]` indexing on Python 3.10 (the minimum supported version).
 - Do not import regular type hints under a `typing.TYPE_CHECKING` block. You may use `TYPE_CHECKING` to fix a circular import or avoid importing a type only needed in type annotations that is otherwise costly to load at runtime.
 
 ```python
@@ -278,7 +283,7 @@ class Triangle:
 - Mark your `Protocol`s as `@runtime_checkable` so users can use them in `isinstance` and `issubclass` checks.
 
 ```python
-from typing_extensions import Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 @runtime_checkable
 class TokenCredential(Protocol):
@@ -386,7 +391,7 @@ CredentialTypes = Union[AzureKeyCredential, TokenCredential, AzureSasCredential,
 - You can use `typing.Literal` when you want to restrict based on exact values.
 
 ```python
-from typing_extensions import Literal
+from typing import Literal
 
 PrimaryColors = Literal["red", "yellow", "blue"]
 ```
@@ -398,7 +403,7 @@ PrimaryColors = Literal["red", "yellow", "blue"]
 - If you have a type that should not change or get re-assigned in the code, consider typing it as `typing.Final`.
 
 ```python
-from typing_extensions import Final
+from typing import Final
 
 MAX_BLOB_SIZE: Final = 4 * 1024 * 1024
 ```
@@ -406,7 +411,7 @@ MAX_BLOB_SIZE: Final = 4 * 1024 * 1024
 - If you have a method that should not be overridden or a class that should not be subclassed, consider decorating with `@final`.
 
 ```python
-from typing_extensions import final
+from typing import final
 
 class BlobClient:
     @final

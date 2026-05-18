@@ -42,7 +42,7 @@ def _build_package_path_index() -> dict[str, str]:
     This scans the sdk/ directory once and caches the result for all subsequent lookups.
     """
     all_paths = glob.glob(os.path.join(SDK_DIR, "*", "*"))
-    # Exclude temp directories like .tox, .venv, __pycache__, etc.
+    # Exclude temp directories like .venv, __pycache__, etc.
     return {
         os.path.basename(p): p
         for p in all_paths

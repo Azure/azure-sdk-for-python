@@ -6,7 +6,7 @@ This guide is intended for developers contributing to the Azure Service Bus Pyth
 
 ### Prerequisites
 
-- Python version [supported by the client library](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)
+- Python version [supported by the client library](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md)
 - Git
 - pip and setuptools
 - Azure subscription to create Service Bus resources
@@ -47,26 +47,26 @@ The tests/mgmt_tests run tests for `azure.servicebus.management` and are HTTP-ba
    ```
 
 2. Set required environment variables (or create a `.env` file):
-   
+
    The following need to be set to run live tests locally and authenticate with AzureCliCredential:
    ```
    AZURE_SUBSCRIPTION_ID=<your-subscription-id>
    SERVICEBUS_RESOURCE_GROUP=<your-resource-group>
    AZURE_TEST_RUN_LIVE=true
    ```
-   
+
    If using CLI:
    ```
    AZURE_TEST_USE_CLI_AUTH=true
    ```
-   
+
    OR
-   
+
    If using pwsh:
    ```
    AZURE_TEST_USE_PWSH_AUTH=true
    ```
-   
+
    Note: To run mgmt tests in playback mode instead of live mode, set:
    ```
    AZURE_TEST_RUN_LIVE=false
@@ -79,7 +79,7 @@ The tests/mgmt_tests run tests for `azure.servicebus.management` and are HTTP-ba
 
    # Run specific live test
    pytest tests/livetest/synctests/test_queue_client.py::test_specific_function
-   
+
    # Show output during test run
    pytest -s tests/livetest/synctests/test_queue_client.py::test_specific_function
    ```
@@ -94,7 +94,7 @@ The tests/mgmt_tests run tests for `azure.servicebus.management` and are HTTP-ba
    ```bash
    python azure-sdk-for-python/scripts/manage_recordings.py restore -p sdk/servicebus/azure-servicebus/assets.json
    ```
-   
+
    To push after recording mgmt tests in live mode:
    ```bash
    python scripts/manage_recordings.py push -p sdk/servicebus/azure-servicebus/assets.json
@@ -143,16 +143,16 @@ stress/
    ```bash
    # Check on pods
    kubectl get pods -n <your-namespace>
-   
+
    # Delete namespace
    kubectl delete namespace <your-namespace>
-   
+
    # List all active namespaces
    helm list --all-namespaces
-   
+
    # Show logs in console
    kubectl logs -n <your-namespace> <pod-name>
-   
+
    # For init failure
    kubectl logs -n <your-namespace> <pod-name> -c init-azure-deployer
    ```

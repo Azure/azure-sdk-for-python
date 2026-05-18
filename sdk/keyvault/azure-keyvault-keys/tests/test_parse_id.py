@@ -15,7 +15,7 @@ only_vault = get_decorator(only_vault=True)
 
 
 class TestParseId(KeyVaultTestCase, KeysTestCase):
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault)
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_parse_key_id_with_version(self, client, **kwargs):

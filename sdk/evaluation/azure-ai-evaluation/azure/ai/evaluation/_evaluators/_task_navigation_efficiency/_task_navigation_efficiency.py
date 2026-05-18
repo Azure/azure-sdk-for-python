@@ -137,7 +137,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             error_target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
         )
 
-        super().__init__()
+        super().__init__(threshold=1.0)
 
     @override
     async def _real_call(self, **kwargs):
@@ -150,6 +150,23 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         """
         self._validator.validate_eval_input(kwargs)
         return await super()._real_call(**kwargs)
+
+    @staticmethod
+    def _normalize_param_value(value: Any) -> str:
+        """Normalize a parameter value to a string for consistent comparison.
+
+        Uses json.dumps for dicts and lists to produce canonical JSON strings,
+        and str() for other types. This ensures both agent and ground truth
+        parameter values are compared in the same string format.
+        """
+        if isinstance(value, str):
+            return value
+        if isinstance(value, (dict, list)):
+            try:
+                return json.dumps(value, sort_keys=True)
+            except (TypeError, ValueError):
+                return str(value)
+        return str(value)
 
     def _prepare_steps_for_comparison(
         self,
@@ -165,10 +182,22 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         agent_steps: List[Union[str, Tuple[str, Tuple]]] = []
         ground_truth_steps: List[Union[str, Tuple[str, Tuple]]] = []
         if use_parameter_matching:
-            # When parameter matching is enabled, we need to match both tool name and parameters
-            agent_steps = [(pair[0], tuple(sorted(pair[1].items()))) for pair in agent_tool_pairs]
+            # When parameter matching is enabled, we need to match both tool name and parameters.
+            # Normalize all parameter values to strings on both sides for consistent comparison.
+            agent_steps = [
+                (pair[0], tuple(sorted((k, self._normalize_param_value(v)) for k, v in pair[1].items())))
+                for pair in agent_tool_pairs
+            ]
             ground_truth_steps = [
-                (name, tuple(sorted(ground_truth_params.get(name, {}).items()))) for name in ground_truth
+                (
+                    name,
+                    tuple(
+                        sorted(
+                            (k, self._normalize_param_value(v)) for k, v in ground_truth_params.get(name, {}).items()
+                        )
+                    ),
+                )
+                for name in ground_truth
             ]
         else:
             # When parameter matching is disabled, only compare tool names
@@ -263,6 +292,15 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         :return: The evaluation result.
         :rtype: Dict[str, Union[float, str, Dict[str, float]]]
         """
+        # If response or ground_truth is a string, try to parse it as JSON
+        for key in ("response", "ground_truth"):
+            value = eval_input.get(key)
+            if isinstance(value, str):
+                try:
+                    eval_input[key] = json.loads(value)
+                except (ValueError, TypeError):
+                    pass
+
         response = eval_input["response"]
         ground_truth = eval_input["ground_truth"]
 
@@ -340,9 +378,14 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             )
 
             return {
-                "task_navigation_efficiency_label": match_result,
+                "task_navigation_efficiency": float(match_result),
+                "task_navigation_efficiency_score": float(match_result),
                 "task_navigation_efficiency_result": EVALUATION_PASS_FAIL_MAPPING[match_result],
-                "task_navigation_efficiency_details": additional_properties_metrics,
+                "task_navigation_efficiency_passed": match_result,
+                "task_navigation_efficiency_reason": None,
+                "task_navigation_efficiency_status": "completed",
+                "task_navigation_efficiency_threshold": float(self._threshold),
+                "task_navigation_efficiency_properties": additional_properties_metrics,
             }
         else:
             raise EvaluationException(

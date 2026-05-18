@@ -101,9 +101,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
                 + "operation poller's continuation_token() method"
             ) from ex
 
-        pipeline_response = status_method(
-            job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
-        )
+        pipeline_response = status_method(job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response)
         if "azure-asyncoperation" not in pipeline_response.http_response.headers:
             pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
         return _get_continuation_token(pipeline_response)
@@ -116,8 +114,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[KeyVaultBackupResult]:
-        ...
+    ) -> LROPoller[KeyVaultBackupResult]: ...
 
     @overload
     def begin_backup(
@@ -127,8 +124,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[KeyVaultBackupResult]:
-        ...
+    ) -> LROPoller[KeyVaultBackupResult]: ...
 
     # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace
@@ -195,8 +191,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         key_name: Optional[str] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[None]:
-        ...
+    ) -> LROPoller[None]: ...
 
     @overload
     def begin_restore(
@@ -207,8 +202,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         key_name: Optional[str] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[None]:
-        ...
+    ) -> LROPoller[None]: ...
 
     # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace
@@ -300,8 +294,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[None]:
-        ...
+    ) -> LROPoller[None]: ...
 
     @overload
     def begin_pre_backup(
@@ -311,8 +304,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[None]:
-        ...
+    ) -> LROPoller[None]: ...
 
     @distributed_trace
     def begin_pre_backup(  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -368,8 +360,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[None]:
-        ...
+    ) -> LROPoller[None]: ...
 
     @overload
     def begin_pre_restore(
@@ -379,8 +370,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[None]:
-        ...
+    ) -> LROPoller[None]: ...
 
     @distributed_trace
     def begin_pre_restore(  # pylint: disable=docstring-keyword-should-match-keyword-only

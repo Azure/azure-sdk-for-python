@@ -1,5 +1,24 @@
 # Release History
 
+## 1.0.0 (2026-03-26)
+
+### Features Added
+
+  - Enum `AKSIdentityType` added member `WORKLOAD`
+  - Model `Extension` added property `managed_by`
+  - Model `ExtensionProperties` added property `auto_upgrade_mode`
+  - Model `ExtensionProperties` added property `management_details`
+  - Model `ExtensionProperties` added property `additional_details`
+  - Model `ExtensionProperties` added property `extension_state`
+  - Model `ExtensionPropertiesAksAssignedIdentity` added property `object_id`
+  - Model `ExtensionPropertiesAksAssignedIdentity` added property `client_id`
+  - Model `ExtensionPropertiesAksAssignedIdentity` added property `resource_id`
+  - Model `PatchExtensionProperties` added property `auto_upgrade_mode`
+  - Added model `AccessDetail`
+  - Added model `AdditionalDetails`
+  - Added enum `AutoUpgradeMode`
+  - Added model `ManagementDetails`
+
 ## 1.0.0b2 (2026-03-18)
 
 ### Features Added

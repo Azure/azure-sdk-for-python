@@ -1,11 +1,10 @@
 """Proxy port assignments for azpysdk checks.
 
-This mapping mirrors the explicit `PROXY_URL` configuration found in
-`eng/tox/tox.ini`. Because `dispatch_checks.py` runs multiple checks in
-parallel, each check must bind to its own dedicated test-proxy port to avoid
-races. Keeping this data in a single module allows both the CLI and the CI
-launcher to share the same source of truth without having to parse the tox
-configuration file at runtime.
+This mapping defines the explicit ``PROXY_URL`` configuration for each check.
+Because ``dispatch_checks.py`` runs multiple checks in parallel, each check
+must bind to its own dedicated test-proxy port to avoid races. Keeping this
+data in a single module allows both the CLI and the CI launcher to share the
+same source of truth.
 """
 
 from __future__ import annotations
@@ -16,7 +15,7 @@ DEFAULT_PROXY_PORT = 5000
 DEFAULT_PROXY_URL = f"http://localhost:{DEFAULT_PROXY_PORT}"
 
 # NOTE: `import_all` shares the same configuration as the legacy `depends`
-# tox environment. All other entries match the tox environment names 1:1.
+# check. All other entries match the check names 1:1.
 CHECK_PROXY_PORTS: Dict[str, int] = {
     "whl": DEFAULT_PROXY_PORT,
     "sdist": 5001,

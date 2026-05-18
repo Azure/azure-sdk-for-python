@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import pytest
-from azure.ai.projects import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, is_live
 

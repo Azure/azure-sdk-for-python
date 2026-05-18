@@ -432,7 +432,7 @@ class AgentPool(ProxyResource):
         "virtual_machine_nodes_status",
         "status",
         "local_dns_profile",
-        "node_customization_profile",
+        "prepared_image_specification_profile",
     ]
 
     @overload
@@ -848,7 +848,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
      "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", and "Ubuntu2404".
+     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -1015,10 +1015,10 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
      LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
      more details see aka.ms/aks/localdns.
     :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
-    :ivar node_customization_profile: Settings to determine the node customization used to
-     provision nodes in a pool.
-    :vartype node_customization_profile:
-     ~azure.mgmt.containerservice.models.NodeCustomizationProfile
+    :ivar prepared_image_specification_profile: Settings to determine the prepared image
+     specification used to provision nodes in a pool.
+    :vartype prepared_image_specification_profile:
+     ~azure.mgmt.containerservice.models.PreparedImageSpecificationProfile
     """
 
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
@@ -1097,7 +1097,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"Mariner\",
      \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\",
-     \"WindowsAnnual\", and \"Ubuntu2404\"."""
+     \"WindowsAnnual\", \"Ubuntu2404\", and \"AzureContainerLinux\"."""
     max_count: Optional[int] = rest_field(name="maxCount", visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of nodes for auto-scaling."""
     min_count: Optional[int] = rest_field(name="minCount", visibility=["read", "create", "update", "delete", "query"])
@@ -1143,7 +1143,9 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
      specified version <major.minor.patch>, this field will be exactly equal to it. If
      orchestratorVersion is <major.minor>, this field will contain the full <major.minor.patch>
      version being used."""
-    node_image_version: Optional[str] = rest_field(name="nodeImageVersion", visibility=["read"])
+    node_image_version: Optional[str] = rest_field(
+        name="nodeImageVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of node image."""
     upgrade_strategy: Optional[Union[str, "_models.UpgradeStrategy"]] = rest_field(
         name="upgradeStrategy", visibility=["read", "create", "update", "delete", "query"]
@@ -1330,10 +1332,10 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     """Configures the per-node local DNS, with VnetDNS and KubeDNS overrides. LocalDNS helps improve
      performance and reliability of DNS resolution in an AKS cluster. For more details see
      aka.ms/aks/localdns."""
-    node_customization_profile: Optional["_models.NodeCustomizationProfile"] = rest_field(
-        name="nodeCustomizationProfile", visibility=["read", "create", "update", "delete", "query"]
+    prepared_image_specification_profile: Optional["_models.PreparedImageSpecificationProfile"] = rest_field(
+        name="preparedImageSpecificationProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Settings to determine the node customization used to provision nodes in a pool."""
+    """Settings to determine the prepared image specification used to provision nodes in a pool."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -1359,6 +1361,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
         type_properties_type: Optional[Union[str, "_models.AgentPoolType"]] = None,
         mode: Optional[Union[str, "_models.AgentPoolMode"]] = None,
         orchestrator_version: Optional[str] = None,
+        node_image_version: Optional[str] = None,
         upgrade_strategy: Optional[Union[str, "_models.UpgradeStrategy"]] = None,
         enable_os_disk_full_caching: Optional[bool] = None,
         upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
@@ -1394,7 +1397,62 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
         local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
-        node_customization_profile: Optional["_models.NodeCustomizationProfile"] = None,
+        prepared_image_specification_profile: Optional["_models.PreparedImageSpecificationProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPoolNetworkInterface(_Model):
+    """Configuration of a secondary network interface provisioned on each VM instance in the agent
+    pool. For more information, see `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_.
+
+    :ivar type: Type of NIC to be provisioned on the VM. Known values are: "Standard" and
+     "Dynamic".
+    :vartype type: str or ~azure.mgmt.containerservice.models.AgentPoolNetworkInterfaceType
+    :ivar vnet_subnet_id: The resource ID of the subnet which will be attached to the secondary
+     network interface. Required when ``type`` is ``Standard``; must be an empty string (``""``) or
+     omitted when ``type`` is ``Dynamic``.
+    :vartype vnet_subnet_id: str
+    :ivar enable_accelerated_networking: Whether accelerated networking is enabled on this
+     secondary NIC. If omitted, this defaults to true only when the agent pool VM SKU supports
+     accelerated networking. Validation will fail if it is enabled on an unsupported SKU or NIC
+     configuration.
+    :vartype enable_accelerated_networking: bool
+    """
+
+    type: Optional[Union[str, "_models.AgentPoolNetworkInterfaceType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of NIC to be provisioned on the VM. Known values are: \"Standard\" and \"Dynamic\"."""
+    vnet_subnet_id: Optional[str] = rest_field(
+        name="vnetSubnetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the subnet which will be attached to the secondary network interface.
+     Required when ``type`` is ``Standard``; must be an empty string (``\"\"``) or omitted when
+     ``type`` is ``Dynamic``."""
+    enable_accelerated_networking: Optional[bool] = rest_field(
+        name="enableAcceleratedNetworking", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether accelerated networking is enabled on this secondary NIC. If omitted, this defaults to
+     true only when the agent pool VM SKU supports accelerated networking. Validation will fail if
+     it is enabled on an unsupported SKU or NIC configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.AgentPoolNetworkInterfaceType"]] = None,
+        vnet_subnet_id: Optional[str] = None,
+        enable_accelerated_networking: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1413,18 +1471,45 @@ class AgentPoolNetworkProfile(_Model):
 
     :ivar node_public_ip_tags: IPTags of instance-level public IPs.
     :vartype node_public_ip_tags: list[~azure.mgmt.containerservice.models.IPTag]
+    :ivar node_public_ip_prefix_i_ds: The resource IDs of public IP prefixes for node public IPs.
+     At most one IPv4 and one IPv6 prefix may be specified. Order does not matter; the RP determines
+     IP version from the referenced resource's publicIPAddressVersion. Requires enableNodePublicIP
+     to be true on the agent pool. Mutually exclusive with the top-level nodePublicIPPrefixID
+     property. Immutable after node pool creation. To change prefixes, delete and recreate the node
+     pool. For more information, see `https://aka.ms/aks/ipv6-ilpip
+     <https://aka.ms/aks/ipv6-ilpip>`_.
+    :vartype node_public_ip_prefix_i_ds: list[str]
     :ivar allowed_host_ports: The port ranges that are allowed to access. The specified ranges are
      allowed to overlap.
     :vartype allowed_host_ports: list[~azure.mgmt.containerservice.models.PortRange]
     :ivar application_security_groups: The IDs of the application security groups which agent pool
      will associate when created.
     :vartype application_security_groups: list[str]
+    :ivar secondary_network_interfaces: Secondary network interface configurations for each VM in
+     the agent pool. Each entry is a template: one physical NIC per entry is provisioned on every VM
+     instance. These interfaces are created at agent pool creation time and are immutable. The
+     length of the list must be less than the NIC capacity minus 1 for the VM size of the agent pool
+     (AKS manages the primary NIC). For example, a Standard_D8a_v4 VM supports up to 4 NICs, so the
+     maximum number of secondary interfaces allowed is 3. For mixed-SKU VM pools the effective
+     capacity is the minimum across all SKUs: count(secondaryNetworkInterfaces) + 1 <= min(maxNICs).
+     For more information, see `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_.
+    :vartype secondary_network_interfaces:
+     list[~azure.mgmt.containerservice.models.AgentPoolNetworkInterface]
     """
 
     node_public_ip_tags: Optional[list["_models.IPTag"]] = rest_field(
         name="nodePublicIPTags", visibility=["read", "create", "update", "delete", "query"]
     )
     """IPTags of instance-level public IPs."""
+    node_public_ip_prefix_i_ds: Optional[list[str]] = rest_field(
+        name="nodePublicIPPrefixIDs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource IDs of public IP prefixes for node public IPs. At most one IPv4 and one IPv6
+     prefix may be specified. Order does not matter; the RP determines IP version from the
+     referenced resource's publicIPAddressVersion. Requires enableNodePublicIP to be true on the
+     agent pool. Mutually exclusive with the top-level nodePublicIPPrefixID property. Immutable
+     after node pool creation. To change prefixes, delete and recreate the node pool. For more
+     information, see `https://aka.ms/aks/ipv6-ilpip <https://aka.ms/aks/ipv6-ilpip>`_."""
     allowed_host_ports: Optional[list["_models.PortRange"]] = rest_field(
         name="allowedHostPorts", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1433,14 +1518,27 @@ class AgentPoolNetworkProfile(_Model):
         name="applicationSecurityGroups", visibility=["read", "create", "update", "delete", "query"]
     )
     """The IDs of the application security groups which agent pool will associate when created."""
+    secondary_network_interfaces: Optional[list["_models.AgentPoolNetworkInterface"]] = rest_field(
+        name="secondaryNetworkInterfaces", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secondary network interface configurations for each VM in the agent pool. Each entry is a
+     template: one physical NIC per entry is provisioned on every VM instance. These interfaces are
+     created at agent pool creation time and are immutable. The length of the list must be less than
+     the NIC capacity minus 1 for the VM size of the agent pool (AKS manages the primary NIC). For
+     example, a Standard_D8a_v4 VM supports up to 4 NICs, so the maximum number of secondary
+     interfaces allowed is 3. For mixed-SKU VM pools the effective capacity is the minimum across
+     all SKUs: count(secondaryNetworkInterfaces) + 1 <= min(maxNICs). For more information, see
+     `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_."""
 
     @overload
     def __init__(
         self,
         *,
         node_public_ip_tags: Optional[list["_models.IPTag"]] = None,
+        node_public_ip_prefix_i_ds: Optional[list[str]] = None,
         allowed_host_ports: Optional[list["_models.PortRange"]] = None,
         application_security_groups: Optional[list[str]] = None,
+        secondary_network_interfaces: Optional[list["_models.AgentPoolNetworkInterface"]] = None,
     ) -> None: ...
 
     @overload
@@ -3062,6 +3160,66 @@ class GuardrailsAvailableVersionsProperties(_Model):
     """Whether the version is preview or stable. Known values are: \"Preview\" and \"Stable\"."""
 
 
+class HardEvictionThreshold(_Model):
+    """Hard eviction thresholds for kubelet. These thresholds trigger pod eviction when node resources
+    drop below the specified values. Values must be greater than or equal to the documented
+    minimums for each signal. Supported formats are Ki, Mi, Gi, or percentages using %.
+
+    :ivar memory_available: The threshold for available memory below which pod eviction is
+     triggered. Accepts absolute values (e.g. '500Mi') or percentage values (e.g. '5%'). Absolute
+     values must be greater than or equal to 100Mi. Percentage values must be greater than or equal
+     to 2%.
+    :vartype memory_available: str
+    :ivar node_fs_available: The threshold for available node filesystem space below which pod
+     eviction is triggered. Accepts absolute values (e.g. '1Gi') or percentage values (e.g. '10%').
+     Must be greater than or equal to the system default of 10%.
+    :vartype node_fs_available: str
+    :ivar node_fs_inodes_free: The threshold for available inodes on the node filesystem below
+     which pod eviction is triggered. Accepts absolute inode counts (e.g. '100000') or percentage
+     values (e.g. '5%'). Percentage values must be greater than or equal to the system default of
+     5%.
+    :vartype node_fs_inodes_free: str
+    """
+
+    memory_available: Optional[str] = rest_field(
+        name="memoryAvailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The threshold for available memory below which pod eviction is triggered. Accepts absolute
+     values (e.g. '500Mi') or percentage values (e.g. '5%'). Absolute values must be greater than or
+     equal to 100Mi. Percentage values must be greater than or equal to 2%."""
+    node_fs_available: Optional[str] = rest_field(
+        name="nodeFsAvailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The threshold for available node filesystem space below which pod eviction is triggered.
+     Accepts absolute values (e.g. '1Gi') or percentage values (e.g. '10%'). Must be greater than or
+     equal to the system default of 10%."""
+    node_fs_inodes_free: Optional[str] = rest_field(
+        name="nodeFsInodesFree", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The threshold for available inodes on the node filesystem below which pod eviction is
+     triggered. Accepts absolute inode counts (e.g. '100000') or percentage values (e.g. '5%').
+     Percentage values must be greater than or equal to the system default of 5%."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        memory_available: Optional[str] = None,
+        node_fs_available: Optional[str] = None,
+        node_fs_inodes_free: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class IdentityBinding(ProxyResource):
     """The IdentityBinding resource.
 
@@ -3884,6 +4042,16 @@ class KubeletConfig(_Model):
      specified, 'Unconfined' will be used by default. Known values are: "Unconfined" and
      "RuntimeDefault".
     :vartype seccomp_default: str or ~azure.mgmt.containerservice.models.SeccompDefault
+    :ivar kube_reserved: Kube-reserved values for kubelet. When a value is not set, the
+     system-computed default based on VM size is used. See `AKS node resource reservations
+     <https://aka.ms/aks/nodereservations>`_ for details on computed defaults. Only applicable for
+     Linux nodepools.
+    :vartype kube_reserved: ~azure.mgmt.containerservice.models.KubeReserved
+    :ivar hard_eviction_threshold: Hard eviction thresholds for kubelet. When a threshold is not
+     set, the system default is used. See `AKS node resource reservations
+     <https://aka.ms/aks/nodereservations>`_ for details on computed defaults. Only applicable for
+     Linux nodepools.
+    :vartype hard_eviction_threshold: ~azure.mgmt.containerservice.models.HardEvictionThreshold
     """
 
     cpu_manager_policy: Optional[str] = rest_field(
@@ -3945,6 +4113,18 @@ class KubeletConfig(_Model):
     )
     """Specifies the default seccomp profile applied to all workloads. If not specified, 'Unconfined'
      will be used by default. Known values are: \"Unconfined\" and \"RuntimeDefault\"."""
+    kube_reserved: Optional["_models.KubeReserved"] = rest_field(
+        name="kubeReserved", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Kube-reserved values for kubelet. When a value is not set, the system-computed default based on
+     VM size is used. See `AKS node resource reservations <https://aka.ms/aks/nodereservations>`_
+     for details on computed defaults. Only applicable for Linux nodepools."""
+    hard_eviction_threshold: Optional["_models.HardEvictionThreshold"] = rest_field(
+        name="hardEvictionThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hard eviction thresholds for kubelet. When a threshold is not set, the system default is used.
+     See `AKS node resource reservations <https://aka.ms/aks/nodereservations>`_ for details on
+     computed defaults. Only applicable for Linux nodepools."""
 
     @overload
     def __init__(
@@ -3962,6 +4142,49 @@ class KubeletConfig(_Model):
         container_log_max_files: Optional[int] = None,
         pod_max_pids: Optional[int] = None,
         seccomp_default: Optional[Union[str, "_models.SeccompDefault"]] = None,
+        kube_reserved: Optional["_models.KubeReserved"] = None,
+        hard_eviction_threshold: Optional["_models.HardEvictionThreshold"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KubeReserved(_Model):
+    """Kube-reserved values for kubelet. When a value is not set, the system-computed default based on
+    VM size is used. See `AKS node resource reservations <https://aka.ms/aks/nodereservations>`_
+    for details on computed defaults. Only applicable for Linux nodepools.
+
+    :ivar cpu_millicores: The amount of CPU reserved for Kubernetes system daemons, in millicores.
+     Must be greater than or equal to 140. For example, a value of 200 means 200m (0.2 CPU cores).
+    :vartype cpu_millicores: int
+    :ivar memory_mb: The amount of memory reserved for Kubernetes system daemons, in MiB. Must be
+     greater than or equal to 750.
+    :vartype memory_mb: int
+    """
+
+    cpu_millicores: Optional[int] = rest_field(
+        name="cpuMillicores", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The amount of CPU reserved for Kubernetes system daemons, in millicores. Must be greater than
+     or equal to 140. For example, a value of 200 means 200m (0.2 CPU cores)."""
+    memory_mb: Optional[int] = rest_field(name="memoryMB", visibility=["read", "create", "update", "delete", "query"])
+    """The amount of memory reserved for Kubernetes system daemons, in MiB. Must be greater than or
+     equal to 750."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cpu_millicores: Optional[int] = None,
+        memory_mb: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -4641,7 +4864,7 @@ class Machine(ProxyResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of the machine."""
-    zones: Optional[list[str]] = rest_field(visibility=["read"])
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Availability zone in which machine is located."""
 
     @overload
@@ -4649,6 +4872,7 @@ class Machine(ProxyResource):
         self,
         *,
         properties: Optional["_models.MachineProperties"] = None,
+        zones: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -4979,7 +5203,7 @@ class MachineOSProfile(_Model):
      Ubuntu if OSType=Linux or Windows2019 if OSType=Windows. And the default Windows OSSKU will be
      changed to Windows2022 after Windows2019 is deprecated. Known values are: "Ubuntu",
      "AzureLinux", "AzureLinux3", "Mariner", "Flatcar", "CBLMariner", "Windows2019", "Windows2022",
-     "Ubuntu2204", "Windows2025", "WindowsAnnual", and "Ubuntu2404".
+     "Ubuntu2204", "Windows2025", "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every machine
      in the master/agent pool. If you specify 0, it will apply the default osDisk size according to
@@ -5010,7 +5234,8 @@ class MachineOSProfile(_Model):
      OSType=Linux or Windows2019 if OSType=Windows. And the default Windows OSSKU will be changed to
      Windows2022 after Windows2019 is deprecated. Known values are: \"Ubuntu\", \"AzureLinux\",
      \"AzureLinux3\", \"Mariner\", \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\",
-     \"Ubuntu2204\", \"Windows2025\", \"WindowsAnnual\", and \"Ubuntu2404\"."""
+     \"Ubuntu2204\", \"Windows2025\", \"WindowsAnnual\", \"Ubuntu2404\", and
+     \"AzureContainerLinux\"."""
     os_disk_size_gb: Optional[int] = rest_field(
         name="osDiskSizeGB", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5152,7 +5377,9 @@ class MachineProperties(_Model):
     :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
     """
 
-    network: Optional["_models.MachineNetworkProperties"] = rest_field(visibility=["read"])
+    network: Optional["_models.MachineNetworkProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """network properties of the machine."""
     resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
     """Azure resource id of the machine. It can be used to GET underlying VM Instance."""
@@ -5214,6 +5441,7 @@ class MachineProperties(_Model):
     def __init__(
         self,
         *,
+        network: Optional["_models.MachineNetworkProperties"] = None,
         hardware: Optional["_models.MachineHardwareProfile"] = None,
         operating_system: Optional["_models.MachineOSProfile"] = None,
         kubernetes: Optional["_models.MachineKubernetesProfile"] = None,
@@ -5651,6 +5879,7 @@ class ManagedCluster(TrackedResource):
         "node_resource_group_profile",
         "enable_rbac",
         "support_plan",
+        "enable_fips",
         "enable_namespace_resources",
         "network_profile",
         "aad_profile",
@@ -5678,6 +5907,8 @@ class ManagedCluster(TrackedResource):
         "scheduler_profile",
         "hosted_system_profile",
         "health_monitor_profile",
+        "control_plane_scaling_profile",
+        "node_disruption_profile",
         "status",
     ]
 
@@ -6039,7 +6270,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
      "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", and "Ubuntu2404".
+     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -6206,10 +6437,10 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
      LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
      more details see aka.ms/aks/localdns.
     :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
-    :ivar node_customization_profile: Settings to determine the node customization used to
-     provision nodes in a pool.
-    :vartype node_customization_profile:
-     ~azure.mgmt.containerservice.models.NodeCustomizationProfile
+    :ivar prepared_image_specification_profile: Settings to determine the prepared image
+     specification used to provision nodes in a pool.
+    :vartype prepared_image_specification_profile:
+     ~azure.mgmt.containerservice.models.PreparedImageSpecificationProfile
     """
 
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
@@ -6288,7 +6519,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"Mariner\",
      \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\",
-     \"WindowsAnnual\", and \"Ubuntu2404\"."""
+     \"WindowsAnnual\", \"Ubuntu2404\", and \"AzureContainerLinux\"."""
     max_count: Optional[int] = rest_field(name="maxCount", visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of nodes for auto-scaling."""
     min_count: Optional[int] = rest_field(name="minCount", visibility=["read", "create", "update", "delete", "query"])
@@ -6334,7 +6565,9 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
      specified version <major.minor.patch>, this field will be exactly equal to it. If
      orchestratorVersion is <major.minor>, this field will contain the full <major.minor.patch>
      version being used."""
-    node_image_version: Optional[str] = rest_field(name="nodeImageVersion", visibility=["read"])
+    node_image_version: Optional[str] = rest_field(
+        name="nodeImageVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of node image."""
     upgrade_strategy: Optional[Union[str, "_models.UpgradeStrategy"]] = rest_field(
         name="upgradeStrategy", visibility=["read", "create", "update", "delete", "query"]
@@ -6521,10 +6754,10 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     """Configures the per-node local DNS, with VnetDNS and KubeDNS overrides. LocalDNS helps improve
      performance and reliability of DNS resolution in an AKS cluster. For more details see
      aka.ms/aks/localdns."""
-    node_customization_profile: Optional["_models.NodeCustomizationProfile"] = rest_field(
-        name="nodeCustomizationProfile", visibility=["read", "create", "update", "delete", "query"]
+    prepared_image_specification_profile: Optional["_models.PreparedImageSpecificationProfile"] = rest_field(
+        name="preparedImageSpecificationProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Settings to determine the node customization used to provision nodes in a pool."""
+    """Settings to determine the prepared image specification used to provision nodes in a pool."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -6550,6 +6783,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
         type: Optional[Union[str, "_models.AgentPoolType"]] = None,
         mode: Optional[Union[str, "_models.AgentPoolMode"]] = None,
         orchestrator_version: Optional[str] = None,
+        node_image_version: Optional[str] = None,
         upgrade_strategy: Optional[Union[str, "_models.UpgradeStrategy"]] = None,
         enable_os_disk_full_caching: Optional[bool] = None,
         upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
@@ -6585,7 +6819,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
         local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
-        node_customization_profile: Optional["_models.NodeCustomizationProfile"] = None,
+        prepared_image_specification_profile: Optional["_models.PreparedImageSpecificationProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -6662,7 +6896,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
      "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", and "Ubuntu2404".
+     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -6829,10 +7063,10 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
      more details see aka.ms/aks/localdns.
     :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
-    :ivar node_customization_profile: Settings to determine the node customization used to
-     provision nodes in a pool.
-    :vartype node_customization_profile:
-     ~azure.mgmt.containerservice.models.NodeCustomizationProfile
+    :ivar prepared_image_specification_profile: Settings to determine the prepared image
+     specification used to provision nodes in a pool.
+    :vartype prepared_image_specification_profile:
+     ~azure.mgmt.containerservice.models.PreparedImageSpecificationProfile
     :ivar name: Unique name of the agent pool profile in the context of the subscription and
      resource group. Windows agent pool names must be 6 characters or less. Required.
     :vartype name: str
@@ -6867,6 +7101,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         type: Optional[Union[str, "_models.AgentPoolType"]] = None,
         mode: Optional[Union[str, "_models.AgentPoolMode"]] = None,
         orchestrator_version: Optional[str] = None,
+        node_image_version: Optional[str] = None,
         upgrade_strategy: Optional[Union[str, "_models.UpgradeStrategy"]] = None,
         enable_os_disk_full_caching: Optional[bool] = None,
         upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
@@ -6902,7 +7137,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
         local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
-        node_customization_profile: Optional["_models.NodeCustomizationProfile"] = None,
+        prepared_image_specification_profile: Optional["_models.PreparedImageSpecificationProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -7184,49 +7419,55 @@ class ManagedClusterAzureMonitorProfile(_Model):
 
 
 class ManagedClusterAzureMonitorProfileAppMonitoring(_Model):  # pylint: disable=name-too-long
-    """Application Monitoring Profile for Kubernetes Application Container. Collects application logs,
-    metrics and traces through auto-instrumentation of the application using Azure Monitor
-    OpenTelemetry based SDKs. See aka.ms/AzureMonitorApplicationMonitoring for an overview.
+    """Application Monitoring profile for AKS.
 
-    :ivar auto_instrumentation: Application Monitoring Auto Instrumentation for Kubernetes
-     Application Container. Deploys web hook to auto-instrument Azure Monitor OpenTelemetry based
-     SDKs to collect OpenTelemetry metrics, logs and traces of the application. See
-     aka.ms/AzureMonitorApplicationMonitoring for an overview.
+    :ivar auto_instrumentation: Application Monitoring auto-instrumentation for AKS. Deploys a
+     webhook that auto-instruments workloads with Microsoft OpenTelemetry Distros to collect
+     OpenTelemetry metrics, logs, and traces. See `https://aka.ms/AKSAppMonitoringDocs
+     <https://aka.ms/AKSAppMonitoringDocs>`_ and `https://aka.ms/AzureMonitorApplicationMonitoring
+     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
     :vartype auto_instrumentation:
      ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation
-    :ivar open_telemetry_metrics: Application Monitoring Open Telemetry Metrics Profile for
-     Kubernetes Application Container Metrics. Collects OpenTelemetry metrics of the application
-     using Azure Monitor OpenTelemetry based SDKs. See aka.ms/AzureMonitorApplicationMonitoring for
-     an overview.
+    :ivar open_telemetry_metrics: Application Monitoring Open Telemetry Metrics Profile for AKS.
+     Collects OpenTelemetry metrics of the application using Azure Monitor OpenTelemetry based SDKs.
+     See `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
+     `https://aka.ms/AzureMonitorApplicationMonitoring
+     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
     :vartype open_telemetry_metrics:
      ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics
-    :ivar open_telemetry_logs: Application Monitoring Open Telemetry Metrics Profile for Kubernetes
-     Application Container Logs and Traces. Collects OpenTelemetry logs and traces of the
-     application using Azure Monitor OpenTelemetry based SDKs. See
-     aka.ms/AzureMonitorApplicationMonitoring for an overview.
-    :vartype open_telemetry_logs:
-     ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogs
+    :ivar open_telemetry_logs_and_traces: Application Monitoring Open Telemetry Logs and Traces
+     Profile for AKS. Collects OpenTelemetry logs and traces of the application using Azure Monitor
+     OpenTelemetry based SDKs. See `https://aka.ms/AKSAppMonitoringDocs
+     <https://aka.ms/AKSAppMonitoringDocs>`_ and `https://aka.ms/AzureMonitorApplicationMonitoring
+     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
+    :vartype open_telemetry_logs_and_traces:
+     ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces
     """
 
     auto_instrumentation: Optional["_models.ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation"] = (
         rest_field(name="autoInstrumentation", visibility=["read", "create", "update", "delete", "query"])
     )
-    """Application Monitoring Auto Instrumentation for Kubernetes Application Container. Deploys web
-     hook to auto-instrument Azure Monitor OpenTelemetry based SDKs to collect OpenTelemetry
-     metrics, logs and traces of the application. See aka.ms/AzureMonitorApplicationMonitoring for
-     an overview."""
+    """Application Monitoring auto-instrumentation for AKS. Deploys a webhook that auto-instruments
+     workloads with Microsoft OpenTelemetry Distros to collect OpenTelemetry metrics, logs, and
+     traces. See `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
+     `https://aka.ms/AzureMonitorApplicationMonitoring
+     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview."""
     open_telemetry_metrics: Optional["_models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics"] = (
         rest_field(name="openTelemetryMetrics", visibility=["read", "create", "update", "delete", "query"])
     )
-    """Application Monitoring Open Telemetry Metrics Profile for Kubernetes Application Container
-     Metrics. Collects OpenTelemetry metrics of the application using Azure Monitor OpenTelemetry
-     based SDKs. See aka.ms/AzureMonitorApplicationMonitoring for an overview."""
-    open_telemetry_logs: Optional["_models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogs"] = (
-        rest_field(name="openTelemetryLogs", visibility=["read", "create", "update", "delete", "query"])
-    )
-    """Application Monitoring Open Telemetry Metrics Profile for Kubernetes Application Container Logs
-     and Traces. Collects OpenTelemetry logs and traces of the application using Azure Monitor
-     OpenTelemetry based SDKs. See aka.ms/AzureMonitorApplicationMonitoring for an overview."""
+    """Application Monitoring Open Telemetry Metrics Profile for AKS. Collects OpenTelemetry metrics
+     of the application using Azure Monitor OpenTelemetry based SDKs. See
+     `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
+     `https://aka.ms/AzureMonitorApplicationMonitoring
+     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview."""
+    open_telemetry_logs_and_traces: Optional[
+        "_models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces"
+    ] = rest_field(name="openTelemetryLogsAndTraces", visibility=["read", "create", "update", "delete", "query"])
+    """Application Monitoring Open Telemetry Logs and Traces Profile for AKS. Collects OpenTelemetry
+     logs and traces of the application using Azure Monitor OpenTelemetry based SDKs. See
+     `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
+     `https://aka.ms/AzureMonitorApplicationMonitoring
+     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview."""
 
     @overload
     def __init__(
@@ -7238,7 +7479,9 @@ class ManagedClusterAzureMonitorProfileAppMonitoring(_Model):  # pylint: disable
         open_telemetry_metrics: Optional[
             "_models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics"
         ] = None,
-        open_telemetry_logs: Optional["_models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogs"] = None,
+        open_telemetry_logs_and_traces: Optional[
+            "_models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces"
+        ] = None,
     ) -> None: ...
 
     @overload
@@ -7253,17 +7496,18 @@ class ManagedClusterAzureMonitorProfileAppMonitoring(_Model):  # pylint: disable
 
 
 class ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(_Model):  # pylint: disable=name-too-long
-    """Application Monitoring Auto Instrumentation for Kubernetes Application Container. Deploys web
-    hook to auto-instrument Azure Monitor OpenTelemetry based SDKs to collect OpenTelemetry
-    metrics, logs and traces of the application. See aka.ms/AzureMonitorApplicationMonitoring for
-    an overview.
+    """Application Monitoring auto-instrumentation for AKS. Deploys a webhook that auto-instruments
+    workloads with Microsoft OpenTelemetry Distros to collect OpenTelemetry metrics, logs, and
+    traces. See `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
+    `https://aka.ms/AzureMonitorApplicationMonitoring
+    <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
 
-    :ivar enabled: Indicates if Application Monitoring Auto Instrumentation is enabled or not.
+    :ivar enabled: Indicates if Application Monitoring Auto-instrumentation is enabled or not.
     :vartype enabled: bool
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Indicates if Application Monitoring Auto Instrumentation is enabled or not."""
+    """Indicates if Application Monitoring Auto-instrumentation is enabled or not."""
 
     @overload
     def __init__(
@@ -7283,31 +7527,40 @@ class ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogs(_Model):  # pylint: disable=name-too-long
-    """Application Monitoring Open Telemetry Metrics Profile for Kubernetes Application Container Logs
-    and Traces. Collects OpenTelemetry logs and traces of the application using Azure Monitor
-    OpenTelemetry based SDKs. See aka.ms/AzureMonitorApplicationMonitoring for an overview.
+class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces(_Model):  # pylint: disable=name-too-long
+    """Application Monitoring Open Telemetry Logs and Traces Profile for AKS. Collects OpenTelemetry
+    logs and traces of the application using Azure Monitor OpenTelemetry based SDKs. See
+    `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
+    `https://aka.ms/AzureMonitorApplicationMonitoring
+    <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
 
     :ivar enabled: Indicates if Application Monitoring Open Telemetry Logs and traces is enabled or
      not.
     :vartype enabled: bool
-    :ivar port: The Open Telemetry host port for Open Telemetry logs and traces. If not specified,
-     the default port is 28331.
-    :vartype port: int
+    :ivar http_port: The host port for Open Telemetry HTTP/PROTOBUF logs and traces. If not
+     specified, the default port is 28331.
+    :vartype http_port: int
+    :ivar grpc_port: The host port for Open Telemetry GRPC logs and traces. If not specified, the
+     default port is 28332.
+    :vartype grpc_port: int
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates if Application Monitoring Open Telemetry Logs and traces is enabled or not."""
-    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Open Telemetry host port for Open Telemetry logs and traces. If not specified, the default
+    http_port: Optional[int] = rest_field(name="httpPort", visibility=["read", "create", "update", "delete", "query"])
+    """The host port for Open Telemetry HTTP/PROTOBUF logs and traces. If not specified, the default
      port is 28331."""
+    grpc_port: Optional[int] = rest_field(name="grpcPort", visibility=["read", "create", "update", "delete", "query"])
+    """The host port for Open Telemetry GRPC logs and traces. If not specified, the default port is
+     28332."""
 
     @overload
     def __init__(
         self,
         *,
         enabled: Optional[bool] = None,
-        port: Optional[int] = None,
+        http_port: Optional[int] = None,
+        grpc_port: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -7322,29 +7575,37 @@ class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogs(_Model):  
 
 
 class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(_Model):  # pylint: disable=name-too-long
-    """Application Monitoring Open Telemetry Metrics Profile for Kubernetes Application Container
-    Metrics. Collects OpenTelemetry metrics of the application using Azure Monitor OpenTelemetry
-    based SDKs. See aka.ms/AzureMonitorApplicationMonitoring for an overview.
+    """Application Monitoring Open Telemetry Metrics Profile for AKS. Collects OpenTelemetry metrics
+    of the application using Azure Monitor OpenTelemetry based SDKs. See
+    `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
+    `https://aka.ms/AzureMonitorApplicationMonitoring
+    <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
 
     :ivar enabled: Indicates if Application Monitoring Open Telemetry Metrics is enabled or not.
     :vartype enabled: bool
-    :ivar port: The Open Telemetry host port for Open Telemetry metrics. If not specified, the
+    :ivar http_port: The host port for Open Telemetry HTTP/PROTOBUF metrics. If not specified, the
      default port is 28333.
-    :vartype port: int
+    :vartype http_port: int
+    :ivar grpc_port: The host port for Open Telemetry GRPC metrics. If not specified, the default
+     port is 28334.
+    :vartype grpc_port: int
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates if Application Monitoring Open Telemetry Metrics is enabled or not."""
-    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Open Telemetry host port for Open Telemetry metrics. If not specified, the default port is
+    http_port: Optional[int] = rest_field(name="httpPort", visibility=["read", "create", "update", "delete", "query"])
+    """The host port for Open Telemetry HTTP/PROTOBUF metrics. If not specified, the default port is
      28333."""
+    grpc_port: Optional[int] = rest_field(name="grpcPort", visibility=["read", "create", "update", "delete", "query"])
+    """The host port for Open Telemetry GRPC metrics. If not specified, the default port is 28334."""
 
     @overload
     def __init__(
         self,
         *,
         enabled: Optional[bool] = None,
-        port: Optional[int] = None,
+        http_port: Optional[int] = None,
+        grpc_port: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -7509,6 +7770,11 @@ class ManagedClusterAzureMonitorProfileMetrics(_Model):
      aka.ms/AzureManagedPrometheus-optional-parameters for details.
     :vartype kube_state_metrics:
      ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileKubeStateMetrics
+    :ivar control_plane: Control plane metrics collection profile for the Azure Managed Prometheus
+     addon. Configures collection of operational runtime metrics from managed control plane
+     components (kube-apiserver, etcd, etc). See aka.ms/aks/controlplane-metrics for an overview.
+    :vartype control_plane:
+     ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileMetricsControlPlane
     """
 
     enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7520,6 +7786,12 @@ class ManagedClusterAzureMonitorProfileMetrics(_Model):
     """Kube State Metrics profile for the Azure Managed Prometheus addon. These optional settings are
      for the kube-state-metrics pod that is deployed with the addon. See
      aka.ms/AzureManagedPrometheus-optional-parameters for details."""
+    control_plane: Optional["_models.ManagedClusterAzureMonitorProfileMetricsControlPlane"] = rest_field(
+        name="controlPlane", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Control plane metrics collection profile for the Azure Managed Prometheus addon. Configures
+     collection of operational runtime metrics from managed control plane components
+     (kube-apiserver, etcd, etc). See aka.ms/aks/controlplane-metrics for an overview."""
 
     @overload
     def __init__(
@@ -7527,6 +7799,40 @@ class ManagedClusterAzureMonitorProfileMetrics(_Model):
         *,
         enabled: bool,
         kube_state_metrics: Optional["_models.ManagedClusterAzureMonitorProfileKubeStateMetrics"] = None,
+        control_plane: Optional["_models.ManagedClusterAzureMonitorProfileMetricsControlPlane"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterAzureMonitorProfileMetricsControlPlane(_Model):  # pylint: disable=name-too-long
+    """Control plane metrics collection profile for the Azure Managed Prometheus addon. Configures
+    collection of operational runtime metrics from managed control plane components
+    (kube-apiserver, etcd, etc). See aka.ms/aks/controlplane-metrics for an overview.
+
+    :ivar enabled: Whether to enable or disable collection of control plane metrics by the Azure
+     Managed Prometheus addon. Defaults to disabled. See aka.ms/aks/controlplane-metrics for
+     details.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to enable or disable collection of control plane metrics by the Azure Managed
+     Prometheus addon. Defaults to disabled. See aka.ms/aks/controlplane-metrics for details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -7568,6 +7874,45 @@ class ManagedClusterBootstrapProfile(_Model):
         *,
         artifact_source: Optional[Union[str, "_models.ArtifactSource"]] = None,
         container_registry_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterControlPlaneScalingProfile(_Model):
+    """Profile for providing scaled and performance guaranteed control plane capacity to deliver
+    consistent performance under high workload. Requires Kubernetes version 1.33.0 or later.
+
+    :ivar scaling_size: The scaling size of the control plane. Scaling sizes offer guaranteed
+     capacity and predictable Kubernetes performance beyond standard tier defaults. Higher H sizes
+     provide increased performance guarantees. See `https://aka.ms/aks/hyperscale
+     <https://aka.ms/aks/hyperscale>`_ for performance metrics details for each size. Required.
+     Known values are: "H2", "H4", and "H8".
+    :vartype scaling_size: str or ~azure.mgmt.containerservice.models.ControlPlaneScalingSize
+    """
+
+    scaling_size: Union[str, "_models.ControlPlaneScalingSize"] = rest_field(
+        name="scalingSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The scaling size of the control plane. Scaling sizes offer guaranteed capacity and predictable
+     Kubernetes performance beyond standard tier defaults. Higher H sizes provide increased
+     performance guarantees. See `https://aka.ms/aks/hyperscale <https://aka.ms/aks/hyperscale>`_
+     for performance metrics details for each size. Required. Known values are: \"H2\", \"H4\", and
+     \"H8\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        scaling_size: Union[str, "_models.ControlPlaneScalingSize"],
     ) -> None: ...
 
     @overload
@@ -7658,16 +8003,46 @@ class ManagedClusterHostedSystemProfile(_Model):
 
     :ivar enabled: Whether to enable hosted system addons for the cluster.
     :vartype enabled: bool
+    :ivar system_node_subnet_id: The ID of the subnet that will be joined by system nodes managed
+     and hosted by AKS for running critical system addons. This ID must be provided together with
+     ``nodeSubnetID`` and ``apiserverAccessProfile.subnetId``, and all three subnet IDs must belong
+     to the same VNet. If you don’t specify it, AKS will create a subnet in the managed resource
+     group using a default /26 CIDR.
+    :vartype system_node_subnet_id: str
+    :ivar node_subnet_id: The ID of the subnet that will be joined by worker nodes managed by node
+     auto provisioner for running workload pods in your tenant. This must be provided together with
+     ``systemNodeSubnetID`` and ``apiserverAccessProfile.subnetId``, and all three subnet IDs must
+     be in the same VNet. If you don’t specify it, AKS will create a subnet in the managed resource
+     group using a default /16 CIDR.
+    :vartype node_subnet_id: str
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable hosted system addons for the cluster."""
+    system_node_subnet_id: Optional[str] = rest_field(
+        name="systemNodeSubnetID", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the subnet that will be joined by system nodes managed and hosted by AKS for running
+     critical system addons. This ID must be provided together with ``nodeSubnetID`` and
+     ``apiserverAccessProfile.subnetId``, and all three subnet IDs must belong to the same VNet. If
+     you don’t specify it, AKS will create a subnet in the managed resource group using a default
+     /26 CIDR."""
+    node_subnet_id: Optional[str] = rest_field(
+        name="nodeSubnetID", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the subnet that will be joined by worker nodes managed by node auto provisioner for
+     running workload pods in your tenant. This must be provided together with
+     ``systemNodeSubnetID`` and ``apiserverAccessProfile.subnetId``, and all three subnet IDs must
+     be in the same VNet. If you don’t specify it, AKS will create a subnet in the managed resource
+     group using a default /16 CIDR."""
 
     @overload
     def __init__(
         self,
         *,
         enabled: Optional[bool] = None,
+        system_node_subnet_id: Optional[str] = None,
+        node_subnet_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -7936,7 +8311,7 @@ class ManagedClusterIngressProfileApplicationLoadBalancer(_Model):  # pylint: di
 
 
 class ManagedClusterIngressProfileGatewayConfiguration(_Model):  # pylint: disable=name-too-long
-    """Configuration for the ingress managed gateway. See `https://aka.ms/k8s-gateway-api
+    """Configuration for managed Gateway API CRDs. See `https://aka.ms/k8s-gateway-api
     <https://aka.ms/k8s-gateway-api>`_ for more details.
 
     :ivar installation: Configuration for the managed Gateway API installation. If not specified,
@@ -9062,6 +9437,12 @@ class ManagedClusterProperties(_Model):
     :ivar support_plan: The support plan for the Managed Cluster. If unspecified, the default is
      'KubernetesOfficial'. Known values are: "KubernetesOfficial" and "AKSLongTermSupport".
     :vartype support_plan: str or ~azure.mgmt.containerservice.models.KubernetesSupportPlan
+    :ivar enable_fips: Whether to enable FIPS mode at the cluster level. When enabled, this setting
+     enforces FIPS compliance for all AKS-managed components, such as the node operating system,
+     addons, and `managed containerized components <https://aka.ms/aks/components/docs>`_. See
+     `Enable cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is
+     enabled, all node pools in the cluster must also be FIPS-enabled.
+    :vartype enable_fips: bool
     :ivar enable_namespace_resources: Enable namespace as Azure resource. The default value is
      false. It can be enabled/disabled on creation and updating of the managed cluster. See
      `https://aka.ms/NamespaceARMResource <https://aka.ms/NamespaceARMResource>`_ for more details
@@ -9141,6 +9522,13 @@ class ManagedClusterProperties(_Model):
     :ivar health_monitor_profile: Health monitor profile for the managed cluster.
     :vartype health_monitor_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterHealthMonitorProfile
+    :ivar control_plane_scaling_profile: Profile for providing scaled and performance guaranteed
+     control plane capacity to deliver consistent performance under high workload. Requires
+     Kubernetes version 1.33.0 or later.
+    :vartype control_plane_scaling_profile:
+     ~azure.mgmt.containerservice.models.ManagedClusterControlPlaneScalingProfile
+    :ivar node_disruption_profile: Node disruption profile for a managed cluster.
+    :vartype node_disruption_profile: ~azure.mgmt.containerservice.models.NodeDisruptionProfile
     :ivar status: Contains read-only information about the Managed Cluster.
     :vartype status: ~azure.mgmt.containerservice.models.ManagedClusterStatus
     """
@@ -9239,6 +9627,14 @@ class ManagedClusterProperties(_Model):
     )
     """The support plan for the Managed Cluster. If unspecified, the default is 'KubernetesOfficial'.
      Known values are: \"KubernetesOfficial\" and \"AKSLongTermSupport\"."""
+    enable_fips: Optional[bool] = rest_field(
+        name="enableFIPS", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to enable FIPS mode at the cluster level. When enabled, this setting enforces FIPS
+     compliance for all AKS-managed components, such as the node operating system, addons, and
+     `managed containerized components <https://aka.ms/aks/components/docs>`_. See `Enable
+     cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is enabled,
+     all node pools in the cluster must also be FIPS-enabled."""
     enable_namespace_resources: Optional[bool] = rest_field(
         name="enableNamespaceResources", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9359,6 +9755,15 @@ class ManagedClusterProperties(_Model):
         name="healthMonitorProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Health monitor profile for the managed cluster."""
+    control_plane_scaling_profile: Optional["_models.ManagedClusterControlPlaneScalingProfile"] = rest_field(
+        name="controlPlaneScalingProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Profile for providing scaled and performance guaranteed control plane capacity to deliver
+     consistent performance under high workload. Requires Kubernetes version 1.33.0 or later."""
+    node_disruption_profile: Optional["_models.NodeDisruptionProfile"] = rest_field(
+        name="nodeDisruptionProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Node disruption profile for a managed cluster."""
     status: Optional["_models.ManagedClusterStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9383,6 +9788,7 @@ class ManagedClusterProperties(_Model):
         node_resource_group_profile: Optional["_models.ManagedClusterNodeResourceGroupProfile"] = None,
         enable_rbac: Optional[bool] = None,
         support_plan: Optional[Union[str, "_models.KubernetesSupportPlan"]] = None,
+        enable_fips: Optional[bool] = None,
         enable_namespace_resources: Optional[bool] = None,
         network_profile: Optional["_models.ContainerServiceNetworkProfile"] = None,
         aad_profile: Optional["_models.ManagedClusterAADProfile"] = None,
@@ -9409,6 +9815,8 @@ class ManagedClusterProperties(_Model):
         scheduler_profile: Optional["_models.SchedulerProfile"] = None,
         hosted_system_profile: Optional["_models.ManagedClusterHostedSystemProfile"] = None,
         health_monitor_profile: Optional["_models.ManagedClusterHealthMonitorProfile"] = None,
+        control_plane_scaling_profile: Optional["_models.ManagedClusterControlPlaneScalingProfile"] = None,
+        node_disruption_profile: Optional["_models.NodeDisruptionProfile"] = None,
         status: Optional["_models.ManagedClusterStatus"] = None,
     ) -> None: ...
 
@@ -9675,39 +10083,16 @@ class ManagedClusterPropertiesForSnapshot(_Model):
     :vartype network_profile: ~azure.mgmt.containerservice.models.NetworkProfileForSnapshot
     """
 
-    kubernetes_version: Optional[str] = rest_field(
-        name="kubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
+    kubernetes_version: Optional[str] = rest_field(name="kubernetesVersion", visibility=["read"])
     """The current kubernetes version."""
-    sku: Optional["_models.ManagedClusterSKU"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sku: Optional["_models.ManagedClusterSKU"] = rest_field(visibility=["read"])
     """The current managed cluster sku."""
-    enable_rbac: Optional[bool] = rest_field(
-        name="enableRbac", visibility=["read", "create", "update", "delete", "query"]
-    )
+    enable_rbac: Optional[bool] = rest_field(name="enableRbac", visibility=["read"])
     """Whether the cluster has enabled Kubernetes Role-Based Access Control or not."""
     network_profile: Optional["_models.NetworkProfileForSnapshot"] = rest_field(
         name="networkProfile", visibility=["read"]
     )
     """The current network profile."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kubernetes_version: Optional[str] = None,
-        sku: Optional["_models.ManagedClusterSKU"] = None,
-        enable_rbac: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class ManagedClusterSecurityProfile(_Model):
@@ -10460,21 +10845,16 @@ class ManagedClusterStorageProfileDiskCSIDriver(_Model):  # pylint: disable=name
 
     :ivar enabled: Whether to enable AzureDisk CSI Driver. The default value is true.
     :vartype enabled: bool
-    :ivar version: The version of AzureDisk CSI Driver. The default value is v1.
-    :vartype version: str
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable AzureDisk CSI Driver. The default value is true."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The version of AzureDisk CSI Driver. The default value is v1."""
 
     @overload
     def __init__(
         self,
         *,
         enabled: Optional[bool] = None,
-        version: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -11519,25 +11899,36 @@ class NetworkProfileForSnapshot(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeCustomizationProfile(_Model):
-    """Settings to determine the node customization used to provision nodes in a pool.
+class NodeDisruptionProfile(_Model):
+    """Node disruption profile for a managed cluster.
 
-    :ivar node_customization_id: The resource ID of the node customization resource to use. This
-     can be a version. Omitting the version will use the latest version of the node customization.
-    :vartype node_customization_id: str
+    :ivar node_disruption_policy: The policy configuration for when to allow certain operations
+     which require node re-image and trigger redeployment. For example, some operations, such as
+     updating the .properties.ManagedClusterSecurityProfile.customCATrustCertificates field on an
+     existing managed cluster, trigger rolling updates of the nodes. This setting allows control
+     over when such updates are accepted. The default is 'Allow'. For a full list of covered
+     operations see aka.ms/aks/nodedisruptionpolicy". Known values are: "Allow",
+     "AllowDuringMaintenanceWindow", and "Block".
+    :vartype node_disruption_policy: str or
+     ~azure.mgmt.containerservice.models.NodeDisruptionPolicy
     """
 
-    node_customization_id: Optional[str] = rest_field(
-        name="nodeCustomizationId", visibility=["read", "create", "update", "delete", "query"]
+    node_disruption_policy: Optional[Union[str, "_models.NodeDisruptionPolicy"]] = rest_field(
+        name="nodeDisruptionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource ID of the node customization resource to use. This can be a version. Omitting the
-     version will use the latest version of the node customization."""
+    """The policy configuration for when to allow certain operations which require node re-image and
+     trigger redeployment. For example, some operations, such as updating the
+     .properties.ManagedClusterSecurityProfile.customCATrustCertificates field on an existing
+     managed cluster, trigger rolling updates of the nodes. This setting allows control over when
+     such updates are accepted. The default is 'Allow'. For a full list of covered operations see
+     aka.ms/aks/nodedisruptionpolicy\". Known values are: \"Allow\",
+     \"AllowDuringMaintenanceWindow\", and \"Block\"."""
 
     @overload
     def __init__(
         self,
         *,
-        node_customization_id: Optional[str] = None,
+        node_disruption_policy: Optional[Union[str, "_models.NodeDisruptionPolicy"]] = None,
     ) -> None: ...
 
     @overload
@@ -11896,6 +12287,39 @@ class PowerState(_Model):
         self,
         *,
         code: Optional[Union[str, "_models.Code"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PreparedImageSpecificationProfile(_Model):
+    """Settings to determine the prepared image specification used to provision nodes in a pool.
+
+    :ivar prepared_image_specification_id: The resource ID of the prepared image specification
+     resource to use. This can include a version. Omitting the version will use the latest version
+     of the prepared image specification.
+    :vartype prepared_image_specification_id: str
+    """
+
+    prepared_image_specification_id: Optional[str] = rest_field(
+        name="preparedImageSpecificationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the prepared image specification resource to use. This can include a
+     version. Omitting the version will use the latest version of the prepared image specification."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        prepared_image_specification_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -12751,26 +13175,30 @@ class ScaleProfile(_Model):
     :ivar manual: Specifications on how to scale the VirtualMachines agent pool to a fixed size.
     :vartype manual: list[~azure.mgmt.containerservice.models.ManualScaleProfile]
     :ivar autoscale: Specifications on how to auto-scale the VirtualMachines agent pool within a
-     predefined size range.
-    :vartype autoscale: ~azure.mgmt.containerservice.models.AutoScaleProfile
+     predefined size range. Each profile targets a specific VM SKU and is evaluated independently.
+     Scaling decisions across profiles are governed by the cluster autoscaler expander, configurable
+     via ``ManagedCluster.properties.autoScalerProfile.expander``.
+    :vartype autoscale: list[~azure.mgmt.containerservice.models.AutoScaleProfile]
     """
 
     manual: Optional[list["_models.ManualScaleProfile"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifications on how to scale the VirtualMachines agent pool to a fixed size."""
-    autoscale: Optional["_models.AutoScaleProfile"] = rest_field(
+    autoscale: Optional[list["_models.AutoScaleProfile"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifications on how to auto-scale the VirtualMachines agent pool within a predefined size
-     range."""
+     range. Each profile targets a specific VM SKU and is evaluated independently. Scaling decisions
+     across profiles are governed by the cluster autoscaler expander, configurable via
+     ``ManagedCluster.properties.autoScalerProfile.expander``."""
 
     @overload
     def __init__(
         self,
         *,
         manual: Optional[list["_models.ManualScaleProfile"]] = None,
-        autoscale: Optional["_models.AutoScaleProfile"] = None,
+        autoscale: Optional[list["_models.AutoScaleProfile"]] = None,
     ) -> None: ...
 
     @overload
@@ -13108,7 +13536,7 @@ class SnapshotProperties(_Model):
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
      "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", and "Ubuntu2404".
+     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar vm_size: The size of the VM.
     :vartype vm_size: str
@@ -13136,7 +13564,7 @@ class SnapshotProperties(_Model):
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"Mariner\",
      \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\",
-     \"WindowsAnnual\", and \"Ubuntu2404\"."""
+     \"WindowsAnnual\", \"Ubuntu2404\", and \"AzureContainerLinux\"."""
     vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read"])
     """The size of the VM."""
     enable_fips: Optional[bool] = rest_field(name="enableFIPS", visibility=["read"])

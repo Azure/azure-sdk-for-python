@@ -1,1 +1,3 @@
-py2docfx==0.1.24
+py2docfx==0.1.26
+setuptools
+wheel

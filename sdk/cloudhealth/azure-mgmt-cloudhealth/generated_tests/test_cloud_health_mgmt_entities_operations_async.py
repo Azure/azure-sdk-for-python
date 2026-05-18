@@ -33,76 +33,168 @@ class TestCloudHealthMgmtEntitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_entities_create_or_update(self, resource_group):
-        response = await self.client.entities.create_or_update(
-            resource_group_name=resource_group.name,
-            health_model_name="str",
-            entity_name="str",
-            resource={
-                "id": "str",
-                "name": "str",
-                "properties": {
-                    "alerts": {
-                        "degraded": {"severity": "str", "actionGroupIds": ["str"], "description": "str"},
-                        "unhealthy": {"severity": "str", "actionGroupIds": ["str"], "description": "str"},
+    async def test_entities_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.entities.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                health_model_name="str",
+                entity_name="str",
+                resource={
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "alerts": {
+                            "degraded": {"severity": "str", "actionGroupIds": ["str"], "description": "str"},
+                            "unhealthy": {"severity": "str", "actionGroupIds": ["str"], "description": "str"},
+                        },
+                        "canvasPosition": {"x": 0.0, "y": 0.0},
+                        "discoveredBy": "str",
+                        "displayName": "str",
+                        "healthObjective": 0.0,
+                        "healthState": "str",
+                        "icon": {"iconName": "str", "customData": "str"},
+                        "impact": "str",
+                        "provisioningState": "str",
+                        "signalGroups": {
+                            "azureLogAnalytics": {
+                                "authenticationSetting": "str",
+                                "logAnalyticsWorkspaceResourceId": "str",
+                                "signals": [
+                                    {
+                                        "name": "str",
+                                        "signalKind": "LogAnalyticsQuery",
+                                        "dataUnit": "str",
+                                        "displayName": "str",
+                                        "evaluationRules": {
+                                            "unhealthyRule": {"operator": "str", "threshold": 0.0},
+                                            "degradedRule": {"operator": "str", "threshold": 0.0},
+                                        },
+                                        "queryText": "str",
+                                        "refreshInterval": "str",
+                                        "signalDefinitionName": "str",
+                                        "status": {
+                                            "error": "str",
+                                            "healthState": "str",
+                                            "reportedAt": "2020-02-20 00:00:00",
+                                            "value": 0.0,
+                                        },
+                                        "timeGrain": "str",
+                                        "valueColumnName": "str",
+                                    }
+                                ],
+                            },
+                            "azureMonitorWorkspace": {
+                                "authenticationSetting": "str",
+                                "azureMonitorWorkspaceResourceId": "str",
+                                "signals": [
+                                    {
+                                        "name": "str",
+                                        "signalKind": "PrometheusMetricsQuery",
+                                        "dataUnit": "str",
+                                        "displayName": "str",
+                                        "evaluationRules": {
+                                            "unhealthyRule": {"operator": "str", "threshold": 0.0},
+                                            "degradedRule": {"operator": "str", "threshold": 0.0},
+                                        },
+                                        "queryText": "str",
+                                        "refreshInterval": "str",
+                                        "signalDefinitionName": "str",
+                                        "status": {
+                                            "error": "str",
+                                            "healthState": "str",
+                                            "reportedAt": "2020-02-20 00:00:00",
+                                            "value": 0.0,
+                                        },
+                                        "timeGrain": "str",
+                                    }
+                                ],
+                            },
+                            "azureResource": {
+                                "authenticationSetting": "str",
+                                "azureResourceId": "str",
+                                "azureResourceKind": "str",
+                                "signals": [
+                                    {
+                                        "name": "str",
+                                        "signalKind": "AzureResourceMetric",
+                                        "aggregationType": "str",
+                                        "dataUnit": "str",
+                                        "dimension": "str",
+                                        "dimensionFilter": "str",
+                                        "displayName": "str",
+                                        "evaluationRules": {
+                                            "unhealthyRule": {"operator": "str", "threshold": 0.0},
+                                            "degradedRule": {"operator": "str", "threshold": 0.0},
+                                        },
+                                        "metricName": "str",
+                                        "metricNamespace": "str",
+                                        "refreshInterval": "str",
+                                        "signalDefinitionName": "str",
+                                        "status": {
+                                            "error": "str",
+                                            "healthState": "str",
+                                            "reportedAt": "2020-02-20 00:00:00",
+                                            "value": 0.0,
+                                        },
+                                        "timeGrain": "str",
+                                    }
+                                ],
+                            },
+                            "dependencies": {
+                                "aggregationType": "str",
+                                "degradedThreshold": 0.0,
+                                "ignoreUnknown": bool,
+                                "unhealthyThreshold": 0.0,
+                                "unit": "str",
+                            },
+                            "external": {
+                                "signals": [
+                                    {
+                                        "name": "str",
+                                        "signalKind": "External",
+                                        "evaluationRules": {
+                                            "unhealthyRule": {"operator": "str", "threshold": 0.0},
+                                            "degradedRule": {"operator": "str", "threshold": 0.0},
+                                        },
+                                        "signalDefinitionName": "str",
+                                        "status": {
+                                            "error": "str",
+                                            "healthState": "str",
+                                            "reportedAt": "2020-02-20 00:00:00",
+                                            "value": 0.0,
+                                        },
+                                    }
+                                ]
+                            },
+                        },
+                        "tags": {"str": "str"},
                     },
-                    "canvasPosition": {"x": 0.0, "y": 0.0},
-                    "deletionDate": "2020-02-20 00:00:00",
-                    "discoveredBy": "str",
-                    "displayName": "str",
-                    "healthObjective": 0.0,
-                    "healthState": "str",
-                    "icon": {"iconName": "str", "customData": "str"},
-                    "impact": "str",
-                    "kind": "str",
-                    "labels": {"str": "str"},
-                    "provisioningState": "str",
-                    "signals": {
-                        "azureLogAnalytics": {
-                            "authenticationSetting": "str",
-                            "logAnalyticsWorkspaceResourceId": "str",
-                            "signalAssignments": [{"signalDefinitions": ["str"]}],
-                        },
-                        "azureMonitorWorkspace": {
-                            "authenticationSetting": "str",
-                            "azureMonitorWorkspaceResourceId": "str",
-                            "signalAssignments": [{"signalDefinitions": ["str"]}],
-                        },
-                        "azureResource": {
-                            "authenticationSetting": "str",
-                            "azureResourceId": "str",
-                            "signalAssignments": [{"signalDefinitions": ["str"]}],
-                        },
-                        "dependencies": {
-                            "aggregationType": "str",
-                            "degradedThreshold": "str",
-                            "unhealthyThreshold": "str",
-                        },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
                     },
+                    "type": "str",
                 },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-            },
-        )
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_entities_delete(self, resource_group):
-        response = await self.client.entities.delete(
-            resource_group_name=resource_group.name,
-            health_model_name="str",
-            entity_name="str",
-        )
+    async def test_entities_begin_delete(self, resource_group):
+        response = await (
+            await self.client.entities.begin_delete(
+                resource_group_name=resource_group.name,
+                health_model_name="str",
+                entity_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
@@ -115,5 +207,54 @@ class TestCloudHealthMgmtEntitiesOperationsAsync(AzureMgmtRecordedTestCase):
             health_model_name="str",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_entities_get_history(self, resource_group):
+        response = await self.client.entities.get_history(
+            resource_group_name=resource_group.name,
+            health_model_name="str",
+            entity_name="str",
+            body={"endAt": "2020-02-20 00:00:00", "startAt": "2020-02-20 00:00:00"},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_entities_get_signal_history(self, resource_group):
+        response = await self.client.entities.get_signal_history(
+            resource_group_name=resource_group.name,
+            health_model_name="str",
+            entity_name="str",
+            body={"signalName": "str", "endAt": "2020-02-20 00:00:00", "startAt": "2020-02-20 00:00:00"},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_entities_ingest_health_report(self, resource_group):
+        response = await self.client.entities.ingest_health_report(
+            resource_group_name=resource_group.name,
+            health_model_name="str",
+            entity_name="str",
+            body={
+                "healthState": "str",
+                "signalName": "str",
+                "additionalContext": "str",
+                "evaluationRules": {
+                    "unhealthyRule": {"operator": "str", "threshold": 0.0},
+                    "degradedRule": {"operator": "str", "threshold": 0.0},
+                },
+                "expiresInMinutes": 0,
+                "value": 0.0,
+            },
+        )
+
         # please add some check logic here by yourself
         # ...

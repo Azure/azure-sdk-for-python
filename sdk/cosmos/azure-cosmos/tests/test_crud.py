@@ -1318,19 +1318,19 @@ class TestCRUDOperations(unittest.TestCase):
 
         # Create a custom transport that introduces delays
         class DelayedTransport(RequestsTransport):
-            def __init__(self, delay_per_request=2):
+            def __init__(self, delay_per_request=3):
                 self.delay_per_request = delay_per_request
                 self.request_count = 0
                 super().__init__()
 
             def send(self, request, **kwargs):
                 self.request_count += 1
-                # Delay each request to simulate slow network
+                # Delay each request to simulate slow network (3s, exceeds 5s timeout with >=2 partitions)
                 time.sleep(self.delay_per_request)
                 return super().send(request, **kwargs)
 
         # Verify timeout fails when cumulative time exceeds limit
-        delayed_transport = DelayedTransport(delay_per_request=2)
+        delayed_transport = DelayedTransport(delay_per_request=3)
         client_with_delay = cosmos_client.CosmosClient(
             self.host,
             self.masterKey,
@@ -1342,7 +1342,7 @@ class TestCRUDOperations(unittest.TestCase):
 
         start_time = time.time()
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            # This should timeout because multiple partition requests * 2s delay > 5s timeout
+            # This should timeout because multiple partition requests * 3s delay > 5s timeout
             list(container_with_delay.read_items(
                 items = items_to_read,
                 timeout = 5  # 5 second total timeout

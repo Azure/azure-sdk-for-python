@@ -6,6 +6,11 @@
 import os
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import FileSharePreparer
+
 from azure.core.exceptions import HttpResponseError
 from azure.storage.fileshare import (
     CorsRule,
@@ -15,12 +20,9 @@ from azure.storage.fileshare import (
     ShareServiceClient,
     ShareSmbSettings,
     SmbEncryptionInTransit,
-    SmbMultichannel
+    SmbMultichannel,
 )
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
 
@@ -55,8 +57,7 @@ class TestFileServiceProperties(StorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
+        for i, rule1 in enumerate(cors1):
             rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
@@ -104,8 +105,6 @@ class TestFileServiceProperties(StorageRecordedTestCase):
         assert props['protocol'].smb.multichannel.enabled == False
         assert props['protocol'].smb.encryption_in_transit.required == False
 
-        with pytest.raises(TypeError):
-            ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel()))
         with pytest.raises(ValueError):
             ShareProtocolSettings(smb=ShareSmbSettings())
         with pytest.raises(ValueError):
@@ -211,10 +210,6 @@ class TestFileServiceProperties(StorageRecordedTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        pytest.raises(HttpResponseError,
-                          self.fsc.set_service_properties,
-                          None, None, cors)
-
+        pytest.raises(HttpResponseError, self.fsc.set_service_properties, None, None, cors)
 
 # ------------------------------------------------------------------------------
-
