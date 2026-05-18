@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,12 +7,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -40,8 +38,8 @@ class Error(_serialization.Model):
         error: Optional["_models.ExtendedErrorInfo"] = None,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword error: this is the ExtendedErrorInfo property.
         :paramtype error: ~azure.mgmt.managementpartner.models.ExtendedErrorInfo
@@ -70,7 +68,7 @@ class ExtendedErrorInfo(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: this is the error response code.
         :paramtype code: str
@@ -109,8 +107,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: the is management partner provider.
         :paramtype provider: str
@@ -143,8 +141,12 @@ class OperationList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.OperationResponse"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[list["_models.OperationResponse"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: this is the operation response list.
         :paramtype value: list[~azure.mgmt.managementpartner.models.OperationResponse]
@@ -179,8 +181,8 @@ class OperationResponse(_serialization.Model):
         name: Optional[str] = None,
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: this is the operation response name.
         :paramtype name: str
@@ -195,7 +197,7 @@ class OperationResponse(_serialization.Model):
         self.origin = origin
 
 
-class PartnerResponse(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PartnerResponse(_serialization.Model):
     """this is the management partner operations response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -259,8 +261,8 @@ class PartnerResponse(_serialization.Model):  # pylint: disable=too-many-instanc
         updated_time: Optional[datetime.datetime] = None,
         created_time: Optional[datetime.datetime] = None,
         state: Optional[Union[str, "_models.ManagementPartnerState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword etag: Type of the partner.
         :paramtype etag: int
@@ -283,9 +285,9 @@ class PartnerResponse(_serialization.Model):  # pylint: disable=too-many-instanc
         """
         super().__init__(**kwargs)
         self.etag = etag
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.partner_id = partner_id
         self.partner_name = partner_name
         self.tenant_id = tenant_id
