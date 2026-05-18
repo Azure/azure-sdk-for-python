@@ -1,6 +1,10 @@
 {
   "ignoreWords": [
-    "milli"
+    "delv",
+    "invst",
+    "milli",
+    "sdktestdelv",
+    "wkspc"
   ],
   "ignorePaths": [
     "sdk/discovery/azure-ai-discovery/**/generated_samples/**",
