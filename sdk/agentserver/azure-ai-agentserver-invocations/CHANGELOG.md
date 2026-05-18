@@ -10,10 +10,6 @@
 - WebSocket telemetry — single connection-scoped `websocket_session` OpenTelemetry span per WS connection, plus a structured close-event log line carrying `azure.ai.agentserver.invocations_ws.session_id`, `close_code`, and `duration_ms`. Session ID honours the `FOUNDRY_AGENT_SESSION_ID` env var for HTTP/WS correlation.
 - New samples: `samples/ws_invoke_agent/` (echo) and `samples/ws_bidirectional_streaming_agent/` (concurrent token streaming with cancel/bye control messages).
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Platform header name constants (e.g. `x-platform-error-source`, `x-platform-error-detail`) are now imported from `azure-ai-agentserver-core` (`_platform_headers` module) instead of being defined locally. Error source classification helpers remain internal to this package.
