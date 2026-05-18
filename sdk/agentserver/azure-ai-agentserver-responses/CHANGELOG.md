@@ -2,9 +2,15 @@
 
 ## 1.0.0b7 (Unreleased)
 
+### Breaking Changes
+
+- Removed the automatic `invoke_agent` server span that was created on each response creation request. Trace context propagation is now handled by the core `TraceContextMiddleware`, and user-created spans inside handlers are correctly parented without framework-generated spans.
+- Removed `_safe_set_attrs`, `_wrap_streaming_response`, and `_classify_error_code` internal helpers (no longer needed without framework-level span management).
+- Removed OTel error tagging attributes (`azure.ai.agentserver.responses.error.code`, `azure.ai.agentserver.responses.error.message`) that were set on the framework span.
+
 ### Other Changes
 
-- Removed internal span management helpers (`detach_context`, `end_span`, `set_current_span`, `trace_stream`) and unused error attributes that are no longer needed after the core tracing simplification. Trace context propagation is now handled automatically by the core `TraceContextMiddleware`.
+- Simplified request handling: baggage entries (`response_id`, `conversation_id`, `streaming`, `x-request-id`) are still set on each request, but span creation and lifecycle management are left to downstream frameworks.
 
 ## 1.0.0b6 (2026-05-15)
 

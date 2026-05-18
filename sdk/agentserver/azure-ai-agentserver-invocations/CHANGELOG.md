@@ -2,9 +2,14 @@
 
 ## 1.0.0b5 (Unreleased)
 
+### Breaking Changes
+
+- Removed the automatic `invoke_agent` server span that was created on each `/invocations` request. Trace context propagation is now handled by the core `TraceContextMiddleware`, and user-created spans inside handlers are correctly parented without framework-generated spans.
+- Removed `_safe_set_attrs` and `_wrap_streaming_response` internal helpers (no longer needed without framework-level span management).
+
 ### Other Changes
 
-- Removed internal span management helpers (`_safe_set_attrs`, streaming span wrappers) that are no longer needed after the core tracing simplification. Trace context propagation is now handled automatically by the core `TraceContextMiddleware`.
+- Simplified request handling: baggage entries (`invocation_id`, `session_id`) are still set on each request, but span creation and lifecycle management are left to downstream frameworks.
 
 ## 1.0.0b4 (2026-05-15)
 
