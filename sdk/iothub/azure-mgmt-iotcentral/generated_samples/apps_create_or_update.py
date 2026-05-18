@@ -16,7 +16,7 @@ from azure.mgmt.iotcentral import IotCentralClient
     pip install azure-identity
     pip install azure-mgmt-iotcentral
 # USAGE
-    python apps_delete.py
+    python apps_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,12 +31,27 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    client.apps.begin_delete(
+    response = client.apps.begin_create_or_update(
         resource_group_name="resRg",
         resource_name="myIoTCentralApp",
+        app={
+            "location": "str",
+            "sku": {"name": "str"},
+            "applicationId": "str",
+            "displayName": "str",
+            "id": "str",
+            "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
+            "name": "str",
+            "state": "str",
+            "subdomain": "str",
+            "tags": {"str": "str"},
+            "template": "str",
+            "type": "str",
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/iotcentral/resource-manager/Microsoft.IoTCentral/IoTCentral/stable/2021-06-01/examples/Apps_Delete.json
+# x-ms-original-file: specification/iotcentral/resource-manager/Microsoft.IoTCentral/IoTCentral/stable/2021-06-01/examples/Apps_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
