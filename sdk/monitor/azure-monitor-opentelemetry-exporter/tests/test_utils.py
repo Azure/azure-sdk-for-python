@@ -806,6 +806,10 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.ext_version",
         "1.0.0b21",
     )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        clear=True,
+    )
     def test_get_sdk_version_default(self, mock_python_version, mock_prefix):
         result = _utils._get_sdk_version()
         self.assertEqual(result, "uum_py3.11.0:otel1.20.0:ext1.0.0b21")
