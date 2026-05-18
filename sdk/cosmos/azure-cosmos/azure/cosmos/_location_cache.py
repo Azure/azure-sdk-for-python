@@ -38,7 +38,7 @@ from .http_constants import ResourceType
 logger = logging.getLogger("azure.cosmos.LocationCache")
 
 
-def _normalize_region_name(region_name: str | None) -> str:
+def _normalize_region_name(region_name: Optional[str]) -> str:
     if region_name is None:
         return ""
     normalized = "".join(str(region_name).strip().lower().split())
