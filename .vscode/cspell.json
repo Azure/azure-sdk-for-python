@@ -2209,6 +2209,11 @@
       "words": ["envml", "paginators"]
     },
     {
+      "filename": "sdk/planetarycomputer/azure-planetarycomputer/**",
+      "words": ["topo", "haline", "Aproperty", "pygen"]
+    },
+    {
+      "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
       "filename": "sdk/agentserver/azure-ai-agentserver-ghcopilot/**",
       "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
     }

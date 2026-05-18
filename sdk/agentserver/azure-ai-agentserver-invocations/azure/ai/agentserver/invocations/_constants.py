@@ -21,3 +21,25 @@ class InvocationConstants:
     ATTR_SPAN_SESSION_ID = "azure.ai.agentserver.invocations.session_id"
     ATTR_SPAN_ERROR_CODE = "azure.ai.agentserver.invocations.error.code"
     ATTR_SPAN_ERROR_MESSAGE = "azure.ai.agentserver.invocations.error.message"
+
+
+class InvocationsWSConstants:
+    """invocations_ws (WebSocket) protocol constants.
+
+    Route, span attribute keys, and ping/pong defaults for the
+    WebSocket endpoint hosted alongside the HTTP invocations protocol.
+    """
+
+    # Route
+    ROUTE_PATH = "/invocations_ws"
+
+    # Close codes (RFC 6455)
+    CLOSE_NORMAL = 1000  # handler returned cleanly
+    CLOSE_INTERNAL_ERROR = 1011  # handler raised an unhandled exception
+
+    # Span attribute keys
+    ATTR_SPAN_SESSION_ID = "azure.ai.agentserver.invocations_ws.session_id"
+    ATTR_SPAN_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.close_code"
+    ATTR_SPAN_DURATION_MS = "azure.ai.agentserver.invocations_ws.duration_ms"
+    ATTR_SPAN_ERROR_CODE = "azure.ai.agentserver.invocations_ws.error.code"
+    ATTR_SPAN_ERROR_MESSAGE = "azure.ai.agentserver.invocations_ws.error.message"

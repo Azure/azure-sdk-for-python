@@ -1,19 +1,21 @@
 {
   "ignoreWords": [
-    "viseme",
-    "VISEME",
-    "ulaw",
-    "ULAW",
+    "GENAI",
+    "genai",
+    "HDOMNI",
+    "libasound",
     "logprobs",
     "pyaudio",
     "PyAudio",
-    "libasound",
-    "webrtc",
+    "SSML",
+    "ULAW",
+    "ulaw",
+    "VISEME",
+    "viseme",
     "WEBRTC",
-    "xhigh",
+    "webrtc",
     "XHIGH",
-    "genai",
-    "GENAI"
+    "xhigh"
   ],
     "ignorePaths": [
         "*.csv",

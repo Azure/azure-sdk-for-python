@@ -17,6 +17,7 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
+    config.addinivalue_line("markers", "slow: tests that send large payloads or otherwise take noticeable time in CI")
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -221,6 +222,47 @@ def _make_failing_agent(**kwargs: Any) -> InvocationAgentServerHost:
         raise ValueError("something went wrong")
 
     return app
+
+
+# ---------------------------------------------------------------------------
+# WebSocket factory functions and helpers
+# ---------------------------------------------------------------------------
+
+
+def _make_echo_ws_app(**kwargs: Any) -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost whose ws handler echoes text frames."""
+    from starlette.websockets import WebSocket
+
+    app = InvocationAgentServerHost(**kwargs)
+
+    @app.ws_handler
+    async def echo(websocket: WebSocket) -> None:
+        async for message in websocket.iter_text():
+            await websocket.send_text(message)
+
+    return app
+
+
+def _make_failing_ws_app(**kwargs: Any) -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost whose ws handler raises after one frame."""
+    from starlette.websockets import WebSocket
+
+    app = InvocationAgentServerHost(**kwargs)
+
+    @app.ws_handler
+    async def boom(websocket: WebSocket) -> None:
+        await websocket.receive_text()
+        raise ValueError("boom")
+
+    return app
+
+
+def _records_with_ws_extras(records):
+    """Filter log records that carry the close-event ``ws.*`` extras."""
+    return [
+        r for r in records
+        if hasattr(r, "azure.ai.agentserver.invocations_ws.session_id") and hasattr(r, "azure.ai.agentserver.invocations_ws.close_code")
+    ]
 
 
 # ---------------------------------------------------------------------------
