@@ -73,6 +73,37 @@ class TestCommandJob:
             with pytest.raises(ValidationError):
                 CommandJob(**schema.load(cfg))
 
+    def test_pytorch_torch_distributed_interchangeable(self):
+        """Test that type: pytorch and type: torch.distributed work interchangeably"""
+        # Test with torch.distributed type
+        path_torch_distributed = "./tests/test_configs/command_job/dist_job_pytorch_torch_distributed.yml"
+        # Test with pytorch type (existing file)
+        path_pytorch = "./tests/test_configs/command_job/dist_job_1.yml"
+        
+        context = {BASE_PATH_CONTEXT_KEY: Path(path_torch_distributed).parent}
+        schema = CommandJobSchema(context=context)
+        
+        # Load and verify torch.distributed type
+        with open(path_torch_distributed, "r") as f:
+            cfg_torch_distributed = yaml.safe_load(f)
+        job_torch_distributed = CommandJob(**schema.load(cfg_torch_distributed))
+        
+        # Load and verify pytorch type
+        with open(path_pytorch, "r") as f:
+            cfg_pytorch = yaml.safe_load(f)
+        job_pytorch = CommandJob(**schema.load(cfg_pytorch))
+        
+        # Both should create PyTorchDistribution objects
+        from azure.ai.ml.entities._job.distribution import PyTorchDistribution
+        assert isinstance(job_torch_distributed.distribution, PyTorchDistribution)
+        assert isinstance(job_pytorch.distribution, PyTorchDistribution)
+        
+        # Verify roundtrip for torch.distributed
+        rest_obj = job_torch_distributed._to_rest_object()
+        reconstructed = CommandJob._load_from_rest(rest_obj)
+        assert isinstance(reconstructed.distribution, PyTorchDistribution)
+        assert reconstructed.distribution.process_count_per_instance == 4
+
     def test_deserialize_inputs(self):
         test_path = "./tests/test_configs/command_job/command_job_inputs_test.yml"
         with open("./tests/test_configs/command_job/command_job_inputs_rest.yml", "r") as f:

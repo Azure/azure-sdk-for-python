@@ -59,7 +59,10 @@ class TensorFlowDistributionSchema(metaclass=PatchedSchemaMeta):
 
 
 class PyTorchDistributionSchema(metaclass=PatchedSchemaMeta):
-    type = StringTransformedEnum(required=True, allowed_values=DistributionType.PYTORCH)
+    type = StringTransformedEnum(
+        required=True,
+        allowed_values=[DistributionType.PYTORCH, DistributionType.TORCH_DISTRIBUTED]
+    )
     process_count_per_instance = fields.Int()
 
     @post_load
