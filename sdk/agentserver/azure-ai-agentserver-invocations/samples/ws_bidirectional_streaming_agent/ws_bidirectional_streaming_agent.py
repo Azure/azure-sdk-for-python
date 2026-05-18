@@ -20,12 +20,12 @@ The handler runs two groups of coroutines in parallel:
 
    Connection keep-alive is **not** an application concern: the SDK can
    ask Hypercorn to send WebSocket protocol-level Ping frames
-   (opcode 0x9) every ``ws_ping_interval`` seconds (disabled by default;
-   enable by setting ``WS_KEEPALIVE_INTERVAL`` or by passing
-   ``InvocationAgentServerHost(ws_ping_interval=<seconds>)``).  When
-   enabled, that is enough to survive upstream proxy / load-balancer
-   idle timeouts without your handler having to push any
-   application-level heartbeat messages of its own.
+   (opcode 0x9) on its own schedule (disabled by default; enable by
+   setting the ``WS_KEEPALIVE_INTERVAL`` environment variable, surfaced
+   on ``AgentConfig.ws_ping_interval``).  When enabled, that is enough
+   to survive upstream proxy / load-balancer idle timeouts without your
+   handler having to push any application-level heartbeat messages of
+   its own.
 
 Wire protocol (JSON over text frames)
 -------------------------------------
@@ -255,9 +255,9 @@ async def handle_ws(websocket: WebSocket) -> None:
 
     The SDK has already accepted the connection by the time this function
     runs, and it is sending WS protocol-level Ping frames on its own
-    schedule (see ``ws_ping_interval``).  When this coroutine returns the
-    SDK closes the socket with code ``1000``; if it raises, the SDK maps
-    the exception to ``1011``.
+    schedule (see ``AgentConfig.ws_ping_interval``).  When this coroutine
+    returns the SDK closes the socket with code ``1000``; if it raises,
+    the SDK maps the exception to ``1011``.
     """
     await websocket.send_json({"type": "ready"})
 
