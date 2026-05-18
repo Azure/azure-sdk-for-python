@@ -1,5 +1,25 @@
 # Release History
 
+## 2.0.0b1 (2026-05-08)
+
+### Features Added
+
+  - Client `TrafficManagerManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `TrafficManagerManagementClient` added method `send_request`
+  - Added model `CloudError`
+  - Added enum `HeatMapType`
+  - Added enum `RecordType`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `HeatMapModel` moved instance variable `start_time`, `end_time`, `endpoints` and `traffic_flows` under property `properties` whose type is `HeatMapProperties`
+  - Model `TrafficManagerGeographicHierarchy` moved instance variable `geographic_hierarchy` under property `properties` whose type is `GeographicHierarchyProperties`
+  - Model `UserMetricsModel` moved instance variable `key` under property `properties` whose type is `UserMetricsProperties`
+  - Method `HeatMapOperations.get` changed its parameter `top_left`/`bot_right` from `positional_or_keyword` to `keyword_only`
+  - Method `HeatMapOperations.get` inserted a `positional_or_keyword` parameter `heat_map_type`
+
 ## 1.1.0 (2023-06-16)
 
 ### Features Added

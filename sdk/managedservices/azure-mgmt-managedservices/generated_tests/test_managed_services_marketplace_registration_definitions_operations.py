@@ -20,10 +20,10 @@ class TestManagedServicesMarketplaceRegistrationDefinitionsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_marketplace_registration_definitions_list(self, resource_group):
         response = self.client.marketplace_registration_definitions.list(
             scope="str",
-            api_version="2022-10-01",
+            api_version="2020-02-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -31,11 +31,11 @@ class TestManagedServicesMarketplaceRegistrationDefinitionsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_marketplace_registration_definitions_get(self, resource_group):
         response = self.client.marketplace_registration_definitions.get(
             scope="str",
             marketplace_identifier="str",
-            api_version="2022-10-01",
+            api_version="2020-02-01-preview",
         )
 
         # please add some check logic here by yourself
