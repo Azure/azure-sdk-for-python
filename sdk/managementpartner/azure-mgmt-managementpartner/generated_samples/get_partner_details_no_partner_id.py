@@ -16,7 +16,7 @@ from azure.mgmt.managementpartner import ACEProvisioningManagementPartnerAPI
     pip install azure-identity
     pip install azure-mgmt-managementpartner
 # USAGE
-    python get_partner_details.py
+    python get_partner_details_no_partner_id.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,10 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.partner.get(
-        partner_id="123456",
-    )
+    response = client.partners.get()
     print(response)
 
 
-# x-ms-original-file: specification/managementpartner/resource-manager/Microsoft.ManagementPartner/ManagementPartner/preview/2018-02-01/examples/GetPartnerDetails.json
+# x-ms-original-file: specification/managementpartner/resource-manager/Microsoft.ManagementPartner/ManagementPartner/preview/2018-02-01/examples/GetPartnerDetailsNoPartnerId.json
 if __name__ == "__main__":
     main()

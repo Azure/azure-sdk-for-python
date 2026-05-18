@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.managementpartner import ACEProvisioningManagementPartnerAPI
 
 """
@@ -28,12 +30,11 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.partner.delete(
+    client.partner.delete(
         partner_id="123456",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/managementpartner/resource-manager/Microsoft.ManagementPartner/preview/2018-02-01/examples/DeletePartnerDetails.json
+# x-ms-original-file: specification/managementpartner/resource-manager/Microsoft.ManagementPartner/ManagementPartner/preview/2018-02-01/examples/DeletePartnerDetails.json
 if __name__ == "__main__":
     main()
