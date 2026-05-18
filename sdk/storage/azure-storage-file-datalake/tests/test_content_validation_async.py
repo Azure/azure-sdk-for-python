@@ -53,7 +53,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         return self.get_resource_name("file")
 
     @DataLakePreparer()
-    @pytest.mark.parametrize("a", [True])  # a: validate_content
+    @pytest.mark.parametrize("a", [True, "auto", "md5", "crc64"])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy_async
     async def test_upload_data(self, a, **kwargs):
