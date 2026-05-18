@@ -378,6 +378,7 @@
         "azure.ai.projects.models.QueueSettings": "Azure.AI.Projects.QueueSettings",
         "azure.ai.projects.models.RaiConfig": "Azure.AI.Projects.RaiConfig",
         "azure.ai.projects.models.RankingOptions": "OpenAI.RankingOptions",
+        "azure.ai.projects.models.RayDistribution": "Azure.AI.Projects.RayDistribution",
         "azure.ai.projects.models.Reasoning": "OpenAI.Reasoning",
         "azure.ai.projects.models.ReasoningTextContent": "OpenAI.ReasoningTextContent",
         "azure.ai.projects.models.RecurrenceTrigger": "Azure.AI.Projects.RecurrenceTrigger",

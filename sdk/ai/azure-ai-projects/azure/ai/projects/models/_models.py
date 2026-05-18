@@ -7478,7 +7478,7 @@ class DistributionConfiguration(_Model):
     """Distribution configuration of the job.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+    MpiDistribution, PyTorchDistribution, RayDistribution, TensorFlowDistribution
 
     :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
      is None.
@@ -18022,6 +18022,73 @@ class RankingOptions(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class RayDistribution(DistributionConfiguration, discriminator="Ray"):
+    """Ray distribution configuration.
+
+    :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
+     is "Ray".
+    :vartype distribution_type: str
+    :ivar port: The port of the head Ray process.
+    :vartype port: int
+    :ivar address: The address of the Ray head node.
+    :vartype address: str
+    :ivar include_dashboard: Whether to start the Ray dashboard GUI.
+    :vartype include_dashboard: bool
+    :ivar dashboard_port: The port to bind the dashboard server to.
+    :vartype dashboard_port: int
+    :ivar head_node_additional_args: Additional arguments passed to ray start on the head node.
+    :vartype head_node_additional_args: str
+    :ivar worker_node_additional_args: Additional arguments passed to ray start on worker nodes.
+    :vartype worker_node_additional_args: str
+    """
+
+    distribution_type: Literal["Ray"] = rest_discriminator(name="distributionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the type of distribution framework. Required. Default value is \"Ray\"."""
+    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The port of the head Ray process."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The address of the Ray head node."""
+    include_dashboard: Optional[bool] = rest_field(
+        name="includeDashboard", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to start the Ray dashboard GUI."""
+    dashboard_port: Optional[int] = rest_field(
+        name="dashboardPort", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The port to bind the dashboard server to."""
+    head_node_additional_args: Optional[str] = rest_field(
+        name="headNodeAdditionalArgs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional arguments passed to ray start on the head node."""
+    worker_node_additional_args: Optional[str] = rest_field(
+        name="workerNodeAdditionalArgs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional arguments passed to ray start on worker nodes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        port: Optional[int] = None,
+        address: Optional[str] = None,
+        include_dashboard: Optional[bool] = None,
+        dashboard_port: Optional[int] = None,
+        head_node_additional_args: Optional[str] = None,
+        worker_node_additional_args: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.distribution_type = "Ray"  # type: ignore
 
 
 class Reasoning(_Model):
