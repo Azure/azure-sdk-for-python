@@ -1,6 +1,10 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+- Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Developer handler exceptions and missing handler registrations are classified as `upstream`. Exceptions tagged with the platform error tag are classified as `platform` and additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics.
 
 ### Breaking Changes
 
@@ -9,17 +13,8 @@
 
 ### Other Changes
 
-- Simplified request handling: baggage entries (`invocation_id`, `session_id`) are still set on each request, but span creation and lifecycle management are left to downstream frameworks.
-
-## 1.0.0b4 (2026-05-15)
-
-### Features Added
-
-- Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Developer handler exceptions and missing handler registrations are classified as `upstream`. Exceptions tagged with the platform error tag are classified as `platform` and additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics.
-
-### Other Changes
-
 - Platform header name constants (e.g. `x-platform-error-source`, `x-platform-error-detail`) are now imported from `azure-ai-agentserver-core` (`_platform_headers` module) instead of being defined locally. Error source classification helpers remain internal to this package.
+- Simplified request handling: baggage entries (`invocation_id`, `session_id`) are still set on each request, but span creation and lifecycle management are left to downstream frameworks.
 
 ## 1.0.0b3 (2026-04-22)
 
