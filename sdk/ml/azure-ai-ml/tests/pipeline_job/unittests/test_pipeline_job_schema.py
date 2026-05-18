@@ -33,7 +33,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
     from_rest_inputs_to_dataset_literal,
-    to_rest_dataset_literal,
+    to_rest_dataset_literal_inputs,
     validate_pipeline_input_key_characters,
 )
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
@@ -56,7 +56,7 @@ from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CA
 @pytest.mark.pipeline_test
 class TestPipelineJobSchema:
     def test_hdfs_input_mode_round_trip(self):
-        rest_inputs = to_rest_dataset_literal(
+        rest_inputs = to_rest_dataset_literal_inputs(
             {
                 "hdfs_input": Input(
                     type=AssetTypes.URI_FOLDER,
