@@ -1,5 +1,12 @@
 # Release History
 
+## 2.0.0b5 (Unreleased)
+
+### Other Changes
+
+- Replaced `opentelemetry-instrumentation-starlette` with a lightweight `TraceContextMiddleware` that only propagates W3C trace context (traceparent, tracestate, baggage) from incoming requests without creating additional framework spans. This reduces telemetry noise and avoids duplicate spans in Application Insights.
+- Removed `opentelemetry-instrumentation-starlette` dependency.
+
 ## 2.0.0b4 (2026-05-15)
 
 ### Features Added

@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b5 (Unreleased)
+
+### Other Changes
+
+- Removed internal span management helpers (`_safe_set_attrs`, streaming span wrappers) that are no longer needed after the core tracing simplification. Trace context propagation is now handled automatically by the core `TraceContextMiddleware`.
+
 ## 1.0.0b4 (2026-05-15)
 
 ### Features Added

@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b7 (Unreleased)
+
+### Other Changes
+
+- Removed internal span management helpers (`detach_context`, `end_span`, `set_current_span`, `trace_stream`) and unused error attributes that are no longer needed after the core tracing simplification. Trace context propagation is now handled automatically by the core `TraceContextMiddleware`.
+
 ## 1.0.0b6 (2026-05-15)
 
 ### Features Added
