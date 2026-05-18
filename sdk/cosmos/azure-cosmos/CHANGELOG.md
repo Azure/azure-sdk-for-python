@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.14.7 (2026-05-14)
+### 4.14.7 (2026-05-18)
 
 #### Bugs Fixed
 * Fixed `SELECT VALUE` aggregation classification across partitions: booleans are no longer treated as numeric aggregates, non-aggregate numeric projections are no longer merged, and `MIN`/`MAX` detection is now correct. See [PR 46692](https://github.com/Azure/azure-sdk-for-python/pull/46692)
