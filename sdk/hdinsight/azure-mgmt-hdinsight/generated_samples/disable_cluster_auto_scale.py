@@ -16,7 +16,7 @@ from azure.mgmt.hdinsight import HDInsightManagementClient
     pip install azure-identity
     pip install azure-mgmt-hdinsight
 # USAGE
-    python patch_linux_hadoop_cluster_with_system_msi.py
+    python disable_cluster_auto_scale.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,14 +31,27 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.clusters.update(
+    client.clusters.begin_update_auto_scale_configuration(
         resource_group_name="rg1",
         cluster_name="cluster1",
-        parameters={"identity": {"type": "SystemAssigned"}, "tags": {"key1": "val1", "key2": "val2"}},
-    )
-    print(response)
+        role_name="workernode",
+        parameters={
+            "autoscale": {
+                "capacity": {"maxInstanceCount": 0, "minInstanceCount": 0},
+                "recurrence": {
+                    "schedule": [
+                        {
+                            "days": ["str"],
+                            "timeAndCapacity": {"maxInstanceCount": 0, "minInstanceCount": 0, "time": "str"},
+                        }
+                    ],
+                    "timeZone": "str",
+                },
+            }
+        },
+    ).result()
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2025-01-15-preview/examples/PatchLinuxHadoopClusterWithSystemMSI.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/DisableClusterAutoScale.json
 if __name__ == "__main__":
     main()
