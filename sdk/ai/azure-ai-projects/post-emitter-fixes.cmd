@@ -25,8 +25,9 @@ powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 
 REM Rename DEFAULT2024_11_15 to DEFAULT_2024_11_15
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'DEFAULT2024_11_15', 'DEFAULT_2024_11_15' | Set-Content azure\ai\projects\models\_enums.py"
 
-REM Rename `A2_A` to `A2A` in enum class AgentEndpointProtocol in _enums.py
+REM Rename `A2_A` to `A2A` in enum class AgentEndpointProtocol in _enums.py & _models.py
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'A2_A', 'A2A' | Set-Content azure\ai\projects\models\_enums.py"
+powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'A2_A', 'A2A' | Set-Content azure\ai\projects\models\_models.py"
 
 REM Edit both _operations.py files to fix missing Foundry-Features HTTP request header in continued list paging calls. Add:
 REM   headers=_headers

@@ -4,19 +4,19 @@
 
 ### Features Added
 
-* Toolboxes operations promoted from beta to GA: access via `project_client.toolboxes` (was `project_client.beta.toolboxes`).
-* New `.beta.models` sub-client with model version management operations: `list_versions`, `list`, `get`, `delete`, `create_version`, `upload_file`, `get_pending_upload`.
-* New `.beta.routines` sub-client with routine management operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `dispatch_async`.
-* New agent optimization operations on `.beta.agents`: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `list_optimization_candidates`.
-* New evaluator suite operations on `.beta.evaluators`: `create_evaluation_suite`, `list_evaluation_suite_versions`, `get_evaluation_suite`, `delete_evaluation_suite`, `create_generation_suite_job`, `get_generation_suite_job`, `list_generation_suite_jobs`, `cancel_generation_suite_job`.
-* New individual memory operations on `.beta.memory_stores`: `get_memory`, `delete_memory`.
 * New Agent tool `FabricIQPreviewTool`.
 * New Agent tool `ToolboxSearchPreviewTool`.
-* New optional string properties `description` and `name` added to Agent tools which did not have them before.
-* New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
-* New evaluator generation job operations on `.beta.evaluators`: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
+* Toolboxes operations promoted from beta to GA: access via `project_client.toolboxes` (was `project_client.beta.toolboxes`).
 * New methods on `.beta.agents` sub-client for code-based hosted agents: `update_agent_from_code()`, `create_agent_version_from_code()`, `download_agent_version_code()`, `download_agent_code()`.
+* New agent optimization operations on `.beta.agents`: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `list_optimization_candidates`.
+* New evaluator suite operations on `.beta.evaluators`: `create_evaluation_suite`, `list_evaluation_suite_versions`, `get_evaluation_suite`, `delete_evaluation_suite`, `create_generation_suite_job`, `get_generation_suite_job`, `list_generation_suite_jobs`, `cancel_generation_suite_job`.
+* New evaluator generation job operations on `.beta.evaluators`: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
+* New `.beta.models` sub-client with model weights management operations: `list_versions`, `list`, `get`, `delete`, `create_version`, `upload_file`, `get_pending_upload`.
+* New `.beta.routines` sub-client with routine management operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `dispatch_async`.
+* New individual memory operations on `.beta.memory_stores`: `get_memory`, `delete_memory`.
+* New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
+* New optional string properties `description` and `name` added to Agent tools which did not have them before.
 
 ### Breaking Changes
 
@@ -34,9 +34,8 @@ Breaking changes in beta classes:
 * Renamed class `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
 * Renamed class `SessionFileWriteResponse` to `SessionFileWriteResult`.
 * Renamed class `SkillObject` to `SkillDetails`.
-* Removed class `FabricIQPreviewToolParameters`.
-* Removed class `WorkIQPreviewToolParameters`.
-* Removed classes `RubricCriterion`, `Target`, `TargetConfig`.
+* Renamed class `Target` to `EvaluationTarget`.
+* Renamed class `TargetConfig` to `RedTeamTargetConfig`.
 
 ### Bugs Fixed
 
@@ -44,12 +43,12 @@ Breaking changes in beta classes:
 
 ### Sample updates
 
+* Updated Toolbox samples to use GA `project_client.toolboxes` instead of `project_client.beta.toolboxes`.
 * Added Hosted Agent creation samples `sample_create_hosted_agent.py` and `sample_create_hosted_agent_async.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`.
 * Added Hosted Agent code-upload samples `sample_create_hosted_agent_from_code.py` and `sample_create_hosted_agent_from_code_async.py`, demonstrating uploading a code package (zip) as a new hosted agent version.
 * The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
 * Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
 * Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
-* Updated Toolbox samples to use GA `project_client.toolboxes` instead of `project_client.beta.toolboxes`.
 
 ## 2.1.0 (2026-04-20)
 
