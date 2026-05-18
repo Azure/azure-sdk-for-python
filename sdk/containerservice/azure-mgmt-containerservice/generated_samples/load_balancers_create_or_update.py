@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python agent_pools_create_crg.py
+    python load_balancers_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,23 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.agent_pools.begin_create_or_update(
+    response = client.load_balancers.create_or_update(
         resource_group_name="rg1",
         resource_name="clustername1",
-        agent_pool_name="agentpool1",
-        parameters={
-            "properties": {
-                "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/CapacityReservationGroups/crg1",
-                "count": 3,
-                "orchestratorVersion": "",
-                "osType": "Linux",
-                "vmSize": "Standard_DS2_v2",
-            }
-        },
-    ).result()
+        load_balancer_name="kubernetes",
+        parameters={"properties": {"allowServicePlacement": True, "primaryAgentPoolName": "agentpool1"}},
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/AgentPoolsCreate_CRG.json
+# x-ms-original-file: 2026-03-02-preview/LoadBalancers_Create_Or_Update.json
 if __name__ == "__main__":
     main()
