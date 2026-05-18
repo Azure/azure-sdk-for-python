@@ -9,9 +9,9 @@ the user handler with:
 
 * ``await websocket.accept()`` before the handler runs;
 * WebSocket protocol-level Ping/Pong keep-alive (disabled by default;
-  enable via the ``WS_KEEPALIVE_INTERVAL`` env var or the
-  ``ws_ping_interval=`` constructor argument) so idle connections can
-  survive Azure APIM / Azure Load Balancer's ~4-minute idle timeout;
+  enable via the ``WS_KEEPALIVE_INTERVAL`` environment variable surfaced
+  on ``AgentConfig.ws_ping_interval``) so idle connections can survive
+  Azure APIM / Azure Load Balancer's ~4-minute idle timeout;
 * a clean close on handler return (code 1000) or a 1011 close on uncaught
   handler exceptions;
 * a structured close-event log line and OTel span attributes carrying
