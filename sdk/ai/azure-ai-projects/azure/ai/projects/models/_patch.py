@@ -44,9 +44,10 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
     "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
+    "models": _FoundryFeaturesOptInKeys.MODELS_V1_PREVIEW.value,
     "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
+    "routines": _FoundryFeaturesOptInKeys.ROUTINES_V1_PREVIEW.value,
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
-    "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
     "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
     "agents": ",".join(

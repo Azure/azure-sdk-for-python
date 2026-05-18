@@ -4,6 +4,12 @@
 
 ### Features Added
 
+* Toolboxes operations promoted from beta to GA: access via `project_client.toolboxes` (was `project_client.beta.toolboxes`).
+* New `.beta.models` sub-client with model version management operations: `list_versions`, `list`, `get`, `delete`, `create_version`, `upload_file`, `get_pending_upload`.
+* New `.beta.routines` sub-client with routine management operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `dispatch_async`.
+* New agent optimization operations on `.beta.agents`: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `list_optimization_candidates`.
+* New evaluator suite operations on `.beta.evaluators`: `create_evaluation_suite`, `list_evaluation_suite_versions`, `get_evaluation_suite`, `delete_evaluation_suite`, `create_generation_suite_job`, `get_generation_suite_job`, `list_generation_suite_jobs`, `cancel_generation_suite_job`.
+* New individual memory operations on `.beta.memory_stores`: `get_memory`, `delete_memory`.
 * New Agent tool `FabricIQPreviewTool`.
 * New Agent tool `ToolboxSearchPreviewTool`.
 * New optional string properties `description` and `name` added to Agent tools which did not have them before.
@@ -15,6 +21,7 @@
 ### Breaking Changes
 
 Breaking changes in beta methods:
+* `.beta.toolboxes` sub-client removed (promoted to GA as `project_client.toolboxes`).
 * Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
 * Argument `body` in method `.beta.skills.create_from_package()` renamed to `content`.
@@ -29,6 +36,7 @@ Breaking changes in beta classes:
 * Renamed class `SkillObject` to `SkillDetails`.
 * Removed class `FabricIQPreviewToolParameters`.
 * Removed class `WorkIQPreviewToolParameters`.
+* Removed classes `RubricCriterion`, `Target`, `TargetConfig`.
 
 ### Bugs Fixed
 
@@ -41,6 +49,7 @@ Breaking changes in beta classes:
 * The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
 * Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
 * Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
+* Updated Toolbox samples to use GA `project_client.toolboxes` instead of `project_client.beta.toolboxes`.
 
 ## 2.1.0 (2026-04-20)
 
