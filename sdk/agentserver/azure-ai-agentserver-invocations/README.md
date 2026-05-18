@@ -230,8 +230,6 @@ app.run()
 
 A WebSocket connection is wrapped by the SDK in a single connection-scoped `websocket_session` OpenTelemetry span. The span carries the GenAI semantic-convention attributes plus `azure.ai.agentserver.invocations_ws.session_id`, `close_code`, and `duration_ms`. Any child spans your handler opens — e.g. via `opentelemetry.trace.get_tracer(...).start_as_current_span(...)` — are automatically parented to the connection span.
 
-There is no per-message `invocation_id` for WebSocket: a WS connection is a single long-lived session, not a sequence of independently-identifiable HTTP invocations. The HTTP-only endpoints `GET /invocations/{id}` and `POST /invocations/{id}/cancel` do not apply to WS sessions — clients observe status via reply frames and cancel by closing the socket (the handler observes `asyncio.CancelledError`).
-
 ### Handler signature
 
 The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`. The full WebSocket API — `iter_text`, `iter_bytes`, `iter_json`, `send_text`, `send_bytes`, `send_json`, `close`, `headers`, `query_params`, `client`, `state` — is available, so application protocols on top of `invocations_ws` are entirely under your control.
