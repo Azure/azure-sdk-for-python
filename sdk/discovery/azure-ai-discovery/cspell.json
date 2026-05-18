@@ -1,15 +1,9 @@
 {
   "ignoreWords": [
-    "secknbke",
-    "huint",
-    "itsconhuint",
-    "itsasthuint",
-    "fixedrg",
-    "swecentral",
-    "taskakd",
-    "itcorpythtlhuint",
-    "itsupehuint",
-    "itnphuint",
-    "itworkhuint"
+    "milli"
+  ],
+  "ignorePaths": [
+    "sdk/discovery/azure-ai-discovery/**/generated_samples/**",
+    "sdk/discovery/azure-ai-discovery/**/generated_tests/**"
   ]
 }
