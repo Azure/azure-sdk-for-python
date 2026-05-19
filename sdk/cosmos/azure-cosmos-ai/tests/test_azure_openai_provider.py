@@ -52,11 +52,28 @@ DEPLOYMENT = "text-embedding-3-small"
 DIMENSIONS = 1536
 
 
+# Apply the shared cosmos CI test marker at module scope. The cosmos-sdk-client
+# pipeline template filters via ``-m cosmosEmulator``; without this declaration
+# every test in this module would be silently deselected in CI.
+pytestmark = pytest.mark.cosmosEmulator
+
+
 class _FakeTokenCredential:
     def __init__(self):
         self.calls = []
 
     def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
+        self.calls.append(scopes)
+        return AccessToken("fake-token", 9999999999)
+
+
+class _FakeAsyncTokenCredential:
+    """Stand-in for an azure.identity.aio credential without the import cost."""
+
+    def __init__(self):
+        self.calls = []
+
+    async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         self.calls.append(scopes)
         return AccessToken("fake-token", 9999999999)
 
@@ -95,6 +112,35 @@ class TestAzureOpenAIProvider:
     def test_init_rejects_unknown_credential(self):
         with pytest.raises(TypeError):
             AzureOpenAIEmbeddingProvider(credential=12345)  # type: ignore[arg-type]
+
+    def test_init_rejects_async_credential_with_actionable_message(self):
+        with pytest.raises(TypeError, match=r"(?i)async"):
+            AzureOpenAIEmbeddingProvider(credential=_FakeAsyncTokenCredential())  # type: ignore[arg-type]
+
+    def test_init_accepts_api_version_override(self, mock_aoai):
+        cls, _ = mock_aoai
+        provider = AzureOpenAIEmbeddingProvider(credential="key", api_version="2024-12-01-preview")
+        provider.generate_embeddings(
+            ["x"], endpoint=ENDPOINT, deployment_name=DEPLOYMENT, dimensions=DIMENSIONS
+        )
+        _, ctor_kwargs = cls.call_args
+        assert ctor_kwargs["api_version"] == "2024-12-01-preview"
+
+    def test_init_accepts_openai_client_kwargs(self, mock_aoai):
+        cls, _ = mock_aoai
+        provider = AzureOpenAIEmbeddingProvider(
+            credential="key",
+            openai_client_kwargs={"timeout": 30.0, "default_headers": {"x-test": "1"}},
+        )
+        provider.generate_embeddings(
+            ["x"], endpoint=ENDPOINT, deployment_name=DEPLOYMENT, dimensions=DIMENSIONS
+        )
+        _, ctor_kwargs = cls.call_args
+        assert ctor_kwargs["timeout"] == 30.0
+        assert ctor_kwargs["default_headers"] == {"x-test": "1"}
+        # Explicit provider-controlled kwargs still win.
+        assert ctor_kwargs["azure_endpoint"] == ENDPOINT_KEY
+        assert ctor_kwargs["api_version"] == "2024-10-21"
 
     # ----- generate_embeddings -----
 
@@ -147,7 +193,7 @@ class TestAzureOpenAIProvider:
         )
         assert result.vectors == []
         assert result.total_tokens == 0
-        assert result.latency == 0.0
+        assert result.latency is None
         cls.assert_not_called()
         instance.embeddings.create.assert_not_called()
 
@@ -294,7 +340,7 @@ class TestAzureOpenAIProviderLive:
             )
         assert result.vectors == []
         assert result.total_tokens == 0
-        assert result.latency == 0.0
+        assert result.latency is None
 
     @pytest.mark.skipif(not _LIVE_API_KEY, reason="AZURE_OPENAI_API_KEY not set.")
     def test_live_underlying_client_is_cached_across_calls(self):
@@ -305,12 +351,15 @@ class TestAzureOpenAIProviderLive:
                 deployment_name=_LIVE_DEPLOYMENT,
                 dimensions=_LIVE_DIMENSIONS,
             )
-            first_client = next(iter(provider._clients.values()))  # pylint: disable=protected-access
+            first_clients = dict(provider._clients)  # pylint: disable=protected-access
+            assert len(first_clients) == 1
             provider.generate_embeddings(
                 _LIVE_TEXTS[:1],
                 endpoint=_LIVE_ENDPOINT,
                 deployment_name=_LIVE_DEPLOYMENT,
                 dimensions=_LIVE_DIMENSIONS,
             )
-            second_client = next(iter(provider._clients.values()))  # pylint: disable=protected-access
-            assert first_client is second_client
+            second_clients = dict(provider._clients)  # pylint: disable=protected-access
+            assert first_clients.keys() == second_clients.keys()
+            for key in first_clients:
+                assert first_clients[key] is second_clients[key]

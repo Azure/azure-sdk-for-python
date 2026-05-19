@@ -51,8 +51,8 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 exclude_packages = [
     "tests",
     "samples",
-    # Exclude packages that will be covered by PEP420 or nspkg
     "azure",
+    "azure.cosmos",
 ]
 
 setup(

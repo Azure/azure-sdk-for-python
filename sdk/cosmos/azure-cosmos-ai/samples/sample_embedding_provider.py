@@ -63,14 +63,14 @@ def variant_a_api_key() -> None:
 def variant_b_shared_entra() -> None:
     cosmos_endpoint = os.environ["COSMOS_ENDPOINT"]
 
-    cred = DefaultAzureCredential()
-    with AzureOpenAIEmbeddingProvider(credential=cred) as provider:
-        client = CosmosClient(
-            url=cosmos_endpoint,
-            credential=cred,
-            embedding_provider=provider,
-        )
-        _run_query(client)
+    with DefaultAzureCredential() as cred:
+        with AzureOpenAIEmbeddingProvider(credential=cred) as provider:
+            client = CosmosClient(
+                url=cosmos_endpoint,
+                credential=cred,
+                embedding_provider=provider,
+            )
+            _run_query(client)
 
 
 def _run_query(client: CosmosClient) -> None:

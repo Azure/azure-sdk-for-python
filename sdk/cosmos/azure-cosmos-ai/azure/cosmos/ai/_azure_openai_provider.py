@@ -21,8 +21,9 @@
 
 """Synchronous Azure OpenAI implementation of the EmbeddingProvider Protocol."""
 
+import inspect
 import time
-from typing import Any, Dict, Optional, Sequence, Union
+from typing import Any, Dict, Mapping, Optional, Sequence, Union
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.cosmos import EmbeddingResult
@@ -51,20 +52,46 @@ class AzureOpenAIEmbeddingProvider:
     :type credential: str or
         ~azure.core.credentials.AzureKeyCredential or
         ~azure.core.credentials.TokenCredential
+    :keyword str api_version: Azure OpenAI REST API version. Defaults to
+        ``"2024-10-21"`` (the GA version when this package shipped). Override to
+        access newer model features without waiting for a new release of this
+        package.
+    :keyword openai_client_kwargs: Additional keyword arguments forwarded
+        verbatim to :class:`openai.AzureOpenAI` (e.g. ``timeout``, ``max_retries``,
+        ``http_client``, ``default_headers``, ``user``). Keys that this provider
+        controls (``azure_endpoint``, ``api_version``, ``api_key``,
+        ``azure_ad_token_provider``) are not overridable through this mapping.
+    :paramtype openai_client_kwargs: ~typing.Mapping[str, ~typing.Any] or None
     """
 
     def __init__(
         self,
         credential: Union[str, AzureKeyCredential, TokenCredential],
-        **kwargs: Any,  # pylint: disable=unused-argument
+        *,
+        api_version: str = _AZURE_OPENAI_API_VERSION,
+        openai_client_kwargs: Optional[Mapping[str, Any]] = None,
     ) -> None:
-        if not isinstance(credential, (str, AzureKeyCredential)) and not _is_token_credential(credential):
+        if isinstance(credential, (str, AzureKeyCredential)):
+            pass
+        elif _is_token_credential(credential):
+            pass
+        elif _is_async_token_credential(credential):
             raise TypeError(
-                "credential must be a str, AzureKeyCredential, or TokenCredential; "
-                f"got {type(credential).__name__}"
+                "Synchronous AzureOpenAIEmbeddingProvider received an async "
+                f"credential ({type(credential).__name__}). Either use "
+                "azure.cosmos.ai.aio.AzureOpenAIEmbeddingProvider instead, or "
+                "pass a synchronous TokenCredential such as "
+                "azure.identity.DefaultAzureCredential."
             )
+        else:
+            raise TypeError(
+                "credential must be a str, AzureKeyCredential, or synchronous "
+                f"TokenCredential; got {type(credential).__name__}"
+            )
+
         self._credential = credential
-        self._api_version = _AZURE_OPENAI_API_VERSION
+        self._api_version = api_version
+        self._openai_client_kwargs: Dict[str, Any] = dict(openai_client_kwargs or {})
         self._clients: Dict[str, AzureOpenAI] = {}
 
     def generate_embeddings(
@@ -74,7 +101,7 @@ class AzureOpenAIEmbeddingProvider:
         endpoint: str,
         deployment_name: str,
         dimensions: int,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> EmbeddingResult:
         """Generate embeddings for ``texts`` using Azure OpenAI.
 
@@ -86,11 +113,17 @@ class AzureOpenAIEmbeddingProvider:
             (from ``vectorEmbeddingPolicy.embeddingSource.deploymentName``).
         :keyword int dimensions: Embedding dimensions
             (from ``vectorEmbeddingPolicy.dimensions``).
-        :returns: Vectors in the same order as ``texts``, plus token usage.
+        :keyword Any kwargs: Reserved for forward compatibility with future
+            Cosmos SDK additions. Currently, no per-call kwargs are forwarded to
+            the underlying ``openai`` call; use ``openai_client_kwargs`` on the
+            constructor (e.g. ``timeout``, ``max_retries``) to configure the
+            underlying client.
+        :returns: Vectors in the same order as ``texts``, plus token usage and
+            measured latency.
         :rtype: ~azure.cosmos.EmbeddingResult
         """
         if not texts:
-            return EmbeddingResult(vectors=[], total_tokens=0, latency=0.0)
+            return EmbeddingResult(vectors=[], total_tokens=0, latency=None)
 
         client = self._get_or_create_client(endpoint)
         start = time.perf_counter()
@@ -109,12 +142,13 @@ class AzureOpenAIEmbeddingProvider:
 
     def close(self) -> None:
         """Close every cached underlying Azure OpenAI client and clear the cache."""
-        for client in self._clients.values():
+        clients = list(self._clients.values())
+        self._clients.clear()
+        for client in clients:
             try:
                 client.close()
             except Exception:  # pylint: disable=broad-except
                 pass
-        self._clients.clear()
 
     def __enter__(self) -> "AzureOpenAIEmbeddingProvider":
         return self
@@ -131,30 +165,34 @@ class AzureOpenAIEmbeddingProvider:
         return client
 
     def _build_client(self, endpoint: str) -> AzureOpenAI:
+        # User-supplied kwargs go first so our explicit args win on collision.
+        common: Dict[str, Any] = dict(self._openai_client_kwargs)
+        common.update(azure_endpoint=endpoint, api_version=self._api_version)
         if isinstance(self._credential, str):
-            return AzureOpenAI(
-                azure_endpoint=endpoint,
-                api_version=self._api_version,
-                api_key=self._credential,
-            )
+            return AzureOpenAI(api_key=self._credential, **common)
         if isinstance(self._credential, AzureKeyCredential):
-            return AzureOpenAI(
-                azure_endpoint=endpoint,
-                api_version=self._api_version,
-                api_key=self._credential.key,
-            )
+            return AzureOpenAI(api_key=self._credential.key, **common)
         token_provider = get_bearer_token_provider(self._credential, _COGNITIVE_SERVICES_SCOPE)
-        return AzureOpenAI(
-            azure_endpoint=endpoint,
-            api_version=self._api_version,
-            azure_ad_token_provider=token_provider,
-        )
+        return AzureOpenAI(azure_ad_token_provider=token_provider, **common)
 
 
 def _is_token_credential(obj: Any) -> bool:
-    """Duck-type check for a sync TokenCredential.
+    """Duck-type check for a *synchronous* TokenCredential.
 
-    Avoids ``isinstance(obj, TokenCredential)`` because ``TokenCredential`` is a
-    ``Protocol`` in some azure-core versions and not always runtime_checkable.
+    Accepts any object that exposes a non-coroutine, callable ``get_token``.
+    Async credentials (where ``get_token`` is a coroutine function) are rejected
+    so the mismatch is caught at ``__init__`` instead of failing deep inside
+    ``openai`` with a confusing ``coroutine`` error.
     """
-    return callable(getattr(obj, "get_token", None))
+    get_token = getattr(obj, "get_token", None)
+    return callable(get_token) and not inspect.iscoroutinefunction(get_token)
+
+
+def _is_async_token_credential(obj: Any) -> bool:
+    """Duck-type check for an *asynchronous* TokenCredential.
+
+    Used only to produce an actionable error message when an async credential is
+    accidentally passed to the sync provider.
+    """
+    get_token = getattr(obj, "get_token", None)
+    return callable(get_token) and inspect.iscoroutinefunction(get_token)
