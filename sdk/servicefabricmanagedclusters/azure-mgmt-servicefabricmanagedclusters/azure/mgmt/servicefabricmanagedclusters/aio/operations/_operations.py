@@ -67,9 +67,13 @@ from ...operations._operations import (
     build_managed_cluster_version_list_request,
     build_managed_clusters_create_or_update_request,
     build_managed_clusters_delete_request,
+    build_managed_clusters_get_fault_simulation_request,
     build_managed_clusters_get_request,
     build_managed_clusters_list_by_resource_group_request,
     build_managed_clusters_list_by_subscription_request,
+    build_managed_clusters_list_fault_simulation_request,
+    build_managed_clusters_start_fault_simulation_request,
+    build_managed_clusters_stop_fault_simulation_request,
     build_managed_clusters_update_request,
     build_managed_maintenance_window_status_get_request,
     build_managed_unsupported_vm_sizes_get_request,
@@ -79,12 +83,16 @@ from ...operations._operations import (
     build_node_types_deallocate_request,
     build_node_types_delete_node_request,
     build_node_types_delete_request,
+    build_node_types_get_fault_simulation_request,
     build_node_types_get_request,
     build_node_types_list_by_managed_clusters_request,
+    build_node_types_list_fault_simulation_request,
     build_node_types_redeploy_request,
     build_node_types_reimage_request,
     build_node_types_restart_request,
+    build_node_types_start_fault_simulation_request,
     build_node_types_start_request,
+    build_node_types_stop_fault_simulation_request,
     build_node_types_update_request,
     build_operation_results_get_request,
     build_operation_status_get_request,
@@ -173,7 +181,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -186,7 +197,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OperationResult], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OperationResult],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -277,6 +291,7 @@ class ApplicationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -298,7 +313,7 @@ class ApplicationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ApplicationResource, response.json())
 
@@ -352,6 +367,7 @@ class ApplicationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -378,7 +394,7 @@ class ApplicationsOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -607,6 +623,7 @@ class ApplicationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -633,7 +650,7 @@ class ApplicationsOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -847,6 +864,7 @@ class ApplicationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -873,7 +891,7 @@ class ApplicationsOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1001,7 +1019,10 @@ class ApplicationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1014,7 +1035,10 @@ class ApplicationsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ApplicationResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ApplicationResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1070,6 +1094,7 @@ class ApplicationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1095,7 +1120,7 @@ class ApplicationsOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1210,6 +1235,7 @@ class ApplicationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1235,7 +1261,7 @@ class ApplicationsOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1442,6 +1468,7 @@ class ApplicationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1467,7 +1494,7 @@ class ApplicationsOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1582,6 +1609,7 @@ class ApplicationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1607,7 +1635,7 @@ class ApplicationsOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1792,7 +1820,7 @@ class ApplicationsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
     )
     async def _fetch_health_initial(
         self,
@@ -1839,6 +1867,7 @@ class ApplicationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1864,7 +1893,7 @@ class ApplicationsOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1977,7 +2006,7 @@ class ApplicationsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
     )
     async def begin_fetch_health(
         self,
@@ -2065,7 +2094,7 @@ class ApplicationsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
     )
     async def _restart_deployed_code_package_initial(
         self,
@@ -2112,6 +2141,7 @@ class ApplicationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2137,7 +2167,7 @@ class ApplicationsOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2251,7 +2281,7 @@ class ApplicationsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
     )
     async def begin_restart_deployed_code_package(
         self,
@@ -2393,6 +2423,7 @@ class ApplicationTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2414,7 +2445,7 @@ class ApplicationTypesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ApplicationTypeResource, response.json())
 
@@ -2580,6 +2611,7 @@ class ApplicationTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2601,7 +2633,7 @@ class ApplicationTypesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ApplicationTypeResource, response.json())
 
@@ -2765,6 +2797,7 @@ class ApplicationTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2786,7 +2819,7 @@ class ApplicationTypesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ApplicationTypeResource, response.json())
 
@@ -2825,6 +2858,7 @@ class ApplicationTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2851,7 +2885,7 @@ class ApplicationTypesOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2979,7 +3013,10 @@ class ApplicationTypesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2992,7 +3029,10 @@ class ApplicationTypesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ApplicationTypeResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ApplicationTypeResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3087,6 +3127,7 @@ class ApplicationTypeVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3108,7 +3149,7 @@ class ApplicationTypeVersionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ApplicationTypeVersionResource, response.json())
 
@@ -3164,6 +3205,7 @@ class ApplicationTypeVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3190,7 +3232,7 @@ class ApplicationTypeVersionsOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3565,6 +3607,7 @@ class ApplicationTypeVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3586,7 +3629,7 @@ class ApplicationTypeVersionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ApplicationTypeVersionResource, response.json())
 
@@ -3626,6 +3669,7 @@ class ApplicationTypeVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3652,7 +3696,7 @@ class ApplicationTypeVersionsOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3786,7 +3830,10 @@ class ApplicationTypeVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3799,7 +3846,10 @@ class ApplicationTypeVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ApplicationTypeVersionResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ApplicationTypeVersionResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3894,6 +3944,7 @@ class ServicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3915,7 +3966,7 @@ class ServicesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ServiceResource, response.json())
 
@@ -3971,6 +4022,7 @@ class ServicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3997,7 +4049,7 @@ class ServicesOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4368,6 +4420,7 @@ class ServicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4389,7 +4442,7 @@ class ServicesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ServiceResource, response.json())
 
@@ -4429,6 +4482,7 @@ class ServicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4455,7 +4509,7 @@ class ServicesOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4590,7 +4644,10 @@ class ServicesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4603,7 +4660,10 @@ class ServicesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ServiceResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ServiceResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4642,7 +4702,7 @@ class ServicesOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
     )
     async def _restart_replica_initial(
         self,
@@ -4691,6 +4751,7 @@ class ServicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4716,7 +4777,7 @@ class ServicesOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4839,7 +4900,7 @@ class ServicesOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
     )
     async def begin_restart_replica(
         self,
@@ -4982,6 +5043,7 @@ class ManagedClusterVersionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5003,7 +5065,7 @@ class ManagedClusterVersionOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ManagedClusterCodeVersionResult, response.json())
 
@@ -5050,6 +5112,7 @@ class ManagedClusterVersionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5071,7 +5134,7 @@ class ManagedClusterVersionOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(List[_models.ManagedClusterCodeVersionResult], response.json())
 
@@ -5133,6 +5196,7 @@ class ManagedClusterVersionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5154,7 +5218,7 @@ class ManagedClusterVersionOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ManagedClusterCodeVersionResult, response.json())
 
@@ -5207,6 +5271,7 @@ class ManagedClusterVersionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5228,7 +5293,7 @@ class ManagedClusterVersionOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(List[_models.ManagedClusterCodeVersionResult], response.json())
 
@@ -5261,7 +5326,7 @@ class ManagedUnsupportedVMSizesOperations:
     async def get(self, location: str, vm_size: str, **kwargs: Any) -> _models.ManagedVMSize:
         """Get unsupported vm size for Service Fabric Managed Clusters.
 
-        :param location: The location for the cluster code versions. This is different from cluster
+        :param location: The location for the unsupported VM sizes. This is different from cluster
          location. Required.
         :type location: str
         :param vm_size: VM Size name. Required.
@@ -5296,6 +5361,7 @@ class ManagedUnsupportedVMSizesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5317,7 +5383,7 @@ class ManagedUnsupportedVMSizesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ManagedVMSize, response.json())
 
@@ -5330,7 +5396,7 @@ class ManagedUnsupportedVMSizesOperations:
     def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.ManagedVMSize"]:
         """Get the lists of unsupported vm sizes for Service Fabric Managed Clusters.
 
-        :param location: The location for the cluster code versions. This is different from cluster
+        :param location: The location for the unsupported VM sizes. This is different from cluster
          location. Required.
         :type location: str
         :return: An iterator like instance of ManagedVMSize
@@ -5379,7 +5445,10 @@ class ManagedUnsupportedVMSizesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5392,7 +5461,10 @@ class ManagedUnsupportedVMSizesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ManagedVMSize], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ManagedVMSize],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5478,6 +5550,7 @@ class ManagedClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5499,7 +5572,7 @@ class ManagedClustersOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ManagedCluster, response.json())
 
@@ -5551,6 +5624,7 @@ class ManagedClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5577,7 +5651,7 @@ class ManagedClustersOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5791,6 +5865,7 @@ class ManagedClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5817,7 +5892,7 @@ class ManagedClustersOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6017,6 +6092,7 @@ class ManagedClustersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6043,7 +6119,7 @@ class ManagedClustersOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6163,7 +6239,10 @@ class ManagedClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6176,7 +6255,10 @@ class ManagedClustersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ManagedCluster], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ManagedCluster],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6252,7 +6334,10 @@ class ManagedClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6265,7 +6350,10 @@ class ManagedClustersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ManagedCluster], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ManagedCluster],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6290,6 +6378,845 @@ class ManagedClustersOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def get_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: _models.FaultSimulationIdContent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.FaultSimulation:
+        """Gets a fault simulation by the simulationId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FaultSimulation. The FaultSimulation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.FaultSimulation:
+        """Gets a fault simulation by the simulationId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FaultSimulation. The FaultSimulation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.FaultSimulation:
+        """Gets a fault simulation by the simulationId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FaultSimulation. The FaultSimulation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def get_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.FaultSimulation:
+        """Gets a fault simulation by the simulationId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameter with fault simulation id. Is one of the following types:
+         FaultSimulationIdContent, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent or
+         JSON or IO[bytes]
+        :return: FaultSimulation. The FaultSimulation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FaultSimulation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_managed_clusters_get_fault_simulation_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.FaultSimulation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def list_fault_simulation(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.FaultSimulation"]:
+        """Gets the list of recent fault simulations for the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :return: An iterator like instance of FaultSimulation
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.FaultSimulation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_managed_clusters_list_fault_simulation_request(
+                    resource_group_name=resource_group_name,
+                    cluster_name=cluster_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.FaultSimulation],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def _start_fault_simulation_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: Union[_models.FaultSimulationContentWrapper, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_managed_clusters_start_fault_simulation_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_start_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: _models.FaultSimulationContentWrapper,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Starts a fault simulation on the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameters describing the fault simulation. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContentWrapper
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_start_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Starts a fault simulation on the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameters describing the fault simulation. Required.
+        :type parameters: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_start_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Starts a fault simulation on the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameters describing the fault simulation. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def begin_start_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: Union[_models.FaultSimulationContentWrapper, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Starts a fault simulation on the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameters describing the fault simulation. Is one of the following types:
+         FaultSimulationContentWrapper, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContentWrapper
+         or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FaultSimulation] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._start_fault_simulation_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+            deserialized = _deserialize(_models.FaultSimulation, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.FaultSimulation].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.FaultSimulation](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def _stop_fault_simulation_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_managed_clusters_stop_fault_simulation_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_stop_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: _models.FaultSimulationIdContent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Stops a fault simulation on the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_stop_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Stops a fault simulation on the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_stop_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Stops a fault simulation on the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def begin_stop_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Stops a fault simulation on the cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param parameters: parameter with fault simulation id. Is one of the following types:
+         FaultSimulationIdContent, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent or
+         JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FaultSimulation] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._stop_fault_simulation_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+            deserialized = _deserialize(_models.FaultSimulation, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.FaultSimulation].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.FaultSimulation](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
 
 class ManagedAzResiliencyStatusOperations:
@@ -6354,6 +7281,7 @@ class ManagedAzResiliencyStatusOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6375,7 +7303,7 @@ class ManagedAzResiliencyStatusOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ManagedAzResiliencyStatus, response.json())
 
@@ -6404,16 +7332,123 @@ class ManagedApplyMaintenanceWindowOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace_async
-    async def post(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> None:
-        """Action to Apply Maintenance window on the Service Fabric Managed Clusters, right now. Any
-        pending update will be applied.
+    @overload
+    async def post(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[_models.ApplyMaintenanceWindowRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Action to Apply Maintenance window on the Service Fabric Managed Clusters. Any pending update
+        will be applied.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster resource. Required.
         :type cluster_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.servicefabricmanagedclusters.models.ApplyMaintenanceWindowRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def post(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[JSON] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Action to Apply Maintenance window on the Service Fabric Managed Clusters. Any pending update
+        will be applied.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def post(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Action to Apply Maintenance window on the Service Fabric Managed Clusters. Any pending update
+        will be applied.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def post(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[Union[_models.ApplyMaintenanceWindowRequest, JSON, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Action to Apply Maintenance window on the Service Fabric Managed Clusters. Any pending update
+        will be applied.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param body: The content of the action request. Is one of the following types:
+         ApplyMaintenanceWindowRequest, JSON, IO[bytes] Default value is None.
+        :type body: ~azure.mgmt.servicefabricmanagedclusters.models.ApplyMaintenanceWindowRequest or
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6426,16 +7461,30 @@ class ManagedApplyMaintenanceWindowOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
         _request = build_managed_apply_maintenance_window_post_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -6524,6 +7573,7 @@ class ManagedMaintenanceWindowStatusOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6545,7 +7595,7 @@ class ManagedMaintenanceWindowStatusOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ManagedMaintenanceWindowStatus, response.json())
 
@@ -6555,7 +7605,7 @@ class ManagedMaintenanceWindowStatusOperations:
         return deserialized  # type: ignore
 
 
-class NodeTypesOperations:
+class NodeTypesOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6618,6 +7668,7 @@ class NodeTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6639,7 +7690,7 @@ class NodeTypesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NodeType, response.json())
 
@@ -6693,6 +7744,7 @@ class NodeTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6719,7 +7771,7 @@ class NodeTypesOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6947,6 +7999,7 @@ class NodeTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6973,7 +8026,7 @@ class NodeTypesOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7191,6 +8244,7 @@ class NodeTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7217,7 +8271,7 @@ class NodeTypesOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7344,7 +8398,10 @@ class NodeTypesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7357,7 +8414,10 @@ class NodeTypesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NodeType], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NodeType],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7428,6 +8488,7 @@ class NodeTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7453,7 +8514,7 @@ class NodeTypesOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7673,6 +8734,7 @@ class NodeTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7698,7 +8760,7 @@ class NodeTypesOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7918,6 +8980,7 @@ class NodeTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7943,7 +9006,7 @@ class NodeTypesOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8163,6 +9226,7 @@ class NodeTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8188,7 +9252,7 @@ class NodeTypesOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8408,6 +9472,7 @@ class NodeTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8433,7 +9498,7 @@ class NodeTypesOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8653,6 +9718,7 @@ class NodeTypesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8678,7 +9744,7 @@ class NodeTypesOperations:
         )
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8853,6 +9919,903 @@ class NodeTypesOperations:
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "node_type_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def _start_fault_simulation_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: Union[_models.FaultSimulationContentWrapper, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_node_types_start_fault_simulation_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            node_type_name=node_type_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_start_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: _models.FaultSimulationContentWrapper,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Starts a fault simulation on the node type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameters describing the fault simulation. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContentWrapper
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_start_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Starts a fault simulation on the node type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameters describing the fault simulation. Required.
+        :type parameters: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_start_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Starts a fault simulation on the node type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameters describing the fault simulation. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "node_type_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def begin_start_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: Union[_models.FaultSimulationContentWrapper, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Starts a fault simulation on the node type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameters describing the fault simulation. Is one of the following types:
+         FaultSimulationContentWrapper, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContentWrapper
+         or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FaultSimulation] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._start_fault_simulation_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                node_type_name=node_type_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+            deserialized = _deserialize(_models.FaultSimulation, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.FaultSimulation].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.FaultSimulation](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "node_type_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def _stop_fault_simulation_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_node_types_stop_fault_simulation_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            node_type_name=node_type_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_stop_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: _models.FaultSimulationIdContent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Stops a fault simulation on the node type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_stop_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Stops a fault simulation on the node type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_stop_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Stops a fault simulation on the node type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "node_type_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def begin_stop_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.FaultSimulation]:
+        """Stops a fault simulation on the node type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameter with fault simulation id. Is one of the following types:
+         FaultSimulationIdContent, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent or
+         JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns FaultSimulation. The FaultSimulation is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FaultSimulation] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._stop_fault_simulation_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                node_type_name=node_type_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+            deserialized = _deserialize(_models.FaultSimulation, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.FaultSimulation].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.FaultSimulation](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def get_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: _models.FaultSimulationIdContent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.FaultSimulation:
+        """Gets a fault simulation by the simulationId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FaultSimulation. The FaultSimulation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.FaultSimulation:
+        """Gets a fault simulation by the simulationId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FaultSimulation. The FaultSimulation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.FaultSimulation:
+        """Gets a fault simulation by the simulationId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameter with fault simulation id. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FaultSimulation. The FaultSimulation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "node_type_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def get_fault_simulation(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: Union[_models.FaultSimulationIdContent, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.FaultSimulation:
+        """Gets a fault simulation by the simulationId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: parameter with fault simulation id. Is one of the following types:
+         FaultSimulationIdContent, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationIdContent or
+         JSON or IO[bytes]
+        :return: FaultSimulation. The FaultSimulation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FaultSimulation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_node_types_get_fault_simulation_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            node_type_name=node_type_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.FaultSimulation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "node_type_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def list_fault_simulation(
+        self, resource_group_name: str, cluster_name: str, node_type_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.FaultSimulation"]:
+        """Gets the list of recent fault simulations for the node type.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :return: An iterator like instance of FaultSimulation
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.FaultSimulation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_node_types_list_fault_simulation_request(
+                    resource_group_name=resource_group_name,
+                    cluster_name=cluster_name,
+                    node_type_name=node_type_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.FaultSimulation],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
 
 class NodeTypeSkusOperations:
     """
@@ -8934,7 +10897,10 @@ class NodeTypeSkusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8947,7 +10913,10 @@ class NodeTypeSkusOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NodeTypeAvailableSku], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NodeTypeAvailableSku],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -9116,6 +11085,7 @@ class OperationStatusOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9137,7 +11107,7 @@ class OperationStatusOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.LongRunningOperationResult, response.json())
 

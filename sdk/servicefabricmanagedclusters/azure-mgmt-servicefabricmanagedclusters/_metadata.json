@@ -1,10 +1,10 @@
 {
-  "apiVersion": "2026-02-01",
+  "apiVersion": "2026-05-01-preview",
   "apiVersions": {
-    "Microsoft.ServiceFabric": "2026-02-01"
+    "Microsoft.ServiceFabric": "2026-05-01-preview"
   },
-  "commit": "0d9b77817effe915b68e20d1a1830bf3b682cbd3",
+  "commit": "cfd58963682948f5242b945bc6152c4e54c88c0c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/ServiceFabricManagedClusters",
-  "emitterVersion": "0.60.1"
+  "emitterVersion": "0.62.1"
 }
