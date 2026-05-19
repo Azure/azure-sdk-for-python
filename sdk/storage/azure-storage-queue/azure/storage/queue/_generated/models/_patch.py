@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 # TODO: Waiting on Emitter Perf updates before updating these methods
 import xml.etree.ElementTree as ET
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from .._utils.model_base import Model as _deserialize
 from azure.core.serialization import as_attribute_dict
@@ -24,6 +24,7 @@ from azure.core.serialization import as_attribute_dict
 # here preserves backward compatibility for users.
 # ---------------------------------------------------------------------------
 
+
 def as_dict(
     self,
     keep_readonly: bool = True,
@@ -31,7 +32,7 @@ def as_dict(
     *,
     exclude_readonly: bool = False,
     **kwargs: Any,
-) -> dict:
+) -> Dict[str, Any]:
     """Backcompat wrapper that returns Python attribute names (snake_case).
 
     Accepts both the old autorest signature (``keep_readonly``,
@@ -44,10 +45,10 @@ def as_dict(
     result = as_attribute_dict(self, exclude_readonly=effective_exclude)
     return result
 
+
 class _ModelBackCompatMixin:
 
-
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> dict:
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> Dict[str, Any]:
         """Backcompat alias for the old autorest ``Model.serialize``.
 
         Equivalent to ``as_dict(keep_readonly=keep_readonly)`` with REST wire
@@ -56,15 +57,13 @@ class _ModelBackCompatMixin:
         """
         return as_attribute_dict(self, exclude_readonly=not keep_readonly)
 
-
-    def validate(self) -> list:  # pylint: disable=unused-argument
+    def validate(self) -> List[Any]:  # pylint: disable=unused-argument
         """Backcompat no-op for the old autorest ``Model.validate``.
 
         TypeSpec models do not perform client-side validation; return an empty
         list to match the old "no errors" return value.
         """
         return []
-
 
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Any:
@@ -78,7 +77,6 @@ class _ModelBackCompatMixin:
                 data = ET.fromstring(data)  # nosec
             return cls(data)
         return _deserialize(cls, data)
-
 
     @classmethod
     def from_dict(
@@ -98,7 +96,6 @@ class _ModelBackCompatMixin:
             return cls(data)
         return _deserialize(cls, data)
 
-
     @classmethod
     def enable_additional_properties_sending(cls) -> None:  # pylint: disable=unused-argument
         """Backcompat no-op for the old autorest ``Model.enable_additional_properties_sending``.
@@ -106,7 +103,6 @@ class _ModelBackCompatMixin:
         TypeSpec models already round-trip unknown properties through ``_data``.
         """
         return None
-
 
     @classmethod
     def is_xml_model(cls) -> bool:

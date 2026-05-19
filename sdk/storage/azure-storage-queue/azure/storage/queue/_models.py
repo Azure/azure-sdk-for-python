@@ -49,7 +49,6 @@ class RetentionPolicy(GeneratedRetentionPolicy, _ModelBackCompatMixin):
     days: Optional[int] = None
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
     as_dict = _backcompat_as_dict
-    
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         if enabled and (days is None):
@@ -62,7 +61,7 @@ class RetentionPolicy(GeneratedRetentionPolicy, _ModelBackCompatMixin):
             return cls()
         # Handle XML Element by converting to generated model first
         if isinstance(generated, ET.Element):
-            generated = GeneratedRetentionPolicy(generated) # type: ignore[assignment,call-overload]
+            generated = GeneratedRetentionPolicy(generated)  # type: ignore[assignment,call-overload]
         return cls(
             enabled=generated.enabled,
             days=generated.days,
@@ -108,7 +107,7 @@ class QueueAnalyticsLogging(GeneratedLogging, _ModelBackCompatMixin):
             return cls()
         # Handle XML Element by converting to generated model first
         if isinstance(generated, ET.Element):
-            generated = GeneratedLogging(generated) # type: ignore[assignment,call-overload]
+            generated = GeneratedLogging(generated)  # type: ignore[assignment,call-overload]
         return cls(
             version=generated.version,
             delete=generated.delete,
@@ -118,6 +117,7 @@ class QueueAnalyticsLogging(GeneratedLogging, _ModelBackCompatMixin):
                 generated.retention_policy
             ),
         )
+
 
 class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates.
@@ -155,7 +155,7 @@ class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
             return cls()
         # Handle XML Element by converting to generated model first
         if isinstance(generated, ET.Element):
-            generated = GeneratedMetrics(generated) # type: ignore[assignment,call-overload]
+            generated = GeneratedMetrics(generated)  # type: ignore[assignment,call-overload]
         return cls(
             version=generated.version,
             enabled=generated.enabled,
@@ -244,7 +244,7 @@ class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
     def _from_generated(cls, generated: Any) -> Self:
         # Handle XML Element by converting to generated model first
         if isinstance(generated, ET.Element):
-            generated = GeneratedCorsRule(generated) # type: ignore[assignment,call-overload]
+            generated = GeneratedCorsRule(generated)  # type: ignore[assignment,call-overload]
         return cls(
             [generated.allowed_origins],
             [generated.allowed_methods],
@@ -378,11 +378,11 @@ class AccessPolicy(GenAccessPolicy, _ModelBackCompatMixin):
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
     ) -> None:
-        # TODO: here AccessPolicy never took in a datetime 
+        # TODO: here AccessPolicy never took in a datetime
         # but we supported datetime and serialized it when passing the model through. (see set access policy)
         if isinstance(permission, QueueSasPermissions):
             permission = str(permission)
-        super().__init__(start=start, expiry=expiry, permission=permission) # type: ignore [arg-type]
+        super().__init__(start=start, expiry=expiry, permission=permission)  # type: ignore [arg-type]
 
 
 class QueueMessage(DictMixin):
