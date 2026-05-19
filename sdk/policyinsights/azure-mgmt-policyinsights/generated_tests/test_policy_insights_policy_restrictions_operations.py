@@ -24,10 +24,9 @@ class TestPolicyInsightsPolicyRestrictionsOperations(AzureMgmtRecordedTestCase):
         response = self.client.policy_restrictions.check_at_subscription_scope(
             parameters={
                 "resourceDetails": {"resourceContent": {}, "apiVersion": "str", "scope": "str"},
-                "includeAuditEffect": False,
                 "pendingFields": [{"field": "str", "values": ["str"]}],
             },
-            api_version="2024-10-01",
+            api_version="2020-07-01",
         )
 
         # please add some check logic here by yourself
@@ -40,26 +39,9 @@ class TestPolicyInsightsPolicyRestrictionsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             parameters={
                 "resourceDetails": {"resourceContent": {}, "apiVersion": "str", "scope": "str"},
-                "includeAuditEffect": False,
                 "pendingFields": [{"field": "str", "values": ["str"]}],
             },
-            api_version="2024-10-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_restrictions_check_at_management_group_scope(self, resource_group):
-        response = self.client.policy_restrictions.check_at_management_group_scope(
-            management_group_id="str",
-            parameters={
-                "pendingFields": [{"field": "str", "values": ["str"]}],
-                "resourceDetails": {"resourceContent": {}, "apiVersion": "str", "scope": "str"},
-            },
-            management_groups_namespace="Microsoft.Management",
-            api_version="2024-10-01",
+            api_version="2020-07-01",
         )
 
         # please add some check logic here by yourself

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.storagesync import MicrosoftStorageSync
 
 """
@@ -38,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/storagesync/resource-manager/Microsoft.StorageSync/stable/2022-06-01/examples/CloudEndpoints_ListBySyncGroup.json
+# x-ms-original-file: specification/storagesync/resource-manager/Microsoft.StorageSync/StorageSync/stable/2020-09-01/examples/CloudEndpoints_ListBySyncGroup.json
 if __name__ == "__main__":
     main()

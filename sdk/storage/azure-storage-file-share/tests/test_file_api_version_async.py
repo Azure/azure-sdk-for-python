@@ -5,13 +5,15 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from azure.core.exceptions import ResourceExistsError
-from azure.storage.fileshare.aio import ShareClient, ShareDirectoryClient, ShareFileClient, ShareServiceClient
-from azure.storage.fileshare._shared.constants import X_MS_VERSION
 
 from devtools_testutils.aio import recorded_by_proxy_async
-from settings.testcase import FileSharePreparer
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import FileSharePreparer
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.fileshare._shared.constants import X_MS_VERSION
+from azure.storage.fileshare.aio import ShareClient, ShareDirectoryClient, ShareFileClient, ShareServiceClient
+
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'

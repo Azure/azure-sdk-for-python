@@ -146,5 +146,6 @@
         "azure.mgmt.recoveryservices.aio.RecoveryServicesClient.get_operation_status": "Microsoft.RecoveryServices.getOperationStatus",
         "azure.mgmt.recoveryservices.RecoveryServicesClient.get_operation_result": "Microsoft.RecoveryServices.getOperationResult",
         "azure.mgmt.recoveryservices.aio.RecoveryServicesClient.get_operation_result": "Microsoft.RecoveryServices.getOperationResult"
-    }
+    },
+    "CrossLanguageVersion": "c3f1e94d9174"
 }

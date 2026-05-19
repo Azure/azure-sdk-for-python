@@ -23,7 +23,7 @@ class TestPolicyInsightsPolicyMetadataOperations(AzureMgmtRecordedTestCase):
     def test_policy_metadata_get_resource(self, resource_group):
         response = self.client.policy_metadata.get_resource(
             resource_name="str",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestPolicyInsightsPolicyMetadataOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_policy_metadata_list(self, resource_group):
         response = self.client.policy_metadata.list(
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
