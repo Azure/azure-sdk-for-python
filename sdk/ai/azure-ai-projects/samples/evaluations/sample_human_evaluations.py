@@ -37,27 +37,35 @@ USAGE:
 
 import json
 import logging
-import os
 import uuid
-from typing import Literal, Mapping, Optional
+from typing import Literal, Mapping, Optional, TypedDict
 
-from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential
-from azure.monitor.opentelemetry import configure_azure_monitor
-from azure.ai.projects import AIProjectClient
+# NOTE: Azure SDK / Application Insights imports (azure-identity,
+# azure-monitor-opentelemetry, azure-ai-projects, python-dotenv) are
+# intentionally deferred into the `if __name__ == "__main__":` block at the
+# bottom of this file. They are only needed when running the sample directly;
+# the `emit_human_evaluation_event` helper itself depends only on the
+# standard library and `typing`, which keeps the helper importable in test
+# environments that do not (or cannot) install the full OTel stack.
 
-load_dotenv()
-
-# `configure_azure_monitor` installs an OpenTelemetry LoggingHandler on the
-# root logger, so any standard Python `logging` call below this point flows
-# through OTel to Application Insights as a log record. The
-# `microsoft.custom_event.name` attribute is what routes the record to the
-# `customEvents` table.
+# `configure_azure_monitor` (called in __main__) installs an OpenTelemetry
+# LoggingHandler on the root logger, so any standard Python `logging` call
+# below this point flows through OTel to Application Insights as a log record.
+# The `microsoft.custom_event.name` attribute is what routes the record to
+# the `customEvents` table.
 logger = logging.getLogger("human_evaluations")
 logger.setLevel(logging.INFO)
 
 
-_KIND_DEFAULTS = {
+class _KindDefaults(TypedDict):
+    min_value: float
+    max_value: float
+    threshold: float
+    desirable_direction: str
+    type: str
+
+
+_KIND_DEFAULTS: dict[str, _KindDefaults] = {
     "binary": {
         "min_value": 0.0,
         "max_value": 1.0,
@@ -209,6 +217,15 @@ def emit_human_evaluation_event(
 
 
 if __name__ == "__main__":
+    import os
+
+    from dotenv import load_dotenv
+    from azure.identity import DefaultAzureCredential
+    from azure.monitor.opentelemetry import configure_azure_monitor
+    from azure.ai.projects import AIProjectClient
+
+    load_dotenv()
+
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
     with (
