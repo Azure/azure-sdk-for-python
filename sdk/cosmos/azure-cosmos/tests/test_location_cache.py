@@ -4,6 +4,7 @@
 import time
 import unittest
 import unittest.mock
+import logging
 from typing import Mapping, Any
 
 import pytest
@@ -712,11 +713,18 @@ class TestLocationCache:
 
         assert lc.resolve_service_endpoint(read_request) == canonical_location1_endpoint
 
-    def test_preferred_locations_support_normalized_region_names(self):
+    def test_preferred_locations_support_normalized_region_names(self, caplog):
         # Preferred locations should match account region names even with case/spacing/separator variations.
-        lc = refresh_location_cache(["east-us-2", " west_us_3 "], True)
-        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
-        lc.perform_on_database_account_read(db_acc)
+        # Also guards against drift between the two call sites that normalize region names:
+        # the routing path (get_preferred_regional_routing_contexts) and the diagnostic path
+        # (_emit_config_mismatch_warning_once). If they ever disagree on normalization, routing
+        # would still succeed while users got a misleading "did not match" warning.
+        with caplog.at_level(logging.WARNING):
+            lc = refresh_location_cache(["east-us-2", " west_us_3 "], True)
+            db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+            lc.perform_on_database_account_read(db_acc)
+
+        assert not [r for r in caplog.records if "did not match" in r.getMessage()]
 
         write_contexts = lc.get_write_regional_routing_contexts()
         read_contexts = lc.get_read_regional_routing_contexts()
@@ -726,14 +734,20 @@ class TestLocationCache:
         assert read_contexts[0].get_primary() == canonical_location1_endpoint
         assert read_contexts[1].get_primary() == canonical_location2_endpoint
 
-    def test_excluded_locations_support_normalized_region_names(self):
+    def test_excluded_locations_support_normalized_region_names(self, caplog):
         # Excluded locations should filter regions even when normalized names are used.
+        # Same divergence guard as the preferred-locations test: excluded_locations also flows
+        # through both the routing path and the diagnostic warning emitter, so a normalization
+        # mismatch between them would produce correct filtering plus a spurious warning.
         connection_policy = documents.ConnectionPolicy()
         connection_policy.ExcludedLocations = ["east-us-2"]
 
-        lc = refresh_location_cache([canonical_location1_name, canonical_location2_name], True, connection_policy)
-        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
-        lc.perform_on_database_account_read(db_acc)
+        with caplog.at_level(logging.WARNING):
+            lc = refresh_location_cache([canonical_location1_name, canonical_location2_name], True, connection_policy)
+            db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+            lc.perform_on_database_account_read(db_acc)
+
+        assert not [r for r in caplog.records if "did not match" in r.getMessage()]
 
         read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
         write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)

@@ -25,7 +25,7 @@ DatabaseAccount with multiple writable and readable locations.
 import collections
 import logging
 from typing import Optional
-from typing import Set, Mapping, OrderedDict
+from typing import Set, Mapping, OrderedDict, Sequence
 from urllib.parse import urlparse
 
 from . import documents, _base as base
@@ -38,7 +38,7 @@ from .http_constants import ResourceType
 logger = logging.getLogger("azure.cosmos.LocationCache")
 
 
-def _clean_location_list(locations: Optional[list[Optional[str]]]) -> list[str]:
+def _clean_location_list(locations: Optional[Sequence[Optional[str]]]) -> list[str]:
     """Drop ``None``/empty/whitespace-only entries from a location list.
 
     We filter these out at every intake point because the region normalizer
@@ -47,6 +47,14 @@ def _clean_location_list(locations: Optional[list[Optional[str]]]) -> list[str]:
     found in our by-endpoint lookup map — which also returns an empty string
     as its default — would compare equal to it and get silently excluded.
     Stripping the bad inputs once, at the boundary, prevents that collision.
+
+    :param locations: The raw location list to clean, or ``None``. May contain
+        ``None`` entries and empty/whitespace-only strings.
+    :type locations: Optional[Sequence[Optional[str]]]
+    :return: A new list containing only the non-empty, non-whitespace string
+        entries from ``locations``. Returns an empty list when ``locations``
+        is ``None`` or empty.
+    :rtype: list[str]
     """
     if not locations:
         return []
@@ -54,6 +62,43 @@ def _clean_location_list(locations: Optional[list[Optional[str]]]) -> list[str]:
 
 
 def _normalize_region_name(region_name: Optional[str]) -> str:
+    """Canonicalize a region name for equality comparison.
+
+    This is the single function every region-name comparison in this module
+    routes through (exclusion matching, preferred-location resolution, the
+    by-endpoint normalized lookup, the config-mismatch warning emitter, and
+    the most-preferred check in ``should_refresh_endpoints``). Two names
+    normalize to the same string iff the SDK treats them as the same region.
+
+    The rule, in plain terms:
+
+    - **Stripped:** outer and inner whitespace (via ``.strip()`` followed by
+      ``.split()`` / ``"".join(...)``), case (``.lower()``), and the two
+      separator characters customers commonly write — ``-`` and ``_``.
+    - **Preserved:** ASCII letters and **digits**. The digit invariant is the
+      load-bearing one: it is what keeps ``"East US"`` and ``"East US 2"``
+      distinct after normalization (``"eastus"`` vs ``"eastus2"``). Stripping
+      digits, even as part of a well-meaning cleanup, would silently collide
+      these regions and route each one's traffic to the other.
+    - **``None`` / empty / whitespace-only input maps to ``""``.** That empty
+      string is a sentinel that also appears as the default value of the
+      by-endpoint name lookup, so callers must filter such inputs out at the
+      configuration boundary with :func:`_clean_location_list` before they
+      reach this function. See that function's docstring for the collision
+      scenario.
+    - **Idempotent.** ``_normalize_region_name(_normalize_region_name(x)) ==
+      _normalize_region_name(x)`` for every ``x``. Defensive double-calls are
+      safe.
+
+    :param region_name: A region name to canonicalize, or ``None``. Customer
+        input (preferred/excluded locations) and account-side names from the
+        gateway both flow through here.
+    :type region_name: Optional[str]
+    :return: The canonicalized form, suitable for direct ``==`` / ``in``
+        comparison against other canonicalized names. Returns ``""`` for
+        ``None`` or whitespace-only input.
+    :rtype: str
+    """
     if region_name is None:
         return ""
     normalized = "".join(str(region_name).strip().lower().split())
