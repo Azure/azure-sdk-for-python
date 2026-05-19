@@ -282,8 +282,7 @@ def to_rest_dataset_literal_inputs(
                     input_data = LiteralJobInput(value=str(input_value["value"]))
                     # set mode attribute manually for binding job input
                     if "mode" in input_value:
-                        input_mode = str(input_value["mode"])
-                        input_data.mode = INPUT_MOUNT_MAPPING_TO_REST.get(input_mode.lower(), input_mode)
+                        input_data.mode = input_value["mode"]
                 else:
                     input_data = LiteralJobInput(value=str(input_value))
                 input_data.job_input_type = JobInputType.LITERAL
