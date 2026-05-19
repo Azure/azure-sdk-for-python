@@ -1,8 +1,10 @@
 # Release History
 
-## 4.1.0 (2026-05-19)
+## 4.0.1 (2026-05-19)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+  - Regenerated with latest code generator tool
 
 ## 4.0.0 (2025-10-27)
 ### Features Added
