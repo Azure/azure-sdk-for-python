@@ -7,17 +7,19 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.settings import settings
 from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from . import models as _models
 from ._configuration import DevTestLabsClientConfiguration
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     ArmTemplatesOperations,
     ArtifactSourcesOperations,
@@ -47,11 +49,11 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class DevTestLabsClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class DevTestLabsClient:  # pylint: disable=too-many-instance-attributes
     """The DevTest Labs Client.
 
     :ivar provider_operations: ProviderOperationsOperations operations
@@ -111,8 +113,11 @@ class DevTestLabsClient:  # pylint: disable=client-accepts-api-version-keyword,t
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription ID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: Api Version. Default value is "2018-09-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -124,10 +129,24 @@ class DevTestLabsClient:  # pylint: disable=client-accepts-api-version-keyword,t
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        self._config = DevTestLabsClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
+        self._config = DevTestLabsClientConfiguration(
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -146,7 +165,7 @@ class DevTestLabsClient:  # pylint: disable=client-accepts-api-version-keyword,t
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

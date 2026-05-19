@@ -1,0 +1,8 @@
+{
+    "CrossLanguagePackageId": "Payload.Head",
+    "CrossLanguageDefinitionId": {
+        "payload.head.HeadClient.content_type_header_in_response": "Payload.Head.contentTypeHeaderInResponse",
+        "payload.head.aio.HeadClient.content_type_header_in_response": "Payload.Head.contentTypeHeaderInResponse"
+    },
+    "CrossLanguageVersion": "a0913c74311e"
+}

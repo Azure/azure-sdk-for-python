@@ -28,10 +28,16 @@ def test_basic_imports():
             InputAudioFormat,
             OutputAudioFormat,
             Modality,
+            SessionIncludeOption,
+            ServerEventType,
         )
 
         # Test model imports
         from azure.ai.voicelive.models import (
+            ActionFind,
+            ActionOpenPage,
+            ActionSearch,
+            AzureAvatarVoiceSyncVoice,
             InputTextContentPart,
             OutputTextContentPart,
             UserMessageItem,
@@ -41,6 +47,10 @@ def test_basic_imports():
             AzureStandardVoice,
             AzurePersonalVoice,
             RequestSession,
+            ResponseWebSearchCallItem,
+            ResponseFileSearchCallItem,
+            TranscriptionPhrase,
+            TranscriptionWord,
         )
 
         # Test async imports
