@@ -24,7 +24,7 @@ from ._shared.models import (
     AccountSasPermissions,
     StorageErrorCode,
     UserDelegationKey,
-    Services
+    Services,
 )
 from ._generated.models import RehydratePriority
 from ._models import (
@@ -74,8 +74,10 @@ __version__ = VERSION
 def upload_blob_to_url(
     blob_url: str,
     data: Union[Iterable[AnyStr], IO[AnyStr]],
-    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-    **kwargs: Any
+    credential: Optional[
+        Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+    ] = None,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     """Upload data to a given URL
 
@@ -143,8 +145,10 @@ def _download_to_stream(client: BlobClient, handle: IO[bytes], **kwargs: Any) ->
 def download_blob_from_url(
     blob_url: str,
     output: Union[str, IO[bytes]],
-    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-    **kwargs: Any
+    credential: Optional[
+        Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+    ] = None,
+    **kwargs: Any,
 ) -> None:
     """Download the contents of a blob to a local file or stream.
 
@@ -193,72 +197,72 @@ def download_blob_from_url(
     :return: None
     :rtype: None
     """
-    overwrite = kwargs.pop('overwrite', False)
-    with BlobClient.from_blob_url(blob_url, credential=credential) as client: # pylint: disable=not-context-manager
-        if hasattr(output, 'write'):
+    overwrite = kwargs.pop("overwrite", False)
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-context-manager
+        if hasattr(output, "write"):
             _download_to_stream(client, cast(IO[bytes], output), **kwargs)
         else:
             if not overwrite and os.path.isfile(output):
                 raise ValueError(f"The file '{output}' already exists.")
-            with open(output, 'wb') as file_handle:
+            with open(output, "wb") as file_handle:
                 _download_to_stream(client, file_handle, **kwargs)
 
 
 __all__ = [
-    'upload_blob_to_url',
-    'download_blob_from_url',
-    'BlobServiceClient',
-    'ContainerClient',
-    'BlobClient',
-    'BlobType',
-    'BlobLeaseClient',
-    'StorageErrorCode',
-    'UserDelegationKey',
-    'ExponentialRetry',
-    'LinearRetry',
-    'LocationMode',
-    'BlockState',
-    'StandardBlobTier',
-    'PremiumPageBlobTier',
-    'SequenceNumberAction',
-    'BlobImmutabilityPolicyMode',
-    'ImmutabilityPolicy',
-    'PublicAccess',
-    'BlobAnalyticsLogging',
-    'Metrics',
-    'RetentionPolicy',
-    'StaticWebsite',
-    'CorsRule',
-    'ContainerProperties',
-    'BlobProperties',
-    'BlobPrefix',
-    'FilteredBlob',
-    'LeaseProperties',
-    'ContentSettings',
-    'CopyProperties',
-    'BlobBlock',
-    'PageRange',
-    'AccessPolicy',
-    'QuickQueryDialect',
-    'ContainerSasPermissions',
-    'BlobSasPermissions',
-    'ResourceTypes',
-    'AccountSasPermissions',
-    'StorageStreamDownloader',
-    'CustomerProvidedEncryptionKey',
-    'RehydratePriority',
-    'generate_account_sas',
-    'generate_container_sas',
-    'generate_blob_sas',
-    'PartialBatchErrorException',
-    'ContainerEncryptionScope',
-    'BlobQueryError',
-    'DelimitedJsonDialect',
-    'DelimitedTextDialect',
-    'ArrowDialect',
-    'ArrowType',
-    'BlobQueryReader',
-    'ObjectReplicationPolicy',
-    'ObjectReplicationRule',
-    'Services',
+    "upload_blob_to_url",
+    "download_blob_from_url",
+    "BlobServiceClient",
+    "ContainerClient",
+    "BlobClient",
+    "BlobType",
+    "BlobLeaseClient",
+    "StorageErrorCode",
+    "UserDelegationKey",
+    "ExponentialRetry",
+    "LinearRetry",
+    "LocationMode",
+    "BlockState",
+    "StandardBlobTier",
+    "PremiumPageBlobTier",
+    "SequenceNumberAction",
+    "BlobImmutabilityPolicyMode",
+    "ImmutabilityPolicy",
+    "PublicAccess",
+    "BlobAnalyticsLogging",
+    "Metrics",
+    "RetentionPolicy",
+    "StaticWebsite",
+    "CorsRule",
+    "ContainerProperties",
+    "BlobProperties",
+    "BlobPrefix",
+    "FilteredBlob",
+    "LeaseProperties",
+    "ContentSettings",
+    "CopyProperties",
+    "BlobBlock",
+    "PageRange",
+    "AccessPolicy",
+    "QuickQueryDialect",
+    "ContainerSasPermissions",
+    "BlobSasPermissions",
+    "ResourceTypes",
+    "AccountSasPermissions",
+    "StorageStreamDownloader",
+    "CustomerProvidedEncryptionKey",
+    "RehydratePriority",
+    "generate_account_sas",
+    "generate_container_sas",
+    "generate_blob_sas",
+    "PartialBatchErrorException",
+    "ContainerEncryptionScope",
+    "BlobQueryError",
+    "DelimitedJsonDialect",
+    "DelimitedTextDialect",
+    "ArrowDialect",
+    "ArrowType",
+    "BlobQueryReader",
+    "ObjectReplicationPolicy",
+    "ObjectReplicationRule",
+    "Services",
 ]

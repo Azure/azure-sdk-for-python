@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=attribute-defined-outside-init
+import pytest
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -18,13 +19,14 @@ from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=n
 class TestStorageTransports(StorageRecordedTestCase):
     def _setup(self, storage_account_name, key):
         self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name("utcontainer")
         if self.is_live:
             try:
                 self.bsc.create_container(self.container_name, timeout=5)
             except ResourceExistsError:
                 pass
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @BlobPreparer()
     def test_legacy_transport_old_response(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -33,11 +35,11 @@ class TestStorageTransports(StorageRecordedTestCase):
         transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='container',
-            blob_name='blob',
+            container_name="container",
+            blob_name="blob",
             credential=storage_account_key.secret,
             transport=transport,
-            retry_total=0
+            retry_total=0,
         )
 
         props = blob_client.get_blob_properties()
@@ -53,6 +55,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         resp = blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @BlobPreparer()
     def test_legacy_transport_old_response_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -61,11 +64,11 @@ class TestStorageTransports(StorageRecordedTestCase):
         transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='container',
-            blob_name='blob',
+            container_name="container",
+            blob_name="blob",
             credential=storage_account_key.secret,
             transport=transport,
-            retry_total=0
+            retry_total=0,
         )
 
         data = b"Hello World!"
@@ -78,6 +81,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         resp = blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @BlobPreparer()
     @recorded_by_proxy
     def test_legacy_transport(self, **kwargs):
@@ -90,9 +94,9 @@ class TestStorageTransports(StorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
-            blob_name=self.get_resource_name('blob'),
+            blob_name=self.get_resource_name("blob"),
             credential=storage_account_key.secret,
-            transport=transport
+            transport=transport,
         )
 
         data = b"Hello World!"
@@ -105,6 +109,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         resp = blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @BlobPreparer()
     @recorded_by_proxy
     def test_legacy_transport_content_validation(self, **kwargs):
@@ -117,9 +122,9 @@ class TestStorageTransports(StorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
-            blob_name=self.get_resource_name('blob'),
+            blob_name=self.get_resource_name("blob"),
             credential=storage_account_key.secret,
-            transport=transport
+            transport=transport,
         )
 
         data = b"Hello World!"

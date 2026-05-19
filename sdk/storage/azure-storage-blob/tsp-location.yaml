@@ -1,0 +1,4 @@
+directory: specification/storage/Microsoft.BlobStorage
+commit: <replace with your value>
+repo: <replace with your value>
+additionalDirectories: 
