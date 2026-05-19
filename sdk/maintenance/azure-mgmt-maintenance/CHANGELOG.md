@@ -2,7 +2,24 @@
 
 ## 2.2.0b3 (2026-05-19)
 
-skip changelog generation
+### Features Added
+
+  - Model `Operation` added property `action_type`
+  - Added enum `ActionType`
+  - Added model `MaintenanceWindow`
+  - Added model `OperationDisplay`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+
+### Breaking Changes
+
+  - Deleted or renamed client `MaintenanceManagementClient`
+  - Model `Operation` deleted or renamed its instance variable `properties`
+  - Deleted or renamed model `ListApplyUpdate`
+  - Deleted or renamed model `ListConfigurationAssignmentsResult`
+  - Deleted or renamed model `ListMaintenanceConfigurationsResult`
+  - Deleted or renamed model `ListUpdatesResult`
+  - Deleted or renamed model `OperationInfo`
 
 ## 2.2.0b2 (2024-05-20)
 
