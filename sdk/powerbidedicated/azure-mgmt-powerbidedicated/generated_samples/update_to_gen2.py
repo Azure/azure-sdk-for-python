@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.powerbidedicated import PowerBIDedicated
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.powerbidedicated import PowerBIDedicated
     pip install azure-identity
     pip install azure-mgmt-powerbidedicated
 # USAGE
-    python list_operations.py
+    python update_to_gen2.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,11 +31,18 @@ def main():
         subscription_id="613192d7-503f-477a-9cfe-4efc3ee2bd60",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.capacities.begin_update(
+        resource_group_name="TestRG",
+        dedicated_capacity_name="azsdktest",
+        capacity_update_parameters={
+            "properties": {"mode": "Gen2"},
+            "sku": {"name": "A1", "tier": "PBIE_Azure"},
+            "tags": {"testKey": "testValue"},
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/powerbidedicated/resource-manager/Microsoft.PowerBIdedicated/stable/2021-01-01/examples/operations.json
+# x-ms-original-file: specification/powerbidedicated/resource-manager/Microsoft.PowerBIdedicated/stable/2021-01-01/examples/updateToGen2.json
 if __name__ == "__main__":
     main()

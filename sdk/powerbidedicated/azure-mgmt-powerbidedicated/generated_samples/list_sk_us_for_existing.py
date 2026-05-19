@@ -16,7 +16,7 @@ from azure.mgmt.powerbidedicated import PowerBIDedicated
     pip install azure-identity
     pip install azure-mgmt-powerbidedicated
 # USAGE
-    python list_capacities_in_resource_group.py
+    python list_sk_us_for_existing.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,13 +31,13 @@ def main():
         subscription_id="613192d7-503f-477a-9cfe-4efc3ee2bd60",
     )
 
-    response = client.capacities.list_by_resource_group(
+    response = client.capacities.list_skus_for_capacity(
         resource_group_name="TestRG",
+        dedicated_capacity_name="azsdktest",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/powerbidedicated/resource-manager/Microsoft.PowerBIdedicated/stable/2021-01-01/examples/listCapacitiesInResourceGroup.json
+# x-ms-original-file: specification/powerbidedicated/resource-manager/Microsoft.PowerBIdedicated/stable/2021-01-01/examples/listSKUsForExisting.json
 if __name__ == "__main__":
     main()
