@@ -184,15 +184,11 @@ def emit_human_evaluation_event(
         "gen_ai.evaluation.type": defaults["type"],
         "microsoft.human_evaluation.source": "end_user",
         "microsoft.human_evaluation.kind": kind,
-        "microsoft.human_evaluation.id": evaluation_id or str(uuid.uuid4()),
     }
     if project_resource_id:
         internal_properties["gen_ai.azure_ai_project.id"] = project_resource_id
     if response_id:
         internal_properties["gen_ai.response.id.type"] = "responses"
-    if tags:
-        for tag_name, tag_value in tags.items():
-            internal_properties[f"microsoft.human_evaluation.tags.{tag_name}"] = tag_value
 
     # Top-level event attributes follow the OTel `gen_ai.evaluation.result`
     # event shape (except internal_properties). `microsoft.custom_event.name` 
@@ -212,6 +208,13 @@ def emit_human_evaluation_event(
         attributes["enduser.id"] = enduser_id
     if enduser_pseudo_id is not None:
         attributes["enduser.pseudo.id"] = enduser_pseudo_id
+
+    # Some attributes are customer-defined and can be put in top-level with "microsoft" prefix
+    if tags:
+        for tag_name, tag_value in tags.items():
+            attributes[f"microsoft.human_evaluation.tags.{tag_name}"] = tag_value
+    if evaluation_id:
+        attributes["microsoft.human_evaluation.id"] = evaluation_id
 
     logger.info("gen_ai.evaluation.result", extra=attributes)
 
