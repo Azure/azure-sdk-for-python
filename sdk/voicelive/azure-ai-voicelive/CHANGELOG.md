@@ -57,6 +57,7 @@
 
 - Removed Foundry Agent Tool classes (`FoundryAgentTool`, `ResponseFoundryAgentCallItem`, etc.) —
   use `AgentSessionConfig` with `connect()` instead
+- Renamed `AvatarConfig.type` field to `avatar_type` to avoid conflict with Python's built-in `type`
 
 ### Other Changes
 
