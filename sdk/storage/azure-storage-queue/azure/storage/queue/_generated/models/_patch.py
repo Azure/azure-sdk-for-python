@@ -57,14 +57,6 @@ class _ModelBackCompatMixin:
         """
         return as_attribute_dict(self, exclude_readonly=not keep_readonly)
 
-    def validate(self) -> List[Any]:  # pylint: disable=unused-argument
-        """Backcompat no-op for the old autorest ``Model.validate``.
-
-        TypeSpec models do not perform client-side validation; return an empty
-        list to match the old "no errors" return value.
-        """
-        return []
-
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Any:
         """Backcompat classmethod for the old autorest ``Model.deserialize``.
@@ -82,7 +74,7 @@ class _ModelBackCompatMixin:
     def from_dict(
         cls,
         data: Any,
-        key_extractors: Optional[Callable[[str, dict, Any], Any]] = None,  # pylint: disable=unused-argument
+        key_extractors: Optional[Callable[[str, dict[str, Any], Any], Any]] = None,  # pylint: disable=unused-argument
         content_type: Optional[str] = None,
     ) -> Any:
         """Backcompat classmethod for the old autorest ``Model.from_dict``.
