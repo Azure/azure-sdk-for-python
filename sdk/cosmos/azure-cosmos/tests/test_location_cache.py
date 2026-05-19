@@ -696,7 +696,6 @@ class TestEmulatorEndpointRewrite:
     @pytest.mark.parametrize("user_endpoint", [
         "http://localhost:8888/",
         "http://127.0.0.1:9000/",
-        "https://localhost:8081/",
     ])
     def test_emulator_endpoint_is_preserved(self, user_endpoint):
         connection_policy = documents.ConnectionPolicy()
@@ -713,6 +712,26 @@ class TestEmulatorEndpointRewrite:
         # user-supplied host:port so the SDK can reach the emulator.
         assert write_contexts[0].get_primary() == user_endpoint
         assert read_contexts[0].get_primary() == user_endpoint
+
+    def test_emulator_matching_port_preserves_advertised_host(self):
+        # When the user-supplied endpoint and the advertised endpoint already
+        # use the same port, the rewrite is intentionally skipped so the
+        # advertised hostname is preserved. This matters for test
+        # infrastructure (e.g. FaultInjectionTransport) that simulates
+        # multiple regions by advertising different hostnames (localhost vs
+        # 127.0.0.1) against the same physical emulator instance.
+        user_endpoint = "https://localhost:8081/"
+        advertised_endpoint = "https://127.0.0.1:8081/"
+        connection_policy = documents.ConnectionPolicy()
+        lc = LocationCache(default_endpoint=user_endpoint, connection_policy=connection_policy)
+        db_acc = self._make_db_account(advertised_endpoint)
+
+        lc.perform_on_database_account_read(db_acc)
+
+        write_contexts = lc.get_write_regional_routing_contexts()
+        read_contexts = lc.get_read_regional_routing_contexts()
+        assert write_contexts[0].get_primary() == advertised_endpoint
+        assert read_contexts[0].get_primary() == advertised_endpoint
 
     def test_non_emulator_endpoints_are_not_rewritten(self):
         user_endpoint = "https://contoso.documents.azure.com:443/"

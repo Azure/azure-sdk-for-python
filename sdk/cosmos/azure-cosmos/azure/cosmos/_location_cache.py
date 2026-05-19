@@ -62,6 +62,13 @@ def _is_local_emulator_endpoint(endpoint: Optional[str]) -> bool:
     """Return True if the endpoint refers to the local Cosmos DB emulator.
 
     Hosts ``localhost`` and ``127.0.0.1`` are treated as emulator endpoints.
+
+    :param endpoint: The endpoint URL to inspect, or ``None``.
+    :type endpoint: str or None
+    :returns: ``True`` if the endpoint's hostname is ``localhost`` or
+        ``127.0.0.1``; ``False`` otherwise (including when ``endpoint`` is
+        ``None`` / empty or cannot be parsed).
+    :rtype: bool
     """
     if not endpoint:
         return False
@@ -80,13 +87,37 @@ def _rewrite_endpoint_with_default(default_endpoint: str, regional_endpoint: str
     is running in a container with a remapped port, that advertised endpoint
     is unreachable from the host. Rewriting it to the user-supplied endpoint
     preserves connectivity while keeping the rest of the URI (path, etc.) intact.
+
+    When both endpoints already advertise the same explicit port, the rewrite
+    is skipped so legitimate hostname differences are preserved (for example,
+    test setups that simulate multiple regions by advertising different
+    hostnames against the same emulator instance).
+
+    :param str default_endpoint: The user-supplied account endpoint whose
+        scheme / host / port should be copied onto ``regional_endpoint``.
+    :param str regional_endpoint: The endpoint advertised by the gateway for
+        a specific region (typically the emulator's internal host:port).
+    :returns: A URL string with ``regional_endpoint``'s path/query preserved
+        and its scheme/netloc replaced with the values from
+        ``default_endpoint``. The input ``regional_endpoint`` is returned
+        unchanged if ``default_endpoint`` cannot be parsed, has no netloc,
+        or already shares the same explicit port.
+    :rtype: str
     """
     try:
         default_parsed = urlparse(default_endpoint)
         regional_parsed = urlparse(regional_endpoint)
+        default_port = default_parsed.port
+        regional_port = regional_parsed.port
     except ValueError:
         return regional_endpoint
     if not default_parsed.netloc:
+        return regional_endpoint
+    if default_port is not None and default_port == regional_port:
+        # Ports already match — rewriting would only collapse legitimate
+        # hostname distinctions (e.g. fault-injection tests that simulate
+        # multiple regions by advertising different hostnames against the
+        # same emulator instance). Leave the advertised endpoint untouched.
         return regional_endpoint
     return regional_parsed._replace(
         scheme=default_parsed.scheme or regional_parsed.scheme,
