@@ -1,6 +1,0 @@
-{
-  "apiVersion": "2023-12-01-preview",
-  "apiVersions": {
-    "Azure.ResourceManager.CommonProperties": "2023-12-01-preview"
-  }
-}
