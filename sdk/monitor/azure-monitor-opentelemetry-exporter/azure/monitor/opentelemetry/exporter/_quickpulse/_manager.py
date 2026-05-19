@@ -9,7 +9,7 @@ import threading
 
 import psutil
 
-from opentelemetry.sdk._logs import ReadWriteLogRecord
+from azure.monitor.opentelemetry.exporter._log_imports import ReadWriteLogRecord
 from opentelemetry.sdk.metrics import MeterProvider, Meter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan

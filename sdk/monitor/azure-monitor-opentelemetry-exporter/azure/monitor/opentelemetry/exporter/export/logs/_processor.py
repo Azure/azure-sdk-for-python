@@ -3,8 +3,8 @@
 
 from typing import Optional, Dict, Any
 
-from opentelemetry.sdk._logs import ReadWriteLogRecord
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, LogRecordExporter
+from azure.monitor.opentelemetry.exporter._log_imports import ReadWriteLogRecord
+from azure.monitor.opentelemetry.exporter._log_imports import BatchLogRecordProcessor, LogRecordExporter
 from opentelemetry.trace import get_current_span
 
 

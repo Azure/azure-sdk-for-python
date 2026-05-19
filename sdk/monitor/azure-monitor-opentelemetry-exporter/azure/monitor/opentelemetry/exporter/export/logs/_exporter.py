@@ -5,8 +5,8 @@ import logging
 from typing import Optional, Sequence, Any
 
 from opentelemetry._logs.severity import SeverityNumber
-from opentelemetry.sdk._logs import ReadableLogRecord
-from opentelemetry.sdk._logs.export import LogRecordExporter, LogRecordExportResult
+from azure.monitor.opentelemetry.exporter._log_imports import ReadableLogRecord
+from azure.monitor.opentelemetry.exporter._log_imports import LogRecordExporter, LogRecordExportResult
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_ESCAPED,
     EXCEPTION_MESSAGE,

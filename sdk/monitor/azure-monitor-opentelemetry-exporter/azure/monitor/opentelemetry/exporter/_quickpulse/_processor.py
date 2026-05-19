@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from opentelemetry.sdk._logs import LogRecordProcessor, ReadWriteLogRecord
+from azure.monitor.opentelemetry.exporter._log_imports import LogRecordProcessor, ReadWriteLogRecord
 from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 
 from azure.monitor.opentelemetry.exporter._quickpulse._state import get_quickpulse_manager
