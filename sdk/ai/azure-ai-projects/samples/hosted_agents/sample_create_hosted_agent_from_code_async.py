@@ -94,7 +94,7 @@ async def main() -> None:
             code=(zip_filename, code_zip_bytes, "application/zip"),
         )
 
-        created = await project_client.beta.agents.create_agent_version_from_code(
+        created = await project_client.beta.agents.create_version_from_code(
             agent_name=agent_name,
             content=content,
             code_zip_sha256=code_zip_sha256,
@@ -119,7 +119,7 @@ async def main() -> None:
         # Download the zip for the version we just created, streaming to a temp file.
         version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
         sha = hashlib.sha256()
-        version_stream = await project_client.beta.agents.download_agent_version_code(
+        version_stream = await project_client.beta.agents.download_agent_code(
             agent_name=agent_name,
             agent_version=created.version,
         )
