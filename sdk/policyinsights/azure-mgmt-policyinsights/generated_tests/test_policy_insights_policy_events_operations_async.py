@@ -26,7 +26,7 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
             policy_events_resource="str",
             management_group_name="str",
             management_groups_namespace="Microsoft.Management",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.policy_events.list_query_results_for_subscription(
             policy_events_resource="str",
             subscription_id="str",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
             policy_events_resource="str",
             subscription_id="str",
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.policy_events.list_query_results_for_resource(
             policy_events_resource="str",
             resource_id="str",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
             subscription_id="str",
             policy_set_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -91,7 +91,7 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
             subscription_id="str",
             policy_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
             subscription_id="str",
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -120,7 +120,7 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

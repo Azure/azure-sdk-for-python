@@ -137,7 +137,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -150,7 +153,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ClientDiscoveryValueForSingleApi], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ClientDiscoveryValueForSingleApi],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -166,7 +172,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -230,6 +239,7 @@ class VaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -244,11 +254,14 @@ class VaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Vault, response.json())
 
@@ -303,6 +316,7 @@ class VaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -316,7 +330,10 @@ class VaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -324,7 +341,7 @@ class VaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -550,6 +567,7 @@ class VaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -563,7 +581,10 @@ class VaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -571,7 +592,7 @@ class VaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -778,6 +799,7 @@ class VaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -791,7 +813,10 @@ class VaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -799,7 +824,7 @@ class VaultsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -911,7 +936,10 @@ class VaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -924,7 +952,10 @@ class VaultsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Vault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Vault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -940,7 +971,10 @@ class VaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -999,7 +1033,10 @@ class VaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1012,7 +1049,10 @@ class VaultsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Vault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Vault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1028,7 +1068,10 @@ class VaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1110,7 +1153,10 @@ class DeletedVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1123,7 +1169,10 @@ class DeletedVaultsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeletedVault], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DeletedVault],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1139,7 +1188,10 @@ class DeletedVaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1189,6 +1241,7 @@ class DeletedVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1203,11 +1256,14 @@ class DeletedVaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeletedVault, response.json())
 
@@ -1266,6 +1322,7 @@ class DeletedVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1279,7 +1336,10 @@ class DeletedVaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1289,7 +1349,7 @@ class DeletedVaultsOperations:
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1499,6 +1559,7 @@ class DeletedVaultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1513,11 +1574,14 @@ class DeletedVaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OperationResource, response.json())
 
@@ -1588,6 +1652,7 @@ class PrivateLinkResourcesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1602,11 +1667,14 @@ class PrivateLinkResourcesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateLinkResource, response.json())
 
@@ -1673,7 +1741,10 @@ class PrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1686,7 +1757,10 @@ class PrivateLinkResourcesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateLinkResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateLinkResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1702,7 +1776,10 @@ class PrivateLinkResourcesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1884,6 +1961,7 @@ class VaultCertificatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1898,11 +1976,14 @@ class VaultCertificatesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VaultCertificateResponse, response.json())
 
@@ -1980,7 +2061,10 @@ class RegisteredIdentitiesOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -2062,7 +2146,10 @@ class ReplicationUsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2075,7 +2162,10 @@ class ReplicationUsagesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ReplicationUsage], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ReplicationUsage],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2091,7 +2181,10 @@ class ReplicationUsagesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2173,7 +2266,10 @@ class UsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2186,7 +2282,10 @@ class UsagesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VaultUsage], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VaultUsage],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2202,7 +2301,10 @@ class UsagesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2267,6 +2369,7 @@ class VaultExtendedInfoOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2281,11 +2384,14 @@ class VaultExtendedInfoOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VaultExtendedInfoResource, response.json())
 
@@ -2439,6 +2545,7 @@ class VaultExtendedInfoOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2453,11 +2560,14 @@ class VaultExtendedInfoOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VaultExtendedInfoResource, response.json())
 
@@ -2611,6 +2721,7 @@ class VaultExtendedInfoOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2625,11 +2736,14 @@ class VaultExtendedInfoOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VaultExtendedInfoResource, response.json())
 
@@ -2666,17 +2780,13 @@ class RecoveryServicesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
-        """API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        """API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
-        API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2704,17 +2814,13 @@ class RecoveryServicesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
-        """API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        """API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
-        API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2742,17 +2848,13 @@ class RecoveryServicesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
-        """API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        """API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
-        API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2778,17 +2880,13 @@ class RecoveryServicesOperations:
         input: Union[_models.CheckNameAvailabilityParameters, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
-        """API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        """API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
-        API to check for resource name availability.
-        A name is available if no other resource exists that has the same SubscriptionId, Resource Name
-        and Type
-        or if one or more such resources exist, each of these must be GC'd and their time of deletion
-        be more than 24 Hours Ago.
+        API to check for resource name availability. A name is available if no other resource exists
+        that has the same SubscriptionId, Resource Name and Type or if one or more such resources
+        exist, each of these must be GC'd and their time of deletion be more than 24 Hours Ago.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2840,6 +2938,7 @@ class RecoveryServicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2854,11 +2953,14 @@ class RecoveryServicesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckNameAvailabilityResult, response.json())
 
@@ -2984,6 +3086,7 @@ class RecoveryServicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2998,11 +3101,14 @@ class RecoveryServicesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CapabilitiesResponse, response.json())
 
@@ -3060,6 +3166,7 @@ class _RecoveryServicesClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3074,11 +3181,14 @@ class _RecoveryServicesClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OperationResource, response.json())
 
@@ -3131,6 +3241,7 @@ class _RecoveryServicesClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3145,13 +3256,16 @@ class _RecoveryServicesClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
             if _stream:
-                deserialized = response.iter_bytes()
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
             else:
                 deserialized = _deserialize(_models.Vault, response.json())
 
