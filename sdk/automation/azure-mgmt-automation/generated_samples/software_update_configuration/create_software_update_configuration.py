@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -67,10 +68,10 @@ def main():
                                 ],
                                 "tagSettings": {
                                     "filterOperator": "All",
-                                    "tags": {
-                                        "tag1": ["tag1Value1", "tag1Value2", "tag1Value3"],
-                                        "tag2": ["tag2Value1", "tag2Value2", "tag2Value3"],
-                                    },
+                                    "tags": [
+                                        {"tag1": ["tag1Value1", "tag1Value2", "tag1Value3"]},
+                                        {"tag2": ["tag2Value1", "tag2Value2", "tag2Value3"]},
+                                    ],
                                 },
                             }
                         ],
@@ -91,6 +92,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2019-06-01/examples/softwareUpdateConfiguration/createSoftwareUpdateConfiguration.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/preview/2017-05-15-preview/examples/softwareUpdateConfiguration/createSoftwareUpdateConfiguration.json
 if __name__ == "__main__":
     main()

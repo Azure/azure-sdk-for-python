@@ -20,7 +20,7 @@ class TestDevTestLabsDisksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_disks_list(self, resource_group):
         response = self.client.disks.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -33,7 +33,7 @@ class TestDevTestLabsDisksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_disks_get(self, resource_group):
         response = self.client.disks.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -47,7 +47,7 @@ class TestDevTestLabsDisksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_disks_begin_create_or_update(self, resource_group):
         response = self.client.disks.begin_create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -79,7 +79,7 @@ class TestDevTestLabsDisksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_disks_begin_delete(self, resource_group):
         response = self.client.disks.begin_delete(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -93,7 +93,7 @@ class TestDevTestLabsDisksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_disks_update(self, resource_group):
         response = self.client.disks.update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -107,7 +107,7 @@ class TestDevTestLabsDisksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_attach(self, resource_group):
+    def test_disks_begin_attach(self, resource_group):
         response = self.client.disks.begin_attach(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -121,7 +121,7 @@ class TestDevTestLabsDisksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_detach(self, resource_group):
+    def test_disks_begin_detach(self, resource_group):
         response = self.client.disks.begin_detach(
             resource_group_name=resource_group.name,
             lab_name="str",
