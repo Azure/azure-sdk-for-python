@@ -12,7 +12,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Callable, IO, Coroutine, List, Optional, Union, cast
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 
 from azure.confidentialledger.aio._operations._operations import (
@@ -65,6 +65,14 @@ class AsyncStatePollingMethod(BaseStatePollingMethod, AsyncPollingMethod):
                     not_retryable = not self._retry_not_found or self._give_up_not_found_error(not_found_exception)
 
                     if not_retryable or self._not_found_count >= 3:
+                        raise
+                except HttpResponseError as http_exception:
+                    # 406: node knows the transaction but it hasn't committed yet.
+                    # This is transient during transaction-status polling — treat as
+                    # pending so the poller retries.
+                    if http_exception.status_code == 406 and self._retry_not_found:
+                        pass  # stay in polling loop
+                    else:
                         raise
                 if not self.finished():
                     await asyncio.sleep(self._polling_interval_s)
