@@ -73,6 +73,9 @@ class CapturingAsyncTransport(AsyncHttpTransport):
         pass
 
 
+# Methods that are purely local (never hit the transport) and must be excluded.
+_SKIP_METHODS: set[str] = {"validate", "create_or_update"}
+
 # ---------------------------------------------------------------------------
 # Dynamic test-case discovery (runs at collection time, not at test time)
 # ---------------------------------------------------------------------------
@@ -118,6 +121,8 @@ def _discover_async_test_cases() -> list[pytest.param]:
         _underlying_op = getattr(sc, "_operation", sc)
         for m_name in sorted(dir(_underlying_op)):
             if m_name.startswith("_"):
+                continue
+            if m_name in _SKIP_METHODS:
                 continue
             method = getattr(sc, m_name)
             if not callable(method):
