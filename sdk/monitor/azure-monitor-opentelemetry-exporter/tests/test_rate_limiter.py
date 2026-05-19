@@ -109,9 +109,7 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
     def setUpClass(cls):
         import os
 
-        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = (
-            "1234abcd-5678-4efa-8abc-1234567890ab"
-        )
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         os.environ["APPLICATIONINSIGHTS_SDKSTATS_DISABLED"] = "true"
 
@@ -126,6 +124,12 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
 
         base = BaseExporter(disable_offline_storage=True, max_envelopes_per_second=0)
         self.assertIsNone(base._rate_limiter)
+
+    def test_rate_limiter_rejects_negative(self):
+        from azure.monitor.opentelemetry.exporter.export._base import BaseExporter
+
+        with self.assertRaises(ValueError):
+            BaseExporter(disable_offline_storage=True, max_envelopes_per_second=-1)
 
     def test_rate_limiter_custom_value(self):
         from azure.monitor.opentelemetry.exporter.export._base import BaseExporter
@@ -182,6 +186,34 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
             # Should have sent only 3 envelopes
             self.assertEqual(len(mock_track.call_args[0][0]), 3)
             self.assertEqual(result, ExportResult.SUCCESS)
+            # envelopes list should be mutated in-place to only contain the admitted portion
+            self.assertEqual(len(envelopes), 3)
+
+    def test_transmit_partial_rate_limit_no_storage_drops_overflow(self):
+        """When storage is disabled and overflow occurs, overflow is dropped and logged."""
+        from unittest import mock
+        from datetime import datetime
+        from azure.monitor.opentelemetry.exporter.export._base import (
+            BaseExporter,
+            ExportResult,
+        )
+        from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
+            TelemetryItem,
+            TrackResponse,
+        )
+
+        base = BaseExporter(disable_offline_storage=True, max_envelopes_per_second=5)
+        base._rate_limiter._tokens = 3
+
+        envelopes = [TelemetryItem(name="Test", time=datetime.now()) for _ in range(10)]
+
+        with mock.patch.object(base.client, "track") as mock_track:
+            mock_track.return_value = TrackResponse(items_received=3, items_accepted=3)
+            # Should not raise even with no storage
+            result = base._transmit(envelopes)
+            self.assertEqual(result, ExportResult.SUCCESS)
+            # Only admitted envelopes remain
+            self.assertEqual(len(envelopes), 3)
 
     def test_stats_exporter_bypasses_rate_limiter(self):
         """Stats exporters should not be rate limited."""

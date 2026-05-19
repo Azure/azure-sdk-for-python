@@ -27,9 +27,7 @@ class _TokenBucketRateLimiter:
 
     def __init__(self, max_per_second: float) -> None:
         if max_per_second < _MIN_MAX_ENVELOPES_PER_SECOND:
-            raise ValueError(
-                f"max_per_second must be at least {_MIN_MAX_ENVELOPES_PER_SECOND}"
-            )
+            raise ValueError(f"max_per_second must be at least {_MIN_MAX_ENVELOPES_PER_SECOND}")
         self._max_per_second = float(max_per_second)
         self._tokens = self._max_per_second  # start full
         self._last_refill = time.monotonic()
