@@ -35,12 +35,9 @@ def main():
         remediation_name="storageRemediation",
         parameters={
             "properties": {
-                "failureThreshold": {"percentage": 0.1},
                 "filters": {"locations": ["eastus", "westus"]},
-                "parallelDeployments": 6,
                 "policyAssignmentId": "/subscriptions/35ee058e-5fa0-414c-8145-3ebb8d09b6e2/providers/microsoft.authorization/policyassignments/b101830944f246d8a14088c5",
                 "policyDefinitionReferenceId": "8c8fa9e4",
-                "resourceCount": 42,
                 "resourceDiscoveryMode": "ReEvaluateCompliance",
             }
         },
@@ -48,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/policyinsights/resource-manager/Microsoft.PolicyInsights/stable/2024-10-01/examples/Remediations_CreateSubscriptionScope_AllProperties.json
+# x-ms-original-file: specification/policyinsights/resource-manager/Microsoft.PolicyInsights/stable/2019-07-01/examples/Remediations_CreateSubscriptionScope_AllProperties.json
 if __name__ == "__main__":
     main()
