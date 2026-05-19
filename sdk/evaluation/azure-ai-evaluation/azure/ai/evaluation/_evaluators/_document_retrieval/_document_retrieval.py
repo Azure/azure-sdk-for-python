@@ -5,10 +5,10 @@ import math
 import operator
 from itertools import starmap
 from typing import Any, Dict, List, TypedDict, Tuple, Optional, Union
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException
 from typing_extensions import override, overload
-
 
 RetrievalGroundTruthDocument = TypedDict(
     "RetrievalGroundTruthDocument", {"document_id": str, "query_relevance_label": int}
@@ -83,7 +83,10 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         self.ground_truth_label_min = ground_truth_label_min
         self.ground_truth_label_max = ground_truth_label_max
 
-        # The default threshold for metrics where higher numbers are better.
+        # Primary metric threshold (NDCG@3) used for top-level score/result
+        self._threshold: float = ndcg_threshold if ndcg_threshold is not None else 0.5
+
+        # Per-metric thresholds stored in properties
         self._threshold_metrics: Dict[str, Any] = {
             "ndcg@3": ndcg_threshold,
             "xdcg@3": xdcg_threshold,
@@ -213,6 +216,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 result[f"{metric_name}_result"] = (
                     "pass" if metric_value >= self._threshold_metrics[metric_name] else "fail"
                 )
+                result[f"{metric_name}_passed"] = metric_value >= self._threshold_metrics[metric_name]
                 result[f"{metric_name}_threshold"] = self._threshold_metrics[metric_name]
                 result[f"{metric_name}_higher_is_better"] = True
 
@@ -220,6 +224,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 result[f"{metric_name}_result"] = (
                     "pass" if metric_value <= self._threshold_holes[metric_name] else "fail"
                 )
+                result[f"{metric_name}_passed"] = metric_value <= self._threshold_holes[metric_name]
                 result[f"{metric_name}_threshold"] = self._threshold_holes[metric_name]
                 result[f"{metric_name}_higher_is_better"] = False
 
@@ -345,7 +350,18 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             for k, v in binary_result.items():
                 metrics[k] = v
 
-            return metrics
+            ndcg_score = 0.0
+            ndcg_passed = ndcg_score >= self._threshold
+            return {
+                "document_retrieval": ndcg_score,
+                "document_retrieval_score": ndcg_score,
+                "document_retrieval_passed": ndcg_passed,
+                "document_retrieval_result": EVALUATION_PASS_FAIL_MAPPING[ndcg_passed],
+                "document_retrieval_reason": None,
+                "document_retrieval_status": "completed",
+                "document_retrieval_threshold": self._threshold,
+                "document_retrieval_properties": metrics,
+            }
 
         # flatten qrels and results to normal dictionaries
         qrels_lookup = {x["document_id"]: x["query_relevance_label"] for x in qrels}
@@ -382,7 +398,18 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             for k, v in binary_result.items():
                 metrics[k] = v
 
-            return metrics
+            ndcg_score = float(metrics.get(f"ndcg@{self.k}", 0.0))
+            ndcg_passed = ndcg_score >= self._threshold
+            return {
+                "document_retrieval": ndcg_score,
+                "document_retrieval_score": ndcg_score,
+                "document_retrieval_passed": ndcg_passed,
+                "document_retrieval_result": EVALUATION_PASS_FAIL_MAPPING[ndcg_passed],
+                "document_retrieval_reason": None,
+                "document_retrieval_status": "completed",
+                "document_retrieval_threshold": self._threshold,
+                "document_retrieval_properties": metrics,
+            }
 
         metrics = {
             f"ndcg@{self.k}": self._compute_ndcg(
@@ -403,7 +430,18 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         for k, v in binary_result.items():
             metrics[k] = v
 
-        return metrics
+        ndcg_score = float(metrics.get(f"ndcg@{self.k}", 0.0))
+        ndcg_passed = ndcg_score >= self._threshold
+        return {
+            "document_retrieval": ndcg_score,
+            "document_retrieval_score": ndcg_score,
+            "document_retrieval_passed": ndcg_passed,
+            "document_retrieval_result": EVALUATION_PASS_FAIL_MAPPING[ndcg_passed],
+            "document_retrieval_reason": None,
+            "document_retrieval_status": "completed",
+            "document_retrieval_threshold": self._threshold,
+            "document_retrieval_properties": metrics,
+        }
 
     @overload
     def __call__(  # type: ignore

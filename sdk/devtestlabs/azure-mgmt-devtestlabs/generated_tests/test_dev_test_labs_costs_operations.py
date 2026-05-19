@@ -20,7 +20,7 @@ class TestDevTestLabsCostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_costs_get(self, resource_group):
         response = self.client.costs.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -33,7 +33,7 @@ class TestDevTestLabsCostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_costs_create_or_update(self, resource_group):
         response = self.client.costs.create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",

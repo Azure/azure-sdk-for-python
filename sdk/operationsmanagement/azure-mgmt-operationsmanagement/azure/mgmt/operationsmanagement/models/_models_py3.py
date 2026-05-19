@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,20 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from collections.abc import MutableMapping
+from typing import Any, Optional, TYPE_CHECKING
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class ArmTemplateParameter(_serialization.Model):
@@ -37,7 +30,7 @@ class ArmTemplateParameter(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: name of the parameter.
         :paramtype name: str
@@ -60,7 +53,7 @@ class CodeMessageError(_serialization.Model):
         "error": {"key": "error", "type": "CodeMessageErrorError"},
     }
 
-    def __init__(self, *, error: Optional["_models.CodeMessageErrorError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.CodeMessageErrorError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error details for a failed request.
         :paramtype error: ~azure.mgmt.operationsmanagement.models.CodeMessageErrorError
@@ -83,7 +76,7 @@ class CodeMessageErrorError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: The error type.
         :paramtype code: str
@@ -132,8 +125,8 @@ class ManagementAssociation(_serialization.Model):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.ManagementAssociationProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -142,9 +135,9 @@ class ManagementAssociation(_serialization.Model):
         :paramtype properties: ~azure.mgmt.operationsmanagement.models.ManagementAssociationProperties
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.properties = properties
 
@@ -152,7 +145,7 @@ class ManagementAssociation(_serialization.Model):
 class ManagementAssociationProperties(_serialization.Model):
     """ManagementAssociation properties supported by the OperationsManagement resource provider.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar application_id: The applicationId of the appliance for this association. Required.
     :vartype application_id: str
@@ -166,7 +159,7 @@ class ManagementAssociationProperties(_serialization.Model):
         "application_id": {"key": "applicationId", "type": "str"},
     }
 
-    def __init__(self, *, application_id: str, **kwargs):
+    def __init__(self, *, application_id: str, **kwargs: Any) -> None:
         """
         :keyword application_id: The applicationId of the appliance for this association. Required.
         :paramtype application_id: str
@@ -186,7 +179,7 @@ class ManagementAssociationPropertiesList(_serialization.Model):
         "value": {"key": "value", "type": "[ManagementAssociation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ManagementAssociation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[list["_models.ManagementAssociation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Management Association properties within the subscription.
         :paramtype value: list[~azure.mgmt.operationsmanagement.models.ManagementAssociation]
@@ -232,8 +225,8 @@ class ManagementConfiguration(_serialization.Model):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.ManagementConfigurationProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -243,9 +236,9 @@ class ManagementConfiguration(_serialization.Model):
          ~azure.mgmt.operationsmanagement.models.ManagementConfigurationProperties
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.properties = properties
 
@@ -255,7 +248,7 @@ class ManagementConfigurationProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar application_id: The applicationId of the appliance for this Management.
     :vartype application_id: str
@@ -288,11 +281,11 @@ class ManagementConfigurationProperties(_serialization.Model):
         self,
         *,
         parent_resource_type: str,
-        parameters: List["_models.ArmTemplateParameter"],
+        parameters: list["_models.ArmTemplateParameter"],
         template: JSON,
         application_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword application_id: The applicationId of the appliance for this Management.
         :paramtype application_id: str
@@ -307,7 +300,7 @@ class ManagementConfigurationProperties(_serialization.Model):
         self.application_id = application_id
         self.parent_resource_type = parent_resource_type
         self.parameters = parameters
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.template = template
 
 
@@ -322,7 +315,7 @@ class ManagementConfigurationPropertiesList(_serialization.Model):
         "value": {"key": "value", "type": "[ManagementConfiguration]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ManagementConfiguration"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[list["_models.ManagementConfiguration"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Management Configuration properties within the subscription.
         :paramtype value: list[~azure.mgmt.operationsmanagement.models.ManagementConfiguration]
@@ -345,7 +338,9 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -380,8 +375,8 @@ class OperationDisplay(_serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         operation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft OperationsManagement.
         :paramtype provider: str
@@ -408,7 +403,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[list["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of solution operations supported by the OperationsManagement resource
          provider.
@@ -460,11 +455,11 @@ class Solution(_serialization.Model):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         plan: Optional["_models.SolutionPlan"] = None,
         properties: Optional["_models.SolutionProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -478,9 +473,9 @@ class Solution(_serialization.Model):
         :paramtype properties: ~azure.mgmt.operationsmanagement.models.SolutionProperties
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
         self.plan = plan
@@ -498,7 +493,7 @@ class SolutionPatch(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -519,7 +514,7 @@ class SolutionPlan(_serialization.Model):
     :ivar promotion_code: promotionCode, Not really used now, can you left as empty.
     :vartype promotion_code: str
     :ivar product: name of the solution to enabled/add. For Microsoft published gallery solution it
-     should be in the format of OMSGallery/:code:`<solutionType>`. This is case sensitive.
+     should be in the format of OMSGallery/\\ :code:`<solutionType>`. This is case sensitive.
     :vartype product: str
     """
 
@@ -537,8 +532,8 @@ class SolutionPlan(_serialization.Model):
         publisher: Optional[str] = None,
         promotion_code: Optional[str] = None,
         product: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: name of the solution to be created. For Microsoft published solution it should
          be in the format of solutionType(workspaceName). SolutionType part is case sensitive. For third
@@ -549,7 +544,7 @@ class SolutionPlan(_serialization.Model):
         :keyword promotion_code: promotionCode, Not really used now, can you left as empty.
         :paramtype promotion_code: str
         :keyword product: name of the solution to enabled/add. For Microsoft published gallery solution
-         it should be in the format of OMSGallery/:code:`<solutionType>`. This is case sensitive.
+         it should be in the format of OMSGallery/\\ :code:`<solutionType>`. This is case sensitive.
         :paramtype product: str
         """
         super().__init__(**kwargs)
@@ -564,7 +559,7 @@ class SolutionProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar workspace_resource_id: The azure resourceId for the workspace where the solution will be
      deployed/enabled. Required.
@@ -595,10 +590,10 @@ class SolutionProperties(_serialization.Model):
         self,
         *,
         workspace_resource_id: str,
-        contained_resources: Optional[List[str]] = None,
-        referenced_resources: Optional[List[str]] = None,
-        **kwargs
-    ):
+        contained_resources: Optional[list[str]] = None,
+        referenced_resources: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_resource_id: The azure resourceId for the workspace where the solution will
          be deployed/enabled. Required.
@@ -612,7 +607,7 @@ class SolutionProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.workspace_resource_id = workspace_resource_id
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.contained_resources = contained_resources
         self.referenced_resources = referenced_resources
 
@@ -628,7 +623,7 @@ class SolutionPropertiesList(_serialization.Model):
         "value": {"key": "value", "type": "[Solution]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Solution"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[list["_models.Solution"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of solution properties within the subscription.
         :paramtype value: list[~azure.mgmt.operationsmanagement.models.Solution]
