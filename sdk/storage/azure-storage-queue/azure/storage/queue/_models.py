@@ -15,7 +15,7 @@ from ._shared.response_handlers import (
     return_context_and_deserialized,
 )
 from ._shared.models import DictMixin
-from ._generated.models._patch import _ModelBackCompatMixin
+from ._generated.models._patch import _ModelBackCompatMixin, as_dict as _backcompat_as_dict
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class RetentionPolicy(GeneratedRetentionPolicy):
+class RetentionPolicy(GeneratedRetentionPolicy, _ModelBackCompatMixin):
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -48,16 +48,12 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     """Indicates whether a retention policy is enabled for the storage service."""
     days: Optional[int] = None
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
+    as_dict = _backcompat_as_dict
+    
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         if enabled and (days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
-        self.serialize = _ModelBackCompatMixin.serialize
-        self.deserialize = _ModelBackCompatMixin.deserialize
-        self.from_dict = _ModelBackCompatMixin.from_dict
-        self.validate = _ModelBackCompatMixin.validate
-        self.enable_additional_properties_sending = _ModelBackCompatMixin.enable_additional_properties_sending
-        self.is_xml_model = _ModelBackCompatMixin.is_xml_model
         super().__init__(enabled=enabled, days=days)
 
     @classmethod
@@ -73,7 +69,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         )
 
 
-class QueueAnalyticsLogging(GeneratedLogging):
+class QueueAnalyticsLogging(GeneratedLogging, _ModelBackCompatMixin):
     """Azure Analytics Logging settings.
 
     All required parameters must be populated in order to send to Azure.
@@ -95,14 +91,9 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """Indicates whether all write requests should be logged."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
+    as_dict = _backcompat_as_dict
 
     def __init__(self, **kwargs: Any) -> None:
-        self.serialize = _ModelBackCompatMixin.serialize
-        self.deserialize = _ModelBackCompatMixin.deserialize
-        self.from_dict = _ModelBackCompatMixin.from_dict
-        self.validate = _ModelBackCompatMixin.validate
-        self.enable_additional_properties_sending = _ModelBackCompatMixin.enable_additional_properties_sending
-        self.is_xml_model = _ModelBackCompatMixin.is_xml_model
         super().__init__(
             version=kwargs.get("version", "1.0"),
             delete=kwargs.get("delete", False),
@@ -128,7 +119,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
             ),
         )
 
-class Metrics(GeneratedMetrics):
+class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates.
 
     All required parameters must be populated in order to send to Azure.
@@ -148,6 +139,7 @@ class Metrics(GeneratedMetrics):
     """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
+    as_dict = _backcompat_as_dict
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(
@@ -174,7 +166,7 @@ class Metrics(GeneratedMetrics):
         )
 
 
-class CorsRule(GeneratedCorsRule):
+class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -217,6 +209,7 @@ class CorsRule(GeneratedCorsRule):
     allowed_headers: str
     """The comma-delimited string representation of the list of headers allowed to be part of
         the cross-origin request."""
+    as_dict = _backcompat_as_dict
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         super().__init__(
@@ -330,7 +323,7 @@ class QueueSasPermissions(object):
         return parsed
 
 
-class AccessPolicy(GenAccessPolicy):
+class AccessPolicy(GenAccessPolicy, _ModelBackCompatMixin):
     """Access Policy class used by the set and get access policy methods.
 
     A stored access policy can specify the start time, expiry time, and
@@ -377,6 +370,7 @@ class AccessPolicy(GenAccessPolicy):
     """The time at which the shared access signature becomes invalid."""
     start: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
+    as_dict = _backcompat_as_dict
 
     def __init__(
         self,
@@ -388,12 +382,6 @@ class AccessPolicy(GenAccessPolicy):
         # but we supported datetime and serialized it when passing the model through. (see set access policy)
         if isinstance(permission, QueueSasPermissions):
             permission = str(permission)
-        self.serialize = _ModelBackCompatMixin.serialize
-        self.deserialize = _ModelBackCompatMixin.deserialize
-        self.from_dict = _ModelBackCompatMixin.from_dict
-        self.validate = _ModelBackCompatMixin.validate
-        self.enable_additional_properties_sending = _ModelBackCompatMixin.enable_additional_properties_sending
-        self.is_xml_model = _ModelBackCompatMixin.is_xml_model
         super().__init__(start=start, expiry=expiry, permission=permission) # type: ignore [arg-type]
 
 

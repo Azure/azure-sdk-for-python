@@ -16,8 +16,6 @@ from .._utils.model_base import Model as _deserialize
 from azure.core.serialization import as_attribute_dict
 
 
-# do an _mixin and have the public models inherit from it
-
 # ---------------------------------------------------------------------------
 # Backcompat shims for public methods that existed on the old autorest msrest models.
 # The TypeSpec-generated models inherit from ``_Model`` (a ``MutableMapping`` subclass) which does not
@@ -26,27 +24,27 @@ from azure.core.serialization import as_attribute_dict
 # here preserves backward compatibility for users.
 # ---------------------------------------------------------------------------
 
+def as_dict(
+    self,
+    keep_readonly: bool = True,
+    key_transformer: Optional[Callable[[str, dict, Any], Any]] = None,  # pylint: disable=unused-argument
+    *,
+    exclude_readonly: bool = False,
+    **kwargs: Any,
+) -> dict:
+    """Backcompat wrapper that returns Python attribute names (snake_case).
+
+    Accepts both the old autorest signature (``keep_readonly``,
+    ``key_transformer``) and the new TypeSpec keyword-only
+    ``exclude_readonly`` parameter.  ``key_transformer`` is accepted for
+    signature compatibility but ignored; keys are always remapped to
+    Python attribute names.
+    """
+    effective_exclude = exclude_readonly or not keep_readonly
+    result = as_attribute_dict(self, exclude_readonly=effective_exclude)
+    return result
+
 class _ModelBackCompatMixin:
-
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Optional[Callable[[str, dict, Any], Any]] = None,  # pylint: disable=unused-argument
-        *,
-        exclude_readonly: bool = False,
-        **kwargs: Any,
-    ) -> dict:
-        """Backcompat wrapper that returns Python attribute names (snake_case).
-
-        Accepts both the old autorest signature (``keep_readonly``,
-        ``key_transformer``) and the new TypeSpec keyword-only
-        ``exclude_readonly`` parameter.  ``key_transformer`` is accepted for
-        signature compatibility but ignored; keys are always remapped to
-        Python attribute names.
-        """
-        effective_exclude = exclude_readonly or not keep_readonly
-        result = as_attribute_dict(self, exclude_readonly=effective_exclude)
-        return result
 
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> dict:
