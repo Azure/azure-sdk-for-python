@@ -12,7 +12,7 @@
 
 ### Other Changes
 
-## 1.16.7 (2026-05-07)
+## 1.16.7 (Unreleased)
 
 ### Features Added
 
