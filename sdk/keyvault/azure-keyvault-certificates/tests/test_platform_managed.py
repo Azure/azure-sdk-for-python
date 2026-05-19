@@ -60,7 +60,6 @@ class TestCertificatePolicyPlatformManaged:
         )
         policy = models.CertificatePolicy(
             issuer_parameters=models.IssuerParameters(name="Self"),
-            x509_certificate_properties=models.X509CertificateProperties(subject="CN=Test"),
             platform_managed=pm,
         )
         assert policy.platform_managed.certificate_usage == "tls-client"
@@ -94,7 +93,6 @@ class TestCertificatePolicyPlatformManaged:
     def test_policy_deserialization_without_platform_managed(self):
         raw = {
             "issuer": {"name": "Self"},
-            "x509_props": {"subject": "CN=Test"},
         }
         policy = models.CertificatePolicy(raw)
         assert policy.platform_managed is None
