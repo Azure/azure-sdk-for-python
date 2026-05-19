@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,17 +7,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
 import isodate
-from typing import List, TYPE_CHECKING, Union
 
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.cdn import CdnManagementClient
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 """
 # PREREQUISITES
     pip install azure-identity
@@ -34,7 +30,7 @@ if TYPE_CHECKING:
 def main():
     client = CdnManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.log_analytics.get_waf_log_analytics_metrics(
@@ -48,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2024-02-01/examples/LogAnalytics_GetWafLogAnalyticsMetrics.json
+# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2025-06-01/examples/LogAnalytics_GetWafLogAnalyticsMetrics.json
 if __name__ == "__main__":
     main()

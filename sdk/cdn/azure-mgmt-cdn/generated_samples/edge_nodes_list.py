@@ -35,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2024-02-01/examples/EdgeNodes_List.json
+# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2025-06-01/examples/EdgeNodes_List.json
 if __name__ == "__main__":
     main()

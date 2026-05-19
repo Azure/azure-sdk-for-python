@@ -1,5 +1,9 @@
 # Release History
 
+## 13.2.0 (2026-05-19)
+
+skip changelog generation
+
 ## 13.1.1 (2024-06-12)
 
 ### Bugs Fixed

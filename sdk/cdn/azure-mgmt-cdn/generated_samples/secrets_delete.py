@@ -27,7 +27,7 @@ from azure.mgmt.cdn import CdnManagementClient
 def main():
     client = CdnManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     client.secrets.begin_delete(
@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2024-02-01/examples/Secrets_Delete.json
+# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2025-06-01/examples/Secrets_Delete.json
 if __name__ == "__main__":
     main()

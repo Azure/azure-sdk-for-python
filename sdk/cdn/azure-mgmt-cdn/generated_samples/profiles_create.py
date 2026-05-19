@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.cdn import CdnManagementClient
@@ -29,7 +27,7 @@ from azure.mgmt.cdn import CdnManagementClient
 def main():
     client = CdnManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.profiles.begin_create(
@@ -40,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2024-02-01/examples/Profiles_Create.json
+# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2025-06-01/examples/Profiles_Create.json
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,6 +28,33 @@ class AfdCertificateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_FIRST_PARTY_MANAGED_CERTIFICATE = "AzureFirstPartyManagedCertificate"
 
 
+class AfdCipherSuiteSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """cipher suite set type that will be used for Https."""
+
+    CUSTOMIZED = "Customized"
+    TLS10_2019 = "TLS10_2019"
+    TLS12_2022 = "TLS12_2022"
+    TLS12_2023 = "TLS12_2023"
+
+
+class AfdCustomizedCipherSuiteForTls12(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AfdCustomizedCipherSuiteForTls12."""
+
+    ECDHE_RSA_AES128_GCM_SHA256 = "ECDHE_RSA_AES128_GCM_SHA256"
+    ECDHE_RSA_AES256_GCM_SHA384 = "ECDHE_RSA_AES256_GCM_SHA384"
+    DHE_RSA_AES256_GCM_SHA384 = "DHE_RSA_AES256_GCM_SHA384"
+    DHE_RSA_AES128_GCM_SHA256 = "DHE_RSA_AES128_GCM_SHA256"
+    ECDHE_RSA_AES128_SHA256 = "ECDHE_RSA_AES128_SHA256"
+    ECDHE_RSA_AES256_SHA384 = "ECDHE_RSA_AES256_SHA384"
+
+
+class AfdCustomizedCipherSuiteForTls13(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AfdCustomizedCipherSuiteForTls13."""
+
+    TLS_AES128_GCM_SHA256 = "TLS_AES_128_GCM_SHA256"
+    TLS_AES256_GCM_SHA384 = "TLS_AES_256_GCM_SHA384"
+
+
 class AFDEndpointProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported protocols for the customer's endpoint."""
 
@@ -35,10 +63,11 @@ class AFDEndpointProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AfdMinimumTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TLS protocol version that will be used for Https."""
+    """TLS protocol version that will be used for Https when cipherSuiteSetType is Customized."""
 
     TLS10 = "TLS10"
     TLS12 = "TLS12"
+    TLS13 = "TLS13"
 
 
 class AfdProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -86,20 +115,6 @@ class CacheBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SET_IF_MISSING = "SetIfMissing"
 
 
-class CacheExpirationActionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CacheExpirationActionParametersTypeName."""
-
-    DELIVERY_RULE_CACHE_EXPIRATION_ACTION_PARAMETERS = "DeliveryRuleCacheExpirationActionParameters"
-
-
-class CacheKeyQueryStringActionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CacheKeyQueryStringActionParametersTypeName."""
-
-    DELIVERY_RULE_CACHE_KEY_QUERY_STRING_BEHAVIOR_ACTION_PARAMETERS = (
-        "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters"
-    )
-
-
 class CacheType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level at which the content needs to be cached."""
 
@@ -113,12 +128,6 @@ class CanMigrateDefaultSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PREMIUM_AZURE_FRONT_DOOR = "Premium_AzureFrontDoor"
 
 
-class CdnCertificateSourceParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CdnCertificateSourceParametersTypeName."""
-
-    CDN_CERTIFICATE_SOURCE_PARAMETERS = "CdnCertificateSourceParameters"
-
-
 class CertificateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the source of the SSL certificate."""
 
@@ -126,17 +135,18 @@ class CertificateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CDN = "Cdn"
 
 
+class CertificateSourceParametersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CertificateSourceParametersType."""
+
+    CDN_CERTIFICATE_SOURCE_PARAMETERS = "CdnCertificateSourceParameters"
+    KEY_VAULT_CERTIFICATE_SOURCE_PARAMETERS = "KeyVaultCertificateSourceParameters"
+
+
 class CertificateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of certificate used."""
 
     SHARED = "Shared"
     DEDICATED = "Dedicated"
-
-
-class ClientPortMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ClientPortMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_CLIENT_PORT_CONDITION_PARAMETERS = "DeliveryRuleClientPortConditionParameters"
 
 
 class ClientPortOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -154,12 +164,6 @@ class ClientPortOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REG_EX = "RegEx"
 
 
-class CookiesMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CookiesMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_COOKIES_CONDITION_PARAMETERS = "DeliveryRuleCookiesConditionParameters"
-
-
 class CookiesOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
@@ -173,6 +177,15 @@ class CookiesOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
     REG_EX = "RegEx"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 
 class CustomDomainResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -237,6 +250,47 @@ class DeliveryRuleActionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     URL_SIGNING = "UrlSigning"
     ORIGIN_GROUP_OVERRIDE = "OriginGroupOverride"
     ROUTE_CONFIGURATION_OVERRIDE = "RouteConfigurationOverride"
+
+
+class DeliveryRuleActionParametersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DeliveryRuleActionParametersType."""
+
+    DELIVERY_RULE_URL_REDIRECT_ACTION_PARAMETERS = "DeliveryRuleUrlRedirectActionParameters"
+    DELIVERY_RULE_URL_SIGNING_ACTION_PARAMETERS = "DeliveryRuleUrlSigningActionParameters"
+    DELIVERY_RULE_ORIGIN_GROUP_OVERRIDE_ACTION_PARAMETERS = "DeliveryRuleOriginGroupOverrideActionParameters"
+    DELIVERY_RULE_URL_REWRITE_ACTION_PARAMETERS = "DeliveryRuleUrlRewriteActionParameters"
+    DELIVERY_RULE_HEADER_ACTION_PARAMETERS = "DeliveryRuleHeaderActionParameters"
+    DELIVERY_RULE_CACHE_EXPIRATION_ACTION_PARAMETERS = "DeliveryRuleCacheExpirationActionParameters"
+    DELIVERY_RULE_CACHE_KEY_QUERY_STRING_BEHAVIOR_ACTION_PARAMETERS = (
+        "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters"
+    )
+    DELIVERY_RULE_ROUTE_CONFIGURATION_OVERRIDE_ACTION_PARAMETERS = (
+        "DeliveryRuleRouteConfigurationOverrideActionParameters"
+    )
+
+
+class DeliveryRuleConditionParametersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DeliveryRuleConditionParametersType."""
+
+    DELIVERY_RULE_REMOTE_ADDRESS_CONDITION_PARAMETERS = "DeliveryRuleRemoteAddressConditionParameters"
+    DELIVERY_RULE_REQUEST_METHOD_CONDITION_PARAMETERS = "DeliveryRuleRequestMethodConditionParameters"
+    DELIVERY_RULE_QUERY_STRING_CONDITION_PARAMETERS = "DeliveryRuleQueryStringConditionParameters"
+    DELIVERY_RULE_POST_ARGS_CONDITION_PARAMETERS = "DeliveryRulePostArgsConditionParameters"
+    DELIVERY_RULE_REQUEST_URI_CONDITION_PARAMETERS = "DeliveryRuleRequestUriConditionParameters"
+    DELIVERY_RULE_REQUEST_HEADER_CONDITION_PARAMETERS = "DeliveryRuleRequestHeaderConditionParameters"
+    DELIVERY_RULE_REQUEST_BODY_CONDITION_PARAMETERS = "DeliveryRuleRequestBodyConditionParameters"
+    DELIVERY_RULE_REQUEST_SCHEME_CONDITION_PARAMETERS = "DeliveryRuleRequestSchemeConditionParameters"
+    DELIVERY_RULE_URL_PATH_MATCH_CONDITION_PARAMETERS = "DeliveryRuleUrlPathMatchConditionParameters"
+    DELIVERY_RULE_URL_FILE_EXTENSION_MATCH_CONDITION_PARAMETERS = "DeliveryRuleUrlFileExtensionMatchConditionParameters"
+    DELIVERY_RULE_URL_FILENAME_CONDITION_PARAMETERS = "DeliveryRuleUrlFilenameConditionParameters"
+    DELIVERY_RULE_HTTP_VERSION_CONDITION_PARAMETERS = "DeliveryRuleHttpVersionConditionParameters"
+    DELIVERY_RULE_COOKIES_CONDITION_PARAMETERS = "DeliveryRuleCookiesConditionParameters"
+    DELIVERY_RULE_IS_DEVICE_CONDITION_PARAMETERS = "DeliveryRuleIsDeviceConditionParameters"
+    DELIVERY_RULE_SOCKET_ADDR_CONDITION_PARAMETERS = "DeliveryRuleSocketAddrConditionParameters"
+    DELIVERY_RULE_CLIENT_PORT_CONDITION_PARAMETERS = "DeliveryRuleClientPortConditionParameters"
+    DELIVERY_RULE_SERVER_PORT_CONDITION_PARAMETERS = "DeliveryRuleServerPortConditionParameters"
+    DELIVERY_RULE_HOST_NAME_CONDITION_PARAMETERS = "DeliveryRuleHostNameConditionParameters"
+    DELIVERY_RULE_SSL_PROTOCOL_CONDITION_PARAMETERS = "DeliveryRuleSslProtocolConditionParameters"
 
 
 class DeploymentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -323,24 +377,12 @@ class HeaderAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETE = "Delete"
 
 
-class HeaderActionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """HeaderActionParametersTypeName."""
-
-    DELIVERY_RULE_HEADER_ACTION_PARAMETERS = "DeliveryRuleHeaderActionParameters"
-
-
 class HealthProbeRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of health probe request that is made."""
 
     NOT_SET = "NotSet"
     GET = "GET"
     HEAD = "HEAD"
-
-
-class HostNameMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """HostNameMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_HOST_NAME_CONDITION_PARAMETERS = "DeliveryRuleHostNameConditionParameters"
 
 
 class HostNameOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -367,38 +409,17 @@ class HttpsRedirect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
 
 
-class HttpVersionMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """HttpVersionMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_HTTP_VERSION_CONDITION_PARAMETERS = "DeliveryRuleHttpVersionConditionParameters"
-
-
 class HttpVersionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
     EQUAL = "Equal"
 
 
-class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that creates/modifies resources."""
-
-    USER = "user"
-    APPLICATION = "application"
-    MANAGED_IDENTITY = "managedIdentity"
-    KEY = "key"
-
-
-class IsDeviceMatchConditionParametersMatchValuesItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IsDeviceMatchConditionParametersMatchValuesItem."""
+class IsDeviceMatchValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IsDeviceMatchValue."""
 
     MOBILE = "Mobile"
     DESKTOP = "Desktop"
-
-
-class IsDeviceMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IsDeviceMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_IS_DEVICE_CONDITION_PARAMETERS = "DeliveryRuleIsDeviceConditionParameters"
 
 
 class IsDeviceOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -407,14 +428,8 @@ class IsDeviceOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EQUAL = "Equal"
 
 
-class KeyVaultCertificateSourceParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """KeyVaultCertificateSourceParametersTypeName."""
-
-    KEY_VAULT_CERTIFICATE_SOURCE_PARAMETERS = "KeyVaultCertificateSourceParameters"
-
-
-class KeyVaultSigningKeyParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """KeyVaultSigningKeyParametersTypeName."""
+class KeyVaultSigningKeyParametersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KeyVaultSigningKeyParametersType."""
 
     KEY_VAULT_SIGNING_KEY_PARAMETERS = "KeyVaultSigningKeyParameters"
 
@@ -493,7 +508,7 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
-    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
 class MatchProcessingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -501,7 +516,7 @@ class MatchProcessingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     If not present, defaults to Continue.
     """
 
-    CONTINUE_ENUM = "Continue"
+    CONTINUE = "Continue"
     STOP = "Stop"
 
 
@@ -583,10 +598,11 @@ class OptimizationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DYNAMIC_SITE_ACCELERATION = "DynamicSiteAcceleration"
 
 
-class OriginGroupOverrideActionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OriginGroupOverrideActionParametersTypeName."""
+class OriginAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the authentication for the origin."""
 
-    DELIVERY_RULE_ORIGIN_GROUP_OVERRIDE_ACTION_PARAMETERS = "DeliveryRuleOriginGroupOverrideActionParameters"
+    SYSTEM_ASSIGNED_IDENTITY = "SystemAssignedIdentity"
+    USER_ASSIGNED_IDENTITY = "UserAssignedIdentity"
 
 
 class OriginGroupProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -658,7 +674,9 @@ class PolicyResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
 
 
-class PolicySettingsDefaultCustomBlockResponseStatusCode(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PolicySettingsDefaultCustomBlockResponseStatusCode(  # pylint: disable=name-too-long
+    int, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """If the action type is block, this field defines the default customer overridable http response
     status code.
     """
@@ -668,12 +686,6 @@ class PolicySettingsDefaultCustomBlockResponseStatusCode(int, Enum, metaclass=Ca
     FOUR_HUNDRED_FIVE = 405
     FOUR_HUNDRED_SIX = 406
     FOUR_HUNDRED_TWENTY_NINE = 429
-
-
-class PostArgsMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PostArgsMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_POST_ARGS_CONDITION_PARAMETERS = "DeliveryRulePostArgsConditionParameters"
 
 
 class PostArgsOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -776,12 +788,6 @@ class QueryStringCachingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOT_SET = "NotSet"
 
 
-class QueryStringMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """QueryStringMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_QUERY_STRING_CONDITION_PARAMETERS = "DeliveryRuleQueryStringConditionParameters"
-
-
 class QueryStringOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
@@ -806,24 +812,12 @@ class RedirectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PERMANENT_REDIRECT = "PermanentRedirect"
 
 
-class RemoteAddressMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RemoteAddressMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_REMOTE_ADDRESS_CONDITION_PARAMETERS = "DeliveryRuleRemoteAddressConditionParameters"
-
-
 class RemoteAddressOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
     ANY = "Any"
     IP_MATCH = "IPMatch"
     GEO_MATCH = "GeoMatch"
-
-
-class RequestBodyMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RequestBodyMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_REQUEST_BODY_CONDITION_PARAMETERS = "DeliveryRuleRequestBodyConditionParameters"
 
 
 class RequestBodyOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -841,12 +835,6 @@ class RequestBodyOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REG_EX = "RegEx"
 
 
-class RequestHeaderMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RequestHeaderMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_REQUEST_HEADER_CONDITION_PARAMETERS = "DeliveryRuleRequestHeaderConditionParameters"
-
-
 class RequestHeaderOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
@@ -862,8 +850,8 @@ class RequestHeaderOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REG_EX = "RegEx"
 
 
-class RequestMethodMatchConditionParametersMatchValuesItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RequestMethodMatchConditionParametersMatchValuesItem."""
+class RequestMethodMatchValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RequestMethodMatchValue."""
 
     GET = "GET"
     HEAD = "HEAD"
@@ -874,41 +862,25 @@ class RequestMethodMatchConditionParametersMatchValuesItem(str, Enum, metaclass=
     TRACE = "TRACE"
 
 
-class RequestMethodMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RequestMethodMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_REQUEST_METHOD_CONDITION_PARAMETERS = "DeliveryRuleRequestMethodConditionParameters"
-
-
 class RequestMethodOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
     EQUAL = "Equal"
 
 
-class RequestSchemeMatchConditionParametersMatchValuesItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RequestSchemeMatchConditionParametersMatchValuesItem."""
-
-    HTTP = "HTTP"
-    HTTPS = "HTTPS"
-
-
-class RequestSchemeMatchConditionParametersOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RequestSchemeMatchConditionParametersOperator(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Describes operator to be matched."""
 
     EQUAL = "Equal"
 
 
-class RequestSchemeMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RequestSchemeMatchConditionParametersTypeName."""
+class RequestSchemeMatchValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RequestSchemeMatchValue."""
 
-    DELIVERY_RULE_REQUEST_SCHEME_CONDITION_PARAMETERS = "DeliveryRuleRequestSchemeConditionParameters"
-
-
-class RequestUriMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RequestUriMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_REQUEST_URI_CONDITION_PARAMETERS = "DeliveryRuleRequestUriConditionParameters"
+    HTTP = "HTTP"
+    HTTPS = "HTTPS"
 
 
 class RequestUriOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -945,14 +917,6 @@ class ResponseBasedDetectedErrorTypes(str, Enum, metaclass=CaseInsensitiveEnumMe
     NONE = "None"
     TCP_ERRORS_ONLY = "TcpErrorsOnly"
     TCP_AND_HTTP_ERRORS = "TcpAndHttpErrors"
-
-
-class RouteConfigurationOverrideActionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RouteConfigurationOverrideActionParametersTypeName."""
-
-    DELIVERY_RULE_ROUTE_CONFIGURATION_OVERRIDE_ACTION_PARAMETERS = (
-        "DeliveryRuleRouteConfigurationOverrideActionParameters"
-    )
 
 
 class RuleCacheBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1023,12 +987,6 @@ class SecurityPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WEB_APPLICATION_FIREWALL = "WebApplicationFirewall"
 
 
-class ServerPortMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ServerPortMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_SERVER_PORT_CONDITION_PARAMETERS = "DeliveryRuleServerPortConditionParameters"
-
-
 class ServerPortOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
@@ -1074,12 +1032,6 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_PLUS_AVG_BAND_WIDTH_CHINA_CDN = "StandardPlus_AvgBandWidth_ChinaCdn"
 
 
-class SocketAddrMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SocketAddrMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_SOCKET_ADDR_CONDITION_PARAMETERS = "DeliveryRuleSocketAddrConditionParameters"
-
-
 class SocketAddrOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
@@ -1093,12 +1045,6 @@ class SslProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TL_SV1 = "TLSv1"
     TL_SV1_1 = "TLSv1.1"
     TL_SV1_2 = "TLSv1.2"
-
-
-class SslProtocolMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SslProtocolMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_SSL_PROTOCOL_CONDITION_PARAMETERS = "DeliveryRuleSslProtocolConditionParameters"
 
 
 class SslProtocolOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1144,12 +1090,6 @@ class UpdateRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NO_ACTION = "NoAction"
 
 
-class UrlFileExtensionMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """UrlFileExtensionMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_URL_FILE_EXTENSION_MATCH_CONDITION_PARAMETERS = "DeliveryRuleUrlFileExtensionMatchConditionParameters"
-
-
 class UrlFileExtensionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
@@ -1163,12 +1103,6 @@ class UrlFileExtensionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
     REG_EX = "RegEx"
-
-
-class UrlFileNameMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """UrlFileNameMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_URL_FILENAME_CONDITION_PARAMETERS = "DeliveryRuleUrlFilenameConditionParameters"
 
 
 class UrlFileNameOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1186,12 +1120,6 @@ class UrlFileNameOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REG_EX = "RegEx"
 
 
-class UrlPathMatchConditionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """UrlPathMatchConditionParametersTypeName."""
-
-    DELIVERY_RULE_URL_PATH_MATCH_CONDITION_PARAMETERS = "DeliveryRuleUrlPathMatchConditionParameters"
-
-
 class UrlPathOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes operator to be matched."""
 
@@ -1206,24 +1134,6 @@ class UrlPathOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
     WILDCARD = "Wildcard"
     REG_EX = "RegEx"
-
-
-class UrlRedirectActionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """UrlRedirectActionParametersTypeName."""
-
-    DELIVERY_RULE_URL_REDIRECT_ACTION_PARAMETERS = "DeliveryRuleUrlRedirectActionParameters"
-
-
-class UrlRewriteActionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """UrlRewriteActionParametersTypeName."""
-
-    DELIVERY_RULE_URL_REWRITE_ACTION_PARAMETERS = "DeliveryRuleUrlRewriteActionParameters"
-
-
-class UrlSigningActionParametersTypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """UrlSigningActionParametersTypeName."""
-
-    DELIVERY_RULE_URL_SIGNING_ACTION_PARAMETERS = "DeliveryRuleUrlSigningActionParameters"
 
 
 class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
