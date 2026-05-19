@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """Hosted durable task provider — HTTP client for the Foundry Task Storage API.
 
-Communicates with ``{FOUNDRY_PROJECT_ENDPOINT}/storage/tasks`` using
+Communicates with ``{FOUNDRY_PROJECT_ENDPOINT}/internal/tasks`` using
 ``httpx.AsyncClient``. Bearer tokens are obtained lazily from
 ``DefaultAzureCredential`` when running in a hosted environment.
 """
@@ -40,7 +40,7 @@ class HostedDurableTaskProvider:
     """
 
     def __init__(self, project_endpoint: str, credential: Any) -> None:
-        self._base_url = f"{project_endpoint.rstrip('/')}/storage/tasks"
+        self._base_url = f"{project_endpoint.rstrip('/')}/internal/tasks"
         self._credential = credential
         self._client = httpx.AsyncClient(timeout=30.0)
 
@@ -52,7 +52,7 @@ class HostedDurableTaskProvider:
         }
 
     async def create(self, request: TaskCreateRequest) -> TaskInfo:
-        """Create a new task via POST /storage/tasks.
+        """Create a new task via POST /internal/tasks.
 
         :param request: Task creation parameters.
         :type request: TaskCreateRequest
@@ -94,7 +94,7 @@ class HostedDurableTaskProvider:
         return TaskInfo.from_dict(response.json())
 
     async def get(self, task_id: str) -> TaskInfo | None:
-        """Get a task by ID via GET /storage/tasks/{id}.
+        """Get a task by ID via GET /internal/tasks/{id}.
 
         :param task_id: The task identifier.
         :type task_id: str
@@ -113,7 +113,7 @@ class HostedDurableTaskProvider:
         return TaskInfo.from_dict(response.json())
 
     async def update(self, task_id: str, patch: TaskPatchRequest) -> TaskInfo:
-        """Update a task via PATCH /storage/tasks/{id}.
+        """Update a task via PATCH /internal/tasks/{id}.
 
         :param task_id: The task identifier.
         :type task_id: str
@@ -165,7 +165,7 @@ class HostedDurableTaskProvider:
         force: bool = False,
         cascade: bool = False,
     ) -> None:
-        """Delete a task via DELETE /storage/tasks/{id}.
+        """Delete a task via DELETE /internal/tasks/{id}.
 
         :param task_id: The task identifier.
         :type task_id: str
@@ -199,7 +199,7 @@ class HostedDurableTaskProvider:
         lease_owner: str | None = None,
         tag: dict[str, str] | None = None,
     ) -> list[TaskInfo]:
-        """List tasks via GET /storage/tasks.
+        """List tasks via GET /internal/tasks.
 
         :keyword agent_name: Filter by agent name.
         :paramtype agent_name: str
