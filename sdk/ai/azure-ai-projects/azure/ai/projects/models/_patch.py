@@ -48,11 +48,15 @@ _FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
 """The HTTP header name used to opt in to Foundry preview features."""
 
 _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
+    "agent_optimization_jobs": _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V1_PREVIEW.value,
     "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
+    "jobs": _FoundryFeaturesOptInKeys.JOBS_V1_PREVIEW.value,
     "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
+    "models": _FoundryFeaturesOptInKeys.MODELS_V1_PREVIEW.value,
     "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
+    "routines": _FoundryFeaturesOptInKeys.ROUTINES_V1_PREVIEW.value,
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
     "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
