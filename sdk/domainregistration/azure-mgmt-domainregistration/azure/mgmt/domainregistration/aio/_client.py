@@ -51,9 +51,9 @@ class DomainRegistrationMgmtClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2024-11-01"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known value is "2024-11-01".
+     Default value is "2024-11-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
