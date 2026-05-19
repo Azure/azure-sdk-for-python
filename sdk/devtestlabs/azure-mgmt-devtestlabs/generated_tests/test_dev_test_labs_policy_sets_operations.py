@@ -20,7 +20,7 @@ class TestDevTestLabsPolicySetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_evaluate_policies(self, resource_group):
+    def test_policy_sets_evaluate_policies(self, resource_group):
         response = self.client.policy_sets.evaluate_policies(
             resource_group_name=resource_group.name,
             lab_name="str",

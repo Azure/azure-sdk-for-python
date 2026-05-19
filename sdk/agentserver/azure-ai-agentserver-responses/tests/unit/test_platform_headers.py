@@ -4,18 +4,18 @@
 
 from __future__ import annotations
 
-from azure.ai.agentserver.responses._platform_headers import (
+from azure.ai.agentserver.core._platform_headers import (
     APIM_REQUEST_ID,
     CHAT_ISOLATION_KEY,
     CLIENT_HEADER_PREFIX,
     CLIENT_REQUEST_ID,
     REQUEST_ID,
-    REQUEST_ID_ITEM_KEY,
     SERVER_VERSION,
     SESSION_ID,
     TRACEPARENT,
     USER_ISOLATION_KEY,
 )
+from azure.ai.agentserver.core._request_id import REQUEST_ID_STATE_KEY
 
 
 class TestPlatformHeaderConstants:
@@ -48,5 +48,5 @@ class TestPlatformHeaderConstants:
     def test_apim_request_id(self) -> None:
         assert APIM_REQUEST_ID == "apim-request-id"
 
-    def test_request_id_item_key(self) -> None:
-        assert REQUEST_ID_ITEM_KEY == "agentserver.request_id"
+    def test_request_id_state_key(self) -> None:
+        assert REQUEST_ID_STATE_KEY == "agentserver.request_id"
