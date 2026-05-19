@@ -35,6 +35,7 @@ from .. import http_constants
 from .._availability_strategy_config import CrossRegionHedgingStrategy
 from .._constants import _Constants
 from .._request_object import RequestObject
+from .._response_decoding import decode_response_body
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 from ..documents import _OperationType
 
@@ -141,7 +142,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
 
     data = response.body()
     if data:
-        data = data.decode("utf-8")
+        data = decode_response_body(data, request_params.operation_type)
 
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
@@ -210,7 +211,10 @@ async def AsynchronousRequest(
     """
     request.data = _request_body_from_data(request_data)
     if request.data and isinstance(request.data, str):
-        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
+        # Use UTF-8 byte length, not str length (code-point count), so the
+        # header matches the bytes the transport actually writes for any
+        # non-ASCII payload.
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data.encode("utf-8"))
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
