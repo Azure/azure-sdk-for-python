@@ -17,7 +17,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
   issues: write
 
 concurrency:
@@ -130,66 +129,27 @@ jobs:
           REF=$(echo "$REF" | tr -d '\n\r')
           echo "ref=$REF" >> $GITHUB_OUTPUT
 
-      - name: Commit and push changes
-        id: push-changes
+      - name: Commit and push to dedicated branch
         run: |
           set -euo pipefail
-          BRANCH="auto/typespec-python-regenerate"
+          BRANCH="typespec-python-generated-tests"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add eng/tools/tsp-python-gen/
+          git add -f eng/tools/tsp-python-gen/
           if git diff --cached --quiet; then
             echo "No changes to commit"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
+          # Push regenerated files directly to the dedicated branch.
+          # This branch is machine-managed and may be force-pushed.
           git checkout -B "$BRANCH"
           git commit -m "[typespec-python] Regenerate tests from http-client-python
 
           Source: microsoft/typespec@${{ steps.source-ref.outputs.ref }}"
-          git push origin "$BRANCH" --force
-          echo "has_changes=true" >> $GITHUB_OUTPUT
-          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
-
-      - name: Create or update Pull Request
-        id: create-pr
-        if: steps.push-changes.outputs.has_changes == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          BRANCH="${{ steps.push-changes.outputs.branch }}"
-          TITLE="[typespec-python] Regenerate tests from http-client-python"
-          BODY="Automated regeneration of TypeSpec Python generated tests.
-
-          - Source: \`microsoft/typespec\` @ \`${{ steps.source-ref.outputs.ref }}\`
-          - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-          This PR was auto-generated."
-
-          # Check if a PR already exists for this branch
-          EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number' || echo "")
-          if [ -n "$EXISTING_PR" ]; then
-            echo "Updating existing PR #$EXISTING_PR"
-            gh pr edit "$EXISTING_PR" --title "$TITLE" --body "$BODY"
-            PR_NUMBER="$EXISTING_PR"
-          else
-            echo "Creating new PR"
-            PR_NUMBER=$(gh pr create --head "$BRANCH" --base main \
-              --title "$TITLE" --body "$BODY" | grep -oP '\d+$')
-            echo "Created PR #$PR_NUMBER"
-          fi
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-
-      - name: Enable auto-merge
-        if: steps.push-changes.outputs.has_changes == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr merge "${{ steps.create-pr.outputs.pr_number }}" --auto --squash || \
-            echo "::warning::Auto-merge could not be enabled (may require branch protection rules)"
+          git push origin "$BRANCH" --force-with-lease
+          echo "::notice::Pushed regenerated tests to $BRANCH"
 
   notify-on-failure:
     name: "Notify on failure"
