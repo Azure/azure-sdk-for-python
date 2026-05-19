@@ -84,5 +84,6 @@
         "azure.mgmt.domainregistration.aio.operations.TopLevelDomainsOperations.list_agreements": "Microsoft.DomainRegistration.TopLevelDomains.listAgreements",
         "azure.mgmt.domainregistration.operations.DomainRegistrationProviderOperations.list_operations": "Azure.ResourceManager.Legacy.Operations.list",
         "azure.mgmt.domainregistration.aio.operations.DomainRegistrationProviderOperations.list_operations": "Azure.ResourceManager.Legacy.Operations.list"
-    }
+    },
+    "CrossLanguageVersion": "5137c6f71ea1"
 }
