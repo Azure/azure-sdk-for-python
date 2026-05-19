@@ -449,6 +449,11 @@ class TestQuery(unittest.TestCase):
             result_strings = sorted(result_strings)
         self.assertListEqual(result_strings, query_results_strings)
 
+    # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason="post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
+    )
     def test_distinct_on_different_types_and_field_orders(self):
         created_collection = self._create_container_for_test(
             id="test-distinct-container-" + str(uuid.uuid4()),

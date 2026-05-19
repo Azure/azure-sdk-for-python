@@ -48,7 +48,7 @@ async def add_all_pk_values_to_set_async(items: List[Mapping[str, str]], pk_valu
     pk_values = [item[PARTITION_KEY] for item in items if PARTITION_KEY in item]
     pk_value_set.update(pk_values)
 
-@pytest_asyncio.fixture(scope="class", autouse=True)
+@pytest_asyncio.fixture(scope="class", loop_scope="class", autouse=True)
 async def setup_and_teardown_async(request):
     """Class-scoped fixture: construct clients, ensure containers, seed docs once per class.
 
@@ -92,7 +92,7 @@ async def setup_and_teardown_async(request):
 
 @pytest.mark.cosmosQuery
 @pytest.mark.cosmosAADSplit
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="class")
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestQueryFeedRangeAsync:
     data_db = None

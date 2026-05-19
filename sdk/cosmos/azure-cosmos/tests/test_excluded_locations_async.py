@@ -57,7 +57,7 @@ async def init_container_async(client):
 
     return db, container
 
-@pytest_asyncio.fixture(scope="class", autouse=True)
+@pytest_asyncio.fixture(scope="class", loop_scope="class", autouse=True)
 async def setup_and_teardown_async():
     print("Setup: This runs before any tests")
     logger = logging.getLogger("azure")
@@ -76,7 +76,7 @@ async def setup_and_teardown_async():
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
 @pytest.mark.cosmosAADCircuitBreaker
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="class")
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestExcludedLocationsAsync:
     @pytest.mark.parametrize('test_data', read_item_test_data())

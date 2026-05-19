@@ -124,7 +124,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
 
         # Create a document. Read change feed should return be able to read that document
         document_definition = {'pk': 'pk', 'id': 'doc1'}
-        await self.created_container.create_item(body=document_definition)
+        await self.key_container.create_item(body=document_definition)
         query_iterable = self.created_container.query_items_change_feed(
             is_start_from_beginning=True,
             partition_key=partition_key
@@ -144,9 +144,9 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         # Create two new documents. Verify that change feed contains the 2 new documents
         # with page size 1 and page size 100
         document_definition = {'pk': 'pk', 'id': 'doc2'}
-        await self.created_container.create_item(body=document_definition)
+        await self.key_container.create_item(body=document_definition)
         document_definition = {'pk': 'pk', 'id': 'doc3'}
-        await self.created_container.create_item(body=document_definition)
+        await self.key_container.create_item(body=document_definition)
 
         for pageSize in [2, 100]:
             # verify iterator
@@ -712,6 +712,11 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         
         await self.key_db.delete_container(created_collection_ref.id)
     
+    # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason="post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
+    )
     async def test_cross_partition_query_pagination_counting_results_async(self):
         """Test counting total results while paginating across partitions."""
         created_collection_ref = await self.key_db.create_container(
