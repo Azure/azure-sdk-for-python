@@ -4,6 +4,7 @@ from azure.servicebus._pyamqp._decode import (
     _decode_array_large,
     _decode_list_large,
     _decode_map_large,
+    decode_frame,
     _MAX_COMPOUND_COUNT,
 )
 
@@ -66,3 +67,17 @@ def test_decode_map_large_accepts_boundary():
     # All keys collapse to None, so the dict has a single entry.
     assert values == {None: None}
     assert bytes(remaining) == b""
+
+
+def _frame_list32(count: int) -> bytes:
+    # decode_frame skips data[0:2] (described/ulong constructors), reads
+    # frame_type at data[2], the compound marker at data[3], size at
+    # data[4:8], and the COUNT under test at data[8:12].
+    return b"\x00\x53\x00\xd0" + b"\x00\x00\x00\x00" + count.to_bytes(4, "big")
+
+
+@pytest.mark.parametrize("count", [HUGE_COUNT, JUST_OVER])
+def test_decode_frame_rejects_oversized_list32_count(count):
+    buffer = memoryview(_frame_list32(count))
+    with pytest.raises(ValueError, match="exceeds maximum"):
+        decode_frame(buffer)

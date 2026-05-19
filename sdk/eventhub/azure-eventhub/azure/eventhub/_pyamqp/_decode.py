@@ -373,11 +373,18 @@ def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
     frame_type = data[2]
     compound_list_type = data[3]
     if compound_list_type == 0xD0:
-        # list32 0xd0: data[4:8] is size, data[8:12] is count
-        count = c_signed_int.unpack(data[8:12])[0]
+        # list32 0xd0: data[4:8] is size, data[8:12] is count. The AMQP 1.0
+        # wire format defines COUNT as an unsigned 32-bit field; decoding it
+        # as a signed int and skipping the cap would let a malicious peer
+        # request a multi-gigabyte field-list allocation below.
+        count = c_unsigned_long.unpack(data[8:12])[0]
+        if count > _MAX_COMPOUND_COUNT:
+            raise ValueError(
+                f"AMQP frame field count {count} exceeds maximum {_MAX_COMPOUND_COUNT}"
+            )
         buffer = data[12:]
     else:
-        # list8 0xc0: data[4] is size, data[5] is count
+        # list8 0xc0: data[4] is size, data[5] is count (1 byte, bounded at 255).
         count = data[5]
         buffer = data[6:]
     fields: List[Optional[memoryview]] = [None] * count
