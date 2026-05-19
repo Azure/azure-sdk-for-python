@@ -1,11 +1,22 @@
 {
-  "commit": "1653285537c3f05521c480112d2a36645878c274",
+  "apiVersions": {
+    "Microsoft.ActionGroups": "2024-10-01-preview",
+    "Microsoft.ActivityLogAlerts": "2023-01-01-preview",
+    "Microsoft.ActivityLogs": "2015-04-01",
+    "Microsoft.AlertRulesIncidents": "2016-03-01",
+    "Microsoft.AutoScale": "2022-10-01",
+    "Microsoft.DataCollection": "2024-03-11",
+    "Microsoft.LogProfiles": "2016-03-01",
+    "Microsoft.MetricAlert": "2024-03-01-preview",
+    "Microsoft.MetricBaselines": "2019-03-01",
+    "Microsoft.Metrics": "2024-02-01",
+    "Microsoft.NetworkSecurityPerimeter": "2021-10-01",
+    "Microsoft.PrivateLinkScopes": "2023-06-01-preview",
+    "Microsoft.ScheduledQueryRule": "2025-01-01-preview",
+    "Microsoft.ServiceDiagnosticsSettings": "2016-09-01"
+  },
+  "commit": "1b7a1bfd07df1c06bd50d40cde638dc4b93fb80f",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.42.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/monitor/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-python-sdk-for-cli-only --use=@autorest/python@6.42.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/monitor/resource-manager/readme.md"
+  "typespec_src": "specification/monitor/resource-manager/Microsoft.Insights/Insights",
+  "emitterVersion": "0.61.3"
 }
