@@ -21,6 +21,7 @@
 
 """Synchronous Azure OpenAI implementation of the EmbeddingProvider Protocol."""
 
+import time
 from typing import Any, Dict, Optional, Sequence, Union
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -89,18 +90,21 @@ class AzureOpenAIEmbeddingProvider:
         :rtype: ~azure.cosmos.EmbeddingResult
         """
         if not texts:
-            return EmbeddingResult(vectors=[], total_tokens=0)
+            return EmbeddingResult(vectors=[], total_tokens=0, latency=0.0)
 
         client = self._get_or_create_client(endpoint)
+        start = time.perf_counter()
         response = client.embeddings.create(
             input=list(texts),
             model=deployment_name,
             dimensions=dimensions,
         )
+        latency = time.perf_counter() - start
         total_tokens: Optional[int] = response.usage.total_tokens if response.usage else None
         return EmbeddingResult(
             vectors=[item.embedding for item in response.data],
             total_tokens=total_tokens,
+            latency=latency,
         )
 
     def close(self) -> None:

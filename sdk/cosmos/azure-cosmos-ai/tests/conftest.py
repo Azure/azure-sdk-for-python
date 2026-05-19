@@ -39,5 +39,6 @@ if not hasattr(_cosmos, "EmbeddingResult"):
     class EmbeddingResult:  # pylint: disable=too-few-public-methods
         vectors: List[List[float]]
         total_tokens: Optional[int] = None
+        latency: Optional[float] = None
 
     _cosmos.EmbeddingResult = EmbeddingResult  # type: ignore[attr-defined]

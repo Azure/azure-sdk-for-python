@@ -118,6 +118,8 @@ async def test_generate_embeddings_forwards_params_and_returns_result(mock_aoai)
 
     assert result.vectors == [[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]
     assert result.total_tokens == 99
+    assert isinstance(result.latency, float)
+    assert result.latency >= 0.0
 
 
 @pytest.mark.asyncio
@@ -141,6 +143,7 @@ async def test_empty_texts_short_circuits(mock_aoai):
     )
     assert result.vectors == []
     assert result.total_tokens == 0
+    assert result.latency == 0.0
     cls.assert_not_called()
     instance.embeddings.create.assert_not_called()
 
