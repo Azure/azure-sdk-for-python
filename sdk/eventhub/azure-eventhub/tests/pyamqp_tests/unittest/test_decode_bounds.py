@@ -4,6 +4,7 @@ from azure.eventhub._pyamqp._decode import (
     _decode_array_large,
     _decode_list_large,
     _decode_map_large,
+    _decode_map_small,
     decode_frame,
     _MAX_COMPOUND_COUNT,
 )
@@ -81,3 +82,19 @@ def test_decode_frame_rejects_oversized_list32_count(count):
     buffer = memoryview(_frame_list32(count))
     with pytest.raises(ValueError, match="exceeds maximum"):
         decode_frame(buffer)
+
+
+def test_decode_map_large_rejects_odd_count():
+    # An odd raw COUNT would silently floor to pairs = (count - 1) // 2 and
+    # leave a trailing key with no value, corrupting subsequent decoding.
+    buffer = memoryview(_header(3))
+    with pytest.raises(ValueError, match="must be even"):
+        _decode_map_large(buffer)
+
+
+def test_decode_map_small_rejects_odd_count():
+    # _decode_map_small reads the COUNT from buffer[1] (1 byte, 0-255). An
+    # odd value has the same trailing-key problem as the large variant.
+    buffer = memoryview(b"\x00\x03")
+    with pytest.raises(ValueError, match="must be even"):
+        _decode_map_small(buffer)

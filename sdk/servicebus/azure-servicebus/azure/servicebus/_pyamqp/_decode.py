@@ -254,7 +254,12 @@ def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
 
 def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
-    count = int(buffer[1] / 2)
+    raw_count = buffer[1]
+    if raw_count % 2 != 0:
+        raise ValueError(
+            f"AMQP map element count {raw_count} must be even (key/value pairs)"
+        )
+    count = raw_count // 2
     buffer = buffer[2:]
     values = {}
     for _ in range(count):
@@ -266,15 +271,21 @@ def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
 
 def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     # Validate the raw on-wire count *before* halving it (the AMQP encoding
-    # stores total entries; pairs = entries / 2). Checking pre-halve catches
-    # hostile odd values and keeps the comparison aligned with the bound used
-    # by _decode_list_large / _decode_array_large.
+    # stores total entries; pairs = entries / 2). Checking pre-halve keeps
+    # the comparison aligned with the bound used by _decode_list_large /
+    # _decode_array_large. Odd counts are rejected explicitly: silently
+    # flooring to (raw_count - 1) // 2 would leave a trailing key with no
+    # value, leaking bytes into the next decoder.
     raw_count = c_unsigned_long.unpack(buffer[4:8])[0]
     if raw_count > _MAX_COMPOUND_COUNT:
         raise ValueError(
             f"AMQP map element count {raw_count} exceeds maximum {_MAX_COMPOUND_COUNT}"
         )
-    count = int(raw_count / 2)
+    if raw_count % 2 != 0:
+        raise ValueError(
+            f"AMQP map element count {raw_count} must be even (key/value pairs)"
+        )
+    count = raw_count // 2
     buffer = buffer[8:]
     values = {}
     for _ in range(count):
