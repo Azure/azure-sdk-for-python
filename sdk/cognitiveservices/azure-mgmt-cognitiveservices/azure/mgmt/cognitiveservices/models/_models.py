@@ -12,7 +12,7 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import AgentDeploymentType, BuiltInAuthorizationScheme, ConnectionAuthType, RuleType
+from ._enums import AgentDeploymentType, BuiltInAuthorizationScheme, ComputeType, ConnectionAuthType, RuleType
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -433,7 +433,24 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class Account(Resource):
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    """
+
+
+class Account(ProxyResource):
     """Cognitive Services account is an Azure resource representing the provisioned account, it's
     type, location and SKU.
 
@@ -1091,23 +1108,6 @@ class AccountSkuListResult(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
-    """
 
 
 class AgentApplication(ProxyResource):
@@ -2420,6 +2420,111 @@ class CheckSkuAvailabilityParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ComputeProperties(_Model):
+    """Base properties for all compute resource types. The computeType discriminator determines the
+    concrete property shape.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClusterComputeProperties, ContainerInstanceComputeProperties
+
+    :ivar compute_type: The type of compute resource. Required. Known values are: "Cluster" and
+     "ContainerInstance".
+    :vartype compute_type: str or ~azure.mgmt.cognitiveservices.models.ComputeType
+    :ivar provisioning_state: Provisioning state of the compute resource. Known values are:
+     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
+     "Stopping", "Restarting", and "Stopped".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cognitiveservices.models.ComputeProvisioningState
+    :ivar errors: Error details for the compute resource.
+    :vartype errors: list[~azure.mgmt.cognitiveservices.models.ErrorDetail]
+    :ivar creation_time: Creation time of the compute resource.
+    :vartype creation_time: ~datetime.datetime
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    compute_type: str = rest_discriminator(
+        name="computeType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of compute resource. Required. Known values are: \"Cluster\" and
+     \"ContainerInstance\"."""
+    provisioning_state: Optional[Union[str, "_models.ComputeProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the compute resource. Known values are: \"Accepted\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Deleting\", \"Scaling\", \"Disabled\", \"Starting\", \"Stopping\",
+     \"Restarting\", and \"Stopped\"."""
+    errors: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    """Error details for the compute resource."""
+    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
+    """Creation time of the compute resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        compute_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterComputeProperties(ComputeProperties, discriminator="Cluster"):
+    """Properties for a Cluster (AKS-backed) compute resource.
+
+    :ivar provisioning_state: Provisioning state of the compute resource. Known values are:
+     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
+     "Stopping", "Restarting", and "Stopped".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cognitiveservices.models.ComputeProvisioningState
+    :ivar errors: Error details for the compute resource.
+    :vartype errors: list[~azure.mgmt.cognitiveservices.models.ErrorDetail]
+    :ivar creation_time: Creation time of the compute resource.
+    :vartype creation_time: ~datetime.datetime
+    :ivar compute_type: The type of compute resource. Required. Cluster (AKS-backed) compute type.
+    :vartype compute_type: str or ~azure.mgmt.cognitiveservices.models.CLUSTER
+    :ivar pools: Pools attached to this compute cluster. Required.
+    :vartype pools: list[~azure.mgmt.cognitiveservices.models.Pool]
+    :ivar subnet_arm_id: ARM ID of the subnet used for compute.
+    :vartype subnet_arm_id: str
+    """
+
+    compute_type: Literal[ComputeType.CLUSTER] = rest_discriminator(name="computeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of compute resource. Required. Cluster (AKS-backed) compute type."""
+    pools: list["_models.Pool"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Pools attached to this compute cluster. Required."""
+    subnet_arm_id: Optional[str] = rest_field(
+        name="subnetArmId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM ID of the subnet used for compute."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pools: list["_models.Pool"],
+        subnet_arm_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.compute_type = ComputeType.CLUSTER  # type: ignore
+
+
 class CommitmentCost(_Model):
     """Cognitive Services account commitment cost.
 
@@ -2502,7 +2607,7 @@ class CommitmentPeriod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitmentPlan(Resource):
+class CommitmentPlan(ProxyResource):
     """Cognitive Services account commitment plan.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2872,6 +2977,72 @@ class CommitmentTier(_Model):
         max_count: Optional[int] = None,
         quota: Optional["_models.CommitmentQuota"] = None,
         cost: Optional["_models.CommitmentCost"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Compute(ProxyResource):
+    """Cognitive Services compute resource. Supports polymorphic compute types (Cluster,
+    ContainerInstance) via the computeType discriminator in properties.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Polymorphic properties of the compute resource. Use computeType to select
+     Cluster or ContainerInstance. Required.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.ComputeProperties
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar location: The location of the compute resource.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: The kind (type) of compute resource.
+    :vartype kind: str
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.cognitiveservices.models.Identity
+    """
+
+    properties: "_models.ComputeProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Polymorphic properties of the compute resource. Use computeType to select Cluster or
+     ContainerInstance. Required."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Resource Etag."""
+    location: Optional[str] = rest_field(visibility=["read", "create"])
+    """The location of the compute resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    kind: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The kind (type) of compute resource."""
+    identity: Optional["_models.Identity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identity for the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.ComputeProperties",
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        kind: Optional[str] = None,
+        identity: Optional["_models.Identity"] = None,
     ) -> None: ...
 
     @overload
@@ -3367,6 +3538,94 @@ class ConnectionUsernamePassword(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ConnectivityEndpoints(_Model):
+    """Network connectivity endpoints for a Container Instance compute.
+
+    :ivar public_ip_address: The public IP address of the compute instance.
+    :vartype public_ip_address: str
+    :ivar ssh_port: The SSH port for the compute instance.
+    :vartype ssh_port: int
+    """
+
+    public_ip_address: Optional[str] = rest_field(name="publicIpAddress", visibility=["read"])
+    """The public IP address of the compute instance."""
+    ssh_port: Optional[int] = rest_field(name="sshPort", visibility=["read"])
+    """The SSH port for the compute instance."""
+
+
+class ContainerInstanceComputeProperties(ComputeProperties, discriminator="ContainerInstance"):
+    """Properties for a Container Instance compute resource.
+
+    :ivar provisioning_state: Provisioning state of the compute resource. Known values are:
+     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
+     "Stopping", "Restarting", and "Stopped".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cognitiveservices.models.ComputeProvisioningState
+    :ivar errors: Error details for the compute resource.
+    :vartype errors: list[~azure.mgmt.cognitiveservices.models.ErrorDetail]
+    :ivar creation_time: Creation time of the compute resource.
+    :vartype creation_time: ~datetime.datetime
+    :ivar compute_type: The type of compute resource. Required. Container Instance compute type.
+    :vartype compute_type: str or ~azure.mgmt.cognitiveservices.models.CONTAINER_INSTANCE
+    :ivar target_cluster_id: ARM resource ID of the parent cluster that hosts this container
+     instance. Required.
+    :vartype target_cluster_id: str
+    :ivar image_link: Container image URI (e.g., MCR or ACR image path) for the container instance.
+     Required.
+    :vartype image_link: str
+    :ivar idle_time_before_shutdown: ISO 8601 duration before the idle instance is automatically
+     shut down (e.g., 'PT30M').
+    :vartype idle_time_before_shutdown: str
+    :ivar ssh_settings: SSH configuration for remote access to the container instance.
+    :vartype ssh_settings: ~azure.mgmt.cognitiveservices.models.SshSettings
+    :ivar connectivity_endpoints: Network connectivity endpoints assigned to the container
+     instance.
+    :vartype connectivity_endpoints: ~azure.mgmt.cognitiveservices.models.ConnectivityEndpoints
+    """
+
+    compute_type: Literal[ComputeType.CONTAINER_INSTANCE] = rest_discriminator(name="computeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of compute resource. Required. Container Instance compute type."""
+    target_cluster_id: str = rest_field(
+        name="targetClusterId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the parent cluster that hosts this container instance. Required."""
+    image_link: str = rest_field(name="imageLink", visibility=["read", "create", "update", "delete", "query"])
+    """Container image URI (e.g., MCR or ACR image path) for the container instance. Required."""
+    idle_time_before_shutdown: Optional[str] = rest_field(
+        name="idleTimeBeforeShutdown", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ISO 8601 duration before the idle instance is automatically shut down (e.g., 'PT30M')."""
+    ssh_settings: Optional["_models.SshSettings"] = rest_field(
+        name="sshSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SSH configuration for remote access to the container instance."""
+    connectivity_endpoints: Optional["_models.ConnectivityEndpoints"] = rest_field(
+        name="connectivityEndpoints", visibility=["read"]
+    )
+    """Network connectivity endpoints assigned to the container instance."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_cluster_id: str,
+        image_link: str,
+        idle_time_before_shutdown: Optional[str] = None,
+        ssh_settings: Optional["_models.SshSettings"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.compute_type = ComputeType.CONTAINER_INSTANCE  # type: ignore
+
+
 class RaiBlocklistConfig(_Model):
     """Azure OpenAI blocklist config.
 
@@ -3564,77 +3823,6 @@ class CustomKeysConnectionProperties(ConnectionPropertiesV2, discriminator="Cust
         self.auth_type = ConnectionAuthType.CUSTOM_KEYS  # type: ignore
 
 
-class RaiTopicConfig(_Model):
-    """Azure OpenAI RAI topic config.
-
-    :ivar topic_name: Name of RAI topic.
-    :vartype topic_name: str
-    :ivar blocking: If blocking would occur.
-    :vartype blocking: bool
-    """
-
-    topic_name: Optional[str] = rest_field(name="topicName", visibility=["read", "create", "update", "delete", "query"])
-    """Name of RAI topic."""
-    blocking: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """If blocking would occur."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        topic_name: Optional[str] = None,
-        blocking: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CustomTopicConfig(RaiTopicConfig):
-    """Gets or sets the source to which filter applies.
-
-    :ivar topic_name: Name of RAI topic.
-    :vartype topic_name: str
-    :ivar blocking: If blocking would occur.
-    :vartype blocking: bool
-    :ivar source: Content source to apply the Content Filters. Known values are: "Prompt",
-     "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
-    :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
-    """
-
-    source: Optional[Union[str, "_models.RaiPolicyContentSource"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Content source to apply the Content Filters. Known values are: \"Prompt\", \"Completion\",
-     \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        topic_name: Optional[str] = None,
-        blocking: Optional[bool] = None,
-        source: Optional[Union[str, "_models.RaiPolicyContentSource"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class DefenderForAISetting(ProxyResource):
     """The Defender for AI resource.
 
@@ -3826,6 +4014,53 @@ class DeploymentCapacitySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
+class DeploymentPolicyEvaluationResult(_Model):
+    """Policy evaluation result for a single deployment.
+
+    :ivar evaluation_outcome: The evaluation outcome. Known values are: "Compliant",
+     "NonCompliant", and "Error".
+    :vartype evaluation_outcome: str or
+     ~azure.mgmt.cognitiveservices.models.PolicyEvaluationOutcome
+    :ivar error_message: Error message if the evaluation outcome is Error.
+    :vartype error_message: str
+    :ivar non_compliant_assignments: Details of non-compliant policy assignments.
+    :vartype non_compliant_assignments:
+     list[~azure.mgmt.cognitiveservices.models.PolicyAssignmentEvaluationDetails]
+    """
+
+    evaluation_outcome: Optional[Union[str, "_models.PolicyEvaluationOutcome"]] = rest_field(
+        name="evaluationOutcome", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The evaluation outcome. Known values are: \"Compliant\", \"NonCompliant\", and \"Error\"."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Error message if the evaluation outcome is Error."""
+    non_compliant_assignments: Optional[list["_models.PolicyAssignmentEvaluationDetails"]] = rest_field(
+        name="nonCompliantAssignments", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details of non-compliant policy assignments."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        evaluation_outcome: Optional[Union[str, "_models.PolicyEvaluationOutcome"]] = None,
+        error_message: Optional[str] = None,
+        non_compliant_assignments: Optional[list["_models.PolicyAssignmentEvaluationDetails"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DeploymentProperties(_Model):
     """Properties of Cognitive Services account deployment.
 
@@ -3874,10 +4109,10 @@ class DeploymentProperties(_Model):
      'Paused' to temporarily stop inference while preserving the deployment configuration. Known
      values are: "Running" and "Paused".
     :vartype deployment_state: str or ~azure.mgmt.cognitiveservices.models.DeploymentState
-    :ivar routing: Routing configuration for the deployment. This property is only applicable when
-     the deployed model is 'model-router' version 2025-11-18 or later. Allows you to select the
-     models subset for routing and the routing mode (balanced, accuracy, cost) for routing across
-     all supported models or the model subset.
+    :ivar routing: Routing configuration for the model-router deployment. This property is only
+     applicable when the deployed model is 'model-router' version 2025-11-18 or later. Allows you to
+     select the models subset for routing and the routing mode (balanced, quality, cost) for routing
+     across all supported models or the model subset.
     :vartype routing: ~azure.mgmt.cognitiveservices.models.DeploymentRouting
     """
 
@@ -3944,10 +4179,10 @@ class DeploymentProperties(_Model):
     routing: Optional["_models.DeploymentRouting"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Routing configuration for the deployment. This property is only applicable when the deployed
-     model is 'model-router' version 2025-11-18 or later. Allows you to select the models subset for
-     routing and the routing mode (balanced, accuracy, cost) for routing across all supported models
-     or the model subset."""
+    """Routing configuration for the model-router deployment. This property is only applicable when
+     the deployed model is 'model-router' version 2025-11-18 or later. Allows you to select the
+     models subset for routing and the routing mode (balanced, quality, cost) for routing across all
+     supported models or the model subset."""
 
     @overload
     def __init__(
@@ -3978,29 +4213,29 @@ class DeploymentProperties(_Model):
 
 
 class DeploymentRouting(_Model):
-    """Routing configuration for the deployment. Specifies how requests are routed across multiple
-    models.
+    """Routing configuration for the model-router deployment. Specifies how requests are routed across
+    multiple models.
 
-    :ivar mode: The routing mode that determines how requests are distributed across models. Known
-     values are: "cost", "balanced", and "accuracy".
+    :ivar mode: The model-router routing mode that determines how requests are distributed across
+     models. Known values are: "cost", "balanced", and "quality".
     :vartype mode: str or ~azure.mgmt.cognitiveservices.models.RoutingMode
-    :ivar models: Optional. The list of models that the model router can use to route requests
-     across. If not specified, the model router will route to all available models specified in the
-     model-router version.
+    :ivar models: Optional. The list of model-router supported models that the model router can use
+     to route requests across. If not specified, the model router will route to all available models
+     specified in the model-router version.
     :vartype models: list[~azure.mgmt.cognitiveservices.models.DeploymentModel]
     """
 
     mode: Optional[Union[str, "_models.RoutingMode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The routing mode that determines how requests are distributed across models. Known values are:
-     \"cost\", \"balanced\", and \"accuracy\"."""
+    """The model-router routing mode that determines how requests are distributed across models. Known
+     values are: \"cost\", \"balanced\", and \"quality\"."""
     models: Optional[list["_models.DeploymentModel"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional. The list of models that the model router can use to route requests across. If not
-     specified, the model router will route to all available models specified in the model-router
-     version."""
+    """Optional. The list of model-router supported models that the model router can use to route
+     requests across. If not specified, the model router will route to all available models
+     specified in the model-router version."""
 
     @overload
     def __init__(
@@ -4061,6 +4296,28 @@ class DeploymentScaleSettings(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class DeploymentSizeCapacity(_Model):
+    """Capacity information for a specific deployment size.
+
+    :ivar model_instance_accelerator_count: The number of accelerators required per model instance.
+    :vartype model_instance_accelerator_count: int
+    :ivar total_available_capacity: The total available capacity for this deployment size.
+    :vartype total_available_capacity: int
+    :ivar largest_deployment_capacity: The largest contiguous deployment capacity available for
+     this deployment size.
+    :vartype largest_deployment_capacity: int
+    """
+
+    model_instance_accelerator_count: Optional[int] = rest_field(
+        name="modelInstanceAcceleratorCount", visibility=["read"]
+    )
+    """The number of accelerators required per model instance."""
+    total_available_capacity: Optional[int] = rest_field(name="totalAvailableCapacity", visibility=["read"])
+    """The total available capacity for this deployment size."""
+    largest_deployment_capacity: Optional[int] = rest_field(name="largestDeploymentCapacity", visibility=["read"])
+    """The largest contiguous deployment capacity available for this deployment size."""
 
 
 class DomainAvailability(_Model):
@@ -4311,6 +4568,140 @@ class ErrorResponse(_Model):
         self,
         *,
         error: Optional["_models.ErrorDetail"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EvaluateDeploymentPoliciesDeployment(_Model):
+    """A hypothetical deployment definition used for policy dry-run evaluation.
+
+    :ivar name: The name of the hypothetical deployment. Required.
+    :vartype name: str
+    :ivar properties: Properties of the hypothetical deployment. Required.
+    :vartype properties:
+     ~azure.mgmt.cognitiveservices.models.EvaluateDeploymentPoliciesDeploymentProperties
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the hypothetical deployment. Required."""
+    properties: "_models.EvaluateDeploymentPoliciesDeploymentProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the hypothetical deployment. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        properties: "_models.EvaluateDeploymentPoliciesDeploymentProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EvaluateDeploymentPoliciesDeploymentProperties(_Model):  # pylint: disable=name-too-long
+    """Properties of a hypothetical deployment for policy evaluation.
+
+    :ivar model: The model to evaluate. Required.
+    :vartype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+    :ivar rai_policy_name: The name of the RAI policy to evaluate.
+    :vartype rai_policy_name: str
+    """
+
+    model: "_models.DeploymentModel" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model to evaluate. Required."""
+    rai_policy_name: Optional[str] = rest_field(
+        name="raiPolicyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the RAI policy to evaluate."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: "_models.DeploymentModel",
+        rai_policy_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EvaluateDeploymentPoliciesRequest(_Model):
+    """Request body for the evaluateDeploymentPolicies action.
+
+    :ivar deployments: The list of hypothetical deployments to evaluate against Azure Policy.
+     Required.
+    :vartype deployments:
+     list[~azure.mgmt.cognitiveservices.models.EvaluateDeploymentPoliciesDeployment]
+    """
+
+    deployments: list["_models.EvaluateDeploymentPoliciesDeployment"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of hypothetical deployments to evaluate against Azure Policy. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        deployments: list["_models.EvaluateDeploymentPoliciesDeployment"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EvaluateDeploymentPoliciesResponse(_Model):
+    """Response body for the evaluateDeploymentPolicies action.
+
+    :ivar results: Per-deployment policy evaluation results, keyed by deployment name.
+    :vartype results: dict[str,
+     ~azure.mgmt.cognitiveservices.models.DeploymentPolicyEvaluationResult]
+    """
+
+    results: Optional[dict[str, "_models.DeploymentPolicyEvaluationResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per-deployment policy evaluation results, keyed by deployment name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        results: Optional[dict[str, "_models.DeploymentPolicyEvaluationResult"]] = None,
     ) -> None: ...
 
     @overload
@@ -4744,6 +5135,414 @@ class ManagedAgentDeployment(AgentDeploymentProperties, discriminator="Managed")
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.deployment_type = AgentDeploymentType.MANAGED  # type: ignore
+
+
+class ManagedComputeCapacity(ProxyResource):
+    """Managed compute capacity information for Cognitive Services managed compute deployments.
+    Provides available accelerator capacity per type and region at the subscription level.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of the managed compute capacity resource.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.ManagedComputeCapacityProperties
+    """
+
+    properties: Optional["_models.ManagedComputeCapacityProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the managed compute capacity resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ManagedComputeCapacityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedComputeCapacityProperties(_Model):
+    """Properties of a managed compute capacity resource.
+
+    :ivar accelerator_type: The type of accelerator (e.g., Azure.A100, Azure.H100).
+    :vartype accelerator_type: str
+    :ivar location: The Azure region where the capacity is available.
+    :vartype location: str
+    :ivar available_accelerators: The number of available accelerators in the region.
+    :vartype available_accelerators: int
+    :ivar deployment_size_capacities: Capacity information broken down by deployment size.
+    :vartype deployment_size_capacities:
+     list[~azure.mgmt.cognitiveservices.models.DeploymentSizeCapacity]
+    """
+
+    accelerator_type: Optional[str] = rest_field(name="acceleratorType", visibility=["read"])
+    """The type of accelerator (e.g., Azure.A100, Azure.H100)."""
+    location: Optional[str] = rest_field(visibility=["read"])
+    """The Azure region where the capacity is available."""
+    available_accelerators: Optional[int] = rest_field(name="availableAccelerators", visibility=["read"])
+    """The number of available accelerators in the region."""
+    deployment_size_capacities: Optional[list["_models.DeploymentSizeCapacity"]] = rest_field(
+        name="deploymentSizeCapacities", visibility=["read"]
+    )
+    """Capacity information broken down by deployment size."""
+
+
+class ManagedComputeDeployment(ProxyResource):
+    """Cognitive Services account managed compute deployment, backed by managed compute (GPU)
+    resources.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of the Cognitive Services managed compute deployment.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.ManagedComputeDeploymentProperties
+    :ivar sku: The resource model definition representing SKU.
+    :vartype sku: ~azure.mgmt.cognitiveservices.models.Sku
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.ManagedComputeDeploymentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the Cognitive Services managed compute deployment."""
+    sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource model definition representing SKU."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Resource Etag."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ManagedComputeDeploymentProperties"] = None,
+        sku: Optional["_models.Sku"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedComputeDeploymentInfo(_Model):
+    """Deployment detail within a managed compute usage entry.
+
+    :ivar deployment_id: Full ARM resource ID of the deployment.
+    :vartype deployment_id: str
+    :ivar project_id: Full ARM resource ID of the account/project.
+    :vartype project_id: str
+    :ivar model_id: Model name (e.g., 'azureml://registries//models//versions/gpt-4o').
+    :vartype model_id: str
+    :ivar accelerator_count: Number of GPUs consumed by this deployment.
+    :vartype accelerator_count: int
+    :ivar instance_count: Number of instances for this deployment.
+    :vartype instance_count: int
+    """
+
+    deployment_id: Optional[str] = rest_field(
+        name="deploymentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Full ARM resource ID of the deployment."""
+    project_id: Optional[str] = rest_field(name="projectId", visibility=["read", "create", "update", "delete", "query"])
+    """Full ARM resource ID of the account/project."""
+    model_id: Optional[str] = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
+    """Model name (e.g., 'azureml://registries//models//versions/gpt-4o')."""
+    accelerator_count: Optional[int] = rest_field(
+        name="acceleratorCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of GPUs consumed by this deployment."""
+    instance_count: Optional[int] = rest_field(
+        name="instanceCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of instances for this deployment."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        deployment_id: Optional[str] = None,
+        project_id: Optional[str] = None,
+        model_id: Optional[str] = None,
+        accelerator_count: Optional[int] = None,
+        instance_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedComputeDeploymentProperties(_Model):
+    """Properties of a Cognitive Services managed compute deployment.
+
+    :ivar model: AzureML Registry model asset URI. Required on creation; immutable after creation.
+     Example: azureml://registries/{registry}/models/{model}/versions/{version}. Required.
+    :vartype model: str
+    :ivar deployment_template: AzureML Registry deployment template URI. Optional on creation.
+     Example: azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version}.
+    :vartype deployment_template: str
+    :ivar accelerator_type: Accelerator type (e.g., H100_80GB). Optional on creation; immutable
+     after creation.
+    :vartype accelerator_type: str
+    :ivar version_upgrade_option: Template auto-upgrade policy. Defaults to
+     OnceNewDefaultVersionAvailable. Known values are: "OnceNewDefaultVersionAvailable",
+     "OnceCurrentVersionExpired", and "NoAutoUpgrade".
+    :vartype version_upgrade_option: str or
+     ~azure.mgmt.cognitiveservices.models.DeploymentModelVersionUpgradeOption
+    :ivar accelerators_per_instance: Read-only. Number of accelerators (GPUs) consumed by each
+     model instance, sourced from the deployment template.
+    :vartype accelerators_per_instance: int
+    :ivar total_accelerators: Read-only. Total accelerators allocated: sku.capacity (instances) x
+     acceleratorsPerInstance.
+    :vartype total_accelerators: int
+    :ivar provisioning_state: Read-only. Current provisioning state. Known values are: "Accepted",
+     "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled", and "ResolvingDNS".
+    :vartype provisioning_state: str or ~azure.mgmt.cognitiveservices.models.ProvisioningState
+    :ivar provisioning_details: Read-only. Status message and timestamp from the last provisioning
+     operation.
+    :vartype provisioning_details:
+     ~azure.mgmt.cognitiveservices.models.ManagedComputeDeploymentProvisioningDetails
+    :ivar routes: Read-only. Inference route paths relative to the account endpoint. Populated when
+     provisioningState is Succeeded.
+    :vartype routes: ~azure.mgmt.cognitiveservices.models.ManagedComputeDeploymentRoutes
+    """
+
+    model: str = rest_field(visibility=["read", "create"])
+    """AzureML Registry model asset URI. Required on creation; immutable after creation. Example:
+     azureml://registries/{registry}/models/{model}/versions/{version}. Required."""
+    deployment_template: Optional[str] = rest_field(name="deploymentTemplate", visibility=["read", "create"])
+    """AzureML Registry deployment template URI. Optional on creation. Example:
+     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version}."""
+    accelerator_type: Optional[str] = rest_field(name="acceleratorType", visibility=["read", "create"])
+    """Accelerator type (e.g., H100_80GB). Optional on creation; immutable after creation."""
+    version_upgrade_option: Optional[Union[str, "_models.DeploymentModelVersionUpgradeOption"]] = rest_field(
+        name="versionUpgradeOption", visibility=["read", "create"]
+    )
+    """Template auto-upgrade policy. Defaults to OnceNewDefaultVersionAvailable. Known values are:
+     \"OnceNewDefaultVersionAvailable\", \"OnceCurrentVersionExpired\", and \"NoAutoUpgrade\"."""
+    accelerators_per_instance: Optional[int] = rest_field(name="acceleratorsPerInstance", visibility=["read"])
+    """Read-only. Number of accelerators (GPUs) consumed by each model instance, sourced from the
+     deployment template."""
+    total_accelerators: Optional[int] = rest_field(name="totalAccelerators", visibility=["read"])
+    """Read-only. Total accelerators allocated: sku.capacity (instances) x acceleratorsPerInstance."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Read-only. Current provisioning state. Known values are: \"Accepted\", \"Creating\",
+     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", and \"ResolvingDNS\"."""
+    provisioning_details: Optional["_models.ManagedComputeDeploymentProvisioningDetails"] = rest_field(
+        name="provisioningDetails", visibility=["read"]
+    )
+    """Read-only. Status message and timestamp from the last provisioning operation."""
+    routes: Optional["_models.ManagedComputeDeploymentRoutes"] = rest_field(visibility=["read"])
+    """Read-only. Inference route paths relative to the account endpoint. Populated when
+     provisioningState is Succeeded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: str,
+        deployment_template: Optional[str] = None,
+        accelerator_type: Optional[str] = None,
+        version_upgrade_option: Optional[Union[str, "_models.DeploymentModelVersionUpgradeOption"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedComputeDeploymentProvisioningDetails(_Model):  # pylint: disable=name-too-long
+    """Provisioning status details for a managed compute deployment.
+
+    :ivar message: A human-readable status message from the last provisioning operation.
+    :vartype message: str
+    :ivar last_operation_timestamp: Timestamp of the last provisioning operation.
+    :vartype last_operation_timestamp: ~datetime.datetime
+    """
+
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable status message from the last provisioning operation."""
+    last_operation_timestamp: Optional[datetime.datetime] = rest_field(
+        name="lastOperationTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp of the last provisioning operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: Optional[str] = None,
+        last_operation_timestamp: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedComputeDeploymentRoutes(_Model):
+    """Inference route paths for a managed compute deployment, relative to the account endpoint.
+    Populated when provisioningState is Succeeded.
+
+    :ivar chat_completions_scoring_path: Relative path to the chat completions scoring endpoint.
+    :vartype chat_completions_scoring_path: str
+    :ivar swagger: Relative path to the Swagger/OpenAPI endpoint.
+    :vartype swagger: str
+    :ivar messages_api_scoring_path: Relative path to the messages API scoring endpoint.
+    :vartype messages_api_scoring_path: str
+    """
+
+    chat_completions_scoring_path: Optional[str] = rest_field(
+        name="chatCompletionsScoringPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Relative path to the chat completions scoring endpoint."""
+    swagger: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Relative path to the Swagger/OpenAPI endpoint."""
+    messages_api_scoring_path: Optional[str] = rest_field(
+        name="messagesApiScoringPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Relative path to the messages API scoring endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        chat_completions_scoring_path: Optional[str] = None,
+        swagger: Optional[str] = None,
+        messages_api_scoring_path: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedComputeUsage(_Model):
+    """Managed compute quota usage for a specific SKU.
+
+    :ivar id: Fully qualified resource ID for the managed compute usage.
+    :vartype id: str
+    :ivar name: The name information for the metric.
+    :vartype name: ~azure.mgmt.cognitiveservices.models.MetricName
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds", "Percent",
+     "CountPerSecond", "BytesPerSecond", and "Milliseconds".
+    :vartype unit: str or ~azure.mgmt.cognitiveservices.models.UnitType
+    :ivar limit: Maximum value for this metric.
+    :vartype limit: float
+    :ivar current_value: Current value for this metric.
+    :vartype current_value: float
+    :ivar offer_scope: Offer scope (e.g., 'Global', 'Datazone-US').
+    :vartype offer_scope: str
+    :ivar deployments: Deployments consuming this managed compute quota.
+    :vartype deployments: list[~azure.mgmt.cognitiveservices.models.ManagedComputeDeploymentInfo]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the managed compute usage."""
+    name: Optional["_models.MetricName"] = rest_field(visibility=["read"])
+    """The name information for the metric."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The resource type."""
+    unit: Optional[Union[str, "_models.UnitType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The unit of the metric. Known values are: \"Count\", \"Bytes\", \"Seconds\", \"Percent\",
+     \"CountPerSecond\", \"BytesPerSecond\", and \"Milliseconds\"."""
+    limit: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum value for this metric."""
+    current_value: Optional[float] = rest_field(
+        name="currentValue", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current value for this metric."""
+    offer_scope: Optional[str] = rest_field(
+        name="offerScope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Offer scope (e.g., 'Global', 'Datazone-US')."""
+    deployments: Optional[list["_models.ManagedComputeDeploymentInfo"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deployments consuming this managed compute quota."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        unit: Optional[Union[str, "_models.UnitType"]] = None,
+        limit: Optional[float] = None,
+        current_value: Optional[float] = None,
+        offer_scope: Optional[str] = None,
+        deployments: Optional[list["_models.ManagedComputeDeploymentInfo"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ManagedIdentityAuthTypeConnectionProperties(
@@ -6344,45 +7143,6 @@ class OutboundRuleBasicResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class OutboundRuleListResult(_Model):
-    """List of outbound rules for the managed network of a cognitive services account.
-
-    :ivar next_link: The link to the next page constructed using the continuationToken.  If null,
-     there are no additional pages.
-    :vartype next_link: str
-    :ivar value: The list of cognitive services accounts. Since this list may be incomplete, the
-     nextLink field should be used to request the next list of cognitive services accounts.
-    :vartype value: list[~azure.mgmt.cognitiveservices.models.OutboundRuleBasicResource]
-    """
-
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page constructed using the continuationToken.  If null, there are no
-     additional pages."""
-    value: Optional[list["_models.OutboundRuleBasicResource"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of cognitive services accounts. Since this list may be incomplete, the nextLink field
-     should be used to request the next list of cognitive services accounts."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[list["_models.OutboundRuleBasicResource"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class PATAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="PAT"):
     """PATAuthTypeConnectionProperties.
 
@@ -6476,6 +7236,34 @@ class PATAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="PAT
         self.auth_type = ConnectionAuthType.PAT  # type: ignore
 
 
+class PatchResourceSku(_Model):
+    """The object being used to update sku of a resource, in general used for PATCH operations.
+
+    :ivar sku: The resource model definition representing SKU.
+    :vartype sku: ~azure.mgmt.cognitiveservices.models.Sku
+    """
+
+    sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource model definition representing SKU."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sku: Optional["_models.Sku"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PatchResourceTags(_Model):
     """The object being used to update tags of a resource, in general used for PATCH operations.
 
@@ -6523,6 +7311,185 @@ class PatchResourceTagsAndSku(PatchResourceTags):
         *,
         tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.Sku"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PolicyAssignmentEvaluationDetails(_Model):
+    """Details of a non-compliant policy assignment.
+
+    :ivar assignment_id: The policy assignment ID.
+    :vartype assignment_id: str
+    :ivar policy_definition_id: The policy definition ID.
+    :vartype policy_definition_id: str
+    :ivar policy_set_definition_id: The policy set definition ID.
+    :vartype policy_set_definition_id: str
+    :ivar evaluation_outcome: The evaluation outcome for this assignment. Known values are:
+     "Compliant", "NonCompliant", and "Error".
+    :vartype evaluation_outcome: str or
+     ~azure.mgmt.cognitiveservices.models.PolicyEvaluationOutcome
+    :ivar non_compliance_reason: The reason for non-compliance.
+    :vartype non_compliance_reason: str
+    :ivar effect: The policy effect (e.g., Deny, Audit).
+    :vartype effect: str
+    :ivar expression_evaluations: Expression-level evaluation details.
+    :vartype expression_evaluations:
+     list[~azure.mgmt.cognitiveservices.models.PolicyExpressionEvaluationDetails]
+    """
+
+    assignment_id: Optional[str] = rest_field(
+        name="assignmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy assignment ID."""
+    policy_definition_id: Optional[str] = rest_field(
+        name="policyDefinitionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy definition ID."""
+    policy_set_definition_id: Optional[str] = rest_field(
+        name="policySetDefinitionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy set definition ID."""
+    evaluation_outcome: Optional[Union[str, "_models.PolicyEvaluationOutcome"]] = rest_field(
+        name="evaluationOutcome", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The evaluation outcome for this assignment. Known values are: \"Compliant\", \"NonCompliant\",
+     and \"Error\"."""
+    non_compliance_reason: Optional[str] = rest_field(
+        name="nonComplianceReason", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reason for non-compliance."""
+    effect: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The policy effect (e.g., Deny, Audit)."""
+    expression_evaluations: Optional[list["_models.PolicyExpressionEvaluationDetails"]] = rest_field(
+        name="expressionEvaluations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Expression-level evaluation details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        assignment_id: Optional[str] = None,
+        policy_definition_id: Optional[str] = None,
+        policy_set_definition_id: Optional[str] = None,
+        evaluation_outcome: Optional[Union[str, "_models.PolicyEvaluationOutcome"]] = None,
+        non_compliance_reason: Optional[str] = None,
+        effect: Optional[str] = None,
+        expression_evaluations: Optional[list["_models.PolicyExpressionEvaluationDetails"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PolicyExpressionEvaluationDetails(_Model):
+    """Details of a policy expression evaluation.
+
+    :ivar expression: The policy expression.
+    :vartype expression: str
+    :ivar expression_kind: The kind of expression.
+    :vartype expression_kind: str
+    :ivar operator: The operator used in evaluation.
+    :vartype operator: str
+    :ivar result: The evaluation result.
+    :vartype result: str
+    :ivar target_value: The target value of the expression.
+    :vartype target_value: str
+    :ivar expression_value: The actual value of the expression.
+    :vartype expression_value: str
+    """
+
+    expression: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The policy expression."""
+    expression_kind: Optional[str] = rest_field(
+        name="expressionKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The kind of expression."""
+    operator: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The operator used in evaluation."""
+    result: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The evaluation result."""
+    target_value: Optional[str] = rest_field(
+        name="targetValue", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target value of the expression."""
+    expression_value: Optional[str] = rest_field(
+        name="expressionValue", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The actual value of the expression."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expression: Optional[str] = None,
+        expression_kind: Optional[str] = None,
+        operator: Optional[str] = None,
+        result: Optional[str] = None,
+        target_value: Optional[str] = None,
+        expression_value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Pool(_Model):
+    """A compute pool configuration.
+
+    :ivar name: The name of the pool. Required.
+    :vartype name: str
+    :ivar vm_priority: The VM priority of the pool. Required. Known values are: "Regular" and
+     "LowPriority".
+    :vartype vm_priority: str or ~azure.mgmt.cognitiveservices.models.VmPriority
+    :ivar instance_type: The instance type (VM SKU) used in the pool. Required.
+    :vartype instance_type: str
+    :ivar node_count: The number of nodes in the pool. Required.
+    :vartype node_count: int
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the pool. Required."""
+    vm_priority: Union[str, "_models.VmPriority"] = rest_field(
+        name="vmPriority", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The VM priority of the pool. Required. Known values are: \"Regular\" and \"LowPriority\"."""
+    instance_type: str = rest_field(name="instanceType", visibility=["read", "create", "update", "delete", "query"])
+    """The instance type (VM SKU) used in the pool. Required."""
+    node_count: int = rest_field(name="nodeCount", visibility=["read", "create", "update", "delete", "query"])
+    """The number of nodes in the pool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        vm_priority: Union[str, "_models.VmPriority"],
+        instance_type: str,
+        node_count: int,
     ) -> None: ...
 
     @overload
@@ -6936,7 +7903,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Project(Resource):
+class Project(ProxyResource):
     """Cognitive Services project is an Azure resource representing the provisioned account's project,
     it's type, location and SKU.
 
@@ -7715,116 +8682,6 @@ class RaiContentFilterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiExternalSafetyProvider(ProxyResource):
-    """Cognitive Services Rai External Safety provider.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
-    :ivar etag: Resource Etag.
-    :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: Properties of Cognitive Services Rai External Safety provider.
-    :vartype properties: ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderProperties
-    """
-
-    etag: Optional[str] = rest_field(visibility=["read"])
-    """Resource Etag."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read"])
-    """Resource tags."""
-    properties: Optional["_models.RaiExternalSafetyProviderProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties of Cognitive Services Rai External Safety provider."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.RaiExternalSafetyProviderProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RaiExternalSafetyProviderProperties(_Model):
-    """RAI External SafetyProvider properties.
-
-    :ivar provider_id: The unique identifier of the safety provider.
-    :vartype provider_id: str
-    :ivar provider_name: Name of the safety provider.
-    :vartype provider_name: str
-    :ivar mode: Safety provider mode sync/async.
-    :vartype mode: str
-    :ivar url: Webhook URL for the safety provider.
-    :vartype url: str
-    :ivar created_at: Creation time of the safety provider.
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_at: Last modified time of the safety provider.
-    :vartype last_modified_at: ~datetime.datetime
-    """
-
-    provider_id: Optional[str] = rest_field(
-        name="providerId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The unique identifier of the safety provider."""
-    provider_name: Optional[str] = rest_field(
-        name="providerName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Name of the safety provider."""
-    mode: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Safety provider mode sync/async."""
-    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Webhook URL for the safety provider."""
-    created_at: Optional[datetime.datetime] = rest_field(
-        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Creation time of the safety provider."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Last modified time of the safety provider."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        provider_id: Optional[str] = None,
-        provider_name: Optional[str] = None,
-        mode: Optional[str] = None,
-        url: Optional[str] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class RaiExternalSafetyProviderSchema(ProxyResource):
     """Cognitive Services Rai External Safety provider Schema.
 
@@ -8121,8 +8978,6 @@ class RaiPolicyProperties(_Model):
     :vartype content_filters: list[~azure.mgmt.cognitiveservices.models.RaiPolicyContentFilter]
     :ivar custom_blocklists: The list of custom Blocklist.
     :vartype custom_blocklists: list[~azure.mgmt.cognitiveservices.models.CustomBlocklistConfig]
-    :ivar custom_topics: The list of custom rai topics.
-    :vartype custom_topics: list[~azure.mgmt.cognitiveservices.models.CustomTopicConfig]
     :ivar safety_providers: The list of Safety Providers.
     :vartype safety_providers: list[~azure.mgmt.cognitiveservices.models.SafetyProviderConfig]
     """
@@ -8148,10 +9003,6 @@ class RaiPolicyProperties(_Model):
         name="customBlocklists", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of custom Blocklist."""
-    custom_topics: Optional[list["_models.CustomTopicConfig"]] = rest_field(
-        name="customTopics", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of custom rai topics."""
     safety_providers: Optional[list["_models.SafetyProviderConfig"]] = rest_field(
         name="safetyProviders", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8165,7 +9016,6 @@ class RaiPolicyProperties(_Model):
         base_policy_name: Optional[str] = None,
         content_filters: Optional[list["_models.RaiPolicyContentFilter"]] = None,
         custom_blocklists: Optional[list["_models.CustomBlocklistConfig"]] = None,
-        custom_topics: Optional[list["_models.CustomTopicConfig"]] = None,
         safety_providers: Optional[list["_models.SafetyProviderConfig"]] = None,
     ) -> None: ...
 
@@ -9409,6 +10259,43 @@ class SkuResource(_Model):
         resource_type: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
         capacity: Optional["_models.CapacityConfig"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SshSettings(_Model):
+    """SSH configuration for a Container Instance compute.
+
+    :ivar ssh_public_key: The SSH public key for authenticating to the compute instance.
+    :vartype ssh_public_key: str
+    :ivar admin_enabled: Whether SSH admin access is enabled.
+    :vartype admin_enabled: bool
+    """
+
+    ssh_public_key: Optional[str] = rest_field(
+        name="sshPublicKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SSH public key for authenticating to the compute instance."""
+    admin_enabled: Optional[bool] = rest_field(
+        name="adminEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether SSH admin access is enabled."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ssh_public_key: Optional[str] = None,
+        admin_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
