@@ -2,7 +2,22 @@
 
 ## 1.3.0b1 (2026-05-19)
 
-skip changelog generation
+### Features Added
+
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added enum `ActionType`
+  - Added enum `Origin`
+
+### Breaking Changes
+
+  - Deleted or renamed client `ConnectedKubernetesClient`
+  - Deleted or renamed model `ConnectedClusterList`
+  - Deleted or renamed model `LastModifiedByType`
+  - Deleted or renamed model `OperationList`
 
 ## 1.2.0 (2026-04-23)
 
