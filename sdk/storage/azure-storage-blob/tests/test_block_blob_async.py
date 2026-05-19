@@ -36,7 +36,7 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     StandardBlobTier,
 )
-from azure.storage.blob._shared.policies import StorageContentValidation
+from azure.storage.blob._shared.validation import calculate_content_md5
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
 
