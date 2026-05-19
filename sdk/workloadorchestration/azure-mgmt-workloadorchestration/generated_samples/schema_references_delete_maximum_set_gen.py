@@ -15,7 +15,7 @@ from azure.mgmt.workloadorchestration import WorkloadOrchestrationMgmtClient
     pip install azure-identity
     pip install azure-mgmt-workloadorchestration
 # USAGE
-    python dynamic_schema_versions_update_maximum_set_gen.py
+    python schema_references_delete_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,16 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.dynamic_schema_versions.update(
-        resource_group_name="rgconfigurationmanager",
-        schema_name="testname",
-        dynamic_schema_name="testname",
-        dynamic_schema_version_name="1.0.0",
-        properties={"properties": {"value": "muezi"}},
-    )
-    print(response)
+    client.schema_references.begin_delete(
+        resource_uri="gt",
+        schema_reference_name="default",
+    ).result()
 
 
-# x-ms-original-file: 2025-06-01/DynamicSchemaVersions_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-01/SchemaReferences_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -34,7 +34,7 @@ def main():
         resource_group_name="rgconfigurationmanager",
         schema_name="testname",
         dynamic_schema_name="testname",
-        schema_version_name="1.0.0",
+        dynamic_schema_version_name="1.0.0",
     ).result()
 
 

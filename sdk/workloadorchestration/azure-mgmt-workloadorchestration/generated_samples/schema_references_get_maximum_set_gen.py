@@ -31,8 +31,8 @@ def main():
     )
 
     response = client.schema_references.get(
-        resource_uri="jdvtghygpz",
-        schema_reference_name="testname",
+        resource_uri="gt",
+        schema_reference_name="default",
     )
     print(response)
 

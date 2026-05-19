@@ -40,7 +40,12 @@ class TestWorkloadOrchestrationMgmtConfigTemplatesOperations(AzureMgmtRecordedTe
                 "eTag": "str",
                 "id": "str",
                 "name": "str",
-                "properties": {"description": "str", "latestVersion": "str", "provisioningState": "str"},
+                "properties": {
+                    "description": "str",
+                    "latestVersion": "str",
+                    "provisioningState": "str",
+                    "uniqueIdentifier": "str",
+                },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -63,23 +68,7 @@ class TestWorkloadOrchestrationMgmtConfigTemplatesOperations(AzureMgmtRecordedTe
         response = self.client.config_templates.update(
             resource_group_name=resource_group.name,
             config_template_name="str",
-            properties={
-                "location": "str",
-                "eTag": "str",
-                "id": "str",
-                "name": "str",
-                "properties": {"description": "str", "latestVersion": "str", "provisioningState": "str"},
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "tags": {"str": "str"},
-                "type": "str",
-            },
+            properties={"properties": {"description": "str"}, "tags": {"str": "str"}},
         )
 
         # please add some check logic here by yourself

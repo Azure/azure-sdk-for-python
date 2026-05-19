@@ -14,27 +14,27 @@ class ActiveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Instance State."""
 
     ACTIVE = "active"
-    """Instance is active"""
+    """Instance is active."""
     INACTIVE = "inactive"
-    """Instance is inactive"""
+    """Instance is inactive."""
 
 
 class ConfigurationModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available configuration models."""
 
     APPLICATION = "Application"
-    """Configuration model Application"""
+    """Configuration model Application."""
     COMMON = "Common"
-    """Configuration model Common"""
+    """Configuration model Common."""
 
 
 class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available configuration types."""
 
     SHARED = "Shared"
-    """Configuration type Shared"""
+    """Configuration type Shared."""
     HIERARCHY = "Hierarchy"
-    """Configuration type Hierarchy"""
+    """Configuration type Hierarchy."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -54,20 +54,20 @@ class ErrorActionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error Action Mode."""
 
     STOP_ON_ANY_FAILURE = "stopOnAnyFailure"
-    """Stop on any failure"""
+    """Stop on any failure."""
     STOP_ON_N_FAILURES = "stopOnNFailures"
-    """Stop after N cumulative failures"""
+    """Stop after N cumulative failures."""
     SILENTLY_CONTINUE = "silentlyContinue"
-    """Continue silently despite errors"""
+    """Continue silently despite errors."""
 
 
 class ExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported ExtendedLocation types."""
 
     EDGE_ZONE = "EdgeZone"
-    """Azure Edge Zones location type"""
+    """Azure Edge Zones location type."""
     CUSTOM_LOCATION = "CustomLocation"
-    """Azure Custom Locations type"""
+    """Azure Custom Locations type."""
 
 
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -98,7 +98,7 @@ class OrchestratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available Orchestrator types."""
 
     TO = "TO"
-    """Default type"""
+    """Default type."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -111,73 +111,73 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     INITIALIZED = "Initialized"
-    """Resource Provisioning is initialized"""
+    """Resource Provisioning is initialized."""
     INPROGRESS = "InProgress"
-    """Resource Provisioning is in progress"""
+    """Resource Provisioning is in progress."""
     DELETING = "Deleting"
-    """Resource Provisioning is deleting"""
+    """Resource Provisioning is deleting."""
 
 
 class ReconciliationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines a state of the reconciliation policy."""
 
     INACTIVE = "inactive"
-    """Reconciliation is inactive"""
+    """Reconciliation is inactive."""
     ACTIVE = "active"
-    """Reconciliation is active"""
+    """Reconciliation is active."""
 
 
 class ResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource Type State."""
 
     ACTIVE = "active"
-    """Resource is active"""
+    """Resource is active."""
     INACTIVE = "inactive"
-    """Resource is inactive"""
+    """Resource is inactive."""
 
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Solution Instance State."""
 
     IN_REVIEW = "InReview"
-    """Solution Instance is in review"""
+    """Solution Instance is in review."""
     UPGRADE_IN_REVIEW = "UpgradeInReview"
-    """Solution Instance upgrade is in review"""
+    """Solution Instance upgrade is in review."""
     READY_TO_DEPLOY = "ReadyToDeploy"
-    """Solution Instance is ready to deploy"""
+    """Solution Instance is ready to deploy."""
     READY_TO_UPGRADE = "ReadyToUpgrade"
-    """Solution Instance is ready to upgrade"""
+    """Solution Instance is ready to upgrade."""
     DEPLOYING = "Deploying"
-    """Solution Instance is deploying"""
+    """Solution Instance is deploying."""
     DEPLOYED = "Deployed"
-    """Solution Instance is deployed"""
+    """Solution Instance is deployed."""
     FAILED = "Failed"
-    """Solution Instance failed to deploy"""
+    """Solution Instance failed to deploy."""
     UNDEPLOYED = "Undeployed"
-    """Solution Instance is undeployed"""
+    """Solution Instance is undeployed."""
     PENDING_EXTERNAL_VALIDATION = "PendingExternalValidation"
-    """Solution Instance is pending external validation"""
+    """Solution Instance is pending external validation."""
     EXTERNAL_VALIDATION_FAILED = "ExternalValidationFailed"
-    """Solution Instance failed external validation"""
+    """Solution Instance failed external validation."""
     STAGING = "Staging"
-    """Solution Instance is staging the images"""
+    """Solution Instance is staging the images."""
 
 
 class UpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Denotes which part of the version number will be updated."""
 
     MAJOR = "Major"
-    """Major version"""
+    """Major version."""
     MINOR = "Minor"
-    """Minor version"""
+    """Minor version."""
     PATCH = "Patch"
-    """Patch version"""
+    """Patch version."""
 
 
 class ValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Solution Instance Validation Status."""
 
     VALID = "Valid"
-    """Solution Instance is valid"""
+    """Solution Instance is valid."""
     INVALID = "Invalid"
-    """Solution Instance is invalid"""
+    """Solution Instance is invalid."""

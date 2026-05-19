@@ -31,7 +31,7 @@ def main():
     )
 
     response = client.schema_references.list_by_resource_group(
-        resource_uri="jdvtghygpz",
+        resource_uri="gt",
     )
     for item in response:
         print(item)
