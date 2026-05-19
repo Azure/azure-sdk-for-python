@@ -443,23 +443,36 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         item_id = IdGenerator.new_image_gen_call_item_id(self._response_id)
         return OutputItemImageGenCallBuilder(self, output_index=output_index, item_id=item_id)
 
-    def add_output_item_mcp_call(self, server_label: str, name: str) -> OutputItemMcpCallBuilder:
+    def add_output_item_mcp_call(
+        self,
+        server_label: str,
+        name: str,
+        *,
+        item_id: str | None = None,
+    ) -> OutputItemMcpCallBuilder:
         """Add an MCP tool call output item and return its scoped builder.
 
         :param server_label: Label identifying the MCP server.
         :type server_label: str
         :param name: Name of the MCP tool being called.
         :type name: str
+        :keyword item_id: Optional caller-supplied output item identifier.
+        :keyword type item_id: str | None
         :returns: A builder for emitting MCP call argument deltas and lifecycle events.
         :rtype: OutputItemMcpCallBuilder
         """
         output_index = self._output_index
         self._output_index += 1
-        item_id = IdGenerator.new_mcp_call_item_id(self._response_id)
+        if item_id is None:
+            resolved_item_id = IdGenerator.new_mcp_call_item_id(self._response_id)
+        else:
+            if not isinstance(item_id, str) or not item_id.strip():
+                raise ValueError("item_id must be a non-empty string")
+            resolved_item_id = item_id
         return OutputItemMcpCallBuilder(
             self,
             output_index=output_index,
-            item_id=item_id,
+            item_id=resolved_item_id,
             server_label=server_label,
             name=name,
         )

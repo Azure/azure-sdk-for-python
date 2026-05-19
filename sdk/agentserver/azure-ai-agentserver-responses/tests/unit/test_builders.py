@@ -278,6 +278,31 @@ def test_stream_item_id_generation__uses_expected_shape_and_response_partition_k
         assert len(body) == 50
 
 
+def test_add_output_item_mcp_call__uses_caller_supplied_item_id() -> None:
+    stream = ResponseEventStream(response_id=IdGenerator.new_response_id())
+    stream.emit_created()
+
+    mcp_call = stream.add_output_item_mcp_call("srv", "tool", item_id="mcp_06b686e11f")
+
+    assert mcp_call.item_id == "mcp_06b686e11f"
+
+
+def test_output_item_mcp_call_emit_done__includes_output_and_error_when_provided() -> None:
+    stream = ResponseEventStream(response_id=IdGenerator.new_response_id())
+    stream.emit_created()
+
+    mcp_call = stream.add_output_item_mcp_call("srv", "tool", item_id="mcp_custom")
+    mcp_call.emit_added()
+    mcp_call.emit_arguments_done('{"arg": 1}')
+    mcp_call.emit_failed()
+    done = mcp_call.emit_done(output='{"value": 42}', error={"code": "tool_error"})
+
+    assert done["type"] == "response.output_item.done"
+    assert done["item"]["id"] == "mcp_custom"
+    assert done["item"]["output"] == '{"value": 42}'
+    assert done["item"]["error"] == {"code": "tool_error"}
+
+
 def test_response_event_stream__exposes_mutable_response_snapshot_for_lifecycle_events() -> None:
     stream = ResponseEventStream(response_id="resp_builder_snapshot", model="gpt-4o-mini")
     stream.response.temperature = 1
