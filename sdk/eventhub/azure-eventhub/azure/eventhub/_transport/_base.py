@@ -271,7 +271,11 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_source(source: Union["uamqp_Source", "pyamqp_Source"], offset: Optional[Union[int, str, datetime.datetime]], selector: bytes):
+    def create_source(
+        source: Union["uamqp_Source", "pyamqp_Source"],
+        offset: Optional[Union[int, str, datetime.datetime]],
+        selector: bytes,
+    ):
         """
         Creates and returns the Source.
 
