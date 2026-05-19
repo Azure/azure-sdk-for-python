@@ -9,7 +9,7 @@ This skill automatically fixes black code formatting issues in any Azure SDK for
 
 ## Instructions
 
-1. Activate Python 3.10 virtual environment FIRST
+1. Activate Python 3.10+ virtual environment FIRST
 2. Navigate to the package path
 3. Install dev_requirements.txt
 4. Run `azpysdk --isolate black .`

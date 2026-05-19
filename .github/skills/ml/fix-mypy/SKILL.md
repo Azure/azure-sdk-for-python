@@ -85,7 +85,7 @@ pip install -r dev_requirements.txt
 pip install -e .
 ```
 
-**Important:** Use Python 3.10 compatible environment for mypy checks.
+**Important:** Use Python 3.10+ compatible environment for mypy checks.
 
 ### Step 3: Identify Target Files (within activated venv)
 

@@ -25,7 +25,7 @@ Intelligently fixes mypy issues by:
 ## Running MyPy
 
 **Prerequisites:**
-- Use a Python 3.10 virtual environment
+- Use a Python 3.10+ virtual environment
 - Ensure `azpysdk` is installed in the venv
 
 **Command:**
@@ -70,11 +70,11 @@ Read the issue to understand which package and files/modules are affected, and t
 Run mypy checks directly on the package.
 
 **If virtual environment is missing:**
-Ask: "Do you have an existing virtual environment path, or should I create 'env' with Python 3.10?"
+Ask: "Do you have an existing virtual environment path, or should I create 'env'?"
 
-### Step 1: CRITICAL - Activate Python 3.10 Virtual Environment FIRST
+### Step 1: CRITICAL - Activate Python Virtual Environment FIRST
 
-**⚠️ IMPORTANT: ALL subsequent commands MUST run within the activated Python 3.10+ virtual environment. Never run commands outside the venv.**
+**⚠️ IMPORTANT: ALL subsequent commands MUST run within the activated Python virtual environment. Never run commands outside the venv.**
 
 ### Step 2: Install Dependencies (within activated venv)
 
