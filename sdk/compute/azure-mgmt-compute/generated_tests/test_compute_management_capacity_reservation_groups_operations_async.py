@@ -25,7 +25,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
         response = await self.client.capacity_reservation_groups.get(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -116,7 +116,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -128,7 +128,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
         response = await self.client.capacity_reservation_groups.delete(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -139,7 +139,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
     async def test_capacity_reservation_groups_list_by_resource_group(self, resource_group):
         response = self.client.capacity_reservation_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -149,7 +149,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
     @recorded_by_proxy_async
     async def test_capacity_reservation_groups_list_by_subscription(self, resource_group):
         response = self.client.capacity_reservation_groups.list_by_subscription(
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

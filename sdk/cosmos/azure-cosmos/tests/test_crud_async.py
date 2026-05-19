@@ -1076,7 +1076,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         # Create a custom transport that introduces delays
         class DelayedTransport(AioHttpTransport):
-            def __init__(self, delay_per_request=2):
+            def __init__(self, delay_per_request=3):
                 self.delay_per_request = delay_per_request
                 self.request_count = 0
                 super().__init__()
@@ -1084,11 +1084,11 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             async def send(self, request, **kwargs):
                 self.request_count += 1
                 # Delay each request to simulate slow network
-                await asyncio.sleep(self.delay_per_request)  # 2 second delaytime.sleep(self.delay_per_request)
+                await asyncio.sleep(self.delay_per_request)  # 3 second delay
                 return await super().send(request, **kwargs)
 
         # Verify timeout fails when cumulative time exceeds limit
-        delayed_transport = DelayedTransport(delay_per_request=2)
+        delayed_transport = DelayedTransport(delay_per_request=3)
 
         async with CosmosClient(
                 self.host, self.masterKey, transport=delayed_transport
@@ -1101,7 +1101,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             start_time = time.time()
 
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                # This should timeout because multiple partition requests * 2s delay > 5s timeout
+                # This should timeout because multiple partition requests * 3s delay > 5s timeout
                 await container_with_delay.read_items(
                     items=items_to_read,
                     timeout=5  # 5 second total timeout

@@ -1,5 +1,65 @@
 # Release History
 
+## 16.0.0 (2026-04-20)
+
+### Features Added
+
+  - Client `NetAppManagementClient` added operation group `buckets`
+  - Client `NetAppManagementClient` added operation group `caches`
+  - Model `ReplicationObject` added property `external_replication_setup_status`
+  - Model `ReplicationObject` added property `external_replication_setup_info`
+  - Model `ReplicationObject` added property `mirror_state`
+  - Model `ReplicationObject` added property `relationship_status`
+  - Added model `AzureKeyVaultDetails`
+  - Added model `Bucket`
+  - Added model `BucketCredentialsExpiry`
+  - Added model `BucketGenerateCredentials`
+  - Added model `BucketPatch`
+  - Added enum `BucketPatchPermissions`
+  - Added model `BucketPatchProperties`
+  - Added enum `BucketPermissions`
+  - Added model `BucketProperties`
+  - Added model `BucketServerPatchProperties`
+  - Added model `BucketServerProperties`
+  - Added model `Cache`
+  - Added enum `CacheLifeCycleState`
+  - Added model `CacheMountTargetProperties`
+  - Added model `CacheProperties`
+  - Added model `CachePropertiesExportPolicy`
+  - Added enum `CacheProvisioningState`
+  - Added model `CacheUpdate`
+  - Added model `CacheUpdateProperties`
+  - Added model `CertificateAkvDetails`
+  - Added enum `CifsChangeNotifyState`
+  - Added model `CifsUser`
+  - Added model `ClusterPeerCommandResponseProperties`
+  - Added model `CredentialsAkvDetails`
+  - Added enum `CredentialsStatus`
+  - Added enum `EnableWriteBackState`
+  - Added enum `EncryptionState`
+  - Added enum `ExternalReplicationSetupStatus`
+  - Added model `FileSystemUser`
+  - Added enum `GlobalFileLockingState`
+  - Added enum `KerberosState`
+  - Added enum `LdapServerType`
+  - Added enum `LdapState`
+  - Added model `NfsUser`
+  - Added enum `OnCertificateConflictAction`
+  - Added model `OriginClusterInformation`
+  - Added model `PeeringPassphrases`
+  - Added enum `ProtocolTypes`
+  - Added enum `SmbEncryptionState`
+  - Added model `SmbSettings`
+  - Added model `SvmPeerCommandResponseProperties`
+  - Added enum `VolumeLanguage`
+  - Added operation group `BucketsOperations`
+  - Added operation group `CachesOperations`
+
+### Breaking Changes
+
+  - Model `ClusterPeerCommandResponse` deleted or renamed its instance variable `peer_accept_command`
+  - Model `SvmPeerCommandResponse` deleted or renamed its instance variable `svm_peering_command`
+
 ## 15.1.0b1 (2026-03-16)
 
 ### Features Added

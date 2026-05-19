@@ -188,8 +188,8 @@ class TestNetAppManagementCachesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_caches_list_by_capacity_pools(self, resource_group):
-        response = self.client.caches.list_by_capacity_pools(
+    async def test_caches_list(self, resource_group):
+        response = self.client.caches.list(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",

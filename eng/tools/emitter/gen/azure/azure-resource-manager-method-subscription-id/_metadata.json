@@ -1,0 +1,6 @@
+{
+  "apiVersion": "2023-12-01-preview",
+  "apiVersions": {
+    "Azure.ResourceManager.MethodSubscriptionId": "2023-12-01-preview"
+  }
+}

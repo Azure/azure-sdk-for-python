@@ -215,7 +215,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
             )
-            if self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
+            # Prefer the vendor property 'com.microsoft:max-message-batch-size'
+            # which correctly reports the batch size limit independent of the
+            # per-entity max-message-size (which can be up to 100 MB on Premium
+            # large-message entities).
+            vendor_batch_size = self._amqp_transport.get_remote_max_message_batch_size(self._handler)
+            if vendor_batch_size is not None:
+                self._max_batch_size_on_link = vendor_batch_size
+            elif self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
             else:
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD

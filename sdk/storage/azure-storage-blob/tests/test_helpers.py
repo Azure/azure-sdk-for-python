@@ -4,17 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import requests
 from datetime import datetime, timezone
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional, Tuple
-from typing_extensions import Self
 
-from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
+import requests
+from requests import Response
+from typing_extensions import Self
+from urllib3 import HTTPResponse
+
+from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse  # pylint: disable=no-name-in-module
 from azure.core.rest import HttpRequest
 from azure.storage.blob._serialize import get_api_version
-from requests import Response
-from urllib3 import HTTPResponse
 
 
 def _build_base_file_share_headers(bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
@@ -122,7 +123,8 @@ class MockLegacyTransport(RequestsTransport):
     This transport returns http response objects from azure core pipelines and is
     intended only to test our backwards compatibility support.
     """
-    def send(self, request: HttpRequest, **kwargs: Any) -> RequestsTransportResponse:
+
+    def send(self, request: HttpRequest, **kwargs: Any) -> RequestsTransportResponse:  # pylint: disable=unused-argument
         if request.method == 'GET':
             # download_blob
             headers = {

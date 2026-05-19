@@ -1,0 +1,6 @@
+{
+  "apiVersion": "2025-01-01",
+  "apiVersions": {
+    "Client.AlternateApiVersion.Service.Query": "2025-01-01"
+  }
+}

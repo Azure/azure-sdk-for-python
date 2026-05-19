@@ -668,7 +668,7 @@ async def main():
     client = AsyncMCPCallClient(
         endpoint=endpoint,
         credential=credential,
-        model="gpt-4o-realtime-preview",
+        model="gpt-realtime",
         voice="en-US-AvaNeural",
         instructions="You are a helpful AI assistant with access to some mcp server. ",
     )

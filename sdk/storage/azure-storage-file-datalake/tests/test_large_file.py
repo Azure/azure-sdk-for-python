@@ -3,19 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import platform
 import re
 import unittest
 from os import urandom
 
 import pytest
+
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
 from azure.core.exceptions import ResourceExistsError
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.filedatalake import DataLakeServiceClient
 
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
@@ -31,10 +34,12 @@ class TestLargeFile(StorageRecordedTestCase):
         self.payload_dropping_policy = PayloadDroppingPolicy()
         credential_policy = _format_shared_key_credential(account_name,
                                                           account_key.secret)
-        self.dsc = DataLakeServiceClient(url,
-                                         credential=account_key.secret,
-                                         logging_enable=True,
-                                         _additional_pipeline_policies=[self.payload_dropping_policy, credential_policy])
+        self.dsc = DataLakeServiceClient(
+            url,
+            credential=account_key.secret,
+            logging_enable=True,
+            _additional_pipeline_policies=[self.payload_dropping_policy, credential_policy]
+        )
         self.config = self.dsc._config
 
         self.file_system_name = self.get_resource_name('filesystem')
@@ -45,15 +50,6 @@ class TestLargeFile(StorageRecordedTestCase):
                 file_system.create_file_system(timeout=5)
             except ResourceExistsError:
                 pass
-
-    def tearDown(self):
-        if not self.is_playback():
-            try:
-                self.dsc.delete_file_system(self.file_system_name)
-            except:
-                pass
-
-        return super(TestLargeFile, self).tearDown()
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
@@ -80,7 +76,10 @@ class TestLargeFile(StorageRecordedTestCase):
         assert self.payload_dropping_policy.append_counter == 1
         assert self.payload_dropping_policy.append_sizes[0] == LARGEST_BLOCK_SIZE
 
-    @pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="Test failing on Pypy3 Linux, skip to investigate")
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Test failing on Pypy3 Linux, skip to investigate"
+    )
     @pytest.mark.live_test_only
     @DataLakePreparer()
     def test_upload_large_stream_without_network(self, **kwargs):
@@ -146,7 +145,8 @@ class PayloadDroppingPolicy(HTTPPolicy):
         if _is_append_request(request):
             if request.http_request.body:
                 position = self.append_counter*len(self.dummy_body)
-                request.http_request.url = re.sub(r'position=\d+', "position=" + str(position), request.http_request.url)
+                request.http_request.url = re.sub(
+                    r'position=\d+', "position=" + str(position), request.http_request.url)
                 self.append_sizes.append(_get_body_length(request))
                 replacement = self.dummy_body
                 request.http_request.body = replacement
@@ -154,7 +154,8 @@ class PayloadDroppingPolicy(HTTPPolicy):
                 self.append_counter = self.append_counter + 1
         if _is_flush_request(request):
             position = self.append_counter * len(self.dummy_body)
-            request.http_request.url = re.sub(r'position=\d+', "position=" + str(position), request.http_request.url)
+            request.http_request.url = re.sub(
+                r'position=\d+', "position=" + str(position), request.http_request.url)
         return self.next.send(request)
 
 

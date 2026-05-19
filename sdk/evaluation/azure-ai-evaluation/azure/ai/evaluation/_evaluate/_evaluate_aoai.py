@@ -307,10 +307,16 @@ def _get_single_run_results(
 
     LOGGER.info(f"AOAI: Eval run {run_info['eval_run_id']} completed with status: {run_results.status}")
     if run_results.status != "completed":
+        error_code = getattr(getattr(run_results, "error", None), "code", None)
+        blame = (
+            ErrorBlame.USER_ERROR
+            if isinstance(error_code, str) and error_code.lower() == "usererror"
+            else ErrorBlame.UNKNOWN
+        )
         raise EvaluationException(
             message=f"AOAI evaluation run {run_info['eval_group_id']}/{run_info['eval_run_id']}"
             + f" failed with status {run_results.status}.",
-            blame=ErrorBlame.UNKNOWN,
+            blame=blame,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.AOAI_GRADER,
         )

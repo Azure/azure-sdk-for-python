@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.discovery_rules.delete(
+    client.discovery_rules.begin_delete(
         resource_group_name="my-resource-group",
         health_model_name="my-health-model",
         discovery_rule_name="my-discovery-rule",
-    )
+    ).result()
 
 
-# x-ms-original-file: 2025-05-01-preview/DiscoveryRules_Delete.json
+# x-ms-original-file: 2026-01-01-preview/DiscoveryRules_Delete.json
 if __name__ == "__main__":
     main()

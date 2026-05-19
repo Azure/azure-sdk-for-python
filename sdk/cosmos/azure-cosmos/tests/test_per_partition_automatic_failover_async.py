@@ -61,7 +61,7 @@ class TestPerPartitionAutomaticFailoverAsync:
         doc_fail_id = str(uuid.uuid4())
         doc_success_id = str(uuid.uuid4())
         predicate = lambda r: (FaultInjectionTransportAsync.predicate_req_for_document_with_id(r, doc_fail_id) and
-                               FaultInjectionTransportAsync.predicate_is_write_operation(r, "com"))
+                               FaultInjectionTransportAsync.predicate_is_write_operation(r, "documents"))
         # The MockRequest only gets used to create the MockHttpResponse
         mock_request = FaultInjectionTransport.MockHttpRequest(url=self.host)
         if is_batch:

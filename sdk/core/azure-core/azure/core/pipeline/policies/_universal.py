@@ -35,14 +35,15 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping
-import urllib.parse
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping, Iterable
 
 from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from ._base import SansIOHTTPPolicy
+from ._utils import sanitize_url
+from ...utils._utils import CaseInsensitiveSet
 
 from ..transport import HttpRequest as LegacyHttpRequest
 from ..transport._base import _HttpResponseBase as LegacySansIOHttpResponse
@@ -397,6 +398,9 @@ class HttpLoggingPolicy(
     :keyword int http_logging_level: The logging level to use for HTTP request and response logs.
      Defaults to logging.INFO.
     :type http_logging_level: int
+    :keyword additional_allowed_query_params: Query parameter names whose values are allowed in recorded URLs.
+        These are added to the default set which includes "api-version".
+    :type additional_allowed_query_params: Iterable[str]
 
     Environment variables:
 
@@ -404,6 +408,7 @@ class HttpLoggingPolicy(
       details are logged as separate log records instead of a single combined record.
     """
 
+    DEFAULT_QUERY_PARAMS_ALLOWLIST: Set[str] = set(["api-version"])
     DEFAULT_HEADERS_ALLOWLIST: Set[str] = set(
         [
             "x-ms-request-id",
@@ -439,20 +444,25 @@ class HttpLoggingPolicy(
     MULTI_RECORD_LOG: str = "AZURE_SDK_LOGGING_MULTIRECORD"
 
     def __init__(
-        self, logger: Optional[logging.Logger] = None, *, http_logging_level: int = logging.INFO, **kwargs: Any
+        self,
+        logger: Optional[logging.Logger] = None,
+        *,
+        http_logging_level: int = logging.INFO,
+        additional_allowed_query_params: Optional[Iterable[str]] = None,
+        **kwargs: Any
     ):  # pylint: disable=unused-argument
         self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         self.http_logging_level: int = http_logging_level
-        self.allowed_query_params: Set[str] = set()
-        self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
-
-    def _redact_query_param(self, key: str, value: str) -> str:
-        lower_case_allowed_query_params = [param.lower() for param in self.allowed_query_params]
-        return value if key.lower() in lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+        self.allowed_query_params: Set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST)
+        if additional_allowed_query_params:
+            self.allowed_query_params.update(additional_allowed_query_params)
+        self.allowed_header_names: Set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
 
     def _redact_header(self, key: str, value: str) -> str:
+        if isinstance(self.allowed_header_names, CaseInsensitiveSet):
+            return value if key in self.allowed_header_names else self.REDACTED_PLACEHOLDER
         lower_case_allowed_header_names = [header.lower() for header in self.allowed_header_names]
-        return value if key.lower() in lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+        return value if key.lower() in lower_case_allowed_header_names else self.REDACTED_PLACEHOLDER
 
     def on_request(  # pylint: disable=too-many-return-statements
         self, request: PipelineRequest[HTTPRequestType]
@@ -476,12 +486,7 @@ class HttpLoggingPolicy(
             return
 
         try:
-            parsed_url = list(urllib.parse.urlparse(http_request.url))
-            parsed_qp = urllib.parse.parse_qsl(parsed_url[4], keep_blank_values=True)
-            filtered_qp = [(key, self._redact_query_param(key, value)) for key, value in parsed_qp]
-            # 4 is query
-            parsed_url[4] = "&".join(["=".join(part) for part in filtered_qp])
-            redacted_url = urllib.parse.urlunparse(parsed_url)
+            redacted_url = sanitize_url(http_request.url, self.allowed_query_params, self.REDACTED_PLACEHOLDER)
 
             multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
             if multi_record:

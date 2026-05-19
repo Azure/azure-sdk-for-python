@@ -15,14 +15,14 @@
         }
       },
       "EmulatorConfig": {
-        "Emulator Tests Python 3.9 Standard": {
-            "PythonVersion": "3.9",
+        "Emulator Tests Python 3.10 Standard": {
+            "PythonVersion": "3.10",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ChecksOverride": "whl,sdist"
         },
-        "Emulator Tests Python 3.10 Standard": {
-            "PythonVersion": "3.10",
+        "Emulator Tests Python 3.11 Standard": {
+            "PythonVersion": "3.11",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ChecksOverride": "whl,sdist"
@@ -40,14 +40,14 @@
             "ChecksOverride": "whl,sdist"
         },
 
-        "Emulator Tests Python 3.9 Special": {
-            "PythonVersion": "3.9",
+        "Emulator Tests Python 3.10 Special": {
+            "PythonVersion": "3.10",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ChecksOverride": "import_all,whl_no_aio"
         },
-        "Emulator Tests Python 3.10 Special": {
-            "PythonVersion": "3.10",
+        "Emulator Tests Python 3.11 Special": {
+            "PythonVersion": "3.11",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ChecksOverride": "import_all,whl_no_aio"
@@ -71,14 +71,14 @@
             "ChecksOverride": "import_all,whl_no_aio"
         },
 
-        "Emulator Tests Python 3.9 Dependency Checks": {
-            "PythonVersion": "3.9",
+        "Emulator Tests Python 3.10 Dependency Checks": {
+            "PythonVersion": "3.10",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ChecksOverride": "latestdependency,mindependency"
         },
-        "Emulator Tests Python 3.10 Dependency Checks": {
-            "PythonVersion": "3.10",
+        "Emulator Tests Python 3.11 Dependency Checks": {
+            "PythonVersion": "3.11",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ChecksOverride": "latestdependency,mindependency"

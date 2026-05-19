@@ -40,7 +40,6 @@
       - [Regression Test](#regression-test)
       - [Autorest Automation](#autorest-automation)
   - [Weekly Analyze Checks](#weekly-analyze-checks)
-    - [Ruff](#ruff)
     - [Next-Generation Checks](#next-generation-checks)
 
 This document describes every CI check run against Azure SDK for Python packages — what each one does, when it runs, and how to reproduce it locally.
@@ -589,18 +588,6 @@ python scripts/devops_tasks/verify_autorest.py --service_directory <your_service
 <a name="weekly-analyze-checks"></a>
 
 The following checks run on a weekly cadence (not on every PR or nightly) via the `python-analyze-weekly` pipeline. They are exploratory/informational and use `continueOnError: true`, meaning failures are surfaced as warnings but do not block merges.
-
-### Ruff
-
-<a name="ruff"></a>
-
-[`Ruff`](https://docs.astral.sh/ruff/) is a fast Python linter and formatter written in Rust. It runs only during the weekly analyze job, not on every PR.
-
-To run locally:
-
-```bash
-azpysdk ruff .
-```
 
 ### Next-Generation Checks
 

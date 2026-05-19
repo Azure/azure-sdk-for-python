@@ -25,7 +25,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -117,7 +117,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
                 "sku": {"capacity": 0, "name": "str", "tier": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -130,7 +130,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -142,7 +142,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
         response = self.client.dedicated_hosts.list_by_host_group(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -155,7 +155,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -168,7 +168,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -181,7 +181,7 @@ class TestComputeManagementDedicatedHostsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

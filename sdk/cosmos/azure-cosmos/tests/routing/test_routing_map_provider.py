@@ -28,10 +28,16 @@ class TestRoutingMapProvider(unittest.TestCase):
 
         def __init__(self, partition_key_ranges):
             self.partition_key_ranges = partition_key_ranges
+            self.url_connection = "https://mock-test.documents.azure.com:443/"
 
         def _ReadPartitionKeyRanges(self, _collection_link: str, _feed_options: Optional[Mapping[str, Any]] = None, **kwargs):
             TestRoutingMapProvider._capture_internal_headers(kwargs, '"test-etag-1"')
             return self.partition_key_ranges
+
+    def tearDown(self):
+        from azure.cosmos._routing.routing_map_provider import _shared_routing_map_cache, _shared_cache_lock
+        with _shared_cache_lock:
+            _shared_routing_map_cache.clear()
 
     def setUp(self):
         self.partition_key_ranges = [{u'id': u'0', u'minInclusive': u'', u'maxExclusive': u'05C1C9CD673398'},

@@ -1,42 +1,49 @@
 # Extension package for Azure Storage Python libraries
-This package contains a set of C-Extension modules intended to be used with the other Azure Storage Python SDK libraries.
 
-## Getting started
+**This package provides optional native extensions for Azure Storage Python SDK libraries and is not intended for direct use.**
 
-### Prerequisites
-* Python 3.9 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
+This package contains native extension modules that provide performance-critical functionality for Azure Storage Python SDK libraries. It is designed exclusively for use with Azure Storage SDKs and must be explicitly installed to enable enhanced performance features.
 
-### Install the package
-This package is not meant to be used standalone and is meant to accompany other Azure Storage Python SDK libraries. However it can be installed and used standalone as well.
+## Important Notes
 
-Install the Azure Storage Extensions library for Python with [pip](https://pypi.org/project/pip/):
+⚠️ **Not for standalone use**: This package is designed exclusively as an optional dependency for Azure Storage Python SDK libraries. The API surface is subject to change without following semantic versioning conventions—breaking changes may occur between minor versions.
+
+⚠️ **Implementation may change**: While this package currently uses C extensions, future versions may migrate to Rust extensions or other native implementations, which would require different build toolchains.
+
+## Installation
+
+**Recommended**: Install this package via extras when installing Azure Storage libraries:
+
+```bash
+pip install azure-storage-blob[extensions]
+```
+
+This ensures you get compatible versions of both the SDK and the extensions package.
+
+You can also install it directly if needed:
 
 ```bash
 pip install azure-storage-extensions
 ```
 
-Please note that this package contains [C-Extension modules](https://docs.python.org/3/extending/extending.html) and therefore you must install the correct wheel for your
-particular platform. We distribute many pre-built wheels for a wide variety of platforms on PyPi and `pip` will attempt to install the wheel meant for your platform. If
-however, a wheel is not available for your platform, we also distribute the source code on PyPi so `pip` will attempt to build the module at install time, assuming you have
-a compiler available. If you encounter any issues installing this package, please feel to open an Issue.
+### Prerequisites
+* Python 3.9 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 
-## Extensions
-This section contains the list of available extensions and how to use them.
+### Troubleshooting Installation Issues
 
-### Storage CRC64
-The `crc64` extension provides an implementation of the CRC64 algorithm, including the custom polynomial, that is used by the Azure Storage service. It can be used to compute
-the crc64 hash of `bytes` data, including given an initial hash.
+This package contains native extension modules and requires platform-specific compiled binaries. We distribute pre-built wheels for common platforms (Windows, macOS, Linux) on PyPI, which `pip` will automatically install when available.
 
-```py
-from azure.storage.extensions import crc64
+If a pre-built wheel is not available for your platform, `pip` will attempt to build the extensions from source. This requires:
+- A C compiler (e.g., gcc, clang, MSVC)
+- Python development headers
 
-data = b'Hello World!'
-result = crc64.compute_crc64(data, 0)
+**Common installation errors:**
 
-# Chain together calculations
-data2 = b'Goodbye World!`
-result2 = crc64.compute_crc64(data2, result)
-```
+- **"error: Microsoft Visual C++ 14.0 or greater is required"** (Windows): Install [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+- **"error: command 'gcc' failed"** (Linux): Install build essentials: `sudo apt-get install build-essential python3-dev` (Debian/Ubuntu) or equivalent for your distribution
+- **"error: command 'clang' failed"** (macOS): Install Xcode Command Line Tools: `xcode-select --install`
+
+If you encounter installation issues, please open an issue in the [Azure SDK for Python repository](https://github.com/Azure/azure-sdk-for-python/issues).
 
 ## Contributing
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.

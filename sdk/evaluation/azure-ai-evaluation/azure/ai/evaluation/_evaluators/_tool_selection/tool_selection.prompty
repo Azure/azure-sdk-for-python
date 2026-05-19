@@ -90,15 +90,30 @@ TOOL CALLS MADE BY AGENT: {{tool_calls}}
 
 # Tasks
 ## Please provide your evaluation for the tool selection in relation to the user's query based on the definitions and examples above.
+
+## Status: skipped\completed
+Before performing any evaluation, check for the following conditions. If ANY are true, return `status: "skipped"` immediately without scoring, else status is completed:
+1. **No tool calls to evaluate**: The TOOL CALLS MADE BY AGENT section is empty or not provided.
+2. **Missing tool definitions**: The TOOL DEFINITIONS section is empty or not provided.
+3. **No conversation context**: The CONVERSATION section is empty or not provided.
+
+When skipped, return:
+```json
+{"reason": "<explain why evaluation was skipped>", "properties": null, "score": null, "status": "skipped"}
+```
+
 Your output should consist only of a JSON object with the following fields:
-  - explanation: an explanation of the score focusing on tool selection appropriateness, based on the Chain of Thought Structure.
-  - details: a dictionary that contains the following fields:
+  - reason: an explanation of the score focusing on tool selection appropriateness, based on the Chain of Thought Structure.
+  - properties: a dictionary that contains the following fields:
         - correct_tool_selections: number of appropriate/relevant tools selected
         - wrong_tool_selections: number of inappropriate/irrelevant tools selected
         - excessive_tools_used: number of tools that were unnecessary or redundant
         - excessive_tools_list: list of the tool names that were excessive
         - missing_tools: number of essential tools that should have been called but weren't
         - missing_tools_list: list of the tool names that should have been called but weren't
-  - score: an integer value of 0 or 1 that represents the tool selection quality (0 = Fail, 1 = Pass).
+  - score: an integer value of 0 or 1 that represents the tool selection quality (0 = Fail, 1 = Pass). Set to null when status is "skipped".
+  - status: a string indicating the evaluation status. Must be one of:
+      - "completed": tool calls were present, tool definitions were available, and evaluation was performed.
+      - "skipped": evaluation was not performed because there were no tool calls to evaluate, or tool definitions were missing, or no conversation was provided. When skipped, set score to null and properties to null.
 
 # Output

@@ -44,10 +44,10 @@
     },
     {
       "CircuitBreakerMultiRegionTestConfig": {
-        "Ubuntu2404_39_circuit_breaker": {
+        "Ubuntu2404_310_circuit_breaker": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosCircuitBreakerMultiRegion"
@@ -102,10 +102,10 @@
     },
     {
       "CoverageConfig": {
-        "ubuntu2404_39_coverage_query": {
+        "ubuntu2404_310_coverage_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "3.10",
           "CoverageArg": "",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosQuery"
