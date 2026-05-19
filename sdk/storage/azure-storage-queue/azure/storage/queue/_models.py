@@ -43,9 +43,9 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted.
     """
 
-    enabled: bool
+    enabled: bool = False
     """Indicates whether a retention policy is enabled for the storage service."""
-    days: Optional[int]
+    days: Optional[int] = None
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
@@ -57,6 +57,9 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
+        # Handle XML Element by converting to generated model first
+        if isinstance(generated, ET.Element):
+            generated = GeneratedRetentionPolicy(generated) # type: ignore[assignment,call-overload]
         return cls(
             enabled=generated.enabled,
             days=generated.days,
@@ -75,15 +78,15 @@ class QueueAnalyticsLogging(GeneratedLogging):
     :keyword ~azure.storage.queue.RetentionPolicy retention_policy: The retention policy for the metrics.
     """
 
-    version: str
+    version: str = "1.0"
     """The version of Storage Analytics to configure."""
-    delete: bool
+    delete: bool = False
     """Indicates whether all delete requests should be logged."""
-    read: bool
+    read: bool = False
     """Indicates whether all read requests should be logged."""
-    write: bool
+    write: bool = False
     """Indicates whether all write requests should be logged."""
-    retention_policy: RetentionPolicy
+    retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -101,7 +104,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
             return cls()
         # Handle XML Element by converting to generated model first
         if isinstance(generated, ET.Element):
-            generated = GeneratedLogging(generated) # type: ignore[assignment]
+            generated = GeneratedLogging(generated) # type: ignore[assignment,call-overload]
         return cls(
             version=generated.version,
             delete=generated.delete,
@@ -124,13 +127,13 @@ class Metrics(GeneratedMetrics):
     :keyword ~azure.storage.queue.RetentionPolicy retention_policy: The retention policy for the metrics.
     """
 
-    version: str
+    version: str = "1.0"
     """The version of Storage Analytics to configure."""
-    enabled: bool
+    enabled: bool = False
     """Indicates whether metrics are enabled for the service."""
     include_apis: Optional[bool]
     """Indicates whether metrics should generate summary statistics for called API operations."""
-    retention_policy: RetentionPolicy
+    retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -147,7 +150,7 @@ class Metrics(GeneratedMetrics):
             return cls()
         # Handle XML Element by converting to generated model first
         if isinstance(generated, ET.Element):
-            generated = GeneratedMetrics(generated) # type: ignore[assignment]
+            generated = GeneratedMetrics(generated) # type: ignore[assignment,call-overload]
         return cls(
             version=generated.version,
             enabled=generated.enabled,
@@ -188,17 +191,17 @@ class CorsRule(GeneratedCorsRule):
         headers. Each header can be up to 256 characters.
     """
 
-    allowed_origins: str  # type: ignore[assignment]
+    allowed_origins: str
     """The comma-delimited string representation of the list of origin domains that will be allowed via
         CORS, or \"*\" to allow all domains."""
-    allowed_methods: str  # type: ignore[assignment]
+    allowed_methods: str
     """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
         by the origin."""
-    max_age_in_seconds: int  # type: ignore[assignment]
+    max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
-    exposed_headers: str  # type: ignore[assignment]
+    exposed_headers: str
     """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
-    allowed_headers: str  # type: ignore[assignment]
+    allowed_headers: str
     """The comma-delimited string representation of the list of headers allowed to be part of
         the cross-origin request."""
 
@@ -233,6 +236,9 @@ class CorsRule(GeneratedCorsRule):
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
+        # Handle XML Element by converting to generated model first
+        if isinstance(generated, ET.Element):
+            generated = GeneratedCorsRule(generated) # type: ignore[assignment,call-overload]
         return cls(
             [generated.allowed_origins],
             [generated.allowed_methods],
