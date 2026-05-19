@@ -395,7 +395,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :start-after: [START upload_document]
                 :end-before: [END upload_document]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: Upload new documents to an index
         """
         batch = _models.IndexDocumentsBatch()
@@ -423,7 +423,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :start-after: [START delete_document]
                 :end-before: [END delete_document]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: Delete documents from an index
         """
         batch = _models.IndexDocumentsBatch()
@@ -451,7 +451,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :start-after: [START merge_document]
                 :end-before: [END merge_document]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: Merge documents in an index
         """
         batch = _models.IndexDocumentsBatch()
@@ -478,7 +478,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :start-after: [START merge_or_upload_document]
                 :end-before: [END merge_or_upload_document]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: Merge or upload documents to an index
         """
         batch = _models.IndexDocumentsBatch()
@@ -638,7 +638,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :start-after: [START simple_query]
                 :end-before: [END simple_query]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: Search on a simple text term.
 
         .. admonition:: Example:
@@ -647,7 +647,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :start-after: [START filter_query]
                 :end-before: [END filter_query]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: Filter and sort search results.
 
         .. admonition:: Example:
@@ -656,7 +656,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :start-after: [START facet_query]
                 :end-before: [END facet_query]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: Get search result facets.
         """
         # Build the search request using shared helper
@@ -755,7 +755,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :start-after: [START autocomplete_query]
                 :end-before: [END autocomplete_query]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: Get autocomplete suggestions.
         """
         # Call the generated _autocomplete_post method
@@ -834,7 +834,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :start-after: [START suggest_query]
                 :end-before: [END suggest_query]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: Get search suggestions.
         """
         # Call the generated _suggest_post method

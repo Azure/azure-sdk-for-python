@@ -744,7 +744,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
                 :start-after: [START list_indexers]
                 :end-before: [END list_indexers]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: List all the SearchIndexers
         """
         result = self.get_indexers(**kwargs)
