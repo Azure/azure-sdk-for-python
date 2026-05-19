@@ -46,7 +46,7 @@ from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 from .._request_object import RequestObject
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _handle_service_response_retries, _handle_service_request_retries,
-                              _has_database_account_header)
+                              _has_database_account_header, _record_retry_diagnostics_and_attach)
 from .._routing.routing_range import PartitionKeyRangeWrapper
 from ..exceptions import CosmosHttpResponseError
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
@@ -270,6 +270,11 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
                 if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
                     client.session.clear_session_token(client.last_response_headers)
+                # Hedging-detection: attach state to the exception BEFORE
+                # re-raising (sync↔async parity with ``_retry_utility.Execute``).
+                _record_retry_diagnostics_and_attach(
+                    kwargs.get("_hedging_state"), retry_policy, e, args, attached_on_raise=True
+                )
                 raise
 
             # Check timeout only before retrying
@@ -279,6 +284,11 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     raise exceptions.CosmosClientTimeoutError(error=last_error)
             # Wait for retry_after_in_milliseconds time before the next retry
             await asyncio.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
+
+            # Record the retry decision now that we committed to looping.
+            _record_retry_diagnostics_and_attach(
+                kwargs.get("_hedging_state"), retry_policy, e, args, attached_on_raise=False
+            )
 
         except ServiceRequestError as e:
             if request and _has_database_account_header(request.headers):

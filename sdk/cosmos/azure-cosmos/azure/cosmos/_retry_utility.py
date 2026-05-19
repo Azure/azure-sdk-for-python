@@ -41,6 +41,7 @@ from . import _timeout_failover_retry_policy
 from . import exceptions
 from ._constants import _Constants
 from ._cosmos_http_logging_policy import _log_diagnostics_error
+from ._diagnostics_types import RequestedRegionReason
 from ._global_partition_endpoint_manager_per_partition_automatic_failover import \
     _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover
 from ._request_object import RequestObject
@@ -270,6 +271,12 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
                 if args and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
+                # Hedging-detection: attach per-operation state to the exception
+                # BEFORE re-raising so error-path consumers
+                # (``CosmosHttpResponseError.get_requested_regions()``) work.
+                _record_retry_diagnostics_and_attach(
+                    kwargs.get("_hedging_state"), retry_policy, e, args, attached_on_raise=True
+                )
                 raise
 
             # Now check timeout before retrying
@@ -279,6 +286,15 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     raise exceptions.CosmosClientTimeoutError(error=last_error)
             # Wait for retry_after_in_milliseconds time before the next retry
             time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
+
+            # Record this retry decision now that we have committed to looping.
+            # The reason is REGION_FAILOVER if the retry policy mutates the
+            # target region (timeout-failover / endpoint-discovery); else
+            # OPERATION_RETRY (same-region retry: gone / throttle / session /
+            # service-unavailable / default).
+            _record_retry_diagnostics_and_attach(
+                kwargs.get("_hedging_state"), retry_policy, e, args, attached_on_raise=False
+            )
 
         except ServiceRequestError as e:
             if request and _has_database_account_header(request.headers):
@@ -297,6 +313,100 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 if args:
                     _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
+
+def _record_retry_diagnostics_and_attach(
+        hedging_state,
+        retry_policy,
+        exception,
+        args,
+        attached_on_raise: bool) -> None:
+    """Hedging-detection: record a retry-policy decision against the
+    per-operation state and (when raising) attach the state to the exception.
+
+    Reason mapping:
+      * timeout-failover / endpoint-discovery → ``REGION_FAILOVER``
+      * everything else → ``OPERATION_RETRY``
+
+    Recording happens once per retry decision, AFTER ``retry_policy.ShouldRetry``
+    has executed (so any region mutation the policy applied has already
+    landed on ``args[0]``). The recorded region name is best-effort and may
+    be empty when the endpoint cannot be resolved to a friendly name.
+
+    Never raises — diagnostics must not break the hot path.
+
+    :param hedging_state: Per-operation hedging-detection state. ``None`` for
+        callers that have not opted into hedging-detection, in which case this
+        function is a no-op.
+    :type hedging_state: Optional[_HedgingDetectionState]
+    :param retry_policy: The retry policy instance that produced the decision
+        being recorded. Its class name selects the reason mapping above.
+    :type retry_policy: object
+    :param exception: The :class:`CosmosHttpResponseError` (or other
+        AzureError) that triggered the retry decision. When
+        ``attached_on_raise`` is ``True``, the hedging state is attached to
+        this exception so error-path consumers can surface it.
+    :type exception: BaseException
+    :param args: Positional arguments forwarded to
+        :func:`_retry_utility.Execute`. ``args[0]`` is the
+        :class:`~azure.cosmos._request_object.RequestObject` whose
+        post-``ShouldRetry`` endpoint is read for region resolution.
+    :type args: tuple
+    :param attached_on_raise: When ``True``, the retry utility is re-raising
+        the exception, so the state is attached to it for surfacing to error
+        consumers (``CosmosHttpResponseError.get_requested_regions()``).
+        When ``False``, the retry utility is looping, so a new
+        :class:`RequestedRegion` entry is appended to the state.
+    :type attached_on_raise: bool
+    """
+    if hedging_state is None:
+        return
+    try:
+        if attached_on_raise:
+            # Attach to exception only when the retry-utility is re-raising,
+            # so the exception object surfaces the operation's full timeline.
+            try:
+                setattr(exception, "_hedging_state", hedging_state)
+            except (AttributeError, TypeError):  # pragma: no cover - defensive
+                pass
+            return
+
+        # Failover-class retries (region-redirect or endpoint-discovery) map
+        # to REGION_FAILOVER; everything else is OPERATION_RETRY. The two
+        # policy modules are already imported at the top of this file, so
+        # ``isinstance`` is both cheaper and refactor-safe vs. a class-name
+        # string match.
+        if isinstance(
+            retry_policy,
+            (
+                _timeout_failover_retry_policy._TimeoutFailoverRetryPolicy,  # pylint: disable=protected-access
+                _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy,
+            ),
+        ):
+            reason = RequestedRegionReason.REGION_FAILOVER
+        else:
+            reason = RequestedRegionReason.OPERATION_RETRY
+
+        # Best-effort region resolution from args[0] (the RequestObject).
+        region_name = ""
+        try:
+            if args:
+                request_params = args[0]
+                # ``location_endpoint_to_route`` is the post-ShouldRetry endpoint.
+                endpoint = getattr(request_params, "location_endpoint_to_route", None)
+                global_em = getattr(retry_policy, "global_endpoint_manager", None)
+                if endpoint and global_em is not None and hasattr(global_em, "get_region_name"):
+                    is_write = _OperationType.IsWriteOperation(request_params.operation_type)
+                    name = global_em.get_region_name(endpoint, is_write)
+                    if name:
+                        region_name = name
+        except Exception:  # pylint: disable=broad-except
+            region_name = ""
+
+        hedging_state._record_request(region_name, reason)  # pylint: disable=protected-access
+    except Exception:  # pylint: disable=broad-except
+        # Never let diagnostics break the request.
+        return
+
 
 def _record_success_if_request_not_cancelled(
         request_params: RequestObject,
