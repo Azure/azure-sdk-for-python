@@ -5,6 +5,7 @@
 import json
 import os
 from typing import Any
+from unittest.mock import patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -15,16 +16,32 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
 def pytest_configure(config):
-    config.addinivalue_line(
-        "markers",
-        "tracing_e2e: end-to-end tracing tests against live Application Insights",
-    )
+    config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
+    config.addinivalue_line("markers", "slow: tests that send large payloads or otherwise take noticeable time in CI")
+
+
+@pytest.fixture(autouse=True, scope="session")
+def _prevent_distro_setup(request):
+    """Prevent microsoft-opentelemetry distro from contaminating global OTel
+    state during tests.  Without this, CI environments that have the distro
+    installed and APPLICATIONINSIGHTS_CONNECTION_STRING set would trigger
+    ``use_microsoft_opentelemetry()`` on the first server construction,
+    installing a global TracerProvider that breaks later traceparent-
+    propagation tests.
+
+    When running E2E tracing tests (``-m tracing_e2e``), the real distro
+    export is needed so spans actually reach Application Insights."""
+    markexpr = request.config.getoption("-m", default="")
+    if "tracing_e2e" in markexpr:
+        yield
+    else:
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+            yield
 
 
 # ---------------------------------------------------------------------------
 # E2E tracing fixtures
 # ---------------------------------------------------------------------------
-
 
 @pytest.fixture()
 def appinsights_connection_string():
@@ -119,6 +136,7 @@ SAMPLE_OPENAPI_SPEC: dict[str, Any] = {
 
 def _make_echo_agent(**kwargs: Any) -> InvocationAgentServerHost:
     """Create an InvocationAgentServerHost whose invoke handler echoes the request body."""
+    kwargs.setdefault("configure_observability", None)
     app = InvocationAgentServerHost(**kwargs)
 
     @app.invoke_handler
@@ -131,6 +149,7 @@ def _make_echo_agent(**kwargs: Any) -> InvocationAgentServerHost:
 
 def _make_streaming_agent(**kwargs: Any) -> InvocationAgentServerHost:
     """Create an InvocationAgentServerHost whose invoke handler returns 3 JSON chunks."""
+    kwargs.setdefault("configure_observability", None)
     app = InvocationAgentServerHost(**kwargs)
 
     @app.invoke_handler
@@ -146,6 +165,7 @@ def _make_streaming_agent(**kwargs: Any) -> InvocationAgentServerHost:
 
 def _make_async_storage_agent(**kwargs: Any) -> InvocationAgentServerHost:
     """Create an InvocationAgentServerHost with get/cancel handlers and in-memory store."""
+    kwargs.setdefault("configure_observability", None)
     app = InvocationAgentServerHost(**kwargs)
     store: dict[str, Any] = {}
 
@@ -182,7 +202,7 @@ def _make_async_storage_agent(**kwargs: Any) -> InvocationAgentServerHost:
 
 def _make_validated_agent() -> InvocationAgentServerHost:
     """Create an InvocationAgentServerHost with OpenAPI spec."""
-    app = InvocationAgentServerHost(openapi_spec=SAMPLE_OPENAPI_SPEC)
+    app = InvocationAgentServerHost(openapi_spec=SAMPLE_OPENAPI_SPEC, configure_observability=None)
 
     @app.invoke_handler
     async def handle(request: Request) -> Response:
@@ -194,6 +214,7 @@ def _make_validated_agent() -> InvocationAgentServerHost:
 
 def _make_failing_agent(**kwargs: Any) -> InvocationAgentServerHost:
     """Create an InvocationAgentServerHost whose handler raises ValueError."""
+    kwargs.setdefault("configure_observability", None)
     app = InvocationAgentServerHost(**kwargs)
 
     @app.invoke_handler
@@ -201,6 +222,47 @@ def _make_failing_agent(**kwargs: Any) -> InvocationAgentServerHost:
         raise ValueError("something went wrong")
 
     return app
+
+
+# ---------------------------------------------------------------------------
+# WebSocket factory functions and helpers
+# ---------------------------------------------------------------------------
+
+
+def _make_echo_ws_app(**kwargs: Any) -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost whose ws handler echoes text frames."""
+    from starlette.websockets import WebSocket
+
+    app = InvocationAgentServerHost(**kwargs)
+
+    @app.ws_handler
+    async def echo(websocket: WebSocket) -> None:
+        async for message in websocket.iter_text():
+            await websocket.send_text(message)
+
+    return app
+
+
+def _make_failing_ws_app(**kwargs: Any) -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost whose ws handler raises after one frame."""
+    from starlette.websockets import WebSocket
+
+    app = InvocationAgentServerHost(**kwargs)
+
+    @app.ws_handler
+    async def boom(websocket: WebSocket) -> None:
+        await websocket.receive_text()
+        raise ValueError("boom")
+
+    return app
+
+
+def _records_with_ws_extras(records):
+    """Filter log records that carry the close-event ``ws.*`` extras."""
+    return [
+        r for r in records
+        if hasattr(r, "azure.ai.agentserver.invocations_ws.session_id") and hasattr(r, "azure.ai.agentserver.invocations_ws.close_code")
+    ]
 
 
 # ---------------------------------------------------------------------------

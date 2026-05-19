@@ -11,8 +11,6 @@ from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
 class WebpubsubTest(AzureRecordedTestCase):
     def create_client(self, endpoint=None, hub=None, reverse_proxy_endpoint=None, **kwargs):
-        if kwargs.get("connection_string"):
-            return WebPubSubServiceClient.from_connection_string(kwargs.pop("connection_string"), hub, **kwargs)
         credential = self.get_credential(WebPubSubServiceClient)
         return self.create_client_from_credential(
             WebPubSubServiceClient,
@@ -28,5 +26,5 @@ WebpubsubPowerShellPreparer = functools.partial(
     "webpubsub",
     webpubsub_endpoint="https://myservice.webpubsub.azure.com",
     webpubsub_reverse_proxy_endpoint="https://myservice.webpubsub.azure.com",
-    webpubsub_connection_string="Endpoint=https://myservice.webpubsub.azure.com;AccessKey=aaaaaaaaaaaaa;Version=1.0;",
+    webpubsub_socketio_endpoint="https://myservice-socketio.webpubsub.azure.com",
 )

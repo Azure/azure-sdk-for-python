@@ -28,7 +28,6 @@ Usage::
     curl http://localhost:8088/readiness
     # -> {"status": "healthy"}
 """
-
 import logging
 import os
 import uuid
@@ -38,7 +37,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import AgentServerHost, record_error
+from azure.ai.agentserver.core import AgentServerHost
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -55,32 +54,21 @@ class SelfHostedInvocationHost(AgentServerHost):
 
     async def _invoke(self, request: Request) -> Response:
         """POST /invocations — handle an invocation request with tracing."""
-        invocation_id = request.headers.get("x-agent-invocation-id") or str(
-            uuid.uuid4()
-        )
+        invocation_id = request.headers.get("x-agent-invocation-id") or str(uuid.uuid4())
         session_id = (
             request.query_params.get("agent_session_id")
             or os.environ.get("FOUNDRY_AGENT_SESSION_ID")
             or str(uuid.uuid4())
         )
 
-        with self.request_span(
-            request.headers,
-            invocation_id,
-            "invoke_agent",
-            operation_name="invoke_agent",
-            session_id=session_id,
-        ) as otel_span:
-            logger.info(
-                "Processing invocation %s in session %s", invocation_id, session_id
-            )
+        with self.request_context(dict(request.headers)):
+            logger.info("Processing invocation %s in session %s", invocation_id, session_id)
 
             try:
                 data = await request.json()
                 name = data.get("name", "World")
                 result = {"greeting": f"Hello, {name}!"}
             except Exception as exc:
-                record_error(otel_span, exc)
                 logger.error("Invocation %s failed: %s", invocation_id, exc)
                 raise
 

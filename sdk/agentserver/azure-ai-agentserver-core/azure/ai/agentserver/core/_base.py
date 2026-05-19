@@ -160,7 +160,7 @@ class AgentServerHost(Starlette):
 
     _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
 
-    def __init__(  # pylint: disable=too-many-statements
+    def __init__(
         self,
         *,
         applicationinsights_connection_string: Optional[str] = None,
@@ -168,27 +168,12 @@ class AgentServerHost(Starlette):
         log_level: Optional[str] = None,
         access_log: Optional[logging.Logger] = _SENTINEL_ACCESS_LOG,  # type: ignore[assignment]
         access_log_format: Optional[str] = None,
-        configure_observability: Optional[
-            Callable[..., None]
-        ] = _tracing.configure_observability,
+        configure_observability: Optional[Callable[..., None]] = _tracing.configure_observability,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
         # Shutdown handler slot (server-level lifecycle) -------------------
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
-
-        # Durable task manager (optional — enabled by default) ----
-        self._durable_task_manager: Optional[Any] = None
-        try:
-            from .durable._manager import (  # pylint: disable=import-outside-toplevel
-                DurableTaskManager,
-            )
-
-            self._durable_task_manager = DurableTaskManager(
-                _config.AgentConfig.from_env()
-            )
-        except Exception:  # pylint: disable=broad-exception-caught
-            pass  # durable tasks not available — continue without
 
         # Server version segments for the x-platform-server header.
         # Protocol packages call register_server_version() to add their
@@ -202,31 +187,26 @@ class AgentServerHost(Starlette):
         self.config: _config.AgentConfig = _config.AgentConfig.from_env()
 
         # Observability (logging + tracing) --------------------------------
-        _conn_str = (
-            applicationinsights_connection_string
-            or self.config.appinsights_connection_string
-        )
+        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
+        _env_val = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
+        _sensitive_data = _env_val.lower() not in ("false", "0")
         if configure_observability is not None:
             try:
                 configure_observability(
                     connection_string=_conn_str,
                     log_level=log_level,
+                    enable_sensitive_data=_sensitive_data,
                 )
             except ValueError:
                 raise  # invalid log_level etc. — user should fix their config
             except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Failed to initialize observability; continuing without it.",
-                    exc_info=True,
-                )
+                logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
 
         # Access logging ---------------------------------------------------
         self._access_log: Optional[logging.Logger] = (
             logger if access_log is _SENTINEL_ACCESS_LOG else access_log
         )
-        self._access_log_format: str = (
-            access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
-        )
+        self._access_log_format: str = access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
 
         # Timeouts ---------------------------------------------------------
         self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
@@ -235,26 +215,21 @@ class AgentServerHost(Starlette):
 
         # Build lifespan context manager
         @contextlib.asynccontextmanager
-        async def _lifespan(
-            _app: Starlette,
-        ) -> AsyncGenerator[None, None]:  # noqa: RUF029
+        async def _lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
             logger.info("AgentServerHost started")
 
             # --- Startup configuration logging ---
             cfg = self.config
             logger.info(
                 "Platform environment: is_hosted=%s, agent_name=%s, agent_version=%s, "
-                "port=%s, session_id=%s, sse_keepalive_interval=%s",
+                "port=%s, session_id=%s, sse_keepalive_interval=%s, ws_ping_interval=%s",
                 cfg.is_hosted,
                 cfg.agent_name or _NOT_SET,
                 cfg.agent_version or _NOT_SET,
                 cfg.port,
                 cfg.session_id or _NOT_SET,
-                (
-                    cfg.sse_keepalive_interval
-                    if cfg.sse_keepalive_interval > 0
-                    else "disabled"
-                ),
+                cfg.sse_keepalive_interval if cfg.sse_keepalive_interval > 0 else "disabled",
+                f"{cfg.ws_ping_interval}s" if cfg.ws_ping_interval > 0 else "disabled",
             )
             logger.info(
                 "Connectivity: project_endpoint=%s, otlp_endpoint=%s, appinsights_configured=%s",
@@ -262,25 +237,12 @@ class AgentServerHost(Starlette):
                 _mask_uri(cfg.otlp_endpoint),
                 bool(cfg.appinsights_connection_string),
             )
-            protocols = (
-                ", ".join(self._server_version_segments)
-                if self._server_version_segments
-                else _NOT_SET
-            )
+            protocols = ", ".join(self._server_version_segments) if self._server_version_segments else _NOT_SET
             logger.info(
                 "Host options: shutdown_timeout=%ss, protocols=%s",
                 self._graceful_shutdown_timeout,
                 protocols,
             )
-
-            # --- Durable task manager startup ---
-            if self._durable_task_manager is not None:
-                from .durable._manager import (  # pylint: disable=import-outside-toplevel
-                    set_task_manager,
-                )
-
-                set_task_manager(self._durable_task_manager)
-                await self._durable_task_manager.startup()
 
             yield
 
@@ -289,16 +251,6 @@ class AgentServerHost(Starlette):
                 "AgentServerHost shutting down (graceful timeout=%ss)",
                 self._graceful_shutdown_timeout,
             )
-
-            # Durable task manager shutdown
-            if self._durable_task_manager is not None:
-                try:
-                    await self._durable_task_manager.shutdown()
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning(
-                        "Error shutting down durable task manager", exc_info=True
-                    )
-
             if self._graceful_shutdown_timeout == 0:
                 logger.info("Graceful shutdown drain period disabled (timeout=0)")
             else:
@@ -315,22 +267,11 @@ class AgentServerHost(Starlette):
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Error in on_shutdown", exc_info=True)
 
-        # Merge routes: subclass routes (if any) + health endpoint + durable tasks
+        # Merge routes: subclass routes (if any) + health endpoint
         all_routes: list[Any] = list(routes or [])
         all_routes.append(
-            Route(
-                "/readiness",
-                self._readiness_endpoint,
-                methods=["GET"],
-                name="readiness",
-            ),
+            Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
         )
-        if self._durable_task_manager is not None:
-            from .durable._resume_route import (  # pylint: disable=import-outside-toplevel
-                create_resume_route,
-            )
-
-            all_routes.append(create_resume_route())
 
         # Initialize Starlette with combined routes, lifespan, and middleware
         super().__init__(
@@ -346,6 +287,13 @@ class AgentServerHost(Starlette):
             ],
             **kwargs,
         )
+
+        # Extract W3C trace context (traceparent/tracestate) and baggage
+        # from incoming HTTP requests so that any spans created downstream
+        # (e.g. by MAF / agent-framework) are children of the caller's trace.
+        # We do NOT create a SERVER span ourselves — we only propagate context.
+        from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
+        self.add_middleware(TraceContextMiddleware)
 
     # ------------------------------------------------------------------
     # Server version (x-platform-server header)
@@ -389,63 +337,11 @@ class AgentServerHost(Starlette):
     # Tracing (for protocol subclasses)
     # ------------------------------------------------------------------
 
-    #: Default instrumentation scope for tracing spans.
-    #: Protocol subclasses should override this per the spec.
-    _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer"
-
-    @contextlib.contextmanager
-    def request_span(
-        self,
-        headers: Any,
-        request_id: str,
-        operation: str,
-        *,
-        operation_name: Optional[str] = None,
-        session_id: str = "",
-        end_on_exit: bool = True,
-    ) -> Any:
-        """Create a request-scoped span with this host's identity attributes.
-
-        Delegates to :func:`_tracing.request_span` with pre-populated
-        agent identity from environment variables.
-
-        :param headers: HTTP request headers.
-        :type headers: any
-        :param request_id: The request/invocation ID.
-        :type request_id: str
-        :param operation: Span operation (e.g. ``"invoke_agent"``).
-        :type operation: str
-        :keyword operation_name: Optional ``gen_ai.operation.name`` value.
-        :paramtype operation_name: str or None
-        :keyword session_id: Session ID.
-        :paramtype session_id: str
-        :keyword end_on_exit: Whether to end the span when the context exits.
-        :paramtype end_on_exit: bool
-        :return: Context manager yielding the OTel span.
-        :rtype: any
-        """
-        with _tracing.request_span(
-            headers,
-            request_id,
-            operation,
-            agent_id=self.config.agent_id,
-            agent_name=self.config.agent_name,
-            agent_version=self.config.agent_version,
-            project_id=self.config.project_id,
-            operation_name=operation_name,
-            session_id=session_id,
-            end_on_exit=end_on_exit,
-            instrumentation_scope=self._INSTRUMENTATION_SCOPE,
-        ) as span:
-            yield span
-
     # ------------------------------------------------------------------
     # Shutdown handler (server-level lifecycle)
     # ------------------------------------------------------------------
 
-    def shutdown_handler(
-        self, fn: Callable[[], Awaitable[None]]
-    ) -> Callable[[], Awaitable[None]]:
+    def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]:
         """Register a function as the shutdown handler.
 
         :param fn: Async function called during graceful shutdown.
@@ -482,6 +378,11 @@ class AgentServerHost(Starlette):
         config.graceful_timeout = float(self._graceful_shutdown_timeout)
         # Spec requires HTTP/1.1 only — disable HTTP/2
         config.h2_max_concurrent_streams = 0
+        # WebSocket Ping/Pong keep-alive (RFC 6455 opcodes 0x9/0xA).
+        # ``0`` (disabled) maps to Hypercorn's ``None`` sentinel; any
+        # positive value is sent verbatim to Hypercorn.
+        ws_ping = self.config.ws_ping_interval
+        config.websocket_ping_interval = ws_ping if ws_ping > 0 else None  # type: ignore[attr-defined]
         # Access logging
         if self._access_log is not None:
             config.accesslog = self._access_log  # type: ignore[assignment]
@@ -520,9 +421,7 @@ class AgentServerHost(Starlette):
         finally:
             signal.signal(signal.SIGTERM, original_sigterm)
 
-    async def run_async(
-        self, host: str = "0.0.0.0", port: Optional[int] = None
-    ) -> None:
+    async def run_async(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
         """Start the server asynchronously (awaitable).
 
         :param host: Network interface to bind. Defaults to ``"0.0.0.0"``.
@@ -541,9 +440,7 @@ class AgentServerHost(Starlette):
     # Health endpoint
     # ------------------------------------------------------------------
 
-    async def _readiness_endpoint(
-        self, request: Request
-    ) -> Response:  # pylint: disable=unused-argument
+    async def _readiness_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
         """GET /readiness — readiness check endpoint.
 
         :param request: The incoming Starlette request.
@@ -585,9 +482,7 @@ class AgentServerHost(Starlette):
             if pending is None:
                 pending = asyncio.ensure_future(ait.__anext__())
             try:
-                chunk = await asyncio.wait_for(
-                    asyncio.shield(pending), timeout=interval
-                )
+                chunk = await asyncio.wait_for(asyncio.shield(pending), timeout=interval)
                 pending = None  # consumed — create new task next iteration
                 yield chunk
             except asyncio.TimeoutError:

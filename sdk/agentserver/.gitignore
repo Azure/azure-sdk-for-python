@@ -1,5 +1,5 @@
-# Spec Kit
-.specify/
+# Speckit / Specify - spec-driven development tooling
 specs/
+.specify/
 .github/
 .vscode/

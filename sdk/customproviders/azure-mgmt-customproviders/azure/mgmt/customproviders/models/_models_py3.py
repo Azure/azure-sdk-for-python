@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,12 +7,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -50,18 +49,18 @@ class Association(_serialization.Model):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, target_resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, target_resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword target_resource_id: The REST resource instance of the target resource for this
          association.
         :paramtype target_resource_id: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.target_resource_id = target_resource_id
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class AssociationsList(_serialization.Model):
@@ -79,8 +78,8 @@ class AssociationsList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Association"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[list["_models.Association"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The array of associations.
         :paramtype value: list[~azure.mgmt.customproviders.models.Association]
@@ -93,9 +92,10 @@ class AssociationsList(_serialization.Model):
 
 
 class CustomRPRouteDefinition(_serialization.Model):
-    """A route definition that defines an action or resource that can be interacted with through the custom resource provider.
+    """A route definition that defines an action or resource that can be interacted with through the
+    custom resource provider.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the route definition. This becomes the name for the ARM extension (e.g.
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CustomProviders/resourceProviders/{resourceProviderName}/{name}').
@@ -117,7 +117,7 @@ class CustomRPRouteDefinition(_serialization.Model):
         "endpoint": {"key": "endpoint", "type": "str"},
     }
 
-    def __init__(self, *, name: str, endpoint: str, **kwargs):
+    def __init__(self, *, name: str, endpoint: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the route definition. This becomes the name for the ARM extension
          (e.g.
@@ -137,7 +137,7 @@ class CustomRPRouteDefinition(_serialization.Model):
 class CustomRPActionRouteDefinition(CustomRPRouteDefinition):
     """The route definition for an action implemented by the custom resource provider.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the route definition. This becomes the name for the ARM extension (e.g.
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CustomProviders/resourceProviders/{resourceProviderName}/{name}').
@@ -163,8 +163,13 @@ class CustomRPActionRouteDefinition(CustomRPRouteDefinition):
     }
 
     def __init__(
-        self, *, name: str, endpoint: str, routing_type: Optional[Union[str, "_models.ActionRouting"]] = None, **kwargs
-    ):
+        self,
+        *,
+        name: str,
+        endpoint: str,
+        routing_type: Optional[Union[str, "_models.ActionRouting"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the route definition. This becomes the name for the ARM extension
          (e.g.
@@ -187,7 +192,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -216,7 +221,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -224,9 +229,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -236,7 +241,7 @@ class CustomRPManifest(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -284,12 +289,12 @@ class CustomRPManifest(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
-        actions: Optional[List["_models.CustomRPActionRouteDefinition"]] = None,
-        resource_types: Optional[List["_models.CustomRPResourceTypeRouteDefinition"]] = None,
-        validations: Optional[List["_models.CustomRPValidations"]] = None,
-        **kwargs
-    ):
+        tags: Optional[dict[str, str]] = None,
+        actions: Optional[list["_models.CustomRPActionRouteDefinition"]] = None,
+        resource_types: Optional[list["_models.CustomRPResourceTypeRouteDefinition"]] = None,
+        validations: Optional[list["_models.CustomRPValidations"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -307,13 +312,13 @@ class CustomRPManifest(Resource):
         self.actions = actions
         self.resource_types = resource_types
         self.validations = validations
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class CustomRPResourceTypeRouteDefinition(CustomRPRouteDefinition):
     """The route definition for a resource implemented by the custom resource provider.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the route definition. This becomes the name for the ARM extension (e.g.
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CustomProviders/resourceProviders/{resourceProviderName}/{name}').
@@ -345,8 +350,8 @@ class CustomRPResourceTypeRouteDefinition(CustomRPRouteDefinition):
         name: str,
         endpoint: str,
         routing_type: Optional[Union[str, "_models.ResourceTypeRouting"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the route definition. This becomes the name for the ARM extension
          (e.g.
@@ -368,7 +373,7 @@ class CustomRPResourceTypeRouteDefinition(CustomRPRouteDefinition):
 class CustomRPValidations(_serialization.Model):
     """A validation to apply on custom resource provider requests.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar validation_type: The type of validation to run against a matching request. "Swagger"
     :vartype validation_type: str or ~azure.mgmt.customproviders.models.ValidationType
@@ -387,8 +392,12 @@ class CustomRPValidations(_serialization.Model):
     }
 
     def __init__(
-        self, *, specification: str, validation_type: Optional[Union[str, "_models.ValidationType"]] = None, **kwargs
-    ):
+        self,
+        *,
+        specification: str,
+        validation_type: Optional[Union[str, "_models.ValidationType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword validation_type: The type of validation to run against a matching request. "Swagger"
         :paramtype validation_type: str or ~azure.mgmt.customproviders.models.ValidationType
@@ -426,12 +435,12 @@ class ErrorDefinition(_serialization.Model):
         "details": {"key": "details", "type": "[ErrorDefinition]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.details = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDefinition"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -445,7 +454,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDefinition"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error details.
         :paramtype error: ~azure.mgmt.customproviders.models.ErrorDefinition
@@ -469,8 +478,12 @@ class ListByCustomRPManifest(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CustomRPManifest"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[list["_models.CustomRPManifest"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The array of custom resource provider manifests.
         :paramtype value: list[~azure.mgmt.customproviders.models.CustomRPManifest]
@@ -501,8 +514,8 @@ class ResourceProviderOperation(_serialization.Model):
         *,
         name: Optional[str] = None,
         display: Optional["_models.ResourceProviderOperationDisplay"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name, in format of {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -541,8 +554,8 @@ class ResourceProviderOperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Resource provider: Microsoft Custom Providers.
         :paramtype provider: str
@@ -577,10 +590,10 @@ class ResourceProviderOperationList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ResourceProviderOperation"]] = None,
+        value: Optional[list["_models.ResourceProviderOperation"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of operations supported by this resource provider.
         :paramtype value: list[~azure.mgmt.customproviders.models.ResourceProviderOperation]
@@ -603,7 +616,7 @@ class ResourceProvidersUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]

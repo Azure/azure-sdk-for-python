@@ -1,0 +1,24 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.managementpartner.models.Error": null,
+        "azure.mgmt.managementpartner.models.ExtendedErrorInfo": null,
+        "azure.mgmt.managementpartner.models.OperationDisplay": null,
+        "azure.mgmt.managementpartner.models.OperationList": null,
+        "azure.mgmt.managementpartner.models.OperationResponse": null,
+        "azure.mgmt.managementpartner.models.PartnerResponse": null,
+        "azure.mgmt.managementpartner.models.ManagementPartnerState": null,
+        "azure.mgmt.managementpartner.operations.PartnerOperations.get": null,
+        "azure.mgmt.managementpartner.aio.operations.PartnerOperations.get": null,
+        "azure.mgmt.managementpartner.operations.PartnerOperations.create": null,
+        "azure.mgmt.managementpartner.aio.operations.PartnerOperations.create": null,
+        "azure.mgmt.managementpartner.operations.PartnerOperations.update": null,
+        "azure.mgmt.managementpartner.aio.operations.PartnerOperations.update": null,
+        "azure.mgmt.managementpartner.operations.PartnerOperations.delete": null,
+        "azure.mgmt.managementpartner.aio.operations.PartnerOperations.delete": null,
+        "azure.mgmt.managementpartner.operations.OperationOperations.list": null,
+        "azure.mgmt.managementpartner.aio.operations.OperationOperations.list": null,
+        "azure.mgmt.managementpartner.operations.PartnersOperations.get": null,
+        "azure.mgmt.managementpartner.aio.operations.PartnersOperations.get": null
+    }
+}

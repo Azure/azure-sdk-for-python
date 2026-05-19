@@ -24,7 +24,8 @@ tracing exporters, and span operations:
 
 **Span operations:**
 
-- :func:`request_span` — create a request-scoped span with GenAI attributes
+- :class:`TraceContextMiddleware` — ASGI middleware that extracts W3C trace
+  context and baggage from incoming headers
 - :func:`end_span` / :func:`record_error` — span lifecycle helpers
 - :func:`trace_stream` — wrap streaming responses with span lifecycle
 - :func:`set_current_span` / :func:`detach_context` — explicit context management
@@ -34,29 +35,22 @@ real spans.  Azure Monitor export is optional (auto-configured by the distro).
 """
 import logging
 import os
-from collections.abc import (
-    AsyncIterable,
-    AsyncIterator,
-    Mapping,
-)  # pylint: disable=import-error
-from contextlib import contextmanager
-from typing import Any, Iterator, Optional, Union
+from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
+from typing import Any, Optional, Union
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
-from opentelemetry.baggage.propagation import W3CBaggagePropagator
-from opentelemetry.propagate import composite
-from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
 from . import _config
 
 _Content = Union[str, bytes, memoryview]
-_W3C_HEADERS = ("traceparent", "tracestate", "baggage")
 
 # GenAI semantic convention attribute keys
 _ATTR_SERVICE_NAME = "service.name"
 _ATTR_GEN_AI_SYSTEM = "gen_ai.system"
 _ATTR_GEN_AI_PROVIDER_NAME = "gen_ai.provider.name"
 _ATTR_GEN_AI_AGENT_ID = "gen_ai.agent.id"
+_ATTR_GEN_AI_AGENT_BLUEPRINT_ID = "gen_ai.agent.blueprint.id"
+_ATTR_GEN_AI_AGENT_TENANT_ID = "microsoft.tenant.id"
 _ATTR_GEN_AI_AGENT_NAME = "gen_ai.agent.name"
 _ATTR_GEN_AI_AGENT_VERSION = "gen_ai.agent.version"
 _ATTR_GEN_AI_RESPONSE_ID = "gen_ai.response.id"
@@ -72,20 +66,15 @@ _ATTR_SESSION_ID = "microsoft.session.id"
 # the calling service may carry either key as W3C baggage.
 _BAGGAGE_SESSION_ID = "azure.ai.agentserver.session_id"
 _BAGGAGE_CONVERSATION_ID = "azure.ai.agentserver.conversation_id"
+_BAGGAGE_INVOCATION_ID = "azure.ai.agentserver.invocation_id"
+
+_ATTR_INVOCATION_ID = "azure.ai.agentserver.invocations.invocation_id"
 
 _SERVICE_NAME_VALUE = "azure.ai.agentserver"
 _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
 _GEN_AI_PROVIDER_NAME_VALUE = "AzureAI Hosted Agents"
 
 logger = logging.getLogger("azure.ai.agentserver")
-
-# Composite propagator handles both traceparent/tracestate AND baggage
-_propagator = composite.CompositePropagator(
-    [
-        TraceContextTextMapPropagator(),
-        W3CBaggagePropagator(),
-    ]
-)
 
 
 # ======================================================================
@@ -101,6 +90,7 @@ def configure_observability(
     *,
     connection_string: Optional[str] = None,
     log_level: Optional[str] = None,
+    enable_sensitive_data: bool = False,
 ) -> None:
     """Default observability setup: console logging + tracing/OTel export.
 
@@ -117,6 +107,10 @@ def configure_observability(
     :paramtype connection_string: str or None
     :keyword log_level: Log level name (e.g. ``"INFO"``, ``"DEBUG"``).
     :paramtype log_level: str or None
+    :keyword enable_sensitive_data: Enable sensitive data recording
+        (prompts, tool arguments, results) for Agent Framework SDK
+        instrumentation. Defaults to False.
+    :paramtype enable_sensitive_data: bool
     """
     # Console logging on the root logger so user logs are also visible.
     resolved_level = _config.resolve_log_level(log_level)
@@ -128,30 +122,23 @@ def configure_observability(
     # prevent duplicate output on stderr.
     _has_console = any(
         getattr(h, _CONSOLE_HANDLER_ATTR, False)
-        or (
-            isinstance(h, logging.StreamHandler)
-            and not isinstance(h, logging.FileHandler)
-        )
+        or (isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler))
         for h in root.handlers
     )
     if not _has_console:
         _console = logging.StreamHandler()
-        _console.setFormatter(
-            logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
-        )
+        _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
         setattr(_console, _CONSOLE_HANDLER_ATTR, True)
         root.addHandler(_console)
 
     # Suppress the noisy Azure Core HTTP logging policy logger.
-    logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
-        logging.WARNING
-    )
+    logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
 
     # Tracing and OTel export
-    _configure_tracing(connection_string=connection_string)
+    _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
 
 
-def _configure_tracing(connection_string: Optional[str] = None) -> None:
+def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive_data: bool = False) -> None:
     """Configure OpenTelemetry exporters via the microsoft-opentelemetry distro.
 
     Internal helper called by :func:`configure_observability`.
@@ -159,32 +146,29 @@ def _configure_tracing(connection_string: Optional[str] = None) -> None:
     :param connection_string: Application Insights connection string.
         When provided, traces and logs are exported to Azure Monitor.
     :type connection_string: str or None
+    :param enable_sensitive_data: Enable sensitive data recording for
+        Agent Framework SDK instrumentation.
+    :type enable_sensitive_data: bool
     """
     resource = _create_resource()
     if resource is None:
-        logger.warning(
-            "Failed to create OTel resource — tracing will not be configured."
-        )
+        logger.warning("Failed to create OTel resource — tracing will not be configured.")
         return
 
     # Build custom processors
     agent_name = _config.resolve_agent_name() or None
     agent_version = _config.resolve_agent_version() or None
     project_id = _config.resolve_project_id() or None
-
-    if agent_name and agent_version:
-        agent_id = f"{agent_name}:{agent_version}"
-    elif agent_name:
-        agent_id = agent_name
-    else:
-        agent_id = None
+    agent_id = _config.resolve_agent_id() or None
+    agent_blueprint_id = _config.resolve_agent_blueprint_id() or None
+    agent_tenant_id = _config.resolve_agent_tenant_id() or None
 
     span_processors = [
         _FoundryEnrichmentSpanProcessor(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            agent_id=agent_id,
-            project_id=project_id,
+            agent_name=agent_name, agent_version=agent_version,
+            agent_id=agent_id, project_id=project_id,
+            agent_blueprint_id=agent_blueprint_id,
+            agent_tenant_id=agent_tenant_id,
         ),
     ]
     log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
@@ -195,14 +179,11 @@ def _configure_tracing(connection_string: Optional[str] = None) -> None:
             span_processors=span_processors,
             log_record_processors=log_record_processors,
             connection_string=connection_string,
+            enable_sensitive_data=enable_sensitive_data,
         )
-        logger.info(
-            "Tracing configured successfully via microsoft-opentelemetry distro."
-        )
+        logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
     except ImportError:
-        logger.warning(
-            "microsoft-opentelemetry is not installed — tracing export disabled."
-        )
+        logger.warning("microsoft-opentelemetry is not installed — tracing export disabled.")
         # Still set up TracerProvider with enrichment processor so spans are created
         _ensure_trace_provider(resource, span_processors)
 
@@ -213,6 +194,7 @@ def _setup_distro_export(
     span_processors: list[Any],
     log_record_processors: list[Any],
     connection_string: Optional[str] = None,
+    enable_sensitive_data: bool = False,
 ) -> None:
     """Delegate to microsoft-opentelemetry distro for exporter configuration.
 
@@ -223,6 +205,8 @@ def _setup_distro_export(
     :keyword span_processors: Span processors to register.
     :keyword log_record_processors: Log record processors to register.
     :keyword connection_string: Application Insights connection string.
+    :keyword enable_sensitive_data: Enable sensitive data recording for
+        Agent Framework SDK instrumentation.
     """
     from microsoft.opentelemetry import use_microsoft_opentelemetry
 
@@ -230,6 +214,7 @@ def _setup_distro_export(
         "resource": resource,
         "span_processors": span_processors,
         "log_record_processors": log_record_processors,
+        "enable_sensitive_data": enable_sensitive_data,
     }
 
     # Azure Monitor export is off by default in the distro — enable it
@@ -237,6 +222,16 @@ def _setup_distro_export(
     if connection_string:
         kwargs["enable_azure_monitor"] = True
         kwargs["azure_monitor_connection_string"] = connection_string
+
+    # A365 tracing export — enabled only in hosted environments.
+    if (
+        os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "")
+        and os.environ.get("FOUNDRY_AGENT365_TRACING_ENABLED", "").lower() in ("true", "1")
+    ):
+        kwargs["enable_a365"] = True
+        kwargs["a365_use_s2s_endpoint"] = True
+        kwargs["a365_enable_observability_exporter"] = True
+        kwargs["a365_observability_scope_override"] = "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
 
     use_microsoft_opentelemetry(**kwargs)
 
@@ -246,99 +241,56 @@ def _setup_distro_export(
 # ======================================================================
 
 
-@contextmanager
-def request_span(
-    headers: Mapping[str, str],
-    request_id: str,
-    operation: str,
-    *,
-    agent_id: str = "",
-    agent_name: str = "",
-    agent_version: str = "",
-    project_id: str = "",
-    operation_name: Optional[str] = None,
-    session_id: str = "",
-    end_on_exit: bool = True,
-    instrumentation_scope: str = "Azure.AI.AgentServer",
-) -> Iterator[Any]:
-    """Create a request-scoped span with GenAI semantic convention attributes.
+class TraceContextMiddleware:
+    """Pure-ASGI middleware that propagates W3C trace context and baggage.
 
-    Extracts W3C trace context from *headers* and creates a span set as
-    current in context (child spans are correctly parented).
+    Extracts ``traceparent``, ``tracestate``, and ``baggage`` headers from
+    incoming HTTP requests using the standard W3C propagators and attaches
+    the resulting context for the duration of the request.  This ensures
+    that any spans created downstream (e.g. by agent-framework / MAF) are
+    automatically children of the caller's trace.
 
-    For **non-streaming** requests use ``end_on_exit=True`` (default).
-    For **streaming** use ``end_on_exit=False`` and end via :func:`trace_stream`.
+    This middleware does **not** create its own span — it only propagates
+    the incoming context so that downstream instrumentation inherits it.
 
-    :param headers: HTTP request headers.
-    :type headers: Mapping[str, str]
-    :param request_id: The request/invocation ID.
-    :type request_id: str
-    :param operation: Span operation (e.g. ``"invoke_agent"``).
-    :type operation: str
-    :keyword agent_id: Agent identifier (``"name:version"`` or ``"name"``).
-    :paramtype agent_id: str
-    :keyword agent_name: Agent name from FOUNDRY_AGENT_NAME.
-    :paramtype agent_name: str
-    :keyword agent_version: Agent version from FOUNDRY_AGENT_VERSION.
-    :paramtype agent_version: str
-    :keyword project_id: Foundry project ARM resource ID.
-    :paramtype project_id: str
-    :keyword operation_name: Optional ``gen_ai.operation.name`` value.
-    :paramtype operation_name: str or None
-    :keyword session_id: Session ID (empty string if absent).
-    :paramtype session_id: str
-    :keyword end_on_exit: Whether to end the span when the context exits.
-    :paramtype end_on_exit: bool
-    :keyword instrumentation_scope: OpenTelemetry instrumentation scope name.
-    :paramtype instrumentation_scope: str
-    :return: Context manager yielding the OTel span.
-    :rtype: Iterator[any]
+    :param app: The inner ASGI application.
+    :type app: ASGIApp
     """
-    tracer = trace.get_tracer(instrumentation_scope)
 
-    # Build span name
-    name = f"{operation} {agent_id}" if agent_id else operation
+    def __init__(self, app: Any) -> None:
+        self.app = app
 
-    # Build attributes
-    attrs: dict[str, str] = {
-        _ATTR_SERVICE_NAME: agent_name or _SERVICE_NAME_VALUE,
-        _ATTR_GEN_AI_SYSTEM: _GEN_AI_SYSTEM_VALUE,
-        _ATTR_GEN_AI_PROVIDER_NAME: _GEN_AI_PROVIDER_NAME_VALUE,
-        _ATTR_GEN_AI_RESPONSE_ID: request_id,
-        _ATTR_GEN_AI_AGENT_ID: agent_id,
-    }
-    if agent_name:
-        attrs[_ATTR_GEN_AI_AGENT_NAME] = agent_name
-    if agent_version:
-        attrs[_ATTR_GEN_AI_AGENT_VERSION] = agent_version
-    if operation_name:
-        attrs[_ATTR_GEN_AI_OPERATION_NAME] = operation_name
-    if session_id:
-        attrs[_ATTR_SESSION_ID] = session_id
-    if project_id:
-        attrs[_ATTR_FOUNDRY_PROJECT_ID] = project_id
+    async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
 
-    # Propagate platform request correlation ID as span attribute AND baggage
-    x_request_id = headers.get("x-request-id")
-    if x_request_id:
-        attrs["x_request_id"] = x_request_id
+        # Build a simple dict of headers for the propagators
+        raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
+        headers = {
+            k.decode("latin-1"): v.decode("latin-1")
+            for k, v in raw_headers
+        }
 
-    # Extract W3C trace context (traceparent + tracestate + baggage)
-    carrier = _extract_w3c_carrier(headers)
-    ctx = _propagator.extract(carrier=carrier) if carrier else None
+        # Use the global propagator to extract trace context + baggage
+        from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+        ctx = extract(carrier=headers)
 
-    # Add x-request-id to baggage for downstream propagation
-    if x_request_id:
-        ctx = _otel_baggage.set_baggage("x_request_id", x_request_id, context=ctx)
+        # Add x-request-id as baggage for downstream propagation
+        x_request_id = headers.get("x-request-id")
+        if x_request_id:
+            ctx = _otel_baggage.set_baggage(
+                "x_request_id", x_request_id, context=ctx,
+            )
 
-    with tracer.start_as_current_span(  # type: ignore[reportGeneralTypeIssues]
-        name=name,
-        attributes=attrs,
-        kind=trace.SpanKind.SERVER,
-        context=ctx,
-        end_on_exit=end_on_exit,
-    ) as otel_span:
-        yield otel_span
+        token = _otel_context.attach(ctx)
+        try:
+            await self.app(scope, receive, send)
+        finally:
+            try:
+                _otel_context.detach(token)
+            except ValueError:
+                pass
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
@@ -481,15 +433,20 @@ class _FoundryEnrichmentSpanProcessor:
 
     def __init__(
         self,
+        *,
         agent_name: Optional[str] = None,
         agent_version: Optional[str] = None,
         agent_id: Optional[str] = None,
         project_id: Optional[str] = None,
+        agent_blueprint_id: Optional[str] = None,
+        agent_tenant_id: Optional[str] = None,
     ) -> None:
         self.agent_name = agent_name
         self.agent_version = agent_version
         self.agent_id = agent_id
         self.project_id = project_id
+        self.agent_blueprint_id = agent_blueprint_id
+        self.agent_tenant_id = agent_tenant_id
 
     def on_start(self, span: Any, parent_context: Any = None) -> None:
         if self.project_id:
@@ -501,11 +458,12 @@ class _FoundryEnrichmentSpanProcessor:
         session_id = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
         if session_id:
             span.set_attribute(_ATTR_SESSION_ID, session_id)
-        conversation_id = _otel_baggage.get_baggage(
-            _BAGGAGE_CONVERSATION_ID, context=ctx
-        )
+        conversation_id = _otel_baggage.get_baggage(_BAGGAGE_CONVERSATION_ID, context=ctx)
         if conversation_id:
             span.set_attribute(_ATTR_GEN_AI_CONVERSATION_ID, conversation_id)
+        invocation_id = _otel_baggage.get_baggage(_BAGGAGE_INVOCATION_ID, context=ctx)
+        if invocation_id:
+            span.set_attribute(_ATTR_INVOCATION_ID, invocation_id)
 
     def _on_ending(self, span: Any) -> None:
         # Set agent identity attributes at span end so they cannot be
@@ -527,10 +485,12 @@ class _FoundryEnrichmentSpanProcessor:
                 attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
             if self.agent_id:
                 attrs[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
+            if self.agent_blueprint_id:
+                attrs[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
+            if self.agent_tenant_id:
+                attrs[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
         except Exception:  # pylint: disable=broad-exception-caught
-            logger.debug(
-                "Failed to enrich span attributes in _on_ending", exc_info=True
-            )
+            logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 
     def on_end(self, span: Any) -> None:  # pylint: disable=unused-argument
         pass
@@ -538,9 +498,7 @@ class _FoundryEnrichmentSpanProcessor:
     def shutdown(self) -> None:
         pass
 
-    def force_flush(
-        self, timeout_millis: int = 30000
-    ) -> bool:  # pylint: disable=unused-argument
+    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
         return True
 
 
@@ -561,7 +519,7 @@ class _BaggageLogRecordProcessor:
         try:
             ctx = _otel_context.get_current()
             entries = _otel_baggage.get_all(context=ctx)
-            if entries and hasattr(log_data, "log_record") and log_data.log_record:
+            if entries and hasattr(log_data, 'log_record') and log_data.log_record:
                 for key, value in entries.items():
                     log_data.log_record.attributes[key] = value  # type: ignore[index]
         except Exception:  # pylint: disable=broad-except
@@ -570,9 +528,7 @@ class _BaggageLogRecordProcessor:
     def shutdown(self) -> None:
         pass
 
-    def force_flush(
-        self, timeout_millis: int = 30000
-    ) -> bool:  # pylint: disable=unused-argument
+    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
         return True
 
 
@@ -588,16 +544,12 @@ def _create_resource() -> Any:
         logger.warning("OTel SDK not installed — tracing resource creation failed.")
         return None
     # service.name maps to cloud_RoleName in App Insights
-    agent_name = os.environ.get(
-        _config._ENV_FOUNDRY_AGENT_NAME, ""
-    )  # pylint: disable=protected-access
+    agent_name = os.environ.get(_config._ENV_FOUNDRY_AGENT_NAME, "")  # pylint: disable=protected-access
     service_name = agent_name or _SERVICE_NAME_VALUE
     return Resource.create({_ATTR_SERVICE_NAME: service_name})
 
 
-def _ensure_trace_provider(
-    resource: Any, span_processors: Optional[list[Any]] = None
-) -> Any:
+def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] = None) -> Any:
     """Get or create a TracerProvider, optionally adding span processors.
 
     Used as a fallback when the microsoft-opentelemetry distro is not installed.
@@ -619,14 +571,8 @@ def _ensure_trace_provider(
     else:
         provider = SdkTracerProvider(resource=resource)
         trace.set_tracer_provider(provider)
-    if span_processors and not getattr(
-        provider, "_agentserver_processors_added", False
-    ):
+    if span_processors and not getattr(provider, "_agentserver_processors_added", False):
         for proc in span_processors:
             provider.add_span_processor(proc)
         provider._agentserver_processors_added = True  # type: ignore[attr-defined]  # pylint: disable=protected-access
     return provider
-
-
-def _extract_w3c_carrier(headers: Mapping[str, str]) -> dict[str, str]:
-    return {k: v for k in _W3C_HEADERS if (v := headers.get(k)) is not None}

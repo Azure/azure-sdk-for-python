@@ -42,15 +42,15 @@ class KDF:
 
     @staticmethod
     def test_sp800_108():
-        label = 'label'
-        context = 'context'
+        label = "label"
+        context = "context"
         bit_length = 256
-        hex_result = 'f0ca51f6308791404bf68b56024ee7c64d6c737716f81d47e1e68b5c4e399575'
+        hex_result = "f0ca51f6308791404bf68b56024ee7c64d6c737716f81d47e1e68b5c4e399575"
         key = bytearray()
         key.extend([0x41] * 32)
 
         new_key = KDF.sp800_108(key, label, context, bit_length)
-        hex_value = new_key.hex().replace('-', '')  # type: ignore
+        hex_value = new_key.hex().replace("-", "")  # type: ignore
         return hex_value.lower() == hex_result
 
     @staticmethod
@@ -88,9 +88,9 @@ class KDF:
             n += 1
 
         hmac_data_suffix = bytearray()
-        hmac_data_suffix.extend(label.encode('UTF-8'))
+        hmac_data_suffix.extend(label.encode("UTF-8"))
         hmac_data_suffix.append(0)
-        hmac_data_suffix.extend(context.encode('UTF-8'))
+        hmac_data_suffix.extend(context.encode("UTF-8"))
         hmac_data_suffix.extend(KDF.to_big_endian_32bits(bit_length))
 
         out_value = bytearray()
@@ -105,18 +105,31 @@ class KDF:
                 out_value.extend(hash_value)
                 bytes_needed -= len(hash_value)
             else:
-                out_value.extend(hash_value[len(out_value): len(out_value) + bytes_needed])
+                out_value.extend(hash_value[len(out_value) : len(out_value) + bytes_needed])
                 return out_value
 
         return None
 
 
 class JWEHeader:  # pylint: disable=too-many-instance-attributes
-    _fields = ['alg', 'enc', 'zip', 'jku', 'jwk', 'kid', 'x5u', 'x5c', 'x5t', 'x5t_S256', 'typ', 'cty', 'crit']
+    _fields = ["alg", "enc", "zip", "jku", "jwk", "kid", "x5u", "x5c", "x5t", "x5t_S256", "typ", "cty", "crit"]
 
-    def __init__(self, alg=None, enc=None, zip=None,  # pylint: disable=redefined-builtin
-                 jku=None, jwk=None, kid=None, x5u=None, x5c=None, x5t=None,
-                 x5t_S256=None, typ=None, cty=None, crit=None):
+    def __init__(
+        self,
+        alg=None,
+        enc=None,
+        zip=None,  # pylint: disable=redefined-builtin
+        jku=None,
+        jwk=None,
+        kid=None,
+        x5u=None,
+        x5c=None,
+        x5t=None,
+        x5t_S256=None,
+        typ=None,
+        cty=None,
+        crit=None,
+    ):
         """
         JWE header
 
@@ -153,8 +166,8 @@ class JWEHeader:  # pylint: disable=too-many-instance-attributes
         json_dict = json.loads(json_str)
         jwe_header = JWEHeader()
         for k in jwe_header._fields:
-            if k == 'x5t_S256':
-                v = json_dict.get('x5t#S256', None)
+            if k == "x5t_S256":
+                v = json_dict.get("x5t#S256", None)
             else:
                 v = json_dict.get(k, None)
             if v is not None:
@@ -166,8 +179,8 @@ class JWEHeader:  # pylint: disable=too-many-instance-attributes
         for k in self._fields:
             v = getattr(self, k, None)
             if v is not None:
-                if k == 'x5t_S256':
-                    json_dict['x5t#S256'] = v
+                if k == "x5t_S256":
+                    json_dict["x5t#S256"] = v
                 else:
                     json_dict[k] = v
         return json.dumps(json_dict)
@@ -176,46 +189,46 @@ class JWEHeader:  # pylint: disable=too-many-instance-attributes
 class JWEDecode:
     def __init__(self, compact_jwe=None):
         if compact_jwe is None:
-            self.encoded_header = ''
+            self.encoded_header = ""
             self.encrypted_key = None
             self.init_vector = None
             self.ciphertext = None
             self.auth_tag = None
             self.protected_header = JWEHeader()
         else:
-            parts = compact_jwe.split('.')
+            parts = compact_jwe.split(".")
 
             self.encoded_header = parts[0]
-            header = base64.urlsafe_b64decode(self.encoded_header + '===').decode('ascii')  # Fix incorrect padding
+            header = base64.urlsafe_b64decode(self.encoded_header + "===").decode("ascii")  # Fix incorrect padding
             self.protected_header = JWEHeader.from_json_str(header)
-            self.encrypted_key = base64.urlsafe_b64decode(parts[1] + '===')
-            self.init_vector = base64.urlsafe_b64decode(parts[2] + '===')
-            self.ciphertext = base64.urlsafe_b64decode(parts[3] + '===')
-            self.auth_tag = base64.urlsafe_b64decode(parts[4] + '===')
+            self.encrypted_key = base64.urlsafe_b64decode(parts[1] + "===")
+            self.init_vector = base64.urlsafe_b64decode(parts[2] + "===")
+            self.ciphertext = base64.urlsafe_b64decode(parts[3] + "===")
+            self.auth_tag = base64.urlsafe_b64decode(parts[4] + "===")
 
     def encode_header(self):
         header_json = self.protected_header.to_json_str().replace('": ', '":').replace('", ', '",')
-        self.encoded_header = Utils.security_domain_b64_url_encode(header_json.encode('ascii'))
+        self.encoded_header = Utils.security_domain_b64_url_encode(header_json.encode("ascii"))
 
     def encode_compact(self):
-        ret = [self.encoded_header + '.']
+        ret = [self.encoded_header + "."]
 
         if self.encrypted_key is not None:
             ret.append(Utils.security_domain_b64_url_encode(self.encrypted_key))
-        ret.append('.')
+        ret.append(".")
 
         if self.init_vector is not None:
             ret.append(Utils.security_domain_b64_url_encode(self.init_vector))
-        ret.append('.')
+        ret.append(".")
 
         if self.ciphertext is not None:
             ret.append(Utils.security_domain_b64_url_encode(self.ciphertext))
-        ret.append('.')
+        ret.append(".")
 
         if self.auth_tag is not None:
             ret.append(Utils.security_domain_b64_url_encode(self.auth_tag))
 
-        return ''.join(ret)
+        return "".join(ret)
 
 
 class JWE:
@@ -228,26 +241,25 @@ class JWE:
     def get_padding_mode(self):
         alg = self.jwe_decode.protected_header.alg
 
-        if alg == 'RSA-OAEP-256':
+        if alg == "RSA-OAEP-256":
             algorithm = hashes.SHA256()
             return asymmetric_padding.OAEP(
-                mgf=asymmetric_padding.MGF1(algorithm=algorithm), algorithm=algorithm, label=None)
+                mgf=asymmetric_padding.MGF1(algorithm=algorithm), algorithm=algorithm, label=None
+            )
 
-        if alg == 'RSA-OAEP':
+        if alg == "RSA-OAEP":
             algorithm = hashes.SHA1()
             return asymmetric_padding.OAEP(
-                mgf=asymmetric_padding.MGF1(algorithm=algorithm), algorithm=algorithm, label=None)
+                mgf=asymmetric_padding.MGF1(algorithm=algorithm), algorithm=algorithm, label=None
+            )
 
-        if alg == 'RSA1_5':
+        if alg == "RSA1_5":
             return asymmetric_padding.PKCS1v15()
 
         return None
 
     def get_cek(self, private_key):
-        return private_key.decrypt(
-            self.jwe_decode.encrypted_key,
-            self.get_padding_mode()
-        )
+        return private_key.decrypt(self.jwe_decode.encrypted_key, self.get_padding_mode())
 
     def set_cek(self, cert, cek):
         public_key = cert.public_key()
@@ -269,7 +281,7 @@ class JWE:
 
     def get_mac(self, hk):
         header_bytes = bytearray()
-        header_bytes.extend(self.jwe_decode.encoded_header.encode('ascii'))
+        header_bytes.extend(self.jwe_decode.encoded_header.encode("ascii"))
         auth_bits = len(header_bytes) * 8
 
         hash_data = bytearray()
@@ -289,7 +301,7 @@ class JWE:
         test = 0
         i = 0
         while i < len(self.jwe_decode.auth_tag) == 32:  # type: ignore
-            test |= (self.jwe_decode.auth_tag[i] ^ mac_value[i])  # type: ignore
+            test |= self.jwe_decode.auth_tag[i] ^ mac_value[i]  # type: ignore
             i += 1
 
         if test != 0:
@@ -326,7 +338,7 @@ class JWE:
             self.jwe_decode.auth_tag.append(mac_value[i])  # type: ignore
 
     def decrypt_using_bytes(self, cek):
-        if self.jwe_decode.protected_header.enc == 'A256CBC-HS512':
+        if self.jwe_decode.protected_header.enc == "A256CBC-HS512":
             return self.Aes256HmacSha512Decrypt(cek)
         return None
 
@@ -339,17 +351,17 @@ class JWE:
 
     def encrypt_using_bytes(self, cek, plaintext, alg_id, kid=None):
         if kid is not None:
-            self.jwe_decode.protected_header.alg = 'dir'
+            self.jwe_decode.protected_header.alg = "dir"
             self.jwe_decode.protected_header.kid = kid
 
-        if alg_id == 'A256CBC-HS512':
+        if alg_id == "A256CBC-HS512":
             self.jwe_decode.protected_header.enc = alg_id
             self.jwe_decode.encode_header()
             self.Aes256HmacSha512Encrypt(cek, plaintext)
 
     def encrypt_using_cert(self, cert, plaintext):
-        self.jwe_decode.protected_header.alg = 'RSA-OAEP-256'
-        self.jwe_decode.protected_header.kid = 'not used'
+        self.jwe_decode.protected_header.alg = "RSA-OAEP-256"
+        self.jwe_decode.protected_header.kid = "not used"
         cek = Utils.get_random(64)
         self.set_cek(cert, cek)
-        self.encrypt_using_bytes(cek, plaintext, alg_id='A256CBC-HS512')
+        self.encrypt_using_bytes(cek, plaintext, alg_id="A256CBC-HS512")

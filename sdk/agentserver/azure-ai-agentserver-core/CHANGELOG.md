@@ -40,6 +40,17 @@
 - **Task recovery routing** — `_find_resume_callback()` now matches by `source.name` (the auto-stamped function name) first, then falls back to title prefix match. Previously relied only on fragile title prefix heuristic.
 
 ### Other Changes
+- Added `_platform_headers` module with cross-cutting protocol header name constants (`x-request-id`, `x-platform-server`, `x-agent-session-id`, `x-platform-error-source`, `x-platform-error-detail`, and others). Protocol packages now import shared header name strings from core instead of maintaining their own copies.
+- Added `TraceContextMiddleware` — a lightweight pure-ASGI middleware that propagates W3C trace context (`traceparent`, `tracestate`) and baggage from incoming HTTP requests. Any spans created by downstream frameworks (e.g. MAF / agent-framework) are automatically children of the caller's trace without additional framework spans.
+- Added `enable_sensitive_data` parameter to `configure_observability()` to control whether prompts, tool arguments, and results are recorded in telemetry. Respects `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable.
+- Added A365 tracing export support — when `FOUNDRY_HOSTING_ENVIRONMENT` and `FOUNDRY_AGENT365_TRACING_ENABLED` are set, telemetry is exported via the A365 observability pipeline.
+- Added `resolve_agent_id()`, `resolve_agent_blueprint_id()`, and `resolve_agent_tenant_id()` config helpers for new Foundry environment variables (`FOUNDRY_AGENT_INSTANCE_CLIENT_ID`, `FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID`, `FOUNDRY_AGENT_TENANT_ID`).
+- Added `gen_ai.agent.blueprint.id` and `microsoft.tenant.id` span attributes to the `FoundryEnrichmentSpanProcessor`.
+- `AgentConfig.ws_ping_interval` — new field resolved from the `WS_KEEPALIVE_INTERVAL` environment variable (auto-injected by AgentService into hosted-agent containers). `0` disables; negative/non-finite values raise `ValueError` at startup. `AgentServerHost._build_hypercorn_config` wires this into Hypercorn's `websocket_ping_interval` so any protocol package serving WebSocket routes inherits keep-alive without per-package wiring.
+
+### Breaking Changes
+
+- Removed `request_span()` method from `AgentServerHost`. Trace context propagation is now handled automatically by `TraceContextMiddleware`.
 
 ## 2.0.0b3 (2026-04-22)
 

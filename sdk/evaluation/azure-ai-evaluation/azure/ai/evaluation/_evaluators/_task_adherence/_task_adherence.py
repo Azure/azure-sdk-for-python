@@ -30,11 +30,11 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         - Rule adherence: Did the assistant respect safety, privacy, authorization, and presentation contracts?
         - Procedural adherence: Did the assistant follow required workflows, tool use, sequencing, and verification?
 
-    The evaluator returns a boolean flag indicating whether there was any material failure in any dimension.
+    The evaluator returns a score indicating whether there was any material failure in any dimension.
     A material failure is an issue that makes the output unusable, creates verifiable risk, violates an explicit
     constraint, or is a critical issue as defined in the evaluation dimensions.
 
-    The evaluation includes step-by-step reasoning and a flagged boolean result.
+    The evaluation includes step-by-step reasoning and a pass/fail score result.
 
 
     :param model_config: Configuration for the Azure OpenAI model.
@@ -114,7 +114,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :paramtype query: Union[str, List[dict]]
         :keyword response: The response being evaluated, must be a list of messages (full agent response including tool calls and results)
         :paramtype response: Union[str, List[dict]]
-        :return: A dictionary with the task adherence evaluation results including flagged (bool) and reasoning (str).
+        :return: A dictionary with the task adherence evaluation results including score (pass/fail) and reasoning (str).
         :rtype: Dict[str, Union[str, float, bool]]
         """
 
@@ -172,10 +172,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
-                has_details=True,
             )
 
         # Preprocess messages if they are lists
@@ -241,25 +240,27 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
-            flagged = llm_output.get("flagged", False)
-            reasoning = llm_output.get("reasoning", "")
-            # Convert flagged to numeric score for backward compatibility (1 = pass, 0 = fail)
-            score = 0.0 if flagged else 1.0
-            score_result = "fail" if flagged else "pass"
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
+
+            reasoning = llm_output.get("reason", "")
+            score = float(llm_output.get("score", 0.0))
+            score_result = "pass" if score >= 1.0 else "fail"
+            llm_properties = llm_output.get("properties", {}) or {}
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
 
             return {
-                f"{self._result_key}": score,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reasoning,
-                f"{self._result_key}_details": llm_output.get("details", ""),
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
-                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
 
         raise EvaluationException(
