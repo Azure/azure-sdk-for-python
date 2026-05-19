@@ -16,7 +16,7 @@ from azure.mgmt.operationsmanagement import OperationsManagementClient
     pip install azure-identity
     pip install azure-mgmt-operationsmanagement
 # USAGE
-    python management_configuration_create.py
+    python management_association_list_for_subscription.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,14 +31,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.management_configurations.create_or_update(
-        resource_group_name="rg1",
-        management_configuration_name="managementConfiguration1",
-        parameters={"location": "East US"},
-    )
+    response = client.management_associations.list_by_subscription()
     print(response)
 
 
-# x-ms-original-file: specification/operationsmanagement/resource-manager/Microsoft.OperationsManagement/OperationsManagement/preview/2015-11-01-preview/examples/ManagementConfigurationCreate.json
+# x-ms-original-file: specification/operationsmanagement/resource-manager/Microsoft.OperationsManagement/OperationsManagement/preview/2015-11-01-preview/examples/ManagementAssociationListForSubscription.json
 if __name__ == "__main__":
     main()
