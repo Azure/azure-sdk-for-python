@@ -307,5 +307,8 @@ def test_client_certificate_with_params():
     )
 
     assert "passphrase" in credential._client_credential
-    assert credential._client_credential["passphrase"] == cert_password.encode("utf-8")
+    assert credential._client_credential["passphrase"] == cert_password
+    assert "private_key" in credential._client_credential
+    assert isinstance(credential._client_credential["private_key"], str)
+    assert "-----BEGIN" in credential._client_credential["private_key"]
     assert "public_certificate" in credential._client_credential

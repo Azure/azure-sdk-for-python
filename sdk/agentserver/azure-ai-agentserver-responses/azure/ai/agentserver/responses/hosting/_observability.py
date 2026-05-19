@@ -8,7 +8,7 @@ from collections.abc import Mapping, MutableMapping
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
-from .._platform_headers import REQUEST_ID
+from azure.ai.agentserver.core._platform_headers import REQUEST_ID  # pylint: disable=import-error,no-name-in-module
 
 if TYPE_CHECKING:
     from ._execution_context import _ExecutionContext

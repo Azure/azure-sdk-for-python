@@ -17,7 +17,7 @@ from testcase import WebpubsubPowerShellPreparer, WebpubsubTest
 @pytest.mark.live_test_only
 class TestLiveApiCoverage(WebpubsubTest):
     def _find_connection_id(self, client, group_name, user_id):
-        for _ in range(10):
+        for _ in range(30):
             members = list(client.list_connections(group=group_name, top=20))
             for member in members:
                 if member.user_id == user_id and member.connection_id:
@@ -25,13 +25,20 @@ class TestLiveApiCoverage(WebpubsubTest):
             time.sleep(1)
         return None
 
+    def _wait_for_connection_removed(self, client, connection_id):
+        for _ in range(30):
+            if not client.connection_exists(connection_id=connection_id):
+                return
+            time.sleep(1)
+        pytest.fail(f"Timed out waiting for connection {connection_id} to be removed")
+
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
-    def test_live_api_coverage_all_apis_and_parameters(self, webpubsub_endpoint, webpubsub_connection_string):
+    def test_live_api_coverage_all_apis_and_parameters(self, webpubsub_endpoint, webpubsub_socketio_endpoint):
         if not getattr(self, "is_live", False):
             pytest.skip("Live WebSocket coverage test is skipped in playback mode")
 
-        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         aad_client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
 
         user_id = "live-user-1"
@@ -55,7 +62,8 @@ class TestLiveApiCoverage(WebpubsubTest):
         assert "webpubsub.joinLeaveGroup" in decoded["role"]
         assert group_1 in decoded["webpubsub.group"]
 
-        socketio_token = client.get_client_access_token(user_id=user_id, groups=[group_1], client_protocol="SocketIO")
+        socketio_client = self.create_client(endpoint=webpubsub_socketio_endpoint, hub="hub")
+        socketio_token = socketio_client.get_client_access_token(user_id=user_id, groups=[group_1], client_protocol="SocketIO")
         assert socketio_token["token"]
 
         generated_token = aad_client.generate_client_token(
@@ -69,7 +77,7 @@ class TestLiveApiCoverage(WebpubsubTest):
 
         ws = None
         try:
-            ws = ws_connect(access_token["url"])
+            ws = ws_connect(access_token["url"], open_timeout=30)
 
             assert client.get_service_status()
 
@@ -164,31 +172,36 @@ class TestLiveApiCoverage(WebpubsubTest):
 
             # close_group_connections (connection auto-joins group_1 via token)
             ws.close()
-            ws = ws_connect(access_token["url"])
+            self._wait_for_connection_removed(client, connection_id)
+            ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_group_connections(group=group_1, reason="live-coverage")
+            self._wait_for_connection_removed(client, conn)
             assert not client.connection_exists(connection_id=conn)
 
             # close_user_connections
-            ws = ws_connect(access_token["url"])
+            ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_user_connections(user_id=user_id, reason="live-coverage")
+            self._wait_for_connection_removed(client, conn)
             assert not client.connection_exists(connection_id=conn)
 
             # close_connection
-            ws = ws_connect(access_token["url"])
+            ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_connection(connection_id=conn, reason="live-coverage")
+            self._wait_for_connection_removed(client, conn)
             assert not client.connection_exists(connection_id=conn)
 
             # close_all_connections
-            ws = ws_connect(access_token["url"])
+            ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_all_connections(reason="live-coverage")
+            self._wait_for_connection_removed(client, conn)
             assert not client.connection_exists(connection_id=conn)
             ws = None
 

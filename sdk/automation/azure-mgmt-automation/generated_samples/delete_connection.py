@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,13 +31,14 @@ def main():
         subscription_id="subid",
     )
 
-    client.connection.delete(
+    response = client.connection.delete(
         resource_group_name="rg",
         automation_account_name="myAutomationAccount28",
         connection_name="myConnection",
     )
+    print(response)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2022-08-08/examples/deleteConnection.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2015-10-31/examples/deleteConnection.json
 if __name__ == "__main__":
     main()
