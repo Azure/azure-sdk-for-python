@@ -361,7 +361,9 @@ class EventData:
 
         :rtype: dict[str, any] or dict[bytes, any]
         """
-        return self._raw_amqp_message.application_properties or {}
+        if self._raw_amqp_message.application_properties is None:
+            self._raw_amqp_message.application_properties = {}
+        return self._raw_amqp_message.application_properties
 
     @properties.setter
     def properties(self, value: Dict[Union[str, bytes], Any]) -> None:
