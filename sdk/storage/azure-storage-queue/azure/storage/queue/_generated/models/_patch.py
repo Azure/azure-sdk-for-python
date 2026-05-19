@@ -12,172 +12,112 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import xml.etree.ElementTree as ET
 from typing import Any, Callable, List, Optional
 
-from .._utils.model_base import Model as _Model, _MyMutableMapping, _RestField, _deserialize
+from .._utils.model_base import Model as _deserialize
+from azure.core.serialization import as_attribute_dict
 
+
+# do an _mixin and have the public models inherit from it
 
 # ---------------------------------------------------------------------------
-# Backcompat shims for public methods that existed on the old autorest
-# ``msrest.serialization.Model`` base class. The TypeSpec-generated models
-# inherit from ``_Model`` (a ``MutableMapping`` subclass) which does not
+# Backcompat shims for public methods that existed on the old autorest msrest models.
+# The TypeSpec-generated models inherit from ``_Model`` (a ``MutableMapping`` subclass) which does not
 # expose ``serialize``/``deserialize``/``from_dict``/``validate``/
 # ``is_xml_model``/``enable_additional_properties_sending``. Re-adding them
 # here preserves backward compatibility for users.
 # ---------------------------------------------------------------------------
 
+class _ModelBackCompatMixin:
 
-_original_as_dict = _Model.as_dict
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Optional[Callable[[str, dict, Any], Any]] = None,  # pylint: disable=unused-argument
+        *,
+        exclude_readonly: bool = False,
+        **kwargs: Any,
+    ) -> dict:
+        """Backcompat wrapper that returns Python attribute names (snake_case).
 
-
-def _remap_keys(d, rest_name_to_attr):
-    """Recursively remap REST wire-name keys to Python attribute names."""
-    if isinstance(d, dict):
-        return {rest_name_to_attr.get(k, k): _remap_keys(v, rest_name_to_attr) for k, v in d.items()}
-    if isinstance(d, list):
-        return [_remap_keys(item, rest_name_to_attr) for item in d]
-    return d
-
-
-def _patched_as_dict(
-    self,
-    keep_readonly: bool = True,
-    key_transformer: Optional[Callable[[str, dict, Any], Any]] = None,  # pylint: disable=unused-argument
-    *,
-    exclude_readonly: bool = False,
-    **kwargs: Any,
-) -> dict:
-    """Backcompat wrapper that returns Python attribute names (snake_case).
-
-    Accepts both the old autorest signature (``keep_readonly``,
-    ``key_transformer``) and the new TypeSpec keyword-only
-    ``exclude_readonly`` parameter.  ``key_transformer`` is accepted for
-    signature compatibility but ignored; keys are always remapped to
-    Python attribute names.
-    """
-    kwargs.pop("is_xml", None)
-    effective_exclude = exclude_readonly or not keep_readonly
-    result = _original_as_dict(self, exclude_readonly=effective_exclude)
-    rest_name_to_attr = getattr(type(self), "_rest_name_to_attr", {})
-    return _remap_keys(result, rest_name_to_attr)
+        Accepts both the old autorest signature (``keep_readonly``,
+        ``key_transformer``) and the new TypeSpec keyword-only
+        ``exclude_readonly`` parameter.  ``key_transformer`` is accepted for
+        signature compatibility but ignored; keys are always remapped to
+        Python attribute names.
+        """
+        effective_exclude = exclude_readonly or not keep_readonly
+        result = as_attribute_dict(self, exclude_readonly=effective_exclude)
+        return result
 
 
-def _patched_serialize(self, keep_readonly: bool = False, **kwargs: Any) -> dict:
-    """Backcompat alias for the old autorest ``Model.serialize``.
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> dict:
+        """Backcompat alias for the old autorest ``Model.serialize``.
 
-    Equivalent to ``as_dict(keep_readonly=keep_readonly)`` with REST wire
-    names (camelCase) as keys — matching what the old autorest serializer
-    sent to the server.
-    """
-    kwargs.pop("is_xml", None)
-    return _original_as_dict(self, exclude_readonly=not keep_readonly)
-
-
-def _patched_validate(self) -> list:  # pylint: disable=unused-argument
-    """Backcompat no-op for the old autorest ``Model.validate``.
-
-    TypeSpec models do not perform client-side validation; return an empty
-    list to match the old "no errors" return value.
-    """
-    return []
+        Equivalent to ``as_dict(keep_readonly=keep_readonly)`` with REST wire
+        names (camelCase) as keys — matching what the old autorest serializer
+        sent to the server.
+        """
+        return as_attribute_dict(self, exclude_readonly=not keep_readonly)
 
 
-def _patched_deserialize(cls, data: Any, content_type: Optional[str] = None) -> Any:
-    """Backcompat classmethod for the old autorest ``Model.deserialize``.
+    def validate(self) -> list:  # pylint: disable=unused-argument
+        """Backcompat no-op for the old autorest ``Model.validate``.
 
-    Accepts either a JSON-compatible dict/str or (when ``content_type`` is
-    XML) an XML string or ``ElementTree.Element``.
-    """
-    if content_type and "xml" in content_type.lower():
-        if isinstance(data, (bytes, str)):
-            data = ET.fromstring(data)  # nosec
-        return cls(data)
-    return _deserialize(cls, data)
+        TypeSpec models do not perform client-side validation; return an empty
+        list to match the old "no errors" return value.
+        """
+        return []
 
 
-def _patched_from_dict(
-    cls,
-    data: Any,
-    key_extractors: Optional[Callable[[str, dict, Any], Any]] = None,  # pylint: disable=unused-argument
-    content_type: Optional[str] = None,
-) -> Any:
-    """Backcompat classmethod for the old autorest ``Model.from_dict``.
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Any:
+        """Backcompat classmethod for the old autorest ``Model.deserialize``.
 
-    ``key_extractors`` is accepted for signature compatibility but ignored;
-    the TypeSpec deserializer always uses REST-key mapping.
-    """
-    if content_type and "xml" in content_type.lower():
-        if isinstance(data, (bytes, str)):
-            data = ET.fromstring(data)  # nosec
-        return cls(data)
-    return _deserialize(cls, data)
+        Accepts either a JSON-compatible dict/str or (when ``content_type`` is
+        XML) an XML string or ``ElementTree.Element``.
+        """
+        if content_type and "xml" in content_type.lower():
+            if isinstance(data, (bytes, str)):
+                data = ET.fromstring(data)  # nosec
+            return cls(data)
+        return _deserialize(cls, data)
 
 
-def _patched_enable_additional_properties_sending(cls) -> None:  # pylint: disable=unused-argument
-    """Backcompat no-op for the old autorest ``Model.enable_additional_properties_sending``.
+    @classmethod
+    def from_dict(
+        cls,
+        data: Any,
+        key_extractors: Optional[Callable[[str, dict, Any], Any]] = None,  # pylint: disable=unused-argument
+        content_type: Optional[str] = None,
+    ) -> Any:
+        """Backcompat classmethod for the old autorest ``Model.from_dict``.
 
-    TypeSpec models already round-trip unknown properties through ``_data``.
-    """
-    return None
-
-
-def _patched_is_xml_model(cls) -> bool:
-    """Backcompat classmethod for the old autorest ``Model.is_xml_model``.
-
-    Returns True when the model has an ``_xml`` class attribute (set by the
-    generator for models that serialize to/from XML).
-    """
-    return bool(getattr(cls, "_xml", None))
-
-
-_Model.as_dict = _patched_as_dict
-_Model.serialize = _patched_serialize
-_Model.validate = _patched_validate
-_Model.deserialize = classmethod(_patched_deserialize)
-_Model.from_dict = classmethod(_patched_from_dict)
-_Model.enable_additional_properties_sending = classmethod(_patched_enable_additional_properties_sending)
-_Model.is_xml_model = classmethod(_patched_is_xml_model)
+        ``key_extractors`` is accepted for signature compatibility but ignored;
+        the TypeSpec deserializer always uses REST-key mapping.
+        """
+        if content_type and "xml" in content_type.lower():
+            if isinstance(data, (bytes, str)):
+                data = ET.fromstring(data)  # nosec
+            return cls(data)
+        return _deserialize(cls, data)
 
 
-# ---------------------------------------------------------------------------
-# Backcompat shim for legacy ``knack.util.todict`` consumers (e.g. Azure CLI).
-# knack checks ``hasattr(obj, '_asdict')`` (namedtuple convention) BEFORE
-# falling back to ``obj.__dict__``.  TypeSpec ``_Model`` instances stash all
-# fields in ``__dict__['_data']`` so a naive ``__dict__`` walk sees nothing.
-# Returning the model contents with REST wire-name keys at every level
-# matches what msrest models exposed when knack walked their ``__dict__``
-# and camelCased the snake_case attributes -- preserving the JSON shape the
-# Azure CLI's ``_transformers.py`` expects.
-# ---------------------------------------------------------------------------
+    @classmethod
+    def enable_additional_properties_sending(cls) -> None:  # pylint: disable=unused-argument
+        """Backcompat no-op for the old autorest ``Model.enable_additional_properties_sending``.
 
-
-def _asdict_value(v: Any) -> Any:
-    if v is None:
+        TypeSpec models already round-trip unknown properties through ``_data``.
+        """
         return None
-    if isinstance(v, _MyMutableMapping):
-        return _patched_namedtuple_asdict(v)
-    if isinstance(v, dict):
-        return {k: _asdict_value(val) for k, val in v.items()}
-    if isinstance(v, (list, tuple, set)):
-        return type(v)(_asdict_value(x) for x in v)
-    return v
 
 
-def _patched_namedtuple_asdict(self) -> dict:
-    """Mirror msrest behaviour: include every declared field (REST wire
-    name) even when the value was never set, so legacy CLI consumers
-    that subscript by key (e.g. ``result['start']``) don't raise
-    ``KeyError`` for omitted optional fields."""
-    result: dict = {}
-    rest_fields = getattr(type(self), "_attr_to_rest_field", None) or {}
-    data = getattr(self, "_data", {}) or {}
-    for rf in rest_fields.values():
-        result[rf._rest_name] = _asdict_value(data.get(rf._rest_name))
-    for k, v in data.items():
-        if k not in result:
-            result[k] = _asdict_value(v)
-    return result
+    @classmethod
+    def is_xml_model(cls) -> bool:
+        """Backcompat classmethod for the old autorest ``Model.is_xml_model``.
 
-
-_Model._asdict = _patched_namedtuple_asdict
+        Returns True when the model has an ``_xml`` class attribute (set by the
+        generator for models that serialize to/from XML).
+        """
+        return bool(getattr(cls, "_xml", None))
 
 
 __all__: List[str] = []

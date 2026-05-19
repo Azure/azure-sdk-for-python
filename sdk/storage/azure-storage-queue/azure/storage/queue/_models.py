@@ -15,6 +15,7 @@ from ._shared.response_handlers import (
     return_context_and_deserialized,
 )
 from ._shared.models import DictMixin
+from ._generated.models._patch import _ModelBackCompatMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
@@ -51,6 +52,12 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         if enabled and (days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
+        self.serialize = _ModelBackCompatMixin.serialize
+        self.deserialize = _ModelBackCompatMixin.deserialize
+        self.from_dict = _ModelBackCompatMixin.from_dict
+        self.validate = _ModelBackCompatMixin.validate
+        self.enable_additional_properties_sending = _ModelBackCompatMixin.enable_additional_properties_sending
+        self.is_xml_model = _ModelBackCompatMixin.is_xml_model
         super().__init__(enabled=enabled, days=days)
 
     @classmethod
@@ -90,6 +97,12 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
+        self.serialize = _ModelBackCompatMixin.serialize
+        self.deserialize = _ModelBackCompatMixin.deserialize
+        self.from_dict = _ModelBackCompatMixin.from_dict
+        self.validate = _ModelBackCompatMixin.validate
+        self.enable_additional_properties_sending = _ModelBackCompatMixin.enable_additional_properties_sending
+        self.is_xml_model = _ModelBackCompatMixin.is_xml_model
         super().__init__(
             version=kwargs.get("version", "1.0"),
             delete=kwargs.get("delete", False),
@@ -375,6 +388,12 @@ class AccessPolicy(GenAccessPolicy):
         # but we supported datetime and serialized it when passing the model through. (see set access policy)
         if isinstance(permission, QueueSasPermissions):
             permission = str(permission)
+        self.serialize = _ModelBackCompatMixin.serialize
+        self.deserialize = _ModelBackCompatMixin.deserialize
+        self.from_dict = _ModelBackCompatMixin.from_dict
+        self.validate = _ModelBackCompatMixin.validate
+        self.enable_additional_properties_sending = _ModelBackCompatMixin.enable_additional_properties_sending
+        self.is_xml_model = _ModelBackCompatMixin.is_xml_model
         super().__init__(start=start, expiry=expiry, permission=permission) # type: ignore [arg-type]
 
 
