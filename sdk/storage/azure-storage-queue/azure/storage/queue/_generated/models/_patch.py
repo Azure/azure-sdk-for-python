@@ -128,22 +128,9 @@ def _patched_is_xml_model(cls) -> bool:
     """
     return bool(getattr(cls, "_xml", None))
 
-
-def _patched_str(self) -> str:
-    """Backcompat for the old autorest ``Model.__str__``. 
-    Current Mutable Mapping returns __repr__.
-
-    The old implementation returned ``str(self.__dict__)``.  We approximate
-    that by returning the string form of the internal ``_data`` dict which
-    holds all model fields.
-    """
-    return str(self._data)
-
-
 _Model.as_dict = _patched_as_dict
 _Model.serialize = _patched_serialize
 _Model.validate = _patched_validate
-_Model.__str__ = _patched_str
 _Model.deserialize = classmethod(_patched_deserialize)
 _Model.from_dict = classmethod(_patched_from_dict)
 _Model.enable_additional_properties_sending = classmethod(_patched_enable_additional_properties_sending)

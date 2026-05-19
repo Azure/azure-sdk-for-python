@@ -42,9 +42,9 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted.
     """
 
-    enabled: bool = False
+    enabled: bool
     """Indicates whether a retention policy is enabled for the storage service."""
-    days: Optional[int] = None
+    days: Optional[int]
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
@@ -74,15 +74,15 @@ class QueueAnalyticsLogging(GeneratedLogging):
     :keyword ~azure.storage.queue.RetentionPolicy retention_policy: The retention policy for the metrics.
     """
 
-    version: str = "1.0"
+    version: str
     """The version of Storage Analytics to configure."""
-    delete: bool = False
+    delete: bool
     """Indicates whether all delete requests should be logged."""
-    read: bool = False
+    read: bool
     """Indicates whether all read requests should be logged."""
-    write: bool = False
+    write: bool
     """Indicates whether all write requests should be logged."""
-    retention_policy: RetentionPolicy = RetentionPolicy()
+    retention_policy: RetentionPolicy
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -121,13 +121,13 @@ class Metrics(GeneratedMetrics):
     :keyword ~azure.storage.queue.RetentionPolicy retention_policy: The retention policy for the metrics.
     """
 
-    version: str = "1.0"
+    version: str
     """The version of Storage Analytics to configure."""
-    enabled: bool = False
+    enabled: bool
     """Indicates whether metrics are enabled for the service."""
     include_apis: Optional[bool]
     """Indicates whether metrics should generate summary statistics for called API operations."""
-    retention_policy: RetentionPolicy = RetentionPolicy()
+    retention_policy: RetentionPolicy
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -182,17 +182,17 @@ class CorsRule(GeneratedCorsRule):
         headers. Each header can be up to 256 characters.
     """
 
-    allowed_origins: str
+    allowed_origins: str  # type: ignore[assignment]
     """The comma-delimited string representation of the list of origin domains that will be allowed via
-        CORS, or "*" to allow all domains."""
-    allowed_methods: str
+        CORS, or \"*\" to allow all domains."""
+    allowed_methods: str  # type: ignore[assignment]
     """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
         by the origin."""
-    max_age_in_seconds: int
+    max_age_in_seconds: int  # type: ignore[assignment]
     """The number of seconds that the client/browser should cache a pre-flight response."""
-    exposed_headers: str
+    exposed_headers: str  # type: ignore[assignment]
     """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
-    allowed_headers: str
+    allowed_headers: str  # type: ignore[assignment]
     """The comma-delimited string representation of the list of headers allowed to be part of
         the cross-origin request."""
 
