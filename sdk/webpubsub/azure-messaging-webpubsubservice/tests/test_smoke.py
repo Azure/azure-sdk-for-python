@@ -70,43 +70,43 @@ class TestWebpubsubSmoke(WebpubsubTest):
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
-    def test_hello_world_with_connection_string(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+    def test_hello_world(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         client.send_to_all(message="Hello, World!", content_type="text/plain")
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
-    def test_hello_world_with_connection_string_json(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+    def test_hello_world_json(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         client.send_to_all(message={"hello": "world!"})
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
-    def test_hello_world_with_connection_string_binary(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+    def test_hello_world_binary(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         client.send_to_all(message=b"Hello, World!", content_type="application/octet-stream")
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
-    def test_no_users_groups(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+    def test_no_users_groups(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         assert not client.user_exists(user_id="fake user")
         assert not client.group_exists(group="fake group")
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
-    def test_remove_connection_from_all_groups(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+    def test_remove_connection_from_all_groups(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         client.remove_connection_from_all_groups(connection_id="fake connection id")
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
-    def test_send_with_filter(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+    def test_send_with_filter(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         client.send_to_all(message={"hello": "world!"}, filter="userId ne 'user1'", content_type="text/plain")
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
-    def test_get_client_access_key_with_groups(self, webpubsub_connection_string):
-        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+    def test_get_client_access_key_with_groups(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         client.get_client_access_token(user_id="user1", groups=["groups1"])

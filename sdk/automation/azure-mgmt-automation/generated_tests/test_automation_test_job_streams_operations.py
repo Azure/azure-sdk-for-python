@@ -20,13 +20,13 @@ class TestAutomationTestJobStreamsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_test_job_streams_get(self, resource_group):
         response = self.client.test_job_streams.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
             job_stream_id="str",
-            api_version="2022-08-08",
+            api_version="2018-06-30",
         )
 
         # please add some check logic here by yourself
@@ -34,12 +34,12 @@ class TestAutomationTestJobStreamsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_test_job(self, resource_group):
+    def test_test_job_streams_list_by_test_job(self, resource_group):
         response = self.client.test_job_streams.list_by_test_job(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2022-08-08",
+            api_version="2018-06-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

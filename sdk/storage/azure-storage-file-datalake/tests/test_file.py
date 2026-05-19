@@ -11,6 +11,12 @@ from math import ceil
 from urllib.parse import quote, urlencode
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+from test_helpers import MockStorageTransport, ProgressTracker
+
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
@@ -18,7 +24,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceModifiedError,
-    ResourceNotFoundError
+    ResourceNotFoundError,
 )
 from azure.storage.filedatalake import (
     AccountSasPermissions,
@@ -33,19 +39,14 @@ from azure.storage.filedatalake import (
     generate_account_sas,
     generate_file_sas,
     generate_file_system_sas,
-    ResourceTypes
+    ResourceTypes,
 )
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import DataLakePreparer
-from test_helpers import MockStorageTransport, ProgressTracker
 
 # ------------------------------------------------------------------------------
-
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
-
+TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
 
 
@@ -54,7 +55,6 @@ class TestFile(StorageRecordedTestCase):
         url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key.secret, logging_enable=True)
         self.config = self.dsc._config
-
         self.file_system_name = self.get_resource_name('filesystem')
 
         if not self.is_playback():
@@ -64,14 +64,11 @@ class TestFile(StorageRecordedTestCase):
             except ResourceExistsError:
                 pass
 
-    def tearDown(self):
-        if not self.is_playback():
-            try:
-                self.dsc.delete_file_system(self.file_system_name)
-            except:
-                pass
-
     # --Helpers-----------------------------------------------------------------
+    def _get_file_system_reference(self, prefix=TEST_FILE_SYSTEM_PREFIX):
+        file_system_name = self.get_resource_name(prefix)
+        return file_system_name
+
     def _get_directory_reference(self, prefix=TEST_DIRECTORY_PREFIX):
         directory_name = self.get_resource_name(prefix)
         return directory_name
@@ -656,7 +653,12 @@ class TestFile(StorageRecordedTestCase):
             content_language='spanish',
             content_disposition='inline')
 
-        file_client.upload_data(data, content_settings=content_settings, etag=etag, match_condition=MatchConditions.IfNotModified)
+        file_client.upload_data(
+            data,
+            content_settings=content_settings,
+            etag=etag,
+            match_condition=MatchConditions.IfNotModified
+        )
 
         downloaded_data = file_client.download_file().readall()
         properties = file_client.get_file_properties()
@@ -684,7 +686,14 @@ class TestFile(StorageRecordedTestCase):
         # to override the existing file
         data = self.get_random_bytes(100)
 
-        file_client.upload_data(data, overwrite=True, permissions='0777', umask="0000", etag=etag, match_condition=MatchConditions.IfNotModified)
+        file_client.upload_data(
+            data,
+            overwrite=True,
+            permissions='0777',
+            umask="0000",
+            etag=etag,
+            match_condition=MatchConditions.IfNotModified
+        )
 
         downloaded_data = file_client.download_file().readall()
         prop = file_client.get_access_control()
@@ -768,7 +777,11 @@ class TestFile(StorageRecordedTestCase):
 
         # Get user delegation key
         token_credential = self.get_credential(DataLakeServiceClient)
-        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential, logging_enable=True)
+        service_client = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            credential=token_credential,
+            logging_enable=True
+        )
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -807,7 +820,10 @@ class TestFile(StorageRecordedTestCase):
 
         # Get user delegation key
         token_credential = self.get_credential(DataLakeServiceClient)
-        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential)
+        service_client = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            credential=token_credential
+        )
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -853,7 +869,10 @@ class TestFile(StorageRecordedTestCase):
 
         # Get user delegation key
         token_credential = self.get_credential(DataLakeServiceClient)
-        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential)
+        service_client = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            credential=token_credential
+        )
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -965,7 +984,12 @@ class TestFile(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         with pytest.raises(ValueError):
-            DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
+            DataLakeFileClient(
+                self.dsc.url + "?sig=foo",
+                self.file_system_name,
+                "foo",
+                credential=AzureSasCredential("?foo=bar")
+            )
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
@@ -1036,7 +1060,7 @@ class TestFile(StorageRecordedTestCase):
 
         # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        
+
         file_name = self._get_file_reference()
         token_credential = self.get_credential(DataLakeServiceClient)
 
@@ -1672,7 +1696,7 @@ class TestFile(StorageRecordedTestCase):
             file_client.file_system_name + '/',
             '/' + file_client.path_name,
             credential=token_credential,
-            audience=f'https://badaudience.blob.core.windows.net/'
+            audience='https://badaudience.blob.core.windows.net/'
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
@@ -1769,7 +1793,8 @@ class TestFile(StorageRecordedTestCase):
         # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = self._create_file_and_return_client()
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = (b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH'
+                           b'\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00')
         decompressed_data = b"hello from gzip"
         content_settings = ContentSettings(content_encoding='gzip')
 
@@ -1806,7 +1831,8 @@ class TestFile(StorageRecordedTestCase):
         )
         file_client.create_file()
 
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = (b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH'
+                           b'\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00')
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert

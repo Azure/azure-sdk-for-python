@@ -4,11 +4,22 @@
 
 ### Features Added
 
+- Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Client validation errors (400/404) are classified as `user`, Foundry storage infrastructure errors (transport failures, 5xx) as `platform`, and developer handler exceptions as `upstream`. Platform errors additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics. Matches the container image specification §8 error source classification.
+
 ### Breaking Changes
+
+- Removed the automatic `invoke_agent` server span that was created on each response creation request. Trace context propagation is now handled by the core `TraceContextMiddleware`, and user-created spans inside handlers are correctly parented without framework-generated spans.
+- Removed `_safe_set_attrs`, `_wrap_streaming_response`, and `_classify_error_code` internal helpers (no longer needed without framework-level span management).
+- Removed OTel error tagging attributes (`azure.ai.agentserver.responses.error.code`, `azure.ai.agentserver.responses.error.message`) that were set on the framework span.
 
 ### Bugs Fixed
 
+- Removed `ContentDecodePolicy` from the `FoundryStorageProvider` HTTP pipeline.  The policy eagerly decoded every response body as JSON and crashed with `UnicodeDecodeError` when the storage backend (or an intermediary gateway/load-balancer) returned a non-UTF-8 body — for example a gzip-compressed payload, an HTML error page, or a transport-corrupted response.  The crash propagated up before our error-classification code could see the response, masking the underlying status with a generic decode error.  Our serializers and error-extraction helpers already call `http_resp.text()` lazily with defensive error handling, so the eager decode policy was never needed.
+
 ### Other Changes
+
+- Platform header name constants (e.g. `x-platform-error-source`, `x-platform-error-detail`) are now imported from `azure-ai-agentserver-core` (`_platform_headers` module). Error source classification helpers remain internal to this package.
+- Simplified request handling: baggage entries (`response_id`, `conversation_id`, `streaming`, `x-request-id`) are still set on each request, but span creation and lifecycle management are left to downstream frameworks.
 
 ## 1.0.0b5 (2026-04-22)
 

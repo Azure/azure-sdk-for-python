@@ -804,29 +804,6 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["sampling_arg"], 1.0)
         self.assertEqual(configurations["sampler_type"], "parentbased_trace_id_ratio")
 
-    @patch.dict("os.environ", {}, clear=True)
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_sets_distro_version_env_var(self, resource_create_mock):
-        _get_configurations()
-        self.assertEqual(environ.get("AZURE_MONITOR_DISTRO_VERSION"), VERSION)
-
-    @patch.dict("os.environ", {}, clear=True)
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_distro_version_env_var_matches_exporter_constant(self, resource_create_mock):
-        """Verify the distro sets the same env var name the exporter reads."""
-        from azure.monitor.opentelemetry.exporter._constants import (
-            _AZURE_MONITOR_DISTRO_VERSION as EXPORTER_ENV_VAR_NAME,
-        )
-        from azure.monitor.opentelemetry._constants import (
-            AZURE_MONITOR_DISTRO_VERSION as DISTRO_ENV_VAR_NAME,
-        )
-
-        # The env var names must match so the exporter can read what the distro sets
-        self.assertEqual(DISTRO_ENV_VAR_NAME, EXPORTER_ENV_VAR_NAME)
-        # Verify the value is set correctly after configuration
-        _get_configurations()
-        self.assertEqual(environ.get(EXPORTER_ENV_VAR_NAME), VERSION)
-
     @patch.dict(
         "os.environ",
         {

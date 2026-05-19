@@ -8,15 +8,19 @@ from datetime import datetime, timedelta
 from time import sleep
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
-    ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceModifiedError,
     ResourceNotFoundError,
-    ServiceRequestError
+    ServiceRequestError,
 )
 from azure.storage.filedatalake import (
     ContentSettings,
@@ -26,14 +30,10 @@ from azure.storage.filedatalake import (
     EncryptionScopeOptions,
     FileSystemSasPermissions,
     generate_directory_sas,
-    generate_file_system_sas
+    generate_file_system_sas,
 )
 from azure.storage.filedatalake._models import AccessControlChangeCounters, AccessControlChangeResult
-from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
@@ -86,9 +86,6 @@ class TestDirectory(StorageRecordedTestCase):
             sub_dir = directory_client.create_sub_directory(self.get_resource_name('subdir' + str(i)))
             for j in range(0, num_of_files_per_dir):
                 sub_dir.create_file(self.get_resource_name('subfile' + str(j)))
-
-    def _create_file_system(self):
-        return self.dsc.create_file_system(self._get_file_system_reference())
 
     # --Helpers-----------------------------------------------------------------
 
@@ -624,10 +621,14 @@ class TestDirectory(StorageRecordedTestCase):
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory(owner=test_guid)
-        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
-        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
-        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
-        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(
+            owner=test_guid, permissions='0777')
         directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions
@@ -692,10 +693,14 @@ class TestDirectory(StorageRecordedTestCase):
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory(owner=test_guid)
-        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
-        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
-        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid,permissions='0777')
-        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid,permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(
+            owner=test_guid, permissions='0777')
         directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions
@@ -761,10 +766,14 @@ class TestDirectory(StorageRecordedTestCase):
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory(owner=test_guid)
-        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
-        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
-        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
-        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(
+            owner=test_guid, permissions='0777')
 
         directory_client.get_file_client('file3').create_file()
         self.dsc.get_directory_client(self.file_system_name, directory_name + '/dir3').create_directory()
@@ -836,8 +845,8 @@ class TestDirectory(StorageRecordedTestCase):
         batch_size = 2
 
         while result.continuation is not None:
-            result = directory_client.set_access_control_recursive(acl=acl, batch_size=batch_size, max_batches=max_batches,
-                                                                   continuation=result.continuation)
+            result = directory_client.set_access_control_recursive(
+                acl=acl, batch_size=batch_size, max_batches=max_batches, continuation=result.continuation)
 
             running_tally.directories_successful += result.counters.directories_successful
             running_tally.files_successful += result.counters.files_successful
@@ -963,10 +972,14 @@ class TestDirectory(StorageRecordedTestCase):
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory(owner=test_guid)
-        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
-        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
-        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
-        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(
+            owner=test_guid, permissions='0777')
         directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions
@@ -1052,7 +1065,7 @@ class TestDirectory(StorageRecordedTestCase):
         summary = directory_client.remove_access_control_recursive(acl=REMOVE_ACL, batch_size=2)
 
         # Assert
-        summary.counters.directories_successful == num_sub_dirs + 1  # +1 as the dir itself was also included
+        assert summary.counters.directories_successful == num_sub_dirs + 1  # +1 as the dir itself was also included
         assert summary.counters.files_successful == num_sub_dirs * num_file_per_sub_dir
         assert summary.counters.failure_count == 0
 
@@ -1084,7 +1097,7 @@ class TestDirectory(StorageRecordedTestCase):
                                                                    batch_size=2)
 
         # Assert
-        summary.counters.directories_successful == num_sub_dirs + 1  # +1 as the dir itself was also included
+        assert summary.counters.directories_successful == num_sub_dirs + 1  # +1 as the dir itself was also included
         assert summary.counters.files_successful == num_sub_dirs * num_file_per_sub_dir
         assert summary.counters.failure_count == 0
         assert summary.counters.directories_successful == running_tally.directories_successful
@@ -1112,10 +1125,14 @@ class TestDirectory(StorageRecordedTestCase):
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory(owner=test_guid)
-        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
-        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
-        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
-        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(
+            owner=test_guid, permissions='0777')
+        self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(
+            owner=test_guid, permissions='0777')
         directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions
@@ -1150,7 +1167,8 @@ class TestDirectory(StorageRecordedTestCase):
             if resp.batch_failures:
                 failed_entries.append(resp.batch_failures)
 
-        summary = owner_dir_client.remove_access_control_recursive(acl=REMOVE_ACL, progress_hook=progress_callback, batch_size=2)
+        summary = owner_dir_client.remove_access_control_recursive(
+            acl=REMOVE_ACL, progress_hook=progress_callback, batch_size=2)
 
         # Assert
         assert summary.counters.failure_count == 1
@@ -1534,32 +1552,6 @@ class TestDirectory(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
-    def test_using_directory_sas_to_create_file(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
-
-        newest_api_version = _SUPPORTED_API_VERSIONS[-1]
-
-        service_client = DataLakeServiceClient("https://abc.dfs.core.windows.net", credential='fake')
-        filesys_client = service_client.get_file_system_client("filesys")
-        dir_client = DataLakeDirectoryClient("https://abc.dfs.core.windows.net", "filesys", "dir", credential='fake')
-        file_client = dir_client.get_file_client("file")
-        assert service_client.api_version == newest_api_version
-        assert filesys_client.api_version == newest_api_version
-        assert dir_client.api_version == newest_api_version
-        assert file_client.api_version == newest_api_version
-        
-        service_client2 = DataLakeServiceClient("https://abc.dfs.core.windows.net", credential='fake', api_version="2019-02-02")
-        filesys_client2 = service_client2.get_file_system_client("filesys")
-        dir_client2 = DataLakeDirectoryClient("https://abc.dfs.core.windows.net", "filesys", "dir", credential='fake', api_version="2019-02-02")
-        file_client2 = dir_client2.get_file_client("file")
-        assert service_client2.api_version == "2019-02-02"
-        assert filesys_client2.api_version == "2019-02-02"
-        assert dir_client2.api_version == "2019-02-02"
-        assert file_client2.api_version == "2019-02-02"
-
-    @DataLakePreparer()
-    @recorded_by_proxy
     def test_storage_account_audience_dir_client(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1600,7 +1592,7 @@ class TestDirectory(StorageRecordedTestCase):
         token_credential = self.get_credential(DataLakeServiceClient)
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
-            credential=token_credential, audience=f'https://badaudience.blob.core.windows.net/'
+            credential=token_credential, audience='https://badaudience.blob.core.windows.net/'
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
