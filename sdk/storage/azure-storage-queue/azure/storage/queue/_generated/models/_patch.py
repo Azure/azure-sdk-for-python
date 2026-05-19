@@ -15,55 +15,6 @@ from typing import Any, Callable, List, Optional
 from .._utils.model_base import Model as _Model, _MyMutableMapping, _RestField, _deserialize
 
 
-# The original ``Model.__new__`` does ``rf._module = cls.__module__`` which
-# lets an external subclass overwrite
-# ``_module`` on the *shared* descriptor, corrupting type resolution for
-# every class that shares it.  This replacement resolves forward references
-# against the module that *defined* the rest_field and uses that class's own
-# annotations (not merged subclass annotations) to avoid resolving to a type
-# whose ``__init__`` can't handle XML elements.
-
-
-# TODO: ask the emitter folks
-def _patched_new(cls, *args, **kwargs):
-    cache_key = f"{cls.__module__}.{cls.__qualname__}"
-    if cache_key in cls._calculated:
-        return object.__new__(cls)
-
-    # Walk only user-defined classes (base-first), stopping before the
-    # framework base.  Each _RestField is configured with the module of
-    # the class that defined it so forward references resolve correctly.
-    model_index = cls.__mro__.index(_Model)
-    attr_to_rest_field: dict[str, _RestField] = {}
-    for mro_class in reversed(cls.__mro__[:model_index]):
-        annotations = getattr(mro_class, "__annotations__", {})
-        for attr, rest_field in mro_class.__dict__.items():
-            if attr.startswith("_") or not isinstance(rest_field, _RestField):
-                continue
-
-            attr_to_rest_field[attr] = rest_field
-            rest_field._module = mro_class.__module__
-            if not rest_field._type:
-                rest_field._type = rest_field._get_deserialize_callable_from_annotation(annotations.get(attr))
-            if not rest_field._rest_name_input:
-                rest_field._rest_name_input = attr
-
-    cls._attr_to_rest_field = attr_to_rest_field
-    cls._backcompat_attr_to_rest_field = {
-        _Model._get_backcompat_attribute_name(attr_to_rest_field, attr): rest_field
-        for attr, rest_field in attr_to_rest_field.items()
-    }
-
-    # Reverse mapping: REST wire name → Python attribute name
-    cls._rest_name_to_attr = {rest_field._rest_name: attr for attr, rest_field in attr_to_rest_field.items()}
-    cls._calculated.add(cache_key)
-
-    return object.__new__(cls)
-
-
-_Model.__new__ = _patched_new
-
-
 # ---------------------------------------------------------------------------
 # Backcompat shims for public methods that existed on the old autorest
 # ``msrest.serialization.Model`` base class. The TypeSpec-generated models

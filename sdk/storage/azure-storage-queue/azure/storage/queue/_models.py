@@ -6,6 +6,7 @@
 # pylint: disable=too-few-public-methods
 
 import sys
+import xml.etree.ElementTree as ET
 from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
@@ -98,6 +99,9 @@ class QueueAnalyticsLogging(GeneratedLogging):
     def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
+        # Handle XML Element by converting to generated model first
+        if isinstance(generated, ET.Element):
+            generated = GeneratedLogging(generated) # type: ignore[assignment]
         return cls(
             version=generated.version,
             delete=generated.delete,
@@ -107,7 +111,6 @@ class QueueAnalyticsLogging(GeneratedLogging):
                 generated.retention_policy
             ),
         )
-
 
 class Metrics(GeneratedMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates.
@@ -142,6 +145,9 @@ class Metrics(GeneratedMetrics):
     def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
+        # Handle XML Element by converting to generated model first
+        if isinstance(generated, ET.Element):
+            generated = GeneratedMetrics(generated) # type: ignore[assignment]
         return cls(
             version=generated.version,
             enabled=generated.enabled,
@@ -359,7 +365,11 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
     ) -> None:
-        super().__init__(start=start, expiry=expiry, permission=permission)
+        # TODO: here AccessPolicy never took in a datetime 
+        # but we supported datetime and serialized it when passing the model through. (see set access policy)
+        if isinstance(permission, QueueSasPermissions):
+            permission = str(permission)
+        super().__init__(start=start, expiry=expiry, permission=permission) # type: ignore [arg-type]
 
 
 class QueueMessage(DictMixin):
