@@ -4,10 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
+
 class GenericTestProxyParametrize1:
     def __call__(self, fn):
         def _wrapper(test_class, a, **kwargs):
             return fn(test_class, a, **kwargs)
+
         return _wrapper
 
 
@@ -15,4 +17,5 @@ class GenericTestProxyParametrize2:
     def __call__(self, fn):
         def _wrapper(test_class, a, b, **kwargs):
             return fn(test_class, a, b, **kwargs)
+
         return _wrapper

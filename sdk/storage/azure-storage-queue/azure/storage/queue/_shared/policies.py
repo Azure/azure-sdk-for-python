@@ -464,7 +464,7 @@ def _validate_content_response(
             raise AzureError(
                 (
                     f"Expected structured message header in response does not match request. "
-                    f"Request: {sm_request}, Response: {sm_response}",
+                    f"Request: {sm_request}, Response: {sm_response}"
                 ),
                 response=response.http_response,
             )
