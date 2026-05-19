@@ -40,6 +40,15 @@ class ComputeRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PAA_S = "PaaS"
 
 
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
 class Location(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Location of the resource."""
 

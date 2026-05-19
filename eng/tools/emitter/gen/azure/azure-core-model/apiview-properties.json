@@ -8,5 +8,6 @@
         "specs.azure.core.model.aio.operations.AzureCoreEmbeddingVectorOperations.put": "_Specs_.Azure.Core.Model.AzureCoreEmbeddingVector.put",
         "specs.azure.core.model.operations.AzureCoreEmbeddingVectorOperations.post": "_Specs_.Azure.Core.Model.AzureCoreEmbeddingVector.post",
         "specs.azure.core.model.aio.operations.AzureCoreEmbeddingVectorOperations.post": "_Specs_.Azure.Core.Model.AzureCoreEmbeddingVector.post"
-    }
+    },
+    "CrossLanguageVersion": "0516d30dcd2c"
 }

@@ -6,5 +6,6 @@
         "authentication.oauth2.aio.OAuth2Client.valid": "Authentication.OAuth2.valid",
         "authentication.oauth2.OAuth2Client.invalid": "Authentication.OAuth2.invalid",
         "authentication.oauth2.aio.OAuth2Client.invalid": "Authentication.OAuth2.invalid"
-    }
+    },
+    "CrossLanguageVersion": "26e44da61596"
 }

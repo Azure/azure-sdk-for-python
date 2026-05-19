@@ -8,5 +8,6 @@
         "typetest.enum.fixed.aio.operations.StringOperations.put_known_value": "Type.Enum.Fixed.String.putKnownValue",
         "typetest.enum.fixed.operations.StringOperations.put_unknown_value": "Type.Enum.Fixed.String.putUnknownValue",
         "typetest.enum.fixed.aio.operations.StringOperations.put_unknown_value": "Type.Enum.Fixed.String.putUnknownValue"
-    }
+    },
+    "CrossLanguageVersion": "20446acf06fa"
 }

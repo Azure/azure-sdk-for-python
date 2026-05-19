@@ -3,5 +3,6 @@
     "CrossLanguageDefinitionId": {
         "server.endpoint.notdefined.NotDefinedClient.valid": "Server.Endpoint.NotDefined.valid",
         "server.endpoint.notdefined.aio.NotDefinedClient.valid": "Server.Endpoint.NotDefined.valid"
-    }
+    },
+    "CrossLanguageVersion": "7cf673a0a5f0"
 }

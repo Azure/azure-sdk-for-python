@@ -22,5 +22,6 @@
         "azure.resourcemanager.multiservicesharedmodels.combined.aio.operations.StorageAccountsOperations.get": "Azure.ResourceManager.MultiServiceSharedModels.Storage.StorageAccounts.get",
         "azure.resourcemanager.multiservicesharedmodels.combined.operations.StorageAccountsOperations.begin_create_or_update": "Azure.ResourceManager.MultiServiceSharedModels.Storage.StorageAccounts.createOrUpdate",
         "azure.resourcemanager.multiservicesharedmodels.combined.aio.operations.StorageAccountsOperations.begin_create_or_update": "Azure.ResourceManager.MultiServiceSharedModels.Storage.StorageAccounts.createOrUpdate"
-    }
+    },
+    "CrossLanguageVersion": "cf8396e72d94"
 }

@@ -6,5 +6,6 @@
         "streaming.jsonl.aio.operations.BasicOperations.send": "Streaming.Jsonl.Basic.send",
         "streaming.jsonl.operations.BasicOperations.receive": "Streaming.Jsonl.Basic.receive",
         "streaming.jsonl.aio.operations.BasicOperations.receive": "Streaming.Jsonl.Basic.receive"
-    }
+    },
+    "CrossLanguageVersion": "341698a66779"
 }

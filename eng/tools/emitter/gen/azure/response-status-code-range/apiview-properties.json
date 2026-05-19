@@ -9,5 +9,6 @@
         "response.statuscoderange.aio.StatusCodeRangeClient.error_response_status_code_in_range": "Response.StatusCodeRange.errorResponseStatusCodeInRange",
         "response.statuscoderange.StatusCodeRangeClient.error_response_status_code404": "Response.StatusCodeRange.errorResponseStatusCode404",
         "response.statuscoderange.aio.StatusCodeRangeClient.error_response_status_code404": "Response.StatusCodeRange.errorResponseStatusCode404"
-    }
+    },
+    "CrossLanguageVersion": "0eca6296fed3"
 }

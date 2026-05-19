@@ -201,7 +201,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -220,23 +220,26 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         score = math.nan
 
         if isinstance(llm_output, dict):
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
+
             score = float(llm_output.get("score", math.nan))
-            reason = llm_output.get("explanation", "")
-            # Parse out score and reason from evaluators known to possess them.
-            binary_result = self._get_binary_result(score)
+            reason = llm_output.get("reason", "")
+            llm_properties = llm_output.get("properties", {}) or {}
+            score_result = self._get_binary_result(score)
+            llm_properties.update(self._get_token_metadata(result))
             return {
-                self._result_key: float(score),
-                f"gpt_{self._result_key}": float(score),
-                f"{self._result_key}_result": binary_result,
-                f"{self._result_key}_threshold": self._threshold,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_result": score_result,
                 f"{self._result_key}_reason": reason,
-                f"{self._result_key}_prompt_tokens": result.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": result.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": result.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": result.get("finish_reason", ""),
-                f"{self._result_key}_model": result.get("model_id", ""),
-                f"{self._result_key}_sample_input": result.get("sample_input", ""),
-                f"{self._result_key}_sample_output": result.get("sample_output", ""),
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
 
         raise EvaluationException(

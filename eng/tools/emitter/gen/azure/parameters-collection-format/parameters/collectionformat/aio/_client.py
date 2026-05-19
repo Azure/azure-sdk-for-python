@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
-from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -18,6 +18,11 @@ from .._utils.serialization import Deserializer, Serializer
 from ..header.aio.operations import HeaderOperations
 from ..query.aio.operations import QueryOperations
 from ._configuration import CollectionFormatClientConfiguration
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class CollectionFormatClient:  # pylint: disable=client-accepts-api-version-keyword

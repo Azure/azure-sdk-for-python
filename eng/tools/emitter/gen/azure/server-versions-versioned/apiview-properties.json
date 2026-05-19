@@ -9,5 +9,6 @@
         "server.versions.versioned.aio.VersionedClient.with_path_api_version": "Server.Versions.Versioned.withPathApiVersion",
         "server.versions.versioned.VersionedClient.with_query_old_api_version": "Server.Versions.Versioned.withQueryOldApiVersion",
         "server.versions.versioned.aio.VersionedClient.with_query_old_api_version": "Server.Versions.Versioned.withQueryOldApiVersion"
-    }
+    },
+    "CrossLanguageVersion": "77984b6688f5"
 }

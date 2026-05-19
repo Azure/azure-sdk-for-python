@@ -7,5 +7,6 @@
         "service.multiservice.aio.operations.FooOperations.test": "Service.MultiService.ServiceA.Foo.test",
         "service.multiservice.operations.BarOperations.test": "Service.MultiService.ServiceB.Bar.test",
         "service.multiservice.aio.operations.BarOperations.test": "Service.MultiService.ServiceB.Bar.test"
-    }
+    },
+    "CrossLanguageVersion": "208ac2c47515"
 }

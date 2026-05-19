@@ -182,11 +182,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         parser.print_help()
         return 1
 
-    # default to uv if available, but respect an explicit TOX_PIP_IMPL setting
-    if "TOX_PIP_IMPL" not in os.environ:
+    # default to uv if available, but respect an explicit AZPYSDK_PIP_IMPL setting
+    if "AZPYSDK_PIP_IMPL" not in os.environ and "TOX_PIP_IMPL" not in os.environ:
         uv_path = shutil.which("uv")
         if uv_path:
-            os.environ["TOX_PIP_IMPL"] = "uv"
+            os.environ["AZPYSDK_PIP_IMPL"] = "uv"
 
     # default to CFS feed unless --pypi is specified, but allow explicit env var override (e.g. for CI)
     if args.pypi:
@@ -201,7 +201,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             os.environ["UV_DEFAULT_INDEX"] = CFS_INDEX_URL
 
         # Log the feed being used
-        if os.environ.get("TOX_PIP_IMPL", None) == "uv":
+        if os.environ.get("AZPYSDK_PIP_IMPL", os.environ.get("TOX_PIP_IMPL")) == "uv":
             logger.info("Installing from feed: %s", os.environ.get("UV_DEFAULT_INDEX"))
         else:
             logger.info("Installing from feed: %s", os.environ.get("PIP_INDEX_URL"))
@@ -215,9 +215,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 "--python requires --isolate to create a virtual environment with the specified Python version."
             )
 
-        pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
+        pip_impl = os.environ.get("AZPYSDK_PIP_IMPL", os.environ.get("TOX_PIP_IMPL", "pip")).lower()
         if pip_impl != "uv":
-            parser.error("--python requires uv as the backend. Install uv or set TOX_PIP_IMPL=uv.")
+            parser.error("--python requires uv as the backend. Install uv or set AZPYSDK_PIP_IMPL=uv.")
 
     try:
         result = args.func(args)

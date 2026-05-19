@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2025-01-15-preview/examples/HDI_Locations_ListBillingSpecs.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/HDI_Locations_ListBillingSpecs.json
 if __name__ == "__main__":
     main()

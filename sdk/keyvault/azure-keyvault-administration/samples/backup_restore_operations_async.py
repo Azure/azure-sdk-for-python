@@ -19,7 +19,7 @@ from azure.identity.aio import ManagedIdentityCredential
 # 4. A user-assigned managed identity that has access to your managed HSM. For more information about how to create a
 #    user-assigned managed identity, refer to
 #    https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview
-#    
+#
 # 5. A storage account, that your managed identity has access to, containing a blob storage container
 #    (See https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction)
 #
@@ -36,6 +36,7 @@ from azure.identity.aio import ManagedIdentityCredential
 # 2. Perform a full restore (begin_restore)
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def run_sample():
     MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
     CONTAINER_URL = os.environ["CONTAINER_URL"]
@@ -45,7 +46,7 @@ async def run_sample():
     # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     credential = ManagedIdentityCredential(client_id=MANAGED_IDENTITY_CLIENT_ID)
     client = KeyVaultBackupClient(vault_url=MANAGED_HSM_URL, credential=credential)
-    
+
     # Let's back up the vault with begin_backup, which returns a poller. Calling result() on the poller will return
     # a KeyVaultBackupResult that contains the URL of the backup after the operation completes. Calling wait() on
     # the poller will wait until the operation is complete.

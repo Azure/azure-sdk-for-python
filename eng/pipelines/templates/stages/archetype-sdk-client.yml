@@ -29,9 +29,6 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
-  - name: ToxEnvParallel
-    type: string
-    default: all
   - name: InjectedPackages
     type: string
     default: ''
@@ -105,7 +102,6 @@ extends:
               TestMarkArgument: ${{ parameters.TestMarkArgument }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-              ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
               DevFeedName: ${{ parameters.DevFeedName }}

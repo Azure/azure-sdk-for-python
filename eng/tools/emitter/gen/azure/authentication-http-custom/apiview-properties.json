@@ -6,5 +6,6 @@
         "authentication.http.custom.aio.CustomClient.valid": "Authentication.Http.Custom.valid",
         "authentication.http.custom.CustomClient.invalid": "Authentication.Http.Custom.invalid",
         "authentication.http.custom.aio.CustomClient.invalid": "Authentication.Http.Custom.invalid"
-    }
+    },
+    "CrossLanguageVersion": "0a0f8f05c5e1"
 }

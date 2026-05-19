@@ -33,10 +33,14 @@ except ImportError:
 import xml.etree.ElementTree as ET
 
 import isodate  # type: ignore
-from typing_extensions import Self
 
 from corehttp.exceptions import DeserializationError, SerializationError
 from corehttp.serialization import NULL as CoreNull
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 _BOM = codecs.BOM_UTF8.decode(encoding="utf-8")
 

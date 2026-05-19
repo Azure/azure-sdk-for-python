@@ -30,5 +30,6 @@
         "client.naming.main.aio.NamingClient.client_name": "Client.Naming.operation",
         "client.naming.main.NamingClient.parameter": "Client.Naming.parameter",
         "client.naming.main.aio.NamingClient.parameter": "Client.Naming.parameter"
-    }
+    },
+    "CrossLanguageVersion": "75e5b1ae7e7f"
 }

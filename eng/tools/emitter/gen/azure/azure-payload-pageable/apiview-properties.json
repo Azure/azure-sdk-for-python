@@ -4,5 +4,6 @@
         "specs.azure.payload.pageable.models.User": "_Specs_.Azure.Payload.Pageable.User",
         "specs.azure.payload.pageable.PageableClient.list": "_Specs_.Azure.Payload.Pageable.list",
         "specs.azure.payload.pageable.aio.PageableClient.list": "_Specs_.Azure.Payload.Pageable.list"
-    }
+    },
+    "CrossLanguageVersion": "ed8b75173f17"
 }

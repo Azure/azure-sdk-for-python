@@ -22,5 +22,6 @@
         "typetest.model.singlediscriminator.aio.SingleDiscriminatorClient.get_wrong_discriminator": "Type.Model.Inheritance.SingleDiscriminator.getWrongDiscriminator",
         "typetest.model.singlediscriminator.SingleDiscriminatorClient.get_legacy_model": "Type.Model.Inheritance.SingleDiscriminator.getLegacyModel",
         "typetest.model.singlediscriminator.aio.SingleDiscriminatorClient.get_legacy_model": "Type.Model.Inheritance.SingleDiscriminator.getLegacyModel"
-    }
+    },
+    "CrossLanguageVersion": "301c4a3b5af0"
 }

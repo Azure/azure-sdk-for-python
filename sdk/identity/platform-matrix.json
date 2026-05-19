@@ -14,7 +14,7 @@
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "InjectedPackages": "git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev",
-          "UnsupportedToxEnvironments": "mindependency,latestdependency"
+          "UnsupportedChecks": "mindependency,latestdependency"
         }
       }
     }

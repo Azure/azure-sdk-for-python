@@ -15,5 +15,6 @@
         "specs.documentation.aio.operations.TextFormattingOperations.italic_text": "Documentation.TextFormatting.italicText",
         "specs.documentation.operations.TextFormattingOperations.combined_formatting": "Documentation.TextFormatting.combinedFormatting",
         "specs.documentation.aio.operations.TextFormattingOperations.combined_formatting": "Documentation.TextFormatting.combinedFormatting"
-    }
+    },
+    "CrossLanguageVersion": "6c27465aee37"
 }

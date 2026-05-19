@@ -9,5 +9,6 @@
         "specs.azure.core.lro.standard.aio.StandardClient.begin_delete": "_Specs_.Azure.Core.Lro.Standard.delete",
         "specs.azure.core.lro.standard.StandardClient.begin_export": "_Specs_.Azure.Core.Lro.Standard.export",
         "specs.azure.core.lro.standard.aio.StandardClient.begin_export": "_Specs_.Azure.Core.Lro.Standard.export"
-    }
+    },
+    "CrossLanguageVersion": "4e83dd8c9ac7"
 }

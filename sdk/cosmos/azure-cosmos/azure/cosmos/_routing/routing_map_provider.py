@@ -36,7 +36,7 @@ from ._routing_map_provider_common import (
     is_cache_unchanged_since_previous,
     determine_refresh_action,
     get_smart_overlapping_ranges,
-    _NeedFullRefresh,
+    _IncrementalMergeFailed,
 )
 
 if TYPE_CHECKING:
@@ -345,7 +345,7 @@ class PartitionKeyRangeCache(object):
                 return process_fetched_ranges(
                     ranges, current_previous_map, collection_id, collection_link, new_etag
                 )
-            except _NeedFullRefresh:
+            except _IncrementalMergeFailed:
                 if current_previous_map is not None and incomplete_attempt_count < _INCOMPLETE_ROUTING_MAP_MAX_RETRIES:
                     incomplete_attempt_count += 1
                     logger.warning(

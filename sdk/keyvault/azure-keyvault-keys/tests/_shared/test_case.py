@@ -8,8 +8,6 @@ from azure.keyvault.keys._shared import HttpChallengeCache
 from devtools_testutils import AzureRecordedTestCase
 
 
-
-
 class KeyVaultTestCase(AzureRecordedTestCase):
     def get_resource_name(self, name):
         """helper to create resources with a consistent, test-indicative prefix"""

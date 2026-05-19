@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
-from typing_extensions import Self
 
 from corehttp.rest import AsyncHttpResponse, HttpRequest
 from corehttp.runtime import AsyncPipelineClient, policies
@@ -12,6 +12,11 @@ from ..header.aio.operations import HeaderOperations
 from ..property.aio.operations import PropertyOperations
 from ..query.aio.operations import QueryOperations
 from ._configuration import DurationClientConfiguration
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class DurationClient:  # pylint: disable=client-accepts-api-version-keyword

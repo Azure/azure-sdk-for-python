@@ -34,8 +34,9 @@ class ContainerServiceClientConfiguration:  # pylint: disable=too-many-instance-
      None.
     :type cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-02-02-preview". Default value is "2026-02-02-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-03-02-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -47,7 +48,7 @@ class ContainerServiceClientConfiguration:  # pylint: disable=too-many-instance-
         cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2026-02-02-preview")
+        api_version: str = kwargs.pop("api_version", "2026-03-02-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

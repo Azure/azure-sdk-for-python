@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any
-from typing_extensions import Self
 
 from corehttp.credentials import ServiceKeyCredential
 from corehttp.rest import HttpRequest, HttpResponse
@@ -11,6 +11,11 @@ from corehttp.runtime import PipelineClient, policies
 from ._configuration import ApiKeyClientConfiguration
 from ._operations import _ApiKeyClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class ApiKeyClient(_ApiKeyClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword

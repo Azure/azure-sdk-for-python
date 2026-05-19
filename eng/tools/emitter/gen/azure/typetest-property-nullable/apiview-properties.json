@@ -65,5 +65,6 @@
         "typetest.property.nullable.aio.operations.CollectionsStringOperations.patch_non_null": "Type.Property.Nullable.CollectionsString.patchNonNull",
         "typetest.property.nullable.operations.CollectionsStringOperations.patch_null": "Type.Property.Nullable.CollectionsString.patchNull",
         "typetest.property.nullable.aio.operations.CollectionsStringOperations.patch_null": "Type.Property.Nullable.CollectionsString.patchNull"
-    }
+    },
+    "CrossLanguageVersion": "c832b73a858e"
 }

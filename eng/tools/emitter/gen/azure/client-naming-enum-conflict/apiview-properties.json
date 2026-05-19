@@ -9,5 +9,6 @@
         "client.naming.enumconflict.aio.operations.FirstOperationsOperations.first": "Client.Naming.EnumConflict.FirstOperations.first",
         "client.naming.enumconflict.operations.SecondOperationsOperations.second": "Client.Naming.EnumConflict.SecondOperations.second",
         "client.naming.enumconflict.aio.operations.SecondOperationsOperations.second": "Client.Naming.EnumConflict.SecondOperations.second"
-    }
+    },
+    "CrossLanguageVersion": "2eb972a19ec9"
 }

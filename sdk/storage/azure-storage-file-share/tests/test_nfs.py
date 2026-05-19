@@ -3,27 +3,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
+
 from typing import Any, Dict, Optional, Union
 from urllib.parse import unquote
 
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError
-)
-from azure.storage.fileshare import (
-    ContentSettings,
-    FileProperties,
-    DirectoryProperties,
-    ShareFileClient,
-    ShareDirectoryClient,
-    ShareServiceClient
-)
+import pytest
+
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
+
+from azure.core.exceptions import ResourceNotFoundError
+from azure.storage.fileshare import (
+    ContentSettings,
+    DirectoryProperties,
+    FileProperties,
+    ShareDirectoryClient,
+    ShareFileClient,
+    ShareServiceClient,
+)
 
 
 TEST_INTENT = 'backup'

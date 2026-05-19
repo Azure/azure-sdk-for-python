@@ -10,5 +10,6 @@
         "typetest.enum.extensible.aio.operations.StringOperations.put_known_value": "Type.Enum.Extensible.String.putKnownValue",
         "typetest.enum.extensible.operations.StringOperations.put_unknown_value": "Type.Enum.Extensible.String.putUnknownValue",
         "typetest.enum.extensible.aio.operations.StringOperations.put_unknown_value": "Type.Enum.Extensible.String.putUnknownValue"
-    }
+    },
+    "CrossLanguageVersion": "ffc955163775"
 }

@@ -46,5 +46,6 @@
         "typetest.dictionary.aio.operations.NullableFloatValueOperations.get": "Type.Dictionary.NullableFloatValue.get",
         "typetest.dictionary.operations.NullableFloatValueOperations.put": "Type.Dictionary.NullableFloatValue.put",
         "typetest.dictionary.aio.operations.NullableFloatValueOperations.put": "Type.Dictionary.NullableFloatValue.put"
-    }
+    },
+    "CrossLanguageVersion": "781ad62b5c5a"
 }

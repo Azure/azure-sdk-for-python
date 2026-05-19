@@ -7,5 +7,6 @@
         "azure.resourcemanager.largeheader.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
         "azure.resourcemanager.largeheader.operations.LargeHeadersOperations.begin_two6_k": "Azure.ResourceManager.LargeHeader.LargeHeaders.two6k",
         "azure.resourcemanager.largeheader.aio.operations.LargeHeadersOperations.begin_two6_k": "Azure.ResourceManager.LargeHeader.LargeHeaders.two6k"
-    }
+    },
+    "CrossLanguageVersion": "a41db3db2725"
 }

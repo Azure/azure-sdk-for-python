@@ -92,6 +92,21 @@ class AgentPoolMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     full machine lifecycle."""
 
 
+class AgentPoolNetworkInterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of network interface to be provisioned on each virtual machine instance. For more
+    information, see `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_.
+    """
+
+    STANDARD = "Standard"
+    """A standard network interface programmed with an IP from a specified VNet subnet. Must be used
+    with ``vnetSubnetId`` set in the AgentPoolNetworkInterface. IP address family
+    (IPv4/IPv6/Dual-stack) is determined by the subnet."""
+    DYNAMIC = "Dynamic"
+    """A secondary network interface created without IP configuration or subnet attachment. The
+    interface is provisioned in an uninitialized state and the subnet is attached during workload
+    creation. ``vnetSubnetId`` must be set to an empty string (``""``) or omitted."""
+
+
 class AgentPoolSSHAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SSH access method of an agent pool."""
 
@@ -782,6 +797,29 @@ class NginxIngressControllerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     desired."""
 
 
+class NodeDisruptionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy configuration for when to allow certain operations which require node re-image and
+    trigger redeployment. For example, some operations, such as updating the
+    .properties.ManagedClusterSecurityProfile.customCATrustCertificates field on an existing
+    managed cluster, trigger rolling updates of the nodes. This setting allows control over when
+    such updates are accepted. The default is 'Allow'. For a full list of covered operations see
+    aka.ms/aks/nodedisruptionpolicy".
+    """
+
+    ALLOW = "Allow"
+    """Allows operations that will require node re-image and trigger redeployment."""
+    ALLOW_DURING_MAINTENANCE_WINDOW = "AllowDuringMaintenanceWindow"
+    """Blocks certain operations that will require node re-image and trigger redeployment unless
+    within the aksManagedNodeOSUpgradeSchedule maintenance window. For a full list of covered
+    operations see aka.ms/aks/nodedisruptionpolicy . For more information on using the
+    aksManagedNodeOSUpgradeSchedule maintenance window, please see
+    `https://learn.microsoft.com/azure/aks/planned-maintenance?tabs=azure-cli
+    <https://learn.microsoft.com/azure/aks/planned-maintenance?tabs=azure-cli>`_."""
+    BLOCK = "Block"
+    """Blocks certain operations that will require node re-image and trigger redeployment. For a full
+    list of covered operations see aka.ms/aks/nodedisruptionpolicy."""
+
+
 class NodeOSUpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Node OS Upgrade Channel. Manner in which the OS on your nodes is updated. The default is
     NodeImage.
@@ -918,6 +956,13 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use Ubuntu2404 as the OS for node images, however, Ubuntu 24.04 may not be supported for all
     nodepools. For limitations and supported kubernetes versions, see see
     `https://aka.ms/aks/supported-ubuntu-versions <https://aka.ms/aks/supported-ubuntu-versions>`_."""
+    AZURE_CONTAINER_LINUX = "AzureContainerLinux"
+    """Use Azure Container Linux as the OS for node images. Azure Container Linux is a
+    container-optimized, security-focused Linux OS built on Azure Linux, with an immutable
+    filesystem. ACL is derived from the Flatcar Container Linux project, building on Flatcar's
+    proven container-first, immutable design, while adding Azure Linux packages, servicing, and
+    deep integration with the Azure and AKS lifecycle. For more information, see
+    `https://aka.ms/azurecontainerlinux <https://aka.ms/azurecontainerlinux>`_."""
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

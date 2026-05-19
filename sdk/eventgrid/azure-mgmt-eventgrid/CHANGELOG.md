@@ -1,5 +1,71 @@
 # Release History
 
+## 10.5.0b2 (2026-05-11)
+
+### Features Added
+
+  - Client `EventGridManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `EventGridManagementClient` added method `send_request`
+  - Model `EventType` added property `system_data`
+  - Model `NetworkSecurityPerimeterConfiguration` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TopicTypeInfo` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `ConfidentialCompute`
+  - Added enum `ConfidentialComputeMode`
+  - Added model `CustomerManagedKeyEncryption`
+  - Added model `ExtensionResource`
+  - Added model `KeyEncryption`
+  - Added enum `KeyEncryptionIdentityType`
+  - Added model `KeyEncryptionKeyIdentity`
+  - Added enum `KeyEncryptionKeyStatus`
+  - Added model `PlatformCapabilities`
+  - Added model `ProxyResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `NumberInAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `NumberInFilter` renamed its instance variable `values` to `values_property`
+  - Model `NumberInRangeAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `NumberInRangeFilter` renamed its instance variable `values` to `values_property`
+  - Model `NumberNotInAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `NumberNotInFilter` renamed its instance variable `values` to `values_property`
+  - Model `NumberNotInRangeAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `NumberNotInRangeFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringBeginsWithAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringBeginsWithFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringContainsAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringContainsFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringEndsWithAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringEndsWithFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringInAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringInFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringNotBeginsWithAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringNotBeginsWithFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringNotContainsAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringNotContainsFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringNotEndsWithAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringNotEndsWithFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringNotInAdvancedFilter` renamed its instance variable `values` to `values_property`
+  - Model `StringNotInFilter` renamed its instance variable `values` to `values_property`
+  - Model `ChannelUpdateParameters` moved instance variable `expiration_time_if_not_activated_utc`, `partner_destination_info` and `partner_topic_info` under property `properties` whose type is `ChannelUpdateParametersProperties`
+  - Model `DomainUpdateParameters` moved instance variable `public_network_access`, `inbound_ip_rules`, `minimum_tls_version_allowed`, `disable_local_auth`, `auto_create_topic_with_first_subscription`, `auto_delete_topic_with_last_subscription`, `data_residency_boundary` and `event_type_info` under property `properties` whose type is `DomainUpdateParameterProperties`
+  - Model `NamespaceTopicUpdateParameters` moved instance variable `event_retention_in_days` under property `properties` whose type is `NamespaceTopicUpdateParameterProperties`
+  - Model `NamespaceUpdateParameters` moved instance variable `topic_spaces_configuration`, `topics_configuration`, `public_network_access` and `inbound_ip_rules` under property `properties` whose type is `NamespaceUpdateParameterProperties`
+  - Model `PartnerConfigurationUpdateParameters` moved instance variable `default_maximum_expiration_time_in_days` under property `properties` whose type is `PartnerConfigurationUpdateParameterProperties`
+  - Model `PartnerNamespaceUpdateParameters` moved instance variable `public_network_access`, `inbound_ip_rules`, `minimum_tls_version_allowed` and `disable_local_auth` under property `properties` whose type is `PartnerNamespaceUpdateParameterProperties`
+  - Model `SubscriptionUpdateParameters` moved instance variable `delivery_configuration`, `event_delivery_schema`, `filters_configuration`, `expiration_time_utc` and `tags` under property `properties` whose type is `SubscriptionUpdateParametersProperties`
+  - Model `TopicTypeInfo` moved instance variable `provider`, `display_name`, `description`, `resource_region_type`, `provisioning_state`, `supported_locations`, `source_resource_format`, `supported_scopes_for_source`, `are_regional_and_global_sources_supported` and `additional_enforced_permissions` under property `properties` whose type is `TopicTypeProperties`
+  - Model `TopicUpdateParameters` moved instance variable `public_network_access`, `inbound_ip_rules`, `minimum_tls_version_allowed`, `disable_local_auth`, `data_residency_boundary` and `event_type_info` under property `properties` whose type is `TopicUpdateParameterProperties`
+  - Model `WebhookPartnerDestinationInfo` moved instance variable `endpoint_url`, `endpoint_base_url` and `client_authentication` under property `properties` whose type is `WebhookPartnerDestinationProperties`
+  - Model `WebhookUpdatePartnerDestinationInfo` moved instance variable `endpoint_url`, `endpoint_base_url` and `client_authentication` under property `properties` whose type is `WebhookPartnerDestinationProperties`
+
+### Other Changes
+
+  - Deleted model `NetworkSecurityPerimeterConfigurationList` which actually was not used by SDK users
+
 ## 10.5.0b1 (2025-07-20)
 
 ### Features Added

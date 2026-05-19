@@ -21,5 +21,6 @@
         "specs.azure.core.page.aio.PageClient.with_parameterized_next_link": "_Specs_.Azure.Core.Page.withParameterizedNextLink",
         "specs.azure.core.page.PageClient.with_relative_next_link": "_Specs_.Azure.Core.Page.withRelativeNextLink",
         "specs.azure.core.page.aio.PageClient.with_relative_next_link": "_Specs_.Azure.Core.Page.withRelativeNextLink"
-    }
+    },
+    "CrossLanguageVersion": "b833a7905d7b"
 }

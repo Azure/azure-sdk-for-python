@@ -9,5 +9,6 @@
         "specialheaders.conditionalrequest.aio.ConditionalRequestClient.head_if_modified_since": "SpecialHeaders.ConditionalRequest.headIfModifiedSince",
         "specialheaders.conditionalrequest.ConditionalRequestClient.post_if_unmodified_since": "SpecialHeaders.ConditionalRequest.postIfUnmodifiedSince",
         "specialheaders.conditionalrequest.aio.ConditionalRequestClient.post_if_unmodified_since": "SpecialHeaders.ConditionalRequest.postIfUnmodifiedSince"
-    }
+    },
+    "CrossLanguageVersion": "ea61655b8122"
 }

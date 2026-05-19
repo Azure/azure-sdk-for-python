@@ -9,5 +9,6 @@
         "resiliency.srv.driven2.aio.ResiliencyServiceDrivenClient.from_one_required": "Resiliency.ServiceDriven.AddOptionalParam.fromOneRequired",
         "resiliency.srv.driven2.ResiliencyServiceDrivenClient.from_one_optional": "Resiliency.ServiceDriven.AddOptionalParam.fromOneOptional",
         "resiliency.srv.driven2.aio.ResiliencyServiceDrivenClient.from_one_optional": "Resiliency.ServiceDriven.AddOptionalParam.fromOneOptional"
-    }
+    },
+    "CrossLanguageVersion": "5e86d81e4c2e"
 }

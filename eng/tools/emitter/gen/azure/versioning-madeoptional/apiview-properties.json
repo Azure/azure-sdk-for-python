@@ -5,5 +5,6 @@
         "versioning.madeoptional.models.Versions": "Versioning.MadeOptional.Versions",
         "versioning.madeoptional.MadeOptionalClient.test": "Versioning.MadeOptional.test",
         "versioning.madeoptional.aio.MadeOptionalClient.test": "Versioning.MadeOptional.test"
-    }
+    },
+    "CrossLanguageVersion": "29a6539f0405"
 }

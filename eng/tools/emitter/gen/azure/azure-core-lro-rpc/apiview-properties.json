@@ -5,5 +5,6 @@
         "specs.azure.core.lro.rpc.models.GenerationResult": "_Specs_.Azure.Core.Lro.Rpc.GenerationResult",
         "specs.azure.core.lro.rpc.RpcClient.begin_long_running_rpc": "_Specs_.Azure.Core.Lro.Rpc.longRunningRpc",
         "specs.azure.core.lro.rpc.aio.RpcClient.begin_long_running_rpc": "_Specs_.Azure.Core.Lro.Rpc.longRunningRpc"
-    }
+    },
+    "CrossLanguageVersion": "721c25ac0a21"
 }
