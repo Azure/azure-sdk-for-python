@@ -318,6 +318,8 @@ class EventData:
 
         :rtype: int or None
         """
+        if self._raw_amqp_message.annotations is None:
+            return None
         return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
 
     @property
@@ -327,8 +329,8 @@ class EventData:
         :rtype: str or None
         """
         try:
-            return self._raw_amqp_message.annotations[PROP_OFFSET].decode("UTF-8")
-        except (KeyError, AttributeError):
+            return self._raw_amqp_message.annotations[PROP_OFFSET].decode("UTF-8")  # type: ignore[index]
+        except (KeyError, AttributeError, TypeError):
             return None
 
     @property
@@ -337,7 +339,8 @@ class EventData:
 
         :rtype: datetime.datetime or None
         """
-        timestamp = self._raw_amqp_message.annotations.get(PROP_TIMESTAMP, None)
+        annotations = self._raw_amqp_message.annotations or {}
+        timestamp = annotations.get(PROP_TIMESTAMP, None)
         if timestamp:
             return utc_from_timestamp(float(timestamp) / 1000)
         return None
@@ -348,6 +351,8 @@ class EventData:
 
         :rtype: bytes or None
         """
+        if self._raw_amqp_message.annotations is None:
+            return None
         return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
 
     @property
@@ -356,7 +361,7 @@ class EventData:
 
         :rtype: dict[str, any] or dict[bytes, any]
         """
-        return self._raw_amqp_message.application_properties
+        return self._raw_amqp_message.application_properties or {}
 
     @properties.setter
     def properties(self, value: Dict[Union[str, bytes], Any]) -> None:
@@ -402,7 +407,8 @@ class EventData:
                     value = getattr(self._raw_amqp_message.properties, prop_name, None)
                     if value:
                         self._sys_properties[key] = value
-            self._sys_properties.update(self._raw_amqp_message.annotations)
+            if self._raw_amqp_message.annotations:
+                self._sys_properties.update(self._raw_amqp_message.annotations)  # type: ignore[arg-type]
         return self._sys_properties
 
     @property
@@ -483,10 +489,10 @@ class EventData:
             return self._raw_amqp_message.properties.content_type
 
     @content_type.setter
-    def content_type(self, value: str) -> None:
-        if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AmqpMessageProperties()
-        self._raw_amqp_message.properties.content_type = value
+    def content_type(self, value: Optional[str]) -> None:
+        properties = self._raw_amqp_message.properties or AmqpMessageProperties()
+        properties.content_type = value
+        self._raw_amqp_message.properties = properties
 
     @property
     def correlation_id(self) -> Optional[str]:
@@ -503,10 +509,10 @@ class EventData:
             return self._raw_amqp_message.properties.correlation_id
 
     @correlation_id.setter
-    def correlation_id(self, value: str) -> None:
-        if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AmqpMessageProperties()
-        self._raw_amqp_message.properties.correlation_id = value
+    def correlation_id(self, value: Optional[str]) -> None:
+        properties = self._raw_amqp_message.properties or AmqpMessageProperties()
+        properties.correlation_id = value
+        self._raw_amqp_message.properties = properties
 
     @property
     def message_id(self) -> Optional[str]:
@@ -525,10 +531,10 @@ class EventData:
             return self._raw_amqp_message.properties.message_id
 
     @message_id.setter
-    def message_id(self, value: str) -> None:
-        if not self._raw_amqp_message.properties:
-            self._raw_amqp_message.properties = AmqpMessageProperties()
-        self._raw_amqp_message.properties.message_id = value
+    def message_id(self, value: Optional[str]) -> None:
+        properties = self._raw_amqp_message.properties or AmqpMessageProperties()
+        properties.message_id = value
+        self._raw_amqp_message.properties = properties
 
 
 class EventDataBatch:
