@@ -23,6 +23,7 @@ from .._utils.model_base import Model as _Model, _MyMutableMapping, _RestField, 
 # annotations (not merged subclass annotations) to avoid resolving to a type
 # whose ``__init__`` can't handle XML elements.
 
+
 # TODO: ask the emitter folks
 def _patched_new(cls, *args, **kwargs):
     cache_key = f"{cls.__module__}.{cls.__qualname__}"
@@ -58,6 +59,7 @@ def _patched_new(cls, *args, **kwargs):
     cls._calculated.add(cache_key)
 
     return object.__new__(cls)
+
 
 _Model.__new__ = _patched_new
 
@@ -173,6 +175,7 @@ def _patched_is_xml_model(cls) -> bool:
     generator for models that serialize to/from XML).
     """
     return bool(getattr(cls, "_xml", None))
+
 
 _Model.as_dict = _patched_as_dict
 _Model.serialize = _patched_serialize
