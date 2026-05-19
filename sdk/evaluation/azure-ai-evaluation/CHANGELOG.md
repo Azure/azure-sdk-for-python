@@ -1,5 +1,11 @@
 # Release History
 
+## 1.16.8 (2026-05-19)
+
+### Features Added
+
+- App Insights logging now forwards arbitrary evaluator-specific keys from each event's `properties` payload as a single `gen_ai.evaluation.properties` JSON attribute (carried inside `internal_properties`). Previously only the four red-team keys (`attack_success`, `attack_technique`, `attack_complexity`, `attack_success_threshold`) were forwarded; structured outputs such as rubric `dimension_scores` were silently dropped. Payloads larger than 7500 characters are replaced with a valid JSON marker (`{"truncated": true, "original_size_bytes": <n>}`) so consumers can always `json.loads` the value. Non-dict `properties` payloads are now safely ignored instead of raising in the red-team forwarder.
+
 ## 1.16.7 (2026-05-07)
 
 ### Features Added
@@ -9,7 +15,6 @@
 - Added `status` field (`"completed"`, `"error"`, `"skipped"`) on evaluation result items to indicate evaluator execution outcome.
 - Added `skipped` and `errored` counts to `result_counts` and `per_testing_criteria_results` in AOAI evaluation summaries.
 - Added `skipped` to `ResultCount` and `skipped`/`errored` to `PerTestingCriteriaResult` typed contracts.
-- App Insights logging now forwards arbitrary evaluator-specific keys from each event's `properties` payload as a single `gen_ai.evaluation.properties` JSON attribute (carried inside `internal_properties`). Previously only the four red-team keys (`attack_success`, `attack_technique`, `attack_complexity`, `attack_success_threshold`) were forwarded; structured outputs such as rubric `dimension_scores` were silently dropped. Payloads larger than 7500 characters are replaced with a valid JSON marker (`{"truncated": true, "original_size_bytes": <n>}`) so consumers can always `json.loads` the value. Non-dict `properties` payloads are now safely ignored instead of raising in the red-team forwarder.
 
 ### Bugs Fixed
 
