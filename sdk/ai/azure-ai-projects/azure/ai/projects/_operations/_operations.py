@@ -36,7 +36,8 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._configuration import AIProjectClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from .._utils.serialization import Deserializer, Serializer
+from .._utils.serialization import Serializer
+from .._utils.utils import ClientMixinABC
 
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
@@ -48,7 +49,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -72,7 +73,7 @@ def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_delete_request(agent_name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_delete_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -96,7 +97,7 @@ def build_agents_delete_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_list_request(
+def build_ai_project_list_request(
     *,
     kind: Optional[Union[str, _models.AgentKind]] = None,
     limit: Optional[int] = None,
@@ -133,7 +134,7 @@ def build_agents_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_version_request(agent_name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_create_version_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -160,7 +161,7 @@ def build_agents_create_version_request(agent_name: str, **kwargs: Any) -> HttpR
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_version_from_manifest_request(  # pylint: disable=name-too-long
+def build_ai_project_create_version_from_manifest_request(  # pylint: disable=name-too-long
     agent_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -189,7 +190,7 @@ def build_agents_create_version_from_manifest_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_version_request(agent_name: str, agent_version: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_version_request(agent_name: str, agent_version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -214,7 +215,7 @@ def build_agents_get_version_request(agent_name: str, agent_version: str, **kwar
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_delete_version_request(agent_name: str, agent_version: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_delete_version_request(agent_name: str, agent_version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -239,7 +240,7 @@ def build_agents_delete_version_request(agent_name: str, agent_version: str, **k
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_list_versions_request(
+def build_ai_project_list_versions_request(
     agent_name: str,
     *,
     limit: Optional[int] = None,
@@ -279,7 +280,7 @@ def build_agents_list_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluation_rules_get_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -303,7 +304,7 @@ def build_evaluation_rules_get_request(id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluation_rules_delete_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_delete_request(id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -321,9 +322,7 @@ def build_evaluation_rules_delete_request(id: str, **kwargs: Any) -> HttpRequest
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too-long
-    id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_create_or_update_request(id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -350,7 +349,7 @@ def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluation_rules_list_request(
+def build_ai_project_list_request(
     *,
     action_type: Optional[Union[str, _models.EvaluationRuleActionType]] = None,
     agent_name: Optional[str] = None,
@@ -381,7 +380,96 @@ def build_evaluation_rules_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_connections_get_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_list_versions_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_ai_project_list_latest_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_ai_project_get_version_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_ai_project_delete_version_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_ai_project_create_or_update_version_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
+
+
+def build_ai_project_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -405,7 +493,7 @@ def build_connections_get_request(name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_connections_get_with_credentials_request(  # pylint: disable=name-too-long
+def build_ai_project_get_with_credentials_request(  # pylint: disable=name-too-long
     name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -431,7 +519,7 @@ def build_connections_get_with_credentials_request(  # pylint: disable=name-too-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_connections_list_request(
+def build_ai_project_list_request(
     *,
     connection_type: Optional[Union[str, _models.ConnectionType]] = None,
     default_connection: Optional[bool] = None,
@@ -459,7 +547,7 @@ def build_connections_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -483,7 +571,7 @@ def build_datasets_list_versions_request(name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_list_request(**kwargs: Any) -> HttpRequest:
+def build_ai_project_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -502,7 +590,7 @@ def build_datasets_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -527,7 +615,7 @@ def build_datasets_get_request(name: str, version: str, **kwargs: Any) -> HttpRe
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -546,7 +634,9 @@ def build_datasets_delete_request(name: str, version: str, **kwargs: Any) -> Htt
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_datasets_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_create_or_update_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -574,7 +664,7 @@ def build_datasets_create_or_update_request(name: str, version: str, **kwargs: A
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_pending_upload_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_pending_upload_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -602,7 +692,7 @@ def build_datasets_pending_upload_request(name: str, version: str, **kwargs: Any
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_get_credentials_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_credentials_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -627,7 +717,7 @@ def build_datasets_get_credentials_request(name: str, version: str, **kwargs: An
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployments_get_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -651,7 +741,7 @@ def build_deployments_get_request(name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployments_list_request(
+def build_ai_project_list_request(
     *,
     model_publisher: Optional[str] = None,
     model_name: Optional[str] = None,
@@ -682,7 +772,7 @@ def build_deployments_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -706,7 +796,7 @@ def build_indexes_list_versions_request(name: str, **kwargs: Any) -> HttpRequest
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_list_request(**kwargs: Any) -> HttpRequest:
+def build_ai_project_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -725,7 +815,7 @@ def build_indexes_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -750,7 +840,7 @@ def build_indexes_get_request(name: str, version: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -769,7 +859,9 @@ def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> Http
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_indexes_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_create_or_update_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -797,9 +889,7 @@ def build_indexes_create_or_update_request(name: str, version: str, **kwargs: An
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluation_taxonomies_get_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -823,7 +913,7 @@ def build_beta_evaluation_taxonomies_get_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluation_taxonomies_list_request(  # pylint: disable=name-too-long
+def build_ai_project_list_request(
     *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -848,9 +938,7 @@ def build_beta_evaluation_taxonomies_list_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluation_taxonomies_delete_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_delete_request(name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -868,9 +956,7 @@ def build_beta_evaluation_taxonomies_delete_request(  # pylint: disable=name-too
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_evaluation_taxonomies_create_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_create_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -897,9 +983,7 @@ def build_beta_evaluation_taxonomies_create_request(  # pylint: disable=name-too
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_update_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -926,7 +1010,7 @@ def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluators_list_versions_request(  # pylint: disable=name-too-long
+def build_ai_project_list_versions_request(
     name: str,
     *,
     type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
@@ -960,7 +1044,7 @@ def build_beta_evaluators_list_versions_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluators_list_request(
+def build_ai_project_list_request(
     *,
     type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
     limit: Optional[int] = None,
@@ -988,9 +1072,7 @@ def build_beta_evaluators_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluators_get_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_get_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1015,9 +1097,7 @@ def build_beta_evaluators_get_version_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluators_delete_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_delete_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -1036,9 +1116,7 @@ def build_beta_evaluators_delete_version_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_evaluators_create_version_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_create_version_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1065,9 +1143,7 @@ def build_beta_evaluators_create_version_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluators_update_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_update_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1095,9 +1171,7 @@ def build_beta_evaluators_update_version_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluators_pending_upload_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_pending_upload_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1125,9 +1199,7 @@ def build_beta_evaluators_pending_upload_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluators_get_credentials_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_get_credentials_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1155,7 +1227,7 @@ def build_beta_evaluators_get_credentials_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_insights_generate_request(**kwargs: Any) -> HttpRequest:
+def build_ai_project_generate_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1183,7 +1255,7 @@ def build_beta_insights_generate_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_insights_get_request(
+def build_ai_project_get_request(
     insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1211,7 +1283,7 @@ def build_beta_insights_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_insights_list_request(
+def build_ai_project_list_request(
     *,
     type: Optional[Union[str, _models.InsightType]] = None,
     eval_id: Optional[str] = None,
@@ -1248,7 +1320,7 @@ def build_beta_insights_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_create_request(**kwargs: Any) -> HttpRequest:
+def build_ai_project_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1270,7 +1342,7 @@ def build_beta_memory_stores_create_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_update_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_update_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1297,7 +1369,7 @@ def build_beta_memory_stores_update_request(name: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_get_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1321,7 +1393,7 @@ def build_beta_memory_stores_get_request(name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_list_request(
+def build_ai_project_list_request(
     *,
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.PageOrder]] = None,
@@ -1355,7 +1427,7 @@ def build_beta_memory_stores_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_delete_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_delete_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1379,9 +1451,7 @@ def build_beta_memory_stores_delete_request(name: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_search_memories_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_search_memories_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1408,9 +1478,7 @@ def build_beta_memory_stores_search_memories_request(  # pylint: disable=name-to
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_update_memories_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_update_memories_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1437,9 +1505,7 @@ def build_beta_memory_stores_update_memories_request(  # pylint: disable=name-to
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_delete_scope_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_delete_scope_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1466,7 +1532,7 @@ def build_beta_memory_stores_delete_scope_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_red_teams_get_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1490,7 +1556,7 @@ def build_beta_red_teams_get_request(name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_red_teams_list_request(**kwargs: Any) -> HttpRequest:
+def build_ai_project_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1509,7 +1575,7 @@ def build_beta_red_teams_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_red_teams_create_request(**kwargs: Any) -> HttpRequest:
+def build_ai_project_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1531,7 +1597,7 @@ def build_beta_red_teams_create_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_schedules_delete_request(schedule_id: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_delete_request(schedule_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -1549,7 +1615,7 @@ def build_beta_schedules_delete_request(schedule_id: str, **kwargs: Any) -> Http
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_schedules_get_request(schedule_id: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_request(schedule_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1573,7 +1639,7 @@ def build_beta_schedules_get_request(schedule_id: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_schedules_list_request(
+def build_ai_project_list_request(
     *, type: Optional[Union[str, _models.ScheduleTaskType]] = None, enabled: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1598,7 +1664,7 @@ def build_beta_schedules_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-long
+def build_ai_project_create_or_update_request(  # pylint: disable=name-too-long
     schedule_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1627,7 +1693,7 @@ def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-l
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_schedules_get_run_request(schedule_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_run_request(schedule_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1652,7 +1718,7 @@ def build_beta_schedules_get_run_request(schedule_id: str, run_id: str, **kwargs
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_schedules_list_runs_request(
+def build_ai_project_list_runs_request(
     schedule_id: str,
     *,
     type: Optional[Union[str, _models.ScheduleTaskType]] = None,
@@ -1686,7 +1752,7 @@ def build_beta_schedules_list_runs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolsets_create_request(**kwargs: Any) -> HttpRequest:
+def build_ai_project_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1708,7 +1774,7 @@ def build_beta_toolsets_create_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolsets_update_request(tool_set_name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_update_request(tool_set_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1735,7 +1801,7 @@ def build_beta_toolsets_update_request(tool_set_name: str, **kwargs: Any) -> Htt
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolsets_get_request(tool_set_name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_request(tool_set_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1759,7 +1825,7 @@ def build_beta_toolsets_get_request(tool_set_name: str, **kwargs: Any) -> HttpRe
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolsets_list_request(
+def build_ai_project_list_request(
     *,
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.PageOrder]] = None,
@@ -1793,7 +1859,7 @@ def build_beta_toolsets_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolsets_delete_request(tool_set_name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_delete_request(tool_set_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1817,7 +1883,7 @@ def build_beta_toolsets_delete_request(tool_set_name: str, **kwargs: Any) -> Htt
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_training_jobs_list_request(
+def build_ai_project_list_request(
     *,
     job_type: Optional[Union[str, _models.JobType]] = None,
     tag: Optional[str] = None,
@@ -1851,7 +1917,7 @@ def build_beta_training_jobs_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_training_jobs_get_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_ai_project_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1875,9 +1941,7 @@ def build_beta_training_jobs_get_request(name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_training_jobs_create_or_update_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_create_or_update_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1904,9 +1968,7 @@ def build_beta_training_jobs_create_or_update_request(  # pylint: disable=name-t
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_training_jobs_begin_delete_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_begin_delete_request(name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -1924,9 +1986,7 @@ def build_beta_training_jobs_begin_delete_request(  # pylint: disable=name-too-l
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_training_jobs_begin_cancel_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_ai_project_begin_cancel_request(name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -1944,51 +2004,9 @@ def build_beta_training_jobs_begin_cancel_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-class BetaOperations:  # pylint: disable=too-many-instance-attributes
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`beta` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-        self.training = BetaTrainingOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.evaluation_taxonomies = BetaEvaluationTaxonomiesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.insights = BetaInsightsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.red_teams = BetaRedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.schedules = BetaSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.toolsets = BetaToolsetsOperations(self._client, self._config, self._serialize, self._deserialize)
-
-
-class AgentsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`agents` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+class _AIProjectClientOperationsMixin(  # pylint: disable=too-many-public-methods
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AIProjectClientConfiguration]
+):
 
     @distributed_trace
     def get(self, agent_name: str, **kwargs: Any) -> _models.AgentDetails:
@@ -2013,7 +2031,7 @@ class AgentsOperations:
 
         cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_request(
+        _request = build_ai_project_get_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2078,7 +2096,7 @@ class AgentsOperations:
 
         cls: ClsType[_models.DeleteAgentResponse] = kwargs.pop("cls", None)
 
-        _request = build_agents_delete_request(
+        _request = build_ai_project_delete_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2168,7 +2186,7 @@ class AgentsOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_agents_list_request(
+            _request = build_ai_project_list_request(
                 kind=kind,
                 limit=limit,
                 order=order,
@@ -2365,7 +2383,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_version_request(
+        _request = build_ai_project_create_version_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2572,7 +2590,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_version_from_manifest_request(
+        _request = build_ai_project_create_version_from_manifest_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2641,7 +2659,7 @@ class AgentsOperations:
 
         cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
 
-        _request = build_agents_get_version_request(
+        _request = build_ai_project_get_version_request(
             agent_name=agent_name,
             agent_version=agent_version,
             api_version=self._config.api_version,
@@ -2710,7 +2728,7 @@ class AgentsOperations:
 
         cls: ClsType[_models.DeleteAgentVersionResponse] = kwargs.pop("cls", None)
 
-        _request = build_agents_delete_version_request(
+        _request = build_ai_project_delete_version_request(
             agent_name=agent_name,
             agent_version=agent_version,
             api_version=self._config.api_version,
@@ -2800,7 +2818,7 @@ class AgentsOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_agents_list_versions_request(
+            _request = build_ai_project_list_versions_request(
                 agent_name=agent_name,
                 limit=limit,
                 order=order,
@@ -2847,24 +2865,6 @@ class AgentsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-
-class EvaluationRulesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`evaluation_rules` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
     def get(self, id: str, **kwargs: Any) -> _models.EvaluationRule:
         """Get an evaluation rule.
@@ -2888,7 +2888,7 @@ class EvaluationRulesOperations:
 
         cls: ClsType[_models.EvaluationRule] = kwargs.pop("cls", None)
 
-        _request = build_evaluation_rules_get_request(
+        _request = build_ai_project_get_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2949,7 +2949,7 @@ class EvaluationRulesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_evaluation_rules_delete_request(
+        _request = build_ai_project_delete_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3064,7 +3064,7 @@ class EvaluationRulesOperations:
         else:
             _content = json.dumps(evaluation_rule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_evaluation_rules_create_or_update_request(
+        _request = build_ai_project_create_or_update_request(
             id=id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3142,7 +3142,7 @@ class EvaluationRulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_evaluation_rules_list_request(
+                _request = build_ai_project_list_request(
                     action_type=action_type,
                     agent_name=agent_name,
                     enabled=enabled,
@@ -3206,23 +3206,364 @@ class EvaluationRulesOperations:
 
         return ItemPaged(get_next, extract_data)
 
+    @distributed_trace
+    def list_versions(self, **kwargs: Any) -> _models.Page:
+        """list_versions.
 
-class ConnectionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
+        :return: Page. The Page is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Page
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`connections` attribute.
-    """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        cls: ClsType[_models.Page] = kwargs.pop("cls", None)
+
+        _request = build_ai_project_list_versions_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Page, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_latest(self, **kwargs: Any) -> _models.Page:
+        """list_latest.
+
+        :return: Page. The Page is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Page
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Page] = kwargs.pop("cls", None)
+
+        _request = build_ai_project_list_latest_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Page, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def get_version(self, *, content_type: str = "application/json", **kwargs: Any) -> None:
+        """get_version.
+
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def get_version(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+        """get_version.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def get_version(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> None:
+        """get_version.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def get_version(  # pylint: disable=inconsistent-return-statements
+        self, body: Union[JSON, IO[bytes]] = _Unset, **kwargs: Any
+    ) -> None:
+        """get_version.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_project_get_version_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    def delete_version(self, *, content_type: str = "application/json", **kwargs: Any) -> None:
+        """delete_version.
+
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def delete_version(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+        """delete_version.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def delete_version(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> None:
+        """delete_version.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def delete_version(  # pylint: disable=inconsistent-return-statements
+        self, body: Union[JSON, IO[bytes]] = _Unset, **kwargs: Any
+    ) -> None:
+        """delete_version.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_project_delete_version_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def create_or_update_version(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """create_or_update_version.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_project_create_or_update_version_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def _get(self, name: str, **kwargs: Any) -> _models.Connection:
@@ -3247,7 +3588,7 @@ class ConnectionsOperations:
 
         cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
 
-        _request = build_connections_get_request(
+        _request = build_ai_project_get_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3313,7 +3654,7 @@ class ConnectionsOperations:
 
         cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
 
-        _request = build_connections_get_with_credentials_request(
+        _request = build_ai_project_get_with_credentials_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3393,7 +3734,7 @@ class ConnectionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_connections_list_request(
+                _request = build_ai_project_list_request(
                     connection_type=connection_type,
                     default_connection=default_connection,
                     api_version=self._config.api_version,
@@ -3456,24 +3797,6 @@ class ConnectionsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-
-class DatasetsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`datasets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
     def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_models.DatasetVersion"]:
         """List all versions of the given DatasetVersion.
@@ -3500,7 +3823,7 @@ class DatasetsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_datasets_list_versions_request(
+                _request = build_ai_project_list_versions_request(
                     name=name,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -3586,7 +3909,7 @@ class DatasetsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_datasets_list_request(
+                _request = build_ai_project_list_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3673,7 +3996,7 @@ class DatasetsOperations:
 
         cls: ClsType[_models.DatasetVersion] = kwargs.pop("cls", None)
 
-        _request = build_datasets_get_request(
+        _request = build_ai_project_get_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -3738,7 +4061,7 @@ class DatasetsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_datasets_delete_request(
+        _request = build_ai_project_delete_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -3880,7 +4203,7 @@ class DatasetsOperations:
         else:
             _content = json.dumps(dataset_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_datasets_create_or_update_request(
+        _request = build_ai_project_create_or_update_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -4042,7 +4365,7 @@ class DatasetsOperations:
         else:
             _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_datasets_pending_upload_request(
+        _request = build_ai_project_pending_upload_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -4108,7 +4431,7 @@ class DatasetsOperations:
 
         cls: ClsType[_models.DatasetCredential] = kwargs.pop("cls", None)
 
-        _request = build_datasets_get_credentials_request(
+        _request = build_ai_project_get_credentials_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -4147,24 +4470,6 @@ class DatasetsOperations:
 
         return deserialized  # type: ignore
 
-
-class DeploymentsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`deployments` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
     def get(self, name: str, **kwargs: Any) -> _models.Deployment:
         """Get a deployed model.
@@ -4188,7 +4493,7 @@ class DeploymentsOperations:
 
         cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
 
-        _request = build_deployments_get_request(
+        _request = build_ai_project_get_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4270,7 +4575,7 @@ class DeploymentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deployments_list_request(
+                _request = build_ai_project_list_request(
                     model_publisher=model_publisher,
                     model_name=model_name,
                     deployment_type=deployment_type,
@@ -4334,24 +4639,6 @@ class DeploymentsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-
-class IndexesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`indexes` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
     def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_models.Index"]:
         """List all versions of the given Index.
@@ -4378,7 +4665,7 @@ class IndexesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_indexes_list_versions_request(
+                _request = build_ai_project_list_versions_request(
                     name=name,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -4464,7 +4751,7 @@ class IndexesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_indexes_list_request(
+                _request = build_ai_project_list_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4551,7 +4838,7 @@ class IndexesOperations:
 
         cls: ClsType[_models.Index] = kwargs.pop("cls", None)
 
-        _request = build_indexes_get_request(
+        _request = build_ai_project_get_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -4616,7 +4903,7 @@ class IndexesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_indexes_delete_request(
+        _request = build_ai_project_delete_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -4752,7 +5039,7 @@ class IndexesOperations:
         else:
             _content = json.dumps(index, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexes_create_or_update_request(
+        _request = build_ai_project_create_or_update_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -4793,44 +5080,6 @@ class IndexesOperations:
 
         return deserialized  # type: ignore
 
-
-class BetaTrainingOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`training` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-        self.jobs = BetaTrainingJobsOperations(self._client, self._config, self._serialize, self._deserialize)
-
-
-class BetaEvaluationTaxonomiesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`evaluation_taxonomies` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
     def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
         """Get an evaluation run by name.
@@ -4854,7 +5103,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
 
-        _request = build_beta_evaluation_taxonomies_get_request(
+        _request = build_ai_project_get_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4922,7 +5171,7 @@ class BetaEvaluationTaxonomiesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_beta_evaluation_taxonomies_list_request(
+                _request = build_ai_project_list_request(
                     input_name=input_name,
                     input_type=input_type,
                     api_version=self._config.api_version,
@@ -4947,10 +5196,7 @@ class BetaEvaluationTaxonomiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5011,7 +5257,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_beta_evaluation_taxonomies_delete_request(
+        _request = build_ai_project_delete_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5126,7 +5372,7 @@ class BetaEvaluationTaxonomiesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_evaluation_taxonomies_create_request(
+        _request = build_ai_project_create_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5256,7 +5502,7 @@ class BetaEvaluationTaxonomiesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_evaluation_taxonomies_update_request(
+        _request = build_ai_project_update_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5295,24 +5541,6 @@ class BetaEvaluationTaxonomiesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
-class BetaEvaluatorsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`evaluators` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list_versions(
@@ -5354,7 +5582,7 @@ class BetaEvaluatorsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_beta_evaluators_list_versions_request(
+                _request = build_ai_project_list_versions_request(
                     name=name,
                     type=type,
                     limit=limit,
@@ -5380,10 +5608,7 @@ class BetaEvaluatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5458,7 +5683,7 @@ class BetaEvaluatorsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_beta_evaluators_list_request(
+                _request = build_ai_project_list_request(
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -5483,10 +5708,7 @@ class BetaEvaluatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5550,7 +5772,7 @@ class BetaEvaluatorsOperations:
 
         cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
 
-        _request = build_beta_evaluators_get_version_request(
+        _request = build_ai_project_get_version_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -5617,7 +5839,7 @@ class BetaEvaluatorsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_beta_evaluators_delete_version_request(
+        _request = build_ai_project_delete_version_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -5738,7 +5960,7 @@ class BetaEvaluatorsOperations:
         else:
             _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_evaluators_create_version_request(
+        _request = build_ai_project_create_version_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5892,7 +6114,7 @@ class BetaEvaluatorsOperations:
         else:
             _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_evaluators_update_version_request(
+        _request = build_ai_project_update_version_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -6054,7 +6276,7 @@ class BetaEvaluatorsOperations:
         else:
             _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_evaluators_pending_upload_request(
+        _request = build_ai_project_pending_upload_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -6216,7 +6438,7 @@ class BetaEvaluatorsOperations:
         else:
             _content = json.dumps(credential_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_evaluators_get_credentials_request(
+        _request = build_ai_project_get_credentials_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -6256,24 +6478,6 @@ class BetaEvaluatorsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
-class BetaInsightsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`insights` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     def generate(
@@ -6354,7 +6558,7 @@ class BetaInsightsOperations:
         else:
             _content = json.dumps(insight, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_insights_generate_request(
+        _request = build_ai_project_generate_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6423,7 +6627,7 @@ class BetaInsightsOperations:
 
         cls: ClsType[_models.Insight] = kwargs.pop("cls", None)
 
-        _request = build_beta_insights_get_request(
+        _request = build_ai_project_get_request(
             insight_id=insight_id,
             include_coordinates=include_coordinates,
             api_version=self._config.api_version,
@@ -6511,7 +6715,7 @@ class BetaInsightsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_beta_insights_list_request(
+                _request = build_ai_project_list_request(
                     type=type,
                     eval_id=eval_id,
                     run_id=run_id,
@@ -6539,10 +6743,7 @@ class BetaInsightsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6583,24 +6784,6 @@ class BetaInsightsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-
-class BetaMemoryStoresOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`memory_stores` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     def create(
@@ -6720,7 +6903,7 @@ class BetaMemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_memory_stores_create_request(
+        _request = build_ai_project_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6875,7 +7058,7 @@ class BetaMemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_memory_stores_update_request(
+        _request = build_ai_project_update_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6942,7 +7125,7 @@ class BetaMemoryStoresOperations:
 
         cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
 
-        _request = build_beta_memory_stores_get_request(
+        _request = build_ai_project_get_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7028,7 +7211,7 @@ class BetaMemoryStoresOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_memory_stores_list_request(
+            _request = build_ai_project_list_request(
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -7097,7 +7280,7 @@ class BetaMemoryStoresOperations:
 
         cls: ClsType[_models.DeleteMemoryStoreResult] = kwargs.pop("cls", None)
 
-        _request = build_beta_memory_stores_delete_request(
+        _request = build_ai_project_delete_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7210,7 +7393,7 @@ class BetaMemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items": items,
+                "items_property": items,
                 "options": options,
                 "previous_search_id": previous_search_id,
                 "scope": scope,
@@ -7223,7 +7406,7 @@ class BetaMemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_memory_stores_search_memories_request(
+        _request = build_ai_project_search_memories_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -7296,7 +7479,7 @@ class BetaMemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items": items,
+                "items_property": items,
                 "previous_update_id": previous_update_id,
                 "scope": scope,
                 "update_delay": update_delay,
@@ -7309,7 +7492,7 @@ class BetaMemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_memory_stores_update_memories_request(
+        _request = build_ai_project_update_memories_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -7573,7 +7756,7 @@ class BetaMemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_memory_stores_delete_scope_request(
+        _request = build_ai_project_delete_scope_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -7617,24 +7800,6 @@ class BetaMemoryStoresOperations:
 
         return deserialized  # type: ignore
 
-
-class BetaRedTeamsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`red_teams` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
     def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
@@ -7658,7 +7823,7 @@ class BetaRedTeamsOperations:
 
         cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
 
-        _request = build_beta_red_teams_get_request(
+        _request = build_ai_project_get_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7720,7 +7885,7 @@ class BetaRedTeamsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_beta_red_teams_list_request(
+                _request = build_ai_project_list_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -7743,10 +7908,7 @@ class BetaRedTeamsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7860,7 +8022,7 @@ class BetaRedTeamsOperations:
         else:
             _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_red_teams_create_request(
+        _request = build_ai_project_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7903,24 +8065,6 @@ class BetaRedTeamsOperations:
 
         return deserialized  # type: ignore
 
-
-class BetaSchedulesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`schedules` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
     def delete(self, schedule_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a schedule.
@@ -7944,7 +8088,7 @@ class BetaSchedulesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_beta_schedules_delete_request(
+        _request = build_ai_project_delete_request(
             schedule_id=schedule_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7992,7 +8136,7 @@ class BetaSchedulesOperations:
 
         cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
 
-        _request = build_beta_schedules_get_request(
+        _request = build_ai_project_get_request(
             schedule_id=schedule_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8065,7 +8209,7 @@ class BetaSchedulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_beta_schedules_list_request(
+                _request = build_ai_project_list_request(
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -8090,10 +8234,7 @@ class BetaSchedulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8221,7 +8362,7 @@ class BetaSchedulesOperations:
         else:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_schedules_create_or_update_request(
+        _request = build_ai_project_create_or_update_request(
             schedule_id=schedule_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -8286,7 +8427,7 @@ class BetaSchedulesOperations:
 
         cls: ClsType[_models.ScheduleRun] = kwargs.pop("cls", None)
 
-        _request = build_beta_schedules_get_run_request(
+        _request = build_ai_project_get_run_request(
             schedule_id=schedule_id,
             run_id=run_id,
             api_version=self._config.api_version,
@@ -8367,7 +8508,7 @@ class BetaSchedulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_beta_schedules_list_runs_request(
+                _request = build_ai_project_list_runs_request(
                     schedule_id=schedule_id,
                     type=type,
                     enabled=enabled,
@@ -8393,10 +8534,7 @@ class BetaSchedulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8433,24 +8571,6 @@ class BetaSchedulesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-
-class BetaToolsetsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`toolsets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     def create(
@@ -8568,7 +8688,7 @@ class BetaToolsetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_toolsets_create_request(
+        _request = build_ai_project_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -8731,7 +8851,7 @@ class BetaToolsetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_toolsets_update_request(
+        _request = build_ai_project_update_request(
             tool_set_name=tool_set_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -8798,7 +8918,7 @@ class BetaToolsetsOperations:
 
         cls: ClsType[_models.ToolsetObject] = kwargs.pop("cls", None)
 
-        _request = build_beta_toolsets_get_request(
+        _request = build_ai_project_get_request(
             tool_set_name=tool_set_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8884,7 +9004,7 @@ class BetaToolsetsOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_toolsets_list_request(
+            _request = build_ai_project_list_request(
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -8953,7 +9073,7 @@ class BetaToolsetsOperations:
 
         cls: ClsType[_models.DeleteToolsetResponse] = kwargs.pop("cls", None)
 
-        _request = build_beta_toolsets_delete_request(
+        _request = build_ai_project_delete_request(
             tool_set_name=tool_set_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8994,24 +9114,6 @@ class BetaToolsetsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
-class BetaTrainingJobsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`jobs` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list(
@@ -9056,7 +9158,7 @@ class BetaTrainingJobsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_beta_training_jobs_list_request(
+                _request = build_ai_project_list_request(
                     job_type=job_type,
                     tag=tag,
                     list_view_type=list_view_type,
@@ -9083,10 +9185,7 @@ class BetaTrainingJobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9147,7 +9246,7 @@ class BetaTrainingJobsOperations:
 
         cls: ClsType[_models.Job] = kwargs.pop("cls", None)
 
-        _request = build_beta_training_jobs_get_request(
+        _request = build_ai_project_get_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -9187,15 +9286,15 @@ class BetaTrainingJobsOperations:
 
     @overload
     def create_or_update(
-        self, name: str, job: _models.Job, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: _models.Job, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Job:
         """Create and execute a Job. For update case, the Tags in the definition passed in will replace
         Tags in the existing job.
 
         :param name: The name of the Job. This is case-sensitive. Required.
         :type name: str
-        :param job: The job to create or update. Required.
-        :type job: ~azure.ai.projects.models.Job
+        :param body: The job to create or update. Required.
+        :type body: ~azure.ai.projects.models.Job
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9206,15 +9305,15 @@ class BetaTrainingJobsOperations:
 
     @overload
     def create_or_update(
-        self, name: str, job: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Job:
         """Create and execute a Job. For update case, the Tags in the definition passed in will replace
         Tags in the existing job.
 
         :param name: The name of the Job. This is case-sensitive. Required.
         :type name: str
-        :param job: The job to create or update. Required.
-        :type job: JSON
+        :param body: The job to create or update. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9225,15 +9324,15 @@ class BetaTrainingJobsOperations:
 
     @overload
     def create_or_update(
-        self, name: str, job: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Job:
         """Create and execute a Job. For update case, the Tags in the definition passed in will replace
         Tags in the existing job.
 
         :param name: The name of the Job. This is case-sensitive. Required.
         :type name: str
-        :param job: The job to create or update. Required.
-        :type job: IO[bytes]
+        :param body: The job to create or update. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9243,15 +9342,15 @@ class BetaTrainingJobsOperations:
         """
 
     @distributed_trace
-    def create_or_update(self, name: str, job: Union[_models.Job, JSON, IO[bytes]], **kwargs: Any) -> _models.Job:
+    def create_or_update(self, name: str, body: Union[_models.Job, JSON, IO[bytes]], **kwargs: Any) -> _models.Job:
         """Create and execute a Job. For update case, the Tags in the definition passed in will replace
         Tags in the existing job.
 
         :param name: The name of the Job. This is case-sensitive. Required.
         :type name: str
-        :param job: The job to create or update. Is one of the following types: Job, JSON, IO[bytes]
+        :param body: The job to create or update. Is one of the following types: Job, JSON, IO[bytes]
          Required.
-        :type job: ~azure.ai.projects.models.Job or JSON or IO[bytes]
+        :type body: ~azure.ai.projects.models.Job or JSON or IO[bytes]
         :return: Job. The Job is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Job
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9272,12 +9371,12 @@ class BetaTrainingJobsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(job, (IOBase, bytes)):
-            _content = job
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_training_jobs_create_or_update_request(
+        _request = build_ai_project_create_or_update_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -9341,7 +9440,7 @@ class BetaTrainingJobsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_beta_training_jobs_begin_delete_request(
+        _request = build_ai_project_begin_delete_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -9395,7 +9494,7 @@ class BetaTrainingJobsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_beta_training_jobs_begin_cancel_request(
+        _request = build_ai_project_begin_cancel_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,

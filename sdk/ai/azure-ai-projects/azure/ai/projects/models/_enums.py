@@ -11,20 +11,16 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
+    """Opt-in keys for defining preview Hosted or Workflow Agents."""
 
     HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
     """HOSTED_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
-    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
-    """CONTAINER_AGENTS_V1_PREVIEW."""
-    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
-    """AGENT_ENDPOINT_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of _FoundryFeaturesOptInKeys."""
+    """Opt-in keys for enabling preview Foundry features."""
 
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
@@ -38,39 +34,12 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INSIGHTS_V1_PREVIEW."""
     MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
     """MEMORY_STORES_V1_PREVIEW."""
-    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
-    """TOOLBOXES_V1_PREVIEW."""
-
-
-class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of AgentBlueprintReferenceType."""
-
-    MANAGED_AGENT_IDENTITY_BLUEPRINT = "ManagedAgentIdentityBlueprint"
-    """MANAGED_AGENT_IDENTITY_BLUEPRINT."""
-
-
-class AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of AgentEndpointAuthorizationSchemeType."""
-
-    ENTRA = "Entra"
-    """ENTRA."""
-    BOT_SERVICE = "BotService"
-    """BOT_SERVICE."""
-    BOT_SERVICE_RBAC = "BotServiceRbac"
-    """BOT_SERVICE_RBAC."""
-
-
-class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of AgentEndpointProtocol."""
-
-    ACTIVITY = "activity"
-    """ACTIVITY."""
-    RESPONSES = "responses"
-    """RESPONSES."""
-    A2A = "a2a"
-    """A2A."""
-    INVOCATIONS = "invocations"
-    """INVOCATIONS."""
+    TOOLSET_V1_PREVIEW = "Toolsets=V1Preview"
+    """TOOLSET_V1_PREVIEW."""
+    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
+    """AGENT_ENDPOINT_V1_PREVIEW."""
+    JOBS_V1_PREVIEW = "Jobs=V1Preview"
+    """JOBS_V1_PREVIEW."""
 
 
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -106,44 +75,19 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY_PROTOCOL."""
     RESPONSES = "responses"
     """RESPONSES."""
-    INVOCATIONS = "invocations"
-    """INVOCATIONS."""
 
 
-class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of an agent session."""
+class AssetTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of job input/output asset."""
 
-    CREATING = "creating"
-    """Session initialization is in progress."""
-    ACTIVE = "active"
-    """Session is running and operational."""
-    IDLE = "idle"
-    """Session sandbox is auto-suspended; resumes on next invocation."""
-    UPDATING = "updating"
-    """Reserved for future session re-parenting flows."""
-    FAILED = "failed"
-    """Session initialization or lifecycle handling failed and requires delete to recover."""
-    DELETING = "deleting"
-    """Session is being deleted (cleanup in progress)."""
-    DELETED = "deleted"
-    """Session has been explicitly deleted."""
-    EXPIRED = "expired"
-    """Session TTL exceeded (30 days from last activity)."""
-
-
-class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning status of an agent version."""
-
-    CREATING = "creating"
-    """The agent version is being provisioned."""
-    ACTIVE = "active"
-    """The agent version is active and ready to serve requests."""
-    FAILED = "failed"
-    """The agent version provisioning failed."""
-    DELETING = "deleting"
-    """The agent version is being deleted."""
-    DELETED = "deleted"
-    """The agent version has been deleted."""
+    URI_FILE = "uri_file"
+    """URI file asset."""
+    URI_FOLDER = "uri_folder"
+    """URI folder asset."""
+    SAFETENSORS_MODEL = "safetensors_model"
+    """Safetensors model asset."""
+    LITERAL = "literal"
+    """Literal value (inputs only)."""
 
 
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -505,6 +449,21 @@ class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LOW."""
 
 
+class InputOutputModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the input/output data delivery mode."""
+
+    READ_ONLY_MOUNT = "ReadOnlyMount"
+    """Read-only mount mode."""
+    READ_WRITE_MOUNT = "ReadWriteMount"
+    """Read-write mount mode."""
+    DOWNLOAD = "Download"
+    """Download mode."""
+    DIRECT = "Direct"
+    """Direct mode."""
+    UPLOAD = "Upload"
+    """Upload mode."""
+
+
 class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The request of the insights."""
 
@@ -516,13 +475,22 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation Comparison."""
 
 
-class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of IsolationKeySourceKind."""
+class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of a job."""
 
-    ENTRA = "Entra"
-    """ENTRA."""
-    HEADER = "Header"
-    """HEADER."""
+    COMMAND = "Command"
+    """Command job."""
+
+
+class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies which jobs to include in a list result based on their lifecycle state."""
+
+    ACTIVE_ONLY = "ActiveOnly"
+    """Show only active (non-archived) jobs."""
+    ARCHIVED_ONLY = "ArchivedOnly"
+    """Show only archived jobs."""
+    ALL = "All"
+    """Show all jobs regardless of archived state."""
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -716,49 +684,6 @@ class SearchContextSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HIGH."""
 
 
-class SessionLogEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Known SSE event types emitted by the hosted agent session log stream. Additional event types
-    may be introduced in future versions.
-    """
-
-    LOG = "log"
-    """A log line from the agent session container."""
-
-
-class TelemetryDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of telemetry data to export."""
-
-    CONTAINER_STDOUT_STDERR = "ContainerStdoutStderr"
-    """Container stdout and stderr logs."""
-    CONTAINER_OTEL = "ContainerOtel"
-    """Container OpenTelemetry signals."""
-    METRICS = "Metrics"
-    """Container metrics."""
-
-
-class TelemetryEndpointAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of authentication for a telemetry endpoint."""
-
-    HEADER = "header"
-    """Header-based secret authentication."""
-
-
-class TelemetryEndpointKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of telemetry export endpoint."""
-
-    OTLP = "OTLP"
-    """OpenTelemetry Protocol (OTLP) endpoint."""
-
-
-class TelemetryTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The transport protocol for telemetry export."""
-
-    HTTP = "Http"
-    """HTTP transport protocol."""
-    GRPC = "Grpc"
-    """gRPC transport protocol."""
-
-
 class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of TextResponseFormatConfigurationType."""
 
@@ -797,6 +722,15 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"
     """CODE_INTERPRETER."""
+
+
+class ToolsetObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ToolsetObjectType."""
+
+    TOOLSET = "toolset"
+    """TOOLSET."""
+    TOOLSET_DELETED = "toolset.deleted"
+    """TOOLSET_DELETED."""
 
 
 class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -876,17 +810,3 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence based trigger."""
     ONE_TIME = "OneTime"
     """One-time trigger."""
-
-
-class VersionIndicatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of version indicator used to determine the agent version backing a session."""
-
-    VERSION_REF = "version_ref"
-    """Direct reference to a specific agent version."""
-
-
-class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VersionSelectorType."""
-
-    FIXED_RATIO = "FixedRatio"
-    """FIXED_RATIO."""

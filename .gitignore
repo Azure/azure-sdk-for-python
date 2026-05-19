@@ -1,3 +1,5 @@
+azureml-mlflow/*
+sdk/ai/azure-ai-projects/designs/*
 # Default Assets restore directory
 .assets
 .assets_distributed
