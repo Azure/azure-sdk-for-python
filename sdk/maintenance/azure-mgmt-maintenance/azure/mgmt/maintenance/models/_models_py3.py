@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class Resource(_serialization.Model):
@@ -57,10 +50,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ApplyUpdate(Resource):
@@ -220,10 +213,10 @@ class ConfigurationAssignmentFilterProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        resource_types: Optional[List[str]] = None,
-        resource_groups: Optional[List[str]] = None,
-        os_types: Optional[List[str]] = None,
-        locations: Optional[List[str]] = None,
+        resource_types: Optional[list[str]] = None,
+        resource_groups: Optional[list[str]] = None,
+        os_types: Optional[list[str]] = None,
+        locations: Optional[list[str]] = None,
         tag_settings: Optional["_models.TagSettingsProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -282,7 +275,8 @@ class InputLinuxParameters(_serialization.Model):
     :vartype package_name_masks_to_exclude: list[str]
     :ivar package_name_masks_to_include: Package names to be included for patching.
     :vartype package_name_masks_to_include: list[str]
-    :ivar classifications_to_include: Classification category of patches to be patched.
+    :ivar classifications_to_include: Classification category of patches to be patched. Allowed
+     values are 'Critical', 'Security', and 'Other'.
     :vartype classifications_to_include: list[str]
     """
 
@@ -295,9 +289,9 @@ class InputLinuxParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        package_name_masks_to_exclude: Optional[List[str]] = None,
-        package_name_masks_to_include: Optional[List[str]] = None,
-        classifications_to_include: Optional[List[str]] = None,
+        package_name_masks_to_exclude: Optional[list[str]] = None,
+        package_name_masks_to_include: Optional[list[str]] = None,
+        classifications_to_include: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -305,7 +299,8 @@ class InputLinuxParameters(_serialization.Model):
         :paramtype package_name_masks_to_exclude: list[str]
         :keyword package_name_masks_to_include: Package names to be included for patching.
         :paramtype package_name_masks_to_include: list[str]
-        :keyword classifications_to_include: Classification category of patches to be patched.
+        :keyword classifications_to_include: Classification category of patches to be patched. Allowed
+         values are 'Critical', 'Security', and 'Other'.
         :paramtype classifications_to_include: list[str]
         """
         super().__init__(**kwargs)
@@ -368,7 +363,9 @@ class InputWindowsParameters(_serialization.Model):
     :vartype kb_numbers_to_exclude: list[str]
     :ivar kb_numbers_to_include: Windows KBID to be included for patching.
     :vartype kb_numbers_to_include: list[str]
-    :ivar classifications_to_include: Classification category of patches to be patched.
+    :ivar classifications_to_include: Classification category of patches to be patched. Allowed
+     values are 'Critical', 'Security', 'UpdateRollup', 'FeaturePack', 'ServicePack', 'Definition',
+     'Tools', and 'Updates'.
     :vartype classifications_to_include: list[str]
     :ivar exclude_kbs_requiring_reboot: Exclude patches which need reboot.
     :vartype exclude_kbs_requiring_reboot: bool
@@ -384,9 +381,9 @@ class InputWindowsParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        kb_numbers_to_exclude: Optional[List[str]] = None,
-        kb_numbers_to_include: Optional[List[str]] = None,
-        classifications_to_include: Optional[List[str]] = None,
+        kb_numbers_to_exclude: Optional[list[str]] = None,
+        kb_numbers_to_include: Optional[list[str]] = None,
+        classifications_to_include: Optional[list[str]] = None,
         exclude_kbs_requiring_reboot: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -395,7 +392,9 @@ class InputWindowsParameters(_serialization.Model):
         :paramtype kb_numbers_to_exclude: list[str]
         :keyword kb_numbers_to_include: Windows KBID to be included for patching.
         :paramtype kb_numbers_to_include: list[str]
-        :keyword classifications_to_include: Classification category of patches to be patched.
+        :keyword classifications_to_include: Classification category of patches to be patched. Allowed
+         values are 'Critical', 'Security', 'UpdateRollup', 'FeaturePack', 'ServicePack', 'Definition',
+         'Tools', and 'Updates'.
         :paramtype classifications_to_include: list[str]
         :keyword exclude_kbs_requiring_reboot: Exclude patches which need reboot.
         :paramtype exclude_kbs_requiring_reboot: bool
@@ -418,7 +417,7 @@ class ListApplyUpdate(_serialization.Model):
         "value": {"key": "value", "type": "[ApplyUpdate]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ApplyUpdate"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ApplyUpdate"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of apply updates.
         :paramtype value: list[~azure.mgmt.maintenance.models.ApplyUpdate]
@@ -438,7 +437,7 @@ class ListConfigurationAssignmentsResult(_serialization.Model):
         "value": {"key": "value", "type": "[ConfigurationAssignment]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ConfigurationAssignment"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ConfigurationAssignment"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of configuration Assignments.
         :paramtype value: list[~azure.mgmt.maintenance.models.ConfigurationAssignment]
@@ -458,7 +457,7 @@ class ListMaintenanceConfigurationsResult(_serialization.Model):
         "value": {"key": "value", "type": "[MaintenanceConfiguration]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MaintenanceConfiguration"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.MaintenanceConfiguration"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of maintenance Configurations.
         :paramtype value: list[~azure.mgmt.maintenance.models.MaintenanceConfiguration]
@@ -478,7 +477,7 @@ class ListUpdatesResult(_serialization.Model):
         "value": {"key": "value", "type": "[Update]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Update"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Update"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The pending updates.
         :paramtype value: list[~azure.mgmt.maintenance.models.Update]
@@ -487,7 +486,7 @@ class ListUpdatesResult(_serialization.Model):
         self.value = value
 
 
-class MaintenanceConfiguration(Resource):  # pylint: disable=too-many-instance-attributes
+class MaintenanceConfiguration(Resource):
     """Maintenance configuration record type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -579,9 +578,9 @@ class MaintenanceConfiguration(Resource):  # pylint: disable=too-many-instance-a
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         namespace: Optional[str] = None,
-        extension_properties: Optional[Dict[str, str]] = None,
+        extension_properties: Optional[dict[str, str]] = None,
         maintenance_scope: Optional[Union[str, "_models.MaintenanceScope"]] = None,
         visibility: Optional[Union[str, "_models.Visibility"]] = None,
         install_patches: Optional["_models.InputPatchConfiguration"] = None,
@@ -787,7 +786,7 @@ class OperationsListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A collection of operations.
         :paramtype value: list[~azure.mgmt.maintenance.models.Operation]
@@ -898,7 +897,7 @@ class TagSettingsProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, List[str]]] = None,
+        tags: Optional[dict[str, list[str]]] = None,
         filter_operator: Optional[Union[str, "_models.TagOperators"]] = None,
         **kwargs: Any
     ) -> None:
