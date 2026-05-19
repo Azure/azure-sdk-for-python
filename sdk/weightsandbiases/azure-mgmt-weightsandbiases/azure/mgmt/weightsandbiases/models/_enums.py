@@ -51,13 +51,13 @@ class MarketplaceSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Marketplace subscription status of a resource."""
 
     PENDING_FULFILLMENT_START = "PendingFulfillmentStart"
-    """Purchased but not yet activated"""
+    """Purchased but not yet activated."""
     SUBSCRIBED = "Subscribed"
-    """Marketplace subscription is activated"""
+    """Marketplace subscription is activated."""
     SUSPENDED = "Suspended"
-    """This state indicates that a customer's payment for the Marketplace service was not received"""
+    """This state indicates that a customer's payment for the Marketplace service was not received."""
     UNSUBSCRIBED = "Unsubscribed"
-    """Customer has cancelled the subscription"""
+    """Customer has cancelled the subscription."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -77,17 +77,17 @@ class Region(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The available regions."""
 
     EASTUS = "eastus"
-    """Region: East US"""
+    """Region: East US."""
     CENTRALUS = "centralus"
-    """Region: Central US"""
+    """Region: Central US."""
     WESTUS = "westus"
-    """Region: West US"""
+    """Region: West US."""
     WESTEUROPE = "westeurope"
-    """Region: West Europe"""
+    """Region: West Europe."""
     JAPANEAST = "japaneast"
-    """Region: Japan East"""
+    """Region: Japan East."""
     KOREACENTRAL = "koreacentral"
-    """Region: Korea Central"""
+    """Region: Korea Central."""
 
 
 class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -105,17 +105,17 @@ class SingleSignOnStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Various states of the SSO resource."""
 
     INITIAL = "Initial"
-    """Initial state of the SSO resource"""
+    """Initial state of the SSO resource."""
     ENABLE = "Enable"
-    """State of the SSO resource when it is enabled"""
+    """State of the SSO resource when it is enabled."""
     DISABLE = "Disable"
-    """State of the SSO resource when it is disabled"""
+    """State of the SSO resource when it is disabled."""
 
 
 class SingleSignOnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the type of Single Sign-On (SSO) mechanism being used."""
 
     SAML = "Saml"
-    """Security Assertion Markup Language (SAML) based Single Sign-On"""
+    """Security Assertion Markup Language (SAML) based Single Sign-On."""
     OPEN_ID = "OpenId"
     """OpenID Connect based Single Sign-On."""
