@@ -1,7 +1,7 @@
 include *.md
-include azure/__init__.py
-include azure/storage/__init__.py
 include LICENSE
+include azure/storage/blob/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
-include azure/storage/blob/py.typed
+include azure/__init__.py
+include azure/storage/__init__.py

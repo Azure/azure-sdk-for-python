@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=attribute-defined-outside-init
+import pytest
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -25,6 +26,7 @@ class TestStorageTransports(StorageRecordedTestCase):
             except ResourceExistsError:
                 pass
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @BlobPreparer()
     def test_legacy_transport_old_response(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -53,6 +55,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         resp = blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @BlobPreparer()
     def test_legacy_transport_old_response_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -78,6 +81,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         resp = blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @BlobPreparer()
     @recorded_by_proxy
     def test_legacy_transport(self, **kwargs):
@@ -105,6 +109,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         resp = blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @BlobPreparer()
     @recorded_by_proxy
     def test_legacy_transport_content_validation(self, **kwargs):

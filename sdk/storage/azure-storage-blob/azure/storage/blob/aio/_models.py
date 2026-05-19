@@ -48,9 +48,7 @@ class ContainerPropertiesPaged(AsyncPageIterator):
 
     def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
         super(ContainerPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.service_endpoint = None
@@ -66,7 +64,8 @@ class ContainerPropertiesPaged(AsyncPageIterator):
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -117,16 +116,15 @@ class FilteredBlobPaged(AsyncPageIterator):
     """The container that the blobs are listed from."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         container: Optional[str] = None,
         results_per_page: Optional[int] = None,
         continuation_token: Optional[str] = None,
-        location_mode: Optional[str] = None
+        location_mode: Optional[str] = None,
     ) -> None:
         super(FilteredBlobPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.service_endpoint = None
@@ -142,7 +140,8 @@ class FilteredBlobPaged(AsyncPageIterator):
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -166,9 +165,7 @@ class FilteredBlobPaged(AsyncPageIterator):
 class PageRangePaged(AsyncPageIterator):
     def __init__(self, command, results_per_page=None, continuation_token=None):
         super(PageRangePaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.results_per_page = results_per_page
@@ -181,7 +178,8 @@ class PageRangePaged(AsyncPageIterator):
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -194,6 +192,6 @@ class PageRangePaged(AsyncPageIterator):
     @staticmethod
     def _build_page(response):
         if not response:
-            raise StopIteration
+            raise StopAsyncIteration
 
         return parse_page_list(response)
