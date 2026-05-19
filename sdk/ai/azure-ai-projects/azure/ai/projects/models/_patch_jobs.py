@@ -85,7 +85,9 @@ class CommandJob(_RestCommandJob):
         obj._id = rest_obj.id
         obj._system_data = rest_obj.system_data
         limits_obj = obj._data.get("limits")
-        if isinstance(limits_obj, _RestCommandJobLimits) and limits_obj._data.get("timeout"):
+        if isinstance(limits_obj, _RestCommandJobLimits) and limits_obj._data.get(
+            "timeout"
+        ):
             limits_obj._data["timeout"] = limits_obj.timeout
         return obj
 
@@ -150,7 +152,9 @@ class ServiceInstance:
         self.properties = properties
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[_RestServiceInstance, Any], node_index: int) -> "ServiceInstance":
+    def _from_rest_object(
+        cls, obj: Union[_RestServiceInstance, Any], node_index: int
+    ) -> "ServiceInstance":
         """Construct a flat :class:`ServiceInstance` from the generated REST model.
 
         Flattens the nested ``JobErrorResponse`` graph down to a single error
@@ -174,7 +178,11 @@ class ServiceInstance:
             port=obj.port,
             status=obj.status,
             error=(obj.error.error.message if obj.error and obj.error.error else None),
-            endpoint=(endpoint.replace("<nodeIndex>", str(node_index)) if endpoint else endpoint),
+            endpoint=(
+                endpoint.replace("<nodeIndex>", str(node_index))
+                if endpoint
+                else endpoint
+            ),
             properties=obj.properties,
         )
 
@@ -204,7 +212,10 @@ def _load_command_job(data: dict, base_dir: Optional[Path] = None) -> CommandJob
 
     inputs_data = data.pop("inputs", None)
     if isinstance(inputs_data, dict):
-        data["inputs"] = {key: Input(**val) if isinstance(val, dict) else val for key, val in inputs_data.items()}
+        data["inputs"] = {
+            key: Input(**val) if isinstance(val, dict) else val
+            for key, val in inputs_data.items()
+        }
 
     job = CommandJob(**data)
     job._base_path = base_dir
@@ -226,7 +237,9 @@ def load_job(source: Union[str, "PathLike[str]", IO[AnyStr]]) -> CommandJob:
     if hasattr(source, "read"):
         data: dict = yaml.safe_load(source)  # type: ignore[arg-type]
         source_name = getattr(source, "name", None)
-        base_dir: Optional[Path] = Path(source_name).resolve().parent if source_name else None
+        base_dir: Optional[Path] = (
+            Path(source_name).resolve().parent if source_name else None
+        )
     else:
         source_path = Path(source)  # type: ignore[arg-type]
         base_dir = source_path.resolve().parent
@@ -241,7 +254,9 @@ def load_job(source: Union[str, "PathLike[str]", IO[AnyStr]]) -> CommandJob:
 
     if job_type_str == "command":
         return _load_command_job(data, base_dir=base_dir)
-    raise ValueError(f"Unsupported job type: '{job_type_str}'. Supported types: ['command']")
+    raise ValueError(
+        f"Unsupported job type: '{job_type_str}'. Supported types: ['command']"
+    )
 
 
 class Diagnostic:
@@ -257,10 +272,10 @@ class Diagnostic:
     ) -> None:
         """Init Diagnostic.
 
-        :keyword yaml_path: A dot-separated path from the root to the target element of the
+        :param yaml_path: A dot-separated path from the root to the target element of the
             diagnostic, e.g. ``inputs.training_data.path``.
         :paramtype yaml_path: str
-        :keyword message: Error message of the diagnostic.
+        :param message: Error message of the diagnostic.
         :paramtype message: str
         :keyword error_code: Error code of the diagnostic.
         :paramtype error_code: str
@@ -342,7 +357,9 @@ class ValidationResult:
         :return: The current validation result.
         :rtype: ValidationResult
         """
-        self.errors.append(Diagnostic(yaml_path, message, error_code=error_code, value=value))
+        self.errors.append(
+            Diagnostic(yaml_path, message, error_code=error_code, value=value)
+        )
         return self
 
     def append_warning(
@@ -366,7 +383,9 @@ class ValidationResult:
         :return: The current validation result.
         :rtype: ValidationResult
         """
-        self.warnings.append(Diagnostic(yaml_path, message, error_code=error_code, value=value))
+        self.warnings.append(
+            Diagnostic(yaml_path, message, error_code=error_code, value=value)
+        )
         return self
 
     def try_raise(self, *, raise_on_failure: bool = True) -> "ValidationResult":
@@ -386,11 +405,19 @@ class ValidationResult:
         return self
 
     def _to_dict(self) -> Dict[str, Any]:
-        result: Dict[str, Any] = {"result": self._STATUS_SUCCEEDED if self.passed else self._STATUS_FAILED}
-        for diagnostic_type, diagnostics in [("errors", self.errors), ("warnings", self.warnings)]:
+        result: Dict[str, Any] = {
+            "result": self._STATUS_SUCCEEDED if self.passed else self._STATUS_FAILED
+        }
+        for diagnostic_type, diagnostics in [
+            ("errors", self.errors),
+            ("warnings", self.warnings),
+        ]:
             messages = []
             for diagnostic in diagnostics:
-                message: Dict[str, Any] = {"message": diagnostic.message, "path": diagnostic.yaml_path}
+                message: Dict[str, Any] = {
+                    "message": diagnostic.message,
+                    "path": diagnostic.yaml_path,
+                }
                 if diagnostic.error_code is not None:
                     message["error_code"] = diagnostic.error_code
                 if diagnostic.value is not None:
