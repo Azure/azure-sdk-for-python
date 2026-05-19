@@ -250,7 +250,11 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_source(source: str, offset: Optional[Union[int, str, datetime.datetime]], selector: bytes) -> Union["uamqp_Source", "pyamqp_Source"]:
+    def create_source(
+        source: str,
+        offset: Optional[Union[int, str, datetime.datetime]],
+        selector: bytes,
+    ) -> Union["uamqp_Source", "pyamqp_Source"]:
         """
         Creates and returns the Source.
 
