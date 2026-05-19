@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservices import RecoveryServicesClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservices
 # USAGE
-    python list_operations.py
+    python update_vault_extended_info.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,33 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.vault_extended_info.update(
+        resource_group_name="Default-RecoveryServices-ResourceGroup",
+        vault_name="swaggerExample",
+        resource_extended_info_details={
+            "etag": "str",
+            "id": "str",
+            "name": "str",
+            "properties": {
+                "algorithm": "str",
+                "encryptionKey": "str",
+                "encryptionKeyThumbprint": "str",
+                "integrityKey": "str",
+            },
+            "systemData": {
+                "createdAt": "2020-02-20 00:00:00",
+                "createdBy": "str",
+                "createdByType": "str",
+                "lastModifiedAt": "2020-02-20 00:00:00",
+                "lastModifiedBy": "str",
+                "lastModifiedByType": "str",
+            },
+            "type": "str",
+        },
+    )
+    print(response)
 
 
-# x-ms-original-file: 2025-08-01/ListOperations.json
+# x-ms-original-file: 2025-08-01/UpdateVaultExtendedInfo.json
 if __name__ == "__main__":
     main()
