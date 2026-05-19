@@ -1,6 +1,6 @@
 # Release History
 
-## 25.0.0 (2026-05-07)
+## 25.0.0 (2026-05-19)
 
 ### Features Added
 
@@ -60,10 +60,13 @@
   - Added model `BlobServicePropertiesProperties`
   - Added model `CloudError`
   - Added model `Connector`
+  - Added model `ConnectorUpdate`
   - Added model `ContainerProperties`
   - Added model `DataShare`
   - Added model `DataShareConnection`
   - Added model `DataShareSource`
+  - Added model `DataShareSourceUpdate`
+  - Added model `DataShareUpdate`
   - Added model `EncryptionScopeProperties`
   - Added model `FileServicePropertiesProperties`
   - Added model `FileShareProperties`
@@ -71,6 +74,7 @@
   - Added enum `LeaseContainerRequestAction`
   - Added model `ListQueueProperties`
   - Added model `ManagedIdentityAuthProperties`
+  - Added model `ManagedIdentityAuthPropertiesUpdate`
   - Added enum `NativeDataSharingProvisioningState`
   - Added model `ObjectReplicationPolicyPropertiesTagsReplication`
   - Added model `OperationProperties`
@@ -83,24 +87,29 @@
   - Added model `StorageAccountPropertiesUpdateParameters`
   - Added model `StorageAccountSharedKeyAccessProperties`
   - Added model `StorageConnectorAuthProperties`
+  - Added model `StorageConnectorAuthPropertiesUpdate`
   - Added enum `StorageConnectorAuthType`
   - Added model `StorageConnectorConnection`
   - Added enum `StorageConnectorConnectionType`
   - Added enum `StorageConnectorDataSourceType`
   - Added model `StorageConnectorProperties`
+  - Added model `StorageConnectorPropertiesUpdate`
   - Added model `StorageConnectorSource`
   - Added enum `StorageConnectorSourceType`
+  - Added model `StorageConnectorSourceUpdate`
   - Added enum `StorageConnectorState`
   - Added model `StorageDataCollaborationPolicyProperties`
   - Added model `StorageDataShareAccessPolicy`
   - Added enum `StorageDataShareAccessPolicyPermission`
   - Added model `StorageDataShareAsset`
   - Added model `StorageDataShareProperties`
+  - Added model `StorageDataSharePropertiesUpdate`
   - Added enum `StorageTaskAssignmentProvisioningState`
   - Added model `TableProperties`
   - Added model `TableServicePropertiesProperties`
   - Added model `TestConnectionResponse`
   - Added model `TestExistingConnectionRequest`
+  - Added model `TrackedResourceUpdate`
   - Model `BlobContainersOperations` added parameter `etag` in method `create_or_update_immutability_policy`
   - Model `BlobContainersOperations` added parameter `match_condition` in method `create_or_update_immutability_policy`
   - Model `BlobContainersOperations` added parameter `etag` in method `delete_immutability_policy`

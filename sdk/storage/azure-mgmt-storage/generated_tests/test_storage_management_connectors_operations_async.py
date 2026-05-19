@@ -79,19 +79,14 @@ class TestStorageManagementConnectorsOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 connector_name="str",
                 properties={
-                    "location": "str",
-                    "properties": {
-                        "dataSourceType": "str",
-                        "source": "storage_connector_source",
-                        "creationTime": "str",
-                        "description": "str",
-                        "provisioningState": "str",
-                        "state": "str",
-                        "testConnection": bool,
-                        "uniqueId": "str",
-                    },
                     "id": "str",
                     "name": "str",
+                    "properties": {
+                        "description": "str",
+                        "source": "storage_connector_source_update",
+                        "state": "str",
+                        "testConnection": bool,
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",

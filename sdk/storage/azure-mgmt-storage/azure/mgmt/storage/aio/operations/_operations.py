@@ -11859,7 +11859,7 @@ class ConnectorsOperations:
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        properties: Union[_models.Connector, JSON, IO[bytes]],
+        properties: Union[_models.ConnectorUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11937,7 +11937,7 @@ class ConnectorsOperations:
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        properties: _models.Connector,
+        properties: _models.ConnectorUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11954,7 +11954,7 @@ class ConnectorsOperations:
         :param connector_name: The name of the Storage Connector. Required.
         :type connector_name: str
         :param properties: The updated properties of the Storage Connector. Required.
-        :type properties: ~azure.mgmt.storage.models.Connector
+        :type properties: ~azure.mgmt.storage.models.ConnectorUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12051,7 +12051,7 @@ class ConnectorsOperations:
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        properties: Union[_models.Connector, JSON, IO[bytes]],
+        properties: Union[_models.ConnectorUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Connector]:
         """Update a Storage Connector.
@@ -12066,8 +12066,8 @@ class ConnectorsOperations:
         :param connector_name: The name of the Storage Connector. Required.
         :type connector_name: str
         :param properties: The updated properties of the Storage Connector. Is one of the following
-         types: Connector, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.storage.models.Connector or JSON or IO[bytes]
+         types: ConnectorUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.storage.models.ConnectorUpdate or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Connector. The Connector is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storage.models.Connector]
@@ -13123,7 +13123,7 @@ class DataSharesOperations:
         resource_group_name: str,
         account_name: str,
         data_share_name: str,
-        properties: Union[_models.DataShare, JSON, IO[bytes]],
+        properties: Union[_models.DataShareUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13201,7 +13201,7 @@ class DataSharesOperations:
         resource_group_name: str,
         account_name: str,
         data_share_name: str,
-        properties: _models.DataShare,
+        properties: _models.DataShareUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13218,7 +13218,7 @@ class DataSharesOperations:
         :param data_share_name: The name of the Storage DataShare. Required.
         :type data_share_name: str
         :param properties: The updated properties of the Storage DataShare. Required.
-        :type properties: ~azure.mgmt.storage.models.DataShare
+        :type properties: ~azure.mgmt.storage.models.DataShareUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13315,7 +13315,7 @@ class DataSharesOperations:
         resource_group_name: str,
         account_name: str,
         data_share_name: str,
-        properties: Union[_models.DataShare, JSON, IO[bytes]],
+        properties: Union[_models.DataShareUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DataShare]:
         """Update a Storage DataShare.
@@ -13330,8 +13330,8 @@ class DataSharesOperations:
         :param data_share_name: The name of the Storage DataShare. Required.
         :type data_share_name: str
         :param properties: The updated properties of the Storage DataShare. Is one of the following
-         types: DataShare, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.storage.models.DataShare or JSON or IO[bytes]
+         types: DataShareUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.storage.models.DataShareUpdate or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DataShare. The DataShare is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.storage.models.DataShare]

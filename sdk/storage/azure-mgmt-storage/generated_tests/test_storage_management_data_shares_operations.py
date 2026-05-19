@@ -73,17 +73,13 @@ class TestStorageManagementDataSharesOperations(AzureMgmtRecordedTestCase):
             account_name="str",
             data_share_name="str",
             properties={
-                "location": "str",
+                "id": "str",
+                "name": "str",
                 "properties": {
                     "accessPolicies": [{"permission": "str", "principalId": "str", "tenantId": "str"}],
                     "assets": [{"assetPath": "str", "displayName": "str"}],
-                    "dataShareIdentifier": "str",
-                    "dataShareUri": "str",
                     "description": "str",
-                    "provisioningState": "str",
                 },
-                "id": "str",
-                "name": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
