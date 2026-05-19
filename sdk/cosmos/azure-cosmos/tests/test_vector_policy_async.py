@@ -1,6 +1,8 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import copy
+import os
 import unittest
 import uuid
 
@@ -11,7 +13,7 @@ import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
-from test_vector_policy import VectorPolicyTestData
+from test_vector_policy import EGS_SKIP_REASON, VectorPolicyTestData
 
 @pytest.mark.cosmosSearchQuery
 class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
@@ -503,34 +505,12 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 400
             assert "The Vector Embedding Policy has an invalid DistanceFunction:handMeasured" in e.http_error_message
 
-    @unittest.skip("Skipped until the embedding generation service is in preview.")
+    @unittest.skipUnless(os.getenv("COSMOS_ENABLE_EGS_TESTS"), EGS_SKIP_REASON)
     async def test_create_vector_embedding_with_embedding_source_async(self):
-        # Verify a vector embedding policy that includes the optional ``embeddingSource`` round-trips
-        # correctly for both ``ApiKey`` and ``Entra`` auth types.
         for auth_type in ["ApiKey", "Entra"]:
-            vector_embedding_policy = {
-                "vectorEmbeddings": [
-                    {
-                        "path": "/embedding",
-                        "dataType": "float32",
-                        "dimensions": 1536,
-                        "distanceFunction": "cosine",
-                        "embeddingSource": {
-                            "sourcePaths": [
-                                "/journal_title",
-                                "/title",
-                                "/toc_abstract",
-                                "/abstract",
-                                "/full_text",
-                            ],
-                            "deploymentName": "text-embedding-3-small",
-                            "modelName": "text-embedding-3-small",
-                            "endpoint": "https://example.com",
-                            "authType": auth_type,
-                        },
-                    }
-                ]
-            }
+            vector_embedding_policy = copy.deepcopy(
+                VectorPolicyTestData["valid_vector_embedding_policy_with_source"])
+            vector_embedding_policy["vectorEmbeddings"][0]["embeddingSource"]["authType"] = auth_type
             container_id = "vector_embedding_source_container_" + auth_type.lower() + "_" + str(uuid.uuid4())
             created_container = await self.test_db.create_container(
                 id=container_id,
@@ -543,27 +523,11 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             finally:
                 await self.test_db.delete_container(container_id)
 
-    @unittest.skip("Skipped until the embedding generation service is in preview.")
+    @unittest.skipUnless(os.getenv("COSMOS_ENABLE_EGS_TESTS"), EGS_SKIP_REASON)
     async def test_fail_create_vector_embedding_source_invalid_auth_type_async(self):
-        # An ``embeddingSource`` with an unsupported ``authType`` should be rejected by the service
-        # (only ``ApiKey`` and ``Entra`` are valid).
-        vector_embedding_policy = {
-            "vectorEmbeddings": [
-                {
-                    "path": "/embedding",
-                    "dataType": "float32",
-                    "dimensions": 1536,
-                    "distanceFunction": "cosine",
-                    "embeddingSource": {
-                        "sourcePaths": ["/title"],
-                        "deploymentName": "text-embedding-3-small",
-                        "modelName": "text-embedding-3-small",
-                        "endpoint": "https://example.com",
-                        "authType": "NotAnAuthType",
-                    },
-                }
-            ]
-        }
+        vector_embedding_policy = copy.deepcopy(
+            VectorPolicyTestData["valid_vector_embedding_policy_with_source"])
+        vector_embedding_policy["vectorEmbeddings"][0]["embeddingSource"]["authType"] = "NotAnAuthType"
         try:
             await self.test_db.create_container(
                 id="vector_embedding_source_bad_auth_" + str(uuid.uuid4()),
@@ -575,6 +539,32 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 400
             assert "The auth type provided in the embedding source of vector policy is invalid." \
                 in e.http_error_message
+
+    @unittest.skipUnless(os.getenv("COSMOS_ENABLE_EGS_TESTS"), EGS_SKIP_REASON)
+    async def test_fail_create_vector_embedding_source_missing_required_fields_async(self):
+        for field_name in ["sourcePaths", "endpoint", "deploymentName"]:
+            vector_embedding_policy = copy.deepcopy(
+                VectorPolicyTestData["valid_vector_embedding_policy_with_source"])
+            embedding_source = vector_embedding_policy["vectorEmbeddings"][0]["embeddingSource"]
+            if field_name == "sourcePaths":
+                embedding_source["sourcePaths"] = []
+            else:
+                del embedding_source[field_name]
+
+            container_id = "vector_embedding_source_missing_" + field_name.lower() + "_" + str(uuid.uuid4())
+            try:
+                await self.test_db.create_container(
+                    id=container_id,
+                    partition_key=PartitionKey(path="/id"),
+                    vector_embedding_policy=vector_embedding_policy,
+                )
+                pytest.fail(
+                    "Container creation should have failed for embeddingSource missing '{}'.".format(field_name)
+                )
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 400, (
+                    "Expected 400 for missing '{}', got {}".format(field_name, e.status_code)
+                )
 
 
 if __name__ == '__main__':
