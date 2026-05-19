@@ -48,7 +48,7 @@ class RetentionPolicy(GeneratedRetentionPolicy, _ModelBackCompatMixin):
     """Indicates whether a retention policy is enabled for the storage service."""
     days: Optional[int] = None
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
-    as_dict = _backcompat_as_dict
+    as_dict = _backcompat_as_dict  # pyright: ignore[reportIncompatibleMethodOverride]
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         if enabled and (days is None):
@@ -90,7 +90,7 @@ class QueueAnalyticsLogging(GeneratedLogging, _ModelBackCompatMixin):
     """Indicates whether all write requests should be logged."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
-    as_dict = _backcompat_as_dict
+    as_dict = _backcompat_as_dict  # pyright: ignore[reportIncompatibleMethodOverride]
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(
@@ -139,7 +139,7 @@ class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
     """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
-    as_dict = _backcompat_as_dict
+    as_dict = _backcompat_as_dict  # pyright: ignore[reportIncompatibleMethodOverride]
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(
@@ -209,7 +209,7 @@ class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
     allowed_headers: str
     """The comma-delimited string representation of the list of headers allowed to be part of
         the cross-origin request."""
-    as_dict = _backcompat_as_dict
+    as_dict = _backcompat_as_dict  # pyright: ignore[reportIncompatibleMethodOverride]
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         super().__init__(
@@ -297,7 +297,7 @@ class QueueSasPermissions(object):
             + ("p" if self.process else "")
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._str
 
     @classmethod
@@ -370,7 +370,7 @@ class AccessPolicy(GenAccessPolicy, _ModelBackCompatMixin):
     """The time at which the shared access signature becomes invalid."""
     start: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
-    as_dict = _backcompat_as_dict
+    as_dict = _backcompat_as_dict  # pyright: ignore[reportIncompatibleMethodOverride]
 
     def __init__(
         self,

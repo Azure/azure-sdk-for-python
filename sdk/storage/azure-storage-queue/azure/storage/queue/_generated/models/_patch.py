@@ -29,8 +29,6 @@ def as_dict(
     self,
     keep_readonly: bool = True,
     key_transformer: Optional[Callable[[str, dict, Any], Any]] = None,  # pylint: disable=unused-argument
-    *,
-    exclude_readonly: bool = False,
     **kwargs: Any,
 ) -> Dict[str, Any]:
     """Backcompat wrapper that returns Python attribute names (snake_case).
@@ -41,8 +39,7 @@ def as_dict(
     signature compatibility but ignored; keys are always remapped to
     Python attribute names.
     """
-    effective_exclude = exclude_readonly or not keep_readonly
-    result = as_attribute_dict(self, exclude_readonly=effective_exclude)
+    result = as_attribute_dict(self, exclude_readonly=not keep_readonly)
     return result
 
 
