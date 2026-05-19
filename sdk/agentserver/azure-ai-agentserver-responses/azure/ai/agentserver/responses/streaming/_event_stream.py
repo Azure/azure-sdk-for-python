@@ -466,9 +466,11 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         if item_id is None:
             resolved_item_id = IdGenerator.new_mcp_call_item_id(self._response_id)
         else:
-            if not isinstance(item_id, str) or not item_id.strip():
+            if not isinstance(item_id, str):
+                raise TypeError("item_id must be a string")
+            resolved_item_id = item_id.strip()
+            if not resolved_item_id:
                 raise ValueError("item_id must be a non-empty string")
-            resolved_item_id = item_id
         return OutputItemMcpCallBuilder(
             self,
             output_index=output_index,
