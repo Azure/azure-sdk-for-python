@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, Awaitable, IO, List, MutableMapping, overload, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -28,7 +29,6 @@ from .._internal import (
 )
 from ..models import CertificateInfo, SecurityDomain
 from .._patch import DEFAULT_VERSION, _format_api_version, _SERIALIZER
-
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 

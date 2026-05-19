@@ -17,7 +17,6 @@ from cryptography.x509 import load_pem_x509_certificate
 from jwe import JWE, KDF
 from utils import Utils
 
-
 PATH_PREFIX = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir, "resources"))
 CERT_PATH_PREFIX = f"{PATH_PREFIX}/certificate"
 SECURITY_DOMAIN_PATH = f"{PATH_PREFIX}/security-domain.json"
