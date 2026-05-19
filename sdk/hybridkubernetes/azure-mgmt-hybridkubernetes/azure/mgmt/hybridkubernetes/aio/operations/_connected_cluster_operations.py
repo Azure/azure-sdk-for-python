@@ -34,7 +34,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._connected_cluster_operations import (
-    build_create_request,
+    build_create_or_replace_request,
     build_delete_request,
     build_get_request,
     build_list_by_resource_group_request,
@@ -67,7 +67,7 @@ class ConnectedClusterOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    async def _create_initial(
+    async def _create_or_replace_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -97,7 +97,7 @@ class ConnectedClusterOperations:
         else:
             _json = self._serialize.body(connected_cluster, "ConnectedCluster")
 
-        _request = build_create_request(
+        _request = build_create_or_replace_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
@@ -138,7 +138,7 @@ class ConnectedClusterOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def begin_create(
+    async def begin_create_or_replace(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -149,8 +149,8 @@ class ConnectedClusterOperations:
     ) -> AsyncLROPoller[_models.ConnectedCluster]:
         """Register a new Kubernetes cluster with Azure Resource Manager.
 
-        API to register a new Kubernetes cluster and create a tracked resource in Azure Resource
-        Manager (ARM).
+        API to register a new Kubernetes cluster and create or replace a connected cluster tracked
+        resource in Azure Resource Manager (ARM).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -170,7 +170,7 @@ class ConnectedClusterOperations:
         """
 
     @overload
-    async def begin_create(
+    async def begin_create_or_replace(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -181,8 +181,8 @@ class ConnectedClusterOperations:
     ) -> AsyncLROPoller[_models.ConnectedCluster]:
         """Register a new Kubernetes cluster with Azure Resource Manager.
 
-        API to register a new Kubernetes cluster and create a tracked resource in Azure Resource
-        Manager (ARM).
+        API to register a new Kubernetes cluster and create or replace a connected cluster tracked
+        resource in Azure Resource Manager (ARM).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -202,7 +202,7 @@ class ConnectedClusterOperations:
         """
 
     @distributed_trace_async
-    async def begin_create(
+    async def begin_create_or_replace(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -211,8 +211,8 @@ class ConnectedClusterOperations:
     ) -> AsyncLROPoller[_models.ConnectedCluster]:
         """Register a new Kubernetes cluster with Azure Resource Manager.
 
-        API to register a new Kubernetes cluster and create a tracked resource in Azure Resource
-        Manager (ARM).
+        API to register a new Kubernetes cluster and create or replace a connected cluster tracked
+        resource in Azure Resource Manager (ARM).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -238,7 +238,7 @@ class ConnectedClusterOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_initial(
+            raw_result = await self._create_or_replace_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 connected_cluster=connected_cluster,
@@ -738,7 +738,7 @@ class ConnectedClusterOperations:
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.ConnectedCluster"]:
-        """Lists all connected clusters.
+        """Lists all connected clusters in the given ResourceGroup.
 
         API to enumerate registered connected K8s clusters under a Resource Group.
 
@@ -823,7 +823,7 @@ class ConnectedClusterOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ConnectedCluster"]:
-        """Lists all connected clusters.
+        """Lists all connected clusters in the given Subscription.
 
         API to enumerate registered connected K8s clusters under a Subscription.
 

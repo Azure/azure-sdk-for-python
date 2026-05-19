@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hybridkubernetes/resource-manager/Microsoft.Kubernetes/stable/2021-10-01/examples/ConnectedClustersListClusterCredentialResultHPAAD.json
+# x-ms-original-file: specification/hybridkubernetes/resource-manager/Microsoft.Kubernetes/preview/2024-12-01-preview/examples/ConnectedClustersListClusterCredentialResultHPAAD.json
 if __name__ == "__main__":
     main()

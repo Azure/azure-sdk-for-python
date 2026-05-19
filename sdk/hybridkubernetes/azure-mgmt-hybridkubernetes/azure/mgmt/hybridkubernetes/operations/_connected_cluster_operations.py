@@ -42,13 +42,13 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_create_request(
+def build_create_or_replace_request(
     resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -84,7 +84,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -118,7 +118,7 @@ def build_get_request(resource_group_name: str, cluster_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -151,7 +151,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -184,7 +184,7 @@ def build_list_cluster_user_credential_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -218,7 +218,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -248,7 +248,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -289,7 +289,7 @@ class ConnectedClusterOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def _create_initial(
+    def _create_or_replace_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -319,7 +319,7 @@ class ConnectedClusterOperations:
         else:
             _json = self._serialize.body(connected_cluster, "ConnectedCluster")
 
-        _request = build_create_request(
+        _request = build_create_or_replace_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
@@ -360,7 +360,7 @@ class ConnectedClusterOperations:
         return deserialized  # type: ignore
 
     @overload
-    def begin_create(
+    def begin_create_or_replace(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -371,8 +371,8 @@ class ConnectedClusterOperations:
     ) -> LROPoller[_models.ConnectedCluster]:
         """Register a new Kubernetes cluster with Azure Resource Manager.
 
-        API to register a new Kubernetes cluster and create a tracked resource in Azure Resource
-        Manager (ARM).
+        API to register a new Kubernetes cluster and create or replace a connected cluster tracked
+        resource in Azure Resource Manager (ARM).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -391,7 +391,7 @@ class ConnectedClusterOperations:
         """
 
     @overload
-    def begin_create(
+    def begin_create_or_replace(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -402,8 +402,8 @@ class ConnectedClusterOperations:
     ) -> LROPoller[_models.ConnectedCluster]:
         """Register a new Kubernetes cluster with Azure Resource Manager.
 
-        API to register a new Kubernetes cluster and create a tracked resource in Azure Resource
-        Manager (ARM).
+        API to register a new Kubernetes cluster and create or replace a connected cluster tracked
+        resource in Azure Resource Manager (ARM).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -422,7 +422,7 @@ class ConnectedClusterOperations:
         """
 
     @distributed_trace
-    def begin_create(
+    def begin_create_or_replace(
         self,
         resource_group_name: str,
         cluster_name: str,
@@ -431,8 +431,8 @@ class ConnectedClusterOperations:
     ) -> LROPoller[_models.ConnectedCluster]:
         """Register a new Kubernetes cluster with Azure Resource Manager.
 
-        API to register a new Kubernetes cluster and create a tracked resource in Azure Resource
-        Manager (ARM).
+        API to register a new Kubernetes cluster and create or replace a connected cluster tracked
+        resource in Azure Resource Manager (ARM).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -457,7 +457,7 @@ class ConnectedClusterOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_initial(
+            raw_result = self._create_or_replace_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 connected_cluster=connected_cluster,
@@ -954,7 +954,7 @@ class ConnectedClusterOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.ConnectedCluster"]:
-        """Lists all connected clusters.
+        """Lists all connected clusters in the given ResourceGroup.
 
         API to enumerate registered connected K8s clusters under a Resource Group.
 
@@ -1038,7 +1038,7 @@ class ConnectedClusterOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.ConnectedCluster"]:
-        """Lists all connected clusters.
+        """Lists all connected clusters in the given Subscription.
 
         API to enumerate registered connected K8s clusters under a Subscription.
 

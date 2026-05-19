@@ -16,7 +16,7 @@ from azure.mgmt.hybridkubernetes import ConnectedKubernetesClient
     pip install azure-identity
     pip install azure-mgmt-hybridkubernetes
 # USAGE
-    python create_cluster_example.py
+    python create_cluster_agentless_kind_aws_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -90,6 +90,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hybridkubernetes/resource-manager/Microsoft.Kubernetes/preview/2024-12-01-preview/examples/CreateClusterExample.json
+# x-ms-original-file: specification/hybridkubernetes/resource-manager/Microsoft.Kubernetes/preview/2024-12-01-preview/examples/CreateClusterAgentless_KindAWSExample.json
 if __name__ == "__main__":
     main()
