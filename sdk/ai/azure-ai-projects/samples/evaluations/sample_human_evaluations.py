@@ -269,6 +269,7 @@ if __name__ == "__main__":
             project_resource_id=project_resource_id,
             enduser_id="241964ad-a8db-4318-9f2e-5a7dc1f05349",
             tags={"subscription_tier": "basic_plan"},
+            evaluation_id="986ee25a-2db1-423c-8e3c-a2774a4d2da2",
         )
         print("Emitted binary human evaluation event.")
 
@@ -283,5 +284,6 @@ if __name__ == "__main__":
             project_resource_id=project_resource_id,
             enduser_pseudo_id="sess_QdH5CAWJgqVT4rOr0qtumf",
             tags={"subscription_tier": "free_plan"},
+            evaluation_id="87e1fa43-46fc-4ddc-aaa6-c9af716fb47b"
         )
         print("Emitted likert_5 human evaluation event.")

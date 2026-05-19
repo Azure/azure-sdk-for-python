@@ -6,7 +6,6 @@
 import json
 import logging
 import sys
-import uuid
 from pathlib import Path
 
 import pytest
@@ -143,7 +142,6 @@ def test_internal_properties_is_json_encoded_string_with_binary_defaults(capture
     assert decoded["gen_ai.evaluation.type"] == "boolean"
     assert decoded["microsoft.human_evaluation.source"] == "end_user"
     assert decoded["microsoft.human_evaluation.kind"] == "binary"
-    assert "microsoft.human_evaluation.id" in decoded
 
 
 def test_internal_properties_likert_5_defaults(capture):
@@ -240,36 +238,43 @@ def test_both_enduser_ids_set_both_attributes(capture):
     assert attrs["enduser.pseudo.id"] == "sess_abc"
 
 
-def test_tags_fan_out_into_internal_properties(capture):
+def test_tags_fan_out_as_top_level_attributes(capture):
     emit_human_evaluation_event(
         evaluation_name="task_completion",
         score_value=1.0,
         kind="binary",
         tags={"subscription_tier": "basic_plan", "department": "marketing"},
     )
-    decoded = json.loads(_only_record(capture).__dict__["internal_properties"])
-    assert decoded["microsoft.human_evaluation.tags.subscription_tier"] == "basic_plan"
-    assert decoded["microsoft.human_evaluation.tags.department"] == "marketing"
+    attrs = _only_record(capture).__dict__
+    assert attrs["microsoft.human_evaluation.tags.subscription_tier"] == "basic_plan"
+    assert attrs["microsoft.human_evaluation.tags.department"] == "marketing"
+    # And explicitly: tags must NOT also be inside internal_properties.
+    decoded = json.loads(attrs["internal_properties"])
+    assert "microsoft.human_evaluation.tags.subscription_tier" not in decoded
+    assert "microsoft.human_evaluation.tags.department" not in decoded
 
 
-def test_evaluation_id_omitted_generates_uuid(capture):
+def test_evaluation_id_omitted_omits_attribute(capture):
     emit_human_evaluation_event(evaluation_name="task_completion", score_value=1.0, kind="binary")
-    decoded = json.loads(_only_record(capture).__dict__["internal_properties"])
-    generated = decoded["microsoft.human_evaluation.id"]
-    assert isinstance(generated, str) and generated
-    # Should parse as a UUID (raises if not).
-    uuid.UUID(generated)
+    attrs = _only_record(capture).__dict__
+    assert "microsoft.human_evaluation.id" not in attrs
+    # And explicitly: id must not be inside internal_properties either.
+    decoded = json.loads(attrs["internal_properties"])
+    assert "microsoft.human_evaluation.id" not in decoded
 
 
-def test_evaluation_id_provided_flows_through_verbatim(capture):
+def test_evaluation_id_provided_flows_through_verbatim_as_top_level_attribute(capture):
     emit_human_evaluation_event(
         evaluation_name="task_completion",
         score_value=1.0,
         kind="binary",
         evaluation_id="custom-eval-id-42",
     )
-    decoded = json.loads(_only_record(capture).__dict__["internal_properties"])
-    assert decoded["microsoft.human_evaluation.id"] == "custom-eval-id-42"
+    attrs = _only_record(capture).__dict__
+    assert attrs["microsoft.human_evaluation.id"] == "custom-eval-id-42"
+    # And explicitly: id must not also be inside internal_properties.
+    decoded = json.loads(attrs["internal_properties"])
+    assert "microsoft.human_evaluation.id" not in decoded
 
 
 def test_explanation_flows_through_as_top_level_attribute(capture):
