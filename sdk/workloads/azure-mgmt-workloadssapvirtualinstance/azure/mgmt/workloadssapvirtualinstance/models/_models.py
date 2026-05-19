@@ -9,10 +9,9 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
     FileShareConfigurationType,
     NamingPatternType,
@@ -26,7 +25,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ApplicationServerConfiguration(_model_base.Model):
+class ApplicationServerConfiguration(_Model):
     """Gets or sets the application server configuration.
 
     :ivar subnet_id: The subnet id. Required.
@@ -67,7 +66,7 @@ class ApplicationServerConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationServerFullResourceNames(_model_base.Model):
+class ApplicationServerFullResourceNames(_Model):
     """The full resource names object for application layer resources. The number of entries in this
     list should be equal to the number VMs to be created for application layer.
 
@@ -79,7 +78,7 @@ class ApplicationServerFullResourceNames(_model_base.Model):
     :vartype availability_set_name: str
     """
 
-    virtual_machines: Optional[List["_models.VirtualMachineResourceNames"]] = rest_field(
+    virtual_machines: Optional[list["_models.VirtualMachineResourceNames"]] = rest_field(
         name="virtualMachines", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of virtual machine naming details."""
@@ -93,7 +92,7 @@ class ApplicationServerFullResourceNames(_model_base.Model):
     def __init__(
         self,
         *,
-        virtual_machines: Optional[List["_models.VirtualMachineResourceNames"]] = None,
+        virtual_machines: Optional[list["_models.VirtualMachineResourceNames"]] = None,
         availability_set_name: Optional[str] = None,
     ) -> None: ...
 
@@ -108,7 +107,7 @@ class ApplicationServerFullResourceNames(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationServerVmDetails(_model_base.Model):
+class ApplicationServerVmDetails(_Model):
     """The Application Server VM Details.
 
     :ivar type: Defines the type of application server VM. Known values are: "Active", "Standby",
@@ -128,14 +127,14 @@ class ApplicationServerVmDetails(_model_base.Model):
      \"Unknown\"."""
     virtual_machine_id: Optional[str] = rest_field(name="virtualMachineId", visibility=["read"])
     """The virtual machine id."""
-    storage_details: Optional[List["_models.StorageInformation"]] = rest_field(
+    storage_details: Optional[list["_models.StorageInformation"]] = rest_field(
         name="storageDetails", visibility=["read"]
     )
     """Storage details of all the Storage Accounts attached to the App Virtual Machine. For e.g. NFS
      on AFS Shared Storage."""
 
 
-class CentralServerConfiguration(_model_base.Model):
+class CentralServerConfiguration(_Model):
     """Gets or sets the central server configuration.
 
     :ivar subnet_id: The subnet id. Required.
@@ -176,7 +175,7 @@ class CentralServerConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CentralServerFullResourceNames(_model_base.Model):
+class CentralServerFullResourceNames(_Model):
     """The full resource names object for central server layer resources.
 
     :ivar virtual_machines: The list of names for all ASCS virtual machines to be deployed. The
@@ -192,7 +191,7 @@ class CentralServerFullResourceNames(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.LoadBalancerResourceNames
     """
 
-    virtual_machines: Optional[List["_models.VirtualMachineResourceNames"]] = rest_field(
+    virtual_machines: Optional[list["_models.VirtualMachineResourceNames"]] = rest_field(
         name="virtualMachines", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of names for all ASCS virtual machines to be deployed. The number of entries in this
@@ -212,7 +211,7 @@ class CentralServerFullResourceNames(_model_base.Model):
     def __init__(
         self,
         *,
-        virtual_machines: Optional[List["_models.VirtualMachineResourceNames"]] = None,
+        virtual_machines: Optional[list["_models.VirtualMachineResourceNames"]] = None,
         availability_set_name: Optional[str] = None,
         load_balancer: Optional["_models.LoadBalancerResourceNames"] = None,
     ) -> None: ...
@@ -228,7 +227,7 @@ class CentralServerFullResourceNames(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CentralServerVmDetails(_model_base.Model):
+class CentralServerVmDetails(_Model):
     """The SAP Central Services Instance VM details.
 
     :ivar type: Defines the type of central server VM. Known values are: "Primary", "Secondary",
@@ -248,14 +247,14 @@ class CentralServerVmDetails(_model_base.Model):
      \"Unknown\", \"ASCS\", \"ERSInactive\", \"ERS\", and \"Standby\"."""
     virtual_machine_id: Optional[str] = rest_field(name="virtualMachineId", visibility=["read"])
     """The virtual machine id."""
-    storage_details: Optional[List["_models.StorageInformation"]] = rest_field(
+    storage_details: Optional[list["_models.StorageInformation"]] = rest_field(
         name="storageDetails", visibility=["read"]
     )
     """Storage details of all the Storage Accounts attached to the ASCS Virtual Machine. For e.g. NFS
      on AFS Shared Storage."""
 
 
-class FileShareConfiguration(_model_base.Model):
+class FileShareConfiguration(_Model):
     """File Share configuration details, populated with information on storage configuration mounted
     on the VIS. The createAndMount option is selected in case of missing input.
 
@@ -268,7 +267,7 @@ class FileShareConfiguration(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.FileShareConfigurationType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     configuration_type: str = rest_discriminator(
         name="configurationType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -339,10 +338,11 @@ class CreateAndMountFileShareConfiguration(FileShareConfiguration, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, configuration_type=FileShareConfigurationType.CREATE_AND_MOUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.configuration_type = FileShareConfigurationType.CREATE_AND_MOUNT  # type: ignore
 
 
-class DatabaseConfiguration(_model_base.Model):
+class DatabaseConfiguration(_Model):
     """Gets or sets the database configuration.
 
     :ivar database_type: The database type. Known values are: "HANA" and "DB2".
@@ -397,7 +397,7 @@ class DatabaseConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseServerFullResourceNames(_model_base.Model):
+class DatabaseServerFullResourceNames(_Model):
     """The full resource names object for database layer resources. The number of entries in this list
     should be equal to the number VMs to be created for database layer.
 
@@ -412,7 +412,7 @@ class DatabaseServerFullResourceNames(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.LoadBalancerResourceNames
     """
 
-    virtual_machines: Optional[List["_models.VirtualMachineResourceNames"]] = rest_field(
+    virtual_machines: Optional[list["_models.VirtualMachineResourceNames"]] = rest_field(
         name="virtualMachines", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of virtual machine naming details."""
@@ -430,7 +430,7 @@ class DatabaseServerFullResourceNames(_model_base.Model):
     def __init__(
         self,
         *,
-        virtual_machines: Optional[List["_models.VirtualMachineResourceNames"]] = None,
+        virtual_machines: Optional[list["_models.VirtualMachineResourceNames"]] = None,
         availability_set_name: Optional[str] = None,
         load_balancer: Optional["_models.LoadBalancerResourceNames"] = None,
     ) -> None: ...
@@ -446,7 +446,7 @@ class DatabaseServerFullResourceNames(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseVmDetails(_model_base.Model):
+class DatabaseVmDetails(_Model):
     """Database VM details.
 
     :ivar virtual_machine_id: The virtual machine id.
@@ -465,14 +465,14 @@ class DatabaseVmDetails(_model_base.Model):
     status: Optional[Union[str, "_models.SAPVirtualInstanceStatus"]] = rest_field(visibility=["read"])
     """Defines the SAP Instance status. Known values are: \"Starting\", \"Running\", \"Stopping\",
      \"Offline\", \"PartiallyRunning\", \"Unavailable\", and \"SoftShutdown\"."""
-    storage_details: Optional[List["_models.StorageInformation"]] = rest_field(
+    storage_details: Optional[list["_models.StorageInformation"]] = rest_field(
         name="storageDetails", visibility=["read"]
     )
     """Storage details of all the Storage Accounts attached to the Database Virtual Machine. For e.g.
      NFS on AFS Shared Storage."""
 
 
-class DeployerVmPackages(_model_base.Model):
+class DeployerVmPackages(_Model):
     """Defines the url and storage account ID where deployer VM packages are uploaded.
 
     :ivar url: The URL to the deployer VM packages file.
@@ -507,7 +507,7 @@ class DeployerVmPackages(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPConfiguration(_model_base.Model):
+class SAPConfiguration(_Model):
     """The SAP Configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -519,7 +519,7 @@ class SAPConfiguration(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.SAPConfigurationType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     configuration_type: str = rest_discriminator(
         name="configurationType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -593,7 +593,8 @@ class DeploymentConfiguration(SAPConfiguration, discriminator="Deployment"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, configuration_type=SAPConfigurationType.DEPLOYMENT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.configuration_type = SAPConfigurationType.DEPLOYMENT  # type: ignore
 
 
 class DeploymentWithOSConfiguration(SAPConfiguration, discriminator="DeploymentWithOSConfig"):
@@ -654,7 +655,8 @@ class DeploymentWithOSConfiguration(SAPConfiguration, discriminator="DeploymentW
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, configuration_type=SAPConfigurationType.DEPLOYMENT_WITH_OS_CONFIG, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.configuration_type = SAPConfigurationType.DEPLOYMENT_WITH_OS_CONFIG  # type: ignore
 
 
 class DiscoveryConfiguration(SAPConfiguration, discriminator="Discovery"):
@@ -708,10 +710,11 @@ class DiscoveryConfiguration(SAPConfiguration, discriminator="Discovery"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, configuration_type=SAPConfigurationType.DISCOVERY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.configuration_type = SAPConfigurationType.DISCOVERY  # type: ignore
 
 
-class DiskConfiguration(_model_base.Model):
+class DiskConfiguration(_Model):
     """The Disk Configuration Details.
 
     :ivar disk_volume_configurations: The disk configuration for the db volume. For HANA, Required
@@ -721,7 +724,7 @@ class DiskConfiguration(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.DiskVolumeConfiguration]
     """
 
-    disk_volume_configurations: Optional[Dict[str, "_models.DiskVolumeConfiguration"]] = rest_field(
+    disk_volume_configurations: Optional[dict[str, "_models.DiskVolumeConfiguration"]] = rest_field(
         name="diskVolumeConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """The disk configuration for the db volume. For HANA, Required volumes are: ['hana/data',
@@ -731,7 +734,7 @@ class DiskConfiguration(_model_base.Model):
     def __init__(
         self,
         *,
-        disk_volume_configurations: Optional[Dict[str, "_models.DiskVolumeConfiguration"]] = None,
+        disk_volume_configurations: Optional[dict[str, "_models.DiskVolumeConfiguration"]] = None,
     ) -> None: ...
 
     @overload
@@ -745,7 +748,7 @@ class DiskConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskDetails(_model_base.Model):
+class DiskDetails(_Model):
     """The supported disk size details for a disk type.
 
     :ivar sku: The type of disk sku. For example, Standard_LRS, Standard_ZRS, Premium_LRS,
@@ -812,7 +815,7 @@ class DiskDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskSku(_model_base.Model):
+class DiskSku(_Model):
     """The type of disk sku. For example, Standard_LRS, Standard_ZRS, Premium_LRS, Premium_ZRS.
 
     :ivar name: Defines the disk sku name. Known values are: "Standard_LRS", "Premium_LRS",
@@ -845,7 +848,7 @@ class DiskSku(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskVolumeConfiguration(_model_base.Model):
+class DiskVolumeConfiguration(_Model):
     """The disk configuration required for the selected volume.
 
     :ivar count: The total number of disks required for the concerned volume.
@@ -883,7 +886,7 @@ class DiskVolumeConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EnqueueReplicationServerProperties(_model_base.Model):
+class EnqueueReplicationServerProperties(_Model):
     """Defines the SAP Enqueue Replication Server (ERS) properties.
 
     :ivar ers_version: Defines the type of Enqueue Replication Server. Known values are:
@@ -925,7 +928,7 @@ class EnqueueReplicationServerProperties(_model_base.Model):
      and \"Degraded\"."""
 
 
-class EnqueueServerProperties(_model_base.Model):
+class EnqueueServerProperties(_Model):
     """Defines the SAP Enqueue Server properties.
 
     :ivar hostname: Enqueue Server SAP Hostname.
@@ -950,7 +953,7 @@ class EnqueueServerProperties(_model_base.Model):
      and \"Degraded\"."""
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -965,7 +968,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDefinition(_model_base.Model):
+class ErrorDefinition(_Model):
     """Error definition.
 
     :ivar code: Service specific error code which serves as the substatus for the HTTP error code.
@@ -980,11 +983,11 @@ class ErrorDefinition(_model_base.Model):
     """Service specific error code which serves as the substatus for the HTTP error code."""
     message: Optional[str] = rest_field(visibility=["read"])
     """Description of the error."""
-    details: Optional[List["_models.ErrorDefinition"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDefinition"]] = rest_field(visibility=["read"])
     """Internal error details."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -1006,17 +1009,16 @@ class ErrorDetail(_model_base.Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.workloadssapvirtualinstance.models.ErrorDetail
@@ -1043,7 +1045,7 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftwareConfiguration(_model_base.Model):
+class SoftwareConfiguration(_Model):
     """The SAP Software configuration Input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1056,7 +1058,7 @@ class SoftwareConfiguration(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.SAPSoftwareInstallationType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     software_installation_type: str = rest_discriminator(
         name="softwareInstallationType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1118,10 +1120,11 @@ class ExternalInstallationSoftwareConfiguration(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, software_installation_type=SAPSoftwareInstallationType.EXTERNAL, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.software_installation_type = SAPSoftwareInstallationType.EXTERNAL  # type: ignore
 
 
-class GatewayServerProperties(_model_base.Model):
+class GatewayServerProperties(_Model):
     """Defines the SAP Gateway Server properties.
 
     :ivar port: Gateway Port.
@@ -1138,7 +1141,7 @@ class GatewayServerProperties(_model_base.Model):
      and \"Degraded\"."""
 
 
-class HighAvailabilityConfiguration(_model_base.Model):
+class HighAvailabilityConfiguration(_Model):
     """Gets or sets the high availability configuration.
 
     :ivar high_availability_type: The high availability type. Required. Known values are:
@@ -1171,7 +1174,7 @@ class HighAvailabilityConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class HighAvailabilitySoftwareConfiguration(_model_base.Model):
+class HighAvailabilitySoftwareConfiguration(_Model):
     """Gets or sets the HA software configuration.
 
     :ivar fencing_client_id: The fencing client id. Required.
@@ -1210,7 +1213,7 @@ class HighAvailabilitySoftwareConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageReference(_model_base.Model):
+class ImageReference(_Model):
     """Specifies information about the image to use. You can specify information about platform
     images, marketplace images, or virtual machine images. This element is required when you want
     to use a platform image, marketplace image, or virtual machine image, but is not used in other
@@ -1276,7 +1279,7 @@ class ImageReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InfrastructureConfiguration(_model_base.Model):
+class InfrastructureConfiguration(_Model):
     """Deploy SAP Infrastructure Details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1291,7 +1294,7 @@ class InfrastructureConfiguration(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.SAPDeploymentType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     app_resource_group: str = rest_field(
         name="appResourceGroup", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1321,7 +1324,7 @@ class InfrastructureConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OSConfiguration(_model_base.Model):
+class OSConfiguration(_Model):
     """Defines the OS configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1331,7 +1334,7 @@ class OSConfiguration(_model_base.Model):
     :vartype os_type: str or ~azure.mgmt.workloadssapvirtualinstance.models.OSType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     os_type: str = rest_discriminator(name="osType", visibility=["read", "create", "update", "delete", "query"])
     """The OS Type. Required. Known values are: \"Linux\" and \"Windows\"."""
 
@@ -1401,10 +1404,11 @@ class LinuxConfiguration(OSConfiguration, discriminator="Linux"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, os_type=OSType.LINUX, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.os_type = OSType.LINUX  # type: ignore
 
 
-class LoadBalancerDetails(_model_base.Model):
+class LoadBalancerDetails(_Model):
     """The Load Balancer details such as Load Balancer ID.
 
     :ivar id: Fully qualified resource ID for the load balancer.
@@ -1415,7 +1419,7 @@ class LoadBalancerDetails(_model_base.Model):
     """Fully qualified resource ID for the load balancer."""
 
 
-class LoadBalancerResourceNames(_model_base.Model):
+class LoadBalancerResourceNames(_Model):
     """The resource names object for load balancer and related resources.
 
     :ivar load_balancer_name: The full resource name for load balancer. If this value is not
@@ -1437,17 +1441,17 @@ class LoadBalancerResourceNames(_model_base.Model):
     )
     """The full resource name for load balancer. If this value is not provided, load balancer will be
      name as {ASCS/DB}-loadBalancer."""
-    frontend_ip_configuration_names: Optional[List[str]] = rest_field(
+    frontend_ip_configuration_names: Optional[list[str]] = rest_field(
         name="frontendIpConfigurationNames", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of frontend IP configuration names. If provided as input, size of this list should be
      2 for cs layer and should be 1 for database layer."""
-    backend_pool_names: Optional[List[str]] = rest_field(
+    backend_pool_names: Optional[list[str]] = rest_field(
         name="backendPoolNames", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of backend pool names. Currently, ACSS deploys only one backend pool and hence, size
      of this list should be 1."""
-    health_probe_names: Optional[List[str]] = rest_field(
+    health_probe_names: Optional[list[str]] = rest_field(
         name="healthProbeNames", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of health probe names. If provided as input, size of this list should be 2 for cs
@@ -1458,9 +1462,9 @@ class LoadBalancerResourceNames(_model_base.Model):
         self,
         *,
         load_balancer_name: Optional[str] = None,
-        frontend_ip_configuration_names: Optional[List[str]] = None,
-        backend_pool_names: Optional[List[str]] = None,
-        health_probe_names: Optional[List[str]] = None,
+        frontend_ip_configuration_names: Optional[list[str]] = None,
+        backend_pool_names: Optional[list[str]] = None,
+        health_probe_names: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1474,7 +1478,7 @@ class LoadBalancerResourceNames(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedRGConfiguration(_model_base.Model):
+class ManagedRGConfiguration(_Model):
     """Managed resource group configuration.
 
     :ivar name: Managed resource group name.
@@ -1502,7 +1506,7 @@ class ManagedRGConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageServerProperties(_model_base.Model):
+class MessageServerProperties(_Model):
     """Defines the SAP message server properties.
 
     :ivar ms_port: message server port.
@@ -1578,10 +1582,11 @@ class MountFileShareConfiguration(FileShareConfiguration, discriminator="Mount")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, configuration_type=FileShareConfigurationType.MOUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.configuration_type = FileShareConfigurationType.MOUNT  # type: ignore
 
 
-class NetworkConfiguration(_model_base.Model):
+class NetworkConfiguration(_Model):
     """Defines the network configuration type for SAP system infrastructure that is being deployed.
 
     :ivar is_secondary_ip_enabled: Specifies whether a secondary IP address should be added to the
@@ -1613,7 +1618,7 @@ class NetworkConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfaceResourceNames(_model_base.Model):
+class NetworkInterfaceResourceNames(_Model):
     """The resource names object for network interface and related resources.
 
     :ivar network_interface_name: The full name for network interface. If name is not provided,
@@ -1653,8 +1658,8 @@ class NetworkInterfaceResourceNames(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -1710,8 +1715,8 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
-    """Localized display information for and operation.
+class OperationDisplay(_Model):
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -1741,7 +1746,7 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class OperationStatusResult(_model_base.Model):
+class OperationStatusResult(_Model):
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -1783,7 +1788,7 @@ class OperationStatusResult(_model_base.Model):
         name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The end time of the operation."""
-    operations: Optional[List["_models.OperationStatusResult"]] = rest_field(
+    operations: Optional[list["_models.OperationStatusResult"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The operations list."""
@@ -1802,7 +1807,7 @@ class OperationStatusResult(_model_base.Model):
         percent_complete: Optional[float] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
     ) -> None: ...
 
@@ -1817,7 +1822,7 @@ class OperationStatusResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OSProfile(_model_base.Model):
+class OSProfile(_Model):
     """Specifies the operating system settings for the virtual machine. Some of the settings cannot be
     changed once VM is provisioned.
 
@@ -1900,7 +1905,7 @@ class OSProfile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OsSapConfiguration(_model_base.Model):
+class OsSapConfiguration(_Model):
     """Defines the OS and SAP Configurations for Deployment.
 
     :ivar deployer_vm_packages: The url and storage account ID where deployer VM packages are
@@ -1937,8 +1942,8 @@ class OsSapConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1966,8 +1971,7 @@ class Resource(_model_base.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1986,7 +1990,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -1996,7 +2000,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2043,7 +2047,7 @@ class SAPApplicationServerInstance(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SAPApplicationServerProperties"] = None,
     ) -> None: ...
 
@@ -2058,7 +2062,7 @@ class SAPApplicationServerInstance(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SAPApplicationServerProperties(_model_base.Model):
+class SAPApplicationServerProperties(_Model):
     """Defines the SAP Application Server instance properties.
 
     :ivar instance_no: Application server Instance Number.
@@ -2127,7 +2131,7 @@ class SAPApplicationServerProperties(_model_base.Model):
     )
     """The Load Balancer details such as LoadBalancer ID attached to Application Server Virtual
      Machines."""
-    vm_details: Optional[List["_models.ApplicationServerVmDetails"]] = rest_field(name="vmDetails", visibility=["read"])
+    vm_details: Optional[list["_models.ApplicationServerVmDetails"]] = rest_field(name="vmDetails", visibility=["read"])
     """The list of virtual machines."""
     status: Optional[Union[str, "_models.SAPVirtualInstanceStatus"]] = rest_field(visibility=["read"])
     """Defines the SAP Instance status. Known values are: \"Starting\", \"Running\", \"Stopping\",
@@ -2144,7 +2148,7 @@ class SAPApplicationServerProperties(_model_base.Model):
     """Defines the Application Instance errors."""
 
 
-class SAPAvailabilityZoneDetailsRequest(_model_base.Model):
+class SAPAvailabilityZoneDetailsRequest(_Model):
     """The SAP request to get list of availability zones.
 
     :ivar app_location: The geo-location where the SAP resources will be created. Required.
@@ -2188,7 +2192,7 @@ class SAPAvailabilityZoneDetailsRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPAvailabilityZoneDetailsResult(_model_base.Model):
+class SAPAvailabilityZoneDetailsResult(_Model):
     """The list of supported availability zone pairs which are part of SAP HA deployment.
 
     :ivar availability_zone_pairs: Gets the list of availability zone pairs.
@@ -2196,7 +2200,7 @@ class SAPAvailabilityZoneDetailsResult(_model_base.Model):
      list[~azure.mgmt.workloadssapvirtualinstance.models.SAPAvailabilityZonePair]
     """
 
-    availability_zone_pairs: Optional[List["_models.SAPAvailabilityZonePair"]] = rest_field(
+    availability_zone_pairs: Optional[list["_models.SAPAvailabilityZonePair"]] = rest_field(
         name="availabilityZonePairs", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets the list of availability zone pairs."""
@@ -2205,7 +2209,7 @@ class SAPAvailabilityZoneDetailsResult(_model_base.Model):
     def __init__(
         self,
         *,
-        availability_zone_pairs: Optional[List["_models.SAPAvailabilityZonePair"]] = None,
+        availability_zone_pairs: Optional[list["_models.SAPAvailabilityZonePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -2219,7 +2223,7 @@ class SAPAvailabilityZoneDetailsResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPAvailabilityZonePair(_model_base.Model):
+class SAPAvailabilityZonePair(_Model):
     """The SAP Availability Zone Pair.
 
     :ivar zone_a: The zone A.
@@ -2284,7 +2288,7 @@ class SAPCentralServerInstance(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SAPCentralServerProperties"] = None,
     ) -> None: ...
 
@@ -2299,7 +2303,7 @@ class SAPCentralServerInstance(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SAPCentralServerProperties(_model_base.Model):
+class SAPCentralServerProperties(_Model):
     """Defines the SAP Central Services Instance properties.
 
     :ivar instance_no: The central services instance number.
@@ -2372,7 +2376,7 @@ class SAPCentralServerProperties(_model_base.Model):
         name="loadBalancerDetails", visibility=["read"]
     )
     """The Load Balancer details such as LoadBalancer ID attached to ASCS Virtual Machines."""
-    vm_details: Optional[List["_models.CentralServerVmDetails"]] = rest_field(name="vmDetails", visibility=["read"])
+    vm_details: Optional[list["_models.CentralServerVmDetails"]] = rest_field(name="vmDetails", visibility=["read"])
     """The list of virtual machines corresponding to the Central Services instance."""
     status: Optional[Union[str, "_models.SAPVirtualInstanceStatus"]] = rest_field(visibility=["read"])
     """Defines the SAP Instance status. Known values are: \"Starting\", \"Running\", \"Stopping\",
@@ -2441,7 +2445,7 @@ class SAPDatabaseInstance(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SAPDatabaseProperties"] = None,
     ) -> None: ...
 
@@ -2456,7 +2460,7 @@ class SAPDatabaseInstance(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SAPDatabaseProperties(_model_base.Model):
+class SAPDatabaseProperties(_Model):
     """Defines the Database properties.
 
     :ivar subnet: Database subnet.
@@ -2497,7 +2501,7 @@ class SAPDatabaseProperties(_model_base.Model):
         name="loadBalancerDetails", visibility=["read"]
     )
     """The Load Balancer details such as LoadBalancer ID attached to Database Virtual Machines."""
-    vm_details: Optional[List["_models.DatabaseVmDetails"]] = rest_field(name="vmDetails", visibility=["read"])
+    vm_details: Optional[list["_models.DatabaseVmDetails"]] = rest_field(name="vmDetails", visibility=["read"])
     """The list of virtual machines corresponding to the Database resource."""
     status: Optional[Union[str, "_models.SAPVirtualInstanceStatus"]] = rest_field(visibility=["read"])
     """Defines the SAP Instance status. Known values are: \"Starting\", \"Running\", \"Stopping\",
@@ -2511,7 +2515,7 @@ class SAPDatabaseProperties(_model_base.Model):
     """Defines the errors related to Database resource."""
 
 
-class SAPDiskConfiguration(_model_base.Model):
+class SAPDiskConfiguration(_Model):
     """The SAP Disk Configuration contains 'recommended disk' details and list of supported disks
     detail for a volume type.
 
@@ -2527,7 +2531,7 @@ class SAPDiskConfiguration(_model_base.Model):
         name="recommendedConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The recommended disk details for a given VM Sku."""
-    supported_configurations: Optional[List["_models.DiskDetails"]] = rest_field(
+    supported_configurations: Optional[list["_models.DiskDetails"]] = rest_field(
         name="supportedConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of supported disks for a given VM Sku."""
@@ -2537,7 +2541,7 @@ class SAPDiskConfiguration(_model_base.Model):
         self,
         *,
         recommended_configuration: Optional["_models.DiskVolumeConfiguration"] = None,
-        supported_configurations: Optional[List["_models.DiskDetails"]] = None,
+        supported_configurations: Optional[list["_models.DiskDetails"]] = None,
     ) -> None: ...
 
     @overload
@@ -2551,7 +2555,7 @@ class SAPDiskConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPDiskConfigurationsRequest(_model_base.Model):
+class SAPDiskConfigurationsRequest(_Model):
     """The SAP request to get list of disk configurations.
 
     :ivar app_location: The geo-location where the SAP resources will be created. Required.
@@ -2619,7 +2623,7 @@ class SAPDiskConfigurationsRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPDiskConfigurationsResult(_model_base.Model):
+class SAPDiskConfigurationsResult(_Model):
     """The list of disk configuration for vmSku which are part of SAP deployment.
 
     :ivar volume_configurations: The disk configuration for the db volume. For HANA, Required
@@ -2629,7 +2633,7 @@ class SAPDiskConfigurationsResult(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.SAPDiskConfiguration]
     """
 
-    volume_configurations: Optional[Dict[str, "_models.SAPDiskConfiguration"]] = rest_field(
+    volume_configurations: Optional[dict[str, "_models.SAPDiskConfiguration"]] = rest_field(
         name="volumeConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """The disk configuration for the db volume. For HANA, Required volumes are: ['hana/data',
@@ -2639,7 +2643,7 @@ class SAPDiskConfigurationsResult(_model_base.Model):
     def __init__(
         self,
         *,
-        volume_configurations: Optional[Dict[str, "_models.SAPDiskConfiguration"]] = None,
+        volume_configurations: Optional[dict[str, "_models.SAPDiskConfiguration"]] = None,
     ) -> None: ...
 
     @overload
@@ -2709,12 +2713,11 @@ class SAPInstallWithoutOSConfigSoftwareConfiguration(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, software_installation_type=SAPSoftwareInstallationType.SAP_INSTALL_WITHOUT_OS_CONFIG, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.software_installation_type = SAPSoftwareInstallationType.SAP_INSTALL_WITHOUT_OS_CONFIG  # type: ignore
 
 
-class SAPSizingRecommendationRequest(_model_base.Model):
+class SAPSizingRecommendationRequest(_Model):
     """The SAP Sizing Recommendation request.
 
     :ivar app_location: The geo-location where the resource is to be created. Required.
@@ -2803,7 +2806,7 @@ class SAPSizingRecommendationRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPSizingRecommendationResult(_model_base.Model):
+class SAPSizingRecommendationResult(_Model):
     """The SAP sizing recommendation result.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2815,7 +2818,7 @@ class SAPSizingRecommendationResult(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.SAPDeploymentType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     deployment_type: str = rest_discriminator(
         name="deploymentType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2840,14 +2843,14 @@ class SAPSizingRecommendationResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPSupportedResourceSkusResult(_model_base.Model):
+class SAPSupportedResourceSkusResult(_Model):
     """The list of supported SKUs for different resources which are part of SAP deployment.
 
     :ivar supported_skus: Gets the list of SAP supported SKUs.
     :vartype supported_skus: list[~azure.mgmt.workloadssapvirtualinstance.models.SAPSupportedSku]
     """
 
-    supported_skus: Optional[List["_models.SAPSupportedSku"]] = rest_field(
+    supported_skus: Optional[list["_models.SAPSupportedSku"]] = rest_field(
         name="supportedSkus", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets the list of SAP supported SKUs."""
@@ -2856,7 +2859,7 @@ class SAPSupportedResourceSkusResult(_model_base.Model):
     def __init__(
         self,
         *,
-        supported_skus: Optional[List["_models.SAPSupportedSku"]] = None,
+        supported_skus: Optional[list["_models.SAPSupportedSku"]] = None,
     ) -> None: ...
 
     @overload
@@ -2870,7 +2873,7 @@ class SAPSupportedResourceSkusResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPSupportedSku(_model_base.Model):
+class SAPSupportedSku(_Model):
     """The SAP supported SKU.
 
     :ivar vm_sku: The VM Sku.
@@ -2913,7 +2916,7 @@ class SAPSupportedSku(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPSupportedSkusRequest(_model_base.Model):
+class SAPSupportedSkusRequest(_Model):
     """The SAP request to get list of supported SKUs.
 
     :ivar app_location: The geo-location where the resource is to be created. Required.
@@ -3024,7 +3027,7 @@ class SAPVirtualInstance(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SAPVirtualInstanceProperties"] = None,
         identity: Optional["_models.SAPVirtualInstanceIdentity"] = None,
     ) -> None: ...
@@ -3040,7 +3043,7 @@ class SAPVirtualInstance(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SAPVirtualInstanceError(_model_base.Model):
+class SAPVirtualInstanceError(_Model):
     """An error response from the Virtual Instance for SAP Workload service.
 
     :ivar properties: The Virtual Instance for SAP error body.
@@ -3070,7 +3073,7 @@ class SAPVirtualInstanceError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPVirtualInstanceIdentity(_model_base.Model):
+class SAPVirtualInstanceIdentity(_Model):
     """Managed service identity (user assigned identities).
 
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
@@ -3087,7 +3090,7 @@ class SAPVirtualInstanceIdentity(_model_base.Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\"
      and \"UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -3097,7 +3100,7 @@ class SAPVirtualInstanceIdentity(_model_base.Model):
         self,
         *,
         type: Union[str, "_models.SAPVirtualInstanceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -3111,7 +3114,7 @@ class SAPVirtualInstanceIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SAPVirtualInstanceProperties(_model_base.Model):
+class SAPVirtualInstanceProperties(_Model):
     """Defines the Virtual Instance for SAP solutions resource properties.
 
     :ivar environment: Defines the environment type - Production/Non Production. Required. Known
@@ -3288,10 +3291,11 @@ class ServiceInitiatedSoftwareConfiguration(SoftwareConfiguration, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, software_installation_type=SAPSoftwareInstallationType.SERVICE_INITIATED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.software_installation_type = SAPSoftwareInstallationType.SERVICE_INITIATED  # type: ignore
 
 
-class SharedStorageResourceNames(_model_base.Model):
+class SharedStorageResourceNames(_Model):
     """The resource names object for shared storage.
 
     :ivar shared_storage_account_name: The full name of the shared storage account. If it is not
@@ -3410,10 +3414,11 @@ class SingleServerConfiguration(InfrastructureConfiguration, discriminator="Sing
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, deployment_type=SAPDeploymentType.SINGLE_SERVER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.deployment_type = SAPDeploymentType.SINGLE_SERVER  # type: ignore
 
 
-class SingleServerCustomResourceNames(_model_base.Model):
+class SingleServerCustomResourceNames(_Model):
     """The resource-names input to specify custom names for underlying azure resources that are part
     of a single server SAP system.
 
@@ -3425,7 +3430,7 @@ class SingleServerCustomResourceNames(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.NamingPatternType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     naming_pattern_type: str = rest_discriminator(
         name="namingPatternType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3485,7 +3490,8 @@ class SingleServerFullResourceNames(SingleServerCustomResourceNames, discriminat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, naming_pattern_type=NamingPatternType.FULL_RESOURCE_NAME, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.naming_pattern_type = NamingPatternType.FULL_RESOURCE_NAME  # type: ignore
 
 
 class SingleServerRecommendationResult(SAPSizingRecommendationResult, discriminator="SingleServer"):
@@ -3518,7 +3524,8 @@ class SingleServerRecommendationResult(SAPSizingRecommendationResult, discrimina
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, deployment_type=SAPDeploymentType.SINGLE_SERVER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.deployment_type = SAPDeploymentType.SINGLE_SERVER  # type: ignore
 
 
 class SkipFileShareConfiguration(FileShareConfiguration, discriminator="Skip"):
@@ -3547,17 +3554,18 @@ class SkipFileShareConfiguration(FileShareConfiguration, discriminator="Skip"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, configuration_type=FileShareConfigurationType.SKIP, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.configuration_type = FileShareConfigurationType.SKIP  # type: ignore
 
 
-class SshConfiguration(_model_base.Model):
+class SshConfiguration(_Model):
     """SSH configuration for Linux based VMs running on Azure.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with linux based VMs.
     :vartype public_keys: list[~azure.mgmt.workloadssapvirtualinstance.models.SshPublicKey]
     """
 
-    public_keys: Optional[List["_models.SshPublicKey"]] = rest_field(
+    public_keys: Optional[list["_models.SshPublicKey"]] = rest_field(
         name="publicKeys", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of SSH public keys used to authenticate with linux based VMs."""
@@ -3566,7 +3574,7 @@ class SshConfiguration(_model_base.Model):
     def __init__(
         self,
         *,
-        public_keys: Optional[List["_models.SshPublicKey"]] = None,
+        public_keys: Optional[list["_models.SshPublicKey"]] = None,
     ) -> None: ...
 
     @overload
@@ -3580,7 +3588,7 @@ class SshConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SshKeyPair(_model_base.Model):
+class SshKeyPair(_Model):
     """The SSH Key-pair used to authenticate with the VM. The key needs to be at least 2048-bit and in
     ssh-rsa format. For creating ssh keys, see `Create SSH keys on Linux and Mac for Linux VMs in
     Azure <https://learn.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed>`_.
@@ -3617,7 +3625,7 @@ class SshKeyPair(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SshPublicKey(_model_base.Model):
+class SshPublicKey(_Model):
     """Contains information about SSH certificate public key and the path on the Linux VM where the
     public key is placed.
 
@@ -3652,7 +3660,7 @@ class SshPublicKey(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StartRequest(_model_base.Model):
+class StartRequest(_Model):
     """Start SAP instance(s) request body.
 
     :ivar start_vm: The boolean value indicates whether to start the virtual machines before
@@ -3682,7 +3690,7 @@ class StartRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StopRequest(_model_base.Model):
+class StopRequest(_Model):
     """Stop SAP instance(s) request body.
 
     :ivar soft_stop_timeout_seconds: This parameter defines how long (in seconds) the soft shutdown
@@ -3726,7 +3734,7 @@ class StopRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageConfiguration(_model_base.Model):
+class StorageConfiguration(_Model):
     """Gets or sets the storage configuration.
 
     :ivar transport_file_share_configuration: The properties of the transport directory attached to
@@ -3760,7 +3768,7 @@ class StorageConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageInformation(_model_base.Model):
+class StorageInformation(_Model):
     """Storage details of all the Storage accounts attached to the VM. For e.g. NFS on AFS Shared
     Storage.
 
@@ -3772,7 +3780,7 @@ class StorageInformation(_model_base.Model):
     """Fully qualified resource ID for the storage account."""
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3928,10 +3936,11 @@ class ThreeTierConfiguration(InfrastructureConfiguration, discriminator="ThreeTi
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, deployment_type=SAPDeploymentType.THREE_TIER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.deployment_type = SAPDeploymentType.THREE_TIER  # type: ignore
 
 
-class ThreeTierCustomResourceNames(_model_base.Model):
+class ThreeTierCustomResourceNames(_Model):
     """The resource-names input to specify custom names for underlying azure resources that are part
     of a three tier SAP system.
 
@@ -3944,7 +3953,7 @@ class ThreeTierCustomResourceNames(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.NamingPatternType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     naming_pattern_type: str = rest_discriminator(
         name="namingPatternType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4033,7 +4042,8 @@ class ThreeTierFullResourceNames(ThreeTierCustomResourceNames, discriminator="Fu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, naming_pattern_type=NamingPatternType.FULL_RESOURCE_NAME, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.naming_pattern_type = NamingPatternType.FULL_RESOURCE_NAME  # type: ignore
 
 
 class ThreeTierRecommendationResult(SAPSizingRecommendationResult, discriminator="ThreeTier"):
@@ -4101,24 +4111,25 @@ class ThreeTierRecommendationResult(SAPSizingRecommendationResult, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, deployment_type=SAPDeploymentType.THREE_TIER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.deployment_type = SAPDeploymentType.THREE_TIER  # type: ignore
 
 
-class UpdateSAPApplicationInstanceRequest(_model_base.Model):
+class UpdateSAPApplicationInstanceRequest(_Model):
     """Defines the request body for updating SAP Application Instance.
 
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Gets or sets the Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -4132,21 +4143,21 @@ class UpdateSAPApplicationInstanceRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateSAPCentralInstanceRequest(_model_base.Model):
+class UpdateSAPCentralInstanceRequest(_Model):
     """Defines the request body for updating SAP Central Instance.
 
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Gets or sets the Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -4160,21 +4171,21 @@ class UpdateSAPCentralInstanceRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateSAPDatabaseInstanceRequest(_model_base.Model):
+class UpdateSAPDatabaseInstanceRequest(_Model):
     """Defines the request body for updating SAP Database Instance.
 
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Gets or sets the Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -4188,7 +4199,7 @@ class UpdateSAPDatabaseInstanceRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateSAPVirtualInstanceProperties(_model_base.Model):
+class UpdateSAPVirtualInstanceProperties(_Model):
     """Defines the update request body properties for updating Virtual Instance for SAP.
 
     :ivar managed_resources_network_access_type: Specifies the network access configuration for the
@@ -4233,7 +4244,7 @@ class UpdateSAPVirtualInstanceProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateSAPVirtualInstanceRequest(_model_base.Model):
+class UpdateSAPVirtualInstanceRequest(_Model):
     """Defines the request body for updating Virtual Instance for SAP.
 
     :ivar tags: Gets or sets the Resource tags.
@@ -4245,7 +4256,7 @@ class UpdateSAPVirtualInstanceRequest(_model_base.Model):
      ~azure.mgmt.workloadssapvirtualinstance.models.UpdateSAPVirtualInstanceProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Gets or sets the Resource tags."""
     identity: Optional["_models.SAPVirtualInstanceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -4260,7 +4271,7 @@ class UpdateSAPVirtualInstanceRequest(_model_base.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.SAPVirtualInstanceIdentity"] = None,
         properties: Optional["_models.UpdateSAPVirtualInstanceProperties"] = None,
     ) -> None: ...
@@ -4276,22 +4287,22 @@ class UpdateSAPVirtualInstanceRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedIdentity(_model_base.Model):
+class UserAssignedIdentity(_Model):
     """User assigned identity properties.
 
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
     :ivar principal_id: The principal ID of the assigned identity.
     :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
     """
 
-    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
-    """The client ID of the assigned identity."""
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
     """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
 
 
-class VirtualMachineConfiguration(_model_base.Model):
+class VirtualMachineConfiguration(_Model):
     """Defines the virtual machine configuration.
 
     :ivar vm_size: The virtual machine size. Required.
@@ -4333,7 +4344,7 @@ class VirtualMachineConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineResourceNames(_model_base.Model):
+class VirtualMachineResourceNames(_Model):
     """The resource names object for virtual machine and related resources.
 
     :ivar vm_name: The full name for virtual machine. The length of this field can be upto 64
@@ -4373,7 +4384,7 @@ class VirtualMachineResourceNames(_model_base.Model):
     """The full name for virtual-machine's host (computer name). Currently, ACSS only supports host
      names which are less than or equal to 13 characters long. If this value is not provided, vmName
      will be used as host name."""
-    network_interfaces: Optional[List["_models.NetworkInterfaceResourceNames"]] = rest_field(
+    network_interfaces: Optional[list["_models.NetworkInterfaceResourceNames"]] = rest_field(
         name="networkInterfaces", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of network interface name objects for the selected virtual machine. Currently, only
@@ -4384,7 +4395,7 @@ class VirtualMachineResourceNames(_model_base.Model):
     """The full name for OS disk attached to the VM. If this value is not provided, it will be named
      by ARM as per its default naming standards (prefixed with vm name). There is only one OS disk
      attached per Virtual Machine."""
-    data_disk_names: Optional[Dict[str, List[str]]] = rest_field(
+    data_disk_names: Optional[dict[str, list[str]]] = rest_field(
         name="dataDiskNames", visibility=["read", "create", "update", "delete", "query"]
     )
     """The full resource names for virtual machine data disks. This is a dictionary containing list of
@@ -4398,9 +4409,9 @@ class VirtualMachineResourceNames(_model_base.Model):
         *,
         vm_name: Optional[str] = None,
         host_name: Optional[str] = None,
-        network_interfaces: Optional[List["_models.NetworkInterfaceResourceNames"]] = None,
+        network_interfaces: Optional[list["_models.NetworkInterfaceResourceNames"]] = None,
         os_disk_name: Optional[str] = None,
-        data_disk_names: Optional[Dict[str, List[str]]] = None,
+        data_disk_names: Optional[dict[str, list[str]]] = None,
     ) -> None: ...
 
     @overload
@@ -4437,4 +4448,5 @@ class WindowsConfiguration(OSConfiguration, discriminator="Windows"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, os_type=OSType.WINDOWS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.os_type = OSType.WINDOWS  # type: ignore

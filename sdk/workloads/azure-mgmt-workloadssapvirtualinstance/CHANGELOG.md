@@ -1,5 +1,16 @@
 # Release History
 
+## 2.0.0b1 (2026-05-19)
+
+### Features Added
+
+  - Client `WorkloadsSapVirtualInstanceMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Enum `SAPProductType` added member `S4_HANA`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `SAPProductType.S4HANA`
+
 ## 1.0.0 (2025-04-30)
 
 ### Features Added
