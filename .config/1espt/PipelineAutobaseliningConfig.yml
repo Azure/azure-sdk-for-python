@@ -8,26 +8,26 @@ pipelines:
         credscan:
           lastModifiedDate: 2024-09-13
         psscriptanalyzer:
-          lastModifiedDate: 2026-05-19
+          lastModifiedDate: 2024-09-13
         armory:
-          lastModifiedDate: 2026-05-19
+          lastModifiedDate: 2024-09-13
       binary:
         credscan:
           lastModifiedDate: 2025-09-03
         binskim:
-          lastModifiedDate: 2026-05-19
+          lastModifiedDate: 2026-05-20
         spotbugs:
-          lastModifiedDate: 2026-05-19
+          lastModifiedDate: 2026-05-20
   459:
     usedNonDefaultBranch: true
     retail:
       source:
         armory:
-          lastModifiedDate: 2026-05-20
+          lastModifiedDate: 2025-09-05
         credscan:
           lastModifiedDate: 2025-09-09
       binary:
         binskim:
-          lastModifiedDate: 2026-05-20
+          lastModifiedDate: 2025-09-05
         credscan:
           lastModifiedDate: 2025-09-09
