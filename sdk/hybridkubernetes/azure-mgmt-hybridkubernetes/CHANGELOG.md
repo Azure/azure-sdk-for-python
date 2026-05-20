@@ -31,16 +31,18 @@
   - Added model `SecurityProfile`
   - Added model `SecurityProfileWorkloadIdentity`
   - Added model `SystemComponent`
-  - Model `ConnectedClusterOperations` added method `begin_create_or_replace`
-  - Model `ConnectedClusterOperations` added method `begin_update_async`
+  - Operation group `ConnectedClusterOperations` added method `begin_create_or_replace`
+  - Operation group `ConnectedClusterOperations` added method `begin_update_async`
 
 ### Breaking Changes
 
-  - Deleted or renamed model `ConnectedClusterList`
   - Deleted or renamed model `LastModifiedByType`
-  - Deleted or renamed model `OperationList`
   - Deleted or renamed method `ConnectedClusterOperations.begin_create`
   - Deleted or renamed method `ConnectedClusterOperations.update`
+
+### Other Changes
+
+  - Deleted model `ConnectedClusterList`/`OperationList` which actually were not used by SDK users
 
 ## 1.2.0 (2026-04-23)
 
