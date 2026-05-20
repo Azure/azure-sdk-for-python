@@ -50,7 +50,6 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 
 exclude_packages = [
     "tests",
-    "samples",
     "azure",
     "azure.cosmos",
 ]
