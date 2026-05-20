@@ -10,9 +10,10 @@ crash resilience without any manual state management.
 1. **12-stage deep research pipeline** — each stage is a distinct LLM call with real-time token streaming
 2. **Crash resilience** — send `{"message": "crash"}` to kill the process; the supervisor
    restarts it, and the task resumes from its last checkpoint
-3. **GET reconnection** — after a crash, `GET /invocations/{id}` streams replayed + live tokens
-4. **Cancel support** — `POST /invocations/{id}/cancel` stops the task gracefully
-5. **File-backed streaming** — stream items persist to disk for replay after crashes
+3. **Fire-and-forget POST** — `POST /invocations` dispatches the task and returns 202 immediately
+4. **GET streaming with resume** — `GET /invocations/{id}?last_event_id=N` streams SSE, skipping already-seen events
+5. **Cancel support** — `POST /invocations/{id}/cancel` stops the task gracefully
+6. **File-backed streaming** — stream items persist to disk for replay after crashes
 
 ## Architecture
 
@@ -23,20 +24,15 @@ crash resilience without any manual state management.
 │  supervisor.py (PID 1 — always responds to /readiness)     │
 │    └── python app.py (port 8089, restarted on crash)       │
 │                                                            │
-│  POST /invocations                                         │
-│    ├── {"message": "crash"} → responds 200, then exit 💥   │
+│  POST /invocations  (fire-and-forget)                      │
+│    ├── {"message": "crash"} → 202, then exit 💥            │
 │    └── {"message": "<topic>"} →                            │
-│          deep_research.start()                             │
-│            └── @durable_task execution                     │
-│                  ├── Stage 1/12 → LLM streaming + ckpt     │
-│                  ├── Stage 2/12 → LLM streaming + ckpt     │
-│                  │       💥 CRASH (supervisor restarts)     │
-│                  ├── Stage 3/12 (resumes here)             │
-│                  ├── ...                                   │
-│                  └── Stage 12/12 → final report            │
+│          deep_research.start() → 202 JSON response         │
+│          { invocation_id, session_id, task_id, status }    │
 │                                                            │
-│  GET /invocations/{id}                                     │
-│    └── Streams from active task or replays from file       │
+│  GET /invocations/{id}?last_event_id=N                     │
+│    └── Streams SSE from active task (skips first N events) │
+│        or replays from persisted file                      │
 │                                                            │
 │  POST /invocations/{id}/cancel                             │
 │    └── Signals cancellation to running task                │
@@ -67,7 +63,41 @@ azd up
 
 This walkthrough demonstrates the full durability story. Total time: ~3 minutes.
 
-### Setup
+### Quick Demo (recommended)
+
+Use the included `demo-client.sh` which handles token refresh, session sharing,
+auto-reconnection, and event resumption:
+
+```bash
+# Terminal 1 — start research (auto-reconnects after crashes)
+./demo-client.sh start "quantum computing"
+
+# Terminal 2 — crash the agent while it's running
+./demo-client.sh crash
+
+# Watch Terminal 1 auto-reconnect and resume from where it left off!
+# Crash again, as many times as you want:
+./demo-client.sh crash
+
+# Terminal 3 — stream container logs (optional)
+./demo-client.sh logs
+
+# Or cancel:
+./demo-client.sh cancel
+
+# Reset session to start fresh:
+./demo-client.sh reset
+```
+
+### How it works (client flow)
+
+1. **POST** `/invocations?agent_session_id=X` → returns 202 with `invocation_id`
+2. **GET** `/invocations/{inv_id}` → streams SSE events (`id: N\ndata: {...}\n\n`)
+3. Client tracks `last_event_id` (the `id:` field of the last received event)
+4. On disconnect (crash): **POST** same session → new `invocation_id` → **GET** with `?last_event_id=N`
+5. Server skips first N events → client sees only new content from the recovery point
+
+### Manual Demo (curl)
 
 ```bash
 # Get access token
@@ -81,89 +111,95 @@ SESSION_ID="demo-$(uuidgen | tr '[:upper:]' '[:lower:]')"
 echo "Session: $SESSION_ID"
 ```
 
-### Step 1: Start the research task
+### Step 1: Start the research task (fire-and-forget)
 
 ```bash
-curl -N -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+# POST dispatches the task and returns immediately with IDs
+curl -s -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"message": "Research the history and future of quantum computing"}'
 ```
 
-You'll see SSE token events streaming in real-time:
+Response (202):
+```json
+{"status": "started", "invocation_id": "inv_abc123...", "session_id": "demo-...", "task_id": "research-demo-..."}
 ```
-data: {"type": "token", "content": "\n\n**[Stage 1/12]** Decomposing topic into focused research questions...\n"}
+
+Save the invocation ID:
+```bash
+INV_ID="inv_abc123..."  # from response above
+```
+
+### Step 2: Stream results via GET
+
+```bash
+curl -N -X GET "${ENDPOINT}/invocations/${INV_ID}?api-version=2025-11-15-preview" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+You'll see SSE events with sequential IDs:
+```
+id: 1
+data: {"type": "token", "content": "\n\n**[Stage 1/12]** Decomposing topic...\n"}
+
+id: 2
 data: {"type": "token", "content": "Quantum"}
+
+id: 3
 data: {"type": "token", "content": " computing"}
 ...
-data: {"type": "token", "content": "\n✅ Stage 1/12 complete.\n"}
-data: {"type": "token", "content": "\n\n**[Stage 2/12]** Surveying foundational literature...\n"}
 ```
 
-> **Note:** Press Ctrl+C to stop watching the stream. The task continues running on the server.
-
-### Step 2: Crash the agent! 💥
+### Step 3: Crash the agent! 💥
 
 While the research is running, send a crash trigger (same session):
 
 ```bash
-curl -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+curl -s -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"message": "crash"}'
 ```
 
-Response (the app sends this back BEFORE dying):
-```
-data: {"type": "done", "full_text": "💥 Process crashing now..."}
+Response (202):
+```json
+{"status": "crashing", "message": "💥 Process will crash now"}
 ```
 
 The process exits. The supervisor immediately restarts it and recovers the task.
 
-### Step 3: Reconnect via GET
+### Step 4: Reconnect with resume
 
-Wait ~10 seconds for the process to restart and recover, then reconnect:
-
-```bash
-# Use the invocation ID from Step 1's response headers (x-agent-invocation-id),
-# or just use any ID — the GET handler finds the active task by session.
-INV_ID="reconnect"
-
-curl -N -X GET "${ENDPOINT}/invocations/${INV_ID}?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-You'll see replayed tokens from before the crash, followed by the recovery message
-and continued live streaming:
-```
-data: {"type": "token", "content": "\n\n**[Stage 1/12]** Decomposing topic...\n"}
-data: {"type": "token", "content": "Quantum computing..."}
-...
-data: {"type": "token", "content": "\n\n⚡ **Recovered from crash!** Resuming from stage 3/12...\n\n"}
-data: {"type": "token", "content": "\n\n**[Stage 3/12]** Identifying leading researchers...\n"}
-...
-```
-
-### Step 4: Crash again (optional — repeat as many times as you want)
+Wait ~10 seconds, then POST again to get a new invocation ID, and GET with `last_event_id`:
 
 ```bash
-curl -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+# Get new invocation ID (task is already in progress)
+NEW_RESPONSE=$(curl -s -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"message": "crash"}'
+  -d '{"message": "quantum computing"}')
+NEW_INV_ID=$(echo "$NEW_RESPONSE" | python3 -c "import sys,json; print(json.loads(sys.stdin.read())['invocation_id'])")
 
-# Wait, then reconnect again
-sleep 10
-curl -N -X GET "${ENDPOINT}/invocations/${INV_ID}?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+# Resume from where we left off (e.g., last_event_id=370)
+curl -N -X GET "${ENDPOINT}/invocations/${NEW_INV_ID}?api-version=2025-11-15-preview&last_event_id=370" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-Each time the task resumes from its last checkpoint — no work is lost.
+You'll see only NEW events (stages after the crash):
+```
+id: 371
+data: {"type": "token", "content": "\n\n⚡ **Recovered from crash!** Resuming from stage 5/12...\n\n"}
+
+id: 372
+data: {"type": "token", "content": "\n\n**[Stage 5/12]** Examining competing theories...\n"}
+...
+```
 
 ### Step 5: Cancel the task (optional)
 
 ```bash
-curl -X POST "${ENDPOINT}/invocations/${INV_ID}/cancel?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+curl -X POST "${ENDPOINT}/invocations/${NEW_INV_ID}/cancel?api-version=2025-11-15-preview" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
@@ -172,6 +208,24 @@ curl -X POST "${ENDPOINT}/invocations/${INV_ID}/cancel?api-version=2025-11-15-pr
 Response:
 ```json
 {"status": "cancelled", "message": "Task cancellation requested."}
+```
+
+## Container Logs
+
+Stream real-time container logs (stdout/stderr) in a separate terminal:
+
+```bash
+# Via demo-client.sh (uses session from .demo-session file)
+./demo-client.sh logs
+
+# Or directly via azd:
+azd ai agent monitor --session <session-id> --follow
+
+# Recent logs (last 20 lines):
+azd ai agent monitor --tail 20
+
+# System events (container start/stop):
+azd ai agent monitor --type system
 ```
 
 ## How it works
@@ -187,6 +241,8 @@ The `@durable_task` decorator provides:
   called: `"fresh"`, `"resumed"`, or `"recovered"`
 - **File-backed streaming** — stream items are persisted to disk via a custom
   `FileStreamHandler` so GET can replay them after a crash
+- **Event IDs** — each SSE event has a sequential `id:` field; clients use
+  `last_event_id` query param to skip already-seen events on reconnect
 
 Key code pattern:
 ```python
@@ -222,12 +278,13 @@ async def deep_research(ctx: TaskContext[dict]) -> dict:
 
 ```
 durable-agent-demo/
+├── demo-client.sh          # ⭐ Demo client (handles sessions, reconnect, crash)
 ├── azure.yaml              # azd service config
 ├── build.sh                # Build local wheels for Docker
 ├── infra/                  # Bicep templates
 ├── src/durable-research-agent/
 │   ├── agent.py            # ⭐ The durable task (12-stage research pipeline)
-│   ├── app.py              # HTTP handlers (invoke, GET reconnect, cancel)
+│   ├── app.py              # HTTP handlers (POST fire-and-forget, GET stream, cancel)
 │   ├── supervisor.py       # PID 1 reverse proxy (keeps /readiness alive)
 │   ├── agent.yaml          # Agent definition for Foundry
 │   ├── Dockerfile
