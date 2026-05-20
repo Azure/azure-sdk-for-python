@@ -55,8 +55,21 @@ class RetentionPolicy(GeneratedRetentionPolicy, _ModelBackCompatMixin):
         key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        """Return a dict representation of the model."""
-        return _backcompat_as_dict(self, keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore[return-value]
+        """Return a dict representation of the model.
+
+        :param bool keep_readonly: Whether to include readonly fields.
+        :param key_transformer: A callable to transform each key serialized
+         from the model.
+        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
+        :return: A dictionary representation of this model.
+        :rtype: Dict[str, Any]
+        """
+        return _backcompat_as_dict(
+            self,
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )  # type: ignore[return-value]
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         if enabled and (days is None):
@@ -105,8 +118,21 @@ class QueueAnalyticsLogging(GeneratedLogging, _ModelBackCompatMixin):
         key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        """Return a dict representation of the model."""
-        return _backcompat_as_dict(self, keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore[return-value]
+        """Return a dict representation of the model.
+
+        :param bool keep_readonly: Whether to include readonly fields.
+        :param key_transformer: A callable to transform each key serialized
+         from the model.
+        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
+        :return: A dictionary representation of this model.
+        :rtype: Dict[str, Any]
+        """
+        return _backcompat_as_dict(
+            self,
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )  # type: ignore[return-value]
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(
@@ -162,8 +188,21 @@ class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
         key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        """Return a dict representation of the model."""
-        return _backcompat_as_dict(self, keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore[return-value]
+        """Return a dict representation of the model.
+
+        :param bool keep_readonly: Whether to include readonly fields.
+        :param key_transformer: A callable to transform each key serialized
+         from the model.
+        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
+        :return: A dictionary representation of this model.
+        :rtype: Dict[str, Any]
+        """
+        return _backcompat_as_dict(
+            self,
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )  # type: ignore[return-value]
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(
@@ -240,8 +279,21 @@ class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
         key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        """Return a dict representation of the model."""
-        return _backcompat_as_dict(self, keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore[return-value]
+        """Return a dict representation of the model.
+
+        :param bool keep_readonly: Whether to include readonly fields.
+        :param key_transformer: A callable to transform each key serialized
+         from the model.
+        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
+        :return: A dictionary representation of this model.
+        :rtype: Dict[str, Any]
+        """
+        return _backcompat_as_dict(
+            self,
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )  # type: ignore[return-value]
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         super().__init__(
@@ -409,8 +461,21 @@ class AccessPolicy(GenAccessPolicy, _ModelBackCompatMixin):
         key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        """Return a dict representation of the model."""
-        return _backcompat_as_dict(self, keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore[return-value]
+        """Return a dict representation of the model.
+
+        :param bool keep_readonly: Whether to include readonly fields.
+        :param key_transformer: A callable to transform each key serialized
+         from the model.
+        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
+        :return: A dictionary representation of this model.
+        :rtype: Dict[str, Any]
+        """
+        return _backcompat_as_dict(
+            self,
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )  # type: ignore[return-value]
 
     def __init__(
         self,
