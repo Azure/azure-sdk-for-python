@@ -370,31 +370,14 @@ cmd_logs() {
         exit 1
     fi
 
-    ensure_token
-
     echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════════════╗${RESET}"
     echo -e "${BOLD}${CYAN}║  Container Logs — Streaming                             ║${RESET}"
     echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════════════════╝${RESET}"
     echo -e "${DIM}Session: ${SESSION_ID}${RESET}"
-    echo -e "${DIM}Polling GET every 3s for server-side logs (Ctrl-C to stop)${RESET}"
     echo ""
 
-    # Poll the agent's health/status endpoint or just show SSE stream with debug info
-    # For now: continuously tail the GET stream showing all raw data
-    while true; do
-        if [[ -n "${INV_ID:-}" ]]; then
-            local url="${ENDPOINT}/invocations/${INV_ID}?api-version=${API_VERSION}"
-            echo -e "${DIM}[$(date +%H:%M:%S)] Connecting to inv=${INV_ID:0:30}...${RESET}"
-            ( curl -sN -X GET "$url" \
-                -H "Authorization: Bearer $TOKEN" \
-                -H "Accept: text/event-stream" 2>/dev/null || true ) | while IFS= read -r line; do
-                [[ -z "$line" || "$line" == $'\r' ]] && continue
-                echo -e "${DIM}[$(date +%H:%M:%S)]${RESET} $line"
-            done || true
-        fi
-        sleep 3
-        ensure_token  # refresh token if needed
-    done
+    # Stream real-time container logs via azd ai agent monitor
+    azd ai agent monitor --session "${SESSION_ID}" --follow
 }
 
 # ── Main ──────────────────────────────────────────────────────────────────────
