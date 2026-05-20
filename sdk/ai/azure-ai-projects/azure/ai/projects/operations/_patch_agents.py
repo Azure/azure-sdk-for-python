@@ -40,7 +40,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
-        blueprint_reference: Optional[_models.AgentBlueprintReference] = None,        
+        blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
         **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
