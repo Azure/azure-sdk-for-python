@@ -29,7 +29,6 @@ from .base import (
     CosmosBackend,
     PreparedRequest,
     normalize_response_headers,
-    recover_backend_response_from_driver_error,
 )
 from .constants import BACKEND_NAME_RUST
 
@@ -101,19 +100,7 @@ class RustBackend(CosmosBackend):
 
         handle = self._ensure_handle()
         if prepared.op == OP_CREATE_ITEM:
-            try:
-                status_code, sub_status, headers, body = _rust_module.create_item(handle, prepared)
-            except RuntimeError as exc:
-                # The binding wraps every driver error as RuntimeError today,
-                # including non-2xx HTTP responses. Recover the typed
-                # BackendResponse so the helper-layer parser can route it
-                # through the typed-exception mapping. Genuine
-                # driver-internal errors (no HTTP status in the message)
-                # propagate unchanged.
-                recovered = recover_backend_response_from_driver_error(exc)
-                if recovered is None:
-                    raise
-                return recovered
+            status_code, sub_status, headers, body = _rust_module.create_item(handle, prepared)
         else:
             raise NotImplementedError(
                 "RustBackend.execute does not yet support op={!r}.".format(prepared.op)

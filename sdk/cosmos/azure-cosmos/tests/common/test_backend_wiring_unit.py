@@ -286,6 +286,65 @@ def test_rust_backend_dispatches_to_binding(monkeypatch):
     assert resp.body == b'{"id":"x"}'
 
 
+def test_rust_backend_returns_structured_http_failure_tuple(monkeypatch):
+    """A non-2xx HTTP outcome from the binding must still come back as a BackendResponse.
+
+    Gap 4 closed the old RuntimeError+regex recovery path: the binding now
+    returns the failed call as the same 4-tuple shape it uses for success,
+    including the real headers from the failed response.
+    """
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.create_item.return_value = (
+        409,
+        1002,
+        {
+            "x-ms-activity-id": "act-409",
+            "x-ms-retry-after-ms": "250",
+            "x-ms-substatus": "1002",
+        },
+        b'{"code":"Conflict","message":"already exists"}',
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key_header='["a"]',
+        headers={},
+    )
+
+    resp = backend.execute(prepared)
+
+    assert resp.status_code == 409
+    assert resp.sub_status == 1002
+    assert resp.headers["x-ms-activity-id"] == "act-409"
+    assert resp.headers["x-ms-retry-after-ms"] == "250"
+    assert resp.body == b'{"code":"Conflict","message":"already exists"}'
+
+
+def test_rust_backend_propagates_transport_runtime_error(monkeypatch):
+    """Non-HTTP driver failures must still surface as RuntimeError unchanged."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.create_item.side_effect = RuntimeError("driver execute_operation failed: DNS lookup failed")
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key_header='["a"]',
+        headers={},
+    )
+
+    with pytest.raises(RuntimeError, match="DNS lookup failed"):
+        backend.execute(prepared)
+
+
 def test_rust_backend_raises_when_binding_not_built(monkeypatch):
     """A fresh checkout before ``maturin develop`` has no compiled
     binding. The backend must raise a clear NotImplementedError instead
@@ -334,6 +393,57 @@ def test_async_rust_backend_dispatches_to_binding(monkeypatch):
         fake_module.create_item.assert_called_once_with("handle-1", prepared)
         assert resp.status_code == 201
         assert resp.body == b'{"id":"x"}'
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_returns_structured_http_failure_tuple(monkeypatch):
+    """Async sibling: non-2xx HTTP outcomes stay structured instead of raising RuntimeError."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.create_item.return_value = (
+        404,
+        0,
+        {"x-ms-activity-id": "act-404"},
+        b'{"code":"NotFound","message":"missing"}',
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key_header='["a"]',
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        assert resp.status_code == 404
+        assert resp.headers["x-ms-activity-id"] == "act-404"
+        assert resp.body == b'{"code":"NotFound","message":"missing"}'
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_propagates_transport_runtime_error(monkeypatch):
+    """Async sibling: genuine driver failures still propagate as RuntimeError."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.create_item.side_effect = RuntimeError("driver execute_operation failed: TLS handshake failed")
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key_header='["a"]',
+            headers={},
+        )
+        with pytest.raises(RuntimeError, match="TLS handshake failed"):
+            await backend.execute(prepared)
+
     asyncio.run(_run())
 
 

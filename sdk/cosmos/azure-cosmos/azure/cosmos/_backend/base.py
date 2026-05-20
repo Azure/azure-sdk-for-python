@@ -27,7 +27,6 @@ was handed or the output it produced.
 from __future__ import annotations
 
 import abc
-import re as _re
 from dataclasses import dataclass, field
 from typing import Any, Mapping, Optional
 
@@ -145,71 +144,6 @@ class CosmosBackend(abc.ABC):
         """
         ...
 
-
-# ---------------------------------------------------------------------------
-# Driver error → BackendResponse recovery
-# ---------------------------------------------------------------------------
-#
-# The compiled rust binding currently surfaces *every* driver error as
-# a Python ``RuntimeError`` (see ``azure_cosmos_rust/src/lib.rs``). That
-# includes successful HTTP round-trips that returned a non-2xx status
-# code (409 Conflict, 404 Not Found, 412 Precondition Failed, etc.) —
-# the driver returns those as ``Err`` rather than ``Ok(response)`` with
-# the status code on it.
-#
-# Without help, customer code doing ``except CosmosResourceExistsError:``
-# (the duplicate-id idempotency check) would silently break on the rust
-# path: the 409 would surface as ``RuntimeError("driver execute_operation
-# failed: Cosmos DB returned HTTP 409: Unknown")`` instead of the typed
-# subclass.
-#
-# This helper recognises the driver's error-message shape and turns the
-# RuntimeError back into a ``BackendResponse`` carrying the status code.
-# The helper-layer parser (``parse_backend_response``) then routes that
-# response through the typed-exception mapping the same way it would
-# for a core-python failure.
-#
-# When the driver eventually exposes structured HTTP errors (tracked as
-# gap ``R3-DRIVER-TYPED-HTTP-ERRORS``), this helper becomes a no-op
-# (the regex won't match anything) and can be deleted.
-
-_DRIVER_HTTP_STATUS_RE = _re.compile(r"\bCosmos DB returned HTTP\s+([1-5]\d{2})\b")
-
-
-def recover_backend_response_from_driver_error(
-    exc: BaseException,
-) -> Optional[BackendResponse]:
-    """Synthesise a ``BackendResponse`` from a driver ``RuntimeError`` if it carries an HTTP status.
-
-    Returns ``None`` when the error is not a recognisable HTTP-status
-    failure (genuine driver-internal error, network error, etc.) — the
-    caller should re-raise in that case.
-
-    The synthesised response carries:
-
-    * ``status_code`` — the HTTP status parsed from the message.
-    * ``sub_status = 0`` — the driver does not surface a sub-status
-      with the error today; the parser will use 0.
-    * ``headers = None`` — the error path does not carry response
-      headers.
-    * ``body`` — the original error message bytes, so
-      ``extract_message_from_body`` has something to fall back on
-      when populating the typed exception's ``message``.
-    """
-    msg = str(exc)
-    match = _DRIVER_HTTP_STATUS_RE.search(msg)
-    if match is None:
-        return None
-    status_code = int(match.group(1))
-    if status_code < 100 or status_code > 599:
-        return None
-    return BackendResponse(
-        status_code=status_code,
-        sub_status=0,
-        headers=None,
-        body=msg.encode("utf-8"),
-        diagnostics=None,
-    )
 
 
 # ---------------------------------------------------------------------------

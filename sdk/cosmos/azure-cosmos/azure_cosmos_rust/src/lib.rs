@@ -41,7 +41,8 @@ use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyTuple};
 
-use azure_core::http::headers::{HeaderName, HeaderValue};
+use azure_core::error::ErrorKind;
+use azure_core::http::headers::{HeaderName, HeaderValue, Headers};
 use azure_data_cosmos_driver::{
     driver::{CosmosDriver, CosmosDriverRuntime},
     models::{
@@ -386,10 +387,39 @@ fn create_item<'py>(
         })
     });
 
-    let response = response_result.map_err(|e| {
-        PyRuntimeError::new_err(format!("driver execute_operation failed: {e}"))
-    })?;
+    match response_result {
+        Ok(response) => backend_response_tuple_from_success(py, response),
+        Err(e) => {
+            if let Some(raw_http_error) = backend_response_tuple_from_http_error(py, &e)? {
+                Ok(raw_http_error)
+            } else {
+                Err(PyRuntimeError::new_err(format!("driver execute_operation failed: {e}")))
+            }
+        }
+    }
+}
 
+fn backend_response_tuple<'py>(
+    py: Python<'py>,
+    status_code: i64,
+    sub_status: i64,
+    response_headers: Bound<'py, PyDict>,
+    body: &[u8],
+) -> PyResult<Bound<'py, PyTuple>> {
+    let body_py = PyBytes::new_bound(py, body);
+    let items: Vec<PyObject> = vec![
+        status_code.into_py(py),
+        sub_status.into_py(py),
+        response_headers.into_any().unbind(),
+        body_py.into_any().unbind(),
+    ];
+    Ok(PyTuple::new_bound(py, &items))
+}
+
+fn backend_response_tuple_from_success<'py>(
+    py: Python<'py>,
+    response: azure_data_cosmos_driver::models::CosmosResponse,
+) -> PyResult<Bound<'py, PyTuple>> {
     let status = response.status();
     let status_code = u16::from(status.status_code()) as i64;
     let sub_status = status.sub_status().map(u32::from).unwrap_or(0) as i64;
@@ -405,15 +435,32 @@ fn create_item<'py>(
     write_response_headers(&response_headers, driver_headers)?;
 
     let body_vec = response.into_body();
-    let body_py = PyBytes::new_bound(py, &body_vec);
+    backend_response_tuple(py, status_code, sub_status, response_headers, &body_vec)
+}
 
-    let items: Vec<PyObject> = vec![
-        status_code.into_py(py),
-        sub_status.into_py(py),
-        response_headers.into_any().unbind(),
-        body_py.into_any().unbind(),
-    ];
-    Ok(PyTuple::new_bound(py, &items))
+fn backend_response_tuple_from_http_error<'py>(
+    py: Python<'py>,
+    error: &azure_core::Error,
+) -> PyResult<Option<Bound<'py, PyTuple>>> {
+    let raw_response = match error.kind() {
+        ErrorKind::HttpResponse {
+            raw_response: Some(raw_response),
+            ..
+        } => raw_response,
+        _ => return Ok(None),
+    };
+
+    let response_headers = PyDict::new_bound(py);
+    write_raw_response_headers(&response_headers, raw_response.headers())?;
+    let status_code = u16::from(raw_response.status()) as i64;
+    let sub_status = extract_sub_status(raw_response.headers());
+    Ok(Some(backend_response_tuple(
+        py,
+        status_code,
+        sub_status,
+        response_headers,
+        raw_response.body(),
+    )?))
 }
 
 /// Copy every populated field on the driver's `CosmosResponseHeaders` into a
@@ -546,6 +593,22 @@ fn write_response_headers(
         out.set_item("x-ms-documentdb-collection-lazy-indexing-progress", v)?;
     }
     Ok(())
+}
+
+fn write_raw_response_headers(out: &Bound<'_, PyDict>, h: &Headers) -> PyResult<()> {
+    for (name, value) in h.iter() {
+        out.set_item(name.as_str(), value.as_str())?;
+    }
+    Ok(())
+}
+
+fn extract_sub_status(headers: &Headers) -> i64 {
+    let sub_status_name = HeaderName::from_static("x-ms-substatus");
+    headers
+        .get_str(&sub_status_name)
+        .ok()
+        .and_then(|value| value.parse::<i64>().ok())
+        .unwrap_or(0)
 }
 
 // ---------------------------------------------------------------------------

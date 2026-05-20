@@ -37,6 +37,7 @@ to ``client_connection.last_response_headers``). Both branches —
 with and without that side effect — are covered.
 """
 import unittest
+from typing import Any, cast
 
 from azure.core.utils import CaseInsensitiveDict
 
@@ -241,10 +242,34 @@ class TestFailurePath(unittest.TestCase):
                 ),
             )
         except CosmosResourceExistsError as exc:
+            response = cast(Any, exc.response)
             self.assertEqual(exc.response.status_code, 409)
-            self.assertEqual(exc.response.headers["x-ms-x"], "1")
+            self.assertEqual(response.headers["x-ms-x"], "1")
         else:
             self.fail("expected CosmosResourceExistsError")
+
+    def test_failure_headers_and_typed_sub_status_survive_to_exception(self):
+        """Failed-call headers and the typed ``sub_status`` field remain visible on the exception path."""
+        try:
+            parse_backend_response(
+                _make_response(
+                    status_code=429,
+                    sub_status=3200,
+                    headers={
+                        "x-ms-activity-id": "act-429",
+                        "x-ms-retry-after-ms": "150",
+                    },
+                    body=b'{"message":"retry later"}',
+                ),
+            )
+        except CosmosHttpResponseError as exc:
+            response = cast(Any, exc.response)
+            self.assertEqual(exc.status_code, 429)
+            self.assertEqual(exc.sub_status, 3200)
+            self.assertEqual(response.headers["x-ms-activity-id"], "act-429")
+            self.assertEqual(response.headers["x-ms-retry-after-ms"], "150")
+        else:
+            self.fail("expected CosmosHttpResponseError")
 
     def test_response_hook_not_invoked_on_failure(self):
         """The response hook is *not* called when the parser raises (it runs only on success)."""
@@ -271,6 +296,24 @@ class TestFailurePath(unittest.TestCase):
         self.assertIsNotNone(cc.last_response_headers)
         self.assertEqual(cc.last_response_headers["x-ms-x"], "1")
 
+    def test_last_response_headers_keep_failed_call_metadata(self):
+        """Failure-path headers like activity-id and retry-after are written before the raise."""
+        cc = _FakeClientConnection()
+        with self.assertRaises(CosmosHttpResponseError):
+            parse_backend_response(
+                _make_response(
+                    status_code=429,
+                    headers={
+                        "x-ms-activity-id": "act-429",
+                        "x-ms-retry-after-ms": "200",
+                    },
+                    body=b'{"message":"retry later"}',
+                ),
+                client_connection=cc,
+            )
+        self.assertEqual(cc.last_response_headers["x-ms-activity-id"], "act-429")
+        self.assertEqual(cc.last_response_headers["x-ms-retry-after-ms"], "200")
+
 
 # ---------------------------------------------------------------------------
 # Header normalization
@@ -294,7 +337,7 @@ class TestHeaderNormalization(unittest.TestCase):
         """A plain-dict (mixed-case) input → output supports case-insensitive header lookups."""
         backend_response = BackendResponse(
             status_code=201,
-            headers={"X-MS-Request-Charge": "1.0"},
+            headers=CaseInsensitiveDict({"X-MS-Request-Charge": "1.0"}),
             body=b"{}",
         )
         result = parse_backend_response(backend_response)
@@ -310,7 +353,7 @@ class TestHeaderNormalization(unittest.TestCase):
         """A numeric-typed RU charge from the Rust path is coerced to a string for customer compatibility."""
         backend_response = BackendResponse(
             status_code=201,
-            headers={"x-ms-request-charge": 1.43},
+            headers=CaseInsensitiveDict({"x-ms-request-charge": 1.43}),
             body=b"{}",
         )
         result = parse_backend_response(backend_response)
@@ -320,7 +363,7 @@ class TestHeaderNormalization(unittest.TestCase):
         """A string RU charge from the core-python path is preserved verbatim — no round-trip drift."""
         backend_response = BackendResponse(
             status_code=201,
-            headers={"x-ms-request-charge": "2.50"},
+            headers=CaseInsensitiveDict({"x-ms-request-charge": "2.50"}),
             body=b"{}",
         )
         result = parse_backend_response(backend_response)
