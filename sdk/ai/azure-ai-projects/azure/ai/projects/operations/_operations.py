@@ -12322,6 +12322,14 @@ class BetaMemoryStoresOperations:
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
+
+        # BUG? These lines were inside the prepare_request() method. Moved here instead.
+        if body is _Unset:
+            if scope is _Unset:
+                raise TypeError("missing required argument: scope")
+            body = {"scope": scope}
+            body = {k: v for k, v in body.items() if v is not None}
+
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -12330,12 +12338,6 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
-            if body is _Unset:
-                if scope is _Unset:
-                    raise TypeError("missing required argument: scope")
-                body = {"scope": scope}
-                body = {k: v for k, v in body.items() if v is not None}
-
             _request = build_beta_memory_stores_list_memories_request(
                 name=name,
                 kind=kind,

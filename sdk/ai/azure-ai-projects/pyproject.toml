@@ -14,10 +14,10 @@ name = "azure-ai-projects"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Corporation Azure Ai Projects Client Library for Python"
+description = "Microsoft Corporation Azure AI Projects Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 requires-python = ">=3.9"
 keywords = ["azure", "azure sdk"]
@@ -43,7 +44,7 @@ dynamic = [
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
+repository = "https://aka.ms/azsdk/azure-ai-projects-v2/python/code"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.ai.projects._version.VERSION"}
@@ -51,13 +52,13 @@ readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
 exclude = [
-    "tests*",
+    "azure.ai",
+    "azure",
+    "doc*",
+    "generated_samples*",
     "generated_tests*",
     "samples*",
-    "generated_samples*",
-    "doc*",
-    "azure",
-    "azure.ai",
+    "tests*",
 ]
 
 [tool.setuptools.package-data]
@@ -68,3 +69,4 @@ verifytypes = false
 
 [tool.azure-sdk-conda]
 in_bundle = false
+
