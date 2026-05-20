@@ -124,18 +124,18 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
                 self._raw_amqp_message = AmqpAnnotatedMessage(message=kwargs["message"])
         else:
             self._build_annotated_message(body)
-            self.application_properties = application_properties
-            self.session_id = session_id
-            self.message_id = message_id
-            self.content_type = content_type
-            self.correlation_id = correlation_id
-            self.to = to
-            self.reply_to = reply_to
-            self.reply_to_session_id = reply_to_session_id
-            self.subject = subject
-            self.scheduled_enqueue_time_utc = scheduled_enqueue_time_utc
-            self.time_to_live = time_to_live
-            self.partition_key = partition_key
+            self.application_properties = application_properties  # type: ignore[assignment]
+            self.session_id = session_id  # type: ignore[assignment]
+            self.message_id = message_id  # type: ignore[assignment]
+            self.content_type = content_type  # type: ignore[assignment]
+            self.correlation_id = correlation_id  # type: ignore[assignment]
+            self.to = to  # type: ignore[assignment]
+            self.reply_to = reply_to  # type: ignore[assignment]
+            self.reply_to_session_id = reply_to_session_id  # type: ignore[assignment]
+            self.subject = subject  # type: ignore[assignment]
+            self.scheduled_enqueue_time_utc = scheduled_enqueue_time_utc  # type: ignore[assignment]
+            self.time_to_live = time_to_live  # type: ignore[assignment]
+            self.partition_key = partition_key  # type: ignore[assignment]
 
     def __str__(self) -> str:
         return str(self.raw_amqp_message)
@@ -809,6 +809,32 @@ class ServiceBusReceivedMessage(ServiceBusMessage):  # pylint: disable=too-many-
 
     def __setstate__(self, state: Dict[str, Any]) -> None:
         self.__dict__.update(state)
+
+    @classmethod
+    def from_bytes(cls, message: bytes) -> "ServiceBusReceivedMessage":
+        """Constructs a ServiceBusReceivedMessage from the raw bytes of an AMQP message payload.
+
+        The message payload should adhere to the Message Format specification
+        outlined in the AMQP v1.0 standard:
+        http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
+
+        The returned message is created in a settled state with no associated receiver,
+        meaning settlement operations (e.g., complete, abandon, defer, dead_letter) and
+        lock renewal are not available. The lock_token property will return None.
+
+        :param bytes message: The raw bytes representing the AMQP message payload.
+        :return: A ServiceBusReceivedMessage created from the provided message payload.
+        :rtype: ~azure.servicebus.ServiceBusReceivedMessage
+        """
+        from .._pyamqp._decode import decode_payload
+
+        amqp_message = decode_payload(memoryview(message))
+        received_msg = cls(
+            message=amqp_message,
+            receiver=None,
+            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+        )
+        return received_msg
 
     @property
     def _lock_expired(self) -> bool:
