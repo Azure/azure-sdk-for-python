@@ -11,12 +11,26 @@ Mirrors .NET JobDefinitionJobRunTests + JobDefinitionScheduleTests at:
 Also implements cross-language matrix row #31
 (`JobDefinitionJobRunTests.StartC2CJobWithPrivateSourceTest`) — see the sync
 sibling file for the full rationale.
+
+NOTE: The cross-sub mgmt clients (azure-mgmt-network / -authorization / -storage)
+are imported from their `.aio` namespaces so the test-proxy's async-transport
+interception covers them. Older versions of these packages (in particular the
+floors pinned by the `mindependency` CI leg) lack the `.aio` submodule — we
+use `pytest.importorskip` so collection skips this whole module cleanly in
+that environment.
 """
 import asyncio
 import uuid
 from datetime import datetime, timedelta, timezone
 
 import pytest
+
+# Skip the entire module if the cross-sub `.aio` submodules aren't present
+# (happens in `mindependency` CI legs that pin very old transitive versions).
+pytest.importorskip("azure.mgmt.network.aio")
+pytest.importorskip("azure.mgmt.storage.aio")
+pytest.importorskip("azure.mgmt.authorization.v2022_04_01.aio")
+
 from azure.core.exceptions import HttpResponseError
 from azure.mgmt.authorization.v2022_04_01.aio import AuthorizationManagementClient
 from azure.mgmt.network.aio import NetworkManagementClient
@@ -123,6 +137,8 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
         container_name = variables.setdefault("container_name", "tc" + uuid.uuid4().hex[:10].lower())
         role_assignment_name = variables.setdefault("role_assignment_id", str(uuid.uuid4()))
 
+        # Async cross-sub clients (test-proxy's async-transport interception
+        # covers them; sync clients here would bypass the proxy and hit live).
         storage_client = self.create_client_from_credential(
             StorageManagementClient,
             self.get_credential(StorageManagementClient, is_async=True),
@@ -465,6 +481,8 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
         container_name = variables.setdefault("container_name", "tc" + uuid.uuid4().hex[:10].lower())
         role_assignment_name = variables.setdefault("role_assignment_id", str(uuid.uuid4()))
 
+        # Async cross-sub clients (test-proxy's async-transport interception
+        # covers them; sync clients here would bypass the proxy and hit live).
         network_client = self.create_client_from_credential(
             NetworkManagementClient,
             self.get_credential(NetworkManagementClient, is_async=True),
@@ -679,7 +697,6 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
                     await conn_del_poller.result()
                 except Exception:  # noqa: BLE001
                     pass
-            # Close async cross-sub clients to release resources.
             for cli in (network_client, storage_client, authorization_client):
                 try:
                     await cli.close()

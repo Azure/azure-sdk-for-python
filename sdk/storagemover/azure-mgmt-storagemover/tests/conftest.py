@@ -36,24 +36,30 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
 
     # Cross-subscription shared infra in XDataMove-Synthetics is referenced by
-    # matrix #31 (`test_start_c2c_job_with_private_source`) and #32
+    # matrix #31 (`test_start_c2c_job_with_private_source`), the extended
+    # matrix #10 (`test_job_definition_job_run`), and #32
     # (`test_create_get_list_update_delete` on connections). The sub ID is
-    # well-known shared infrastructure but should still be replaced in
-    # recordings with a distinct stub so cassettes stay portable.
+    # well-known shared infrastructure but must be sanitized in recordings.
+    # **Use the same target value (`00000000-...`) as the default subscription
+    # sanitizer above** so they cooperate at both record AND playback time —
+    # at record the default sanitizer wins (env-var match), at playback this
+    # one rewrites the source-code literal to match the cassette.
     add_general_regex_sanitizer(
         regex="b6b34ad8-ca89-4f85-beb7-c2ec13702dac",
-        value="11111111-1111-1111-1111-111111111111",
+        value="00000000-0000-0000-0000-000000000000",
     )
-    # Sanitize the per-run role-assignment GUID we mint for #31. The GUID is a
-    # path segment under `roleAssignments/<guid>` — redact only there to avoid
-    # clobbering unrelated GUIDs elsewhere in payloads.
+    # Sanitize the per-run role-assignment GUID we mint for matrix #31 and #10.
+    # The GUID is a path segment under `roleAssignments/<guid>` — redact only
+    # there to avoid clobbering unrelated GUIDs elsewhere in payloads. The
+    # `variables` mechanism makes the source GUID deterministic across runs,
+    # so both request and cassette get the same sanitized value.
     add_general_regex_sanitizer(
         regex=r"(?<=roleAssignments/)[0-9a-fA-F\-]{36}",
-        value="22222222-2222-2222-2222-222222222222",
+        value="00000000-0000-0000-0000-000000000000",
     )
     # Sanitize managed-identity principalId values returned by the RP on
-    # blob-container endpoints (matrix row #31) so cassettes don't leak object
-    # IDs we don't control.
+    # blob-container endpoints (matrix #10 + #31) so cassettes don't leak
+    # object IDs we don't control.
     add_body_key_sanitizer(json_path="$..principalId", value="00000000-0000-0000-0000-000000000000")
 
     # Remove default sanitizers that clobber non-sensitive fields the storage mover
