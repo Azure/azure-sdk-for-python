@@ -139,10 +139,13 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
 
         # Async cross-sub clients (test-proxy's async-transport interception
         # covers them; sync clients here would bypass the proxy and hit live).
+        # Pin api_version explicitly so playback stays stable as the underlying
+        # mgmt packages bump default api-versions in future releases.
         storage_client = self.create_client_from_credential(
             StorageManagementClient,
             self.get_credential(StorageManagementClient, is_async=True),
             subscription_id=SYNTHETICS_SUBSCRIPTION_ID,
+            api_version="2025-06-01",
         )
         authorization_client = self.create_client_from_credential(
             AuthorizationManagementClient,
@@ -483,15 +486,18 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
 
         # Async cross-sub clients (test-proxy's async-transport interception
         # covers them; sync clients here would bypass the proxy and hit live).
+        # Pin api_version explicitly — see #10 above.
         network_client = self.create_client_from_credential(
             NetworkManagementClient,
             self.get_credential(NetworkManagementClient, is_async=True),
             subscription_id=SYNTHETICS_SUBSCRIPTION_ID,
+            api_version="2025-05-01",
         )
         storage_client = self.create_client_from_credential(
             StorageManagementClient,
             self.get_credential(StorageManagementClient, is_async=True),
             subscription_id=SYNTHETICS_SUBSCRIPTION_ID,
+            api_version="2025-06-01",
         )
         authorization_client = self.create_client_from_credential(
             AuthorizationManagementClient,

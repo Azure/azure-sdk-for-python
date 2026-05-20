@@ -172,6 +172,7 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         storage_client = self.create_client_from_credential(
             StorageManagementClient, self.get_credential(StorageManagementClient),
             subscription_id=SYNTHETICS_SUBSCRIPTION_ID,
+            api_version="2025-06-01",
         )
         authorization_client = self.create_client_from_credential(
             AuthorizationManagementClient, self.get_credential(AuthorizationManagementClient),
@@ -538,16 +539,22 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         role_assignment_name = variables.setdefault("role_assignment_id", str(uuid.uuid4()))
 
         # Cross-sub mgmt clients (override subscription_id at construction).
+        # Cross-sub mgmt clients. Pin api_version explicitly — see #10 above.
         network_client = self.create_client_from_credential(
-            NetworkManagementClient, self.get_credential(NetworkManagementClient),
+            NetworkManagementClient,
+            self.get_credential(NetworkManagementClient),
             subscription_id=SYNTHETICS_SUBSCRIPTION_ID,
+            api_version="2025-05-01",
         )
         storage_client = self.create_client_from_credential(
-            StorageManagementClient, self.get_credential(StorageManagementClient),
+            StorageManagementClient,
+            self.get_credential(StorageManagementClient),
             subscription_id=SYNTHETICS_SUBSCRIPTION_ID,
+            api_version="2025-06-01",
         )
         authorization_client = self.create_client_from_credential(
-            AuthorizationManagementClient, self.get_credential(AuthorizationManagementClient),
+            AuthorizationManagementClient,
+            self.get_credential(AuthorizationManagementClient),
             subscription_id=SYNTHETICS_SUBSCRIPTION_ID,
         )
 
