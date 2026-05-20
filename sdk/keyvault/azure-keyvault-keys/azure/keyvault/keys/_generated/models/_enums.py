@@ -206,14 +206,38 @@ class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Octet sequence (used to represent symmetric keys) which is stored the HSM."""
 
 
+class JsonWebKeyWrapAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An algorithm used for key wrapping and unwrapping."""
+
+    RSA_OAEP256 = "RSA-OAEP-256"
+    """RSAES using Optimal Asymmetric Encryption Padding with a hash function of SHA-256 and a mask
+    generation function of MGF1 with SHA-256."""
+    A128_KW = "A128KW"
+    """128-bit AES key wrap."""
+    A192_KW = "A192KW"
+    """192-bit AES key wrap."""
+    A256_KW = "A256KW"
+    """256-bit AES key wrap."""
+    A256_KWPAD = "A256KWPAD"
+    """128-bit AES key wrap with padding."""
+    A128_KWPAD = "A128KWPAD"
+    """192-bit AES key wrap with padding."""
+    A192_KWPAD = "A192KWPAD"
+    """256-bit AES key wrap with padding."""
+    CKM_AES_KEY_WRAP = "CKM_AES_KEY_WRAP"
+    """CKM AES key wrap."""
+    CKM_AES_KEY_WRAP_PAD = "CKM_AES_KEY_WRAP_PAD"
+    """CKM AES key wrap with padding."""
+
+
 class KeyEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The encryption algorithm to use to protected the exported key material."""
 
     CKM_RSA_AES_KEY_WRAP = "CKM_RSA_AES_KEY_WRAP"
     """The CKM_RSA_AES_KEY_WRAP key wrap mechanism."""
-    RSA_AES_KEY_WRAP_256 = "RSA_AES_KEY_WRAP_256"
+    RSA_AES_KEY_WRAP256 = "RSA_AES_KEY_WRAP_256"
     """The RSA_AES_KEY_WRAP_256 key wrap mechanism."""
-    RSA_AES_KEY_WRAP_384 = "RSA_AES_KEY_WRAP_384"
+    RSA_AES_KEY_WRAP384 = "RSA_AES_KEY_WRAP_384"
     """The RSA_AES_KEY_WRAP_384 key wrap mechanism."""
 
 

@@ -46,7 +46,6 @@ from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysClientPreparer, get_decorator
 from _keys_test_case import KeysTestCase
 
-
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_vault_default = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
