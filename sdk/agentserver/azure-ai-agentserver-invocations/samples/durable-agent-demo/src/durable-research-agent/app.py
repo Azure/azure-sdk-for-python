@@ -91,7 +91,6 @@ async def handle_invoke(request: Request) -> Response:
             "status": status,
             "invocation_id": invocation_id,
             "session_id": session_id,
-            "task_id": task_id,
         },
         status_code=202,
     )

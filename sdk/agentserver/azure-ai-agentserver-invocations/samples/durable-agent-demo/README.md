@@ -123,7 +123,7 @@ curl -s -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_se
 
 Response (202):
 ```json
-{"status": "started", "invocation_id": "inv_abc123...", "session_id": "demo-...", "task_id": "research-demo-..."}
+{"status": "started", "invocation_id": "inv_abc123...", "session_id": "demo-..."}
 ```
 
 Save the invocation ID:
