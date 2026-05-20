@@ -7,7 +7,7 @@
 
 import datetime
 import json
-import yaml
+import yaml  # type: ignore[import-untyped]
 from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
