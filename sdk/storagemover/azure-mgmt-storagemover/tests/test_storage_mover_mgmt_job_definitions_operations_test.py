@@ -18,12 +18,41 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 from azure.core.exceptions import HttpResponseError
-from azure.mgmt.authorization.v2022_04_01 import AuthorizationManagementClient
-from azure.mgmt.network import NetworkManagementClient
-from azure.mgmt.storage import StorageManagementClient
 from azure.mgmt.storagemover import StorageMoverMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+
+# Detect whether the cross-sub mgmt clients are "modern enough" to flow through
+# azure-core's RequestsTransport (which the test-proxy intercepts). The pre-20.0
+# generations of azure-mgmt-storage / azure-mgmt-network / azure-mgmt-authorization
+# use msrestazure's transport, bypass the proxy, and hit live ARM. The presence
+# of the `.aio` submodule + the `v2022_04_01` authorization API version is a
+# reliable signal of "post-modernization".
+# The `mindependency` CI leg pins those packages to very old floors that lack
+# these — skip the two cross-sub tests cleanly in that environment.
+try:
+    from azure.mgmt.authorization.v2022_04_01 import AuthorizationManagementClient
+    from azure.mgmt.network import NetworkManagementClient
+    from azure.mgmt.storage import StorageManagementClient
+    import azure.mgmt.network.aio  # noqa: F401  (modernization signal)
+    import azure.mgmt.storage.aio  # noqa: F401  (modernization signal)
+    _CROSS_SUB_CLIENTS_MODERN = True
+except ImportError:
+    AuthorizationManagementClient = None  # type: ignore[assignment]
+    NetworkManagementClient = None  # type: ignore[assignment]
+    StorageManagementClient = None  # type: ignore[assignment]
+    _CROSS_SUB_CLIENTS_MODERN = False
+
+_SKIP_IF_CROSS_SUB_CLIENTS_OLD = pytest.mark.skipif(
+    not _CROSS_SUB_CLIENTS_MODERN,
+    reason=(
+        "Cross-sub mgmt clients too old: pre-modernization versions of "
+        "azure-mgmt-{storage,network,authorization} use msrestazure transport "
+        "and bypass the test-proxy, hitting live ARM. Bump those packages to "
+        "their post-azure-core releases (storage>=20, network>=19, authorization>=2) "
+        "to enable this test."
+    ),
+)
 
 AZURE_LOCATION = "eastus"
 # Matrix row #31 runs in westcentralus because the shared PLS + storage account
@@ -125,6 +154,7 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
     # Connection / PrivateLinkService approval — the public bucket is reachable
     # via the MCC directly.
 
+    @_SKIP_IF_CROSS_SUB_CLIENTS_OLD
     @RandomNameResourceGroupPreparer(location=WCUS_LOCATION)
     @recorded_by_proxy
     def test_job_definition_job_run(self, resource_group, **kwargs):
@@ -489,6 +519,7 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
     # See the "Porter's reference" callout in the cross-language playbook
     # (storage-mover-scenario-tests-cross-language) for the canonical step-by-step.
 
+    @_SKIP_IF_CROSS_SUB_CLIENTS_OLD
     @RandomNameResourceGroupPreparer(location=WCUS_LOCATION)
     @recorded_by_proxy
     def test_start_c2c_job_with_private_source(self, resource_group, **kwargs):
