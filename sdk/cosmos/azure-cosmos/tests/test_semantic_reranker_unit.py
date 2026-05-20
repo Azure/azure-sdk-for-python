@@ -156,7 +156,9 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         asyncio.run(run_test())
 
     def test_sync_inference_uses_shared_response_decoder(self):
-        """Test that sync inference service decodes response bytes via decode_response_body."""
+        """Test that sync inference service decodes response bytes via the
+        shared decode_response_body_for_status helper. Locks in the wiring
+        so a regression that reverts to inline data.decode("utf-8") would fail."""
         from azure.cosmos._inference_service import _InferenceService
 
         mock_connection = self._create_mock_connection()
@@ -172,17 +174,18 @@ class TestInferenceServiceTimeout(unittest.TestCase):
             service._inference_pipeline_client._pipeline, "run",
             return_value=mock_response
         ), patch(
-            "azure.cosmos._inference_service.decode_response_body",
+            "azure.cosmos._inference_service.decode_response_body_for_status",
             return_value='{"Scores": []}'
         ) as mock_decode:
             service.rerank(
                 reranking_context="test query",
                 documents=["doc1"]
             )
-            mock_decode.assert_called_once_with(raw_response_data, "inference_request")
+            mock_decode.assert_called_once_with(raw_response_data, 200, "inference_request")
 
     def test_async_inference_uses_shared_response_decoder(self):
-        """Test that async inference service decodes response bytes via decode_response_body."""
+        """Test that async inference service decodes response bytes via the
+        shared decode_response_body_for_status helper."""
         async def run_test():
             from azure.cosmos.aio._inference_service_async import _InferenceService
 
@@ -200,14 +203,14 @@ class TestInferenceServiceTimeout(unittest.TestCase):
                 service._inference_pipeline_client._pipeline, "run",
                 return_value=mock_response
             ), patch(
-                "azure.cosmos.aio._inference_service_async.decode_response_body",
+                "azure.cosmos.aio._inference_service_async.decode_response_body_for_status",
                 return_value='{"Scores": []}'
             ) as mock_decode:
                 await service.rerank(
                     reranking_context="test query",
                     documents=["doc1"]
                 )
-                mock_decode.assert_called_once_with(raw_response_data, "inference_request")
+                mock_decode.assert_called_once_with(raw_response_data, 200, "inference_request")
 
         asyncio.run(run_test())
 

@@ -8,7 +8,7 @@ By default this module preserves the historical SDK behavior: strict
 decode, ``UnicodeDecodeError`` raised on the first invalid byte.
 Operators who need to read past corrupt payloads (for example, to
 unblock a stuck change-feed processor) can opt in to a permissive
-fallback by setting an environment variable at process start.
+fallback by setting an environment variable.
 
 The recognized environment variable is
 ``AZURE_COSMOS_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT``:
@@ -17,8 +17,10 @@ The recognized environment variable is
 * ``IGNORE``  -> Python ``errors="ignore"`` (drop the bad bytes)
 * anything else, including unset -> strict (raise on bad bytes)
 
-The value is read once at module import. Tests can call
-``_reset_for_tests()`` to re-snapshot.
+The env var is consulted only on the decode-failure path, so operators
+can set or change it at any point during process lifetime and the next
+malformed payload will pick up the new value. This follows the Cosmos
+SDK's runtime-read pattern for environment-based controls.
 """
 import logging
 import os
@@ -26,7 +28,6 @@ from typing import Optional
 
 from ._constants import _Constants
 
-__all__ = ["decode_response_body", "_reset_for_tests"]
 
 _MALFORMED_INPUT_ENV_VAR = _Constants.CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT
 
@@ -51,19 +52,6 @@ def _resolve_fallback_mode_from_env() -> Optional[str]:
     return _ENV_VALUE_TO_DECODE_ERRORS_MODE.get(raw_value.strip().upper())
 
 
-# Snapshot at module import. The value is immutable after import unless
-# `_reset_for_tests` is called. Reading a module-level string in CPython is
-# atomic, so no lock is needed on the per-call read path.
-_fallback_errors_mode: Optional[str] = _resolve_fallback_mode_from_env()
-
-
-def _reset_for_tests() -> None:
-    """Re-reads the env var and refreshes the cached fallback mode. Tests
-    should call this after mutating ``os.environ`` so the next call to
-    ``decode_response_body`` sees the new value."""
-    global _fallback_errors_mode  # pylint: disable=global-statement
-    _fallback_errors_mode = _resolve_fallback_mode_from_env()
-
 
 def decode_response_body(data: bytes, operation_context: Optional[str] = None) -> str:
     """Decode an HTTP response body as UTF-8.
@@ -81,17 +69,20 @@ def decode_response_body(data: bytes, operation_context: Optional[str] = None) -
       The original exception is preserved as ``__cause__``.
 
     :param data: Response body bytes.
+    :type data: bytes
     :param operation_context: Optional short string identifying the call
         site (for example, ``"read_item"`` or ``"query_items page"``);
         included in the WARNING log line when permissive fallback fires.
+    :type operation_context: Optional[str]
     :returns: The decoded string.
+    :rtype: str
     :raises UnicodeDecodeError: If the body contains invalid UTF-8 and
         the operator has not opted in to a permissive fallback.
     """
     try:
         return data.decode("utf-8")
     except UnicodeDecodeError as strict_error:
-        fallback_mode = _fallback_errors_mode
+        fallback_mode = _resolve_fallback_mode_from_env()
         if fallback_mode is None:
             hint = (
                 "{original}; set environment variable "
@@ -111,12 +102,57 @@ def decode_response_body(data: bytes, operation_context: Optional[str] = None) -
 
         _logger.warning(
             "Cosmos response body contained invalid UTF-8 at byte offset %d "
-            "(reason: %s); decoding with errors=%r per %s%s.",
+            "(reason: %s); decoding with errors=%r per %s (operation: %s).",
             strict_error.start,
             strict_error.reason,
             fallback_mode,
             _MALFORMED_INPUT_ENV_VAR,
-            " (operation: {0})".format(operation_context) if operation_context else "",
+            operation_context or "-",
         )
         return data.decode("utf-8", errors=fallback_mode)
 
+
+def decode_response_body_for_status(
+    data: bytes,
+    status_code: int,
+    operation_context: Optional[str] = None,
+) -> str:
+    """Decode an HTTP response body, with a best-effort fallback for HTTP
+    error responses whose body happens to contain invalid UTF-8.
+
+    Behaves exactly like :func:`decode_response_body` on success and on
+    2xx responses with malformed UTF-8. The difference is the error path:
+    if strict decoding fails AND the response is an HTTP error
+    (``status_code >= 400``), the body is decoded with ``errors="replace"``
+    so the caller can still construct the real status-code exception
+    (``CosmosResourceNotFoundError``, ``CosmosHttpResponseError``, etc.).
+
+    The reason: the SDK's retry/refresh logic and customer error handlers
+    branch on status code, not on message contents. Masking a 404, 410
+    (partition split), 429 (throttle), or 503 with a ``UnicodeDecodeError``
+    breaks recovery paths that would otherwise have worked. ``U+FFFD`` in
+    an error message is acceptable; a wrong exception class is not.
+
+    For 2xx responses with malformed UTF-8 the exception is still raised —
+    a successful response carrying corrupt bytes is a real data-integrity
+    problem the caller needs to see.
+
+    :param data: Response body bytes.
+    :type data: bytes
+    :param status_code: The HTTP status code of the response.
+    :type status_code: int
+    :param operation_context: Optional short string identifying the call
+        site; forwarded to :func:`decode_response_body`.
+    :type operation_context: Optional[str]
+    :returns: The decoded string.
+    :rtype: str
+    :raises UnicodeDecodeError: If the body contains invalid UTF-8, the
+        operator has not opted in to a permissive fallback, and the
+        response is a success (2xx/3xx) rather than an HTTP error.
+    """
+    try:
+        return decode_response_body(data, operation_context)
+    except UnicodeDecodeError:
+        if status_code >= 400:
+            return data.decode("utf-8", errors="replace")
+        raise

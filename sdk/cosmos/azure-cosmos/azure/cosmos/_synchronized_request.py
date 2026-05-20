@@ -33,7 +33,7 @@ from . import exceptions, http_constants, _retry_utility
 from ._availability_strategy_config import CrossRegionHedgingStrategy
 from ._availability_strategy_handler import execute_with_hedging
 from ._constants import _Constants
-from ._response_decoding import decode_response_body
+from ._response_decoding import decode_response_body_for_status
 from ._request_object import RequestObject
 from .documents import _OperationType
 
@@ -178,7 +178,9 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
 
     data = response.body()
     if data:
-        data = decode_response_body(data, request_params.operation_type)
+        data = decode_response_body_for_status(
+            data, response.status_code, request_params.operation_type
+        )
 
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)

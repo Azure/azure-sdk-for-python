@@ -35,7 +35,7 @@ from .. import http_constants
 from .._availability_strategy_config import CrossRegionHedgingStrategy
 from .._constants import _Constants
 from .._request_object import RequestObject
-from .._response_decoding import decode_response_body
+from .._response_decoding import decode_response_body_for_status
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 from ..documents import _OperationType
 
@@ -142,7 +142,9 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
 
     data = response.body()
     if data:
-        data = decode_response_body(data, request_params.operation_type)
+        data = decode_response_body_for_status(
+            data, response.status_code, request_params.operation_type
+        )
 
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
