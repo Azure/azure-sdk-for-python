@@ -6,6 +6,7 @@ fallback behavior. Covers the healthy path (strict decode succeeds), the
 default behavior when the env var is unset (strict decode fails with an
 actionable hint), and the opt-in REPLACE / IGNORE modes.
 """
+# cspell:ignore ufffd
 import os
 import unittest
 from unittest import mock
@@ -19,7 +20,7 @@ from azure.cosmos import _response_decoding
 _INVALID_UTF8 = b'{"note":"hello \xc3\x28 world"}'
 _VALID_UTF8 = b'{"note":"hello world"}'
 
-_MALFORMED_INPUT_ENV_VAR = "COSMOS.CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT"
+_MALFORMED_INPUT_ENV_VAR = "AZURE_COSMOS_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT"
 
 
 class _DecoderEnvIsolatedTestCase(unittest.TestCase):

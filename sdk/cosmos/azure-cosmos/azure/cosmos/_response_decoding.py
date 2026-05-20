@@ -11,7 +11,7 @@ unblock a stuck change-feed processor) can opt in to a permissive
 fallback by setting an environment variable at process start.
 
 The recognized environment variable is
-``COSMOS.CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT``:
+``AZURE_COSMOS_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT``:
 
 * ``REPLACE`` -> Python ``errors="replace"`` (substitute U+FFFD)
 * ``IGNORE``  -> Python ``errors="ignore"`` (drop the bad bytes)
@@ -24,9 +24,11 @@ import logging
 import os
 from typing import Optional
 
+from ._constants import _Constants
+
 __all__ = ["decode_response_body", "_reset_for_tests"]
 
-_MALFORMED_INPUT_ENV_VAR = "COSMOS.CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT"
+_MALFORMED_INPUT_ENV_VAR = _Constants.CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT
 
 # Mapping from the recognized env var values to Python's bytes.decode
 # `errors=` argument. Anything not in this mapping (including the env var

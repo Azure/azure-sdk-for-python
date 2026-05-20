@@ -155,6 +155,62 @@ class TestInferenceServiceTimeout(unittest.TestCase):
 
         asyncio.run(run_test())
 
+    def test_sync_inference_uses_shared_response_decoder(self):
+        """Test that sync inference service decodes response bytes via decode_response_body."""
+        from azure.cosmos._inference_service import _InferenceService
+
+        mock_connection = self._create_mock_connection()
+        service = _InferenceService(mock_connection)
+
+        raw_response_data = b'{"Scores": []}'
+        mock_response = MagicMock()
+        mock_response.http_response.status_code = 200
+        mock_response.http_response.headers = {}
+        mock_response.http_response.body.return_value = raw_response_data
+
+        with patch.object(
+            service._inference_pipeline_client._pipeline, "run",
+            return_value=mock_response
+        ), patch(
+            "azure.cosmos._inference_service.decode_response_body",
+            return_value='{"Scores": []}'
+        ) as mock_decode:
+            service.rerank(
+                reranking_context="test query",
+                documents=["doc1"]
+            )
+            mock_decode.assert_called_once_with(raw_response_data, "inference_request")
+
+    def test_async_inference_uses_shared_response_decoder(self):
+        """Test that async inference service decodes response bytes via decode_response_body."""
+        async def run_test():
+            from azure.cosmos.aio._inference_service_async import _InferenceService
+
+            mock_connection = self._create_mock_connection()
+            mock_connection.connection_policy.DisableSSLVerification = False
+            service = _InferenceService(mock_connection)
+
+            raw_response_data = b'{"Scores": []}'
+            mock_response = MagicMock()
+            mock_response.http_response.status_code = 200
+            mock_response.http_response.headers = {}
+            mock_response.http_response.body.return_value = raw_response_data
+
+            with patch.object(
+                service._inference_pipeline_client._pipeline, "run",
+                return_value=mock_response
+            ), patch(
+                "azure.cosmos.aio._inference_service_async.decode_response_body",
+                return_value='{"Scores": []}'
+            ) as mock_decode:
+                await service.rerank(
+                    reranking_context="test query",
+                    documents=["doc1"]
+                )
+                mock_decode.assert_called_once_with(raw_response_data, "inference_request")
+
+        asyncio.run(run_test())
+
     def test_sync_inference_response_timeout_raises_408(self):
         """Test that sync inference service converts ServiceResponseError to 408."""
         from azure.cosmos._inference_service import _InferenceService

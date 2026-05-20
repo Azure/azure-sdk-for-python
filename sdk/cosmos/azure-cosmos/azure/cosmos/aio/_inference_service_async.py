@@ -40,6 +40,7 @@ from .. import exceptions
 from .._constants import _Constants as Constants
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._cosmos_responses import CosmosDict
+from .._response_decoding import decode_response_body
 from ..http_constants import HttpHeaders
 
 
@@ -235,7 +236,7 @@ class _InferenceService:
 
             data = response.body()
             if data:
-                data = data.decode("utf-8")
+                data = decode_response_body(data, "inference_request")
 
             if response.status_code >= 400:
                 raise exceptions.CosmosHttpResponseError(message=data, response=response)
