@@ -1,3 +1,4 @@
 # azd environment
 .azure/*/state/
 .azure/*/*.env.bak
+.azure/*/.env.lock

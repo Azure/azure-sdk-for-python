@@ -1,18 +1,19 @@
-# Durable Research Agent — Crash-Resilient Demo
+# Durable Research Agent — Crash-Resilient Demo (LangGraph)
 
 This sample demonstrates a **long-running research agent** that survives process
-crashes and automatically resumes from its last checkpoint. It uses the
-`@durable_task` decorator from `azure-ai-agentserver-core` to provide built-in
-crash resilience without any manual state management.
+crashes and automatically resumes from its last checkpoint. It uses **LangGraph**
+with an **SQLite checkpointer** for built-in crash resilience — no manual state
+management needed.
 
 ## What it showcases
 
 1. **12-stage deep research pipeline** — each stage is a distinct LLM call with real-time token streaming
 2. **Crash resilience** — send `{"message": "crash"}` to kill the process; the supervisor
-   restarts it, and the task resumes from its last checkpoint
-3. **GET reconnection** — after a crash, `GET /invocations/{id}` streams replayed + live tokens
+   restarts it, and the graph resumes from its last checkpointed node
+3. **GET reconnection** — after a crash, `GET /invocations/{id}` replays completed stages
+   from the checkpoint state
 4. **Cancel support** — `POST /invocations/{id}/cancel` stops the task gracefully
-5. **File-backed streaming** — stream items persist to disk for replay after crashes
+5. **Zero manual checkpointing** — LangGraph's `SqliteSaver` handles all state persistence
 
 ## Architecture
 
@@ -26,22 +27,23 @@ crash resilience without any manual state management.
 │  POST /invocations                                         │
 │    ├── {"message": "crash"} → responds 200, then exit 💥   │
 │    └── {"message": "<topic>"} →                            │
-│          deep_research.start()                             │
-│            └── @durable_task execution                     │
-│                  ├── Stage 1/12 → LLM streaming + ckpt     │
-│                  ├── Stage 2/12 → LLM streaming + ckpt     │
+│          run_research(thread_id, topic)                    │
+│            └── LangGraph StateGraph execution              │
+│                  ├── research_stage node (Stage 1) → ckpt  │
+│                  ├── research_stage node (Stage 2) → ckpt  │
 │                  │       💥 CRASH (supervisor restarts)     │
-│                  ├── Stage 3/12 (resumes here)             │
+│                  ├── research_stage node (Stage 3) resumes │
 │                  ├── ...                                   │
-│                  └── Stage 12/12 → final report            │
+│                  └── research_stage node (Stage 12) → done │
 │                                                            │
 │  GET /invocations/{id}                                     │
-│    └── Streams from active task or replays from file       │
+│    ├── Live stream queue (if graph is running)             │
+│    └── Replay from SQLite checkpoint (if not running)      │
 │                                                            │
 │  POST /invocations/{id}/cancel                             │
-│    └── Signals cancellation to running task                │
+│    └── Sets asyncio.Event checked between nodes            │
 │                                                            │
-│  Local disk: ~/.durable-tasks/ (persists across restarts)  │
+│  Local disk: ~/.durable-research/checkpoints.db            │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -118,30 +120,26 @@ Response (the app sends this back BEFORE dying):
 data: {"type": "done", "full_text": "💥 Process crashing now..."}
 ```
 
-The process exits. The supervisor immediately restarts it and recovers the task.
+The process exits. The supervisor immediately restarts it.
 
 ### Step 3: Reconnect via GET
 
-Wait ~10 seconds for the process to restart and recover, then reconnect:
+Wait ~10 seconds for the process to restart, then reconnect:
 
 ```bash
-# Use the invocation ID from Step 1's response headers (x-agent-invocation-id),
-# or just use any ID — the GET handler finds the active task by session.
 INV_ID="reconnect"
 
 curl -N -X GET "${ENDPOINT}/invocations/${INV_ID}?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-You'll see replayed tokens from before the crash, followed by the recovery message
-and continued live streaming:
+If the graph has resumed running, you'll see live token streaming.
+If not yet running, you'll get a replay of completed stages from the checkpoint:
 ```
 data: {"type": "token", "content": "\n\n**[Stage 1/12]** Decomposing topic...\n"}
 data: {"type": "token", "content": "Quantum computing..."}
 ...
-data: {"type": "token", "content": "\n\n⚡ **Recovered from crash!** Resuming from stage 3/12...\n\n"}
-data: {"type": "token", "content": "\n\n**[Stage 3/12]** Identifying leading researchers...\n"}
-...
+data: {"type": "token", "content": "\n\n[Completed 2/12 stages — task may be recovering...]\n"}
 ```
 
 ### Step 4: Crash again (optional — repeat as many times as you want)
@@ -158,7 +156,7 @@ curl -N -X GET "${ENDPOINT}/invocations/${INV_ID}?api-version=2025-11-15-preview
   -H "Authorization: Bearer $TOKEN"
 ```
 
-Each time the task resumes from its last checkpoint — no work is lost.
+Each time the graph resumes from its last checkpoint — no work is lost.
 
 ### Step 5: Cancel the task (optional)
 
@@ -176,37 +174,39 @@ Response:
 
 ## How it works
 
-The `@durable_task` decorator provides:
+**LangGraph + SQLite checkpointer** provides everything:
 
-- **Automatic persistence** — task state is checkpointed after each stage via
-  `ctx.metadata.flush()`
-- **Crash recovery** — on startup, stale (in-flight) tasks are automatically
-  detected by lease owner and re-executed, with `ctx.metadata` containing all
-  previously saved progress
-- **Entry mode awareness** — `ctx.entry_mode` tells the function why it was
-  called: `"fresh"`, `"resumed"`, or `"recovered"`
-- **File-backed streaming** — stream items are persisted to disk via a custom
-  `FileStreamHandler` so GET can replay them after a crash
+- **Automatic persistence** — graph state is checkpointed by `AsyncSqliteSaver`
+  after every node execution (every completed research stage)
+- **Crash recovery** — on restart, `aget_state(config)` loads the last checkpoint;
+  the graph is re-invoked from `current_stage` onward
+- **No manual state management** — no `ctx.metadata.flush()`, no `FileStreamHandler`,
+  no JSONL files. The checkpoint IS the state.
+- **GET replay** — after crash, GET loads checkpoint and replays all completed
+  stage results as SSE events
 
 Key code pattern:
 ```python
-@durable_task(name="deep_research", stream_handler_factory=file_stream_factory)
-async def deep_research(ctx: TaskContext[dict]) -> dict:
-    completed = ctx.metadata.get("completed_stages", 0)
+# The graph state — persisted automatically after each node
+class ResearchState(TypedDict):
+    topic: str
+    current_stage: int
+    results: Annotated[list[dict], _append_results]
+    is_cancelled: bool
+    is_complete: bool
 
-    if ctx.entry_mode == "recovered":
-        await ctx.stream(json.dumps({"type": "token", "content": "⚡ Recovered!"}))
+# Single node that loops via conditional edge
+async def research_stage(state: ResearchState) -> dict:
+    stage_idx = state["current_stage"]
+    # ... LLM call with token streaming ...
+    return {"current_stage": stage_idx + 1, "results": [new_result]}
 
-    for i in range(completed, len(STAGES)):
-        # Stream LLM tokens in real-time
-        async for event in llm_stream:
-            await ctx.stream(json.dumps({"type": "token", "content": event.delta}))
-
-        # CHECKPOINT — survives crashes
-        ctx.metadata["completed_stages"] = i + 1
-        await ctx.metadata.flush()
-
-    return final_result
+# On crash recovery — just check existing checkpoint and resume
+snapshot = await graph.aget_state(config)
+if snapshot.values.get("current_stage", 0) > 0:
+    # Resume from checkpoint — graph continues where it left off
+    async for _ in graph.astream(snapshot.values, config):
+        pass
 ```
 
 ## Environment Variables
@@ -215,7 +215,6 @@ async def deep_research(ctx: TaskContext[dict]) -> dict:
 |---|---|---|
 | `FOUNDRY_PROJECT_ENDPOINT` | AI Foundry project endpoint (set by platform) | Required |
 | `AZURE_AI_MODEL_DEPLOYMENT_NAME` | Model deployment to use | `gpt-4.1-mini` |
-| `FOUNDRY_TASK_API_ENABLED` | Use platform Task Storage (vs local file) | `0` (local) |
 | `STAGE_DURATION` | Seconds between stages (for demo pacing) | `5` |
 
 ## File Structure
@@ -226,7 +225,7 @@ durable-agent-demo/
 ├── build.sh                # Build local wheels for Docker
 ├── infra/                  # Bicep templates
 ├── src/durable-research-agent/
-│   ├── agent.py            # ⭐ The durable task (12-stage research pipeline)
+│   ├── agent.py            # ⭐ LangGraph research pipeline (12 stages + SQLite checkpoint)
 │   ├── app.py              # HTTP handlers (invoke, GET reconnect, cancel)
 │   ├── supervisor.py       # PID 1 reverse proxy (keeps /readiness alive)
 │   ├── agent.yaml          # Agent definition for Foundry
