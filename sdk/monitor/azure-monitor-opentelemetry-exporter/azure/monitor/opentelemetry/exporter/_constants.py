@@ -394,4 +394,9 @@ _MAIN_AGENT_SELF_ATTRIBUTES = (
 
 _MAIN_AGENT_PREFIX = "microsoft.gen_ai.main_agent."
 
+# Microsoft Opentelemetry Distro feature sdkstats
+
+_MICROSOFT_OPENTELEMETRY_DISTRO_FEATURES_ARG = "microsoft_opentelemetry_distro_features"
+_MICROSOFT_OPENTELEMETRY_DISTRO_INSTRUMENTATIONS_ARG = "microsoft_opentelemetry_distro_instrumentations"
+
 # cSpell:disable
