@@ -1,8 +1,11 @@
 # Release History
 
-## 4.11.2 (Unreleased)
+## 4.12.0b1 (2026-05-25)
 
 ### Features Added
+
+- Added support for service API version `2026-01-01-preview`.
+- Added `KeyProperties.key_size` read-only property.
 
 ### Breaking Changes
 
@@ -10,7 +13,9 @@
 
 ### Other Changes
 
-## 4.11.1 (2026-05-18)
+- Key Vault API version `2026-01-01-preview` is now the default
+
+## 4.11.1 (2026-05-19)
 
 ### Features Added
 
