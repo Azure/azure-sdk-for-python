@@ -22,14 +22,14 @@
   - Added enum `ScaleInPolicyMode`
   - Added enum `SfmcOperationStatus`
   - Added model `ZoneFaultSimulationContent`
-  - Model `ManagedClustersOperations` added method `begin_start_fault_simulation`
-  - Model `ManagedClustersOperations` added method `begin_stop_fault_simulation`
-  - Model `ManagedClustersOperations` added method `get_fault_simulation`
-  - Model `ManagedClustersOperations` added method `list_fault_simulation`
-  - Model `NodeTypesOperations` added method `begin_start_fault_simulation`
-  - Model `NodeTypesOperations` added method `begin_stop_fault_simulation`
-  - Model `NodeTypesOperations` added method `get_fault_simulation`
-  - Model `NodeTypesOperations` added method `list_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `begin_start_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `begin_stop_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `get_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `list_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `begin_start_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `begin_stop_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `get_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `list_fault_simulation`
 
 ## 3.0.0 (2026-02-28)
 
