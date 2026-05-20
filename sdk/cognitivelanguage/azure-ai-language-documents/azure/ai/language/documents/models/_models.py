@@ -275,7 +275,40 @@ class AbstractiveSummarizationTaskParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeDocumentJobsInput(_Model):
+class AnalyzeDocumentsDocumentError(_Model):
+    """Contains the error object with errors encountered for the processed document.
+
+    :ivar id: Document Id. Required.
+    :vartype id: str
+    :ivar error: Document Error. Required.
+    :vartype error: ~azure.ai.language.documents.models.Error
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Document Id. Required."""
+    error: "_models.Error" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Document Error. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        error: "_models.Error",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeDocumentsJob(_Model):
     """The input object for the analyze documents LRO.
 
     :ivar display_name: Name for the task.
@@ -326,39 +359,6 @@ class AnalyzeDocumentJobsInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeDocumentsDocumentError(_Model):
-    """Contains the error object with errors encountered for the processed document.
-
-    :ivar id: Document Id. Required.
-    :vartype id: str
-    :ivar error: Document Error. Required.
-    :vartype error: ~azure.ai.language.documents.models.Error
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Document Id. Required."""
-    error: "_models.Error" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Document Error. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        error: "_models.Error",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AnalyzeDocumentsJobState(_Model):
     """The object containing the analyze job LRO job state.
 
@@ -383,7 +383,7 @@ class AnalyzeDocumentsJobState(_Model):
     :vartype tasks: ~azure.ai.language.documents.models.Tasks
     :ivar statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
-    :vartype statistics: ~azure.ai.language.documents.models.RequestStatistics
+    :vartype statistics: ~azure.ai.language.documents.models.OperationStatistics
     """
 
     display_name: Optional[str] = rest_field(
@@ -413,7 +413,7 @@ class AnalyzeDocumentsJobState(_Model):
     """next link."""
     tasks: "_models.Tasks" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of tasks. Required."""
-    statistics: Optional["_models.RequestStatistics"] = rest_field(
+    statistics: Optional["_models.OperationStatistics"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """if showStats=true was specified in the request this field will contain information about the
@@ -431,7 +431,7 @@ class AnalyzeDocumentsJobState(_Model):
         expiration_date_time: Optional[datetime.datetime] = None,
         errors: Optional[list["_models.Error"]] = None,
         next_link: Optional[str] = None,
-        statistics: Optional["_models.RequestStatistics"] = None,
+        statistics: Optional["_models.OperationStatistics"] = None,
     ) -> None: ...
 
     @overload
@@ -452,7 +452,7 @@ class AnalyzeDocumentsResult(_Model):
     :vartype errors: list[~azure.ai.language.documents.models.AnalyzeDocumentsDocumentError]
     :ivar statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
-    :vartype statistics: ~azure.ai.language.documents.models.RequestStatistics
+    :vartype statistics: ~azure.ai.language.documents.models.OperationStatistics
     :ivar model_version: This field indicates which model is used for analysis. Required.
     :vartype model_version: str
     :ivar documents: Response by document. Required.
@@ -463,7 +463,7 @@ class AnalyzeDocumentsResult(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Errors by document id. Required."""
-    statistics: Optional["_models.RequestStatistics"] = rest_field(
+    statistics: Optional["_models.OperationStatistics"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """if showStats=true was specified in the request this field will contain information about the
@@ -482,7 +482,7 @@ class AnalyzeDocumentsResult(_Model):
         errors: list["_models.AnalyzeDocumentsDocumentError"],
         model_version: str,
         documents: list["_models.DocumentAnalysisDocumentResult"],
-        statistics: Optional["_models.RequestStatistics"] = None,
+        statistics: Optional["_models.OperationStatistics"] = None,
     ) -> None: ...
 
     @overload
@@ -1771,6 +1771,60 @@ class NoMaskPolicy(BaseRedactionPolicy, discriminator="noMask"):
         self.policy_kind = RedactionPolicyKind.NO_MASK  # type: ignore
 
 
+class OperationStatistics(_Model):
+    """if showStats=true was specified in the request this field will contain information about the
+    request payload.
+
+    :ivar documents_count: Number of documents submitted in the request. Required.
+    :vartype documents_count: int
+    :ivar valid_documents_count: Number of valid documents. This excludes empty, over-size limit or
+     non-supported languages documents. Required.
+    :vartype valid_documents_count: int
+    :ivar erroneous_documents_count: Number of invalid documents. This includes empty, over-size
+     limit or non-supported languages documents. Required.
+    :vartype erroneous_documents_count: int
+    :ivar transactions_count: Number of billing or usage transactions for the request. Required.
+    :vartype transactions_count: int
+    """
+
+    documents_count: int = rest_field(name="documentsCount", visibility=["read", "create", "update", "delete", "query"])
+    """Number of documents submitted in the request. Required."""
+    valid_documents_count: int = rest_field(
+        name="validDocumentsCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of valid documents. This excludes empty, over-size limit or non-supported languages
+     documents. Required."""
+    erroneous_documents_count: int = rest_field(
+        name="erroneousDocumentsCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of invalid documents. This includes empty, over-size limit or non-supported languages
+     documents. Required."""
+    transactions_count: int = rest_field(
+        name="transactionsCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of billing or usage transactions for the request. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        documents_count: int,
+        valid_documents_count: int,
+        erroneous_documents_count: int,
+        transactions_count: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PiiEntityRecognitionAction(AnalyzeDocumentsOperationAction, discriminator="PiiEntityRecognition"):
     """Contains the analyze text PIIEntityRecognition LRO task.
 
@@ -1950,60 +2004,6 @@ class PiiTaskParameters(_Model):
         redaction_policies: Optional[list["_models.BaseRedactionPolicy"]] = None,
         confidence_score_threshold: Optional["_models.ConfidenceScoreThreshold"] = None,
         disable_entity_validation: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RequestStatistics(_Model):
-    """if showStats=true was specified in the request this field will contain information about the
-    request payload.
-
-    :ivar documents_count: Number of documents submitted in the request. Required.
-    :vartype documents_count: int
-    :ivar valid_documents_count: Number of valid documents. This excludes empty, over-size limit or
-     non-supported languages documents. Required.
-    :vartype valid_documents_count: int
-    :ivar erroneous_documents_count: Number of invalid documents. This includes empty, over-size
-     limit or non-supported languages documents. Required.
-    :vartype erroneous_documents_count: int
-    :ivar transactions_count: Number of billing or usage transactions for the request. Required.
-    :vartype transactions_count: int
-    """
-
-    documents_count: int = rest_field(name="documentsCount", visibility=["read", "create", "update", "delete", "query"])
-    """Number of documents submitted in the request. Required."""
-    valid_documents_count: int = rest_field(
-        name="validDocumentsCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Number of valid documents. This excludes empty, over-size limit or non-supported languages
-     documents. Required."""
-    erroneous_documents_count: int = rest_field(
-        name="erroneousDocumentsCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Number of invalid documents. This includes empty, over-size limit or non-supported languages
-     documents. Required."""
-    transactions_count: int = rest_field(
-        name="transactionsCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Number of billing or usage transactions for the request. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        documents_count: int,
-        valid_documents_count: int,
-        erroneous_documents_count: int,
-        transactions_count: int,
     ) -> None: ...
 
     @overload

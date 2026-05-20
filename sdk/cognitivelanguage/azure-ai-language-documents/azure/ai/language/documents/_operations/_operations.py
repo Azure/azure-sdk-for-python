@@ -213,7 +213,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         return deserialized  # type: ignore
 
     def _submit_job_initial(
-        self, body: Union[_models.AnalyzeDocumentJobsInput, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.AnalyzeDocumentsJob, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -280,13 +280,13 @@ class _AnalyzeDocumentsClientOperationsMixin(
 
     @overload
     def begin_submit_job(
-        self, body: _models.AnalyzeDocumentJobsInput, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.AnalyzeDocumentsJob, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
 
         :param body: The input for the analyze documents operation. Required.
-        :type body: ~azure.ai.language.documents.models.AnalyzeDocumentJobsInput
+        :type body: ~azure.ai.language.documents.models.AnalyzeDocumentsJob
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -329,14 +329,14 @@ class _AnalyzeDocumentsClientOperationsMixin(
 
     @distributed_trace
     def begin_submit_job(
-        self, body: Union[_models.AnalyzeDocumentJobsInput, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.AnalyzeDocumentsJob, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
 
         :param body: The input for the analyze documents operation. Is one of the following types:
-         AnalyzeDocumentJobsInput, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.documents.models.AnalyzeDocumentJobsInput or JSON or IO[bytes]
+         AnalyzeDocumentsJob, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.documents.models.AnalyzeDocumentsJob or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
