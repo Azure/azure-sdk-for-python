@@ -369,7 +369,10 @@ class FileRefField(Field):
             if not path.is_absolute():
                 path = base_path / path
                 path.resolve()
-            data = load_file(path)
+            try:
+                data = load_file(path)
+            except (FileNotFoundError, OSError) as e:
+                raise ValidationError(f"No such file or directory: {path}") from e
             return data
         raise ValidationError(f"Not supporting non file for {attr}")
 
