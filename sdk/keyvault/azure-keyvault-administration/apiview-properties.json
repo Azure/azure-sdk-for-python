@@ -81,5 +81,6 @@
         "azure.keyvault.administration._generated.aio.KeyVaultClient.update_ekm_connection": "KeyVault.updateEkmConnection",
         "azure.keyvault.administration._generated.KeyVaultClient.delete_ekm_connection": "KeyVault.deleteEkmConnection",
         "azure.keyvault.administration._generated.aio.KeyVaultClient.delete_ekm_connection": "KeyVault.deleteEkmConnection"
-    }
+    },
+    "CrossLanguageVersion": "a3023239f547"
 }
