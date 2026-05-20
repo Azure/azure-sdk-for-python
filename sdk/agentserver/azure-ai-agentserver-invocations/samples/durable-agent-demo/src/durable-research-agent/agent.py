@@ -156,7 +156,7 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
         }))
 
         # Do the work — streaming LLM tokens
-        result = await _run_stage_streaming(ctx, topic, stage, prior_results=results[-3:])
+        result = await _run_stage_streaming(ctx, topic, stage, prior_results=results[-3:], stage_idx=stage_idx)
         results.append({"stage": stage, "result": result})
 
         # ── CHECKPOINT ── crash-recovery boundary ─────
@@ -184,10 +184,12 @@ async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
 # ── LLM helpers ───────────────────────────────────────────────────────────────
 
 async def _run_stage_streaming(
-    ctx: TaskContext, topic: str, stage: str, *, prior_results: list
+    ctx: TaskContext, topic: str, stage: str, *, prior_results: list, stage_idx: int = 0
 ) -> str:
     """Call the LLM for one research stage, streaming tokens to the consumer."""
-    await asyncio.sleep(STAGE_DURATION)
+    # Skip artificial delay for first stage so demo feels responsive
+    if stage_idx > 0:
+        await asyncio.sleep(STAGE_DURATION)
 
     if prior_results:
         findings = "\n".join(f"- {r['stage']}: {r['result'][:80]}" for r in prior_results[-3:])
