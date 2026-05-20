@@ -70,7 +70,7 @@ async def handle_invoke(request: Request) -> Response:
 
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
-    task_id = f"research-{session_id}"
+    task_id = invocation_id  # Each invocation gets its own task — no stale file reuse
     logger.info(f"POST handler: session_id={session_id!r}, task_id={task_id!r}")
 
     status = "started"
@@ -108,7 +108,8 @@ async def handle_get(request: Request) -> Response:
     on reconnect (platform strips non x-client- headers, so we use a param).
     """
     session_id = request.state.session_id if hasattr(request.state, "session_id") and request.state.session_id else app.config.session_id
-    task_id = f"research-{session_id}"
+    invocation_id = request.state.invocation_id
+    task_id = invocation_id
 
     # Skip already-seen events: client passes last_event_id query param on reconnect
     last_event_id = request.query_params.get("last_event_id", "")
@@ -182,9 +183,9 @@ async def handle_get(request: Request) -> Response:
 @app.cancel_invocation_handler
 async def handle_cancel(request: Request) -> Response:
     """Cancel the running research task."""
-    session_id = request.state.session_id if hasattr(request.state, "session_id") and request.state.session_id else app.config.session_id
-    task_id = f"research-{session_id}"
-    logger.info(f"CANCEL handler: session_id={session_id!r}, task_id={task_id!r}")
+    invocation_id = request.state.invocation_id
+    task_id = invocation_id
+    logger.info(f"CANCEL handler: invocation_id={invocation_id!r}, task_id={task_id!r}")
 
     run = deep_research.get_active_run(task_id)
     if run is None:

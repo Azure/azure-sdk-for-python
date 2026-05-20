@@ -16,7 +16,7 @@ set -euo pipefail
 # ── Config ────────────────────────────────────────────────────────────────────
 
 ENDPOINT="https://e2e-tests-westus2-account.services.ai.azure.com/api/projects/e2e-tests-westus2/agents/durable-research-agent/endpoint/protocols"
-API_VERSION="2025-11-15-preview"
+API_VERSION="v1"
 SESSION_FILE=".demo-session"
 
 # ── Colors ────────────────────────────────────────────────────────────────────
@@ -78,6 +78,7 @@ stream_sse() {
         -H "Authorization: Bearer $TOKEN"
         -H "Content-Type: application/json"
         -H "Accept: text/event-stream"
+        -H "Foundry-Features: HostedAgents=V1Preview"
     )
     if [[ -n "$body" ]]; then
         curl_args+=(-d "$body")
@@ -181,10 +182,13 @@ dispatch_task() {
     local url="${ENDPOINT}/invocations?api-version=${API_VERSION}&agent_session_id=${SESSION_ID}"
     local body="{\"message\": \"${topic}\"}"
 
+    echo -e "${DIM}→ POST ${url}${RESET}"
+
     local response
     response=$(curl -s -X POST "$url" \
         -H "Authorization: Bearer $TOKEN" \
         -H "Content-Type: application/json" \
+        -H "Foundry-Features: HostedAgents=V1Preview" \
         -d "$body")
 
     # Parse invocation_id and session_id from response JSON
@@ -219,6 +223,7 @@ stream_via_get() {
     if [[ -n "${LAST_EVENT_ID:-}" && "${LAST_EVENT_ID:-0}" != "0" ]]; then
         url="${url}&last_event_id=${LAST_EVENT_ID}"
     fi
+    echo -e "${DIM}→ GET  ${url}${RESET}"
     stream_sse "$url" "GET" ""
 }
 
@@ -280,11 +285,9 @@ reconnect_loop() {
 
         ensure_token
 
-        # POST again with same session — gets new invocation ID
-        # (platform preserves mapping because POST returned 202 immediately)
-        dispatch_task "$topic"
-
-        # GET with new invocation ID to stream
+        # Just GET with the existing invocation_id — no need to POST again.
+        # The platform preserved the invocation→session mapping and the
+        # durable task framework auto-resumes the task on container restart.
         stream_via_get
 
         case "$STREAM_RESULT" in
@@ -322,6 +325,7 @@ cmd_crash() {
     response=$(curl -s -X POST "$url" \
         -H "Authorization: Bearer $TOKEN" \
         -H "Content-Type: application/json" \
+        -H "Foundry-Features: HostedAgents=V1Preview" \
         -d '{"message": "crash"}')
 
     echo -e "${DIM}Response: ${response}${RESET}"
@@ -347,6 +351,7 @@ cmd_cancel() {
     response=$(curl -s -X POST "$url" \
         -H "Authorization: Bearer $TOKEN" \
         -H "Content-Type: application/json" \
+        -H "Foundry-Features: HostedAgents=V1Preview" \
         -d '{}')
 
     echo -e "${GREEN}${response}${RESET}"
