@@ -8,9 +8,9 @@ pipelines:
         credscan:
           lastModifiedDate: 2024-09-13
         psscriptanalyzer:
-          lastModifiedDate: 2024-09-13
+          lastModifiedDate: 2026-05-20
         armory:
-          lastModifiedDate: 2024-09-13
+          lastModifiedDate: 2026-05-20
       binary:
         credscan:
           lastModifiedDate: 2025-09-03
