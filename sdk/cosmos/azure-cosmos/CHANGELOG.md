@@ -8,6 +8,7 @@
 
 #### Bugs Fixed
 * Fixed bug where `CosmosClient` construction with AAD credentials would crash at startup if the semantic reranking inference endpoint environment variable was not set, even when semantic reranking was not being used. The inference service is now lazily initialized on first use. See [PR 46243](https://github.com/Azure/azure-sdk-for-python/pull/46243)
+* Fixed bug where the global endpoint manager would fall back to synthesized public regional endpoints (e.g., `https://<account>-<region>.documents.azure.com`) even when `enable_endpoint_discovery=False` was specified. This caused intermittent `403 Forbidden` ("Request originated from IP ... through public internet") errors for private-endpoint-only Cosmos DB accounts, because the synthesized regional FQDNs are not always present in the customer's `privatelink.documents.azure.com` private DNS zone. With this fix, `enable_endpoint_discovery=False` strictly pins the client to the URL supplied at construction time. See [Issue 46219](https://github.com/Azure/azure-sdk-for-python/issues/46219).
 
 #### Other Changes
 * Reduced per-client memory overhead when partition-level circuit breaker (PPCB) is enabled by sharing the partition key range routing map cache across CosmosClient instances connected to the same endpoint, and stripping unused fields from cached partition key ranges using compact PKRange namedtuples. See [PR 46297](https://github.com/Azure/azure-sdk-for-python/pull/46297)

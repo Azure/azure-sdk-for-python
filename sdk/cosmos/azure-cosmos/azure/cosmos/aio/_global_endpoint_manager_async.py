@@ -218,9 +218,18 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     async def _GetDatabaseAccount(self, **kwargs) -> DatabaseAccount:
         """Gets the database account.
 
-        First tries by using the default endpoint, and if that doesn't work,
-        use the endpoints for the preferred locations in the order they are
-        specified, to get the database account.
+        First tries by using the default endpoint. If that doesn't work and endpoint
+        discovery is enabled, falls back to trying the endpoints for the preferred
+        locations in the order they are specified, to get the database account.
+
+        When endpoint discovery is disabled (`enable_endpoint_discovery=False`),
+        the fallback is skipped and the original exception is re-raised. This
+        guarantees the SDK only contacts the URL the caller supplied -- important
+        for private-endpoint deployments where synthesized regional hostnames
+        (e.g., ``https://<account>-<region>.documents.azure.com``) are not in
+        the customer's private DNS zone and would otherwise resolve to public
+        IPs and be rejected by the account's firewall.
+
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account
         and the endpoint that was used for the request.
         :rtype: ~azure.cosmos.DatabaseAccount
@@ -238,6 +247,11 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         except (exceptions.CosmosHttpResponseError, AzureError) as e:
             if isinstance(e, exceptions.CosmosHttpResponseError):
                 e.endpoint = self.DefaultEndpoint
+            # Honor the user's request to disable endpoint discovery: do not try
+            # synthesized regional/locational endpoints. Re-raise so the caller can
+            # decide how to handle the failure against the supplied endpoint.
+            if not self.client.connection_policy.EnableEndpointDiscovery:
+                raise
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
