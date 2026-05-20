@@ -13,8 +13,9 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from ... import models as _models
-from ...models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
-from ...operations._patch_agents import (
+from ...models._patch import (
+    _FOUNDRY_FEATURES_HEADER_NAME,
+    _has_header_case_insensitive,
     _AGENT_OPERATION_FEATURE_HEADERS,
     _PREVIEW_FEATURE_REQUIRED_CODE,
     _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE,
@@ -40,6 +41,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
+        blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
         **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
@@ -66,6 +68,8 @@ class AgentsOperations(GeneratedAgentsOperations):
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
+        :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
+        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference        
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -129,6 +133,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         definition: _models.AgentDefinition = _Unset,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
+        blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
         **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
@@ -154,6 +159,8 @@ class AgentsOperations(GeneratedAgentsOperations):
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
+        :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
+        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference        
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -174,6 +181,7 @@ class AgentsOperations(GeneratedAgentsOperations):
                 definition=definition,
                 metadata=metadata,
                 description=description,
+                blueprint_reference=blueprint_reference,
                 **kwargs,
             )
         except HttpResponseError as exc:
