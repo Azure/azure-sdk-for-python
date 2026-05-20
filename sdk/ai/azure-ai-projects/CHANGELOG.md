@@ -11,6 +11,10 @@
 * New evaluator generation job operations on `.beta.evaluators`: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New methods on `.beta.agents` sub-client for code-based hosted agents: `update_agent_from_code()`, `create_agent_version_from_code()`, `download_agent_version_code()`, `download_agent_code()`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
+* New `.beta.models` sub-client with model management operations: `list_versions`, `list`, `get`, `delete`, `update`, `create_async`, `pending_upload`, `get_credentials`.
+* New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `list_runs`, `dispatch_async`.
+* New optional `force` parameter on `agents.delete()` and `agents.delete_version()`.
+* New `ExternalAgentDefinition` model for external agent integration.
 
 ### Breaking Changes
 
@@ -29,6 +33,8 @@ Breaking changes in beta classes:
 * Renamed class `SkillObject` to `SkillDetails`.
 * Removed class `FabricIQPreviewToolParameters`.
 * Removed class `WorkIQPreviewToolParameters`.
+* Renamed enum value `EvaluatorDefinitionType.RUBRICS` to `EvaluatorDefinitionType.RUBRIC`.
+* Removed classes `RubricCriterion`, `Target`, `TargetConfig`.
 
 ### Bugs Fixed
 
