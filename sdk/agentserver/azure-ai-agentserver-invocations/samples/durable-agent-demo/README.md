@@ -74,7 +74,7 @@ This walkthrough demonstrates the full durability story. Total time: ~3 minutes.
 TOKEN=$(az account get-access-token --resource https://ai.azure.com --query accessToken -o tsv)
 
 # Endpoint
-ENDPOINT="https://<account>.services.ai.azure.com/api/projects/<project>/agents/durable-research-agent/endpoint/protocols"
+ENDPOINT="https://e2e-tests-westus2-account.services.ai.azure.com/api/projects/e2e-tests-westus2/agents/durable-research-agent/endpoint/protocols"
 
 # Generate a unique session ID (reuse across all calls in this demo)
 SESSION_ID="demo-$(uuidgen | tr '[:upper:]' '[:lower:]')"
