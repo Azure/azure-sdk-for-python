@@ -13,7 +13,7 @@ The Python emitter ecosystem consists of two packages:
 - **Branded emitter** (`@azure-tools/typespec-python`): Lives in [Azure/typespec-azure](https://github.com/Azure/typespec-azure/tree/main/packages/typespec-python). This is the emitter used for Azure SDK generation.
 - **Unbranded emitter** (`@typespec/http-client-python`): Lives in [microsoft/typespec](https://github.com/microsoft/typespec/tree/main/packages/http-client-python). The branded emitter wraps this package.
 
-When `eng/emitter-package.json` is updated on `main`, the [TypeSpec Python Regenerate Tests](../../workflows/typespec-python-regenerate.yml) workflow triggers automatically and regenerates test code at `eng/emitter/gen/`.
+When `eng/emitter-package.json` is updated on `main`, the [TypeSpec Python Regenerate Tests](../../workflows/typespec-python-regenerate.yml) workflow triggers automatically and pushes regenerated test code to the [`typespec-python-generated-tests`](https://github.com/Azure/azure-sdk-for-python/tree/typespec-python-generated-tests/eng/tools/azure-sdk-tools/emitter/generated) branch.
 
 ## Prerequisites
 
@@ -109,5 +109,5 @@ gh pr create --title "bump typespec-python {version}" --body "Bump @azure-tools/
 Once the PR merges to `main`, the [TypeSpec Python Regenerate Tests](../../workflows/typespec-python-regenerate.yml) workflow triggers automatically because `eng/emitter-package.json` was modified. It will:
 1. Install the branded emitter at the version specified in `eng/emitter-package.json`
 2. Regenerate all test code
-3. Create a follow-up PR with the updated generated files at `eng/emitter/gen/`
-4. Tag @iscai-msft and @msyyc as reviewers
+3. Push the updated generated files to the [`typespec-python-generated-tests`](https://github.com/Azure/azure-sdk-for-python/tree/typespec-python-generated-tests/eng/tools/azure-sdk-tools/emitter/generated) branch
+4. If the workflow fails, a GitHub issue is created and assigned to @iscai-msft and @msyyc
