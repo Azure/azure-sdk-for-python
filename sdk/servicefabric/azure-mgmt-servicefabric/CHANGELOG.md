@@ -4,93 +4,29 @@
 
 ### Features Added
 
-  - Model `ServiceFabricManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ServiceFabricManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `ServiceFabricManagementClient` added method `send_request`
-  - Model `ApplicationResource` added property `properties`
-  - Model `ApplicationResourceUpdate` added property `properties`
-  - Model `ClusterCodeVersionsResult` added property `properties`
-  - Model `ClusterUpdateParameters` added property `properties`
-  - Model `ServiceResource` added property `properties`
-  - Model `ServiceResourceUpdate` added property `properties`
   - Model `VMSizeResource` added property `system_data`
   - Added model `ArmProxyResource`
-  - Added model `ClusterPropertiesUpdateParameters`
   - Added enum `CreatedByType`
   - Added model `PatchProxyResource`
   - Added model `TrackedResource`
 
 ### Breaking Changes
 
-  - Model `ApplicationResource` deleted or renamed its instance variable `type_version`
-  - Model `ApplicationResource` deleted or renamed its instance variable `parameters`
-  - Model `ApplicationResource` deleted or renamed its instance variable `upgrade_policy`
-  - Model `ApplicationResource` deleted or renamed its instance variable `minimum_nodes`
-  - Model `ApplicationResource` deleted or renamed its instance variable `maximum_nodes`
-  - Model `ApplicationResource` deleted or renamed its instance variable `remove_application_capacity`
-  - Model `ApplicationResource` deleted or renamed its instance variable `metrics`
-  - Model `ApplicationResource` deleted or renamed its instance variable `managed_identities`
-  - Model `ApplicationResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `ApplicationResource` deleted or renamed its instance variable `type_name`
-  - Model `ApplicationResourceUpdate` deleted or renamed its instance variable `type_version`
-  - Model `ApplicationResourceUpdate` deleted or renamed its instance variable `parameters`
-  - Model `ApplicationResourceUpdate` deleted or renamed its instance variable `upgrade_policy`
-  - Model `ApplicationResourceUpdate` deleted or renamed its instance variable `minimum_nodes`
-  - Model `ApplicationResourceUpdate` deleted or renamed its instance variable `maximum_nodes`
-  - Model `ApplicationResourceUpdate` deleted or renamed its instance variable `remove_application_capacity`
-  - Model `ApplicationResourceUpdate` deleted or renamed its instance variable `metrics`
-  - Model `ApplicationResourceUpdate` deleted or renamed its instance variable `managed_identities`
-  - Model `ClusterCodeVersionsResult` deleted or renamed its instance variable `code_version`
-  - Model `ClusterCodeVersionsResult` deleted or renamed its instance variable `support_expiry_utc`
-  - Model `ClusterCodeVersionsResult` deleted or renamed its instance variable `environment`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `add_on_features`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `certificate`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `certificate_common_names`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `client_certificate_common_names`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `client_certificate_thumbprints`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `cluster_code_version`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `event_store_service_enabled`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `fabric_settings`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `node_types`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `reliability_level`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `reverse_proxy_certificate`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `upgrade_description`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `application_type_versions_cleanup_policy`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `upgrade_mode`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `sf_zonal_upgrade_mode`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `vmss_zonal_upgrade_mode`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `infrastructure_service_manager`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `upgrade_wave`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `upgrade_pause_start_timestamp_utc`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `upgrade_pause_end_timestamp_utc`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `wave_upgrade_paused`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `notifications`
-  - Model `ClusterUpdateParameters` deleted or renamed its instance variable `enable_http_gateway_exclusive_auth_mode`
-  - Model `Resource` deleted or renamed its instance variable `location`
-  - Model `Resource` deleted or renamed its instance variable `tags`
-  - Model `Resource` deleted or renamed its instance variable `etag`
-  - Model `ServiceResource` deleted or renamed its instance variable `placement_constraints`
-  - Model `ServiceResource` deleted or renamed its instance variable `correlation_scheme`
-  - Model `ServiceResource` deleted or renamed its instance variable `service_load_metrics`
-  - Model `ServiceResource` deleted or renamed its instance variable `service_placement_policies`
-  - Model `ServiceResource` deleted or renamed its instance variable `default_move_cost`
-  - Model `ServiceResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `ServiceResource` deleted or renamed its instance variable `service_kind`
-  - Model `ServiceResource` deleted or renamed its instance variable `service_type_name`
-  - Model `ServiceResource` deleted or renamed its instance variable `partition_description`
-  - Model `ServiceResource` deleted or renamed its instance variable `service_package_activation_mode`
-  - Model `ServiceResource` deleted or renamed its instance variable `service_dns_name`
-  - Model `ServiceResourceUpdate` deleted or renamed its instance variable `placement_constraints`
-  - Model `ServiceResourceUpdate` deleted or renamed its instance variable `correlation_scheme`
-  - Model `ServiceResourceUpdate` deleted or renamed its instance variable `service_load_metrics`
-  - Model `ServiceResourceUpdate` deleted or renamed its instance variable `service_placement_policies`
-  - Model `ServiceResourceUpdate` deleted or renamed its instance variable `default_move_cost`
-  - Model `ServiceResourceUpdate` deleted or renamed its instance variable `service_kind`
-  - Deleted or renamed model `ApplicationResourceList`
-  - Deleted or renamed model `ApplicationTypeResourceList`
-  - Deleted or renamed model `ApplicationTypeVersionResourceList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ApplicationResource` moved instance variable `type_version`, `parameters`, `upgrade_policy`, `minimum_nodes`, `maximum_nodes`, `remove_application_capacity`, `metrics`, `managed_identities`, `provisioning_state` and `type_name` under property `properties`
+  - Model `ApplicationResourceUpdate` moved instance variable `type_version`, `parameters`, `upgrade_policy`, `minimum_nodes`, `maximum_nodes`, `remove_application_capacity`, `metrics` and `managed_identities` under property `properties`
+  - Model `ClusterCodeVersionsResult` moved instance variable `code_version`, `support_expiry_utc` and `environment` under property `properties`
+  - Model `ClusterUpdateParameters` moved instance variable `add_on_features`, `certificate`, `certificate_common_names`, `client_certificate_common_names`, `client_certificate_thumbprints`, `cluster_code_version`, `event_store_service_enabled`, `fabric_settings`, `node_types`, `reliability_level`, `reverse_proxy_certificate`, `upgrade_description`, `application_type_versions_cleanup_policy`, `upgrade_mode`, `sf_zonal_upgrade_mode`, `vmss_zonal_upgrade_mode`, `infrastructure_service_manager`, `upgrade_wave`, `upgrade_pause_start_timestamp_utc`, `upgrade_pause_end_timestamp_utc`, `wave_upgrade_paused`, `notifications` and `enable_http_gateway_exclusive_auth_mode` under property `properties` whose type is `ClusterPropertiesUpdateParameters`
+  - Model `Resource` deleted or renamed its instance variable `location`, `tags` and `etag`
+  - Model `ServiceResource` moved instance variable `placement_constraints`, `correlation_scheme`, `service_load_metrics`, `service_placement_policies`, `default_move_cost`, `provisioning_state`, `service_kind`, `service_type_name`, `partition_description`, `service_package_activation_mode` and `service_dns_name` under property `properties`
+  - Model `ServiceResourceUpdate` moved instance variable `placement_constraints`, `correlation_scheme`, `service_load_metrics`, `service_placement_policies`, `default_move_cost` and `service_kind` under property `properties`
   - Deleted or renamed model `ProxyResource`
-  - Deleted or renamed model `ServiceResourceList`
-  - Deleted or renamed model `VMSizesResult`
+
+### Other Changes
+
+  - Deleted model `ApplicationResourceList`/`ApplicationTypeResourceList`/`ApplicationTypeVersionResourceList`/`ServiceResourceList`/`VMSizesResult` which actually were not used by SDK users
 
 ## 2.2.0b1 (2024-02-22)
 
