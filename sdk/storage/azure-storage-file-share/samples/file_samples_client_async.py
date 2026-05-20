@@ -21,7 +21,6 @@ USAGE:
     2) STORAGE_ACCOUNT_NAME - the name of the storage account
 """
 
-
 import asyncio
 import os
 import sys

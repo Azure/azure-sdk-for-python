@@ -15,7 +15,6 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from devtools_testutils.storage.testcase import generate_sas_token
 from settings.testcase import FileSharePreparer
 
-
 # ------------------------------------------------------------------------------
 SERVICES = {
     ShareServiceClient: "file",

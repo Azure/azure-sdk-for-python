@@ -25,7 +25,6 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
-
 TEST_INTENT = "backup"
 TEST_FILE_PREFIX = "file"
 TEST_DIRECTORY_PREFIX = "directory"

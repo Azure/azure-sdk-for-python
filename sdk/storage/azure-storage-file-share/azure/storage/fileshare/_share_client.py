@@ -27,7 +27,6 @@ from ._shared.base_client import parse_connection_str, parse_query, StorageAccou
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
 
-
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from ._models import AccessPolicy, DirectoryProperties, FileProperties, ShareProperties

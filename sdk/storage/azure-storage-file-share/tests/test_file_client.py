@@ -23,7 +23,6 @@ from devtools_testutils.storage import StorageRecordedTestCase
 from devtools_testutils.storage.testcase import generate_sas_token
 from settings.testcase import FileSharePreparer
 
-
 # ------------------------------------------------------------------------------
 SERVICES = {
     ShareServiceClient: "file",

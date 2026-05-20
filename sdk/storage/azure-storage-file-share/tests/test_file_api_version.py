@@ -14,7 +14,6 @@ from azure.core.exceptions import ResourceExistsError
 from azure.storage.fileshare import ShareClient, ShareDirectoryClient, ShareFileClient, ShareServiceClient
 from azure.storage.fileshare._shared.constants import X_MS_VERSION
 
-
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = "file"
 

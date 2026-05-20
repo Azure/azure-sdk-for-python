@@ -848,18 +848,18 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
-        directory = share_client.create_directory("directory\uFFFE")
-        directory.create_subdirectory("subdir1\uFFFE")
-        directory.upload_file("file\uFFFE", "data1")
+        directory = share_client.create_directory("directory\ufffe")
+        directory.create_subdirectory("subdir1\ufffe")
+        directory.upload_file("file\ufffe", "data1")
 
         # Act
         list_dir = list(directory.list_directories_and_files())
 
         # Assert
         assert len(list_dir) == 2
-        assert list_dir[0]["name"] == "subdir1\uFFFE"
+        assert list_dir[0]["name"] == "subdir1\ufffe"
         assert list_dir[0]["is_directory"] == True
-        assert list_dir[1]["name"] == "file\uFFFE"
+        assert list_dir[1]["name"] == "file\ufffe"
         assert list_dir[1]["is_directory"] == False
 
     @FileSharePreparer()
@@ -870,18 +870,18 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
-        directory = share_client.create_directory("\uFFFFdirectory")
-        directory.create_subdirectory("\uFFFFsubdir1")
-        directory.upload_file("\uFFFFfile", "data1")
+        directory = share_client.create_directory("\uffffdirectory")
+        directory.create_subdirectory("\uffffsubdir1")
+        directory.upload_file("\ufffffile", "data1")
 
         # Act
-        list_dir = list(directory.list_directories_and_files(name_starts_with="\uFFFF"))
+        list_dir = list(directory.list_directories_and_files(name_starts_with="\uffff"))
 
         # Assert
         assert len(list_dir) == 2
-        assert list_dir[0]["name"] == "\uFFFFsubdir1"
+        assert list_dir[0]["name"] == "\uffffsubdir1"
         assert list_dir[0]["is_directory"] == True
-        assert list_dir[1]["name"] == "\uFFFFfile"
+        assert list_dir[1]["name"] == "\ufffffile"
         assert list_dir[1]["is_directory"] == False
 
     @FileSharePreparer()

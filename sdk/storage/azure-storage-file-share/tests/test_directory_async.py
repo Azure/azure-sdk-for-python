@@ -897,9 +897,9 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
-        directory = await share_client.create_directory("dir1\uFFFE")
+        directory = await share_client.create_directory("dir1\ufffe")
         await asyncio.gather(
-            directory.create_subdirectory("subdir1\uFFFE"), directory.upload_file("file1\uFFFE", "data1")
+            directory.create_subdirectory("subdir1\ufffe"), directory.upload_file("file1\ufffe", "data1")
         )
 
         # Act
@@ -909,9 +909,9 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert len(list_dir) == 2
-        assert list_dir[0]["name"] == "subdir1\uFFFE"
+        assert list_dir[0]["name"] == "subdir1\ufffe"
         assert list_dir[0]["is_directory"] == True
-        assert list_dir[1]["name"] == "file1\uFFFE"
+        assert list_dir[1]["name"] == "file1\ufffe"
         assert list_dir[1]["is_directory"] == False
 
     @FileSharePreparer()
@@ -923,21 +923,21 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
-        directory = await share_client.create_directory("\uFFFFdir1")
+        directory = await share_client.create_directory("\uffffdir1")
         await asyncio.gather(
-            directory.create_subdirectory("\uFFFFsubdir1"), directory.upload_file("\uFFFFfile1", "data1")
+            directory.create_subdirectory("\uffffsubdir1"), directory.upload_file("\ufffffile1", "data1")
         )
 
         # Act
         list_dir = []
-        async for d in directory.list_directories_and_files(name_starts_with="\uFFFF"):
+        async for d in directory.list_directories_and_files(name_starts_with="\uffff"):
             list_dir.append(d)
 
         # Assert
         assert len(list_dir) == 2
-        assert list_dir[0]["name"] == "\uFFFFsubdir1"
+        assert list_dir[0]["name"] == "\uffffsubdir1"
         assert list_dir[0]["is_directory"] == True
-        assert list_dir[1]["name"] == "\uFFFFfile1"
+        assert list_dir[1]["name"] == "\ufffffile1"
         assert list_dir[1]["is_directory"] == False
 
     @FileSharePreparer()

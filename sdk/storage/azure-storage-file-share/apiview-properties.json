@@ -156,5 +156,6 @@
         "azure.storage.fileshare.aio.operations.ShareOperations.get_statistics": "Storage.File.Share.getStatistics",
         "azure.storage.fileshare.operations.ShareOperations.restore": "Storage.File.Share.restore",
         "azure.storage.fileshare.aio.operations.ShareOperations.restore": "Storage.File.Share.restore"
-    }
+    },
+    "CrossLanguageVersion": "fdd35c41a0ed"
 }

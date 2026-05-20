@@ -21,7 +21,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
-
 TEST_INTENT = "backup"
 TEST_FILE_PREFIX = "file"
 TEST_DIRECTORY_PREFIX = "directory"

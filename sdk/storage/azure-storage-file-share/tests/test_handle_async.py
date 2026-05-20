@@ -13,7 +13,6 @@ from settings.testcase import FileSharePreparer
 import pytest
 from azure.storage.fileshare.aio import ShareServiceClient
 
-
 # ------------------------------------------------------------------------------
 TEST_SHARE_NAME = "test-share"
 # ------------------------------------------------------------------------------
