@@ -23,5 +23,6 @@
         "azure.mgmt.servicegroups.aio.ServiceGroupsMgmtClient.begin_update_service_group": "Microsoft.Management.ServiceGroups.updateServiceGroup",
         "azure.mgmt.servicegroups.ServiceGroupsMgmtClient.begin_delete_service_group": "Microsoft.Management.ServiceGroups.deleteServiceGroup",
         "azure.mgmt.servicegroups.aio.ServiceGroupsMgmtClient.begin_delete_service_group": "Microsoft.Management.ServiceGroups.deleteServiceGroup"
-    }
+    },
+    "CrossLanguageVersion": "c5308d55a0d6"
 }
