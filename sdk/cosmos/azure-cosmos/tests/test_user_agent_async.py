@@ -84,7 +84,22 @@ class TestUserAgentAsync(unittest.IsolatedAsyncioTestCase):
         await _run_case(False)
         await _run_case(True)
 
+    async def test_user_agent_overwrite_does_not_leak_async(self):
+        """Regression test: user_agent_overwrite must not leak into the HTTP transport kwargs.
+        """
+        # user_agent + user_agent_overwrite=True at client level
+        await self._check({'user_agent': 'MyApp/1.0', 'user_agent_overwrite': True})
+        # user_agent + user_agent_overwrite=False at client level
+        await self._check({'user_agent': 'MyApp/1.0', 'user_agent_overwrite': False})
+        # user_agent_suffix + user_agent_overwrite=True at client level
+        await self._check({'user_agent_suffix': 'MyApp/1.0', 'user_agent_overwrite': True})
+        # user_agent_suffix + user_agent_overwrite=False at client level
+        await self._check({'user_agent_suffix': 'MyApp/1.0', 'user_agent_overwrite': False})
+        # user_agent_overwrite=True alone (no custom user_agent string)
+        await self._check({'user_agent_overwrite': True})
+        # user_agent_overwrite=False alone
+        await self._check({'user_agent_overwrite': False})
+
 
 if __name__ == "__main__":
     unittest.main()
-

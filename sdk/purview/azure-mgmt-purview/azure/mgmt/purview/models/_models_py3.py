@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,12 +7,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+import datetime
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -35,8 +35,8 @@ class AccessKeys(_serialization.Model):
         *,
         atlas_kafka_primary_endpoint: Optional[str] = None,
         atlas_kafka_secondary_endpoint: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword atlas_kafka_primary_endpoint: Gets or sets the primary connection string.
         :paramtype atlas_kafka_primary_endpoint: str
@@ -91,9 +91,9 @@ class TrackedResource(_serialization.Model):
         *,
         identity: Optional["_models.Identity"] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        tags: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity Info on the tracked resource.
         :paramtype identity: ~azure.mgmt.purview.models.Identity
@@ -103,16 +103,16 @@ class TrackedResource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.identity = identity
         self.location = location
-        self.name = None
-        self.system_data = None
+        self.name: Optional[str] = None
+        self.system_data: Optional["_models.TrackedResourceSystemData"] = None
         self.tags = tags
-        self.type = None
+        self.type: Optional[str] = None
 
 
-class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Account(TrackedResource):
     """Account resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -133,8 +133,8 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype type: str
     :ivar sku: Gets or sets the Sku.
     :vartype sku: ~azure.mgmt.purview.models.AccountSku
-    :ivar cloud_connectors: Cloud connectors.
-     External cloud identifier used as part of scanning configuration.
+    :ivar cloud_connectors: Cloud connectors. External cloud identifier used as part of scanning
+     configuration.
     :vartype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
     :ivar created_at: Gets the time at which the entity was created.
     :vartype created_at: ~datetime.datetime
@@ -208,12 +208,12 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         *,
         identity: Optional["_models.Identity"] = None,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         cloud_connectors: Optional["_models.CloudConnectors"] = None,
         managed_resource_group_name: Optional[str] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity Info on the tracked resource.
         :paramtype identity: ~azure.mgmt.purview.models.Identity
@@ -221,8 +221,8 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype location: str
         :keyword tags: Tags on the azure resource.
         :paramtype tags: dict[str, str]
-        :keyword cloud_connectors: Cloud connectors.
-         External cloud identifier used as part of scanning configuration.
+        :keyword cloud_connectors: Cloud connectors. External cloud identifier used as part of scanning
+         configuration.
         :paramtype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
         :keyword managed_resource_group_name: Gets or sets the managed resource group name.
         :paramtype managed_resource_group_name: str
@@ -231,17 +231,17 @@ class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
         """
         super().__init__(identity=identity, location=location, tags=tags, **kwargs)
-        self.sku = None
+        self.sku: Optional["_models.AccountSku"] = None
         self.cloud_connectors = cloud_connectors
-        self.created_at = None
-        self.created_by = None
-        self.created_by_object_id = None
-        self.endpoints = None
-        self.friendly_name = None
+        self.created_at: Optional[datetime.datetime] = None
+        self.created_by: Optional[str] = None
+        self.created_by_object_id: Optional[str] = None
+        self.endpoints: Optional["_models.AccountPropertiesEndpoints"] = None
+        self.friendly_name: Optional[str] = None
         self.managed_resource_group_name = managed_resource_group_name
-        self.managed_resources = None
-        self.private_endpoint_connections = None
-        self.provisioning_state = None
+        self.managed_resources: Optional["_models.AccountPropertiesManagedResources"] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.public_network_access = public_network_access
 
 
@@ -270,18 +270,18 @@ class AccountEndpoints(_serialization.Model):
         "scan": {"key": "scan", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.catalog = None
-        self.guardian = None
-        self.scan = None
+        self.catalog: Optional[str] = None
+        self.guardian: Optional[str] = None
+        self.scan: Optional[str] = None
 
 
 class AccountList(_serialization.Model):
     """Paged list of account resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Total item count.
     :vartype count: int
@@ -302,8 +302,13 @@ class AccountList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.Account"], count: Optional[int] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: list["_models.Account"],
+        count: Optional[int] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count: Total item count.
         :paramtype count: int
@@ -318,13 +323,13 @@ class AccountList(_serialization.Model):
         self.value = value
 
 
-class AccountProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class AccountProperties(_serialization.Model):
     """The account properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar cloud_connectors: Cloud connectors.
-     External cloud identifier used as part of scanning configuration.
+    :ivar cloud_connectors: Cloud connectors. External cloud identifier used as part of scanning
+     configuration.
     :vartype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
     :ivar created_at: Gets the time at which the entity was created.
     :vartype created_at: ~datetime.datetime
@@ -383,11 +388,11 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         cloud_connectors: Optional["_models.CloudConnectors"] = None,
         managed_resource_group_name: Optional[str] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword cloud_connectors: Cloud connectors.
-         External cloud identifier used as part of scanning configuration.
+        :keyword cloud_connectors: Cloud connectors. External cloud identifier used as part of scanning
+         configuration.
         :paramtype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
         :keyword managed_resource_group_name: Gets or sets the managed resource group name.
         :paramtype managed_resource_group_name: str
@@ -397,15 +402,15 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         """
         super().__init__(**kwargs)
         self.cloud_connectors = cloud_connectors
-        self.created_at = None
-        self.created_by = None
-        self.created_by_object_id = None
-        self.endpoints = None
-        self.friendly_name = None
+        self.created_at: Optional[datetime.datetime] = None
+        self.created_by: Optional[str] = None
+        self.created_by_object_id: Optional[str] = None
+        self.endpoints: Optional["_models.AccountPropertiesEndpoints"] = None
+        self.friendly_name: Optional[str] = None
         self.managed_resource_group_name = managed_resource_group_name
-        self.managed_resources = None
-        self.private_endpoint_connections = None
-        self.provisioning_state = None
+        self.managed_resources: Optional["_models.AccountPropertiesManagedResources"] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.public_network_access = public_network_access
 
 
@@ -421,22 +426,6 @@ class AccountPropertiesEndpoints(AccountEndpoints):
     :ivar scan: Gets the scan endpoint.
     :vartype scan: str
     """
-
-    _validation = {
-        "catalog": {"readonly": True},
-        "guardian": {"readonly": True},
-        "scan": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "catalog": {"key": "catalog", "type": "str"},
-        "guardian": {"key": "guardian", "type": "str"},
-        "scan": {"key": "scan", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
 
 
 class ManagedResources(_serialization.Model):
@@ -465,12 +454,12 @@ class ManagedResources(_serialization.Model):
         "storage_account": {"key": "storageAccount", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.event_hub_namespace = None
-        self.resource_group = None
-        self.storage_account = None
+        self.event_hub_namespace: Optional[str] = None
+        self.resource_group: Optional[str] = None
+        self.storage_account: Optional[str] = None
 
 
 class AccountPropertiesManagedResources(ManagedResources):
@@ -487,22 +476,6 @@ class AccountPropertiesManagedResources(ManagedResources):
     :vartype storage_account: str
     """
 
-    _validation = {
-        "event_hub_namespace": {"readonly": True},
-        "resource_group": {"readonly": True},
-        "storage_account": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "event_hub_namespace": {"key": "eventHubNamespace", "type": "str"},
-        "resource_group": {"key": "resourceGroup", "type": "str"},
-        "storage_account": {"key": "storageAccount", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-
 
 class AccountSkuAutoGenerated(_serialization.Model):
     """The Sku.
@@ -518,7 +491,9 @@ class AccountSkuAutoGenerated(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, capacity: Optional[int] = None, name: Optional[Union[str, "_models.Name"]] = None, **kwargs):
+    def __init__(
+        self, *, capacity: Optional[int] = None, name: Optional[Union[str, "_models.Name"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword capacity: Gets or sets the sku capacity.
         :paramtype capacity: int
@@ -538,20 +513,6 @@ class AccountSku(AccountSkuAutoGenerated):
     :ivar name: Gets or sets the sku name. "Standard"
     :vartype name: str or ~azure.mgmt.purview.models.Name
     """
-
-    _attribute_map = {
-        "capacity": {"key": "capacity", "type": "int"},
-        "name": {"key": "name", "type": "str"},
-    }
-
-    def __init__(self, *, capacity: Optional[int] = None, name: Optional[Union[str, "_models.Name"]] = None, **kwargs):
-        """
-        :keyword capacity: Gets or sets the sku capacity.
-        :paramtype capacity: int
-        :keyword name: Gets or sets the sku name. "Standard"
-        :paramtype name: str or ~azure.mgmt.purview.models.Name
-        """
-        super().__init__(capacity=capacity, name=name, **kwargs)
 
 
 class AccountUpdateParameters(_serialization.Model):
@@ -576,9 +537,9 @@ class AccountUpdateParameters(_serialization.Model):
         *,
         identity: Optional["_models.Identity"] = None,
         properties: Optional["_models.AccountProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        tags: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity related info to add/remove userAssignedIdentities.
         :paramtype identity: ~azure.mgmt.purview.models.Identity
@@ -607,7 +568,7 @@ class CheckNameAvailabilityRequest(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Resource name to verify for availability.
         :paramtype name: str
@@ -643,8 +604,8 @@ class CheckNameAvailabilityResult(_serialization.Model):
         message: Optional[str] = None,
         name_available: Optional[bool] = None,
         reason: Optional[Union[str, "_models.Reason"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword message: Error message.
         :paramtype message: str
@@ -665,8 +626,8 @@ class CloudConnectors(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar aws_external_id: AWS external identifier.
-     Configured in AWS to allow use of the role arn used for scanning.
+    :ivar aws_external_id: AWS external identifier. Configured in AWS to allow use of the role arn
+     used for scanning.
     :vartype aws_external_id: str
     """
 
@@ -678,10 +639,10 @@ class CloudConnectors(_serialization.Model):
         "aws_external_id": {"key": "awsExternalId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.aws_external_id = None
+        self.aws_external_id: Optional[str] = None
 
 
 class CollectionAdminUpdate(_serialization.Model):
@@ -695,7 +656,7 @@ class CollectionAdminUpdate(_serialization.Model):
         "object_id": {"key": "objectId", "type": "str"},
     }
 
-    def __init__(self, *, object_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, object_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword object_id: Gets or sets the object identifier of the admin.
         :paramtype object_id: str
@@ -740,8 +701,8 @@ class DefaultAccountPayload(_serialization.Model):
         scope_tenant_id: Optional[str] = None,
         scope_type: Optional[Union[str, "_models.ScopeType"]] = None,
         subscription_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: The name of the account that is set as the default.
         :paramtype account_name: str
@@ -791,8 +752,8 @@ class DimensionProperties(_serialization.Model):
         display_name: Optional[str] = None,
         name: Optional[str] = None,
         to_be_exported_for_customer: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: localized display name of the dimension to customer.
         :paramtype display_name: str
@@ -837,13 +798,13 @@ class ErrorModel(_serialization.Model):
         "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.details = None
-        self.message = None
-        self.target = None
+        self.code: Optional[str] = None
+        self.details: Optional[list["_models.ErrorModel"]] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
 
 
 class ErrorResponseModel(_serialization.Model):
@@ -863,10 +824,10 @@ class ErrorResponseModel(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponseModelError"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.error = None
+        self.error: Optional["_models.ErrorResponseModelError"] = None
 
 
 class ErrorResponseModelError(ErrorModel):
@@ -883,24 +844,6 @@ class ErrorResponseModelError(ErrorModel):
     :ivar target: Gets or sets the target.
     :vartype target: str
     """
-
-    _validation = {
-        "code": {"readonly": True},
-        "details": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorModel]"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
 
 
 class Identity(_serialization.Model):
@@ -934,9 +877,9 @@ class Identity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.Type"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Identity Type. Known values are: "None", "SystemAssigned", and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.purview.models.Type
@@ -944,8 +887,8 @@ class Identity(_serialization.Model):
         :paramtype user_assigned_identities: dict[str, ~azure.mgmt.purview.models.UserAssignedIdentity]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -984,8 +927,8 @@ class Operation(_serialization.Model):
         name: Optional[str] = None,
         origin: Optional[str] = None,
         service_specification: Optional["_models.OperationMetaServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display: Properties on the operation.
         :paramtype display: ~azure.mgmt.purview.models.OperationDisplay
@@ -1033,8 +976,8 @@ class OperationDisplay(_serialization.Model):
         operation: Optional[str] = None,
         provider: Optional[str] = None,
         resource: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of the operation for display purposes.
         :paramtype description: str
@@ -1055,7 +998,7 @@ class OperationDisplay(_serialization.Model):
 class OperationList(_serialization.Model):
     """Paged list of operation resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Total item count.
     :vartype count: int
@@ -1078,11 +1021,11 @@ class OperationList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: List["_models.Operation"],
+        value: list["_models.Operation"],
         count: Optional[int] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count: Total item count.
         :paramtype count: int
@@ -1120,8 +1063,8 @@ class OperationMetaLogSpecification(_serialization.Model):
         blob_duration: Optional[str] = None,
         display_name: Optional[str] = None,
         name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob_duration: blob duration of the log.
         :paramtype blob_duration: str
@@ -1136,7 +1079,7 @@ class OperationMetaLogSpecification(_serialization.Model):
         self.name = name
 
 
-class OperationMetaMetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class OperationMetaMetricSpecification(_serialization.Model):
     """metric specifications for the operation.
 
     :ivar aggregation_type: aggregation type of metric.
@@ -1156,9 +1099,8 @@ class OperationMetaMetricSpecification(_serialization.Model):  # pylint: disable
     :ivar resource_id_dimension_name_override: dimension name use to replace resource id if
      specified.
     :vartype resource_id_dimension_name_override: str
-    :ivar source_mdm_namespace: Metric namespace.
-     Only set the namespace if different from the default value,
-     leaving it empty makes it use the value from the ARM manifest.
+    :ivar source_mdm_namespace: Metric namespace. Only set the namespace if different from the
+     default value, leaving it empty makes it use the value from the ARM manifest.
     :vartype source_mdm_namespace: str
     :ivar supported_aggregation_types: supported aggregation types.
     :vartype supported_aggregation_types: list[str]
@@ -1187,7 +1129,7 @@ class OperationMetaMetricSpecification(_serialization.Model):  # pylint: disable
         self,
         *,
         aggregation_type: Optional[str] = None,
-        dimensions: Optional[List["_models.DimensionProperties"]] = None,
+        dimensions: Optional[list["_models.DimensionProperties"]] = None,
         display_description: Optional[str] = None,
         display_name: Optional[str] = None,
         enable_regional_mdm_account: Optional[str] = None,
@@ -1195,11 +1137,11 @@ class OperationMetaMetricSpecification(_serialization.Model):  # pylint: disable
         name: Optional[str] = None,
         resource_id_dimension_name_override: Optional[str] = None,
         source_mdm_namespace: Optional[str] = None,
-        supported_aggregation_types: Optional[List[str]] = None,
-        supported_time_grain_types: Optional[List[str]] = None,
+        supported_aggregation_types: Optional[list[str]] = None,
+        supported_time_grain_types: Optional[list[str]] = None,
         unit: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword aggregation_type: aggregation type of metric.
         :paramtype aggregation_type: str
@@ -1218,9 +1160,8 @@ class OperationMetaMetricSpecification(_serialization.Model):  # pylint: disable
         :keyword resource_id_dimension_name_override: dimension name use to replace resource id if
          specified.
         :paramtype resource_id_dimension_name_override: str
-        :keyword source_mdm_namespace: Metric namespace.
-         Only set the namespace if different from the default value,
-         leaving it empty makes it use the value from the ARM manifest.
+        :keyword source_mdm_namespace: Metric namespace. Only set the namespace if different from the
+         default value, leaving it empty makes it use the value from the ARM manifest.
         :paramtype source_mdm_namespace: str
         :keyword supported_aggregation_types: supported aggregation types.
         :paramtype supported_aggregation_types: list[str]
@@ -1262,10 +1203,10 @@ class OperationMetaServiceSpecification(_serialization.Model):
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["_models.OperationMetaLogSpecification"]] = None,
-        metric_specifications: Optional[List["_models.OperationMetaMetricSpecification"]] = None,
-        **kwargs
-    ):
+        log_specifications: Optional[list["_models.OperationMetaLogSpecification"]] = None,
+        metric_specifications: Optional[list["_models.OperationMetaMetricSpecification"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_specifications: log specifications for the operation.
         :paramtype log_specifications: list[~azure.mgmt.purview.models.OperationMetaLogSpecification]
@@ -1289,7 +1230,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The private endpoint identifier.
         :paramtype id: str
@@ -1323,12 +1264,12 @@ class ProxyResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class PrivateEndpointConnection(ProxyResource):
@@ -1375,8 +1316,8 @@ class PrivateEndpointConnection(ProxyResource):
         *,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The private endpoint information.
         :paramtype private_endpoint: ~azure.mgmt.purview.models.PrivateEndpoint
@@ -1387,13 +1328,13 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
 
 
 class PrivateEndpointConnectionList(_serialization.Model):
     """Paged list of private endpoint connections.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Total item count.
     :vartype count: int
@@ -1416,11 +1357,11 @@ class PrivateEndpointConnectionList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: List["_models.PrivateEndpointConnection"],
+        value: list["_models.PrivateEndpointConnection"],
         count: Optional[int] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count: Total item count.
         :paramtype count: int
@@ -1464,19 +1405,19 @@ class PrivateLinkResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.properties = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.properties: Optional["_models.PrivateLinkResourceProperties"] = None
+        self.type: Optional[str] = None
 
 
 class PrivateLinkResourceList(_serialization.Model):
     """Paged list of private link resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Total item count.
     :vartype count: int
@@ -1499,11 +1440,11 @@ class PrivateLinkResourceList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: List["_models.PrivateLinkResource"],
+        value: list["_models.PrivateLinkResource"],
         count: Optional[int] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count: Total item count.
         :paramtype count: int
@@ -1544,12 +1485,12 @@ class PrivateLinkResourceProperties(_serialization.Model):
         "required_zone_names": {"key": "requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.group_id = None
-        self.required_members = None
-        self.required_zone_names = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[list[str]] = None
+        self.required_zone_names: Optional[list[str]] = None
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
@@ -1576,8 +1517,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         actions_required: Optional[str] = None,
         description: Optional[str] = None,
         status: Optional[Union[str, "_models.Status"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword actions_required: The required actions.
         :paramtype actions_required: str
@@ -1632,15 +1573,15 @@ class SystemData(_serialization.Model):
         "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.created_at = None
-        self.created_by = None
-        self.created_by_type = None
-        self.last_modified_at = None
-        self.last_modified_by = None
-        self.last_modified_by_type = None
+        self.created_at: Optional[datetime.datetime] = None
+        self.created_by: Optional[str] = None
+        self.created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None
+        self.last_modified_at: Optional[datetime.datetime] = None
+        self.last_modified_by: Optional[str] = None
+        self.last_modified_by_type: Optional[Union[str, "_models.LastModifiedByType"]] = None
 
 
 class TrackedResourceSystemData(SystemData):
@@ -1664,28 +1605,6 @@ class TrackedResourceSystemData(SystemData):
     :vartype last_modified_by_type: str or ~azure.mgmt.purview.models.LastModifiedByType
     """
 
-    _validation = {
-        "created_at": {"readonly": True},
-        "created_by": {"readonly": True},
-        "created_by_type": {"readonly": True},
-        "last_modified_at": {"readonly": True},
-        "last_modified_by": {"readonly": True},
-        "last_modified_by_type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "created_by": {"key": "createdBy", "type": "str"},
-        "created_by_type": {"key": "createdByType", "type": "str"},
-        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
-        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
-        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-
 
 class UserAssignedIdentity(_serialization.Model):
     """Uses client ID and Principal ID.
@@ -1708,8 +1627,8 @@ class UserAssignedIdentity(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.client_id = None
-        self.principal_id = None
+        self.client_id: Optional[str] = None
+        self.principal_id: Optional[str] = None

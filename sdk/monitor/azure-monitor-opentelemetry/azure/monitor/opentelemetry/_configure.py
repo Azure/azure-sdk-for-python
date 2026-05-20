@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 from functools import cached_property
 from logging import getLogger, Formatter
 from typing import Any, Dict, List, Optional, cast
@@ -19,6 +20,13 @@ from opentelemetry.util._importlib_metadata import (  # pylint: disable=import-e
     distributions,
     entry_points,
 )
+
+# Populate distro version env var so it flows to the exporter
+AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
+# pylint: disable=wrong-import-position
+from azure.monitor.opentelemetry._version import VERSION
+
+os.environ[AZURE_MONITOR_DISTRO_VERSION] = VERSION
 
 from azure.monitor.opentelemetry._browser_sdk_loader import setup_snippet_injection
 from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
@@ -58,6 +66,10 @@ from azure.monitor.opentelemetry.exporter._performance_counters._processor impor
 from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pylint: disable=import-error,no-name-in-module
     _QuickpulseLogRecordProcessor,
     _QuickpulseSpanProcessor,
+)
+from azure.monitor.opentelemetry.exporter._gen_ai._processor import (  # pylint: disable=import-error,no-name-in-module
+    _GenAIMainAgentLogRecordProcessor,
+    _GenAIMainAgentSpanProcessor,
 )
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
     ApplicationInsightsSampler,
@@ -182,6 +194,8 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
             sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
         )
 
+    # GenAI main-agent attribution processor must be registered first
+    tracer_provider.add_span_processor(_GenAIMainAgentSpanProcessor())
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
@@ -223,7 +237,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     # Use try catch while signal is experimental
     try:
         from opentelemetry._logs import set_logger_provider
-        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+        from opentelemetry.sdk._logs import LoggerProvider
+        from opentelemetry.instrumentation.logging.handler import LoggingHandler
         from azure.monitor.opentelemetry.exporter.export.logs._processor import _AzureBatchLogRecordProcessor
 
         from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
@@ -234,6 +249,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
         enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
+        # GenAI main-agent attribution processor must be registered first
+        logger_provider.add_log_record_processor(_GenAIMainAgentLogRecordProcessor())
         for custom_log_record_processor in configurations[LOG_RECORD_PROCESSORS_ARG]:  # type: ignore
             logger_provider.add_log_record_processor(custom_log_record_processor)  # type: ignore
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
@@ -266,21 +283,6 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
                     )
             logger.addHandler(handler)
 
-        # Setup Events
-        try:
-            from opentelemetry._events import _set_event_logger_provider
-            from opentelemetry.sdk._events import EventLoggerProvider
-
-            event_provider = EventLoggerProvider(logger_provider)
-            _set_event_logger_provider(event_provider, False)
-        except ImportError as ex:
-            # If the events is not available, we will not set it up.
-            # This could possibly be due to breaking change in upstream OpenTelemetry
-            # Advise user to upgrade to latest OpenTelemetry version
-            _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                "Exception occurred when setting up Events. Please upgrade to the latest OpenTelemetry version: %s.",
-                ex,
-            )
     except ImportError as ex:
         # If the events is not available, we will not set it up.
         # This could possibly be due to breaking change in upstream OpenTelemetry

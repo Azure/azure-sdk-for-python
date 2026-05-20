@@ -9,9 +9,9 @@ and that the returned AsyncOpenAI client uses it instead of the default one.
 """
 
 import os
+from typing import Any
 import pytest
 import httpx
-from typing import Any
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.ai.projects.aio import AIProjectClient
 

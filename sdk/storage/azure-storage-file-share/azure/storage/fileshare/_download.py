@@ -17,6 +17,7 @@ from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 from azure.core.tracing.common import with_current_context
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import parse_length_from_content_range, process_storage_error
+from ._shared.constants import DEFAULT_MAX_CONCURRENCY
 
 if TYPE_CHECKING:
     from ._generated.operations import FileOperations
@@ -217,7 +218,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
         start_range: Optional[int] = None,
         end_range: Optional[int] = None,
         validate_content: bool = None,  # type: ignore [assignment]
-        max_concurrency: int = 1,
+        max_concurrency: Optional[int] = None,
         name: str = None,  # type: ignore [assignment]
         path: str = None,  # type: ignore [assignment]
         share: str = None,  # type: ignore [assignment]
@@ -233,7 +234,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
         self._config = config
         self._start_range = start_range
         self._end_range = end_range
-        self._max_concurrency = max_concurrency
+        self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
         self._encoding = encoding
         self._validate_content = validate_content
         self._progress_hook = kwargs.pop('progress_hook', None)
@@ -398,7 +399,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
             return data.decode(self._encoding)  # type: ignore [return-value]
         return data
 
-    def content_as_bytes(self, max_concurrency=1):
+    def content_as_bytes(self, max_concurrency=None):
         """DEPRECATED: Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
@@ -414,10 +415,10 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
             "content_as_bytes is deprecated, use readall instead",
             DeprecationWarning
         )
-        self._max_concurrency = max_concurrency
+        self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
         return self.readall()
 
-    def content_as_text(self, max_concurrency=1, encoding="UTF-8"):
+    def content_as_text(self, max_concurrency=None, encoding="UTF-8"):
         """DEPRECATED: Download the contents of this file, and decode as text.
 
         This operation is blocking until all data is downloaded.
@@ -435,7 +436,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
             "content_as_text is deprecated, use readall instead",
             DeprecationWarning
         )
-        self._max_concurrency = max_concurrency
+        self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
         self._encoding = encoding
         return self.readall()
 
@@ -501,7 +502,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
                 downloader.process_chunk(chunk)
         return self.size
 
-    def download_to_stream(self, stream, max_concurrency=1):
+    def download_to_stream(self, stream, max_concurrency=None):
         """DEPRECATED: Download the contents of this file to a stream.
 
         This method is deprecated, use func:`readinto` instead.
@@ -519,6 +520,6 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
             "download_to_stream is deprecated, use readinto instead",
             DeprecationWarning
         )
-        self._max_concurrency = max_concurrency
+        self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
         self.readinto(stream)
         return self.properties

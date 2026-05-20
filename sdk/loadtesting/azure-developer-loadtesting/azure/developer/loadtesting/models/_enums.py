@@ -57,7 +57,7 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Entity was created by a scheduled trigger."""
     AZURE_PIPELINES = "AzurePipelines"
     """Entity was created by Azure DevOps pipelines."""
-    GIT_HUB_WORKFLOWS = "GitHubWorkflows"
+    GITHUB_WORKFLOWS = "GitHubWorkflows"
     """Entity was created by GitHub Workflows."""
 
 
@@ -136,13 +136,13 @@ class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECONDS = "Seconds"
     """Seconds."""
     MILLISECONDS = "Milliseconds"
-    """Milliseconds"""
+    """Milliseconds."""
     BYTES = "Bytes"
-    """Bytes"""
+    """Bytes."""
     BYTES_PER_SECOND = "BytesPerSecond"
-    """Bytes per second"""
+    """Bytes per second."""
     COUNT_PER_SECOND = "CountPerSecond"
-    """Count per second"""
+    """Count per second."""
 
 
 class NotificationEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -169,11 +169,11 @@ class OperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kind of the long running operation."""
 
     CLONE_TEST = "CloneTest"
-    """Operation represents a clone test operation"""
+    """Operation represents a clone test operation."""
     GENERATE_TEST_RUN_INSIGHTS = "GenerateTestRunInsights"
-    """Operation represents a test run insights generation operation"""
+    """Operation represents a test run insights generation operation."""
     TEST_PLAN_RECOMMENDATIONS = "TestPlanRecommendations"
-    """Operation represents a test plan recommendations generation operation"""
+    """Operation represents a test plan recommendations generation operation."""
 
 
 class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -194,7 +194,7 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class PassFailAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Action to take on failure of pass/fail criteria."""
 
-    CONTINUE = "continue"
+    CONTINUEEnum = "continue"
     """Test will continue to run even if pass fail metric criteria metric gets failed."""
     STOP = "stop"
     """Test run will stop if pass fail criteria metric is not passed."""
@@ -286,9 +286,9 @@ class RequestDataLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Request data collection level for test run."""
 
     NONE = "NONE"
-    """No request data will be collected"""
+    """No request data will be collected."""
     ERRORS = "ERRORS"
-    """Request data will be collected in case of failed requests"""
+    """Request data will be collected in case of failed requests."""
 
 
 class ResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -311,11 +311,11 @@ class TestKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Test kind."""
 
     URL = "URL"
-    """URL Test"""
+    """URL Test."""
     JMX = "JMX"
-    """JMX Test"""
+    """JMX Test."""
     LOCUST = "Locust"
-    """Locust Test"""
+    """Locust Test."""
 
 
 class TestProfileRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -382,7 +382,7 @@ class TimeGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PT10S = "PT10S"
     """10 seconds, available only if test run duration is less than 10 minutes."""
     PT1M = "PT1M"
-    """1 minute"""
+    """1 minute."""
     PT5M = "PT5M"
     """5 minutes, available only if test run duration is greater than 1 minute."""
     PT1H = "PT1H"

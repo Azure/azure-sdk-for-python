@@ -9,7 +9,7 @@ import pytest
 from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Workspace_Name
 
 from azure.ai.ml import load_data
-from azure.ai.ml._restclient.v2022_10_01.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     DataContainer,
     DataContainerProperties,
     DataVersionBase,

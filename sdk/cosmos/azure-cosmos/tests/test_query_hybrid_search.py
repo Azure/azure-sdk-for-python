@@ -471,6 +471,121 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         assert len(literal_simple_indices) == len(param_simple_indices) == 5
         assert literal_simple_indices == param_simple_indices
 
+    def test_hybrid_search_with_full_text_score_scope_global(self):
+        """Test that full_text_score_scope='Global' returns the same results as the default (no scope set)."""
+        query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
+                "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
+
+        # Default (no scope)
+        results_default = self.test_container.query_items(query, enable_cross_partition_query=True)
+        result_list_default = [res['index'] for res in results_default]
+
+        # Explicit Global scope
+        results_global = self.test_container.query_items(query, enable_cross_partition_query=True,
+                                                         full_text_score_scope="Global")
+        result_list_global = [res['index'] for res in results_global]
+
+        assert len(result_list_default) == len(result_list_global) == 3
+        assert set(result_list_default) == set(result_list_global) == {2, 85, 57}
+
+    def test_hybrid_search_with_full_text_score_scope_local(self):
+        """Test that full_text_score_scope='Local' returns valid results for a cross-partition query."""
+        query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
+                "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
+
+        results_local = self.test_container.query_items(query, enable_cross_partition_query=True,
+                                                        full_text_score_scope="Local")
+        result_list_local = [res['index'] for res in results_local]
+        assert len(result_list_local) == 3
+        for res in result_list_local:
+            assert res in [2, 85, 57]
+
+    def test_hybrid_search_with_full_text_score_scope_local_partition_key(self):
+        """Test that full_text_score_scope='Local' works with a specific partition key."""
+        query = "SELECT TOP 10 c.index, c.title, c.pk FROM c WHERE FullTextContains(c.title, 'John') OR " \
+                "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
+
+        # With Local scope and partition key, statistics are scoped to just that partition
+        results_local = self.test_container.query_items(query, partition_key='2',
+                                                        full_text_score_scope="Local")
+        result_list_local = list(results_local)
+        # Only index=2 has pk='2' among the 'John' matches (57 and 85 have pk='2')
+        assert len(result_list_local) > 0
+        for res in result_list_local:
+            assert res['pk'] == '2'
+            assert res['index'] == 2
+
+    def test_hybrid_search_with_invalid_full_text_score_scope(self):
+        """Test that an invalid full_text_score_scope value raises ValueError."""
+        query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John') " \
+                "ORDER BY RANK FullTextScore(c.title, 'John')"
+        with pytest.raises(ValueError, match="full_text_score_scope must be 'Local' or 'Global'"):
+            list(self.test_container.query_items(query, enable_cross_partition_query=True,
+                                                 full_text_score_scope="invalid"))
+
+    def test_hybrid_search_rrf_with_full_text_score_scope_local(self):
+        """Test RRF hybrid search with Local scope returns valid results."""
+        query = "SELECT TOP 10 c.index, c.title, c.text FROM c WHERE " \
+                "FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John') OR " \
+                "FullTextContains(c.text, 'United States') ORDER BY RANK RRF(FullTextScore(c.title, 'John')," \
+                " FullTextScore(c.text, 'United States'))"
+
+        results_local = self.test_container.query_items(query, enable_cross_partition_query=True,
+                                                        full_text_score_scope="Local")
+        result_list_local = list(results_local)
+        assert len(result_list_local) == 10
+        for res in result_list_local:
+            assert res['index'] in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
+
+    def test_hybrid_search_local_vs_global_scope_both_return_results(self):
+        """Verify both Local and Global scopes return valid, non-empty results for the same query."""
+        query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
+                "FullTextContains(c.text, 'John') ORDER BY RANK FullTextScore(c.title, 'John')"
+
+        for scope in ["Local", "Global"]:
+            results = self.test_container.query_items(query, enable_cross_partition_query=True,
+                                                      full_text_score_scope=scope)
+            result_list = list(results)
+            assert len(result_list) > 0, f"Expected results for scope={scope}, got none."
+            for res in result_list:
+                assert res['index'] in [2, 85, 57]
+
+    def test_weighted_rrf_with_full_text_score_scope_local(self):
+        """Test weighted RRF with Local scope returns valid results."""
+        query = """
+            SELECT TOP 15 c.index AS Index, c.title AS Title, c.text AS Text
+            FROM c
+            WHERE FullTextContains(c.title, 'John') OR FullTextContains(c.text, 'John')
+                OR FullTextContains(c.text, 'United States')
+            ORDER BY RANK RRF(FullTextScore(c.title, 'John'),
+                FullTextScore(c.text, 'United States'), [1, 1])
+        """
+
+        for scope in ["Local", "Global"]:
+            results = self.test_container.query_items(query, enable_cross_partition_query=True,
+                                                      full_text_score_scope=scope)
+            result_list = [res['Index'] for res in results]
+            assert len(result_list) > 0, f"Expected results for scope={scope}, got none."
+            for result in result_list:
+                assert result in [61, 51, 49, 54, 75, 24, 77, 76, 80, 25, 22, 2, 66, 57, 85]
+
+    def test_hybrid_search_parameterized_with_full_text_score_scope(self):
+        """Test parameterized hybrid search with full_text_score_scope."""
+        param_query = (
+            "SELECT TOP 10 c.index, c.title FROM c "
+            "WHERE FullTextContains(c.title, @term) OR FullTextContains(c.text, @term) "
+            "ORDER BY RANK FullTextScore(c.title, @term)"
+        )
+        params = [{"name": "@term", "value": "John"}]
+
+        results_local = self.test_container.query_items(
+            param_query, parameters=params, enable_cross_partition_query=True,
+            full_text_score_scope="Local"
+        )
+        result_list_local = [res['index'] for res in results_local]
+        assert len(result_list_local) == 3
+        assert set(result_list_local) == {2, 85, 57}
+
 
 if __name__ == "__main__":
     unittest.main()

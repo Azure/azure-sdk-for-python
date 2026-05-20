@@ -1,4 +1,3 @@
-
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -23,7 +22,6 @@ class TestAzureStackHCIOperationsAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list(self, resource_group):
-        response = await self.client.operations.list(
-            api_version="2024-04-01",
-        )
-        assert response.value
+        response = self.client.operations.list()
+        result = [r async for r in response]
+        assert len(result)

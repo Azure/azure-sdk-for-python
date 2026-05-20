@@ -5,7 +5,7 @@
 from datetime import datetime
 from typing import Any, Optional
 
-from azure.ai.ml._restclient.v2023_10_01.models import FeatureWindow as RestFeatureWindow
+from azure.ai.ml._restclient.arm_ml_service.models import FeatureWindow as RestFeatureWindow
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

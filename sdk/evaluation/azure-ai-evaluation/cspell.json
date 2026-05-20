@@ -30,7 +30,9 @@
         "e2etests",
         "etests",
         "redteam",
-        "redef"
+        "redef",
+        "smode",
+        "genai"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/onedp/models/_enums.py",
@@ -43,6 +45,7 @@
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_task_completion/_task_completion.py"
     ],
     "words": [
+        "Agentic",
         "Aoai",
         "onedp"
     ]

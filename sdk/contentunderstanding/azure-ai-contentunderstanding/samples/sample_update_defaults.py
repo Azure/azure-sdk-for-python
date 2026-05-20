@@ -114,7 +114,9 @@ def main() -> None:
         for deployment in missing_deployments:
             print(f"   - {deployment}")
         print("\nPlease set these environment variables and try again.")
-        print("The deployment names should match the models you deployed in Microsoft Foundry.")
+        print(
+            "The deployment names should match the models you deployed in Microsoft Foundry."
+        )
         return
 
     # Map your deployed models to the models required by prebuilt analyzers

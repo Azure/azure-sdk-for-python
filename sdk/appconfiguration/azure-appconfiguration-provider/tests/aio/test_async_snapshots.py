@@ -4,17 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-import time
 import pytest
 from asynctestcase import (
     AppConfigTestCase,
-    cleanup_test_resources_async,
     set_test_settings_async,
-    create_snapshot_async,
 )
+import conftest
 from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
-from test_constants import APPCONFIGURATION_CONNECTION_STRING
+from test_constants import APPCONFIGURATION_ENDPOINT_STRING
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR, FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 from azure.appconfiguration.provider import WatchKey
@@ -26,7 +24,7 @@ from azure.appconfiguration import (
 AppConfigProviderPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_connection_string=APPCONFIGURATION_CONNECTION_STRING,
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
 )
 
 
@@ -128,22 +126,22 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
 
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_load_provider_with_snapshot_not_found(self, appconfiguration_connection_string):
+    async def test_load_provider_with_snapshot_not_found(self, appconfiguration_endpoint_string):
         """Test loading provider with a non-existent snapshot returns error."""
         # Try to load from a non-existent snapshot
         provider = await self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=[SettingSelector(snapshot_name="non-existent-snapshot")],
         )
         assert len(provider._dict) == 0, "Provider should have no settings when snapshot is not found"
 
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_load_provider_with_regular_selectors(self, appconfiguration_connection_string):
+    async def test_load_provider_with_regular_selectors(self, appconfiguration_endpoint_string):
         """Test loading provider with regular selectors works (baseline test)."""
         # This should work - regular selector loading
         async with await self.create_client(
-            connection_string=appconfiguration_connection_string,
+            endpoint=appconfiguration_endpoint_string,
             selects=[SettingSelector(key_filter="message")],  # Regular selector
         ) as provider:
             # Verify we can access the configuration (message is set up by setup_configs)
@@ -152,81 +150,39 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
     @pytest.mark.live_test_only  # Needed to fix an azure core dependency compatibility issue
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_create_snapshot_and_load_provider(self, appconfiguration_connection_string, **kwargs):
-        """Test creating a snapshot and loading provider from it."""
-        # Create SDK client for setup
-        sdk_client = self.create_sdk_client(appconfiguration_connection_string)
+    async def test_create_snapshot_and_load_provider(self, appconfiguration_endpoint_string):
+        """Test loading provider from a pre-created snapshot."""
+        snapshot_name = conftest.snapshot_names["snapshot"]
 
-        # Create unique test configuration settings for the snapshot
-        test_settings = [
-            ConfigurationSetting(key="snapshot_test_key1", value="snapshot_test_value1", label=NULL_CHAR),
-            ConfigurationSetting(key="snapshot_test_key2", value="snapshot_test_value2", label=NULL_CHAR),
-            ConfigurationSetting(
-                key="snapshot_test_json",
-                value='{"nested": "snapshot_value"}',
-                label=NULL_CHAR,
-                content_type="application/json",
-            ),
-            ConfigurationSetting(key="refresh_test_key", value="original_refresh_value", label=NULL_CHAR),
-        ]
+        # Load provider using the snapshot with refresh enabled and feature flags enabled
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
+            selects=[
+                SettingSelector(snapshot_name=snapshot_name),  # Snapshot data (includes feature flags)
+                SettingSelector(key_filter="refresh_test_key"),  # Non-snapshot key for refresh testing
+            ],
+            refresh_on=[WatchKey("refresh_test_key")],  # Watch non-snapshot key for refresh
+            refresh_interval=1,  # Short refresh interval for testing
+        ) as provider:
 
-        # Create feature flag settings for the snapshot
-        # Note: Feature flags in snapshots are NOT loaded as feature flags by the provider
-        test_feature_flags = [
-            FeatureFlagConfigurationSetting(
-                feature_id="SnapshotFeature",
-                enabled=True,
-                label=NULL_CHAR,
-            ),
-            FeatureFlagConfigurationSetting(
-                feature_id="SnapshotFeatureDisabled",
-                enabled=False,
-                label=NULL_CHAR,
-            ),
-        ]
+            # Get the underlying SDK client from the provider
+            sdk_client = provider._replica_client_manager._original_client._client
 
-        # Set the configuration settings and feature flags
-        await set_test_settings_async(sdk_client, test_settings + test_feature_flags)
+            # Verify all snapshot settings are loaded
+            assert provider["snapshot_test_key1"] == "snapshot_test_value1"
+            assert provider["snapshot_test_key2"] == "snapshot_test_value2"
+            assert provider["snapshot_test_json"]["nested"] == "snapshot_value"
+            assert provider["refresh_test_key"] == "original_refresh_value"
 
-        variables = kwargs.pop("variables", {})
-        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
+            # Verify that snapshot settings and refresh key are loaded
+            snapshot_keys = [key for key in provider.keys() if key.startswith("snapshot_test_")]
+            assert len(snapshot_keys) == 3
 
-        # Create a unique snapshot name with timestamp to avoid conflicts
-        snapshot_name = f"test-snapshot-{dynamic_snapshot_name_postfix}"
+            # Verify feature flags from snapshots are NOT loaded as feature flags
+            # (snapshots don't support feature flag loading, only regular selects do)
+            assert FEATURE_MANAGEMENT_KEY not in provider, "Feature flags should not be loaded from snapshots"
 
-        try:
-            # Create the snapshot including both config settings and feature flags
-            await create_snapshot_async(
-                sdk_client,
-                snapshot_name,
-                key_filters=["snapshot_test_*", ".appconfig.featureflag/SnapshotFeature*"],
-            )
-
-            # Load provider using the snapshot with refresh enabled and feature flags enabled
-            async with await self.create_client(
-                connection_string=appconfiguration_connection_string,
-                selects=[
-                    SettingSelector(snapshot_name=snapshot_name),  # Snapshot data (includes feature flags)
-                    SettingSelector(key_filter="refresh_test_key"),  # Non-snapshot key for refresh testing
-                ],
-                refresh_on=[WatchKey("refresh_test_key")],  # Watch non-snapshot key for refresh
-                refresh_interval=1,  # Short refresh interval for testing
-            ) as provider:
-
-                # Verify all snapshot settings are loaded
-                assert provider["snapshot_test_key1"] == "snapshot_test_value1"
-                assert provider["snapshot_test_key2"] == "snapshot_test_value2"
-                assert provider["snapshot_test_json"]["nested"] == "snapshot_value"
-                assert provider["refresh_test_key"] == "original_refresh_value"
-
-                # Verify that snapshot settings and refresh key are loaded
-                snapshot_keys = [key for key in provider.keys() if key.startswith("snapshot_test_")]
-                assert len(snapshot_keys) == 3
-
-                # Verify feature flags from snapshots are NOT loaded as feature flags
-                # (snapshots don't support feature flag loading, only regular selects do)
-                assert FEATURE_MANAGEMENT_KEY not in provider, "Feature flags should not be loaded from snapshots"
-
+            try:
                 # Test snapshot immutability: modify the original settings
                 modified_settings = [
                     ConfigurationSetting(
@@ -252,8 +208,8 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
                 new_key = ConfigurationSetting(key="new_key_added_after_load", value="new_value", label=NULL_CHAR)
                 await set_test_settings_async(sdk_client, modified_settings + [new_key])
 
-                # Wait for refresh interval to pass
-                time.sleep(1)
+                # Expire the refresh timer so refresh will check for changes
+                provider._refresh_timer._next_refresh_time = 0
 
                 # Refresh the existing provider (snapshots should remain immutable, but non-snapshot keys should update)
                 await provider.refresh()
@@ -269,150 +225,100 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
                 # Verify new keys are NOT added during refresh (only watched keys trigger full reload)
                 assert "new_key_added_after_load" not in provider  # New key should not be loaded
 
-            # Verify that loading without snapshot gets the modified values
-            async with await self.create_client(
-                connection_string=appconfiguration_connection_string,
-                selects=[SettingSelector(key_filter="snapshot_test_*")],
-            ) as provider_current:
+                # Verify that loading without snapshot gets the modified values
+                async with await self.create_client(
+                    endpoint=appconfiguration_endpoint_string,
+                    selects=[SettingSelector(key_filter="snapshot_test_*")],
+                ) as provider_current:
 
-                # Current values should be the modified ones
-                assert provider_current["snapshot_test_key1"] == "MODIFIED_VALUE1"  # Modified value
-                assert provider_current["snapshot_test_key2"] == "MODIFIED_VALUE2"  # Modified value
-                assert provider_current["snapshot_test_json"]["nested"] == "MODIFIED_VALUE"  # Modified value
+                    # Current values should be the modified ones
+                    assert provider_current["snapshot_test_key1"] == "MODIFIED_VALUE1"  # Modified value
+                    assert provider_current["snapshot_test_key2"] == "MODIFIED_VALUE2"  # Modified value
+                    assert provider_current["snapshot_test_json"]["nested"] == "MODIFIED_VALUE"  # Modified value
 
-        finally:
-            # Clean up test resources
-            cleanup_settings = (
-                test_settings
-                + test_feature_flags
-                + [ConfigurationSetting(key="new_key_added_after_load", value="", label=NULL_CHAR)]
-            )
-            await cleanup_test_resources_async(
-                sdk_client,
-                settings=cleanup_settings,
-                snapshot_names=[snapshot_name],
-            )
-        return variables
+            finally:
+                # Restore modified settings to original values for other tests
+                # Must happen inside async with so sdk_client is still open
+                restored_settings = [
+                    ConfigurationSetting(key="snapshot_test_key1", value="snapshot_test_value1", label=NULL_CHAR),
+                    ConfigurationSetting(key="snapshot_test_key2", value="snapshot_test_value2", label=NULL_CHAR),
+                    ConfigurationSetting(
+                        key="snapshot_test_json",
+                        value='{"nested": "snapshot_value"}',
+                        label=NULL_CHAR,
+                        content_type="application/json",
+                    ),
+                    ConfigurationSetting(key="refresh_test_key", value="original_refresh_value", label=NULL_CHAR),
+                ]
+                await set_test_settings_async(sdk_client, restored_settings)
 
     @pytest.mark.live_test_only  # Needed to fix an azure core dependency compatibility issue
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_create_snapshot_and_load_provider_with_feature_flags(
-        self, appconfiguration_connection_string, **kwargs
-    ):
-        """Test creating a snapshot and loading provider with feature flags from non-snapshot selectors."""
-        # Create SDK client for setup
-        sdk_client = self.create_sdk_client(appconfiguration_connection_string)
+    async def test_create_snapshot_and_load_provider_with_feature_flags(self, appconfiguration_endpoint_string):
+        """Test loading provider with feature flags from a pre-created snapshot."""
+        snapshot_name = conftest.snapshot_names["ff_snapshot"]
 
-        # Create unique test configuration settings for the snapshot
-        test_settings = [
-            ConfigurationSetting(key="ff_snapshot_test_key1", value="ff_snapshot_test_value1", label=NULL_CHAR),
-            ConfigurationSetting(key="ff_snapshot_test_key2", value="ff_snapshot_test_value2", label=NULL_CHAR),
-        ]
+        # Load provider using snapshot for config settings and regular selectors for feature flags
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
+            feature_flag_enabled=True,  # Enable feature flags
+            feature_flag_selectors=[
+                SettingSelector(snapshot_name=snapshot_name),  # Load feature flags from snapshot
+            ],
+        ) as provider:
 
-        # Create feature flag settings - some for snapshot, some for regular loading
-        # Note: Feature flags in snapshots are NOT loaded as feature flags by the provider
-        snapshot_feature_flags = [
-            FeatureFlagConfigurationSetting(
-                feature_id="SnapshotOnlyFeature",
-                enabled=True,
-                label=NULL_CHAR,
-            ),
-        ]
+            # Get the underlying SDK client from the provider
+            sdk_client = provider._replica_client_manager._original_client._client
 
-        # Feature flags loaded via regular selectors (not from snapshot)
-        regular_feature_flags = [
-            FeatureFlagConfigurationSetting(
-                feature_id="RegularFeature",
-                enabled=True,
-                label=NULL_CHAR,
-            ),
-            FeatureFlagConfigurationSetting(
-                feature_id="RegularFeatureDisabled",
-                enabled=False,
-                label=NULL_CHAR,
-            ),
-        ]
+            # Verify snapshot configuration settings are loaded
+            assert provider["ff_snapshot_test_key1"] == "ff_snapshot_test_value1"
+            assert provider["ff_snapshot_test_key2"] == "ff_snapshot_test_value2"
 
-        # Set the configuration settings and feature flags
-        await set_test_settings_async(sdk_client, test_settings + snapshot_feature_flags + regular_feature_flags)
+            # Verify feature flags loaded via regular selectors ARE loaded
+            feature_flags = provider.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
+            feature_flag_ids = {ff["id"]: ff["enabled"] for ff in feature_flags}
 
-        variables = kwargs.pop("variables", {})
-        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_ff_snapshot_name_postfix", str(int(time.time())))
+            # Regular feature flags should be loaded
+            assert "RegularFeature" not in feature_flag_ids, "RegularFeature should not be loaded via regular selector"
+            assert "RegularFeatureDisabled" not in feature_flag_ids, "RegularFeatureDisabled should not be loaded"
 
-        # Create a unique snapshot name with timestamp to avoid conflicts
-        snapshot_name = f"test-ff-snapshot-{dynamic_snapshot_name_postfix}"
+            # Snapshot-only feature flag should be loaded as a feature flag
+            assert "SnapshotOnlyFeature" in feature_flag_ids, "SnapshotOnlyFeature should be loaded as FF from snapshot"
 
-        try:
-            # Create the snapshot including config settings and snapshot-only feature flags
-            await create_snapshot_async(
-                sdk_client,
-                snapshot_name,
-                key_filters=["ff_snapshot_test_*", ".appconfig.featureflag/SnapshotOnlyFeature"],
-            )
+            # Verify exactly 1 feature flag is loaded (the snapshot-only one)
+            assert len(feature_flags) == 1, f"Expected 1 feature flag, got {len(feature_flags)}"
 
-            # Load provider using snapshot for config settings and regular selectors for feature flags
-            async with await self.create_client(
-                connection_string=appconfiguration_connection_string,
-                feature_flag_enabled=True,  # Enable feature flags
-                feature_flag_selectors=[
-                    SettingSelector(snapshot_name=snapshot_name),  # Load feature flags from snapshot
-                ],
-            ) as provider:
+            try:
+                # Modify the feature flags in the snapshot
+                modified_feature_flags = [
+                    FeatureFlagConfigurationSetting(
+                        feature_id="SnapshotOnlyFeature",
+                        enabled=False,  # Changed from True to False
+                        label=NULL_CHAR,
+                    ),
+                ]
 
-                # Verify snapshot configuration settings are loaded
-                assert provider["ff_snapshot_test_key1"] == "ff_snapshot_test_value1"
-                assert provider["ff_snapshot_test_key2"] == "ff_snapshot_test_value2"
+                await set_test_settings_async(sdk_client, modified_feature_flags)
 
-                # Verify feature flags loaded via regular selectors ARE loaded
-                feature_flags = provider.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
-                feature_flag_ids = {ff["id"]: ff["enabled"] for ff in feature_flags}
+            finally:
+                # Restore modified feature flag to original value for other tests
+                # Must happen inside async with so sdk_client is still open
+                await set_test_settings_async(
+                    sdk_client,
+                    [FeatureFlagConfigurationSetting(feature_id="SnapshotOnlyFeature", enabled=True, label=NULL_CHAR)],
+                )
 
-                # Regular feature flags should be loaded
-                assert (
-                    "RegularFeature" not in feature_flag_ids
-                ), "RegularFeature should not be loaded via regular selector"
-                assert "RegularFeatureDisabled" not in feature_flag_ids, "RegularFeatureDisabled should not be loaded"
+        # Load a fresh provider to verify snapshot immutability
+        async with await self.create_client(
+            endpoint=appconfiguration_endpoint_string,
+            feature_flag_enabled=True,
+            feature_flag_selectors=[
+                SettingSelector(snapshot_name=snapshot_name),  # Load feature flags from snapshot
+            ],
+        ) as provider_current:
 
-                # Snapshot-only feature flag should be loaded as a feature flag
-                assert (
-                    "SnapshotOnlyFeature" in feature_flag_ids
-                ), "SnapshotOnlyFeature should be loaded as FF from snapshot"
-
-                # Verify exactly 1 feature flag is loaded (the snapshot-only one)
-                assert len(feature_flags) == 1, f"Expected 1 feature flag, got {len(feature_flags)}"
-
-            # Modify the feature flags in the snapshot
-            modified_feature_flags = [
-                FeatureFlagConfigurationSetting(
-                    feature_id="SnapshotOnlyFeature",
-                    enabled=False,  # Changed from True to False
-                    label=NULL_CHAR,
-                ),
-            ]
-
-            await set_test_settings_async(sdk_client, modified_feature_flags)
-
-            # Load a fresh provider without snapshot to verify current feature flag values
-            async with await self.create_client(
-                connection_string=appconfiguration_connection_string,
-                feature_flag_enabled=True,
-                feature_flag_selectors=[
-                    SettingSelector(snapshot_name=snapshot_name),  # Load feature flags from snapshot
-                ],
-            ) as provider_current:
-
-                # Current feature flag values should be the original ones from snapshot (immutable)
-                current_feature_flags = provider_current.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
-                current_ff_ids = {ff["id"]: ff["enabled"] for ff in current_feature_flags}
-                assert current_ff_ids.get("SnapshotOnlyFeature") is True  # Original value from snapshot (not modified)
-
-        finally:
-            # Clean up test resources
-            cleanup_settings = test_settings + snapshot_feature_flags + regular_feature_flags
-            await cleanup_test_resources_async(
-                sdk_client,
-                settings=cleanup_settings,
-                snapshot_names=[snapshot_name],
-            )
-        return variables
+            # Current feature flag values should be the original ones from snapshot (immutable)
+            current_feature_flags = provider_current.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
+            current_ff_ids = {ff["id"]: ff["enabled"] for ff in current_feature_flags}
+            assert current_ff_ids.get("SnapshotOnlyFeature") is True  # Original value from snapshot (not modified)

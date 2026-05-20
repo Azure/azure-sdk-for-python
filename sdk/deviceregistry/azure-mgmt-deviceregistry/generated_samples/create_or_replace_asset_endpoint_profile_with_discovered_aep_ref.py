@@ -52,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/CreateOrReplace_AssetEndpointProfile_With_DiscoveredAepRef.json
+# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_AssetEndpointProfile_With_DiscoveredAepRef.json
 if __name__ == "__main__":
     main()

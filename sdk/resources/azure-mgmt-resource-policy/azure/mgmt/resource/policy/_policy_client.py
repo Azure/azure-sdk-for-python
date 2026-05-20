@@ -25,11 +25,9 @@ from .operations import (
     PolicyAssignmentsOperations,
     PolicyDefinitionVersionsOperations,
     PolicyDefinitionsOperations,
-    PolicyExemptionsOperations,
     PolicySetDefinitionVersionsOperations,
     PolicySetDefinitionsOperations,
-    VariableValuesOperations,
-    VariablesOperations,
+    PolicyTokensOperations,
 )
 
 if TYPE_CHECKING:
@@ -40,28 +38,24 @@ if TYPE_CHECKING:
 class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Policy Client.
 
-    :ivar data_policy_manifests: DataPolicyManifestsOperations operations
-    :vartype data_policy_manifests:
-     azure.mgmt.resource.policy.operations.DataPolicyManifestsOperations
-    :ivar policy_definitions: PolicyDefinitionsOperations operations
-    :vartype policy_definitions: azure.mgmt.resource.policy.operations.PolicyDefinitionsOperations
+    :ivar policy_assignments: PolicyAssignmentsOperations operations
+    :vartype policy_assignments: azure.mgmt.resource.policy.operations.PolicyAssignmentsOperations
     :ivar policy_definition_versions: PolicyDefinitionVersionsOperations operations
     :vartype policy_definition_versions:
      azure.mgmt.resource.policy.operations.PolicyDefinitionVersionsOperations
-    :ivar policy_set_definitions: PolicySetDefinitionsOperations operations
-    :vartype policy_set_definitions:
-     azure.mgmt.resource.policy.operations.PolicySetDefinitionsOperations
     :ivar policy_set_definition_versions: PolicySetDefinitionVersionsOperations operations
     :vartype policy_set_definition_versions:
      azure.mgmt.resource.policy.operations.PolicySetDefinitionVersionsOperations
-    :ivar policy_assignments: PolicyAssignmentsOperations operations
-    :vartype policy_assignments: azure.mgmt.resource.policy.operations.PolicyAssignmentsOperations
-    :ivar policy_exemptions: PolicyExemptionsOperations operations
-    :vartype policy_exemptions: azure.mgmt.resource.policy.operations.PolicyExemptionsOperations
-    :ivar variables: VariablesOperations operations
-    :vartype variables: azure.mgmt.resource.policy.operations.VariablesOperations
-    :ivar variable_values: VariableValuesOperations operations
-    :vartype variable_values: azure.mgmt.resource.policy.operations.VariableValuesOperations
+    :ivar policy_definitions: PolicyDefinitionsOperations operations
+    :vartype policy_definitions: azure.mgmt.resource.policy.operations.PolicyDefinitionsOperations
+    :ivar policy_set_definitions: PolicySetDefinitionsOperations operations
+    :vartype policy_set_definitions:
+     azure.mgmt.resource.policy.operations.PolicySetDefinitionsOperations
+    :ivar policy_tokens: PolicyTokensOperations operations
+    :vartype policy_tokens: azure.mgmt.resource.policy.operations.PolicyTokensOperations
+    :ivar data_policy_manifests: DataPolicyManifestsOperations operations
+    :vartype data_policy_manifests:
+     azure.mgmt.resource.policy.operations.DataPolicyManifestsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -119,29 +113,25 @@ class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword,too-ma
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.data_policy_manifests = DataPolicyManifestsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.policy_definitions = PolicyDefinitionsOperations(
+        self.policy_assignments = PolicyAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.policy_definition_versions = PolicyDefinitionVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.policy_set_definitions = PolicySetDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.policy_set_definition_versions = PolicySetDefinitionVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.policy_assignments = PolicyAssignmentsOperations(
+        self.policy_definitions = PolicyDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.policy_exemptions = PolicyExemptionsOperations(
+        self.policy_set_definitions = PolicySetDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.variables = VariablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.variable_values = VariableValuesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.policy_tokens = PolicyTokensOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_policy_manifests = DataPolicyManifestsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

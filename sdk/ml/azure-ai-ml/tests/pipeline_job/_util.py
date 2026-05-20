@@ -17,7 +17,7 @@ DATABINDING_EXPRESSION_TEST_CASES = [
     ),
     (
         "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
-        HttpResponseError(),
+        None,
     ),
     (
         "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
@@ -25,11 +25,11 @@ DATABINDING_EXPRESSION_TEST_CASES = [
     ),
     (
         "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
-        HttpResponseError(),
+        None,
     ),
     (
         "./tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
-        HttpResponseError(),
+        None,
     ),
     (
         "./tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",

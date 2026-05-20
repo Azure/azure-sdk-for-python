@@ -9,7 +9,6 @@ import jsondiff
 import re
 from enum import Enum
 from typing import Any, Dict, List, Union
-from copy import deepcopy
 from _models import ChangesChecker, Suppression, RegexSuppression, PostProcessingChecker
 
 
@@ -27,6 +26,7 @@ class BreakingChangeType(str, Enum):
     CHANGED_PARAMETER_DEFAULT_VALUE = "ChangedParameterDefaultValue"
     CHANGED_PARAMETER_ORDERING = "ChangedParameterOrdering"
     CHANGED_PARAMETER_KIND = "ChangedParameterKind"
+    CHANGED_PARAMETER_TYPE = "ChangedParameterType"
     CHANGED_FUNCTION_KIND = "ChangedFunctionKind"
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
@@ -74,6 +74,10 @@ class BreakingChangesTracker:
         "Method `{}.{}` changed its parameter `{}` from `{}` to `{}`"
     CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
         "Function `{}` changed its parameter `{}` from `{}` to `{}`"
+    CHANGED_PARAMETER_TYPE_MSG = \
+        "Method `{}.{}` changed type of its parameter `{}` from `{}` to `{}`"
+    CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG = \
+        "Function `{}` changed type of its parameter `{}` from `{}` to `{}`"
     CHANGED_CLASS_FUNCTION_KIND_MSG = \
         "Method `{}.{}` changed from `{}` to `{}`"
     CHANGED_FUNCTION_KIND_MSG = \
@@ -115,6 +119,36 @@ class BreakingChangesTracker:
         self.check_parameter_ordering()  # not part of diff
         self.run_post_processing()
 
+    def is_client(self, module_name: Any, class_name: Any) -> bool:
+        """Determine whether a class should be treated as a client.
+
+        For non management-plane SDKs (module namespace does not start with
+        ``azure.mgmt.``) any class whose name ends with ``Client`` is treated
+        as a client.
+
+        For management-plane SDKs the class name must end with ``Client`` AND
+        its ``__init__`` must accept a parameter named ``credential``. This
+        avoids misclassifying helper classes such as ``ARMPollingClient`` or
+        similar that happen to end with ``Client``.
+        """
+        if isinstance(class_name, jsondiff.Symbol) or not isinstance(class_name, str):
+            return False
+        if not class_name.endswith("Client"):
+            return False
+        if not isinstance(module_name, str) or not module_name.startswith("azure.mgmt."):
+            return True
+        # Management-plane SDK: also require a "credential" parameter in __init__.
+        # The class definition may live in either the stable or current snapshot
+        # depending on whether the class is being added, removed, or modified.
+        for source in (self.current, self.stable):
+            class_info = source.get(module_name, {}).get("class_nodes", {}).get(class_name)
+            if not class_info:
+                continue
+            init_method = class_info.get("methods", {}).get("__init__", {})
+            if isinstance(init_method, dict) and "credential" in init_method.get("parameters", {}):
+                return True
+        return False
+
     def run_post_processing(self) -> None:
         # Remove duplicate reporting of changes that apply to both sync and async package components
         self.run_async_cleanup(self.breaking_changes)
@@ -129,15 +163,31 @@ class BreakingChangesTracker:
         
     # Remove duplicate reporting of changes that apply to both sync and async package components
     def run_async_cleanup(self, changes_list: List) -> None:
-        # Create a list of all sync changes
-        non_aio_changes = [bc for bc in changes_list if "aio" not in bc[2]]
-        # Remove any aio change if there is a sync change that is the same
-        for change in non_aio_changes:
-            for c in changes_list:
-                if "aio" in c[2]:
-                    if change[1] == c[1] and change[3:] == c[3:]:
-                        changes_list.remove(c)
-                        break
+        def _make_hashable(item):
+            """Convert an item to a hashable type.
+
+            Lists become tuples, dicts become frozensets of items.
+            Other types are returned as-is (assumed hashable).
+            """
+            if isinstance(item, list):
+                return tuple(_make_hashable(i) for i in item)
+            if isinstance(item, dict):
+                return frozenset((_make_hashable(k), _make_hashable(v)) for k, v in item.items())
+            return item
+
+        def _make_key(bc):
+            return tuple(_make_hashable(x) for x in (bc[1],) + bc[3:])
+
+        # Build a set of keys from non-aio changes for O(1) lookup
+        non_aio_keys = set()
+        for bc in changes_list:
+            if "aio" not in bc[2]:
+                non_aio_keys.add(_make_key(bc))
+        # Keep only non-aio changes and aio changes that don't have a sync counterpart
+        changes_list[:] = [
+            bc for bc in changes_list
+            if "aio" not in bc[2] or _make_key(bc) not in non_aio_keys
+        ]
 
     def run_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():
@@ -274,8 +324,14 @@ class BreakingChangesTracker:
                         diff[diff_type], stable_default
                     )
                 elif diff_type == "param_type":
+                    # Check if the parameter kind (positional vs keyword) has changed
                     self.check_parameter_type_changed(
                         diff["param_type"], stable_parameters_node
+                    )
+                elif diff_type == "type":
+                    # Check if the parameter type annotation has changed
+                    self.check_parameter_annotation_type_changed(
+                        diff["type"], stable_parameters_node
                     )
 
     def check_kwargs_removed(self, param_type: str, param_name: str) -> None:
@@ -359,6 +415,30 @@ class BreakingChangesTracker:
                     self.CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_KIND,
                     self._module_name, self._function_name, self._parameter_name,
                     stable_parameters_node[self._parameter_name]["param_type"], diff
+                )
+            )
+
+    def check_parameter_annotation_type_changed(self, diff: Any, stable_parameters_node: Dict) -> None:
+        stable_type = stable_parameters_node[self._parameter_name].get("type")
+        # `create_parameters` stores a missing annotation as Python None, while an
+        # explicit `None` annotation is stored as the string "None". Normalize the
+        # missing-annotation case to a distinct display so the message is unambiguous.
+        display_stable = "<no annotation>" if stable_type is None else stable_type
+        display_current = "<no annotation>" if diff is None else diff
+        if self._class_name:
+            self.breaking_changes.append(
+                (
+                    self.CHANGED_PARAMETER_TYPE_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
+                    self._module_name, self._class_name, self._function_name, self._parameter_name,
+                    display_stable, display_current
+                )
+            )
+        else:
+            self.breaking_changes.append(
+                (
+                    self.CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
+                    self._module_name, self._function_name, self._parameter_name,
+                    display_stable, display_current
                 )
             )
 
@@ -531,7 +611,7 @@ class BreakingChangesTracker:
 
         for property in deleted_props:
             bc = None
-            if self._class_name.endswith("Client"):
+            if self.is_client(self._module_name, self._class_name):
                 property_type = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"][property]["attr_type"]
                 # property_type is not always a string, such as client_side_validation which is a bool, so we need to check for strings
                 if property_type is not None and isinstance(property_type, str) and property_type.lower().endswith("operations"):
@@ -572,7 +652,7 @@ class BreakingChangesTracker:
                 deleted_classes = self.stable[self._module_name]["class_nodes"]
 
             for name in deleted_classes:
-                if name.endswith("Client"):
+                if self.is_client(self._module_name, name):
                     bc = (
                         self.REMOVED_OR_RENAMED_CLIENT_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLIENT,
@@ -599,7 +679,7 @@ class BreakingChangesTracker:
                 methods_deleted = stable_methods_node
 
             for method in methods_deleted:
-                if self._class_name.endswith("Client"):
+                if self.is_client(self._module_name, self._class_name):
                     bc = (
                         self.REMOVED_OR_RENAMED_CLIENT_METHOD_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLIENT_METHOD,
@@ -652,28 +732,37 @@ class BreakingChangesTracker:
         ignored = []
         # Match all ignore rules that should apply to this package
         for ignored_package, ignore_rules in ignore_changes.items():
-            if re.findall(ignored_package, self.package_name):
+            if re.search(ignored_package, self.package_name):
                 ignored.extend(ignore_rules)
 
-        # Remove ignored changes from list of reportable changes
-        bc_copy = deepcopy(changes_list)
-        for bc in bc_copy:
+        if not ignored:
+            return
+
+        # Pre-create Suppression objects once instead of recreating per change
+        suppressions = [Suppression(*rule) for rule in ignored]
+
+        # Filter out ignored changes in a single pass instead of deepcopy + list.remove()
+        filtered = []
+        for bc in changes_list:
             _, bc_type, module_name, *args = bc
             class_name = args[0] if args else None
             function_name = args[1] if len(args) > 1 else None
             parameter_name = args[2] if len(args) > 2 else None
 
-            for rule in ignored:
-                suppression = Suppression(*rule)
-
+            should_keep = True
+            for suppression in suppressions:
                 if suppression.parameter_or_property_name is not None:
                     # If the ignore rule is for a property or parameter, we should check up to that level on the original change
                     if self.match((bc_type, module_name, class_name, function_name, parameter_name), suppression):
-                        changes_list.remove(bc)
+                        should_keep = False
                         break
                 elif self.match((bc_type, module_name, class_name, function_name), suppression):
-                    changes_list.remove(bc)
+                    should_keep = False
                     break
+            if should_keep:
+                filtered.append(bc)
+
+        changes_list[:] = filtered
 
     def report_changes(self) -> None:
         ignore_changes = self.ignore if self.ignore else {}

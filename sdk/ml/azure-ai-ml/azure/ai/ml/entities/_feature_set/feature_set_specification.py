@@ -5,7 +5,7 @@
 from os import PathLike
 from typing import Any, Optional, Union
 
-from azure.ai.ml._restclient.v2023_10_01.models import FeaturesetSpecification as RestFeaturesetSpecification
+from azure.ai.ml._restclient.arm_ml_service.models import FeaturesetSpecification as RestFeaturesetSpecification
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

@@ -8,7 +8,7 @@ from typing import Any, Callable, Dict, Optional, Tuple
 
 from marshmallow import Schema
 
-from ..._restclient.v2022_10_01.models import ComponentVersion
+from ..._restclient.arm_ml_service.models import ComponentVersion
 from ..._utils.utils import is_internal_component_data
 from ...constants._common import SOURCE_PATH_CONTEXT_KEY
 from ...constants._component import DataTransferTaskType, NodeType

@@ -18,6 +18,7 @@ from ._exposure_control_operations import ExposureControlOperations  # type: ign
 from ._integration_runtimes_operations import IntegrationRuntimesOperations  # type: ignore
 from ._integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations  # type: ignore
 from ._integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations  # type: ignore
+from ._integration_runtime_operations import IntegrationRuntimeOperations  # type: ignore
 from ._linked_services_operations import LinkedServicesOperations  # type: ignore
 from ._datasets_operations import DatasetsOperations  # type: ignore
 from ._pipelines_operations import PipelinesOperations  # type: ignore
@@ -47,6 +48,7 @@ __all__ = [
     "IntegrationRuntimesOperations",
     "IntegrationRuntimeObjectMetadataOperations",
     "IntegrationRuntimeNodesOperations",
+    "IntegrationRuntimeOperations",
     "LinkedServicesOperations",
     "DatasetsOperations",
     "PipelinesOperations",

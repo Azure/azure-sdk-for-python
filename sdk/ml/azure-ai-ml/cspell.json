@@ -1,19 +1,22 @@
 {
-    "version": "0.2",
-    "ignoreWords": [
-        "kwoa",
-        "rslex",
-        "aadtoken",
-        "alds",
-        "entra",
-        "restclient",
-        "SERP",
-        "mpnet",
-        "FAISS",
-        "faiss",
-        "Faiss",
-        "LLMRAG",
-        "expirable",
-        "elts"
-    ]
+  "version": "0.2",
+  "ignoreWords": [
+    "FAISS",
+    "Faiss",
+    "LLMRAG",
+    "SERP",
+    "aadtoken",
+    "alds",
+    "elts",
+    "entra",
+    "expirable",
+    "faiss",
+    "kwoa",
+    "merkle",
+    "merkletree",
+    "misformatted",
+    "mpnet",
+    "restclient",
+    "rslex"
+  ]
 }

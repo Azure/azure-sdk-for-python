@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -173,6 +173,134 @@ class ArtifactProperties(_Model):
     """The artifact size in MB."""
 
 
+class BenefitPlans(_Model):
+    """The benefit plans.
+
+    :ivar azure_hybrid_windows_server_benefit: Azure Hybrid Windows Server Benefit plan. Known
+     values are: "Enabled" and "Disabled".
+    :vartype azure_hybrid_windows_server_benefit: str or
+     ~azure.mgmt.disconnectedoperations.models.BenefitPlanStatus
+    :ivar windows_server_vm_count: Number of Windows Server VMs to license under the Azure Hybrid
+     Benefit plan.
+    :vartype windows_server_vm_count: int
+    """
+
+    azure_hybrid_windows_server_benefit: Optional[Union[str, "_models.BenefitPlanStatus"]] = rest_field(
+        name="azureHybridWindowsServerBenefit", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure Hybrid Windows Server Benefit plan. Known values are: \"Enabled\" and \"Disabled\"."""
+    windows_server_vm_count: Optional[int] = rest_field(
+        name="windowsServerVmCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of Windows Server VMs to license under the Azure Hybrid Benefit plan."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_hybrid_windows_server_benefit: Optional[Union[str, "_models.BenefitPlanStatus"]] = None,
+        windows_server_vm_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BillingConfiguration(_Model):
+    """The billing configuration.
+
+    :ivar auto_renew: The auto renew setting. Required. Known values are: "Enabled" and "Disabled".
+    :vartype auto_renew: str or ~azure.mgmt.disconnectedoperations.models.AutoRenew
+    :ivar billing_status: The billing status. Required. Known values are: "Enabled", "Disabled",
+     and "Stopped".
+    :vartype billing_status: str or ~azure.mgmt.disconnectedoperations.models.BillingStatus
+    :ivar current: The current billing configuration. Required.
+    :vartype current: ~azure.mgmt.disconnectedoperations.models.BillingPeriod
+    :ivar upcoming: The upcoming billing configuration.
+    :vartype upcoming: ~azure.mgmt.disconnectedoperations.models.BillingPeriod
+    """
+
+    auto_renew: Union[str, "_models.AutoRenew"] = rest_field(
+        name="autoRenew", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The auto renew setting. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    billing_status: Union[str, "_models.BillingStatus"] = rest_field(name="billingStatus", visibility=["read"])
+    """The billing status. Required. Known values are: \"Enabled\", \"Disabled\", and \"Stopped\"."""
+    current: "_models.BillingPeriod" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current billing configuration. Required."""
+    upcoming: Optional["_models.BillingPeriod"] = rest_field(visibility=["read", "update"])
+    """The upcoming billing configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auto_renew: Union[str, "_models.AutoRenew"],
+        current: "_models.BillingPeriod",
+        upcoming: Optional["_models.BillingPeriod"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BillingPeriod(_Model):
+    """The billing period.
+
+    :ivar cores: The number of cores. Required.
+    :vartype cores: int
+    :ivar pricing_model: The pricing model. Required. Known values are: "Trial" and "Annual".
+    :vartype pricing_model: str or ~azure.mgmt.disconnectedoperations.models.PricingModel
+    :ivar start_date: The billing start date.
+    :vartype start_date: ~datetime.date
+    :ivar end_date: The billing end date.
+    :vartype end_date: ~datetime.date
+    """
+
+    cores: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of cores. Required."""
+    pricing_model: Union[str, "_models.PricingModel"] = rest_field(
+        name="pricingModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The pricing model. Required. Known values are: \"Trial\" and \"Annual\"."""
+    start_date: Optional[datetime.date] = rest_field(name="startDate", visibility=["read"])
+    """The billing start date."""
+    end_date: Optional[datetime.date] = rest_field(name="endDate", visibility=["read"])
+    """The billing end date."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cores: int,
+        pricing_model: Union[str, "_models.PricingModel"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TrackedResource(Resource):
     """Tracked Resource.
 
@@ -282,6 +410,10 @@ class DisconnectedOperationDeploymentManifest(_Model):
     :vartype connection_intent: str or ~azure.mgmt.disconnectedoperations.models.ConnectionIntent
     :ivar cloud: The cloud in which the resource is registered.
     :vartype cloud: str
+    :ivar billing_configuration: The billing configuration.
+    :vartype billing_configuration: ~azure.mgmt.disconnectedoperations.models.BillingConfiguration
+    :ivar benefit_plans: The benefit plans.
+    :vartype benefit_plans: ~azure.mgmt.disconnectedoperations.models.BenefitPlans
     """
 
     resource_id: str = rest_field(name="resourceId", visibility=["read"])
@@ -298,6 +430,12 @@ class DisconnectedOperationDeploymentManifest(_Model):
     """The connection intent. Required. Known values are: \"Connected\" and \"Disconnected\"."""
     cloud: Optional[str] = rest_field(visibility=["read"])
     """The cloud in which the resource is registered."""
+    billing_configuration: Optional["_models.BillingConfiguration"] = rest_field(
+        name="billingConfiguration", visibility=["read"]
+    )
+    """The billing configuration."""
+    benefit_plans: Optional["_models.BenefitPlans"] = rest_field(name="benefitPlans", visibility=["read"])
+    """The benefit plans."""
 
 
 class DisconnectedOperationProperties(_Model):
@@ -323,6 +461,10 @@ class DisconnectedOperationProperties(_Model):
      ~azure.mgmt.disconnectedoperations.models.RegistrationStatus
     :ivar device_version: The device version.
     :vartype device_version: str
+    :ivar billing_configuration: The billing configuration.
+    :vartype billing_configuration: ~azure.mgmt.disconnectedoperations.models.BillingConfiguration
+    :ivar benefit_plans: The benefit plans.
+    :vartype benefit_plans: ~azure.mgmt.disconnectedoperations.models.BenefitPlans
     """
 
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
@@ -334,7 +476,7 @@ class DisconnectedOperationProperties(_Model):
     billing_model: Union[str, "_models.BillingModel"] = rest_field(name="billingModel", visibility=["read"])
     """The billing model. Required. \"Capacity\""""
     connection_intent: Union[str, "_models.ConnectionIntent"] = rest_field(
-        name="connectionIntent", visibility=["read", "create", "update", "delete", "query"]
+        name="connectionIntent", visibility=["read", "create", "update"]
     )
     """The connection intent. Required. Known values are: \"Connected\" and \"Disconnected\"."""
     connection_status: Optional[Union[str, "_models.ConnectionStatus"]] = rest_field(
@@ -347,6 +489,14 @@ class DisconnectedOperationProperties(_Model):
     """The registration intent. Known values are: \"Registered\" and \"Unregistered\"."""
     device_version: Optional[str] = rest_field(name="deviceVersion", visibility=["read", "update"])
     """The device version."""
+    billing_configuration: Optional["_models.BillingConfiguration"] = rest_field(
+        name="billingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The billing configuration."""
+    benefit_plans: Optional["_models.BenefitPlans"] = rest_field(
+        name="benefitPlans", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The benefit plans."""
 
     @overload
     def __init__(
@@ -355,6 +505,8 @@ class DisconnectedOperationProperties(_Model):
         connection_intent: Union[str, "_models.ConnectionIntent"],
         registration_status: Optional[Union[str, "_models.RegistrationStatus"]] = None,
         device_version: Optional[str] = None,
+        billing_configuration: Optional["_models.BillingConfiguration"] = None,
+        benefit_plans: Optional["_models.BenefitPlans"] = None,
     ) -> None: ...
 
     @overload
@@ -416,10 +568,14 @@ class DisconnectedOperationUpdateProperties(_Model):
      ~azure.mgmt.disconnectedoperations.models.RegistrationStatus
     :ivar device_version: The device version.
     :vartype device_version: str
+    :ivar billing_configuration: The billing configuration.
+    :vartype billing_configuration: ~azure.mgmt.disconnectedoperations.models.BillingConfiguration
+    :ivar benefit_plans: The benefit plans.
+    :vartype benefit_plans: ~azure.mgmt.disconnectedoperations.models.BenefitPlans
     """
 
     connection_intent: Optional[Union[str, "_models.ConnectionIntent"]] = rest_field(
-        name="connectionIntent", visibility=["read", "create", "update", "delete", "query"]
+        name="connectionIntent", visibility=["read", "create", "update"]
     )
     """The connection intent. Known values are: \"Connected\" and \"Disconnected\"."""
     registration_status: Optional[Union[str, "_models.RegistrationStatus"]] = rest_field(
@@ -428,6 +584,14 @@ class DisconnectedOperationUpdateProperties(_Model):
     """The registration intent. Known values are: \"Registered\" and \"Unregistered\"."""
     device_version: Optional[str] = rest_field(name="deviceVersion", visibility=["read", "update"])
     """The device version."""
+    billing_configuration: Optional["_models.BillingConfiguration"] = rest_field(
+        name="billingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The billing configuration."""
+    benefit_plans: Optional["_models.BenefitPlans"] = rest_field(
+        name="benefitPlans", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The benefit plans."""
 
     @overload
     def __init__(
@@ -436,6 +600,8 @@ class DisconnectedOperationUpdateProperties(_Model):
         connection_intent: Optional[Union[str, "_models.ConnectionIntent"]] = None,
         registration_status: Optional[Union[str, "_models.RegistrationStatus"]] = None,
         device_version: Optional[str] = None,
+        billing_configuration: Optional["_models.BillingConfiguration"] = None,
+        benefit_plans: Optional["_models.BenefitPlans"] = None,
     ) -> None: ...
 
     @overload
@@ -521,6 +687,127 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
+class HardwareSetting(ProxyResource):
+    """Hardware settings resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.disconnectedoperations.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.disconnectedoperations.models.HardwareSettingProperties
+    """
+
+    properties: Optional["_models.HardwareSettingProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.HardwareSettingProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HardwareSettingProperties(_Model):
+    """The hardware setting properties.
+
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.disconnectedoperations.models.ResourceProvisioningState
+    :ivar total_cores: The total number of cores. Required.
+    :vartype total_cores: int
+    :ivar disk_space_in_gb: The disk space in GB. Required.
+    :vartype disk_space_in_gb: int
+    :ivar memory_in_gb: The memory in GB. Required.
+    :vartype memory_in_gb: int
+    :ivar oem: The OEM. Required.
+    :vartype oem: str
+    :ivar hardware_sku: The hardware SKU. Required.
+    :vartype hardware_sku: str
+    :ivar nodes: The number of nodes. Required.
+    :vartype nodes: int
+    :ivar version_at_registration: The active version at registration. Required.
+    :vartype version_at_registration: str
+    :ivar solution_builder_extension: The solution builder extension at registration. Required.
+    :vartype solution_builder_extension: str
+    :ivar device_id: The unique Id of the device. Required.
+    :vartype device_id: str
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The resource provisioning state. Known values are: \"Succeeded\", \"Failed\", and \"Canceled\"."""
+    total_cores: int = rest_field(name="totalCores", visibility=["read", "create", "update", "delete", "query"])
+    """The total number of cores. Required."""
+    disk_space_in_gb: int = rest_field(name="diskSpaceInGb", visibility=["read", "create", "update", "delete", "query"])
+    """The disk space in GB. Required."""
+    memory_in_gb: int = rest_field(name="memoryInGb", visibility=["read", "create", "update", "delete", "query"])
+    """The memory in GB. Required."""
+    oem: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The OEM. Required."""
+    hardware_sku: str = rest_field(name="hardwareSku", visibility=["read", "create", "update", "delete", "query"])
+    """The hardware SKU. Required."""
+    nodes: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of nodes. Required."""
+    version_at_registration: str = rest_field(
+        name="versionAtRegistration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The active version at registration. Required."""
+    solution_builder_extension: str = rest_field(
+        name="solutionBuilderExtension", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The solution builder extension at registration. Required."""
+    device_id: str = rest_field(name="deviceId", visibility=["read", "create", "update", "delete", "query"])
+    """The unique Id of the device. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_cores: int,
+        disk_space_in_gb: int,
+        memory_in_gb: int,
+        oem: str,
+        hardware_sku: str,
+        nodes: int,
+        version_at_registration: str,
+        solution_builder_extension: str,
+        device_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Image(ProxyResource):
     """Holds the release information of a disconnected operations image.
 
@@ -581,6 +868,8 @@ class ImageDownloadResult(_Model):
     :vartype release_type: str or ~azure.mgmt.disconnectedoperations.models.ReleaseType
     :ivar compatible_versions: The versions that are compatible for this update package.
     :vartype compatible_versions: list[str]
+    :ivar update_properties: Image update properties for update release type image.
+    :vartype update_properties: ~azure.mgmt.disconnectedoperations.models.ImageUpdateProperties
     :ivar transaction_id: The unique identifier of the download. Required.
     :vartype transaction_id: str
     :ivar download_link: The download URI. Required.
@@ -605,6 +894,10 @@ class ImageDownloadResult(_Model):
     """The release type. Required. Known values are: \"Install\" and \"Update\"."""
     compatible_versions: Optional[list[str]] = rest_field(name="compatibleVersions", visibility=["read"])
     """The versions that are compatible for this update package."""
+    update_properties: Optional["_models.ImageUpdateProperties"] = rest_field(
+        name="updateProperties", visibility=["read"]
+    )
+    """Image update properties for update release type image."""
     transaction_id: str = rest_field(name="transactionId", visibility=["read"])
     """The unique identifier of the download. Required."""
     download_link: str = rest_field(name="downloadLink", visibility=["read"])
@@ -632,6 +925,8 @@ class ImageProperties(_Model):
     :vartype release_type: str or ~azure.mgmt.disconnectedoperations.models.ReleaseType
     :ivar compatible_versions: The versions that are compatible for this update package.
     :vartype compatible_versions: list[str]
+    :ivar update_properties: Image update properties for update release type image.
+    :vartype update_properties: ~azure.mgmt.disconnectedoperations.models.ImageUpdateProperties
     """
 
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
@@ -650,6 +945,40 @@ class ImageProperties(_Model):
     """The release type. Required. Known values are: \"Install\" and \"Update\"."""
     compatible_versions: Optional[list[str]] = rest_field(name="compatibleVersions", visibility=["read"])
     """The versions that are compatible for this update package."""
+    update_properties: Optional["_models.ImageUpdateProperties"] = rest_field(
+        name="updateProperties", visibility=["read"]
+    )
+    """Image update properties for update release type image."""
+
+
+class ImageUpdateProperties(_Model):
+    """The update properties of the Update Release type Image.
+
+    :ivar system_reboot: Indicates if a system reboot is required after applying the update.
+     Required. Known values are: "Required" and "NotRequired".
+    :vartype system_reboot: str or ~azure.mgmt.disconnectedoperations.models.SystemReboot
+    :ivar security_updates: Details of security updates included in this image release. Required.
+    :vartype security_updates: str
+    :ivar os_version: The operating system version provided by this image update. Required.
+    :vartype os_version: str
+    :ivar agent_version: The version(s) of the agent software included in this image update.
+     Required.
+    :vartype agent_version: str
+    :ivar feature_updates: Details of feature updates included in this image release. Required.
+    :vartype feature_updates: str
+    """
+
+    system_reboot: Union[str, "_models.SystemReboot"] = rest_field(name="systemReboot", visibility=["read"])
+    """Indicates if a system reboot is required after applying the update. Required. Known values are:
+     \"Required\" and \"NotRequired\"."""
+    security_updates: str = rest_field(name="securityUpdates", visibility=["read"])
+    """Details of security updates included in this image release. Required."""
+    os_version: str = rest_field(name="osVersion", visibility=["read"])
+    """The operating system version provided by this image update. Required."""
+    agent_version: str = rest_field(name="agentVersion", visibility=["read"])
+    """The version(s) of the agent software included in this image update. Required."""
+    feature_updates: str = rest_field(name="featureUpdates", visibility=["read"])
+    """Details of feature updates included in this image release. Required."""
 
 
 class SystemData(_Model):

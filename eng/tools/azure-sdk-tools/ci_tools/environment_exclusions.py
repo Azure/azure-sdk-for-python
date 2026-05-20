@@ -67,30 +67,6 @@ def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool
     return config
 
 
-def filter_tox_environment_string(namespace_argument: str, package_path: str) -> str:
-    """
-    Takes an incoming comma separated list of tox environments and package name. Resolves whether or not
-    each given tox environment should run, given comparison to single unified exclusion file in `environment_exclusions`.
-
-    :param namespace_argument: A namespace argument. This takes the form of a comma separated list: "whl,sdist,mindependency". "whl". "lint,pyright,sphinx".
-    :param package_path: The path to the package.
-    """
-    if package_path.endswith("setup.py"):
-        package_path = os.path.dirname(package_path)
-
-    if namespace_argument:
-        tox_envs = namespace_argument.strip().split(",")
-        filtered_set = []
-
-        for tox_env in [env.strip().lower() for env in tox_envs]:
-            check_enabled = is_check_enabled(package_path, tox_env, CHECK_DEFAULTS.get(tox_env, True))
-            if check_enabled or tox_env in MUST_RUN_ENVS:
-                filtered_set.append(tox_env)
-        return ",".join(filtered_set)
-
-    return namespace_argument
-
-
 def is_typing_ignored(package_name: str) -> bool:
     """
     Evaluates a package name and evaluates whether or not this package should be ignored when invoking type checking.

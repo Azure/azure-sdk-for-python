@@ -22,7 +22,30 @@ class TestPolicyPolicySetDefinitionVersionsOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_policy_set_definition_versions_list_all_builtins(self, resource_group):
         response = self.client.policy_set_definition_versions.list_all_builtins(
-            api_version="2023-04-01",
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_set_definition_versions_list_built_in(self, resource_group):
+        response = self.client.policy_set_definition_versions.list_built_in(
+            policy_set_definition_name="str",
+            api_version="2025-03-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_set_definition_versions_get_built_in(self, resource_group):
+        response = self.client.policy_set_definition_versions.get_built_in(
+            policy_set_definition_name="str",
+            policy_definition_version="str",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +56,110 @@ class TestPolicyPolicySetDefinitionVersionsOperations(AzureMgmtRecordedTestCase)
     def test_policy_set_definition_versions_list_all_at_management_group(self, resource_group):
         response = self.client.policy_set_definition_versions.list_all_at_management_group(
             management_group_name="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_set_definition_versions_list_by_management_group(self, resource_group):
+        response = self.client.policy_set_definition_versions.list_by_management_group(
+            management_group_name="str",
+            policy_set_definition_name="str",
+            api_version="2025-03-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_set_definition_versions_get_at_management_group(self, resource_group):
+        response = self.client.policy_set_definition_versions.get_at_management_group(
+            management_group_name="str",
+            policy_set_definition_name="str",
+            policy_definition_version="str",
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_set_definition_versions_create_or_update_at_management_group(self, resource_group):
+        response = self.client.policy_set_definition_versions.create_or_update_at_management_group(
+            management_group_name="str",
+            policy_set_definition_name="str",
+            policy_definition_version="str",
+            parameters={
+                "description": "str",
+                "displayName": "str",
+                "id": "str",
+                "metadata": {},
+                "name": "str",
+                "parameters": {
+                    "str": {
+                        "allowedValues": [{}],
+                        "defaultValue": {},
+                        "metadata": {
+                            "assignPermissions": bool,
+                            "description": "str",
+                            "displayName": "str",
+                            "strongType": "str",
+                        },
+                        "schema": {},
+                        "type": "str",
+                    }
+                },
+                "policyDefinitionGroups": [
+                    {
+                        "name": "str",
+                        "additionalMetadataId": "str",
+                        "category": "str",
+                        "description": "str",
+                        "displayName": "str",
+                    }
+                ],
+                "policyDefinitions": [
+                    {
+                        "policyDefinitionId": "str",
+                        "definitionVersion": "str",
+                        "effectiveDefinitionVersion": "str",
+                        "groupNames": ["str"],
+                        "latestDefinitionVersion": "str",
+                        "parameters": {"str": {"value": {}}},
+                        "policyDefinitionReferenceId": "str",
+                    }
+                ],
+                "policyType": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+                "version": "str",
+            },
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_set_definition_versions_delete_at_management_group(self, resource_group):
+        response = self.client.policy_set_definition_versions.delete_at_management_group(
+            management_group_name="str",
+            policy_set_definition_name="str",
+            policy_definition_version="str",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -43,7 +169,30 @@ class TestPolicyPolicySetDefinitionVersionsOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_policy_set_definition_versions_list_all(self, resource_group):
         response = self.client.policy_set_definition_versions.list_all(
-            api_version="2023-04-01",
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_set_definition_versions_list(self, resource_group):
+        response = self.client.policy_set_definition_versions.list(
+            policy_set_definition_name="str",
+            api_version="2025-03-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_set_definition_versions_get(self, resource_group):
+        response = self.client.policy_set_definition_versions.get(
+            policy_set_definition_name="str",
+            policy_definition_version="str",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -107,7 +256,7 @@ class TestPolicyPolicySetDefinitionVersionsOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "version": "str",
             },
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -119,157 +268,8 @@ class TestPolicyPolicySetDefinitionVersionsOperations(AzureMgmtRecordedTestCase)
         response = self.client.policy_set_definition_versions.delete(
             policy_set_definition_name="str",
             policy_definition_version="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_set_definition_versions_get(self, resource_group):
-        response = self.client.policy_set_definition_versions.get(
-            policy_set_definition_name="str",
-            policy_definition_version="str",
-            api_version="2023-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_set_definition_versions_get_built_in(self, resource_group):
-        response = self.client.policy_set_definition_versions.get_built_in(
-            policy_set_definition_name="str",
-            policy_definition_version="str",
-            api_version="2023-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_set_definition_versions_list(self, resource_group):
-        response = self.client.policy_set_definition_versions.list(
-            policy_set_definition_name="str",
-            api_version="2023-04-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_set_definition_versions_list_built_in(self, resource_group):
-        response = self.client.policy_set_definition_versions.list_built_in(
-            policy_set_definition_name="str",
-            api_version="2023-04-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_set_definition_versions_create_or_update_at_management_group(self, resource_group):
-        response = self.client.policy_set_definition_versions.create_or_update_at_management_group(
-            management_group_name="str",
-            policy_set_definition_name="str",
-            policy_definition_version="str",
-            parameters={
-                "description": "str",
-                "displayName": "str",
-                "id": "str",
-                "metadata": {},
-                "name": "str",
-                "parameters": {
-                    "str": {
-                        "allowedValues": [{}],
-                        "defaultValue": {},
-                        "metadata": {
-                            "assignPermissions": bool,
-                            "description": "str",
-                            "displayName": "str",
-                            "strongType": "str",
-                        },
-                        "schema": {},
-                        "type": "str",
-                    }
-                },
-                "policyDefinitionGroups": [
-                    {
-                        "name": "str",
-                        "additionalMetadataId": "str",
-                        "category": "str",
-                        "description": "str",
-                        "displayName": "str",
-                    }
-                ],
-                "policyDefinitions": [
-                    {
-                        "policyDefinitionId": "str",
-                        "definitionVersion": "str",
-                        "effectiveDefinitionVersion": "str",
-                        "groupNames": ["str"],
-                        "latestDefinitionVersion": "str",
-                        "parameters": {"str": {"value": {}}},
-                        "policyDefinitionReferenceId": "str",
-                    }
-                ],
-                "policyType": "str",
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-                "version": "str",
-            },
-            api_version="2023-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_set_definition_versions_delete_at_management_group(self, resource_group):
-        response = self.client.policy_set_definition_versions.delete_at_management_group(
-            management_group_name="str",
-            policy_set_definition_name="str",
-            policy_definition_version="str",
-            api_version="2023-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_set_definition_versions_get_at_management_group(self, resource_group):
-        response = self.client.policy_set_definition_versions.get_at_management_group(
-            management_group_name="str",
-            policy_set_definition_name="str",
-            policy_definition_version="str",
-            api_version="2023-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_set_definition_versions_list_by_management_group(self, resource_group):
-        response = self.client.policy_set_definition_versions.list_by_management_group(
-            management_group_name="str",
-            policy_set_definition_name="str",
-            api_version="2023-04-01",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

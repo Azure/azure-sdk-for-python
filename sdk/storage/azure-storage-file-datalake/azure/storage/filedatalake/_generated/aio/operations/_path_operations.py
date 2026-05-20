@@ -254,6 +254,7 @@ class PathOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             resource=resource,
@@ -289,7 +290,6 @@ class PathOperations:
             expiry_options=expiry_options,
             expires_on=expires_on,
             encryption_context=encryption_context,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -522,6 +522,7 @@ class PathOperations:
             url=self._config.url,
             action=action,
             mode=mode,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             max_records=max_records,
@@ -550,7 +551,6 @@ class PathOperations:
             structured_body_type=structured_body_type,
             structured_content_length=structured_content_length,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -638,7 +638,7 @@ class PathOperations:
          the current lease ID in "x-ms-lease-id" and the new lease ID in "x-ms-proposed-lease-id" to
          change the lease ID of an active lease. Use "renew" and specify the "x-ms-lease-id" to renew an
          existing lease. Use "release" and specify the "x-ms-lease-id" to release a lease. Known values
-         are: "acquire", "break", "change", "renew", "release", and "break". Required.
+         are: "acquire", "break", "change", "renew", and "release". Required.
         :type x_ms_lease_action: str or ~azure.storage.filedatalake.models.PathLeaseAction
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -694,6 +694,7 @@ class PathOperations:
         _request = build_lease_request(
             url=self._config.url,
             x_ms_lease_action=x_ms_lease_action,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             x_ms_lease_break_period=x_ms_lease_break_period,
@@ -704,7 +705,6 @@ class PathOperations:
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             x_ms_lease_duration=self._config.x_ms_lease_duration,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -835,6 +835,7 @@ class PathOperations:
 
         _request = build_read_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             range=range,
@@ -847,7 +848,6 @@ class PathOperations:
             encryption_key=_encryption_key,
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=_encryption_algorithm,  # type: ignore
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1025,6 +1025,7 @@ class PathOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             action=action,
@@ -1034,7 +1035,6 @@ class PathOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1176,6 +1176,7 @@ class PathOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             recursive=recursive,
@@ -1186,7 +1187,6 @@ class PathOperations:
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             paginated=paginated,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1300,6 +1300,7 @@ class PathOperations:
 
         _request = build_set_access_control_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             owner=owner,
@@ -1312,7 +1313,6 @@ class PathOperations:
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1418,6 +1418,7 @@ class PathOperations:
         _request = build_set_access_control_recursive_request(
             url=self._config.url,
             mode=mode,
+            version=self._config.version,
             timeout=timeout,
             continuation=continuation,
             force_flag=force_flag,
@@ -1425,7 +1426,6 @@ class PathOperations:
             acl=acl,
             request_id_parameter=request_id_parameter,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1595,6 +1595,7 @@ class PathOperations:
 
         _request = build_flush_data_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             position=position,
             retain_uncommitted_data=retain_uncommitted_data,
@@ -1619,7 +1620,6 @@ class PathOperations:
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=_encryption_algorithm,  # type: ignore
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1774,6 +1774,7 @@ class PathOperations:
 
         _request = build_append_data_request(
             url=self._config.url,
+            version=self._config.version,
             position=position,
             timeout=timeout,
             content_length=content_length,
@@ -1792,7 +1793,6 @@ class PathOperations:
             structured_content_length=structured_content_length,
             action=action,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1886,11 +1886,11 @@ class PathOperations:
         _request = build_set_expiry_request(
             url=self._config.url,
             expiry_options=expiry_options,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             expires_on=expires_on,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1966,11 +1966,11 @@ class PathOperations:
 
         _request = build_undelete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             undelete_source=undelete_source,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

@@ -1,13 +1,15 @@
 import copy
 import json
+from datetime import timedelta
 
 import pytest
 import yaml
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_deployment, load_online_deployment
-from azure.ai.ml._restclient.v2022_10_01.models import BatchDeployment as BatchDeploymentData
-from azure.ai.ml._restclient.v2022_10_01.models import BatchOutputAction, EndpointComputeType
+from azure.ai.ml._restclient.arm_ml_service.models import BatchDeployment as BatchDeploymentData
+from azure.ai.ml._restclient.arm_ml_service.models import BatchOutputAction, EndpointComputeType
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import _deserialize
 from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchPipelineComponentDeploymentConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
@@ -380,10 +382,10 @@ class TestOnlineDeploymentFromYAML:
             managed_deployment_rest.properties.request_settings.max_concurrent_requests_per_instance
             == managed_deployment.request_settings.max_concurrent_requests_per_instance
         )
-        assert managed_deployment_rest.properties.request_settings.max_queue_wait == "PT1S"
-        assert managed_deployment_rest.properties.request_settings.request_timeout == "PT10S"
-        assert managed_deployment_rest.properties.liveness_probe.timeout == "PT10S"
-        assert managed_deployment_rest.properties.readiness_probe.timeout == "PT10S"
+        assert managed_deployment_rest.properties.request_settings.max_queue_wait == timedelta(seconds=1)
+        assert managed_deployment_rest.properties.request_settings.request_timeout == timedelta(seconds=10)
+        assert managed_deployment_rest.properties.liveness_probe.timeout == timedelta(seconds=10)
+        assert managed_deployment_rest.properties.readiness_probe.timeout == timedelta(seconds=10)
         assert managed_deployment_rest.properties.data_collector.rolling_rate == "hour"
         assert (
             managed_deployment_rest.properties.data_collector.collections["model_inputs"].data_collection_mode
@@ -437,10 +439,10 @@ class TestOnlineDeploymentFromYAML:
             kubernetes_deployment_rest.properties.request_settings.max_concurrent_requests_per_instance
             == kubernetes_deployment.request_settings.max_concurrent_requests_per_instance
         )
-        assert kubernetes_deployment_rest.properties.request_settings.max_queue_wait == "PT1S"
-        assert kubernetes_deployment_rest.properties.request_settings.request_timeout == "PT10S"
-        assert kubernetes_deployment_rest.properties.liveness_probe.timeout == "PT10S"
-        assert kubernetes_deployment_rest.properties.readiness_probe.timeout == "PT10S"
+        assert kubernetes_deployment_rest.properties.request_settings.max_queue_wait == timedelta(seconds=1)
+        assert kubernetes_deployment_rest.properties.request_settings.request_timeout == timedelta(seconds=10)
+        assert kubernetes_deployment_rest.properties.liveness_probe.timeout == timedelta(seconds=10)
+        assert kubernetes_deployment_rest.properties.readiness_probe.timeout == timedelta(seconds=10)
         assert kubernetes_deployment_rest.sku.name == "Default"
         assert kubernetes_deployment_rest.sku.capacity == kubernetes_deployment.instance_count
         assert kubernetes_deployment_rest.location == "westus2"
@@ -491,7 +493,7 @@ class TestBatchDeploymentSDK:
         rest_representation_properties = deployment_resource.properties
         assert rest_representation_properties.max_concurrency_per_instance == target["max_concurrency_per_instance"]
         assert rest_representation_properties.retry_settings.max_retries == target["retry_settings"]["max_retries"]
-        assert rest_representation_properties.retry_settings.timeout == "PT30S"
+        assert rest_representation_properties.retry_settings.timeout == timedelta(seconds=30)
         assert rest_representation_properties.error_threshold == target["error_threshold"]
         assert rest_representation_properties.output_action == BatchOutputAction.APPEND_ROW
         assert rest_representation_properties.description == target["description"]
@@ -596,7 +598,7 @@ class TestBatchDeploymentSDK:
         assert rest_representation_properties.output_action is None
         assert rest_representation_properties.max_concurrency_per_instance == deployment.max_concurrency_per_instance
         assert rest_representation_properties.retry_settings.max_retries == deployment.retry_settings.max_retries
-        assert rest_representation_properties.retry_settings.timeout == "PT30S"
+        assert rest_representation_properties.retry_settings.timeout == timedelta(seconds=30)
         assert rest_representation_properties.error_threshold == deployment.error_threshold
         assert rest_representation_properties.description == deployment.description
         assert rest_representation_properties.output_file_name == "append_row.txt"
@@ -604,7 +606,7 @@ class TestBatchDeploymentSDK:
 
     def test_from_rest_object(self) -> None:
         with open(TestBatchDeploymentSDK.DEPLOYMENT_REST, "r") as f:
-            deployment_rest = BatchDeploymentData.deserialize(json.load(f))
+            deployment_rest = _deserialize(BatchDeploymentData, json.load(f))
             deployment_rest.properties.deployment_configuration = BatchPipelineComponentDeploymentConfiguration(
                 deployment_configuration_type="PipelineComponent",
                 settings={
@@ -858,10 +860,10 @@ class TestOnlineDeploymentSDK:
             assert blue_deployment.provisioning_state == rest_object.properties.provisioning_state
 
     def test_deployment_from_rest_object_for_online_deployment(self) -> None:
-        from azure.ai.ml._restclient.v2022_05_01.models import OnlineDeploymentData as OnlineDeploymentDataRest
+        from azure.ai.ml._restclient.arm_ml_service.models import OnlineDeployment as OnlineDeploymentDataRest
 
         with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
-            rest_object = OnlineDeploymentDataRest.deserialize(json.load(f))
+            rest_object = _deserialize(OnlineDeploymentDataRest, json.load(f))
             blue_deployment = Deployment._from_rest_object(rest_object)
             assert isinstance(blue_deployment, KubernetesOnlineDeployment)
             assert blue_deployment.name == "blue"
@@ -892,8 +894,8 @@ class TestOnlineDeploymentSDK:
             assert str(exc.value) == "Unsupported online scale setting type Other."
 
 
-from azure.ai.ml._restclient.v2022_05_01.models import BatchRetrySettings as RestBatchRetrySettings
-from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import BatchRetrySettings as RestBatchRetrySettings
+from azure.ai.ml._restclient.arm_ml_service.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml.entities._deployment.data_asset import DataAsset
 from azure.ai.ml.entities._deployment.data_collector import DataCollector
 from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection
@@ -1006,7 +1008,7 @@ class TestOnlineDeploymentSettings:
         retry_settings = BatchRetrySettings(max_retries=3, timeout=30)
         rest_batch_retry_settings = retry_settings._to_rest_object()
         assert rest_batch_retry_settings.max_retries == retry_settings.max_retries
-        assert rest_batch_retry_settings.timeout == "PT30S"
+        assert rest_batch_retry_settings.timeout == timedelta(seconds=30)
 
     def test_resource_settings_equality(self):
         resource_settings1 = ResourceSettings(cpu="1n", memory="2")

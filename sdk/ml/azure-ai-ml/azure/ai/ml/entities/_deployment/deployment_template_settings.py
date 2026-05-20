@@ -7,7 +7,7 @@
 import logging
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_05_01.models import BatchRetrySettings as RestBatchRetrySettings
+from azure.ai.ml._restclient.arm_ml_service.models import BatchRetrySettings as RestBatchRetrySettings
 from azure.ai.ml._restclient.v2024_04_01_dataplanepreview.models import (
     OnlineRequestSettings as RestOnlineRequestSettings,
 )

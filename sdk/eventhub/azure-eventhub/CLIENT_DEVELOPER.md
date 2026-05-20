@@ -6,7 +6,7 @@ This guide is intended for developers contributing to the Azure Event Hubs Pytho
 
 ### Prerequisites
 
-- Python version [supported by the client library](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)
+- Python version [supported by the client library](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md)
 - Git
 - pip and setuptools
 - Azure subscription to create Event Hubs resources
@@ -71,7 +71,7 @@ Live tests require an Azure Event Hubs namespace. Resources are created dynamica
    ```
 
 2. Set required environment variables (or create a `.env` file):
-   
+
    The following need to be set to run live tests locally and authenticate with AzureCliCredential:
    ```
    AZURE_SUBSCRIPTION_ID=<your-subscription-id>
@@ -79,14 +79,14 @@ Live tests require an Azure Event Hubs namespace. Resources are created dynamica
    EVENTHUB_NAMESPACE=<your-namespace>  # Only the name, not the full URL
    AZURE_TEST_RUN_LIVE=true
    ```
-   
+
    If using CLI:
    ```
    AZURE_TEST_USE_CLI_AUTH=true
    ```
-   
+
    OR
-   
+
    If using pwsh:
    ```
    AZURE_TEST_USE_PWSH_AUTH=true
@@ -96,10 +96,10 @@ Live tests require an Azure Event Hubs namespace. Resources are created dynamica
    ```bash
    # Run a specific test to check if your environment is set up correctly
    pytest tests/livetest/synctests/test_consumer_client.py::test_receive_partition
-   
+
    # Run all live tests
    pytest tests/livetest
-   
+
    # Run with output visible even if tests pass
    pytest -s tests/livetest/synctests/test_specific_file.py::test_specific_function
    ```
@@ -149,16 +149,16 @@ stress/
    ```bash
    # Check on pods
    kubectl get pods -n <your-namespace>
-   
+
    # Delete namespace
    kubectl delete namespace <your-namespace>
-   
+
    # List all active namespaces
    helm list --all-namespaces
-   
+
    # Show logs in console
    kubectl logs -n <your-namespace> <pod-name>
-   
+
    # For init failure
    kubectl logs -n <your-namespace> <pod-name> -c init-azure-deployer
    ```

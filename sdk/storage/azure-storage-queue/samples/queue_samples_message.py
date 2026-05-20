@@ -22,6 +22,7 @@ USAGE:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
+# pylint: disable=unused-variable
 
 from datetime import datetime, timedelta
 import os
@@ -72,7 +73,10 @@ class QueueMessageSamples(object):
             from azure.storage.queue import generate_queue_sas
 
             sas_token = generate_queue_sas(
-                queue.account_name, queue.queue_name, queue.credential.account_key, policy_id="my-access-policy-id"
+                queue.account_name,
+                queue.queue_name,
+                queue.credential.account_key,
+                policy_id="my-access-policy-id",
             )
             # [END queue_client_sas_token]
 
@@ -333,7 +337,10 @@ class QueueMessageSamples(object):
             # Update the message
             list_result = next(messages)
             message = queue.update_message(
-                list_result.id, pop_receipt=list_result.pop_receipt, visibility_timeout=0, content="updated"
+                list_result.id,
+                pop_receipt=list_result.pop_receipt,
+                visibility_timeout=0,
+                content="updated",
             )
             # [END update_message]
 

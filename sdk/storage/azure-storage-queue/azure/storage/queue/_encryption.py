@@ -41,7 +41,11 @@ if TYPE_CHECKING:
 _ENCRYPTION_PROTOCOL_V1 = "1.0"
 _ENCRYPTION_PROTOCOL_V2 = "2.0"
 _ENCRYPTION_PROTOCOL_V2_1 = "2.1"
-_VALID_ENCRYPTION_PROTOCOLS = [_ENCRYPTION_PROTOCOL_V1, _ENCRYPTION_PROTOCOL_V2, _ENCRYPTION_PROTOCOL_V2_1]
+_VALID_ENCRYPTION_PROTOCOLS = [
+    _ENCRYPTION_PROTOCOL_V1,
+    _ENCRYPTION_PROTOCOL_V2,
+    _ENCRYPTION_PROTOCOL_V2_1,
+]
 _ENCRYPTION_V2_PROTOCOLS = [_ENCRYPTION_PROTOCOL_V2, _ENCRYPTION_PROTOCOL_V2_1]
 _GCM_REGION_DATA_LENGTH = 4 * 1024 * 1024
 _GCM_NONCE_LENGTH = 12
@@ -308,7 +312,10 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
 
 
 def modify_user_agent_for_encryption(
-    user_agent: str, moniker: str, encryption_version: str, request_options: Dict[str, Any]
+    user_agent: str,
+    moniker: str,
+    encryption_version: str,
+    request_options: Dict[str, Any],
 ) -> None:
     """
     Modifies the request options to contain a user agent string updated with encryption information.
@@ -360,7 +367,10 @@ def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
 
 
 def get_adjusted_download_range_and_offset(
-    start: int, end: int, length: Optional[int], encryption_data: Optional[_EncryptionData]
+    start: int,
+    end: int,
+    length: Optional[int],
+    encryption_data: Optional[_EncryptionData],
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """
     Gets the new download range and offsets into the decrypted data for
@@ -579,11 +589,17 @@ def _dict_to_encryption_data(encryption_data_dict: Dict[str, Any]) -> _Encryptio
     if "EncryptedRegionInfo" in encryption_data_dict:
         encrypted_region_info = encryption_data_dict["EncryptedRegionInfo"]
         region_info = _EncryptedRegionInfo(
-            encrypted_region_info["DataLength"], encrypted_region_info["NonceLength"], _GCM_TAG_LENGTH
+            encrypted_region_info["DataLength"],
+            encrypted_region_info["NonceLength"],
+            _GCM_TAG_LENGTH,
         )
 
     encryption_data = _EncryptionData(
-        encryption_iv, region_info, encryption_agent, wrapped_content_key, key_wrapping_metadata
+        encryption_iv,
+        region_info,
+        encryption_agent,
+        wrapped_content_key,
+        key_wrapping_metadata,
     )
 
     return encryption_data
@@ -656,7 +672,8 @@ def _validate_and_unwrap_cek(
         raise ValueError("Provided or resolved key-encryption-key does not match the id of key used to encrypt.")
     # Will throw an exception if the specified algorithm is not supported.
     content_encryption_key = key_encryption_key.unwrap_key(
-        encryption_data.wrapped_content_key.encrypted_key, encryption_data.wrapped_content_key.algorithm
+        encryption_data.wrapped_content_key.encrypted_key,
+        encryption_data.wrapped_content_key.algorithm,
     )
 
     # For V2, the version is included with the cek. We need to validate it
@@ -889,7 +906,10 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         return content
 
     algorithm = encryption_data.encryption_agent.encryption_algorithm
-    if algorithm not in (_EncryptionAlgorithm.AES_CBC_256, _EncryptionAlgorithm.AES_GCM_256):
+    if algorithm not in (
+        _EncryptionAlgorithm.AES_CBC_256,
+        _EncryptionAlgorithm.AES_GCM_256,
+    ):
         raise ValueError("Specified encryption algorithm is not supported.")
 
     version = encryption_data.encryption_agent.protocol

@@ -284,7 +284,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         )
 
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -332,20 +332,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return await super()._real_call(**kwargs)
         except EvaluationException as ex:
             if ex.category == ErrorCategory.NOT_APPLICABLE:
-                return {
-                    self._result_key: self.threshold,
-                    f"{self._result_key}_result": "pass",
-                    f"{self._result_key}_threshold": self.threshold,
-                    f"{self._result_key}_reason": f"Not applicable: {ex.message}",
-                    f"{self._result_key}_details": {},
-                    f"{self._result_key}_prompt_tokens": 0,
-                    f"{self._result_key}_completion_tokens": 0,
-                    f"{self._result_key}_total_tokens": 0,
-                    f"{self._result_key}_finish_reason": "",
-                    f"{self._result_key}_model": "",
-                    f"{self._result_key}_sample_input": "",
-                    f"{self._result_key}_sample_output": "",
-                }
+                return self._return_not_applicable_result(ex.message, self.threshold)
             else:
                 raise ex
 
@@ -375,6 +362,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             )
+
+        # If response is a string, we can skip the context extraction and just return the eval input
+        if response and isinstance(response, str):
+            return super()._convert_kwargs_to_eval_input(query=query, response=response, context=response)
+
         context = self._get_context_from_agent_response(response, tool_definitions)
 
         if not self._validate_context(context) and self._is_single_entry(response) and self._is_single_entry(query):

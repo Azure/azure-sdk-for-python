@@ -8,7 +8,7 @@ import logging
 import time
 from unittest.mock import Mock, patch
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, ServiceRequestError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from devtools_testutils import recorded_by_proxy
 from azure.keyvault.certificates import (
@@ -766,6 +766,41 @@ class TestCertificateClient(KeyVaultTestCase):
     @pytest.mark.parametrize("api_version", only_latest)
     @CertificatesClientPreparer()
     @recorded_by_proxy
+    def test_create_certificate_with_san_ip_and_uris(self, client, **kwargs):
+        """Verify certificates with only san_ip_addresses or san_uris (no subject/dns) can be created."""
+        # Certificate with only IP addresses in SANs
+        ip_cert_name = self.get_resource_name("sanIpCert")
+        ip_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.self,
+            san_ip_addresses=["10.0.0.1", "192.168.1.1"],
+            content_type=CertificateContentType.pkcs12,
+        )
+        ip_cert = client.begin_create_certificate(certificate_name=ip_cert_name, policy=ip_policy).result()
+        assert ip_cert.name == ip_cert_name
+        returned_ip_policy = client.get_certificate_policy(ip_cert_name)
+        assert set(returned_ip_policy.san_ip_addresses) == {"10.0.0.1", "192.168.1.1"}
+        assert not returned_ip_policy.san_dns_names
+        assert not returned_ip_policy.san_uris
+        client.begin_delete_certificate(ip_cert_name).wait()
+
+        # Certificate with only URIs in SANs
+        uri_cert_name = self.get_resource_name("sanUriCert")
+        uri_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.self,
+            san_uris=["https://service.example.com/api"],
+            content_type=CertificateContentType.pkcs12,
+        )
+        uri_cert = client.begin_create_certificate(certificate_name=uri_cert_name, policy=uri_policy).result()
+        assert uri_cert.name == uri_cert_name
+        returned_uri_policy = client.get_certificate_policy(uri_cert_name)
+        assert returned_uri_policy.san_uris
+        assert not returned_uri_policy.san_dns_names
+        assert not returned_uri_policy.san_ip_addresses
+        client.begin_delete_certificate(uri_cert_name).wait()
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @CertificatesClientPreparer()
+    @recorded_by_proxy
     def test_unknown_issuer_response(self, client, **kwargs):
         """When a certificate is created with an unknown issuer, the poller result should be a CertificateOperation"""
         cert_name = self.get_resource_name("unknownIssuer")
@@ -803,6 +838,24 @@ def test_policy_expected_errors_for_create_cert():
     with pytest.raises(ValueError, match=NO_SAN_OR_SUBJECT):
         policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self)
         client.begin_create_certificate("...", policy=policy)
+
+    # san_ip_addresses alone should be accepted (no ValueError)
+    policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self, san_ip_addresses=["10.0.0.1"])
+    try:
+        client.begin_create_certificate("...", policy=policy)
+    except ValueError:
+        pytest.fail("begin_create_certificate should not raise ValueError for san_ip_addresses-only policy")
+    except (HttpResponseError, ServiceRequestError):
+        pass  # Expected: network/auth error since we are using a fake client
+
+    # san_uris alone should be accepted (no ValueError)
+    policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self, san_uris=["https://example.com"])
+    try:
+        client.begin_create_certificate("...", policy=policy)
+    except ValueError:
+        pytest.fail("begin_create_certificate should not raise ValueError for san_uris-only policy")
+    except (HttpResponseError, ServiceRequestError):
+        pass  # Expected: network/auth error since we are using a fake client
 
 
 def test_service_headers_allowed_in_logs():

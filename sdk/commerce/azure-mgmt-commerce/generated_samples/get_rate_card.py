@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.commerce import UsageManagementClient
 
 """
@@ -35,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/commerce/resource-manager/Microsoft.Commerce/preview/2015-06-01-preview/examples/GetRateCard.json
+# x-ms-original-file: specification/commerce/resource-manager/Microsoft.Commerce/Commerce/preview/2015-06-01-preview/examples/GetRateCard.json
 if __name__ == "__main__":
     main()

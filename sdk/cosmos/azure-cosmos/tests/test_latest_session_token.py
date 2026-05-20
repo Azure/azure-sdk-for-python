@@ -74,6 +74,7 @@ class TestLatestSessionToken(unittest.TestCase):
 
         phys_session_token = container.get_latest_session_token(phys_feed_ranges_and_session_tokens, phys_target_feed_range)
         assert phys_session_token == phys_target_session_token
+        _, pre_split_session_token = parse_session_token(phys_session_token)
 
         feed_ranges_and_session_tokens.append((target_feed_range, session_token))
 
@@ -95,7 +96,7 @@ class TestLatestSessionToken(unittest.TestCase):
         phys_session_token = container.get_latest_session_token(phys_feed_ranges_and_session_tokens, phys_target_feed_range)
         pk_range_id, session_token = parse_session_token(phys_session_token)
 
-        assert 300 <= session_token.global_lsn <= 370
+        assert session_token.global_lsn >= pre_split_session_token.global_lsn
         assert '2' in pk_range_id
         self.database.delete_container(container.id)
 

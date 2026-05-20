@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentVersion, ComponentVersionProperties
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
 from azure.ai.ml._utils._asset_utils import get_object_hash

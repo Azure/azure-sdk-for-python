@@ -12,30 +12,26 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import DataPolicyManifestsOperations  # type: ignore
-from ._operations import PolicyDefinitionsOperations  # type: ignore
-from ._operations import PolicyDefinitionVersionsOperations  # type: ignore
-from ._operations import PolicySetDefinitionsOperations  # type: ignore
-from ._operations import PolicySetDefinitionVersionsOperations  # type: ignore
 from ._operations import PolicyAssignmentsOperations  # type: ignore
-from ._operations import PolicyExemptionsOperations  # type: ignore
-from ._operations import VariablesOperations  # type: ignore
-from ._operations import VariableValuesOperations  # type: ignore
+from ._operations import PolicyDefinitionVersionsOperations  # type: ignore
+from ._operations import PolicySetDefinitionVersionsOperations  # type: ignore
+from ._operations import PolicyDefinitionsOperations  # type: ignore
+from ._operations import PolicySetDefinitionsOperations  # type: ignore
+from ._operations import PolicyTokensOperations  # type: ignore
+from ._operations import DataPolicyManifestsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "DataPolicyManifestsOperations",
-    "PolicyDefinitionsOperations",
-    "PolicyDefinitionVersionsOperations",
-    "PolicySetDefinitionsOperations",
-    "PolicySetDefinitionVersionsOperations",
     "PolicyAssignmentsOperations",
-    "PolicyExemptionsOperations",
-    "VariablesOperations",
-    "VariableValuesOperations",
+    "PolicyDefinitionVersionsOperations",
+    "PolicySetDefinitionVersionsOperations",
+    "PolicyDefinitionsOperations",
+    "PolicySetDefinitionsOperations",
+    "PolicyTokensOperations",
+    "DataPolicyManifestsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

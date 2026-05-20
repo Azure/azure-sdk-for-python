@@ -29,10 +29,42 @@ import pytest
 from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
+    add_remove_header_sanitizer,
     test_proxy,
     add_oauth_response_sanitizer,
     remove_batch_sanitizers,
 )
+
+
+# Workaround: devtools_testutils.get_credential() doesn't forward AZURE_TENANT_ID
+# to AzureDeveloperCliCredential. Without this, AZD auth uses the default tenant
+# which may differ from the tenant where test resources are deployed.
+# See: https://github.com/Azure/azure-sdk-for-python/issues/XXXXX
+def _patch_get_credential_for_azd_tenant():
+    import devtools_testutils.azure_recorded_testcase as _arc
+    import devtools_testutils as _dt
+    import _shared.testcase as _tc
+
+    _original = _arc.get_credential
+
+    def _patched(**kwargs):
+        cred = _original(**kwargs)
+        tenant_id = os.environ.get("AZURE_TENANT_ID")
+        if tenant_id and type(cred).__name__ == "AzureDeveloperCliCredential":
+            from azure.identity import AzureDeveloperCliCredential
+
+            if kwargs.get("is_async", False):
+                from azure.identity.aio import AzureDeveloperCliCredential
+
+            return AzureDeveloperCliCredential(tenant_id=tenant_id)
+        return cred
+
+    _arc.get_credential = _patched
+    _dt.get_credential = _patched
+    _tc.get_credential = _patched
+
+
+_patch_get_credential_for_azd_tenant()
 
 # fixture needs to be visible from conftest
 
@@ -45,21 +77,17 @@ def add_sanitizers(test_proxy):
         regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.(?:cosmos|core)\\."
         "(?:azure|windows)\\.(?:com|net))",
     )
-    # sanitizes random UUIDs that are sent in batch request headers and bodies
-    add_general_regex_sanitizer(
-        value="00000000-0000-0000-0000-000000000000",
-        regex="batch[a-z]*_([0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b)",
-        group_for_replace="1",
-    )
-    # sanitizes tenant ID
-    tenant_id = os.environ.get("TABLES_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=tenant_id)
-    # sanitizes tenant ID used in test_challenge_auth(_async).py tests
-    challenge_tenant_id = os.environ.get("CHALLENGE_TABLES_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=challenge_tenant_id)
+    # sanitizes tenant IDs from environment to prevent leaking into recordings
+    for env_var in ("AZURE_TENANT_ID", "TABLES_TENANT_ID", "CHALLENGE_TABLES_TENANT_ID"):
+        tid = os.environ.get(env_var, "")
+        if tid and tid != "00000000-0000-0000-0000-000000000000":
+            add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=tid)
     # sanitizes access tokens in response bodies
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_oauth_response_sanitizer()
+    # Remove the Server header from recordings — the test proxy replays multi-value
+    # Server headers as duplicates, which aiohttp rejects with BadHttpMessage.
+    add_remove_header_sanitizer(headers="Server")
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3490: $..etag
     remove_batch_sanitizers(["AZSDK3490"])

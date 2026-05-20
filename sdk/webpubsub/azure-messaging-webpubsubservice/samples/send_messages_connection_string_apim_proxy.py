@@ -30,25 +30,26 @@ import logging
 import os
 
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 try:
-    connection_string = os.environ["WEBPUBSUB_CONNECTION_STRING"]
+    endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
     reverse_proxy_endpoint = os.environ["WEBPUBSUB_REVERSE_PROXY_ENDPOINT"]
 except KeyError:
     LOG.error(
-        "Missing environment variable 'WEBPUBSUB_CONNECTION_STRING' or 'WEBPUBSUB_REVERSE_PROXY_ENDPOINT' - please set if before running the example"
+        "Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_REVERSE_PROXY_ENDPOINT' - please set it before running the example"
     )
     exit()
 
-# Build a client from the connection string. And for this example, we have enabled debug
+# Build a client through AAD. And for this example, we have enabled debug
 # tracing. For production code, this should be turned off.
 # If you want to know more about the effect of `reverse_proxy_endpoint`, please reference: https://github.com/Azure/azure-webpubsub/issues/194
-client = WebPubSubServiceClient.from_connection_string(
-    connection_string, hub="hub", logging_enable=True, reverse_proxy_endpoint=reverse_proxy_endpoint
+client = WebPubSubServiceClient(
+    endpoint=endpoint, hub="hub", credential=DefaultAzureCredential(), logging_enable=True, reverse_proxy_endpoint=reverse_proxy_endpoint
 )
 
 try:

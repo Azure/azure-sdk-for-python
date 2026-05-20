@@ -53,7 +53,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -74,7 +74,7 @@ def build_fleets_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -109,7 +109,7 @@ def build_fleets_begin_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -152,7 +152,7 @@ def build_fleets_begin_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -194,7 +194,7 @@ def build_fleets_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}"
     path_format_arguments = {
@@ -225,7 +225,7 @@ def build_fleets_list_by_resource_group_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -249,12 +249,12 @@ def build_fleets_list_by_resource_group_request(  # pylint: disable=name-too-lon
 
 
 def build_fleets_list_by_subscription_request(  # pylint: disable=name-too-long
-    subscription_id: str, **kwargs: Any
+    subscription_id: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,6 +267,10 @@ def build_fleets_list_by_subscription_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -280,7 +284,7 @@ def build_fleets_list_credentials_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -308,7 +312,7 @@ def build_fleet_members_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -345,7 +349,7 @@ def build_fleet_members_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -390,7 +394,7 @@ def build_fleet_members_begin_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -434,7 +438,7 @@ def build_fleet_members_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/members/{fleetMemberName}"
     path_format_arguments = {
@@ -461,12 +465,19 @@ def build_fleet_members_delete_request(
 
 
 def build_fleet_members_list_by_fleet_request(  # pylint: disable=name-too-long
-    resource_group_name: str, fleet_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    fleet_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -481,6 +492,12 @@ def build_fleet_members_list_by_fleet_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -494,7 +511,7 @@ def build_fleet_managed_namespaces_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -531,7 +548,7 @@ def build_fleet_managed_namespaces_create_or_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -575,7 +592,7 @@ def build_fleet_managed_namespaces_delete_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/managedNamespaces/{managedNamespaceName}"
     path_format_arguments = {
@@ -607,7 +624,7 @@ def build_fleet_managed_namespaces_list_by_fleet_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -643,7 +660,7 @@ def build_fleet_managed_namespaces_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -680,7 +697,7 @@ def build_gates_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -717,7 +734,7 @@ def build_gates_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -749,12 +766,19 @@ def build_gates_update_request(
 
 
 def build_gates_list_by_fleet_request(
-    resource_group_name: str, fleet_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    fleet_name: str,
+    subscription_id: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -769,6 +793,12 @@ def build_gates_list_by_fleet_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -782,7 +812,7 @@ def build_update_runs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -819,7 +849,7 @@ def build_update_runs_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -863,7 +893,7 @@ def build_update_runs_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/updateRuns/{updateRunName}"
     path_format_arguments = {
@@ -890,12 +920,18 @@ def build_update_runs_delete_request(
 
 
 def build_update_runs_list_by_fleet_request(
-    resource_group_name: str, fleet_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    fleet_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -910,6 +946,10 @@ def build_update_runs_list_by_fleet_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -930,7 +970,7 @@ def build_update_runs_start_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -972,7 +1012,7 @@ def build_update_runs_stop_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1015,7 +1055,7 @@ def build_update_runs_skip_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1052,7 +1092,7 @@ def build_fleet_update_strategies_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1089,7 +1129,7 @@ def build_fleet_update_strategies_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1133,7 +1173,7 @@ def build_fleet_update_strategies_delete_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/updateStrategies/{updateStrategyName}"
     path_format_arguments = {
@@ -1160,12 +1200,18 @@ def build_fleet_update_strategies_delete_request(  # pylint: disable=name-too-lo
 
 
 def build_fleet_update_strategies_list_by_fleet_request(  # pylint: disable=name-too-long
-    resource_group_name: str, fleet_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    fleet_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1180,6 +1226,10 @@ def build_fleet_update_strategies_list_by_fleet_request(  # pylint: disable=name
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1193,7 +1243,7 @@ def build_auto_upgrade_profiles_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1230,7 +1280,7 @@ def build_auto_upgrade_profiles_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1274,7 +1324,7 @@ def build_auto_upgrade_profiles_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/autoUpgradeProfiles/{autoUpgradeProfileName}"
     path_format_arguments = {
@@ -1301,12 +1351,18 @@ def build_auto_upgrade_profiles_delete_request(  # pylint: disable=name-too-long
 
 
 def build_auto_upgrade_profiles_list_by_fleet_request(  # pylint: disable=name-too-long
-    resource_group_name: str, fleet_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    fleet_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1321,6 +1377,10 @@ def build_auto_upgrade_profiles_list_by_fleet_request(  # pylint: disable=name-t
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1334,7 +1394,7 @@ def build_auto_upgrade_profile_operations_generate_update_run_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1436,7 +1496,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1521,6 +1584,7 @@ class FleetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1542,7 +1606,7 @@ class FleetsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Fleet, response.json())
 
@@ -1605,6 +1669,7 @@ class FleetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1628,7 +1693,7 @@ class FleetsOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1849,6 +1914,7 @@ class FleetsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def _begin_update_initial(
@@ -1905,6 +1971,7 @@ class FleetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1929,7 +1996,7 @@ class FleetsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2066,6 +2133,7 @@ class FleetsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def begin_update(
@@ -2195,6 +2263,7 @@ class FleetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2219,7 +2288,7 @@ class FleetsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2363,7 +2432,10 @@ class FleetsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Fleet], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Fleet],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2390,9 +2462,16 @@ class FleetsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.Fleet"]:
+    def list_by_subscription(
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.Fleet"]:
         """Lists fleets in the specified subscription.
 
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of Fleet
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.Fleet]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2415,6 +2494,8 @@ class FleetsOperations:
 
                 _request = build_fleets_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2450,7 +2531,10 @@ class FleetsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Fleet], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Fleet],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2517,6 +2601,7 @@ class FleetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2538,7 +2623,7 @@ class FleetsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FleetCredentialResults, response.json())
 
@@ -2611,6 +2696,7 @@ class FleetMembersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2632,7 +2718,7 @@ class FleetMembersOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FleetMember, response.json())
 
@@ -2697,6 +2783,7 @@ class FleetMembersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2720,7 +2807,7 @@ class FleetMembersOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2955,6 +3042,7 @@ class FleetMembersOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def _begin_update_initial(
@@ -3013,6 +3101,7 @@ class FleetMembersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3037,7 +3126,7 @@ class FleetMembersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3184,6 +3273,7 @@ class FleetMembersOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def begin_update(
@@ -3320,6 +3410,7 @@ class FleetMembersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3344,7 +3435,7 @@ class FleetMembersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3429,7 +3520,14 @@ class FleetMembersOperations:
 
     @distributed_trace
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.FleetMember"]:
         """List FleetMember resources by Fleet.
 
@@ -3438,6 +3536,13 @@ class FleetMembersOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of FleetMember
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.FleetMember]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3462,6 +3567,9 @@ class FleetMembersOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3497,7 +3605,10 @@ class FleetMembersOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.FleetMember], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.FleetMember],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3556,7 +3667,7 @@ class FleetManagedNamespacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
     )
     def get(
         self, resource_group_name: str, fleet_name: str, managed_namespace_name: str, **kwargs: Any
@@ -3601,6 +3712,7 @@ class FleetManagedNamespacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3622,7 +3734,7 @@ class FleetManagedNamespacesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FleetManagedNamespace, response.json())
 
@@ -3646,7 +3758,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -3704,6 +3816,7 @@ class FleetManagedNamespacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3730,7 +3843,7 @@ class FleetManagedNamespacesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3870,7 +3983,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
     )
     def begin_create_or_update(
         self,
@@ -3975,7 +4088,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
     )
     def _delete_initial(
         self,
@@ -4022,6 +4135,7 @@ class FleetManagedNamespacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4046,7 +4160,7 @@ class FleetManagedNamespacesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4067,7 +4181,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
     )
     def begin_delete(
         self,
@@ -4150,7 +4264,7 @@ class FleetManagedNamespacesOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
     )
     def list_by_fleet(
         self, resource_group_name: str, fleet_name: str, **kwargs: Any
@@ -4222,7 +4336,10 @@ class FleetManagedNamespacesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.FleetManagedNamespace], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.FleetManagedNamespace],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4263,7 +4380,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
     )
     def _update_initial(
         self,
@@ -4321,6 +4438,7 @@ class FleetManagedNamespacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4345,7 +4463,7 @@ class FleetManagedNamespacesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4485,7 +4603,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
     )
     def begin_update(
         self,
@@ -4610,7 +4728,7 @@ class GatesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
     )
     def get(self, resource_group_name: str, fleet_name: str, gate_name: str, **kwargs: Any) -> _models.Gate:
         """Get a Gate.
@@ -4653,6 +4771,7 @@ class GatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4674,7 +4793,7 @@ class GatesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Gate, response.json())
 
@@ -4698,7 +4817,7 @@ class GatesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
     )
     def _update_initial(
         self,
@@ -4756,6 +4875,7 @@ class GatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4780,7 +4900,7 @@ class GatesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4914,7 +5034,7 @@ class GatesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
     )
     def begin_update(
         self,
@@ -5007,11 +5127,29 @@ class GatesOperations:
     @api_version_validation(
         method_added_on="2025-04-01-preview",
         params_added_on={
-            "2025-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2025-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "filter",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
     )
-    def list_by_fleet(self, resource_group_name: str, fleet_name: str, **kwargs: Any) -> ItemPaged["_models.Gate"]:
+    def list_by_fleet(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.Gate"]:
         """List Gate resources by Fleet.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5019,6 +5157,13 @@ class GatesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of Gate
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.Gate]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5043,6 +5188,9 @@ class GatesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5078,7 +5226,10 @@ class GatesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Gate], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Gate],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5148,6 +5299,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def get(self, resource_group_name: str, fleet_name: str, update_run_name: str, **kwargs: Any) -> _models.UpdateRun:
@@ -5191,6 +5343,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5212,7 +5365,7 @@ class UpdateRunsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UpdateRun, response.json())
 
@@ -5247,6 +5400,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def _create_or_update_initial(
@@ -5305,6 +5459,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5328,7 +5483,7 @@ class UpdateRunsOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5476,6 +5631,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def begin_create_or_update(
@@ -5590,6 +5746,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def _delete_initial(
@@ -5637,6 +5794,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5661,7 +5819,7 @@ class UpdateRunsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5693,6 +5851,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def begin_delete(
@@ -5774,7 +5933,15 @@ class UpdateRunsOperations:
     @api_version_validation(
         method_added_on="2023-03-15-preview",
         params_added_on={
-            "2023-03-15-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2023-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=[
             "2023-03-15-preview",
@@ -5787,9 +5954,18 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
-    def list_by_fleet(self, resource_group_name: str, fleet_name: str, **kwargs: Any) -> ItemPaged["_models.UpdateRun"]:
+    def list_by_fleet(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.UpdateRun"]:
         """List UpdateRun resources by Fleet.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5797,6 +5973,11 @@ class UpdateRunsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of UpdateRun
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.UpdateRun]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5821,6 +6002,8 @@ class UpdateRunsOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5856,7 +6039,10 @@ class UpdateRunsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.UpdateRun], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.UpdateRun],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5907,6 +6093,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def _start_initial(
@@ -5954,6 +6141,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5978,7 +6166,7 @@ class UpdateRunsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6011,6 +6199,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def begin_start(
@@ -6123,6 +6312,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def _stop_initial(
@@ -6170,6 +6360,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6194,7 +6385,7 @@ class UpdateRunsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6227,6 +6418,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def begin_stop(
@@ -6336,6 +6528,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def _skip_initial(
@@ -6394,6 +6587,7 @@ class UpdateRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6418,7 +6612,7 @@ class UpdateRunsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6562,6 +6756,7 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def begin_skip(
@@ -6698,6 +6893,7 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def get(
@@ -6743,6 +6939,7 @@ class FleetUpdateStrategiesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6764,7 +6961,7 @@ class FleetUpdateStrategiesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FleetUpdateStrategy, response.json())
 
@@ -6797,6 +6994,7 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def _create_or_update_initial(
@@ -6855,6 +7053,7 @@ class FleetUpdateStrategiesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6878,7 +7077,7 @@ class FleetUpdateStrategiesOperations:
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7027,6 +7226,7 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def begin_create_or_update(
@@ -7141,6 +7341,7 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def _delete_initial(
@@ -7188,6 +7389,7 @@ class FleetUpdateStrategiesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7212,7 +7414,7 @@ class FleetUpdateStrategiesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7242,6 +7444,7 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def begin_delete(
@@ -7323,7 +7526,15 @@ class FleetUpdateStrategiesOperations:
     @api_version_validation(
         method_added_on="2023-08-15-preview",
         params_added_on={
-            "2023-08-15-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2023-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=[
             "2023-08-15-preview",
@@ -7334,10 +7545,17 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
+            "2026-02-01-preview",
         ],
     )
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.FleetUpdateStrategy"]:
         """List FleetUpdateStrategy resources by Fleet.
 
@@ -7346,6 +7564,11 @@ class FleetUpdateStrategiesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of FleetUpdateStrategy
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.FleetUpdateStrategy]
@@ -7371,6 +7594,8 @@ class FleetUpdateStrategiesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -7406,7 +7631,10 @@ class FleetUpdateStrategiesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.FleetUpdateStrategy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.FleetUpdateStrategy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -7465,7 +7693,13 @@ class AutoUpgradeProfilesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+        ],
     )
     def get(
         self, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, **kwargs: Any
@@ -7510,6 +7744,7 @@ class AutoUpgradeProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7531,7 +7766,7 @@ class AutoUpgradeProfilesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AutoUpgradeProfile, response.json())
 
@@ -7555,7 +7790,13 @@ class AutoUpgradeProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+        ],
     )
     def _create_or_update_initial(
         self,
@@ -7613,6 +7854,7 @@ class AutoUpgradeProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7639,7 +7881,7 @@ class AutoUpgradeProfilesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7779,7 +8021,13 @@ class AutoUpgradeProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+        ],
     )
     def begin_create_or_update(
         self,
@@ -7884,7 +8132,13 @@ class AutoUpgradeProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+        ],
     )
     def _delete_initial(
         self,
@@ -7931,6 +8185,7 @@ class AutoUpgradeProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7955,7 +8210,7 @@ class AutoUpgradeProfilesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7976,7 +8231,13 @@ class AutoUpgradeProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+        ],
     )
     def begin_delete(
         self,
@@ -8057,12 +8318,32 @@ class AutoUpgradeProfilesOperations:
     @api_version_validation(
         method_added_on="2024-05-02-preview",
         params_added_on={
-            "2024-05-02-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2024-05-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
-        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=[
+            "2024-05-02-preview",
+            "2025-03-01",
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+        ],
     )
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.AutoUpgradeProfile"]:
         """List AutoUpgradeProfile resources by Fleet.
 
@@ -8071,6 +8352,11 @@ class AutoUpgradeProfilesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of AutoUpgradeProfile
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.AutoUpgradeProfile]
@@ -8096,6 +8382,8 @@ class AutoUpgradeProfilesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -8131,7 +8419,10 @@ class AutoUpgradeProfilesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AutoUpgradeProfile], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AutoUpgradeProfile],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -8189,7 +8480,7 @@ class AutoUpgradeProfileOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-03-01", "2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
     )
     def _generate_update_run_initial(
         self, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, **kwargs: Any
@@ -8221,6 +8512,7 @@ class AutoUpgradeProfileOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8248,7 +8540,7 @@ class AutoUpgradeProfileOperationsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["If-Match"] = self._deserialize("str", response.headers.get("If-Match"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8268,7 +8560,7 @@ class AutoUpgradeProfileOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-03-01", "2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
     )
     def begin_generate_update_run(
         self, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, **kwargs: Any

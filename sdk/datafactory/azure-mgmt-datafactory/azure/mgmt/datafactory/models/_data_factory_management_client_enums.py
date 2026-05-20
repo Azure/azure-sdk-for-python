@@ -30,6 +30,14 @@ class ActivityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INACTIVE = "Inactive"
 
 
+class AmazonRdsForOracleAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Authentication type for connecting to the AmazonRdsForOracle database. Only used for Version
+    2.0.
+    """
+
+    BASIC = "Basic"
+
+
 class AmazonRdsForOraclePartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AmazonRdsForOraclePartitionOption."""
 
@@ -414,6 +422,24 @@ class HDInsightActivityDebugInfoOption(str, Enum, metaclass=CaseInsensitiveEnumM
     FAILURE = "Failure"
 
 
+class HDInsightClusterAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """HDInsight cluster authentication type."""
+
+    BASIC_AUTH = "BasicAuth"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
+class HDInsightOndemandClusterResourceGroupAuthenticationType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """HDInsight On-demand cluster resource group authentication type."""
+
+    SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
 class HiveAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication method used to access the Hive server."""
 
@@ -457,6 +483,13 @@ class ImpalaAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USERNAME_AND_PASSWORD = "UsernameAndPassword"
 
 
+class ImpalaThriftTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport protocol to use in the Thrift layer (for V2 only). Default value is Binary."""
+
+    BINARY = "Binary"
+    HTTP = "HTTP"
+
+
 class IntegrationRuntimeAuthKeyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the authentication key to regenerate."""
 
@@ -485,7 +518,9 @@ class IntegrationRuntimeEntityReferenceType(str, Enum, metaclass=CaseInsensitive
     LINKED_SERVICE_REFERENCE = "LinkedServiceReference"
 
 
-class IntegrationRuntimeInternalChannelEncryptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class IntegrationRuntimeInternalChannelEncryptionMode(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """It is used to set the encryption mode for node-node communication channel (when more than 2
     self-hosted integration runtime nodes exist).
     """
@@ -549,6 +584,17 @@ class IntegrationRuntimeUpdateResult(str, Enum, metaclass=CaseInsensitiveEnumMet
     FAIL = "Fail"
 
 
+class InteractiveCapabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The interactive authoring capability status. Must be one of InteractiveCapabilityStatus. The
+    default value is 'Enabling'.
+    """
+
+    ENABLING = "Enabling"
+    ENABLED = "Enabled"
+    DISABLING = "Disabling"
+    DISABLED = "Disabled"
+
+
 class JsonFormatFilePattern(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """JSON format file pattern. A property of JsonFormat."""
 
@@ -561,6 +607,14 @@ class JsonWriteFilePattern(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SET_OF_OBJECTS = "setOfObjects"
     ARRAY_OF_OBJECTS = "arrayOfObjects"
+
+
+class LakehouseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type to use."""
+
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
 
 
 class ManagedIntegrationRuntimeNodeStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -599,6 +653,16 @@ class NetezzaPartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     DATA_SLICE = "DataSlice"
     DYNAMIC_RANGE = "DynamicRange"
+
+
+class NetezzaSecurityLevelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the security level for the driver connection to the data store. PreferredUnSecured :
+    prefer unsecured, allow fallback to secured connection if required. OnlyUnSecured : strictly
+    unsecured, no fallback.
+    """
+
+    PREFERRED_UN_SECURED = "PreferredUnSecured"
+    ONLY_UN_SECURED = "OnlyUnSecured"
 
 
 class NotebookParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1116,6 +1180,14 @@ class VariableType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STRING = "String"
     BOOL = "Bool"
     ARRAY = "Array"
+
+
+class WarehouseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type to use."""
+
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
 
 
 class WebActivityMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):

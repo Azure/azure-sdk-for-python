@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-11-01",
+  "apiVersions": {
+    "Microsoft.CertificateRegistration": "2024-11-01"
+  },
+  "commit": "aac535c817f2b5e6c7b629f09fd38233767275dd",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/certificateregistration/resource-manager/Microsoft.CertificateRegistration/CertificateRegistration",
+  "emitterVersion": "0.61.3"
+}

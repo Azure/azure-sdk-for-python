@@ -165,6 +165,11 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._return_not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
         if eval_input["response"] is None or eval_input["response"] == []:
             raise EvaluationException(
                 message="response cannot be None or empty for the Tool Call Success evaluator.",
@@ -174,57 +179,60 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
 
-        # Check for intermediate response
-        if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
-                "Intermediate response. Please provide the agent's final response for evaluation.",
-                self._threshold,
-            )
-
-        # Preprocess messages if they are lists
         if isinstance(eval_input.get("response"), list):
             eval_input["response"] = _preprocess_messages(eval_input["response"])
+            eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
+        # If response is a string, pass directly without reformatting
+        elif isinstance(eval_input["response"], str):
+            eval_input["tool_calls"] = eval_input["response"]
+        else:
+            raise EvaluationException(
+                message="response must be either a list of messages or a string.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
+            )
+
         if isinstance(eval_input.get("query"), list):
             eval_input["query"] = _preprocess_messages(eval_input["query"])
 
-        eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
-
-        if "tool_definitions" in eval_input:
+        # If tool definitions are string, pass directly without reformatting, else format it.
+        if "tool_definitions" in eval_input and not isinstance(eval_input["tool_definitions"], str):
             tool_definitions = eval_input["tool_definitions"]
-            filtered_tool_definitions = _filter_to_used_tools(
-                tool_definitions=tool_definitions,
-                msgs_list=eval_input["response"],
-                logger=logger,
-            )
-            eval_input["tool_definitions"] = _reformat_tool_definitions(filtered_tool_definitions, logger)
+            # Only if response is not a string, we filter tool definitions to only tools needed.
+            if not isinstance(eval_input["response"], str):
+                tool_definitions = _filter_to_used_tools(
+                    tool_definitions=tool_definitions,
+                    msgs_list=eval_input["response"],
+                    logger=logger,
+                )
+            eval_input["tool_definitions"] = _reformat_tool_definitions(tool_definitions, logger)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
-            success = llm_output.get("success", False)
-            details = llm_output.get("details", {})
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
 
-            if "success" not in llm_output and "success" in details:
-                success = details.get("success", False)
+            llm_properties = llm_output.get("properties", {}) or {}
 
-            if isinstance(success, str):
-                success = success.upper() == "TRUE"
-
-            success_result = "pass" if success else "fail"
-            reason = llm_output.get("explanation", "")
+            score = float(llm_output.get("score", 0))
+            success_result = "pass" if score >= 1.0 else "fail"
+            reason = llm_output.get("reason", "")
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
             return {
-                f"{self._result_key}": success * 1.0,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": success_result == "pass",
                 f"{self._result_key}_result": success_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_reason": f"{reason} {details or ''}",
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
-                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_properties": llm_properties,
             }
         raise EvaluationException(
             message="Evaluator returned invalid output.",

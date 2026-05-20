@@ -1,6 +1,5 @@
 FEATURE_MANAGEMENT_KEY = "feature_management"
 FEATURE_FLAG_KEY = "feature_flags"
-
 APPCONFIGURATION_CONNECTION_STRING = (
     "Endpoint=https://sanitized.azconfig.io;"
     "Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;"

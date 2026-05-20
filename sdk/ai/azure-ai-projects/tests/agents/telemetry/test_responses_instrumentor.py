@@ -6,8 +6,16 @@
 
 import os
 import json
-import pytest
 from typing import Optional, Tuple
+import pytest
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
+from openai import OpenAI
+from devtools_testutils import recorded_by_proxy, RecordedTransport, set_custom_default_matcher, add_body_key_sanitizer
+from test_base import servicePreparer
+from test_ai_instrumentor_base import (  # pylint: disable=import-error
+    TestAiAgentsInstrumentorBase,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.ai.projects.telemetry._utils import (
     OPERATION_NAME_CHAT,
@@ -18,20 +26,11 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_simple_tool_format,
     RESPONSES_PROVIDER,
 )
-from azure.core.settings import settings
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from openai import OpenAI
-from devtools_testutils import recorded_by_proxy, RecordedTransport, set_custom_default_matcher, add_body_key_sanitizer
 from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
-
-from test_base import servicePreparer
-from test_ai_instrumentor_base import (
-    TestAiAgentsInstrumentorBase,
-    CONTENT_TRACING_ENV_VARIABLE,
-)
+from azure.core.settings import settings
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()
+_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 
 # Environment variable for binary data tracing
 BINARY_DATA_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA"
@@ -53,11 +52,11 @@ TEST_IMAGE_BASE64 = (
 )
 
 
-class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
+class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable=too-many-public-methods
     """Tests for ResponsesInstrumentor with real endpoints."""
 
     @pytest.fixture(scope="session", autouse=True)
-    def configure_playback_matcher(self, test_proxy, add_sanitizers):
+    def configure_playback_matcher(self, test_proxy, add_sanitizers):  # pylint: disable=unused-argument
         """Add body sanitizer and custom matchers for image_url in requests."""
         # Sanitize image_url in request body to a consistent placeholder
         add_body_key_sanitizer(json_path="$..image_url", value="SANITIZED_IMAGE_DATA")
@@ -78,11 +77,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         openai_client = project_client.get_openai_client()
 
         # Get the model deployment name from test parameters
-        model_deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        model_deployment_name = kwargs.get("foundry_model_name")
 
         return openai_client, model_deployment_name
 
-    def test_instrumentation(self, **kwargs):
+    def test_instrumentation(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -100,7 +99,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
-    def test_instrumenting_twice_does_not_cause_exception(self, **kwargs):
+    def test_instrumenting_twice_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -116,7 +115,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
-    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **kwargs):
+    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         exception_caught = False
@@ -127,7 +126,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             print(e)
         assert exception_caught == False
 
-    def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
+    def test_uninstrumenting_twice_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -168,24 +167,23 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             self.cleanup()
 
     @pytest.mark.parametrize(
-        "env_value, expected_enabled, expected_instrumented",
+        "env_value, expected_enabled",
         [
-            (None, True, True),  # Default: enabled and instrumented
-            ("true", True, True),  # Explicitly enabled
-            ("True", True, True),  # Case insensitive
-            ("TRUE", True, True),  # Case insensitive
-            ("false", False, False),  # Explicitly disabled
-            ("False", False, False),  # Case insensitive
-            ("random", False, False),  # Invalid value treated as false
-            ("0", False, False),  # Numeric false
-            ("1", False, False),  # Numeric true but not "true"
+            (None, True),  # Default: enabled and instrumented
+            ("true", True),  # Explicitly enabled
+            ("True", True),  # Case insensitive
+            ("TRUE", True),  # Case insensitive
+            ("false", False),  # Explicitly disabled
+            ("False", False),  # Case insensitive
+            ("random", False),  # Invalid value treated as false
+            ("0", False),  # Numeric false
+            ("1", False),  # Numeric true but not "true"
         ],
     )
     def test_instrumentation_environment_variable(
         self,
         env_value: Optional[str],
         expected_enabled: bool,
-        expected_instrumented: bool,
     ):
         def set_env_var(var_name, value):
             if value is None:
@@ -234,7 +232,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -356,7 +354,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -460,10 +458,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         """Test synchronous non-streaming responses with content recording disabled (attribute mode)."""
         self._test_sync_non_streaming_without_content_recording_impl(False, **kwargs)
 
-    def _test_sync_streaming_with_content_recording_impl(self, use_events, **kwargs):
+    def _test_sync_streaming_with_content_recording_impl(
+        self, use_events, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Implementation for testing synchronous streaming responses with content recording enabled."""
-        from openai.types.responses.response_input_param import FunctionCallOutput
-
         self.cleanup()
         _set_use_message_events(use_events)
         os.environ.update(
@@ -479,7 +477,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -656,7 +654,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -701,7 +698,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -778,7 +775,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -844,7 +841,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         from opentelemetry import trace
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-        from memory_trace_exporter import MemoryTraceExporter
+        from memory_trace_exporter import MemoryTraceExporter  # pylint: disable=import-error
 
         tracer_provider = TracerProvider()
         trace._TRACER_PROVIDER = tracer_provider
@@ -887,7 +884,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        deployment_name = kwargs.get("foundry_model_name")
 
         with project_client:
             # Get the OpenAI client from the project client
@@ -972,7 +969,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(output_messages[0]["parts"][0]["content"]) > 0
             assert "finish_reason" in output_messages[0]
 
-    def _test_sync_function_tool_with_content_recording_non_streaming_impl(
+    def _test_sync_function_tool_with_content_recording_non_streaming_impl(  # pylint: disable=too-many-locals,too-many-statements
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing synchronous function tool usage with content recording (non-streaming)."""
@@ -994,7 +991,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1051,14 +1048,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                     )
 
             # Second request - provide function results
-            response2 = client.responses.create(
+            _response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
                 extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
-            assert hasattr(response2, "output")
-            assert response2.output is not None
+            assert hasattr(_response2, "output")
+            assert _response2.output is not None
 
             # Cleanup
             project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
@@ -1231,7 +1228,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(output_messages[0]["parts"][0]["content"]) > 0
             assert "finish_reason" in output_messages[0]
 
-    def _test_sync_function_tool_with_content_recording_streaming_impl(
+    def _test_sync_function_tool_with_content_recording_streaming_impl(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing synchronous function tool usage with content recording (streaming)."""
@@ -1253,7 +1250,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1555,7 +1552,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             False, use_simple_tool_call_format=True, **kwargs
         )
 
-    def _test_sync_function_tool_without_content_recording_non_streaming_impl(
+    def _test_sync_function_tool_without_content_recording_non_streaming_impl(  # pylint: disable=too-many-locals,too-many-statements
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing synchronous function tool usage without content recording (non-streaming)."""
@@ -1577,7 +1574,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -1634,13 +1631,13 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                     )
 
             # Second request - provide function results
-            response2 = client.responses.create(
+            _response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
                 extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
-            assert hasattr(response2, "output")
+            assert hasattr(_response2, "output")
 
             # Cleanup
             project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
@@ -1791,7 +1788,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 assert input_messages[0]["parts"][0]["content"]["type"] == "function_call_output"
                 assert "id" in input_messages[0]["parts"][0]["content"]
 
-    def _test_sync_function_tool_without_content_recording_streaming_impl(
+    def _test_sync_function_tool_without_content_recording_streaming_impl(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing synchronous function tool usage without content recording (streaming)."""
@@ -1813,7 +1810,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -2131,7 +2128,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -2186,7 +2183,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                     )
 
             # Second request - provide function results
-            response2 = client.responses.create(
+            _response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
                 extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
@@ -2281,7 +2278,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -2336,7 +2333,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                     )
 
             # Second request - provide function results
-            response2 = client.responses.create(
+            _response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
                 extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
@@ -2429,7 +2426,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -2526,7 +2523,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -2631,7 +2628,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -2723,7 +2720,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Create a conversation
             conversation = client.conversations.create()
@@ -2824,7 +2821,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -2929,7 +2926,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3033,7 +3030,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3137,7 +3134,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3245,7 +3242,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3354,7 +3351,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3463,7 +3460,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3571,7 +3568,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3683,7 +3680,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3796,7 +3793,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -3908,7 +3905,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4020,7 +4017,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4136,7 +4133,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4253,7 +4250,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4370,7 +4367,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4486,7 +4483,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4601,7 +4598,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4612,7 +4609,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input="Write a short haiku about testing",
             ) as stream:
                 # Iterate through events
-                for event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 # Get final response
@@ -4654,7 +4651,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             conversation = client.conversations.create()
 
@@ -4665,7 +4662,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input="Write a short haiku about testing",
             ) as stream:
                 # Iterate through events
-                for event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 # Get final response
@@ -4696,6 +4693,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.HTTPX)
@@ -4709,7 +4710,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -4739,7 +4740,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input="What's the weather in Boston?",
                 tools=[function_tool],
             ) as stream:
-                for event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 final_response = stream.get_final_response()
@@ -4770,7 +4771,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=input_list,
                 tools=[function_tool],
             ) as stream:
-                for event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 final_response = stream.get_final_response()
@@ -4801,8 +4802,12 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert attributes_match == True
 
         # Validate second span (tool output + final response)
-        span2 = spans[1]
+        _span2 = spans[1]  # pylint: disable=unused-variable
 
+    @pytest.mark.skip(
+        reason="Fails with pydantic>=2.13.0b2 / pydantic-core>=2.42.0: MockValSer is not accepted as SchemaSerializer, "
+        "causing TypeError when iterating responses.stream() that includes function tools (not related to instrumentation)"
+    )
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.HTTPX)
@@ -4823,7 +4828,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+            deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -4853,7 +4858,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input="What's the weather in Boston?",
                 tools=[function_tool],
             ) as stream:
-                for event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 final_response = stream.get_final_response()
@@ -4884,7 +4889,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=input_list,
                 tools=[function_tool],
             ) as stream:
-                for event in stream:
+                for _ in stream:
                     pass  # Process events
 
                 final_response = stream.get_final_response()
@@ -4942,9 +4947,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_workflow_agent_non_streaming_with_content_recording(self, **kwargs):
+    def test_workflow_agent_non_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Test workflow agent with non-streaming and content recording enabled."""
-        from azure.ai.projects.models import (
+        from azure.ai.projects.models import (  # pylint: disable=reimported,redefined-outer-name
             WorkflowAgentDefinition,
             PromptAgentDefinition,
         )
@@ -4959,8 +4966,8 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
-        with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        with self.create_client(operation_group="tracing", allow_preview=True, **kwargs) as project_client:
+            deployment_name = kwargs.get("foundry_model_name")
             openai_client = project_client.get_openai_client()
 
             # Create Teacher Agent
@@ -4968,7 +4975,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 agent_name="teacher-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a teacher that create pre-school math question for student and check answer. 
+                    instructions="""You are a teacher that create pre-school math question for student and check answer.
                                     If the answer is correct, you stop the conversation by saying [COMPLETE]. 
                                     If the answer is wrong, you ask student to fix it.""",
                 ),
@@ -4979,7 +4986,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 agent_name="student-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a student who answers questions from the teacher. 
+                    instructions="""You are a student who answers questions from the teacher.
                                     When the teacher gives you a question, you answer it.""",
                 ),
             )
@@ -5144,7 +5151,9 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_workflow_agent_non_streaming_without_content_recording(self, **kwargs):
+    def test_workflow_agent_non_streaming_without_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-statements
         """Test workflow agent with non-streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 
@@ -5158,9 +5167,10 @@ trigger:
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
-        with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
-            openai_client = project_client.get_openai_client()
+        with (
+            self.create_client(operation_group="tracing", allow_preview=True, **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
 
             workflow_yaml = """
 kind: workflow
@@ -5180,7 +5190,7 @@ trigger:
 
             conversation = openai_client.conversations.create()
 
-            response = openai_client.responses.create(
+            _response = openai_client.responses.create(
                 conversation=conversation.id,
                 extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
@@ -5258,9 +5268,11 @@ trigger:
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_workflow_agent_streaming_with_content_recording(self, **kwargs):
+    def test_workflow_agent_streaming_with_content_recording(
+        self, **kwargs
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Test workflow agent with streaming and content recording enabled."""
-        from azure.ai.projects.models import (
+        from azure.ai.projects.models import (  # pylint: disable=reimported,redefined-outer-name
             WorkflowAgentDefinition,
             PromptAgentDefinition,
         )
@@ -5275,8 +5287,8 @@ trigger:
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
-        with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
+        with self.create_client(operation_group="tracing", allow_preview=True, **kwargs) as project_client:
+            deployment_name = kwargs.get("foundry_model_name")
             openai_client = project_client.get_openai_client()
 
             # Create Teacher Agent
@@ -5284,7 +5296,7 @@ trigger:
                 agent_name="teacher-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a teacher that create pre-school math question for student and check answer. 
+                    instructions="""You are a teacher that create pre-school math question for student and check answer.
                                     If the answer is correct, you stop the conversation by saying [COMPLETE]. 
                                     If the answer is wrong, you ask student to fix it.""",
                 ),
@@ -5295,7 +5307,7 @@ trigger:
                 agent_name="student-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a student who answers questions from the teacher. 
+                    instructions="""You are a student who answers questions from the teacher.
                                     When the teacher gives you a question, you answer it.""",
                 ),
             )
@@ -5463,7 +5475,7 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_workflow_agent_streaming_without_content_recording(self, **kwargs):
+    def test_workflow_agent_streaming_without_content_recording(self, **kwargs):  # pylint: disable=too-many-statements
         """Test workflow agent with streaming and content recording disabled."""
         from azure.ai.projects.models import WorkflowAgentDefinition
 
@@ -5477,9 +5489,10 @@ trigger:
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
-        with self.create_client(operation_group="tracing", **kwargs) as project_client:
-            deployment_name = kwargs.get("azure_ai_model_deployment_name")
-            openai_client = project_client.get_openai_client()
+        with (
+            self.create_client(operation_group="tracing", allow_preview=True, **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
 
             workflow_yaml = """
 kind: workflow

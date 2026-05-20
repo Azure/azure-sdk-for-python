@@ -29,6 +29,7 @@ class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ARCHIVE = "Archive"
     PREMIUM = "Premium"
     COLD = "Cold"
+    SMART = "Smart"
 
 
 class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -49,6 +50,7 @@ class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
     ARCHIVE = "Archive"
     COLD = "Cold"
+    SMART = "Smart"
 
 
 class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -69,6 +71,7 @@ class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
     ARCHIVE = "Archive"
     COLD = "Cold"
+    SMART = "Smart"
 
 
 class AccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -87,6 +90,7 @@ class ArchiveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REHYDRATE_PENDING_TO_HOT = "rehydrate-pending-to-hot"
     REHYDRATE_PENDING_TO_COOL = "rehydrate-pending-to-cool"
     REHYDRATE_PENDING_TO_COLD = "rehydrate-pending-to-cold"
+    REHYDRATE_PENDING_TO_SMART = "rehydrate-pending-to-smart"
 
 
 class BlobCopySourceTags(str, Enum, metaclass=CaseInsensitiveEnumMeta):

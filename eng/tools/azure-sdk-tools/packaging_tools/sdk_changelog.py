@@ -39,16 +39,33 @@ def is_arm_sdk(package_name: str) -> bool:
 
 
 def execute_func_with_timeout(func, timeout: int = 900) -> Any:
-    """Execute function with timeout"""
-    return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
+    """Execute function with timeout.
+
+    On timeout, the worker pool is forcefully terminated to prevent orphaned
+    child processes from continuing to run.
+    """
+    pool = multiprocessing.Pool(processes=1)
+    try:
+        result = pool.apply_async(func)
+        return result.get(timeout)
+    except multiprocessing.TimeoutError:
+        pool.terminate()
+        pool.join()
+        raise
+    finally:
+        pool.terminate()
+        pool.join()
 
 
-def get_changelog_content(package_path: Path, package_result: dict, enable_changelog: bool) -> tuple[str, str]:
+def get_changelog_content(
+    package_path: Path, package_result: dict, enable_changelog: bool, timeout: int = 900
+) -> tuple[str, str]:
     """Generate changelog content for the given package path.
     Args:
         package_path (Path): The path to the package directory.
         package_result (dict): The package result dictionary to store changelog info.
         enable_changelog (bool): Flag to enable or disable changelog generation.
+        timeout (int): Timeout in seconds for changelog generation. Defaults to 900.
     Returns:
         tuple[str, str]: A tuple containing the generated markdown content and the last version.
     NOTE:
@@ -79,7 +96,7 @@ def get_changelog_content(package_path: Path, package_result: dict, enable_chang
 
         try:
             if enable_changelog:
-                md_output = execute_func_with_timeout(change_log_func)
+                md_output = execute_func_with_timeout(change_log_func, timeout)
             else:
                 md_output = "skip changelog generation"
         except multiprocessing.TimeoutError:
@@ -104,7 +121,7 @@ def log_failed_message(message: str, enable_log_error: bool):
         _LOGGER.warning(message)
 
 
-def main(package_path: Path, *, enable_changelog: bool = True, package_result: dict = {}):
+def main(package_path: Path, *, enable_changelog: bool = True, package_result: dict = {}, timeout: int = 900):
 
     package_name = package_path.name
     # When package_result is provided, it means this function is called in pipeline and we should not log error
@@ -113,7 +130,7 @@ def main(package_path: Path, *, enable_changelog: bool = True, package_result: d
     # Changelog generation
     try:
         changelog_generation_start_time = time.time()
-        md_output, last_version = get_changelog_content(package_path, package_result, enable_changelog)
+        md_output, last_version = get_changelog_content(package_path, package_result, enable_changelog, timeout=timeout)
         _LOGGER.info(f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds")
         if package_result:
             package_result["changelog"] = {
@@ -183,6 +200,12 @@ def generate_main():
         required=True,
         help="Absolute path to the package directory (e.g. c:/azure-sdk-for-python/sdk/<service>/<package_name>).",
     )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=900,
+        help="Timeout in seconds for changelog generation (default: 900).",
+    )
     parser.add_argument("--debug", dest="debug", action="store_true", help="Enable DEBUG logging")
 
     args = parser.parse_args()
@@ -198,7 +221,7 @@ def generate_main():
     if not package_path.is_absolute():
         raise ValueError("--package-path must be an absolute path")
 
-    main(package_path)
+    main(package_path, timeout=args.timeout)
 
 
 if __name__ == "__main__":

@@ -88,7 +88,7 @@
 - Added the ability specify the API version by an optional `api_version` keyword parameter.
 
 ### Other Changes
-- Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 - Updated the default polling interval to 2 seconds, it can still be overwritten by using the keyword argument "polling_interval".
 - Trying to update capabilities with empty phone number will throw `ValueError`. Prior to this change, the client would make an HTTP request that would always fail.
 - Migrated tests from vcrpy to test proxy.

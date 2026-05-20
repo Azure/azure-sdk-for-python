@@ -342,20 +342,22 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
 
     __defaultRequestTimeout: int = 5  # seconds
     __defaultDBAConnectionTimeout: int = 3  # seconds
-    __defaultReadTimeout: int = 65  # seconds
+    __defaultReadTimeout: float = 65  # seconds
     __defaultRecoveryReadTimeout: int = 6  # seconds
     __defaultDBAReadTimeout: int = 3 # seconds
     __defaultMaxBackoff: int = 1 # seconds
+    __defaultInferenceRequestTimeout: int = 5  # seconds
 
     def __init__(self) -> None:
         # RequestTimeout is the connection timeout for all operations except database account
         self.RequestTimeout: int = self.__defaultRequestTimeout
         self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
-        self.ReadTimeout: int = self.__defaultReadTimeout
+        self.ReadTimeout: float = self.__defaultReadTimeout
         # The request timeout for a request trying to recover a unavailable partition
         # This is only applicable if circuit breaker is enabled
         self.RecoveryReadTimeout: int = self.__defaultRecoveryReadTimeout
         self.DBAReadTimeout: int = self.__defaultDBAReadTimeout
+        self.InferenceRequestTimeout: int = self.__defaultInferenceRequestTimeout
         self.MaxBackoff: int = self.__defaultMaxBackoff
         self.ConnectionMode: int = ConnectionMode.Gateway
         self.SSLConfiguration: Optional[SSLConfiguration] = None

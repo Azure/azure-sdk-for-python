@@ -8,8 +8,8 @@ import time
 from typing import Any, Optional
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from .utils import within_credential_chain
-from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+from .utils import get_refresh_status, within_credential_chain
+from .._enums import TokenRefreshStatus
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,16 +44,6 @@ class GetTokenMixin(abc.ABC):
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessTokenInfo
         """
-
-    def _should_refresh(self, token: AccessTokenInfo) -> bool:
-        now = int(time.time())
-        if token.refresh_on is not None and now >= token.refresh_on:
-            return True
-        if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
-            return False
-        if now - self._last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
-            return False
-        return True
 
     def get_token(
         self,
@@ -132,12 +122,13 @@ class GetTokenMixin(abc.ABC):
             token = self._acquire_token_silently(
                 *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
             )
-            if not token:
+            refresh_status = get_refresh_status(token, self._last_request_time)
+            if refresh_status == TokenRefreshStatus.REQUIRED:
                 self._last_request_time = int(time.time())
                 token = self._request_token(
                     *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                 )
-            elif self._should_refresh(token):
+            elif refresh_status == TokenRefreshStatus.RECOMMENDED:
                 try:
                     self._last_request_time = int(time.time())
                     token = self._request_token(
@@ -151,7 +142,7 @@ class GetTokenMixin(abc.ABC):
                 self.__class__.__name__,
                 base_method_name,
             )
-            return token
+            return token  # type: ignore[return-value]
 
         except Exception as ex:
             _LOGGER.log(

@@ -10,32 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ComplianceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The compliance state that should be set on the resource."""
-
-    COMPLIANT = "Compliant"
-    """The resource is in compliance with the policy."""
-    NON_COMPLIANT = "NonCompliant"
-    """The resource is not in compliance with the policy."""
-    UNKNOWN = "Unknown"
-    """The compliance state of the resource is not known."""
-
-
-class ComponentPolicyStatesResource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ComponentPolicyStatesResource."""
-
-    LATEST = "latest"
-
-
-class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource."""
-
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-
 class FieldRestrictionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of restriction that is imposed on the field."""
 
@@ -45,8 +19,6 @@ class FieldRestrictionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The field will be removed by policy."""
     DENY = "Deny"
     """The field and/or values will be denied by policy."""
-    AUDIT = "Audit"
-    """The field and/or values will be audited by policy."""
 
 
 class PolicyEventsResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -83,4 +55,4 @@ class ResourceDiscoveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Remediate resources that are already known to be non-compliant."""
     RE_EVALUATE_COMPLIANCE = "ReEvaluateCompliance"
     """Re-evaluate the compliance state of resources and then remediate the resources found to be
-    non-compliant. The resourceIds filter cannot be used in this mode."""
+    non-compliant."""

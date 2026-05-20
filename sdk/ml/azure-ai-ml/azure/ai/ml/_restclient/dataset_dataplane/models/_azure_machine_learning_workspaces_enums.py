@@ -15,6 +15,7 @@ class DataflowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JSON = "Json"
     YAML = "Yaml"
 
+
 class FieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     STRING = "String"
@@ -28,6 +29,7 @@ class FieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATA_ROW = "DataRow"
     LIST = "List"
     STREAM = "Stream"
+
 
 class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -93,11 +95,13 @@ class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOT_EXTENDED = "NotExtended"
     NETWORK_AUTHENTICATION_REQUIRED = "NetworkAuthenticationRequired"
 
+
 class HttpVersionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REQUEST_VERSION_OR_LOWER = "RequestVersionOrLower"
     REQUEST_VERSION_OR_HIGHER = "RequestVersionOrHigher"
     REQUEST_VERSION_EXACT = "RequestVersionExact"
+
 
 class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -107,6 +111,7 @@ class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     GUID = "Guid"
     BOOLEAN = "Boolean"
     DATE = "Date"
+
 
 class SType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 

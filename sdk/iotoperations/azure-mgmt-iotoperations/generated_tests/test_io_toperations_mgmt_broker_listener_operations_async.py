@@ -67,6 +67,7 @@ class TestIoTOperationsMgmtBrokerListenerOperationsAsync(AzureMgmtRecordedTestCa
                                 },
                             }
                         ],
+                        "healthState": "str",
                         "provisioningState": "str",
                         "serviceName": "str",
                         "serviceType": "str",

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,10 +37,12 @@ def main():
         change_data_capture_name="exampleChangeDataCapture",
         change_data_capture={
             "properties": {
-                "Policy": {"mode": "Microbatch", "recurrence": {"frequency": "Minute", "interval": 15}},
-                "SourceConnectionsInfo": [
+                "allowVNetOverride": False,
+                "description": "Sample demo change data capture to transfer data from delimited (csv) to Azure SQL Database. Updating table mappings.",
+                "policy": {"mode": "Microbatch", "recurrence": {"frequency": "Minute", "interval": 15}},
+                "sourceConnectionsInfo": [
                     {
-                        "Connection": {
+                        "connection": {
                             "commonDslConnectorProperties": [
                                 {"name": "allowSchemaDrift", "value": True},
                                 {"name": "inferDriftedColumnTypes", "value": True},
@@ -121,7 +124,7 @@ def main():
                             "linkedServiceType": "AzureBlobFS",
                             "type": "linkedservicetype",
                         },
-                        "SourceEntities": [
+                        "sourceEntities": [
                             {
                                 "name": "source/customer",
                                 "properties": {
@@ -195,9 +198,10 @@ def main():
                         ],
                     }
                 ],
-                "TargetConnectionsInfo": [
+                "status": "Stopped",
+                "targetConnectionsInfo": [
                     {
-                        "Connection": {
+                        "connection": {
                             "commonDslConnectorProperties": [
                                 {"name": "allowSchemaDrift", "value": True},
                                 {"name": "inferDriftedColumnTypes", "value": True},
@@ -217,7 +221,7 @@ def main():
                             "linkedServiceType": "AzureSqlDatabase",
                             "type": "linkedservicetype",
                         },
-                        "DataMapperMappings": [
+                        "dataMapperMappings": [
                             {
                                 "attributeMappingInfo": {
                                     "attributeMappings": [
@@ -438,8 +442,8 @@ def main():
                                 "targetEntityName": "dbo.justSchema",
                             },
                         ],
-                        "Relationships": [],
-                        "TargetEntities": [
+                        "relationships": [],
+                        "targetEntities": [
                             {
                                 "name": "dbo.employee",
                                 "properties": {
@@ -500,15 +504,12 @@ def main():
                         ],
                     }
                 ],
-                "allowVNetOverride": False,
-                "description": "Sample demo change data capture to transfer data from delimited (csv) to Azure SQL Database. Updating table mappings.",
-                "status": "Stopped",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/ChangeDataCapture_Update.json
+# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/DataFactory/stable/2018-06-01/examples/ChangeDataCapture_Update.json
 if __name__ == "__main__":
     main()

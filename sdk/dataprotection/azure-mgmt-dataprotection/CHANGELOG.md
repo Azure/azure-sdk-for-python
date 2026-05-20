@@ -1,5 +1,23 @@
 # Release History
 
+## 2.1.0b1 (2026-04-07)
+
+### Features Added
+
+  - Client `DataProtectionMgmtClient` added operation group `deleted_backup_vaults`
+  - Added model `AdlsBlobBackupDatasourceParametersForAutoProtection`
+  - Added model `BlobBackupAutoProtectionRule`
+  - Added model `BlobBackupAutoProtectionSettings`
+  - Added model `BlobBackupDatasourceParametersForAutoProtection`
+  - Added enum `BlobBackupPatternType`
+  - Added model `BlobBackupRuleBasedAutoProtectionSettings`
+  - Added enum `BlobBackupRuleMode`
+  - Added model `DeletedBackupVault`
+  - Added model `DeletedBackupVaultResource`
+  - Added model `ResourceDeletionInfo`
+  - Operation group `BackupVaultsOperations` added parameter `x_ms_deleted_vault_id` in method `begin_create_or_update`
+  - Added operation group `DeletedBackupVaultsOperations`
+
 ## 2.0.1 (2025-10-09)
 
 ### Bugs Fixed

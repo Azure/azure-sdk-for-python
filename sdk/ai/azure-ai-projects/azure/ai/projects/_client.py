@@ -58,9 +58,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :param allow_preview: Whether to enable preview features. Must be specified and set to True to
      enable preview features. Default value is None.
     :type allow_preview: bool
-    :keyword api_version: The API version to use for this operation. Known values are "v1" and
-     None. Default value is "v1". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "v1". Default
+     value is "v1". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

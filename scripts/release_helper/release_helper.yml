@@ -25,12 +25,11 @@ schedules:
 variables:
   - group: Release Secrets for GitHub
   - group: SDK Release Helper
-  - group: Azure SDK Auto Release Pipeline Secrets
 
 
 jobs:
 - job: ReleaseHelper
-  displayName: ReleaseHelper Python 3.9
+  displayName: ReleaseHelper Python 3.10
   timeoutInMinutes: 30
   strategy:
     maxParallel: 1
@@ -42,7 +41,7 @@ jobs:
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.9'
+        versionSpec: '3.10'
         addToPath: true
         architecture: 'x64'
     - bash: |
@@ -60,7 +59,6 @@ jobs:
 
         # import env variable
         export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
-        export PIPELINE_TOKEN=$(System.AccessToken)
         export LANGUAGE=$(RUN_LANGUAGE)
         export SPEC_REPO=$(pwd)/azure-rest-api-specs/specification
         export TYPESPEC_JSON=$(pwd)/file-storage/data/typespec.json

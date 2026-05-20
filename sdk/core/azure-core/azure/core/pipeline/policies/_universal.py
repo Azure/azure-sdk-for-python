@@ -35,14 +35,15 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping
-import urllib.parse
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping, Iterable
 
 from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from ._base import SansIOHTTPPolicy
+from ._utils import sanitize_url
+from ...utils._utils import CaseInsensitiveSet
 
 from ..transport import HttpRequest as LegacyHttpRequest
 from ..transport._base import _HttpResponseBase as LegacySansIOHttpResponse
@@ -189,6 +190,11 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :keyword str user_agent: If specified, this will be added in front of the user agent string.
     :keyword str sdk_moniker: If specified, the user agent string will be
         azsdk-python-[sdk_moniker] Python/[python_version] ([platform_version])
+
+    Environment variables:
+
+    * ``AZURE_HTTP_USER_AGENT`` - If set and ``user_agent_use_env`` is True (the default),
+      the value is appended to the User-Agent header string sent with each request.
 
     .. admonition:: Example:
 
@@ -389,8 +395,20 @@ class HttpLoggingPolicy(
 
     :param logger: The logger to use for logging. Default to azure.core.pipeline.policies.http_logging_policy.
     :type logger: logging.Logger
+    :keyword int http_logging_level: The logging level to use for HTTP request and response logs.
+     Defaults to logging.INFO.
+    :type http_logging_level: int
+    :keyword additional_allowed_query_params: Query parameter names whose values are allowed in recorded URLs.
+        These are added to the default set which includes "api-version".
+    :type additional_allowed_query_params: Iterable[str]
+
+    Environment variables:
+
+    * ``AZURE_SDK_LOGGING_MULTIRECORD`` - If set to any truthy value, HTTP request and response
+      details are logged as separate log records instead of a single combined record.
     """
 
+    DEFAULT_QUERY_PARAMS_ALLOWLIST: Set[str] = set(["api-version"])
     DEFAULT_HEADERS_ALLOWLIST: Set[str] = set(
         [
             "x-ms-request-id",
@@ -425,18 +443,26 @@ class HttpLoggingPolicy(
     REDACTED_PLACEHOLDER: str = "REDACTED"
     MULTI_RECORD_LOG: str = "AZURE_SDK_LOGGING_MULTIRECORD"
 
-    def __init__(self, logger: Optional[logging.Logger] = None, **kwargs: Any):  # pylint: disable=unused-argument
+    def __init__(
+        self,
+        logger: Optional[logging.Logger] = None,
+        *,
+        http_logging_level: int = logging.INFO,
+        additional_allowed_query_params: Optional[Iterable[str]] = None,
+        **kwargs: Any
+    ):  # pylint: disable=unused-argument
         self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
-        self.allowed_query_params: Set[str] = set()
-        self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
-
-    def _redact_query_param(self, key: str, value: str) -> str:
-        lower_case_allowed_query_params = [param.lower() for param in self.allowed_query_params]
-        return value if key.lower() in lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+        self.http_logging_level: int = http_logging_level
+        self.allowed_query_params: Set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST)
+        if additional_allowed_query_params:
+            self.allowed_query_params.update(additional_allowed_query_params)
+        self.allowed_header_names: Set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
 
     def _redact_header(self, key: str, value: str) -> str:
+        if isinstance(self.allowed_header_names, CaseInsensitiveSet):
+            return value if key in self.allowed_header_names else self.REDACTED_PLACEHOLDER
         lower_case_allowed_header_names = [header.lower() for header in self.allowed_header_names]
-        return value if key.lower() in lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+        return value if key.lower() in lower_case_allowed_header_names else self.REDACTED_PLACEHOLDER
 
     def on_request(  # pylint: disable=too-many-return-statements
         self, request: PipelineRequest[HTTPRequestType]
@@ -452,39 +478,37 @@ class HttpLoggingPolicy(
         # then read from kwargs (pop if that's the case)
         # then use my instance logger
         logger = request.context.setdefault("logger", options.pop("logger", self.logger))
+        log_level = request.context.setdefault(
+            "http_logging_level", options.pop("http_logging_level", self.http_logging_level)
+        )
 
-        if not logger.isEnabledFor(logging.INFO):
+        if not logger.isEnabledFor(log_level):
             return
 
         try:
-            parsed_url = list(urllib.parse.urlparse(http_request.url))
-            parsed_qp = urllib.parse.parse_qsl(parsed_url[4], keep_blank_values=True)
-            filtered_qp = [(key, self._redact_query_param(key, value)) for key, value in parsed_qp]
-            # 4 is query
-            parsed_url[4] = "&".join(["=".join(part) for part in filtered_qp])
-            redacted_url = urllib.parse.urlunparse(parsed_url)
+            redacted_url = sanitize_url(http_request.url, self.allowed_query_params, self.REDACTED_PLACEHOLDER)
 
             multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
             if multi_record:
-                logger.info("Request URL: %r", redacted_url)
-                logger.info("Request method: %r", http_request.method)
-                logger.info("Request headers:")
+                logger.log(log_level, "Request URL: %r", redacted_url)
+                logger.log(log_level, "Request method: %r", http_request.method)
+                logger.log(log_level, "Request headers:")
                 for header, value in http_request.headers.items():
                     value = self._redact_header(header, value)
-                    logger.info("    %r: %r", header, value)
+                    logger.log(log_level, "    %r: %r", header, value)
                 if isinstance(http_request.body, types.GeneratorType):
-                    logger.info("File upload")
+                    logger.log(log_level, "File upload")
                     return
                 try:
                     if isinstance(http_request.body, types.AsyncGeneratorType):
-                        logger.info("File upload")
+                        logger.log(log_level, "File upload")
                         return
                 except AttributeError:
                     pass
                 if http_request.body:
-                    logger.info("A body is sent with the request")
+                    logger.log(log_level, "A body is sent with the request")
                     return
-                logger.info("No body was attached to the request")
+                logger.log(log_level, "No body was attached to the request")
                 return
             log_string = "Request URL: '{}'".format(redacted_url)
             log_string += "\nRequest method: '{}'".format(http_request.method)
@@ -494,21 +518,21 @@ class HttpLoggingPolicy(
                 log_string += "\n    '{}': '{}'".format(header, value)
             if isinstance(http_request.body, types.GeneratorType):
                 log_string += "\nFile upload"
-                logger.info(log_string)
+                logger.log(log_level, log_string)
                 return
             try:
                 if isinstance(http_request.body, types.AsyncGeneratorType):
                     log_string += "\nFile upload"
-                    logger.info(log_string)
+                    logger.log(log_level, log_string)
                     return
             except AttributeError:
                 pass
             if http_request.body:
                 log_string += "\nA body is sent with the request"
-                logger.info(log_string)
+                logger.log(log_level, log_string)
                 return
             log_string += "\nNo body was attached to the request"
-            logger.info(log_string)
+            logger.log(log_level, log_string)
 
         except Exception:  # pylint: disable=broad-except
             logger.warning("Failed to log request.")
@@ -533,25 +557,28 @@ class HttpLoggingPolicy(
         # If on_request was called, should always read from context
         options = request.context.options
         logger = request.context.setdefault("logger", options.pop("logger", self.logger))
+        log_level = request.context.setdefault(
+            "http_logging_level", options.pop("http_logging_level", self.http_logging_level)
+        )
 
         try:
-            if not logger.isEnabledFor(logging.INFO):
+            if not logger.isEnabledFor(log_level):
                 return
 
             multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
             if multi_record:
-                logger.info("Response status: %r", http_response.status_code)
-                logger.info("Response headers:")
+                logger.log(log_level, "Response status: %r", http_response.status_code)
+                logger.log(log_level, "Response headers:")
                 for res_header, value in http_response.headers.items():
                     value = self._redact_header(res_header, value)
-                    logger.info("    %r: %r", res_header, value)
+                    logger.log(log_level, "    %r: %r", res_header, value)
                 return
             log_string = "Response status: {}".format(http_response.status_code)
             log_string += "\nResponse headers:"
             for res_header, value in http_response.headers.items():
                 value = self._redact_header(res_header, value)
                 log_string += "\n    '{}': '{}'".format(res_header, value)
-            logger.info(log_string)
+            logger.log(log_level, log_string)
         except Exception:  # pylint: disable=broad-except
             logger.warning("Failed to log response.")
 

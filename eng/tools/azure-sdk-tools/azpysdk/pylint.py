@@ -13,7 +13,8 @@ from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.logging import logger, run_logged
 
 REPO_ROOT = discover_repo_root()
-PYLINT_VERSION = "3.2.7"
+PYLINT_VERSION = "4.0.4"
+NEXT_PYLINT_VERSION = "4.0.4"
 
 
 class pylint(Check):
@@ -50,7 +51,13 @@ class pylint(Check):
                 os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for pylint check")
             package_failed = False
 
@@ -85,7 +92,7 @@ class pylint(Check):
             try:
                 if args.next:
                     # use latest version of pylint
-                    install_into_venv(executable, ["pylint"], package_dir)
+                    install_into_venv(executable, [f"pylint=={NEXT_PYLINT_VERSION}"], package_dir)
                 else:
                     install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"], package_dir)
             except CalledProcessError as e:

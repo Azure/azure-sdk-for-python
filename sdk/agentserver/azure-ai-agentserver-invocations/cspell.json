@@ -1,0 +1,30 @@
+{
+    "ignoreWords": [
+        "agentserver",
+        "appinsights",
+        "ASGI",
+        "autouse",
+        "bkey",
+        "bval",
+        "caplog",
+        "genai",
+        "hypercorn",
+        "invocations",
+        "markexpr",
+        "openapi",
+        "paramtype",
+        "pytestmark",
+        "rtype",
+        "sess",
+        "starlette",
+        "traceparent",
+        "tracestate",
+        "tracecontext"
+    ],
+    "ignorePaths": [
+        "*.csv",
+        "*.json",
+        "*.rst",
+        "samples/**"
+    ]
+}

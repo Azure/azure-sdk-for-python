@@ -17,7 +17,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
-    _BearerTokenCredentialPolicyBase,
+    _enforce_https,
     _should_refresh_token,
     MAX_REFRESH_JITTER_SECONDS,
 )
@@ -67,7 +67,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises ~azure.core.exceptions.ServiceRequestError: If the request fails.
         """
-        _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
+        _enforce_https(request)
 
         if self._token is None or self._need_new_token():
             async with self._lock:
@@ -130,10 +130,6 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                     raise ex from HttpResponseError(response=response.http_response)
 
                 if request_authorized:
-                    # if we receive a challenge response, we retrieve a new token
-                    # which matches the new target. In this case, we don't want to remove
-                    # token from the request so clear the 'insecure_domain_change' tag
-                    request.context.options.pop("insecure_domain_change", False)
                     try:
                         response = await self.next.send(request)
                     except Exception:

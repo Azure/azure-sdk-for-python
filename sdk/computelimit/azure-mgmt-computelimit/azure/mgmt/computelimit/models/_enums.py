@@ -32,6 +32,15 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class FeatureState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The allowed states for a compute limit feature."""
+
+    ENABLED = "Enabled"
+    """The feature is enabled."""
+    DISABLED = "Disabled"
+    """The feature is disabled."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".

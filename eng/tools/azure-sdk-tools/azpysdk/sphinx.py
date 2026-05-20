@@ -19,9 +19,13 @@ from ci_tools.logging import logger
 
 # dependencies
 SPHINX_VERSION = "8.2.0"
+NEXT_SPHINX_VERSION = "8.2.0"
 SPHINX_RTD_THEME_VERSION = "3.0.2"
+NEXT_SPHINX_RTD_THEME_VERSION = "3.0.2"
 MYST_PARSER_VERSION = "4.0.1"
+NEXT_MYST_PARSER_VERSION = "4.0.1"
 SPHINX_CONTRIB_JQUERY_VERSION = "4.1"
+NEXT_SPHINX_CONTRIB_JQUERY_VERSION = "4.1"
 
 RST_EXTENSION_FOR_INDEX = """
 
@@ -219,7 +223,13 @@ class sphinx(Check):
             package_dir = parsed.folder
             package_name = parsed.name
 
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for sphinx check")
 
             # check Python version
@@ -251,10 +261,10 @@ class sphinx(Check):
                     install_into_venv(
                         executable,
                         [
-                            "sphinx",
-                            "sphinx_rtd_theme",
-                            "myst_parser",
-                            "sphinxcontrib-jquery",
+                            f"sphinx=={NEXT_SPHINX_VERSION}",
+                            f"sphinx_rtd_theme=={NEXT_SPHINX_RTD_THEME_VERSION}",
+                            f"myst_parser=={NEXT_MYST_PARSER_VERSION}",
+                            f"sphinxcontrib-jquery=={NEXT_SPHINX_CONTRIB_JQUERY_VERSION}",
                         ],
                         package_dir,
                     )

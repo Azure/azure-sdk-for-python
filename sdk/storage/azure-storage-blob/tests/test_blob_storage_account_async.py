@@ -3,14 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core.pipeline.transport import AioHttpTransport
-from azure.storage.blob import StandardBlobTier
-from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.blob._generated.models import RehydratePriority
+# pylint: disable=attribute-defined-outside-init
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import StandardBlobTier
+from azure.storage.blob._generated.models import RehydratePriority
+from azure.storage.blob.aio import BlobServiceClient
+
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -24,7 +27,7 @@ class TestBlobStorageAccountAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_blob_reference(self, bsc):
@@ -51,7 +54,7 @@ class TestBlobStorageAccountAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
 
         await self._setup(bsc)
-        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot, StandardBlobTier.SMART]
 
         for tier in tiers:
             blob_name = self.get_resource_name(tier.value)

@@ -6,7 +6,6 @@
 
 from .._serialize import _SUPPORTED_API_VERSIONS
 
-
 X_MS_VERSION = _SUPPORTED_API_VERSIONS[-1]
 
 # Connection defaults
@@ -18,3 +17,5 @@ DEFAULT_OAUTH_SCOPE = "/.default"
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
 
 SERVICE_HOST_BASE = "core.windows.net"
+
+DEFAULT_MAX_CONCURRENCY = 1

@@ -1,0 +1,11 @@
+name: 'Configure Package Indexes'
+description: 'Configure pip/uv package indexes to use Azure SDK CFS feed'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure package indexes
+      run: |
+        echo "PIP_INDEX_URL=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
+        echo "UV_DEFAULT_INDEX=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
+      shell: bash

@@ -38,10 +38,10 @@
     },
     {
       "CoverageConfig": {
-        "ubuntu2404_39_coverage": {
+        "ubuntu2404_310_coverage": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "3.10",
           "CoverageArg": "",
           "TestSamples": "false"
         }

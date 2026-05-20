@@ -64,6 +64,8 @@ def build_create_request(  # pylint: disable=too-many-locals,too-many-statements
     content_md5: Optional[bytes] = None,
     file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
     content_length: Optional[int] = None,
+    structured_body_type: Optional[str] = None,
+    structured_content_length: Optional[int] = None,
     content: Optional[IO[bytes]] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -146,6 +148,12 @@ def build_create_request(  # pylint: disable=too-many-locals,too-many-statements
         )
     if content_length is not None:
         _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
+    if structured_body_type is not None:
+        _headers["x-ms-structured-body"] = _SERIALIZER.header("structured_body_type", structured_body_type, "str")
+    if structured_content_length is not None:
+        _headers["x-ms-structured-content-length"] = _SERIALIZER.header(
+            "structured_content_length", structured_content_length, "int"
+        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1347,12 +1355,14 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         content_md5: Optional[bytes] = None,
         file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
         content_length: Optional[int] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         file_http_headers: Optional[_models.FileHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         optionalbody: Optional[IO[bytes]] = None,
         **kwargs: Any
     ) -> None:
-        """Creates a new file or replaces a file. Note it only initializes the file with no content.
+        """Creates a new file or replaces a file. Can also initialize the file with content.
 
         :param file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
         :type file_content_length: int
@@ -1419,6 +1429,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          When the x-ms-write header is set to clear, the value of this header must be set to zero.
          Default value is None.
         :type content_length: int
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1492,6 +1509,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             content_md5=content_md5,
             file_property_semantics=file_property_semantics,
             content_length=content_length,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             file_type_constant=file_type_constant,
@@ -1549,6 +1568,9 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
         response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore

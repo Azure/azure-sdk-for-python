@@ -1,0 +1,22 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.commerce.models.ErrorObjectResponse": null,
+        "azure.mgmt.commerce.models.ErrorResponse": null,
+        "azure.mgmt.commerce.models.MeterInfo": null,
+        "azure.mgmt.commerce.models.OfferTermInfo": null,
+        "azure.mgmt.commerce.models.MonetaryCommitment": null,
+        "azure.mgmt.commerce.models.MonetaryCredit": null,
+        "azure.mgmt.commerce.models.RateCardQueryParameters": null,
+        "azure.mgmt.commerce.models.RecurringCharge": null,
+        "azure.mgmt.commerce.models.ResourceRateCardInfo": null,
+        "azure.mgmt.commerce.models.UsageAggregation": null,
+        "azure.mgmt.commerce.models.UsageAggregationListResult": null,
+        "azure.mgmt.commerce.models.OfferTermInfoEnum": null,
+        "azure.mgmt.commerce.models.AggregationGranularity": null,
+        "azure.mgmt.commerce.operations.UsageAggregatesOperations.list": null,
+        "azure.mgmt.commerce.aio.operations.UsageAggregatesOperations.list": null,
+        "azure.mgmt.commerce.operations.RateCardOperations.get": null,
+        "azure.mgmt.commerce.aio.operations.RateCardOperations.get": null
+    }
+}

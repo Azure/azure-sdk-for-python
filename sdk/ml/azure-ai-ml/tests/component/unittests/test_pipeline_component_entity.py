@@ -7,7 +7,9 @@ import pytest
 import yaml
 
 from azure.ai.ml import Input, load_component, load_job
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentVersion as ComponentVersionData
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import _deserialize
+from .test_component_schema import _convert_keys_to_camel
 from azure.ai.ml.entities import Component, PipelineComponent, PipelineJob
 from azure.ai.ml.entities._inputs_outputs import GroupInput
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
@@ -429,7 +431,7 @@ class TestPipelineComponentEntity:
             "shm_size": "2g",
         }
 
-        rest_obj = ComponentVersionData.from_dict(json.loads(json.dumps(json_in_file)))
+        rest_obj = _deserialize(ComponentVersionData, json.loads(json.dumps(_convert_keys_to_camel(json_in_file))))
         pipeline_component = Component._from_rest_object(rest_obj)
         assert pipeline_component.jobs
         obj_node_dict = {key: node._to_rest_object() for key, node in pipeline_component.jobs.items()}[

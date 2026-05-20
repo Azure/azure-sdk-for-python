@@ -87,39 +87,6 @@ def main():
                 "deviceRef": {"deviceName": "myDevice", "endpointName": "opcuaendpointname"},
                 "discoveryId": "11111111-1111-1111-1111-111111111111",
                 "documentationUri": "https://www.example.com/manual",
-                "eventGroups": [
-                    {
-                        "events": [
-                            {
-                                "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/;s=FastUInt3",
-                                "destinations": [
-                                    {
-                                        "configuration": {
-                                            "qos": "Qos0",
-                                            "retain": "Keep",
-                                            "topic": "/contoso/testEvent1",
-                                            "ttl": 7200,
-                                        },
-                                        "target": "Mqtt",
-                                    }
-                                ],
-                                "eventConfiguration": '{"publishingInterval":7,"samplingInterval":1,"queueSize":8}',
-                                "lastUpdatedOn": "2024-04-09T14:20:00.52Z",
-                                "name": "event1",
-                                "typeRef": "event1Ref",
-                            },
-                            {
-                                "dataSource": "nsu=http://microsoft.com/Opc/OpcPlc/;s=FastUInt4",
-                                "destinations": [{"configuration": {"path": "/tmp/event2"}, "target": "Storage"}],
-                                "eventConfiguration": '{"publishingInterval":7,"samplingInterval":8,"queueSize":4}',
-                                "lastUpdatedOn": "2024-04-09T14:20:00.52Z",
-                                "name": "event2",
-                                "typeRef": "event2Ref",
-                            },
-                        ],
-                        "name": "default",
-                    }
-                ],
                 "hardwareRevision": "1.0",
                 "managementGroups": [
                     {
@@ -193,6 +160,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/CreateOrReplace_NamespaceDiscoveredAsset.json
+# x-ms-original-file: 2026-03-01-preview/CreateOrReplace_NamespaceDiscoveredAsset.json
 if __name__ == "__main__":
     main()

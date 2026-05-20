@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.authentication_settings.create_or_update(
+    response = client.authentication_settings.begin_create_or_update(
         resource_group_name="myResourceGroup",
         health_model_name="myHealthModel",
         authentication_setting_name="myAuthSetting",
@@ -41,10 +41,10 @@ def main():
                 "managedIdentityName": "SystemAssigned",
             }
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/AuthenticationSettings_CreateOrUpdate.json
+# x-ms-original-file: 2026-01-01-preview/AuthenticationSettings_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

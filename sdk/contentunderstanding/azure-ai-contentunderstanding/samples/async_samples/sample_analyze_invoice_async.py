@@ -1,4 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
+# mypy: disable-error-code="attr-defined"
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -56,8 +57,10 @@ USAGE:
 
 import asyncio
 import os
+from typing import cast
 
 from dotenv import load_dotenv
+from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     AnalysisInput,
@@ -78,7 +81,9 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         # [START analyze_invoice]
         # You can replace this URL with your own invoice file URL
         invoice_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
@@ -99,12 +104,14 @@ async def main() -> None:
             return
 
         # Get the document content (invoices are documents)
-        document_content: DocumentContent = result.contents[0]  # type: ignore
+        document_content = cast(DocumentContent, result.contents[0])
 
         # Print document unit information
         # The unit indicates the measurement system used for coordinates in the source field
         print(f"Document unit: {document_content.unit or 'unknown'}")
-        print(f"Pages: {document_content.start_page_number} to {document_content.end_page_number}")
+        print(
+            f"Pages: {document_content.start_page_number} to {document_content.end_page_number}"
+        )
 
         # Print page dimensions if available
         if document_content.pages and len(document_content.pages) > 0:
@@ -119,7 +126,9 @@ async def main() -> None:
 
         # Extract simple string fields
         customer_name_field = document_content.fields.get("CustomerName")
-        print(f"Customer Name: {customer_name_field.value or '(None)' if customer_name_field else '(None)'}")
+        print(
+            f"Customer Name: {customer_name_field.value or '(None)' if customer_name_field else '(None)'}"
+        )
         if customer_name_field:
             print(
                 f"  Confidence: {customer_name_field.confidence:.2f}"
@@ -129,11 +138,15 @@ async def main() -> None:
             print(f"  Source: {customer_name_field.source or 'N/A'}")
             if customer_name_field.spans and len(customer_name_field.spans) > 0:
                 span = customer_name_field.spans[0]
-                print(f"  Position in markdown: offset={span.offset}, length={span.length}")
+                print(
+                    f"  Position in markdown: offset={span.offset}, length={span.length}"
+                )
 
         # Extract simple date field
         invoice_date_field = document_content.fields.get("InvoiceDate")
-        print(f"Invoice Date: {invoice_date_field.value or '(None)' if invoice_date_field else '(None)'}")
+        print(
+            f"Invoice Date: {invoice_date_field.value or '(None)' if invoice_date_field else '(None)'}"
+        )
         if invoice_date_field:
             print(
                 f"  Confidence: {invoice_date_field.confidence:.2f}"
@@ -143,7 +156,9 @@ async def main() -> None:
             print(f"  Source: {invoice_date_field.source or 'N/A'}")
             if invoice_date_field.spans and len(invoice_date_field.spans) > 0:
                 span = invoice_date_field.spans[0]
-                print(f"  Position in markdown: offset={span.offset}, length={span.length}")
+                print(
+                    f"  Position in markdown: offset={span.offset}, length={span.length}"
+                )
 
         # Extract object fields (nested structures)
         total_amount_field = document_content.fields.get("TotalAmount")
@@ -152,7 +167,9 @@ async def main() -> None:
             currency_field = total_amount_field.value.get("CurrencyCode")
             amount = amount_field.value if amount_field else None
             # Use currency value if present, otherwise default to ""
-            currency = currency_field.value if currency_field and currency_field.value else ""
+            currency = (
+                currency_field.value if currency_field and currency_field.value else ""
+            )
             if isinstance(amount, (int, float)):
                 print(f"\nTotal: {currency}{amount:.2f}")
             else:
@@ -162,7 +179,11 @@ async def main() -> None:
                 if amount_field and amount_field.confidence
                 else "  Amount Confidence: N/A"
             )
-            print(f"  Source for Amount: {amount_field.source or 'N/A'}" if amount_field else "  Source: N/A")
+            print(
+                f"  Source for Amount: {amount_field.source or 'N/A'}"
+                if amount_field
+                else "  Source: N/A"
+            )
 
         # Extract array fields (collections like line items)
         line_items_field = document_content.fields.get("LineItems")
@@ -172,8 +193,16 @@ async def main() -> None:
                 if isinstance(item, ObjectField) and item.value:
                     description_field = item.value.get("Description")
                     quantity_field = item.value.get("Quantity")
-                    description = description_field.value if description_field and description_field.value else "N/A"
-                    quantity = quantity_field.value if quantity_field and quantity_field.value else "N/A"
+                    description = (
+                        description_field.value
+                        if description_field and description_field.value
+                        else "N/A"
+                    )
+                    quantity = (
+                        quantity_field.value
+                        if quantity_field and quantity_field.value
+                        else "N/A"
+                    )
                     print(f"  Item {i}: {description}")
                     print(f"    Quantity: {quantity}")
                     print(
@@ -182,6 +211,50 @@ async def main() -> None:
                         else "    Quantity Confidence: N/A"
                     )
         # [END extract_invoice_fields]
+
+        # [START get_usage]
+        # Access usage details from the poller (available after result() completes).
+        # Usage reports resource consumption for billing estimation:
+        #
+        # - document_pages_standard/basic/minimal: Pages processed at each extraction tier.
+        #   Standard = layout + OCR (scanned docs), Basic = OCR only, Minimal = digital formats
+        #   (DOCX, XLSX, HTML, TXT) that need no OCR. Charged per 1,000 pages.
+        #
+        # - contextualization_tokens: Fixed-rate tokens charged by Content Understanding for
+        #   preparing context, generating confidence scores, source grounding, and formatting
+        #   output. Typically 1,000 tokens per page. Charged separately from LLM tokens.
+        #
+        # - tokens: Dict of "{model}-input" / "{model}-output" token counts consumed by your
+        #   Foundry model deployment (e.g. "gpt-4.1-input", "gpt-4.1-output"). These are
+        #   billed on your Foundry deployment, not on Content Understanding.
+        #
+        # For full pricing details, see:
+        # https://learn.microsoft.com/azure/ai-services/content-understanding/pricing-explainer
+        usage = poller.usage
+        if usage:
+            print("\nUsage Details:")
+            if usage.document_pages_standard is not None:
+                print(f"  Document pages (standard): {usage.document_pages_standard}")
+            if usage.contextualization_tokens is not None:
+                print(f"  Contextualization tokens: {usage.contextualization_tokens}")
+            if usage.tokens:
+                print("  Model tokens:")
+                for model, count in usage.tokens.items():
+                    print(f"    {model}: {count}")
+        # [END get_usage]
+
+        # [START invoice_to_llm_input_async]
+        # The fields above can also be packaged into a single LLM-ready text block.
+        # to_llm_input() renders all extracted fields as YAML front matter followed by
+        # the markdown body, so an LLM can consume both structured data and document text
+        # in one shot. For advanced options, see sample_to_llm_input_async.py.
+        print("\n" + "=" * 60)
+        print("LLM-READY OUTPUT (fields + markdown)")
+        print("=" * 60)
+
+        text = to_llm_input(result)
+        print(text)
+        # [END invoice_to_llm_input_async]
 
         if not isinstance(credential, AzureKeyCredential):
             await credential.close()

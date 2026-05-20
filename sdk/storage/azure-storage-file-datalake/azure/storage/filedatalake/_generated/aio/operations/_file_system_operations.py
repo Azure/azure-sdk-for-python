@@ -110,11 +110,11 @@ class FileSystemOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             properties=properties,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -208,13 +208,13 @@ class FileSystemOperations:
 
         _request = build_set_properties_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             properties=properties,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -281,10 +281,10 @@ class FileSystemOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -375,12 +375,12 @@ class FileSystemOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -485,6 +485,7 @@ class FileSystemOperations:
         _request = build_list_paths_request(
             url=self._config.url,
             recursive=recursive,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             continuation=continuation,
@@ -493,7 +494,6 @@ class FileSystemOperations:
             upn=upn,
             begin_from=begin_from,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -599,6 +599,7 @@ class FileSystemOperations:
 
         _request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             delimiter=delimiter,
             marker=marker,
@@ -609,7 +610,6 @@ class FileSystemOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

@@ -67,6 +67,10 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                                 {"region": "str", "replicationType": "str", "resourceId": "str", "zone": "str"}
                             ],
                             "endpointType": "str",
+                            "externalReplicationSetupInfo": "str",
+                            "externalReplicationSetupStatus": "str",
+                            "mirrorState": "str",
+                            "relationshipStatus": "str",
                             "remotePath": {"externalHostName": "str", "serverName": "str", "volumeName": "str"},
                             "remoteVolumeRegion": "str",
                             "remoteVolumeResourceId": "str",

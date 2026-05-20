@@ -22,7 +22,7 @@ def get_model_artifacts(
     deployment: OnlineDeployment,
     model_operations: ModelOperations,
     download_path: str,
-) -> Union[str, Tuple]:
+) -> Tuple:
     """Validates and returns model artifacts from deployment specification.
 
     :param endpoint_name: name of endpoint which this deployment is linked to

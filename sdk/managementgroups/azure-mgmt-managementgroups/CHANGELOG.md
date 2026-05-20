@@ -1,5 +1,55 @@
 # Release History
 
+## 2.0.0b1 (2026-04-02)
+
+### Features Added
+
+  - Model `HierarchySettings` added property `system_data`
+  - Model `ManagementGroup` added property `system_data`
+  - Enum `ManagementGroupChildType` added member `SUBSCRIPTIONS`
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `SubscriptionUnderManagementGroup` added property `system_data`
+  - Added enum `ActionType`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `OperationDisplay`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `SystemData`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Renamed client `ManagementGroupsAPI` to `ManagementGroupsMgmtClient`
+  - Model `CreateManagementGroupRequest` moved instance variable `tenant_id`, `display_name`, `details` and `children` under property `properties` whose type is `CreateManagementGroupProperties`
+  - Model `CreateOrUpdateSettingsRequest` moved instance variable `require_authorization_for_group_creation` and `default_management_group` under property `properties` whose type is `CreateOrUpdateSettingsProperties`
+  - Model `HierarchySettingsInfo` moved instance variable `tenant_id`, `require_authorization_for_group_creation` and `default_management_group` under property `properties` whose type is `HierarchySettingsProperties`
+  - Deleted or renamed model `AzureAsyncOperationResults`
+  - Deleted or renamed model `EntityHierarchyItem`
+  - Deleted or renamed model `ErrorDetails`
+  - Deleted or renamed model `OperationDisplayProperties`
+  - Deleted or renamed model `OperationResults`
+  - Method `EntitiesOperations.list` changed its parameter `skiptoken`/`select`/`search`/`view`/`group_name`/`cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.create` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.delete` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.get_subscription` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupSubscriptionsOperations.get_subscriptions_under_management_group` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.begin_create_or_update` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.begin_delete` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.get` changed its parameter `expand`/`recurse`/`cache_control` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.get_descendants` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.list` changed its parameter `cache_control`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ManagementGroupsOperations.update` changed its parameter `cache_control` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `ListSubscriptionUnderManagementGroup` which actually was not used by SDK users
+
 ## 1.1.0 (2026-02-12)
 
 ### Bugs Fixed

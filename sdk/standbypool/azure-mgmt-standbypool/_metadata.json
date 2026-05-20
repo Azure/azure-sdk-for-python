@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-10-01",
+  "apiVersions": {
+    "Microsoft.StandbyPool": "2025-10-01"
+  },
+  "commit": "856e8ce58dbf26fda36a11548a07974d1afa3814",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/standbypool/StandbyPool.Management",
+  "emitterVersion": "0.60.2"
+}

@@ -17,4 +17,6 @@ DATA_BLOCK_SIZE = 256 * 1024
 DEFAULT_OAUTH_SCOPE = "/.default"
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
 
+DEFAULT_MAX_CONCURRENCY = 1
+
 SERVICE_HOST_BASE = "core.windows.net"

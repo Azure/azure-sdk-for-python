@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,13 +7,32 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+
+
+class ErrorObjectResponse(_serialization.Model):
+    """Describes the format of Error response with a wrapper object.
+
+    :ivar error: Wrapper object for error information.
+    :vartype error: ~azure.mgmt.commerce.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorResponse"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: Wrapper object for error information.
+        :paramtype error: ~azure.mgmt.commerce.models.ErrorResponse
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class ErrorResponse(_serialization.Model):
@@ -41,26 +59,6 @@ class ErrorResponse(_serialization.Model):
         super().__init__(**kwargs)
         self.code = code
         self.message = message
-
-
-class InfoField(_serialization.Model):
-    """Key-value pairs of instance details in the legacy format.
-
-    :ivar project: Identifies the name of the instance provisioned by the user.
-    :vartype project: str
-    """
-
-    _attribute_map = {
-        "project": {"key": "project", "type": "str"},
-    }
-
-    def __init__(self, *, project: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword project: Identifies the name of the instance provisioned by the user.
-        :paramtype project: str
-        """
-        super().__init__(**kwargs)
-        self.project = project
 
 
 class MeterInfo(_serialization.Model):
@@ -113,9 +111,9 @@ class MeterInfo(_serialization.Model):
         meter_category: Optional[str] = None,
         meter_sub_category: Optional[str] = None,
         unit: Optional[str] = None,
-        meter_tags: Optional[List[str]] = None,
+        meter_tags: Optional[list[str]] = None,
         meter_region: Optional[str] = None,
-        meter_rates: Optional[Dict[str, float]] = None,
+        meter_rates: Optional[dict[str, float]] = None,
         effective_date: Optional[datetime.datetime] = None,
         included_quantity: Optional[float] = None,
         **kwargs: Any
@@ -165,7 +163,7 @@ class OfferTermInfo(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     MonetaryCommitment, MonetaryCredit, RecurringCharge
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the offer term. Required. Known values are: "Recurring Charge", "Monetary
      Commitment", and "Monetary Credit".
@@ -204,7 +202,7 @@ class OfferTermInfo(_serialization.Model):
 class MonetaryCommitment(OfferTermInfo):
     """Indicates that a monetary commitment is required for this offer.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the offer term. Required. Known values are: "Recurring Charge", "Monetary
      Commitment", and "Monetary Credit".
@@ -234,8 +232,8 @@ class MonetaryCommitment(OfferTermInfo):
         self,
         *,
         effective_date: Optional[datetime.datetime] = None,
-        tiered_discount: Optional[Dict[str, float]] = None,
-        excluded_meter_ids: Optional[List[str]] = None,
+        tiered_discount: Optional[dict[str, float]] = None,
+        excluded_meter_ids: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -258,7 +256,7 @@ class MonetaryCommitment(OfferTermInfo):
 class MonetaryCredit(OfferTermInfo):
     """Indicates that this is a monetary credit offer.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the offer term. Required. Known values are: "Recurring Charge", "Monetary
      Commitment", and "Monetary Credit".
@@ -287,7 +285,7 @@ class MonetaryCredit(OfferTermInfo):
         *,
         effective_date: Optional[datetime.datetime] = None,
         credit: Optional[float] = None,
-        excluded_meter_ids: Optional[List[str]] = None,
+        excluded_meter_ids: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -309,7 +307,7 @@ class RateCardQueryParameters(_serialization.Model):
     """Parameters that are used in the odata $filter query parameter for providing RateCard
     information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offer_durable_id: The Offer ID parameter consists of the 'MS-AZR-' prefix, plus the Offer
      ID number (e.g., MS-AZR-0026P). See
@@ -362,7 +360,7 @@ class RateCardQueryParameters(_serialization.Model):
 class RecurringCharge(OfferTermInfo):
     """Indicates a recurring charge is present for this offer.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the offer term. Required. Known values are: "Recurring Charge", "Monetary
      Commitment", and "Monetary Credit".
@@ -430,8 +428,8 @@ class ResourceRateCardInfo(_serialization.Model):
         currency: Optional[str] = None,
         locale: Optional[str] = None,
         is_tax_included: Optional[bool] = None,
-        offer_terms: Optional[List["_models.OfferTermInfo"]] = None,
-        meters: Optional[List["_models.MeterInfo"]] = None,
+        offer_terms: Optional[list["_models.OfferTermInfo"]] = None,
+        meters: Optional[list["_models.MeterInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -454,7 +452,7 @@ class ResourceRateCardInfo(_serialization.Model):
         self.meters = meters
 
 
-class UsageAggregation(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class UsageAggregation(_serialization.Model):
     """Describes the usageAggregation.
 
     :ivar id: Unique Id for the usage aggregate.
@@ -485,7 +483,7 @@ class UsageAggregation(_serialization.Model):  # pylint: disable=too-many-instan
     :ivar meter_region: Region of the meterId used for billing purposes.
     :vartype meter_region: str
     :ivar info_fields: Key-value pairs of instance details (legacy format).
-    :vartype info_fields: ~azure.mgmt.commerce.models.InfoField
+    :vartype info_fields: any
     :ivar instance_data: Key-value pairs of instance details represented as a string.
     :vartype instance_data: str
     """
@@ -504,7 +502,7 @@ class UsageAggregation(_serialization.Model):  # pylint: disable=too-many-instan
         "meter_category": {"key": "properties.meterCategory", "type": "str"},
         "meter_sub_category": {"key": "properties.meterSubCategory", "type": "str"},
         "meter_region": {"key": "properties.meterRegion", "type": "str"},
-        "info_fields": {"key": "properties.infoFields", "type": "InfoField"},
+        "info_fields": {"key": "properties.infoFields", "type": "object"},
         "instance_data": {"key": "properties.instanceData", "type": "str"},
     }
 
@@ -524,7 +522,7 @@ class UsageAggregation(_serialization.Model):  # pylint: disable=too-many-instan
         meter_category: Optional[str] = None,
         meter_sub_category: Optional[str] = None,
         meter_region: Optional[str] = None,
-        info_fields: Optional["_models.InfoField"] = None,
+        info_fields: Optional[Any] = None,
         instance_data: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -558,7 +556,7 @@ class UsageAggregation(_serialization.Model):  # pylint: disable=too-many-instan
         :keyword meter_region: Region of the meterId used for billing purposes.
         :paramtype meter_region: str
         :keyword info_fields: Key-value pairs of instance details (legacy format).
-        :paramtype info_fields: ~azure.mgmt.commerce.models.InfoField
+        :paramtype info_fields: any
         :keyword instance_data: Key-value pairs of instance details represented as a string.
         :paramtype instance_data: str
         """
@@ -597,7 +595,7 @@ class UsageAggregationListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.UsageAggregation"]] = None,
+        value: Optional[list["_models.UsageAggregation"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:

@@ -73,6 +73,38 @@ _SERVICE_PARAMS = {
     "file": {"primary": "FILEENDPOINT", "secondary": "FILESECONDARYENDPOINT"},
     "dfs": {"primary": "BLOBENDPOINT", "secondary": "BLOBENDPOINT"},
 }
+_SECONDARY_SUFFIX = "-secondary"
+_KNOWN_FEATURE_SUFFIXES = {"-ipv6", "-dualstack"}
+
+
+def _construct_endpoints(netloc: str, account_part: str) -> Tuple[str, str, str]:
+    """
+    Construct primary and secondary hostnames from a storage account URL's netloc.
+
+    :param str netloc: The network location in a URL.
+    :param str account_part: The account part after parsing the URL.
+    :return: The account name, primary hostname, and secondary hostname.
+    :rtype: Tuple[str, str, str]
+    """
+    domain_suffix = netloc[len(account_part):]
+    secondary_idx = account_part.find(_SECONDARY_SUFFIX)
+
+    # Case where customer provides secondary URL
+    if secondary_idx >= 0:
+        account_name = account_part[:secondary_idx]
+        primary_hostname = secondary_hostname = f"{account_part}{domain_suffix}"
+    else:
+        feature_suffix = ""
+        account_name = account_part
+        for suffix in _KNOWN_FEATURE_SUFFIXES:
+            if account_name.endswith(suffix):
+                feature_suffix = suffix
+                account_name = account_name[: -len(suffix)]
+                break
+        primary_hostname = f"{account_part}{domain_suffix}"
+        secondary_hostname = f"{account_name}{_SECONDARY_SUFFIX}{feature_suffix}{domain_suffix}"
+
+    return account_name, primary_hostname, secondary_hostname
 
 
 class StorageAccountHostsMixin(object):
@@ -115,21 +147,26 @@ class StorageAccountHostsMixin(object):
             self._is_localhost = True
             self.account_name = parsed_url.path.strip("/")
 
+        secondary_hostname = ""
+        if len(account) > 1:
+            self.account_name, primary_hostname, secondary_hostname = _construct_endpoints(
+                parsed_url.netloc, account[0]
+            )
+        else:
+            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
+
         self.credential = _format_shared_key_credential(self.account_name, credential)
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
 
-        secondary_hostname = ""
         if hasattr(self.credential, "account_name"):
+            if not self.account_name:
+                secondary_hostname = f"{self.credential.account_name}-secondary.{service_name}.{SERVICE_HOST_BASE}"
             self.account_name = self.credential.account_name
-            secondary_hostname = f"{self.credential.account_name}-secondary.{service_name}.{SERVICE_HOST_BASE}"
 
         if not self._hosts:
-            if len(account) > 1:
-                secondary_hostname = parsed_url.netloc.replace(account[0], account[0] + "-secondary")
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
-            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"

@@ -100,6 +100,7 @@ class HttpHeaders:
     QueryMetrics = "x-ms-documentdb-query-metrics"
     QueryExecutionInfo = "x-ms-cosmos-query-execution-info"
     IndexUtilization = "x-ms-cosmos-index-utilization"
+    QueryAdvice = "x-ms-cosmos-query-advice"
 
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
@@ -131,6 +132,7 @@ class HttpHeaders:
     IsContinuationExpected = "x-ms-documentdb-query-iscontinuationexpected"
     PopulateQueryMetrics = "x-ms-documentdb-populatequerymetrics"
     PopulateIndexMetrics = "x-ms-cosmos-populateindexmetrics"
+    PopulateQueryAdvice = "x-ms-cosmos-populatequeryadvice"
     ResourceQuota = "x-ms-resource-quota"
     ResourceUsage = "x-ms-resource-usage"
     IntendedCollectionRID = "x-ms-cosmos-intended-collection-rid"

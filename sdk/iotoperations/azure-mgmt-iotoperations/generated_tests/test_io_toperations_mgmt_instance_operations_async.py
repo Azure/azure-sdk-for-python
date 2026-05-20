@@ -50,7 +50,11 @@ class TestIoTOperationsMgmtInstanceOperationsAsync(AzureMgmtRecordedTestCase):
                     "name": "str",
                     "properties": {
                         "schemaRegistryRef": {"resourceId": "str"},
+                        "adrNamespaceRef": {"resourceId": "str"},
+                        "defaultSecretProviderClassRef": {"resourceId": "str"},
                         "description": "str",
+                        "features": {"str": {"mode": "str", "settings": {"str": "str"}}},
+                        "healthState": "str",
                         "provisioningState": "str",
                         "version": "str",
                     },

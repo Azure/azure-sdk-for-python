@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -58,17 +59,13 @@ secrets = client.list_properties_of_secrets()
 for secret in secrets:
     assert secret.name
     retrieved_secret = client.get_secret(secret.name)
-    print(
-        f"Secret with name '{retrieved_secret.name}' and value {retrieved_secret.name} was found."
-    )
+    print(f"Secret with name '{retrieved_secret.name}' and value {retrieved_secret.name} was found.")
 
 # The bank account password got updated, so you want to update the secret in Key Vault to ensure it reflects the
 # new password. Calling set_secret on an existing secret creates a new version of the secret in the Key Vault
 # with the new value.
 updated_secret = client.set_secret(bank_secret.name, "newSecretValue")
-print(
-    f"Secret with name '{updated_secret.name}' was updated with new value '{updated_secret.value}'"
-)
+print(f"Secret with name '{updated_secret.name}' was updated with new value '{updated_secret.value}'")
 
 # You need to check all the different values your bank account password secret had previously. Lets print all
 # the versions of this secret.
@@ -89,6 +86,4 @@ client.begin_delete_secret(storage_secret.name).wait()
 print("\n.. List deleted secrets from the Key Vault")
 deleted_secrets = client.list_deleted_secrets()
 for deleted_secret in deleted_secrets:
-    print(
-        f"Secret with name '{deleted_secret.name}' has recovery id '{deleted_secret.recovery_id}'"
-    )
+    print(f"Secret with name '{deleted_secret.name}' has recovery id '{deleted_secret.recovery_id}'")

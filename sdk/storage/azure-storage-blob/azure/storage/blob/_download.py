@@ -20,6 +20,7 @@ from azure.core.tracing.common import with_current_context
 
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import parse_length_from_content_range, process_storage_error
+from ._shared.constants import DEFAULT_MAX_CONCURRENCY
 from ._deserialize import deserialize_blob_properties, get_page_ranges_result
 from ._encryption import (
     adjust_blob_size_for_encryption,
@@ -330,7 +331,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         end_range: Optional[int] = None,
         validate_content: bool = None,  # type: ignore [assignment]
         encryption_options: Dict[str, Any] = None,  # type: ignore [assignment]
-        max_concurrency: int = 1,
+        max_concurrency: Optional[int] = None,
         name: str = None,  # type: ignore [assignment]
         container: str = None,  # type: ignore [assignment]
         encoding: Optional[str] = None,
@@ -345,7 +346,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._config = config
         self._start_range = start_range
         self._end_range = end_range
-        self._max_concurrency = max_concurrency
+        self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
         self._encoding = encoding
         self._validate_content = validate_content
         self._encryption_options = encryption_options or {}
@@ -865,14 +866,14 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         if self._progress_hook and self._current_content_offset == len(self._current_content):
             self._progress_hook(self._download_offset, self.size)
 
-    def content_as_bytes(self, max_concurrency=1):
+    def content_as_bytes(self, max_concurrency=None):
         """DEPRECATED: Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
 
         This method is deprecated, use func:`readall` instead.
 
-        :param int max_concurrency:
+        :param Optional[int] max_concurrency:
             The number of parallel connections with which to download.
         :return: The contents of the file as bytes.
         :rtype: bytes
@@ -885,17 +886,17 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             raise ValueError("Stream has been partially read in text mode. "
                              "content_as_bytes is not supported in text mode.")
 
-        self._max_concurrency = max_concurrency
+        self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
         return self.readall()
 
-    def content_as_text(self, max_concurrency=1, encoding="UTF-8"):
+    def content_as_text(self, max_concurrency=None, encoding="UTF-8"):
         """DEPRECATED: Download the contents of this blob, and decode as text.
 
         This operation is blocking until all data is downloaded.
 
         This method is deprecated, use func:`readall` instead.
 
-        :param int max_concurrency:
+        :param Optional[int] max_concurrency:
             The number of parallel connections with which to download.
         :param str encoding:
             Test encoding to decode the downloaded bytes. Default is UTF-8.
@@ -910,11 +911,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             raise ValueError("Stream has been partially read in text mode. "
                              "content_as_text is not supported in text mode.")
 
-        self._max_concurrency = max_concurrency
+        self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
         self._encoding = encoding
         return self.readall()
 
-    def download_to_stream(self, stream, max_concurrency=1):
+    def download_to_stream(self, stream, max_concurrency=None):
         """DEPRECATED: Download the contents of this blob to a stream.
 
         This method is deprecated, use func:`readinto` instead.
@@ -923,7 +924,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
-        :param int max_concurrency:
+        :param Optional[int] max_concurrency:
             The number of parallel connections with which to download.
         :return: The properties of the downloaded blob.
         :rtype: Any
@@ -936,6 +937,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             raise ValueError("Stream has been partially read in text mode. "
                              "download_to_stream is not supported in text mode.")
 
-        self._max_concurrency = max_concurrency
+        self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
         self.readinto(stream)
         return self.properties

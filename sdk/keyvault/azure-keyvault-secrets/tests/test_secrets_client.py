@@ -9,9 +9,10 @@ import time
 from unittest.mock import Mock, patch
 
 import pytest
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.secrets import SecretClient
+from azure.keyvault.secrets import ContentType, KeyVaultSecret, SecretClient
+from azure.keyvault.secrets._generated import models as _generated_models
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from dateutil import parser as date_parse
 from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
@@ -49,6 +50,7 @@ class TestSecretClient(KeyVaultTestCase):
         assert s1.updated_on == s2.updated_on
         assert s1.recovery_level == s2.recovery_level
         assert s1.key_id == s2.key_id
+        assert s1.previous_version == s2.previous_version
 
     def _validate_secret_bundle(self, secret_attributes, vault, secret_name, secret_value):
         prefix = "/".join(s.strip("/") for s in [vault, "secrets", secret_name])
@@ -143,7 +145,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsClientPreparer()
     @recorded_by_proxy
     def test_secret_list(self, client, **kwargs):
-        set_custom_default_matcher(ignore_query_ordering=True)
+        set_custom_default_matcher(ignore_query_ordering=True, ignored_headers="Accept")
         max_secrets = list_test_size
         expected = {}
 
@@ -164,7 +166,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsClientPreparer()
     @recorded_by_proxy
     def test_list_versions(self, client, **kwargs):
-        set_custom_default_matcher(ignore_query_ordering=True)
+        set_custom_default_matcher(ignore_query_ordering=True, ignored_headers="Accept")
         secret_name = self.get_resource_name("secVer")
         secret_value = "secVal"
 
@@ -379,9 +381,33 @@ class TestSecretClient(KeyVaultTestCase):
         # Test that 409 is raised correctly (`set_secret` shouldn't actually trigger this, but for raising behavior)
         def run(*_, **__):
             return Mock(http_response=Mock(status_code=409))
+
         with patch.object(client._client._client._pipeline, "run", run):
             with pytest.raises(ResourceExistsError):
                 client.set_secret("...", "...")
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
+    def test_get_secret_accepts_out_content_type(self, client, **kwargs):
+        secret_name = self.get_resource_name("content-type")
+        created = client.set_secret(secret_name, "secret-value")
+
+        try:
+            result = client.get_secret(created.name, out_content_type=ContentType.PEM)
+            assert result.name == created.name
+        except HttpResponseError as error:
+            assert error.status_code in (400, 404)
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @SecretsClientPreparer()
+    @recorded_by_proxy
+    def test_previous_version_property_is_accessible(self, client, **kwargs):
+        secret_name = self.get_resource_name("previous-version")
+        created = client.set_secret(secret_name, "secret-value")
+
+        result = client.get_secret(created.name)
+        assert result.properties.previous_version is None
 
 
 def test_service_headers_allowed_in_logs():
@@ -396,3 +422,39 @@ def test_custom_hook_policy():
 
     client = SecretClient("...", object(), custom_hook_policy=CustomHookPolicy())
     assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)
+
+
+def test_key_vault_secret_maps_previous_version():
+    bundle = _generated_models.SecretBundle(
+        id="https://vault.vault.azure.net/secrets/name/version",
+        value="secret-value",
+        attributes=_generated_models.SecretAttributes(),
+        previous_version="previous-version",
+    )
+
+    secret = KeyVaultSecret._from_secret_bundle(bundle)
+    assert secret.properties.previous_version == "previous-version"
+
+
+def test_get_secret_forwards_out_content_type_to_generated_client():
+    generated_client = Mock()
+    generated_client.get_secret.return_value = _generated_models.SecretBundle(
+        id="https://vault.vault.azure.net/secrets/name/version",
+        value="secret-value",
+        attributes=_generated_models.SecretAttributes(),
+    )
+
+    client = SecretClient(
+        "https://vault.vault.azure.net",
+        object(),
+        generated_client=generated_client,
+        generated_models=_generated_models,
+    )
+
+    client.get_secret("name", out_content_type=ContentType.PEM)
+
+    generated_client.get_secret.assert_called_once_with(
+        secret_name="name",
+        secret_version="",
+        out_content_type=ContentType.PEM,
+    )

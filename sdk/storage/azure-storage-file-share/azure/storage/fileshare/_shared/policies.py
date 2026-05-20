@@ -188,7 +188,7 @@ class StorageHosts(SansIOHTTPPolicy):
 class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
     """A policy that logs HTTP request and response to the DEBUG logger.
 
-    This accepts both global configuration, and per-request level with "enable_http_logger"
+    This accepts both global configuration, and per-request level with "logging_enable" and "logging_body"
     """
 
     def __init__(self, logging_enable: bool = False, **kwargs) -> None:
@@ -198,9 +198,24 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
     def on_request(self, request: "PipelineRequest") -> None:
         http_request = request.http_request
         options = request.context.options
-        self.logging_body = self.logging_body or options.pop("logging_body", False)
-        if options.pop("logging_enable", self.enable_http_logger):
-            request.context["logging_enable"] = True
+
+        # Check if logging settings are already determined (from a previous retry attempt)
+        if "logging_enable" not in request.context:
+            # First attempt - pop from options and store decision in context
+            # For logging_enable and logging_body, per-request setting will override the global setting
+            logging_body = options.pop("logging_body", self.logging_body)
+            logging_enable = options.pop("logging_enable", self.enable_http_logger)
+
+            # Only store in context if logging is enabled to avoid polluting context
+            if logging_enable:
+                request.context["logging_enable"] = True
+                request.context["logging_body"] = logging_body
+        else:
+            # Retry attempt - use the settings stored in context from the first attempt
+            logging_enable = request.context.get("logging_enable", False)
+            logging_body = request.context.get("logging_body", False)
+
+        if logging_enable:
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
@@ -227,7 +242,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                     _LOGGER.debug("    %r: %r", header, value)
                 _LOGGER.debug("Request body:")
 
-                if self.logging_body:
+                if logging_body:
                     _LOGGER.debug(str(http_request.body))
                 else:
                     # We don't want to log the binary data of a file upload.
@@ -236,7 +251,10 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 _LOGGER.debug("Failed to log request: %r", err)
 
     def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
-        if response.context.pop("logging_enable", self.enable_http_logger):
+        # Logging settings should always be present in context if logging is enabled
+        # Use .get() instead of .pop() to preserve context values for potential retries
+        if response.context.get("logging_enable", False):
+            logging_body = response.context.get("logging_body", False)
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
@@ -260,9 +278,9 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 elif resp_content_type.startswith("image"):
                     _LOGGER.debug("Body contains image data.")
 
-                if self.logging_body and resp_content_type.startswith("text"):
+                if logging_body and resp_content_type.startswith("text"):
                     _LOGGER.debug(response.http_response.text())
-                elif self.logging_body:
+                elif logging_body:
                     try:
                         _LOGGER.debug(response.http_response.body())
                     except ValueError:

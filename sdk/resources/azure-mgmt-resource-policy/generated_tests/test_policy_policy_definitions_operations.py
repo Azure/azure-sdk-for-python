@@ -20,69 +20,11 @@ class TestPolicyPolicyDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_policy_definitions_create_or_update(self, resource_group):
-        response = self.client.policy_definitions.create_or_update(
-            policy_definition_name="str",
-            parameters={
-                "description": "str",
-                "displayName": "str",
-                "id": "str",
-                "metadata": {},
-                "mode": "Indexed",
-                "name": "str",
-                "parameters": {
-                    "str": {
-                        "allowedValues": [{}],
-                        "defaultValue": {},
-                        "metadata": {
-                            "assignPermissions": bool,
-                            "description": "str",
-                            "displayName": "str",
-                            "strongType": "str",
-                        },
-                        "schema": {},
-                        "type": "str",
-                    }
-                },
-                "policyRule": {},
-                "policyType": "str",
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-                "version": "str",
-                "versions": ["str"],
-            },
-            api_version="2023-04-01",
+    def test_policy_definitions_list_built_in(self, resource_group):
+        response = self.client.policy_definitions.list_built_in(
+            api_version="2025-03-01",
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_definitions_delete(self, resource_group):
-        response = self.client.policy_definitions.delete(
-            policy_definition_name="str",
-            api_version="2023-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_definitions_get(self, resource_group):
-        response = self.client.policy_definitions.get(
-            policy_definition_name="str",
-            api_version="2023-04-01",
-        )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -91,7 +33,30 @@ class TestPolicyPolicyDefinitionsOperations(AzureMgmtRecordedTestCase):
     def test_policy_definitions_get_built_in(self, resource_group):
         response = self.client.policy_definitions.get_built_in(
             policy_definition_name="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_definitions_list_by_management_group(self, resource_group):
+        response = self.client.policy_definitions.list_by_management_group(
+            management_group_id="str",
+            api_version="2025-03-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_definitions_get_at_management_group(self, resource_group):
+        response = self.client.policy_definitions.get_at_management_group(
+            management_group_id="str",
+            policy_definition_name="str",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -106,6 +71,12 @@ class TestPolicyPolicyDefinitionsOperations(AzureMgmtRecordedTestCase):
             parameters={
                 "description": "str",
                 "displayName": "str",
+                "externalEvaluationEnforcementSettings": {
+                    "endpointSettings": {"details": {}, "kind": "str"},
+                    "missingTokenAction": "str",
+                    "resultLifespan": "str",
+                    "roleDefinitionIds": ["str"],
+                },
                 "id": "str",
                 "metadata": {},
                 "mode": "Indexed",
@@ -138,7 +109,7 @@ class TestPolicyPolicyDefinitionsOperations(AzureMgmtRecordedTestCase):
                 "version": "str",
                 "versions": ["str"],
             },
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -150,19 +121,7 @@ class TestPolicyPolicyDefinitionsOperations(AzureMgmtRecordedTestCase):
         response = self.client.policy_definitions.delete_at_management_group(
             management_group_id="str",
             policy_definition_name="str",
-            api_version="2023-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_policy_definitions_get_at_management_group(self, resource_group):
-        response = self.client.policy_definitions.get_at_management_group(
-            management_group_id="str",
-            policy_definition_name="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -172,7 +131,7 @@ class TestPolicyPolicyDefinitionsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_policy_definitions_list(self, resource_group):
         response = self.client.policy_definitions.list(
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -180,21 +139,74 @@ class TestPolicyPolicyDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_policy_definitions_list_built_in(self, resource_group):
-        response = self.client.policy_definitions.list_built_in(
-            api_version="2023-04-01",
+    def test_policy_definitions_get(self, resource_group):
+        response = self.client.policy_definitions.get(
+            policy_definition_name="str",
+            api_version="2025-03-01",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_policy_definitions_list_by_management_group(self, resource_group):
-        response = self.client.policy_definitions.list_by_management_group(
-            management_group_id="str",
-            api_version="2023-04-01",
+    def test_policy_definitions_create_or_update(self, resource_group):
+        response = self.client.policy_definitions.create_or_update(
+            policy_definition_name="str",
+            parameters={
+                "description": "str",
+                "displayName": "str",
+                "externalEvaluationEnforcementSettings": {
+                    "endpointSettings": {"details": {}, "kind": "str"},
+                    "missingTokenAction": "str",
+                    "resultLifespan": "str",
+                    "roleDefinitionIds": ["str"],
+                },
+                "id": "str",
+                "metadata": {},
+                "mode": "Indexed",
+                "name": "str",
+                "parameters": {
+                    "str": {
+                        "allowedValues": [{}],
+                        "defaultValue": {},
+                        "metadata": {
+                            "assignPermissions": bool,
+                            "description": "str",
+                            "displayName": "str",
+                            "strongType": "str",
+                        },
+                        "schema": {},
+                        "type": "str",
+                    }
+                },
+                "policyRule": {},
+                "policyType": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+                "version": "str",
+                "versions": ["str"],
+            },
+            api_version="2025-03-01",
         )
-        result = [r for r in response]
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_policy_definitions_delete(self, resource_group):
+        response = self.client.policy_definitions.delete(
+            policy_definition_name="str",
+            api_version="2025-03-01",
+        )
+
         # please add some check logic here by yourself
         # ...

@@ -15,7 +15,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineEndpointData,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
-from azure.ai.ml._restclient.v2022_10_01.models import EndpointAuthKeys
+from azure.ai.ml._restclient.arm_ml_service.models import EndpointAuthKeys
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import (
     AAD_TOKEN_RESOURCE_ENDPOINT,

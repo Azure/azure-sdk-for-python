@@ -9,14 +9,12 @@ import os
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional, Tuple, TypeVar, Union
-
-from typing_extensions import Literal
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, TypeVar, Union
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
-from azure.ai.ml._restclient.v2022_10_01.models import DatastoreType
+from azure.ai.ml._restclient.arm_ml_service.models import DatastoreType
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
     AMLNamedArmId,
@@ -82,7 +80,7 @@ def get_datastore_info(
     *,
     credential=None,
     **kwargs,
-) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
+) -> Dict[str, Any]:
     """Get datastore account, type, and auth information.
 
     :param operations: DatastoreOperations object
@@ -93,10 +91,11 @@ def get_datastore_info(
         Instead, a SAS token will be requested from the datastore, and the MLClient credential will be used as backup,
         if necessary.
     :paramtype credential: str
-    :return: The dictionary with datastore info
-    :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]
+    :return: The dictionary with datastore info containing keys:
+        "storage_type", "storage_account", "account_url", "container_name", "credential".
+    :rtype: Dict[str, Any]
     """
-    datastore_info: Dict = {}
+    datastore_info: Dict[str, Any] = {}
     datastore = operations.get(name) if name else operations.get_default()
 
     storage_endpoint = _get_storage_endpoint_from_metadata()
@@ -112,7 +111,7 @@ def get_datastore_info(
             datastore_info["credential"] = operations._credential
         else:
             credential = operations._list_secrets(name=name, expirable_secret=True)
-            datastore_info["credential"] = credential.sas_token
+            datastore_info["credential"] = getattr(credential, "sas_token", None) or getattr(credential, "key", None)
     except HttpResponseError:
         datastore_info["credential"] = operations._credential
 
@@ -135,7 +134,7 @@ def get_datastore_info(
 
 
 def list_logs_in_datastore(
-    ds_info: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str],
+    ds_info: Dict[str, Any],
     prefix: str,
     legacy_log_folder_name: str,
 ) -> Dict[str, str]:
@@ -143,7 +142,7 @@ def list_logs_in_datastore(
     RunDetails.logFiles.
 
     :param ds_info: The datastore info
-    :type ds_info: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]
+    :type ds_info: Dict[str, Any]
     :param prefix: A prefix used to filter logs by path
     :type prefix: str
     :param legacy_log_folder_name: the name of the folder in the datastore that contains the logs
@@ -509,7 +508,7 @@ def _check_and_upload_path(
         path = (
             Path(artifact.path)
             if hasattr(artifact, "path") and artifact.path is not None
-            else Path(artifact.local_path)
+            else Path(getattr(artifact, "local_path"))
         )
         if not path.is_absolute():
             path = Path(artifact.base_path, path).resolve()

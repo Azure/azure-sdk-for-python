@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.peering import PeeringManagementClient
 
 """
@@ -34,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/peering/resource-manager/Microsoft.Peering/stable/2022-10-01/examples/ListPeeringServiceProviders.json
+# x-ms-original-file: specification/peering/resource-manager/Microsoft.Peering/Peering/preview/2019-08-01-preview/examples/ListPeeringServiceProviders.json
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.advisor import AdvisorManagementClient
 
 """
@@ -29,10 +31,9 @@ def main():
         subscription_id="subscriptionId",
     )
 
-    response = client.recommendations.generate()
-    print(response)
+    client.recommendations.generate()
 
 
-# x-ms-original-file: specification/advisor/resource-manager/Microsoft.Advisor/stable/2020-01-01/examples/GenerateRecommendations.json
+# x-ms-original-file: specification/advisor/resource-manager/Microsoft.Advisor/Advisor/stable/2020-01-01/examples/GenerateRecommendations.json
 if __name__ == "__main__":
     main()

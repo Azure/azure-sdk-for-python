@@ -15,8 +15,4 @@ steps:
         --checks="breaking"
         --disable-compatibility-filter
         --disablecov
-    env:
-      TOX_PIP_IMPL: "uv"
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""
     condition: and(succeededOrFailed(), ne(variables['Skip.BreakingChanges'],'true'))

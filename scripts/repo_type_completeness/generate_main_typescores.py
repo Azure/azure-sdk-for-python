@@ -74,7 +74,6 @@ SDK_TEAM_OWNED_PACKAGES = [
 
 # Format: "library_to_score": [dependencies_to_uninstall]
 RESOLUTION_IMPOSSIBLE_LIBRARIES = {
-    "azure-mixedreality-authentication": ["azure-mixedreality-remoterendering"],
     "azure-ai-ml": ["azure-storage-blob", "azure-storage-file-share", "azure-storage-file-datalake"],
     "azure-storage-blob-changefeed": ["azure-storage-blob"],
     "azure-storage-file-datalake": ["azure-storage-blob"],

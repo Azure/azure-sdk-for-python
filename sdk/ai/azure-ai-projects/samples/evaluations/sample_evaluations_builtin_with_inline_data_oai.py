@@ -18,16 +18,15 @@ USAGE:
     pip install openai azure-identity python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    2) FOUNDRY_MODEL_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
 import os
-
-from azure.identity import DefaultAzureCredential
 import time
 from pprint import pprint
+from dotenv import load_dotenv
 from openai import OpenAI
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
@@ -35,33 +34,30 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     SourceFileContentContent,
 )
 from openai.types.eval_create_params import DataSourceConfigCustom
-from dotenv import load_dotenv
-from azure.identity import get_bearer_token_provider
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 load_dotenv()
 
 client = OpenAI(
     api_key=get_bearer_token_provider(DefaultAzureCredential(), "https://ai.azure.com/.default"),
-    base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai/v1",
+    base_url=os.environ["FOUNDRY_PROJECT_ENDPOINT"].rstrip("/") + "/openai/v1",
 )
 
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
+model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
 
 data_source_config = DataSourceConfigCustom(
-    {
-        "type": "custom",
-        "item_schema": {
-            "type": "object",
-            "properties": {
-                "query": {"type": "string"},
-                "response": {"type": "string"},
-                "context": {"type": "string"},
-                "ground_truth": {"type": "string"},
-            },
-            "required": [],
+    type="custom",
+    item_schema={
+        "type": "object",
+        "properties": {
+            "query": {"type": "string"},
+            "response": {"type": "string"},
+            "context": {"type": "string"},
+            "ground_truth": {"type": "string"},
         },
-        "include_sample_schema": True,
-    }
+        "required": [],
+    },
+    include_sample_schema=True,
 )
 
 testing_criteria = [
@@ -87,7 +83,7 @@ eval_object = client.evals.create(
     data_source_config=data_source_config,
     testing_criteria=testing_criteria,  # type: ignore
 )
-print(f"Evaluation created")
+print("Evaluation created")
 
 print("Get Evaluation by Id")
 eval_object_response = client.evals.retrieve(eval_object.id)
@@ -141,12 +137,12 @@ eval_run_object = client.evals.runs.create(
     ),
 )
 
-print(f"Eval Run created")
+print("Eval Run created")
 pprint(eval_run_object)
 
 while True:
     run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
-    if run.status == "completed" or run.status == "failed":
+    if run.status in ("completed", "failed"):
         print("Get Eval Run by Id")
         output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
         pprint(output_items)

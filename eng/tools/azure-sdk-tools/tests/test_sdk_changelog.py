@@ -156,3 +156,27 @@ def test_invalid_changelog_no_log_for_non_arm_sdk(monkeypatch, temp_package):
 
     assert not called
     assert log_level is None, "Expected no error log for invalid changelog content in data-plane SDK"
+
+
+@patch("packaging_tools.sdk_changelog.get_changelog_content")
+def test_timeout_forwarded_to_get_changelog_content(mock_get_changelog_content, temp_package):
+    package_path, _ = temp_package
+    mock_get_changelog_content.return_value = ("### Features Added\n\n- New feature", "1.0.0")
+
+    changelog_main(package_path, timeout=60)
+
+    mock_get_changelog_content.assert_called_once()
+    _, kwargs = mock_get_changelog_content.call_args
+    assert kwargs["timeout"] == 60
+
+
+@patch("packaging_tools.sdk_changelog.get_changelog_content")
+def test_timeout_default_is_900(mock_get_changelog_content, temp_package):
+    package_path, _ = temp_package
+    mock_get_changelog_content.return_value = ("### Features Added\n\n- New feature", "1.0.0")
+
+    changelog_main(package_path)
+
+    mock_get_changelog_content.assert_called_once()
+    _, kwargs = mock_get_changelog_content.call_args
+    assert kwargs["timeout"] == 900

@@ -13,7 +13,8 @@ breaking = false
 suppressed_skip_warnings = ["*"]
 
 [build-system]
-requires = ["setuptools", "wheel", "cibuildwheel"]
+# cibuildwheel is NOT a build-system dependency; it is the outer orchestration tool
+requires = ["setuptools", "wheel"]
 
 [tool.cibuildwheel]
 build = ["cp39*", "pp39*", "pp310*", "pp311*"]

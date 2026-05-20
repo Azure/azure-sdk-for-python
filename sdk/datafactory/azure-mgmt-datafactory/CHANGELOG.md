@@ -1,5 +1,74 @@
 # Release History
 
+## 9.3.0 (2026-03-10)
+
+### Features Added
+
+  - Model `DataFactoryManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DataFactoryManagementClient` added operation group `integration_runtime`
+  - Model `AmazonRdsForOracleLinkedService` added property `server`
+  - Model `AmazonRdsForOracleLinkedService` added property `authentication_type`
+  - Model `AmazonRdsForOracleLinkedService` added property `username`
+  - Model `AmazonRdsForOracleLinkedService` added property `encryption_client`
+  - Model `AmazonRdsForOracleLinkedService` added property `encryption_types_client`
+  - Model `AmazonRdsForOracleLinkedService` added property `crypto_checksum_client`
+  - Model `AmazonRdsForOracleLinkedService` added property `crypto_checksum_types_client`
+  - Model `AmazonRdsForOracleLinkedService` added property `initial_lob_fetch_size`
+  - Model `AmazonRdsForOracleLinkedService` added property `fetch_size`
+  - Model `AmazonRdsForOracleLinkedService` added property `statement_cache_size`
+  - Model `AmazonRdsForOracleLinkedService` added property `initialization_string`
+  - Model `AmazonRdsForOracleLinkedService` added property `enable_bulk_load`
+  - Model `AmazonRdsForOracleLinkedService` added property `support_v1_data_types`
+  - Model `AmazonRdsForOracleLinkedService` added property `fetch_tswtz_as_timestamp`
+  - Model `AmazonRdsForOracleSource` added property `number_precision`
+  - Model `AmazonRdsForOracleSource` added property `number_scale`
+  - Model `AzureDatabricksLinkedService` added property `data_security_mode`
+  - Model `HDInsightLinkedService` added property `cluster_auth_type`
+  - Model `HDInsightLinkedService` added property `credential`
+  - Model `HDInsightOnDemandLinkedService` added property `cluster_resource_group_auth_type`
+  - Model `HiveLinkedService` added property `enable_server_certificate_validation`
+  - Model `ImpalaLinkedService` added property `thrift_transport_protocol`
+  - Model `ImpalaLinkedService` added property `enable_server_certificate_validation`
+  - Model `JiraObjectDataset` added property `schema_type_properties_schema`
+  - Model `JiraObjectDataset` added property `table`
+  - Model `LakeHouseLinkedService` added property `authentication_type`
+  - Model `LakeHouseLinkedService` added property `credential`
+  - Model `LookupActivity` added property `treat_decimal_as_string`
+  - Model `ManagedIntegrationRuntime` added property `interactive_query`
+  - Model `NetezzaLinkedService` added property `server`
+  - Model `NetezzaLinkedService` added property `port`
+  - Model `NetezzaLinkedService` added property `uid`
+  - Model `NetezzaLinkedService` added property `database`
+  - Model `NetezzaLinkedService` added property `security_level`
+  - Model `Office365LinkedService` added property `service_principal_credential_type`
+  - Model `Office365LinkedService` added property `service_principal_embedded_cert`
+  - Model `Office365LinkedService` added property `service_principal_embedded_cert_password`
+  - Model `OracleSource` added property `number_precision`
+  - Model `OracleSource` added property `number_scale`
+  - Model `QuickBooksLinkedService` added property `refresh_token`
+  - Model `SalesforceV2Source` added property `partition_option`
+  - Model `ScriptActivity` added property `treat_decimal_as_string`
+  - Model `SnowflakeV2LinkedService` added property `role`
+  - Model `SnowflakeV2LinkedService` added property `schema`
+  - Model `SnowflakeV2LinkedService` added property `use_utc_timestamps`
+  - Model `SparkLinkedService` added property `enable_server_certificate_validation`
+  - Model `WarehouseLinkedService` added property `authentication_type`
+  - Model `WarehouseLinkedService` added property `credential`
+  - Added enum `AmazonRdsForOracleAuthenticationType`
+  - Added model `DatabricksJobActivity`
+  - Added model `EnableInteractiveQueryRequest`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added enum `HDInsightClusterAuthenticationType`
+  - Added enum `HDInsightOndemandClusterResourceGroupAuthenticationType`
+  - Added enum `ImpalaThriftTransportProtocol`
+  - Added enum `InteractiveCapabilityStatus`
+  - Added model `InteractiveQueryProperties`
+  - Added enum `LakehouseAuthenticationType`
+  - Added enum `NetezzaSecurityLevelType`
+  - Added enum `WarehouseAuthenticationType`
+
 ## 9.2.0 (2025-04-20)
 
 ### Features Added

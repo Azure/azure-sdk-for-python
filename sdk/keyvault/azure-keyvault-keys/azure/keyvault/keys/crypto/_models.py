@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -239,8 +240,11 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         if not result.is_valid:
             raise InvalidSignature(f"The provided signature '{signature!r}' is invalid.")
 
-    def recover_data_from_signature(
-        self, signature: bytes, padding: AsymmetricPadding, algorithm: Optional[HashAlgorithm]
+    def recover_data_from_signature(  # type: ignore[override]  # Parameter subset
+        self,
+        signature: bytes,
+        padding: AsymmetricPadding,
+        algorithm: Optional[HashAlgorithm],
     ) -> bytes:
         # pylint: disable=line-too-long
         """Recovers the signed data from the signature. Only supported with `cryptography` version 3.3 and above.
@@ -317,6 +321,15 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         """
         return self
 
+    def __deepcopy__(self, memo: dict) -> KeyVaultRSAPublicKey:
+        """Returns this instance since it is treated as immutable.
+
+        :param dict memo: The memo dictionary used by deepcopy.
+        :returns: This instance.
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey
+        """
+        return self
+
     def verifier(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self, signature: bytes, padding: AsymmetricPadding, algorithm: HashAlgorithm
     ) -> NoReturn:
@@ -381,7 +394,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """
         return KeyVaultRSAPublicKey(self._client, self._key)
 
-    def sign(
+    def sign(  # type: ignore[override]  # Parameter subset
         self,
         data: bytes,
         padding: AsymmetricPadding,
@@ -494,6 +507,15 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
     def __copy__(self) -> KeyVaultRSAPrivateKey:
         """Returns this instance since it is treated as immutable.
 
+        :returns: This instance.
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey
+        """
+        return self
+
+    def __deepcopy__(self, memo: dict) -> KeyVaultRSAPrivateKey:
+        """Returns this instance since it is treated as immutable.
+
+        :param dict memo: The memo dictionary used by deepcopy.
         :returns: This instance.
         :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey
         """

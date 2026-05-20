@@ -4,6 +4,7 @@ Utility functions for handling attack strategies and converters in Red Team Agen
 
 import random
 from typing import Dict, List, Union, Optional, Any, Callable, cast
+from urllib.parse import urlparse
 import logging
 
 import httpx
@@ -42,6 +43,18 @@ from .._callback_chat_target import _CallbackChatTarget
 from azure.ai.evaluation._model_configurations import (
     AzureOpenAIModelConfiguration,
     OpenAIModelConfiguration,
+)
+
+# All known Azure OpenAI host suffixes (public + sovereign clouds).
+# Used to detect Azure endpoints that need /openai/v1 path normalization for PyRIT.
+_AZURE_OPENAI_HOST_SUFFIXES = (
+    ".openai.azure.com",
+    ".services.ai.azure.com",
+    ".cognitiveservices.azure.com",
+    ".openai.azure.us",
+    ".cognitiveservices.azure.us",
+    ".openai.azure.cn",
+    ".cognitiveservices.azure.cn",
 )
 
 # Azure OpenAI uses cognitive services scope for AAD authentication
@@ -217,6 +230,19 @@ def get_chat_target(
     chat_target = None
     if not isinstance(target, Callable):
         if "azure_deployment" in target and "azure_endpoint" in target:  # Azure OpenAI
+            # Normalize Azure endpoint for PyRIT compatibility.
+            # PyRIT 0.11+ uses AsyncOpenAI(base_url=endpoint) which appends /chat/completions
+            # directly, so Azure endpoints need the /openai/v1 path prefix.
+            endpoint = target["azure_endpoint"].rstrip("/")
+            parsed = urlparse(endpoint)
+            hostname = (parsed.hostname or "").lower()
+
+            if any(hostname.endswith(sfx) for sfx in _AZURE_OPENAI_HOST_SUFFIXES):
+                if endpoint.endswith("/openai"):
+                    endpoint = endpoint + "/v1"
+                elif not endpoint.endswith("/openai/v1"):
+                    endpoint = endpoint + "/openai/v1"
+
             api_key = target.get("api_key", None)
             # Check for credential in target dict or use passed credential parameter
             target_credential = target.get("credential", None) or credential
@@ -224,7 +250,7 @@ def get_chat_target(
                 # Use API key authentication
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
-                    endpoint=target["azure_endpoint"],
+                    endpoint=endpoint,
                     api_key=api_key,
                     httpx_client_kwargs={"timeout": timeout},
                 )
@@ -233,7 +259,7 @@ def get_chat_target(
                 token_provider = _create_token_provider(target_credential)
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
-                    endpoint=target["azure_endpoint"],
+                    endpoint=endpoint,
                     api_key=token_provider,  # PyRIT accepts callable that returns token
                     httpx_client_kwargs={"timeout": timeout},
                 )
@@ -243,7 +269,7 @@ def get_chat_target(
 
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
-                    endpoint=target["azure_endpoint"],
+                    endpoint=endpoint,
                     api_key=get_azure_openai_auth(target["azure_endpoint"]),
                     httpx_client_kwargs={"timeout": timeout},
                 )

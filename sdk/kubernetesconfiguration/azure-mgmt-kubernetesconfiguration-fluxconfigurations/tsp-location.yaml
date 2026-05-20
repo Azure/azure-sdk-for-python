@@ -1,0 +1,4 @@
+directory: specification/kubernetesconfiguration/resource-manager/Microsoft.KubernetesConfiguration/fluxConfigurations
+commit: bf2f971b4319da9f5624da7f3c13d487be477897
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

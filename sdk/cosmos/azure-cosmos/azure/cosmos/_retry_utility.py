@@ -79,7 +79,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     pk_range_wrapper = None
     if args and (global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0]) or
                  global_endpoint_manager.is_circuit_breaker_applicable(args[0])):
-        pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(args[0])
+        pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(args[0], **kwargs)
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
         client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args
@@ -205,6 +205,18 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 retry_policy = sessionRetry_policy
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
+                collection_link, previous_routing_map, feed_options = retry_policy.pop_refresh_context()
+                if collection_link:
+                    client.refresh_routing_map_provider(collection_link, previous_routing_map, feed_options)
+                elif request is not None:
+                    # Request-based path: keep prior behavior and fall back to a global refresh
+                    # when targeted context is unavailable.
+                    client.refresh_routing_map_provider()
+                else:
+                    # Callback-style path (e.g., query execution context) has no request/header context.
+                    # Let higher-level query retry logic refresh with resource_link context to avoid
+                    # redundant global cache nukes.
+                    pass
             elif exceptions._container_recreate_exception(e):
                 retry_policy = container_recreate_retry_policy
                 # Before we retry if retry policy is container recreate, we need refresh the cache of the

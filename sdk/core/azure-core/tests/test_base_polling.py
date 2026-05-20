@@ -46,7 +46,6 @@ from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
 from azure.core.pipeline.transport import HttpTransport
 
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
-from azure.core.pipeline.policies._utils import _FixedOffset
 from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
 from rest_client import MockRestClient
@@ -253,13 +252,15 @@ def test_delay_extraction_httpdate(polling_response, http_response):
 
     from datetime import datetime as basedatetime
 
-    now_mock_datetime = datetime.datetime(1995, 11, 20, 18, 12, 8, tzinfo=_FixedOffset(-5 * 60))
+    now_mock_datetime = datetime.datetime(
+        1995, 11, 20, 18, 12, 8, tzinfo=datetime.timezone(datetime.timedelta(hours=-5))
+    )
     with mock.patch("datetime.datetime") as mock_datetime:
         mock_datetime.now.return_value = now_mock_datetime
         mock_datetime.side_effect = lambda *args, **kw: basedatetime(*args, **kw)
 
         assert polling._extract_delay() == 60 * 60  # one hour in seconds
-        assert str(mock_datetime.now.call_args[0][0]) == "<FixedOffset -5.0>"
+        assert str(mock_datetime.now.call_args[0][0]) == "UTC-05:00"
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))

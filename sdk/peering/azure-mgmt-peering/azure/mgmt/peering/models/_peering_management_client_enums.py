@@ -10,14 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class Command(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Invoked command."""
-
-    TRACEROUTE = "Traceroute"
-    PING = "Ping"
-    BGP_ROUTE = "BgpRoute"
-
-
 class ConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the connection."""
 
@@ -29,8 +21,6 @@ class ConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROVISIONING_COMPLETED = "ProvisioningCompleted"
     VALIDATING = "Validating"
     ACTIVE = "Active"
-    TYPE_CHANGE_REQUESTED = "TypeChangeRequested"
-    TYPE_CHANGE_IN_PROGRESS = "TypeChangeInProgress"
 
 
 class DirectPeeringType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -40,17 +30,36 @@ class DirectPeeringType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSIT = "Transit"
     CDN = "Cdn"
     INTERNAL = "Internal"
-    IX = "Ix"
-    IX_RS = "IxRs"
-    VOICE = "Voice"
-    EDGE_ZONE_FOR_OPERATORS = "EdgeZoneForOperators"
 
 
 class Enum0(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum0."""
 
     AVAILABLE = "Available"
-    UNAVAILABLE = "Unavailable"
+    UN_AVAILABLE = "UnAvailable"
+
+
+class Enum1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum1."""
+
+    DIRECT = "Direct"
+    EXCHANGE = "Exchange"
+
+
+class Enum14(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum14."""
+
+    DIRECT = "Direct"
+    EXCHANGE = "Exchange"
+
+
+class Enum15(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum15."""
+
+    EDGE = "Edge"
+    TRANSIT = "Transit"
+    CDN = "Cdn"
+    INTERNAL = "Internal"
 
 
 class Family(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -71,50 +80,19 @@ class LearnedType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The prefix learned type."""
 
     NONE = "None"
-    VIA_SERVICE_PROVIDER = "ViaServiceProvider"
+    VIA_PARTNER = "ViaPartner"
     VIA_SESSION = "ViaSession"
 
 
-class LegacyPeeringsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """LegacyPeeringsKind."""
+class Name(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the peering SKU."""
 
-    DIRECT = "Direct"
-    EXCHANGE = "Exchange"
-
-
-class LookingGlassCommand(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """LookingGlassCommand."""
-
-    TRACEROUTE = "Traceroute"
-    PING = "Ping"
-    BGP_ROUTE = "BgpRoute"
-
-
-class LookingGlassSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """LookingGlassSourceType."""
-
-    EDGE_SITE = "EdgeSite"
-    AZURE_REGION = "AzureRegion"
-
-
-class PeeringLocationsDirectPeeringType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PeeringLocationsDirectPeeringType."""
-
-    EDGE = "Edge"
-    TRANSIT = "Transit"
-    CDN = "Cdn"
-    INTERNAL = "Internal"
-    IX = "Ix"
-    IX_RS = "IxRs"
-    VOICE = "Voice"
-    EDGE_ZONE_FOR_OPERATORS = "EdgeZoneForOperators"
-
-
-class PeeringLocationsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PeeringLocationsKind."""
-
-    DIRECT = "Direct"
-    EXCHANGE = "Exchange"
+    BASIC_EXCHANGE_FREE = "Basic_Exchange_Free"
+    BASIC_DIRECT_FREE = "Basic_Direct_Free"
+    PREMIUM_DIRECT_FREE = "Premium_Direct_Free"
+    PREMIUM_EXCHANGE_METERED = "Premium_Exchange_Metered"
+    PREMIUM_DIRECT_METERED = "Premium_Direct_Metered"
+    PREMIUM_DIRECT_UNLIMITED = "Premium_Direct_Unlimited"
 
 
 class PrefixValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -125,7 +103,6 @@ class PrefixValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VERIFIED = "Verified"
     FAILED = "Failed"
     PENDING = "Pending"
-    WARNING = "Warning"
     UNKNOWN = "Unknown"
 
 
@@ -136,17 +113,6 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPDATING = "Updating"
     DELETING = "Deleting"
     FAILED = "Failed"
-
-
-class Role(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The role of the contact."""
-
-    NOC = "Noc"
-    POLICY = "Policy"
-    TECHNICAL = "Technical"
-    SERVICE = "Service"
-    ESCALATION = "Escalation"
-    OTHER = "Other"
 
 
 class SessionAddressProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -24,4 +24,4 @@ class TestAuthorizationManagementProviderOperationsMetadataOperationsAsync(Azure
     async def test_provider_operations_metadata_list(self, resource_group):
         response = self.client.provider_operations_metadata.list()
         result = [r async for r in response]
-        assert response
+        assert len(result)

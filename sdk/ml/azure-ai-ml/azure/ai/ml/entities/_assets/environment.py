@@ -294,7 +294,7 @@ class Environment(Asset, LocalizableMixin):
             self._arm_type: {
                 ArmConstants.NAME: self.name,
                 ArmConstants.VERSION: self.version,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "EnvironmentVersion"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: properties.as_dict(),
             }
         }
 

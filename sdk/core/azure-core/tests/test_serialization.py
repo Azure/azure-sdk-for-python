@@ -7,6 +7,7 @@ from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
 import json
 import sys
+import typing
 from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
 
@@ -150,6 +151,688 @@ def test_dictionary_basic(json_dumps_with_encoder):
     assert json.loads(complex_serialized) == test_obj
 
 
+def test_dictionary_set():
+    """Test that dictionary mutations via attribute syntax persist and sync to dictionary syntax."""
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    # Test 1: Basic mutation via attribute syntax
+    m = MyModel(my_dict={"a": 1, "b": 2})
+    assert m.my_dict == {"a": 1, "b": 2}
+
+    # Test 2: Add new key via attribute syntax and verify it persists
+    m.my_dict["c"] = 3
+    assert m.my_dict["c"] == 3
+    assert m.my_dict == {"a": 1, "b": 2, "c": 3}
+
+    # Test 3: Verify mutation is reflected in dictionary syntax
+    assert m["my_dict"] == {"a": 1, "b": 2, "c": 3}
+
+    # Test 4: Modify existing key via attribute syntax
+    m.my_dict["a"] = 100
+    assert m.my_dict["a"] == 100
+    assert m["my_dict"]["a"] == 100
+
+    # Test 5: Delete key via attribute syntax
+    del m.my_dict["b"]
+    assert "b" not in m.my_dict
+    assert "b" not in m["my_dict"]
+
+    # Test 6: Update via dict methods
+    m.my_dict.update({"d": 4, "e": 5})
+    assert m.my_dict["d"] == 4
+    assert m.my_dict["e"] == 5
+    assert m["my_dict"]["d"] == 4
+
+    # Test 7: Clear via attribute syntax and verify via dictionary syntax
+    m.my_dict.clear()
+    assert len(m.my_dict) == 0
+    assert len(m["my_dict"]) == 0
+
+    # Test 8: Reassign entire dictionary via attribute syntax
+    m.my_dict = {"x": 10, "y": 20}
+    assert m.my_dict == {"x": 10, "y": 20}
+    assert m["my_dict"] == {"x": 10, "y": 20}
+
+    # Test 9: Mutation after reassignment
+    m.my_dict["z"] = 30
+    assert m.my_dict["z"] == 30
+    assert m["my_dict"]["z"] == 30
+
+    # Test 10: Access via dictionary syntax first, then mutate via attribute syntax
+    m.my_dict["w"] = 40
+    assert m["my_dict"]["w"] == 40
+
+    # Test 11: Multiple accesses maintain same cached object
+    dict_ref1 = m.my_dict
+    dict_ref2 = m.my_dict
+    assert dict_ref1 is dict_ref2
+    dict_ref1["new_key"] = 999
+    assert dict_ref2["new_key"] == 999
+    assert m.my_dict["new_key"] == 999
+
+
+def test_list_set():
+    """Test that list mutations via attribute syntax persist and sync to dictionary syntax."""
+
+    class MyModel(HybridModel):
+        my_list: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    # Test 1: Basic mutation via attribute syntax
+    m = MyModel(my_list=[1, 2, 3])
+    assert m.my_list == [1, 2, 3]
+
+    # Test 2: Append via attribute syntax and verify it persists
+    m.my_list.append(4)
+    assert m.my_list == [1, 2, 3, 4]
+
+    # Test 3: Verify mutation is reflected in dictionary syntax
+    assert m["my_list"] == [1, 2, 3, 4]
+
+    # Test 4: Modify existing element via attribute syntax
+    m.my_list[0] = 100
+    assert m.my_list[0] == 100
+    assert m["my_list"][0] == 100
+
+    # Test 5: Extend list via attribute syntax
+    m.my_list.extend([5, 6])
+    assert m.my_list == [100, 2, 3, 4, 5, 6]
+    assert m["my_list"] == [100, 2, 3, 4, 5, 6]
+
+    # Test 6: Remove element via attribute syntax
+    m.my_list.remove(2)
+    assert 2 not in m.my_list
+    assert 2 not in m["my_list"]
+
+    # Test 7: Pop element
+    popped = m.my_list.pop()
+    assert popped == 6
+    assert 6 not in m.my_list
+    assert 6 not in m["my_list"]
+
+    # Test 8: Insert element
+    m.my_list.insert(0, 999)
+    assert m.my_list[0] == 999
+    assert m["my_list"][0] == 999
+
+    # Test 9: Clear via attribute syntax
+    m.my_list.clear()
+    assert len(m.my_list) == 0
+    assert len(m["my_list"]) == 0
+
+    # Test 10: Reassign entire list via attribute syntax
+    m.my_list = [10, 20, 30]
+    assert m.my_list == [10, 20, 30]
+    assert m["my_list"] == [10, 20, 30]
+
+    # Test 11: Mutation after reassignment
+    m.my_list.append(40)
+    assert m.my_list == [10, 20, 30, 40]
+    assert m["my_list"] == [10, 20, 30, 40]
+
+    # Test 12: Multiple accesses maintain same cached object
+    list_ref1 = m.my_list
+    list_ref2 = m.my_list
+    assert list_ref1 is list_ref2
+    list_ref1.append(50)
+    assert 50 in list_ref2
+    assert 50 in m.my_list
+
+    # Test 13: Delete element via dict syntax
+    m["my_list"] = [1, 2, 3]
+    m["my_list"].append(4)
+    del m["my_list"]
+    m.my_list = [4, 5, 6]
+    assert m.my_list == [4, 5, 6]
+
+
+def test_set_collection():
+    """Test that set mutations via attribute syntax persist and sync to dictionary syntax."""
+
+    class MyModel(HybridModel):
+        my_set: typing.Set[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    # Test 1: Basic mutation via attribute syntax
+    m = MyModel(my_set={1, 2, 3})
+    assert m.my_set == {1, 2, 3}
+
+    # Test 2: Add via attribute syntax and verify it persists
+    m.my_set.add(4)
+    assert 4 in m.my_set
+
+    # Test 3: Verify mutation is reflected in dictionary syntax
+    assert 4 in m["my_set"]
+
+    # Test 4: Remove element via attribute syntax
+    m.my_set.remove(2)
+    assert 2 not in m.my_set
+    assert 2 not in m["my_set"]
+
+    # Test 5: Update set via attribute syntax
+    m.my_set.update({5, 6, 7})
+    assert m.my_set == {1, 3, 4, 5, 6, 7}
+    assert m["my_set"] == {1, 3, 4, 5, 6, 7}
+
+    # Test 6: Discard element
+    m.my_set.discard(1)
+    assert 1 not in m.my_set
+    assert 1 not in m["my_set"]
+
+    # Test 7: Clear via attribute syntax
+    m.my_set.clear()
+    assert len(m.my_set) == 0
+    assert len(m["my_set"]) == 0
+
+    # Test 8: Reassign entire set via attribute syntax
+    m.my_set = {10, 20, 30}
+    assert m.my_set == {10, 20, 30}
+    assert m["my_set"] == {10, 20, 30}
+
+    # Test 9: Mutation after reassignment
+    m.my_set.add(40)
+    assert 40 in m.my_set
+    assert 40 in m["my_set"]
+
+    # Test 10: Multiple accesses maintain same cached object
+    set_ref1 = m.my_set
+    set_ref2 = m.my_set
+    assert set_ref1 is set_ref2
+    set_ref1.add(50)
+    assert 50 in set_ref2
+    assert 50 in m.my_set
+
+
+def test_empty_collection_caching():
+    """Test edge cases with empty collections to ensure caching works correctly."""
+
+    # Test 1: Empty dictionary
+    class DictModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m1 = DictModel(my_dict={})
+    assert m1.my_dict == {}
+    assert m1["my_dict"] == {}
+
+    # Add items to empty dict
+    m1.my_dict["a"] = 1
+    assert m1.my_dict == {"a": 1}
+    assert m1["my_dict"] == {"a": 1}
+
+    # Clear to empty again
+    m1.my_dict.clear()
+    assert m1.my_dict == {}
+    assert m1["my_dict"] == {}
+
+    # Test 2: Empty list
+    class ListModel(HybridModel):
+        my_list: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m2 = ListModel(my_list=[])
+    assert m2.my_list == []
+    assert m2["my_list"] == []
+
+    # Add items to empty list
+    m2.my_list.append(1)
+    m2.my_list.append(2)
+    assert m2.my_list == [1, 2]
+    assert m2["my_list"] == [1, 2]
+
+    # Clear to empty again
+    m2.my_list.clear()
+    assert m2.my_list == []
+    assert m2["my_list"] == []
+
+    # Test 3: Empty set
+    class SetModel(HybridModel):
+        my_set: typing.Set[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m3 = SetModel(my_set=set())
+    assert m3.my_set == set()
+    assert m3["my_set"] == set()
+
+    # Add items to empty set
+    m3.my_set.add(1)
+    m3.my_set.add(2)
+    assert m3.my_set == {1, 2}
+    assert m3["my_set"] == {1, 2}
+
+    # Clear to empty again
+    m3.my_set.clear()
+    assert m3.my_set == set()
+    assert m3["my_set"] == set()
+
+    # Test 4: Initialize non-empty, then set to empty via dict access
+    m4 = DictModel(my_dict={"x": 10, "y": 20})
+    assert m4.my_dict == {"x": 10, "y": 20}
+
+    # Set to empty via dict access
+    m4["my_dict"] = {}
+    assert m4.my_dict == {}
+    assert m4["my_dict"] == {}
+
+    # Test 5: Initialize non-empty list, then set to empty via dict access
+    m5 = ListModel(my_list=[1, 2, 3])
+    assert m5.my_list == [1, 2, 3]
+
+    # Set to empty via dict access
+    m5["my_list"] = []
+    assert m5.my_list == []
+    assert m5["my_list"] == []
+
+    # Test 6: Cache identity maintained for empty collections
+    m6 = DictModel(my_dict={})
+    ref1 = m6.my_dict
+    ref2 = m6.my_dict
+    assert ref1 is ref2
+
+    # Modify empty cached dict
+    ref1["key"] = "value"
+    assert ref2["key"] == "value"
+    assert m6.my_dict["key"] == "value"
+    assert m6["my_dict"]["key"] == "value"
+
+
+def test_cache_alternating_access_patterns():
+    """Test alternating between dict and attr access patterns."""
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    # Test 1: Multiple alternating accesses
+    m = MyModel(my_dict={"a": 1})
+
+    # attr -> dict -> attr -> dict pattern
+    assert m.my_dict == {"a": 1}
+    assert m["my_dict"] == {"a": 1}
+    m.my_dict["b"] = 2
+    assert m["my_dict"] == {"a": 1, "b": 2}
+    m["my_dict"]["c"] = 3
+    assert m.my_dict == {"a": 1, "b": 2, "c": 3}
+    assert m["my_dict"] == {"a": 1, "b": 2, "c": 3}
+
+    # Test 2: Rapid alternating mutations
+    m2 = MyModel(my_dict={})
+    for i in range(5):
+        if i % 2 == 0:
+            m2.my_dict[f"attr_{i}"] = i
+        else:
+            m2["my_dict"][f"dict_{i}"] = i
+
+    expected = {"attr_0": 0, "dict_1": 1, "attr_2": 2, "dict_3": 3, "attr_4": 4}
+    assert m2.my_dict == expected
+    assert m2["my_dict"] == expected
+
+
+def test_cache_nested_mutations():
+    """Test nested dict/list mutations."""
+
+    class NestedModel(HybridModel):
+        nested: Dict[str, Dict[str, int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = NestedModel(nested={"outer": {"inner": 1}})
+
+    # Access nested value via attr
+    assert m.nested["outer"]["inner"] == 1
+
+    # Mutate nested value via attr
+    m.nested["outer"]["inner"] = 100
+    assert m.nested["outer"]["inner"] == 100
+    assert m["nested"]["outer"]["inner"] == 100
+
+    # Add new nested key via attr
+    m.nested["outer"]["new_inner"] = 200
+    assert m["nested"]["outer"]["new_inner"] == 200
+
+    # Add new outer key via dict access
+    m["nested"]["new_outer"] = {"a": 1}
+    assert m.nested["new_outer"] == {"a": 1}
+
+
+def test_cache_list_nested_mutations():
+    """Test nested list mutations."""
+
+    class ListModel(HybridModel):
+        nested_list: List[List[int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = ListModel(nested_list=[[1, 2], [3, 4]])
+
+    # Access and mutate nested list
+    m.nested_list[0].append(99)
+    assert m.nested_list[0] == [1, 2, 99]
+    assert m["nested_list"][0] == [1, 2, 99]
+
+    # Mutate via dict access
+    m["nested_list"][1].append(100)
+    assert m.nested_list[1] == [3, 4, 100]
+
+
+def test_cache_set_to_none_and_back():
+    """Test setting to None and back to a value."""
+
+    class MyModel(HybridModel):
+        my_dict: Optional[Dict[str, int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MyModel(my_dict={"a": 1})
+
+    # Mutate, then set to None
+    m.my_dict["b"] = 2
+    assert m.my_dict == {"a": 1, "b": 2}
+
+    m.my_dict = None
+    assert m.my_dict is None
+    assert m.get("my_dict") is None
+
+    # Set back to a value
+    m.my_dict = {"c": 3}
+    assert m.my_dict == {"c": 3}
+    assert m["my_dict"] == {"c": 3}
+
+    # Mutate again
+    m.my_dict["d"] = 4
+    assert m.my_dict == {"c": 3, "d": 4}
+
+
+def test_cache_dict_methods():
+    """Test that dict methods work correctly with caching."""
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MyModel(my_dict={"a": 1, "b": 2, "c": 3})
+
+    # Test keys(), values(), items() via attr
+    assert set(m.my_dict.keys()) == {"a", "b", "c"}
+    assert set(m.my_dict.values()) == {1, 2, 3}
+    assert set(m.my_dict.items()) == {("a", 1), ("b", 2), ("c", 3)}
+
+    # Test pop via attr
+    popped = m.my_dict.pop("a")
+    assert popped == 1
+    assert "a" not in m.my_dict
+    assert "a" not in m["my_dict"]
+
+    # Test update via attr
+    m.my_dict.update({"d": 4, "e": 5})
+    assert m.my_dict["d"] == 4
+    assert m["my_dict"]["e"] == 5
+
+    # Test setdefault via attr
+    result = m.my_dict.setdefault("f", 6)
+    assert result == 6
+    assert m["my_dict"]["f"] == 6
+
+    # Test get via attr
+    assert m.my_dict.get("nonexistent", 999) == 999
+    assert m.my_dict.get("b") == 2
+
+
+def test_cache_list_methods():
+    """Test that list methods work correctly with caching."""
+
+    class MyModel(HybridModel):
+        my_list: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MyModel(my_list=[1, 2, 3, 4, 5])
+
+    # Test index and slicing
+    assert m.my_list[0] == 1
+    assert m.my_list[-1] == 5
+    assert m.my_list[1:3] == [2, 3]
+
+    # Test pop
+    popped = m.my_list.pop()
+    assert popped == 5
+    assert m["my_list"] == [1, 2, 3, 4]
+
+    # Test insert
+    m.my_list.insert(0, 0)
+    assert m.my_list[0] == 0
+    assert m["my_list"][0] == 0
+
+    # Test remove
+    m.my_list.remove(2)
+    assert 2 not in m.my_list
+    assert 2 not in m["my_list"]
+
+    # Test reverse
+    m.my_list.reverse()
+    assert m.my_list == [4, 3, 1, 0]
+    assert m["my_list"] == [4, 3, 1, 0]
+
+    # Test sort
+    m.my_list.sort()
+    assert m.my_list == [0, 1, 3, 4]
+    assert m["my_list"] == [0, 1, 3, 4]
+
+
+def test_cache_multiple_fields():
+    """Test caching with multiple mutable fields."""
+
+    class MultiModel(HybridModel):
+        dict1: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+        dict2: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+        list1: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MultiModel(dict1={"a": 1}, dict2={"b": 2}, list1=[1, 2])
+
+    # Mutate each field independently
+    m.dict1["c"] = 3
+    m.dict2["d"] = 4
+    m.list1.append(3)
+
+    # Verify each field is correct
+    assert m.dict1 == {"a": 1, "c": 3}
+    assert m.dict2 == {"b": 2, "d": 4}
+    assert m.list1 == [1, 2, 3]
+
+    # Verify dict access
+    assert m["dict1"] == {"a": 1, "c": 3}
+    assert m["dict2"] == {"b": 2, "d": 4}
+    assert m["list1"] == [1, 2, 3]
+
+    # Mutate via dict access
+    m["dict1"]["e"] = 5
+    m["list1"].append(4)
+
+    assert m.dict1 == {"a": 1, "c": 3, "e": 5}
+    assert m.list1 == [1, 2, 3, 4]
+
+
+def test_cache_after_reassignment():
+    """Test that cache is properly cleared after reassignment."""
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = MyModel(my_dict={"a": 1})
+
+    # Get reference, mutate
+    ref1 = m.my_dict
+    ref1["b"] = 2
+    assert m.my_dict["b"] == 2
+
+    # Reassign via attr
+    m.my_dict = {"x": 10}
+    ref2 = m.my_dict
+
+    # Old reference should be stale (different object)
+    ref1["c"] = 3  # This mutates old object, not m._data
+    assert "c" not in m.my_dict
+    assert m.my_dict == {"x": 10}
+
+    # Reassign via dict access
+    m["my_dict"] = {"y": 20}
+    assert m.my_dict == {"y": 20}
+
+
+def test_cache_model_equality():
+    """Test that model equality works correctly with cached values."""
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m1 = MyModel(my_dict={"a": 1, "b": 2})
+    m2 = MyModel(my_dict={"a": 1, "b": 2})
+
+    # Models should be equal initially
+    assert m1 == m2
+
+    # Mutate m1 via attr
+    m1.my_dict["c"] = 3
+
+    # Models should not be equal
+    assert m1 != m2
+
+    # Mutate m2 to match
+    m2.my_dict["c"] = 3
+
+    # Models should be equal again
+    assert m1 == m2
+
+    # Also test equality with plain dict
+    assert m1 == {"my_dict": {"a": 1, "b": 2, "c": 3}}
+
+
+def test_dictionary_set_datetime():
+    """Test that dictionary with datetime values properly serializes/deserializes."""
+    from datetime import datetime, timezone
+
+    class MyModel(HybridModel):
+        my_dict: Dict[str, datetime] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    # Test 1: Initialize with datetime values
+    dt1 = datetime(2023, 1, 15, 10, 30, 45, tzinfo=timezone.utc)
+    dt2 = datetime(2023, 6, 20, 14, 15, 30, tzinfo=timezone.utc)
+    m = MyModel(my_dict={"created": dt1, "updated": dt2})
+
+    # Test 2: Access via attribute syntax returns datetime objects
+    assert isinstance(m.my_dict["created"], datetime)
+    assert isinstance(m.my_dict["updated"], datetime)
+    assert m.my_dict["created"] == dt1
+    assert m.my_dict["updated"] == dt2
+
+    # Test 3: Access via dictionary syntax returns serialized strings (ISO format)
+    dict_access = m["my_dict"]
+    assert isinstance(dict_access["created"], str)
+    assert isinstance(dict_access["updated"], str)
+    assert dict_access["created"] == "2023-01-15T10:30:45Z"
+    assert dict_access["updated"] == "2023-06-20T14:15:30Z"
+
+    # Test 4: Mutate via attribute syntax with new datetime
+    dt3 = datetime(2023, 12, 25, 18, 0, 0, tzinfo=timezone.utc)
+    m.my_dict["holiday"] = dt3
+    assert m.my_dict["holiday"] == dt3
+
+    # Test 5: Verify mutation is serialized in dictionary syntax
+    assert m["my_dict"]["holiday"] == "2023-12-25T18:00:00Z"
+
+    # Test 6: Update existing datetime via attribute syntax
+    dt4 = datetime(2024, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    m.my_dict["created"] = dt4
+    assert m.my_dict["created"] == dt4
+    assert m["my_dict"]["created"] == "2024-01-01T00:00:00Z"
+
+    # Test 7: Verify all datetimes are deserialized correctly after mutation
+    assert isinstance(m.my_dict["created"], datetime)
+    assert isinstance(m.my_dict["updated"], datetime)
+    assert isinstance(m.my_dict["holiday"], datetime)
+
+    # Test 8: Use dict update method with datetimes
+    dt5 = datetime(2024, 6, 15, 12, 30, 0, tzinfo=timezone.utc)
+    dt6 = datetime(2024, 7, 4, 16, 45, 0, tzinfo=timezone.utc)
+    m.my_dict.update({"event1": dt5, "event2": dt6})
+    assert m.my_dict["event1"] == dt5
+    assert m["my_dict"]["event1"] == "2024-06-15T12:30:00Z"
+
+    # Test 9: Reassign entire dictionary with new datetimes
+    dt7 = datetime(2025, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    dt8 = datetime(2025, 12, 31, 23, 59, 59, tzinfo=timezone.utc)
+    m.my_dict = {"start": dt7, "end": dt8}
+    assert m.my_dict["start"] == dt7
+    assert m.my_dict["end"] == dt8
+    assert m["my_dict"]["start"] == "2025-01-01T00:00:00Z"
+    assert m["my_dict"]["end"] == "2025-12-31T23:59:59Z"
+
+    # Test 10: Cached object maintains datetime type
+    dict_ref1 = m.my_dict
+    dict_ref2 = m.my_dict
+    assert dict_ref1 is dict_ref2
+    assert isinstance(dict_ref1["start"], datetime)
+    assert isinstance(dict_ref2["start"], datetime)
+
+
+def test_dict_access_modification_clears_cache():
+    """Test that modifying through dict access clears cache and updates attribute access."""
+
+    # Test 1: Dictionary modification
+    class DictModel(HybridModel):
+        my_dict: Dict[str, int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m = DictModel(my_dict={"a": 1, "b": 2})
+
+    # Access via attribute to cache it
+    assert m.my_dict == {"a": 1, "b": 2}
+
+    # Modify through dict access
+    m["my_dict"] = {"x": 10, "y": 20}
+
+    # Attribute access should reflect the new value
+    assert m.my_dict == {"x": 10, "y": 20}
+    assert m["my_dict"] == {"x": 10, "y": 20}
+
+    # Test 2: List modification
+    class ListModel(HybridModel):
+        my_list: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m2 = ListModel(my_list=[1, 2, 3])
+
+    # Access via attribute to cache it
+    assert m2.my_list == [1, 2, 3]
+
+    # Modify through dict access
+    m2["my_list"] = [10, 20, 30]
+
+    # Attribute access should reflect the new value
+    assert m2.my_list == [10, 20, 30]
+    assert m2["my_list"] == [10, 20, 30]
+
+    # Test 3: Set modification
+    class SetModel(HybridModel):
+        my_set: typing.Set[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    m3 = SetModel(my_set={1, 2, 3})
+
+    # Access via attribute to cache it
+    assert m3.my_set == {1, 2, 3}
+
+    # Modify through dict access
+    m3["my_set"] = {10, 20, 30}
+
+    # Attribute access should reflect the new value
+    assert m3.my_set == {10, 20, 30}
+    assert m3["my_set"] == {10, 20, 30}
+
+    # Test 4: Comma-delimited format example (simulating custom format)
+    class ColorModel(HybridModel):
+        colors: List[str] = rest_field(format="csv", visibility=["read", "create", "update", "delete", "query"])
+
+    m4 = ColorModel(colors=["green", "yellow", "purple"])
+    assert m4.colors == ["green", "yellow", "purple"]
+
+    # With format="csv", the serialized form would be comma-delimited
+    # But since we don't have that format implemented, let's test the principle:
+    # Access via attribute creates cache
+    cached_colors = m4.colors
+
+    # Modify through dict access with serialized form
+    m4["colors"] = ["orange", "pink"]
+
+    # Attribute access should deserialize the new value
+    assert m4.colors == ["orange", "pink"]
+    assert m4["colors"] == ["orange", "pink"]
+
+
 def test_model_basic(json_dumps_with_encoder):
     class BasicModel(SerializerMixin):
         def __init__(self):
@@ -189,6 +872,25 @@ def test_dictionary_datetime(json_dumps_with_encoder):
     assert json.loads(json_dumps_with_encoder(test_obj)) == expected
 
 
+def test_both_item_attr_access():
+    """Test that mutations via dictionary access properly sync to attribute access."""
+
+    class MyModel(HybridModel):
+        my_dict: dict[str, int] = rest_field()
+
+    m = MyModel(my_dict={"a": 1, "b": 2})
+
+    # Mutate via attribute syntax
+    m.my_dict["c"] = 3
+    assert m.my_dict["c"] == 3
+
+    # Direct assignment via dictionary syntax
+    m["my_dict"]["d"] = 4
+    assert m.my_dict["d"] == 4
+
+    assert m.my_dict == {"a": 1, "b": 2, "c": 3, "d": 4}
+
+
 def test_model_datetime(json_dumps_with_encoder):
     class DatetimeModel(SerializerMixin):
         def __init__(self):
@@ -205,6 +907,15 @@ def test_model_datetime(json_dumps_with_encoder):
         "time": "11:12:13",
     }
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
+
+
+def test_repr():
+    class MyModel(HybridModel):
+        my_dict: dict[str, int] = rest_field()
+
+    m = MyModel(my_dict={"a": 1, "b": 2})
+    m.my_dict["c"] = 3
+    assert repr(m) == "{'my_dict': {'a': 1, 'b': 2, 'c': 3}}"
 
 
 def test_model_key_vault(json_dumps_with_encoder):

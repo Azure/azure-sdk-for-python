@@ -7,10 +7,24 @@
 
 import os
 import json
+import re
+import sys
+import subprocess
+import tempfile
+from pathlib import Path
 import pytest
-from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
+
+PACKAGE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+SCRIPTS_DIR = os.path.dirname(PACKAGE_DIR)
+
+for path in (SCRIPTS_DIR, PACKAGE_DIR):
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker, BreakingChangeType
 from breaking_changes_checker.detect_breaking_changes import main
 from breaking_changes_checker.checkers.removed_method_overloads_checker import RemovedMethodOverloadChecker
+from breaking_changes_checker.checkers.changed_function_return_type_checker import ChangedFunctionReturnTypeChecker
 
 def format_breaking_changes(breaking_changes):
     formatted = "\n"
@@ -21,6 +35,13 @@ def format_breaking_changes(breaking_changes):
     formatted += "\nSee aka.ms/azsdk/breaking-changes-tool to resolve " \
                     "any reported breaking changes or false positives.\n"
     return formatted
+
+
+def normalize_breaking_changes_report(report):
+    def replace_enum_name(match):
+        return f"({BreakingChangeType[match.group(1)].value}):"
+
+    return re.sub(r"\(BreakingChangeType\.([A-Z_]+)\):", replace_enum_name, report)
 
 EXPECTED = [
     "(RemovedOrRenamedInstanceAttribute): Model `Metrics` deleted or renamed its instance variable `retention_policy`",
@@ -54,7 +75,7 @@ def test_multiple_checkers():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -76,7 +97,7 @@ def test_ignore_checks():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue", ignore=ignore)
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED[:-1])
     assert len(bc.breaking_changes)+1 == len(EXPECTED)
@@ -99,7 +120,7 @@ def test_ignore_with_wildcard_checks():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue", ignore=ignore)
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED[:-2])
     assert len(bc.breaking_changes)+2 == len(EXPECTED)
@@ -186,7 +207,7 @@ def test_replace_all_params():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -273,7 +294,7 @@ def test_replace_all_functions():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -346,7 +367,7 @@ def test_replace_all_classes():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -372,7 +393,7 @@ def test_replace_all_modules():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -381,11 +402,11 @@ def test_replace_all_modules():
 
 @pytest.mark.skip(reason="We need to regenerate the code reports for these tests and update the expected results")
 def test_pass_custom_reports_breaking(capsys):
-    source_report = "test_stable.json"
-    target_report = "test_current.json"
+    source_report = Path("test_stable.json")
+    target_report = Path("test_current.json")
 
     try:
-        main(None, None, None, None, "tests", False, False, False, source_report, target_report)
+        main("", "", "", False, "tests", False, False, False, source_report, target_report)
     except SystemExit as e:
         if e.code == 1:
             out, _ = capsys.readouterr()
@@ -429,7 +450,7 @@ def test_removed_operation_group():
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
     bc.run_checks()
 
-    changes = bc.report_changes()
+    changes = normalize_breaking_changes_report(bc.report_changes())
 
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -577,3 +598,494 @@ def test_removed_overload():
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
     assert changes == expected_msg
+
+
+def test_parameter_annotation_type_changed():
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "EffectiveNetworkSecurityGroup": {
+                    "type": "Model",
+                    "methods": {
+                        "__init__": {
+                            "parameters": {
+                                "tag_map": {
+                                    "type": "Optional[str]",
+                                    "default": None,
+                                    "param_type": "keyword_only"
+                                }
+                            },
+                            "is_async": False
+                        }
+                    }
+                }
+            },
+            "function_nodes": {
+                "my_func": {
+                    "parameters": {
+                        "value": {
+                            "type": "str",
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    },
+                    "is_async": False
+                }
+            }
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "EffectiveNetworkSecurityGroup": {
+                    "type": "Model",
+                    "methods": {
+                        "__init__": {
+                            "parameters": {
+                                "tag_map": {
+                                    "type": "Optional[Dict[str, List[str]]]",
+                                    "default": None,
+                                    "param_type": "keyword_only"
+                                }
+                            },
+                            "is_async": False
+                        }
+                    }
+                }
+            },
+            "function_nodes": {
+                "my_func": {
+                    "parameters": {
+                        "value": {
+                            "type": "int",
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    },
+                    "is_async": False
+                }
+            }
+        }
+    }
+
+    EXPECTED = [
+        "(ChangedParameterType): Method `EffectiveNetworkSecurityGroup.__init__` changed type of its parameter `tag_map` from `Optional[str]` to `Optional[Dict[str, List[str]]]`",
+        "(ChangedParameterType): Function `my_func` changed type of its parameter `value` from `str` to `int`",
+    ]
+
+    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
+def test_parameter_annotation_type_missing_vs_explicit_none():
+    # `a` goes from no annotation (stored as Python None) to `str`.
+    # `b` goes from an explicit `None` annotation (stored as the string "None") to `int`.
+    # The reported messages must distinguish between these two cases.
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {},
+            "function_nodes": {
+                "my_func": {
+                    "parameters": {
+                        "a": {
+                            "type": None,
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        },
+                        "b": {
+                            "type": "None",
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    },
+                    "is_async": False
+                }
+            }
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {},
+            "function_nodes": {
+                "my_func": {
+                    "parameters": {
+                        "a": {
+                            "type": "str",
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        },
+                        "b": {
+                            "type": "int",
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    },
+                    "is_async": False
+                }
+            }
+        }
+    }
+
+    EXPECTED = [
+        "(ChangedParameterType): Function `my_func` changed type of its parameter `a` from `<no annotation>` to `str`",
+        "(ChangedParameterType): Function `my_func` changed type of its parameter `b` from `None` to `int`",
+    ]
+
+    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
+def test_changed_lro_return_type_issue_46489():
+    """Regression test for https://github.com/Azure/azure-sdk-for-python/issues/46489.
+
+    The tool must detect that an LRO method's response type changed from
+    `LROPoller[Fleet]` to `LROPoller[None]` as a breaking change.
+    """
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "FleetsOperations": {
+                    "methods": {
+                        "begin_create_or_update": {
+                            "parameters": {
+                                "resource_group_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "fleet_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "resource": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword",
+                                },
+                            },
+                            "is_async": False,
+                            "return_type": "LROPoller[Fleet]",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "FleetsOperations": {
+                    "methods": {
+                        "begin_create_or_update": {
+                            "parameters": {
+                                "resource_group_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "fleet_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "resource": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword",
+                                },
+                            },
+                            "is_async": False,
+                            "return_type": "LROPoller[None]",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    EXPECTED = [
+        "(ChangedFunctionReturnType): Method `FleetsOperations.begin_create_or_update` "
+        "changed return type from `LROPoller[Fleet]` to `LROPoller[None]`",
+    ]
+
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedFunctionReturnTypeChecker()],
+    )
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
+def test_changed_module_function_return_type():
+    """A module-level function return type change should also be flagged."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {},
+            "function_nodes": {
+                "build_url": {
+                    "parameters": {
+                        "base": {"default": None, "param_type": "positional_or_keyword"},
+                    },
+                    "is_async": False,
+                    "return_type": "str",
+                }
+            },
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {},
+            "function_nodes": {
+                "build_url": {
+                    "parameters": {
+                        "base": {"default": None, "param_type": "positional_or_keyword"},
+                    },
+                    "is_async": False,
+                    "return_type": "bytes",
+                }
+            },
+        }
+    }
+
+    EXPECTED = [
+        "(ChangedFunctionReturnType): Function `build_url` changed return type from `str` to `bytes`",
+    ]
+
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedFunctionReturnTypeChecker()],
+    )
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
+def test_return_type_missing_in_stable_is_not_breaking():
+    """Legacy stable reports without `return_type` must not produce false positives."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Foo": {
+                    "methods": {
+                        "bar": {
+                            "parameters": {},
+                            "is_async": False,
+                            # no return_type captured by older versions of the tool
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Foo": {
+                    "methods": {
+                        "bar": {
+                            "parameters": {},
+                            "is_async": False,
+                            "return_type": "str",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedFunctionReturnTypeChecker()],
+    )
+    bc.run_checks()
+
+    assert bc.breaking_changes == []
+
+
+def test_return_type_paged_iterable_equivalence_is_not_breaking():
+    """`Iterable[X]` <-> `ItemPaged[X]` and the async equivalents are
+    semantically identical for callers and must not be reported as breaking.
+    Module-qualified spellings are normalized too.
+    """
+    def _make(stable_rt, current_rt, is_async=False):
+        stable = {
+            "azure.contoso": {
+                "class_nodes": {
+                    "PeeringLocationsOperations": {
+                        "methods": {
+                            "list": {
+                                "parameters": {},
+                                "is_async": is_async,
+                                "return_type": stable_rt,
+                            }
+                        }
+                    }
+                },
+                "function_nodes": {},
+            }
+        }
+        current = {
+            "azure.contoso": {
+                "class_nodes": {
+                    "PeeringLocationsOperations": {
+                        "methods": {
+                            "list": {
+                                "parameters": {},
+                                "is_async": is_async,
+                                "return_type": current_rt,
+                            }
+                        }
+                    }
+                },
+                "function_nodes": {},
+            }
+        }
+        return stable, current
+
+    cases = [
+        ("AsyncIterable[_models.PeeringLocation]", "AsyncItemPaged[_models.PeeringLocation]"),
+        ("Iterable[_models.PeeringLocation]", "ItemPaged[_models.PeeringLocation]"),
+        ("ItemPaged[_models.PeeringLocation]", "Iterable[_models.PeeringLocation]"),
+        # Module-qualified spellings should normalize too.
+        ("typing.AsyncIterable[X]", "azure.core.async_paging.AsyncItemPaged[X]"),
+        # `typing` aliases vs PEP 585 builtin generics are equivalent.
+        ("Dict[str, Any]", "dict[str, Any]"),
+        ("List[str]", "list[str]"),
+        ("typing.Tuple[int, str]", "tuple[int, str]"),
+    ]
+    for stable_rt, current_rt in cases:
+        stable, current = _make(stable_rt, current_rt, is_async="Async" in stable_rt)
+        bc = BreakingChangesTracker(
+            stable, current, "azure-contoso",
+            checkers=[ChangedFunctionReturnTypeChecker()],
+        )
+        bc.run_checks()
+        assert bc.breaking_changes == [], (
+            f"Unexpected breaking change reported for {stable_rt!r} -> {current_rt!r}: "
+            f"{bc.breaking_changes}"
+        )
+
+
+def test_create_function_report_scopes_return_type_to_owner_class():
+    """End-to-end check that `create_function_report` captures the right return
+    annotation when multiple functions/methods in the same module share a name.
+
+    Regression for the original implementation, which used `ast.walk` and
+    matched the first same-named `FunctionDef` in the module regardless of
+    class scope. With proper scoping:
+
+      - `FooOperations.list` -> ``str``
+      - `BarOperations.list` -> ``bytes``
+      - module-level `list`  -> ``int``
+      - `FooOperations.fetch` (impl, after two `@typing.overload` stubs)
+        -> ``typing.Union[int, str]``
+    """
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "examples", "return_type_capture"))
+    try:
+        # Import lazily so we always get a fresh handle on the fixture module.
+        import importlib
+        sample = importlib.import_module("sample")
+        importlib.reload(sample)
+
+        from breaking_changes_checker.detect_breaking_changes import (
+            create_class_report, create_function_report,
+        )
+
+        foo_report = create_class_report(sample.FooOperations)
+        bar_report = create_class_report(sample.BarOperations)
+        free_report = create_function_report(sample.list)
+
+        assert foo_report["methods"]["list"]["return_type"] == "str"
+        assert bar_report["methods"]["list"]["return_type"] == "bytes"
+        assert free_report["return_type"] == "int"
+        # `fetch` has two `@typing.overload` stubs and one real implementation;
+        # the captured return_type must come from the implementation, not a stub.
+        assert foo_report["methods"]["fetch"]["return_type"] == "typing.Union[int, str]"
+    finally:
+        sys.path.remove(os.path.join(os.path.dirname(__file__), "examples", "return_type_capture"))
+
+
+def test_get_parameter_type_handles_pep604_union_is_json_serializable():
+    """Regression: PEP 604 unions (``T | None``) parse as ``ast.BinOp`` and
+    previously fell through to ``return annotation``, leaving a raw AST node in
+    the report. ``json.dump`` on the public API report would then raise
+    ``TypeError``. Ensure the captured ``return_type`` is a JSON-serializable
+    string for both standalone and nested PEP 604 unions.
+    """
+    import ast as _ast
+    from breaking_changes_checker.detect_breaking_changes import get_parameter_type
+
+    # Standalone PEP 604 union as a return annotation.
+    fn = _ast.parse("def f() -> int | None: ...").body[0]
+    result = get_parameter_type(fn.returns)
+    assert result == "Union[int, None]"
+    json.dumps({"return_type": result})  # must not raise
+
+    # Nested in a generic, e.g. LROPoller[int | None].
+    fn2 = _ast.parse("def f() -> LROPoller[int | None]: ...").body[0]
+    result2 = get_parameter_type(fn2.returns)
+    assert result2 == "LROPoller[Union[int, None]]"
+    json.dumps({"return_type": result2})
+
+    # Three-way union flattens left-to-right.
+    fn3 = _ast.parse("def f() -> int | str | None: ...").body[0]
+    assert get_parameter_type(fn3.returns) == "Union[int, str, None]"
+
+
+def test_report_mode_without_setup_py():
+    """Verify detect_breaking_changes.py works with --source-report and --target-report
+    when --target points to a directory without setup.py or pyproject.toml.
+
+    This reproduces the scenario from _run_from_reports() in azpysdk/breaking.py,
+    which creates a temp directory as --target and relies on the pre-built reports.
+    """
+    tests_dir = os.path.dirname(__file__)
+    source_report = os.path.join(tests_dir, "test_stable.json")
+    target_report = os.path.join(tests_dir, "test_current.json")
+    detect_script = os.path.join(os.path.dirname(tests_dir), "detect_breaking_changes.py")
+
+    with tempfile.TemporaryDirectory() as tmp_root:
+        # Create a subdirectory matching azure-mgmt-* so it passes the opt-in check
+        tmp_pkg_dir = os.path.join(tmp_root, "azure-mgmt-fake")
+        os.makedirs(tmp_pkg_dir)
+
+        cmd = [
+            sys.executable,
+            detect_script,
+            "--target", tmp_pkg_dir,
+            "--source-report", source_report,
+            "--target-report", target_report,
+            "--changelog",
+        ]
+        # Should succeed without ValueError about missing setup.py/pyproject.toml
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        assert result.returncode == 0, (
+            f"detect_breaking_changes.py failed with:\n{result.stderr}"
+        )

@@ -165,11 +165,11 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
+            version=self._api_version,
             base_url=url,
             file_system=self.file_system_name,
             pipeline=self._pipeline
         )
-        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
 
     def _format_url(self, hostname: str) -> str:
@@ -972,6 +972,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         )
         path_client = AzureDataLakeStorageRESTAPI(
             url,
+            version=self._api_version,
             filesystem=self.file_system_name,
             path=deleted_path_name,
             pipeline=pipeline

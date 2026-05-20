@@ -1,10 +1,30 @@
 # Release History
 
-## 4.10.1 (Unreleased)
+## 4.11.2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.11.1 (2026-04-29)
+
+### Bugs Fixed
+
+- Fixed `CertificateClient.begin_create_certificate` (and its async counterpart) incorrectly raising
+  `ValueError` when a `CertificatePolicy` was created with only `san_ip_addresses` or `san_uris` and no
+  `subject`, `san_dns_names`, `san_emails`, or `san_user_principal_names`. IP addresses and URIs are
+  valid subject alternative name types and are now recognized by the client's policy validator.
+
+## 4.11.0 (2026-03-27)
+
+### Features Added
+
+- Added support for service API version `2025-07-01`
+- Added `uris` and `ip_addresses` properties to `SubjectAlternativeNames`
 
 ### Bugs Fixed
 
@@ -13,8 +33,6 @@
 - When a certificate operation's error doesn't have an inner error, `CertificateOperationError` will be correctly
   serialized instead of raising an exception
   ([Azure/azure-cli #31764](https://github.com/Azure/azure-cli/issues/31764))
-
-### Other Changes
 
 ## 4.10.0 (2025-06-16)
 

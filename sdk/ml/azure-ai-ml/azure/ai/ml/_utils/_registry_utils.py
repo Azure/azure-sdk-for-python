@@ -8,8 +8,8 @@ from typing import Optional, Tuple
 from typing_extensions import Literal
 
 from azure.ai.ml._azure_environments import _get_default_cloud_name, _get_registry_discovery_endpoint_from_metadata
-from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataPlane
-from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataPlane
+from azure.ai.ml._restclient.registry_discovery import RegistryDiscoveryClient as ServiceClientRegistryDiscovery
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     BlobReferenceSASRequestDto,
@@ -42,7 +42,7 @@ class RegistryDiscovery:
         self.workspace_region = kwargs.get("workspace_location", None)
 
     def _get_registry_details(self) -> str:
-        response = self.service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(  # pylint: disable=line-too-long
+        response = self.service_client_registry_discovery_client.registry_management_non_workspace.get_registry_management_non_workspace(  # pylint: disable=line-too-long
             self.registry_name
         )
         if self.workspace_region:
@@ -228,9 +228,9 @@ def get_registry_client(credential, registry_name, workspace_location: Optional[
 
 
 def _check_region_fqdn(workspace_region, response):
-    if workspace_region in response.additional_properties["registryFqdns"].keys():
+    if workspace_region in response["registryFqdns"].keys():
         return
-    regions = list(response.additional_properties["registryFqdns"].keys())
+    regions = list(response["registryFqdns"].keys())
     msg = f"Workspace region {workspace_region} not supported by the \
             registry {response.registry_name} regions {regions}"
     raise MlException(message=msg, no_personal_data_message=msg)

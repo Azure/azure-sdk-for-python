@@ -9,9 +9,9 @@ and that the returned OpenAI client uses it instead of the default one.
 """
 
 import os
+from typing import Any
 import pytest
 import httpx
-from typing import Any
 from azure.core.credentials import TokenCredential
 from azure.ai.projects import AIProjectClient
 
