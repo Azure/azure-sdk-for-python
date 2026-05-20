@@ -22,7 +22,7 @@ from azure.keyvault.keys.crypto.aio import (
     KeyWrapAlgorithm,
     SignatureAlgorithm,
 )
-from azure.keyvault.keys._generated._serialization import Deserializer
+from azure.keyvault.keys._generated._utils.serialization import Deserializer
 from azure.keyvault.keys._generated.models import KeySignParameters
 from devtools_testutils.aio import recorded_by_proxy_async
 
