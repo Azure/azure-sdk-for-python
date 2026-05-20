@@ -22,6 +22,7 @@
 from ._container import ContainerProxy
 from ._cosmos_client import CosmosClient
 from ._database import DatabaseProxy
+from ._embedding_provider import EmbeddingProvider
 from ._user import UserProxy
 from ._scripts import ScriptsProxy
 
@@ -30,5 +31,6 @@ __all__ = (
     "DatabaseProxy",
     "ContainerProxy",
     "ScriptsProxy",
-    "UserProxy"
+    "UserProxy",
+    "EmbeddingProvider",
 )

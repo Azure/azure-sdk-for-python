@@ -3,6 +3,7 @@
 ### 4.16.0b3 (Unreleased)
 
 #### Features Added
+* Added **preview** support for the `EmbeddingProvider` Protocol and `EmbeddingResult` dataclass, defining the contract the SDK will use to generate vector embeddings for `GenerateEmbeddings(...)` query expressions. Requires the embedding-generation service to be enabled on the account. See [46902](https://github.com/Azure/azure-sdk-for-python/pull/46902)
 * Added **preview** support for the optional `embeddingSource` field on entries in `vector_embedding_policy.vectorEmbeddings`, which allows the service to generate vector embeddings from the specified item paths. Requires the embedding-generation service to be enabled on the account. See [46870](https://github.com/Azure/azure-sdk-for-python/pull/46870)
 
 #### Breaking Changes
