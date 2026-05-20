@@ -1,5 +1,46 @@
 # Release History
 
+## 2.0.0 (2026-05-20)
+
+### Features Added
+
+  - Client `ConnectedKubernetesClient` added method `send_request`
+  - Model `ConnectedCluster` added property `kind`
+  - Enum `ConnectivityStatus` added member `AGENT_NOT_INSTALLED`
+  - Model `HybridConnectionConfig` added property `relay_tid`
+  - Model `HybridConnectionConfig` added property `relay_type`
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `AadProfile`
+  - Added enum `ActionType`
+  - Added model `AgentError`
+  - Added model `ArcAgentProfile`
+  - Added model `ArcAgentryConfigurations`
+  - Added enum `AutoUpgradeOptions`
+  - Added enum `AzureHybridBenefit`
+  - Added enum `ConnectedClusterKind`
+  - Added model `ConnectedClusterPatchProperties`
+  - Added model `Gateway`
+  - Added model `OidcIssuerProfile`
+  - Added enum `Origin`
+  - Added enum `PrivateLinkState`
+  - Added model `SecurityProfile`
+  - Added model `SecurityProfileWorkloadIdentity`
+  - Added model `SystemComponent`
+  - Model `ConnectedClusterOperations` added method `begin_create_or_replace`
+  - Model `ConnectedClusterOperations` added method `begin_update_async`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ConnectedClusterList`
+  - Deleted or renamed model `LastModifiedByType`
+  - Deleted or renamed model `OperationList`
+  - Deleted or renamed method `ConnectedClusterOperations.begin_create`
+  - Deleted or renamed method `ConnectedClusterOperations.update`
+
 ## 1.2.0 (2026-04-23)
 
 ### Other Changes
