@@ -10,15 +10,15 @@ RUN pip install --no-cache-dir /tmp/wheels/*.whl && rm -rf /tmp/wheels
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py agent.py entrypoint.sh ./
+COPY app.py agent.py supervisor.py entrypoint.sh ./
 RUN chmod +x entrypoint.sh
 
-# Use local file-based durability (persisted on disk within the sandbox)
+# Use local file-based durability (Task Storage API not yet available in this region)
 ENV FOUNDRY_TASK_API_ENABLED=0
-ENV STAGE_DURATION=10
+ENV STAGE_DURATION=5
 
 EXPOSE 8088
 
-# entrypoint.sh auto-restarts the agent on crash (the platform doesn't today)
-CMD ["./entrypoint.sh"]
+# supervisor.py is PID 1: keeps /readiness alive, proxies to app, restarts on crash
+CMD ["python", "supervisor.py"]
 

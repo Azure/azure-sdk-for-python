@@ -155,6 +155,7 @@ class DurableTaskManager:
         self._provider = provider or self._create_provider(config)
         self._active_tasks: dict[str, _ActiveTask] = {}
         self._resume_callbacks: dict[str, Callable[..., Any]] = {}
+        self._resume_opts: dict[str, DurableTaskOptions] = {}
         self._lease_owner = derive_lease_owner(config.session_id or "local")
         self._instance_id = generate_instance_id()
         self._shutdown_event = shutdown_event or asyncio.Event()
@@ -253,6 +254,7 @@ class DurableTaskManager:
         self,
         fn_name: str,
         fn: Callable[..., Any],
+        opts: DurableTaskOptions | None = None,
     ) -> None:
         """Register a function as a resume callback.
 
@@ -260,10 +262,12 @@ class DurableTaskManager:
         :type fn_name: str
         :param fn: The async function to call on resume.
         :type fn: Callable[..., Any]
+        :param opts: The task options (for stream_handler_factory etc.).
+        :type opts: DurableTaskOptions | None
         """
         self._resume_callbacks[fn_name] = fn
-
-        self._resume_callbacks[fn_name] = fn
+        if opts is not None:
+            self._resume_opts[fn_name] = opts
 
     async def list_tasks(
         self,
@@ -335,6 +339,15 @@ class DurableTaskManager:
             self._instance_id,
             self._config.is_hosted,
         )
+        # Pick up descriptors registered at import time (for recovery)
+        from ._decorator import (  # pylint: disable=import-outside-toplevel
+            _REGISTERED_DESCRIPTORS,
+        )
+
+        for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
+            self._resume_callbacks[fn_name] = fn
+            self._resume_opts[fn_name] = opts
+
         await self._recover_stale_tasks()
 
     async def shutdown(self) -> None:
@@ -532,6 +545,7 @@ class DurableTaskManager:
 
         # Register resume callback
         self._resume_callbacks[fn_name] = fn
+        self._resume_opts[fn_name] = opts
 
         # Build context
         cancel_event = asyncio.Event()
@@ -1661,7 +1675,17 @@ class DurableTaskManager:
             fn = self._find_resume_callback(task_info)
             if fn is not None:
                 try:
-                    await self.handle_resume(task_info.id)
+                    # Look up stored opts for stream_handler_factory etc.
+                    fn_name = (task_info.source or {}).get("name", "")
+                    opts = self._resume_opts.get(fn_name)
+                    await self._start_existing_task(
+                        fn=fn,
+                        fn_name=task_info.agent_name,
+                        task_info=task_info,
+                        entry_mode="recovered",
+                        opts=opts,
+                    )
+                    logger.info("Recovered task %s is now active", task_info.id)
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning(
                         "Failed to resume recovered task %s",

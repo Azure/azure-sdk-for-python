@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Auto-restart wrapper — immediately restarts on crash, unlimited retries.
+# Auto-restart wrapper. Restarts immediately on crash.
 set -u
 
 while true; do
@@ -12,5 +12,5 @@ while true; do
         exit 0
     fi
 
-    echo "$(date -Iseconds) [entrypoint] 💥 Crashed (exit $exit_code). Restarting..."
+    echo "$(date -Iseconds) [entrypoint] 💥 Crashed (exit $exit_code). Restarting immediately..."
 done

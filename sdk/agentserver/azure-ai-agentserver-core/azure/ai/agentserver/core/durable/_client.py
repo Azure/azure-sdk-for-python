@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """Hosted durable task provider — HTTP client for the Foundry Task Storage API.
 
-Communicates with ``{FOUNDRY_PROJECT_ENDPOINT}/internal/tasks`` using
+Communicates with ``{FOUNDRY_PROJECT_ENDPOINT}/tasks`` using
 ``httpx.AsyncClient``. Bearer tokens are obtained lazily from
 ``DefaultAzureCredential`` when running in a hosted environment.
 """
@@ -40,7 +40,7 @@ class HostedDurableTaskProvider:
     """
 
     def __init__(self, project_endpoint: str, credential: Any) -> None:
-        self._base_url = f"{project_endpoint.rstrip('/')}/internal/tasks"
+        self._base_url = f"{project_endpoint.rstrip('/')}/tasks"
         self._credential = credential
         self._client = httpx.AsyncClient(timeout=30.0)
 
@@ -52,7 +52,7 @@ class HostedDurableTaskProvider:
         }
 
     async def create(self, request: TaskCreateRequest) -> TaskInfo:
-        """Create a new task via POST /internal/tasks.
+        """Create a new task via POST /tasks.
 
         :param request: Task creation parameters.
         :type request: TaskCreateRequest

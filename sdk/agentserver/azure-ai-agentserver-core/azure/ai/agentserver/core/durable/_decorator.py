@@ -56,6 +56,10 @@ _RESERVED_TAG_PREFIX = "_durable_task_"
 
 _logger = _logging.getLogger("azure.ai.agentserver.durable")
 
+# Global registry of durable task descriptors for recovery purposes.
+# Populated at import time when @durable_task decorates a function.
+_REGISTERED_DESCRIPTORS: list[tuple[str, Callable[..., Any], "DurableTaskOptions"]] = []
+
 
 def _strip_reserved_tags(tags: dict[str, str]) -> dict[str, str]:
     """Remove framework-reserved tags from developer-provided tags.
@@ -308,6 +312,8 @@ class DurableTask(Generic[Input, Output]):
         self._input_type = input_type
         self._output_type = output_type
         self.name = opts.name
+        # Register for recovery — manager picks these up at startup
+        _REGISTERED_DESCRIPTORS.append((opts.name, fn, opts))
 
     def _resolve_title(self, input_val: Input, task_id: str) -> str:
         if callable(self._opts.title):

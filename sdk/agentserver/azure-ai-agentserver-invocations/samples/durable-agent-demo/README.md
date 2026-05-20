@@ -1,43 +1,48 @@
 # Durable Research Agent — Crash-Resilient Demo
 
-This sample demonstrates a **long-running research agent** that survives crashes
-and automatically resumes from its last checkpoint. It uses the
+This sample demonstrates a **long-running research agent** that survives process
+crashes and automatically resumes from its last checkpoint. It uses the
 `@durable_task` decorator from `azure-ai-agentserver-core` to provide built-in
 crash resilience without any manual state management.
 
 ## What it showcases
 
-1. **Multi-stage long-running task** — 5 research stages that take ~1 minute total
-2. **Real-time streaming** — SSE progress events as each stage completes
-3. **Crash resilience** — send `{"message": "crash"}` to trigger a deliberate crash,
-   the entrypoint auto-restarts the process, and the task resumes from checkpoint
-4. **Hosted deployment** — deploys to Azure AI Foundry as a hosted agent via `azd`
+1. **12-stage deep research pipeline** — each stage is a distinct LLM call with real-time token streaming
+2. **Crash resilience** — send `{"message": "crash"}` to kill the process; the supervisor
+   restarts it, and the task resumes from its last checkpoint
+3. **GET reconnection** — after a crash, `GET /invocations/{id}` streams replayed + live tokens
+4. **Cancel support** — `POST /invocations/{id}/cancel` stops the task gracefully
+5. **File-backed streaming** — stream items persist to disk for replay after crashes
 
 ## Architecture
 
 ```
-┌────────────────────────────────────────────────────┐
-│  Hosted Agent Sandbox                              │
-│                                                    │
-│  entrypoint.sh (auto-restarts on crash)            │
-│    └── python main.py                              │
-│                                                    │
-│  POST /invocations                                 │
-│    ├── {"message": "crash"} → os._exit(137) 💥     │
-│    └── {"message": "<topic>"} →                    │
-│          deep_research.start()                     │
-│            └── @durable_task execution             │
-│                  ├── Stage 1  → ctx.metadata.flush │
-│                  ├── Stage 2  → ctx.metadata.flush │
-│                  │       💥 CRASH (entrypoint       │
-│                  │          restarts process)       │
-│                  ├── Stage 3  (resumes here)       │
-│                  ├── Stage 4  → ctx.metadata.flush │
-│                  └── Stage 5  → final report       │
-│                                                    │
-│  Local disk: ~/.durable-sessions/ (persists in     │
-│  the sandbox filesystem across restarts)           │
-└────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│  Hosted Agent Sandbox (port 8088)                          │
+│                                                            │
+│  supervisor.py (PID 1 — always responds to /readiness)     │
+│    └── python app.py (port 8089, restarted on crash)       │
+│                                                            │
+│  POST /invocations                                         │
+│    ├── {"message": "crash"} → responds 200, then exit 💥   │
+│    └── {"message": "<topic>"} →                            │
+│          deep_research.start()                             │
+│            └── @durable_task execution                     │
+│                  ├── Stage 1/12 → LLM streaming + ckpt     │
+│                  ├── Stage 2/12 → LLM streaming + ckpt     │
+│                  │       💥 CRASH (supervisor restarts)     │
+│                  ├── Stage 3/12 (resumes here)             │
+│                  ├── ...                                   │
+│                  └── Stage 12/12 → final report            │
+│                                                            │
+│  GET /invocations/{id}                                     │
+│    └── Streams from active task or replays from file       │
+│                                                            │
+│  POST /invocations/{id}/cancel                             │
+│    └── Signals cancellation to running task                │
+│                                                            │
+│  Local disk: ~/.durable-tasks/ (persists across restarts)  │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ## Prerequisites
@@ -47,119 +52,126 @@ crash resilience without any manual state management.
 - [Azure Developer CLI (azd)](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
 - `azd` AI agents extension: `azd extension install azure.ai.agents`
 
-## Quick Start (Local)
-
-```bash
-# 1. Build local wheel packages (packages aren't published yet)
-./build.sh
-
-# 2. Install dependencies
-cd src/durable-research-agent
-pip install wheels/*.whl
-pip install -r requirements.txt
-
-# 3. Set environment
-export FOUNDRY_PROJECT_ENDPOINT="https://e2e-tests-westus2-account.services.ai.azure.com/api/projects/e2e-tests-westus2"
-export STAGE_DURATION=10   # seconds per stage (default 15)
-
-# 4. Run the agent (with auto-restart)
-./entrypoint.sh
-# — or directly without restart wrapper —
-python app.py
-```
-
-## Quick Start (Hosted via azd)
+## Quick Start (Deploy to Foundry)
 
 ```bash
 # 1. Build wheels (included in Docker image)
 ./build.sh
 
-# 2. Login and initialize (uses existing Foundry project)
+# 2. Login and deploy
 azd auth login
-
-# 3. Deploy
 azd up
 ```
 
-## Demo Walkthrough — Crash Recovery
+## Demo Script — Crash Recovery & Reconnection
 
-### Terminal 1: Start the agent
+This walkthrough demonstrates the full durability story. Total time: ~3 minutes.
 
-```bash
-./entrypoint.sh
-# Output: [entrypoint] Starting agent (PID 12345)...
-# Output: INFO Starting server on 0.0.0.0:8088
-```
-
-### Terminal 2: Send a research request (streaming)
+### Setup
 
 ```bash
-curl -N -X POST "http://localhost:8088/invocations?agent_session_id=demo-1" \
-    -H "Content-Type: application/json" \
-    -d '{"message": "Research the history and future of quantum computing"}'
+# Get access token
+TOKEN=$(az account get-access-token --resource https://ai.azure.com --query accessToken -o tsv)
+
+# Endpoint
+ENDPOINT="https://<account>.services.ai.azure.com/api/projects/<project>/agents/durable-research-agent/endpoint/protocols"
+
+# Generate a unique session ID (reuse across all calls in this demo)
+SESSION_ID="demo-$(uuidgen | tr '[:upper:]' '[:lower:]')"
+echo "Session: $SESSION_ID"
 ```
 
-You'll see SSE events streaming:
-```
-data: {"type": "started", "invocation_id": "abc123"}
-data: {"type": "progress", "stage": 1, "total": 5, "message": "[1/5] Analyzing topic..."}
-data: {"type": "stage_done", "stage": 1, "total": 5, "preview": "Quantum computing originated..."}
-data: {"type": "progress", "stage": 2, "total": 5, "message": "[2/5] Searching sources..."}
-data: {"type": "stage_done", "stage": 2, "total": 5, "preview": "Key papers include..."}
-```
-
-### Terminal 2: Crash the agent! 💥
-
-While stages are running, send the crash command from another terminal:
+### Step 1: Start the research task
 
 ```bash
-curl -X POST "http://localhost:8088/invocations?agent_session_id=crash-1" \
-    -H "Content-Type: application/json" \
-    -d '{"message": "crash"}'
+curl -N -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Research the history and future of quantum computing"}'
 ```
 
-### Terminal 1: Watch auto-restart
-
+You'll see SSE token events streaming in real-time:
 ```
-💥 DELIBERATE CRASH triggered via API — simulating OOM/failure
-[entrypoint] 💥 Agent crashed with exit code 137. Restarting in 1s...
-[entrypoint] Starting agent (PID 12346)...
-INFO Starting server on 0.0.0.0:8088
-WARNING Recovered stale task research-demo-1-abc123
+data: {"type": "token", "content": "\n\n**[Stage 1/12]** Decomposing topic into focused research questions...\n"}
+data: {"type": "token", "content": "Quantum"}
+data: {"type": "token", "content": " computing"}
+...
+data: {"type": "token", "content": "\n✅ Stage 1/12 complete.\n"}
+data: {"type": "token", "content": "\n\n**[Stage 2/12]** Surveying foundational literature...\n"}
 ```
 
-The `entrypoint.sh` wrapper detects the crash and restarts automatically.
-On startup, the durable task system detects the stale in-flight task and
-recovers it from the last checkpoint.
+> **Note:** Press Ctrl+C to stop watching the stream. The task continues running on the server.
 
-### Terminal 2: Check status
+### Step 2: Crash the agent! 💥
+
+While the research is running, send a crash trigger (same session):
 
 ```bash
-# Poll the invocation to see resumed progress:
-curl "http://localhost:8088/invocations/<invocation_id>"
+curl -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "crash"}'
+```
+
+Response (the app sends this back BEFORE dying):
+```
+data: {"type": "done", "full_text": "💥 Process crashing now..."}
+```
+
+The process exits. The supervisor immediately restarts it and recovers the task.
+
+### Step 3: Reconnect via GET
+
+Wait ~10 seconds for the process to restart and recover, then reconnect:
+
+```bash
+# Use the invocation ID from Step 1's response headers (x-agent-invocation-id),
+# or just use any ID — the GET handler finds the active task by session.
+INV_ID="reconnect"
+
+curl -N -X GET "${ENDPOINT}/invocations/${INV_ID}?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+You'll see replayed tokens from before the crash, followed by the recovery message
+and continued live streaming:
+```
+data: {"type": "token", "content": "\n\n**[Stage 1/12]** Decomposing topic...\n"}
+data: {"type": "token", "content": "Quantum computing..."}
+...
+data: {"type": "token", "content": "\n\n⚡ **Recovered from crash!** Resuming from stage 3/12...\n\n"}
+data: {"type": "token", "content": "\n\n**[Stage 3/12]** Identifying leading researchers...\n"}
+...
+```
+
+### Step 4: Crash again (optional — repeat as many times as you want)
+
+```bash
+curl -X POST "${ENDPOINT}/invocations?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "crash"}'
+
+# Wait, then reconnect again
+sleep 10
+curl -N -X GET "${ENDPOINT}/invocations/${INV_ID}?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Each time the task resumes from its last checkpoint — no work is lost.
+
+### Step 5: Cancel the task (optional)
+
+```bash
+curl -X POST "${ENDPOINT}/invocations/${INV_ID}/cancel?api-version=2025-11-15-preview&agent_session_id=${SESSION_ID}" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{}'
 ```
 
 Response:
 ```json
-{
-  "invocation_id": "abc123",
-  "status": "running",
-  "recovered": true,
-  "completed_stages": 2
-}
-```
-
-After recovery completes:
-```json
-{
-  "invocation_id": "abc123",
-  "status": "completed",
-  "output": {
-    "topic": "Research the history and future of quantum computing",
-    "report": "Quantum computing has evolved from theoretical proposals...",
-    "stages_completed": 5
-  }
-}
+{"status": "cancelled", "message": "Task cancellation requested."}
 ```
 
 ## How it works
@@ -169,24 +181,26 @@ The `@durable_task` decorator provides:
 - **Automatic persistence** — task state is checkpointed after each stage via
   `ctx.metadata.flush()`
 - **Crash recovery** — on startup, stale (in-flight) tasks are automatically
-  detected and re-executed from the top, but `ctx.metadata` contains all
+  detected by lease owner and re-executed, with `ctx.metadata` containing all
   previously saved progress
 - **Entry mode awareness** — `ctx.entry_mode` tells the function why it was
   called: `"fresh"`, `"resumed"`, or `"recovered"`
+- **File-backed streaming** — stream items are persisted to disk via a custom
+  `FileStreamHandler` so GET can replay them after a crash
 
 Key code pattern:
 ```python
-@durable_task(name="deep_research")
+@durable_task(name="deep_research", stream_handler_factory=file_stream_factory)
 async def deep_research(ctx: TaskContext[dict]) -> dict:
-    # Read progress from last checkpoint
     completed = ctx.metadata.get("completed_stages", 0)
 
     if ctx.entry_mode == "recovered":
-        # We crashed! But metadata has our progress.
-        await ctx.stream("⚡ Recovered! Resuming...")
+        await ctx.stream(json.dumps({"type": "token", "content": "⚡ Recovered!"}))
 
     for i in range(completed, len(STAGES)):
-        result = await do_stage(i)
+        # Stream LLM tokens in real-time
+        async for event in llm_stream:
+            await ctx.stream(json.dumps({"type": "token", "content": event.delta}))
 
         # CHECKPOINT — survives crashes
         ctx.metadata["completed_stages"] = i + 1
@@ -202,8 +216,7 @@ async def deep_research(ctx: TaskContext[dict]) -> dict:
 | `FOUNDRY_PROJECT_ENDPOINT` | AI Foundry project endpoint (set by platform) | Required |
 | `AZURE_AI_MODEL_DEPLOYMENT_NAME` | Model deployment to use | `gpt-4.1-mini` |
 | `FOUNDRY_TASK_API_ENABLED` | Use platform Task Storage (vs local file) | `0` (local) |
-| `STAGE_DURATION` | Seconds per research stage (for demo pacing) | `15` |
-| `DURABLE_DATA_DIR` | Local persistence directory | `~/.durable-sessions` |
+| `STAGE_DURATION` | Seconds between stages (for demo pacing) | `5` |
 
 ## File Structure
 
@@ -211,12 +224,11 @@ async def deep_research(ctx: TaskContext[dict]) -> dict:
 durable-agent-demo/
 ├── azure.yaml              # azd service config
 ├── build.sh                # Build local wheels for Docker
-├── infra/                  # Bicep templates (shared with other demos)
-├── .azure/demo-dev/.env    # Points at e2e-tests-westus2 project
+├── infra/                  # Bicep templates
 ├── src/durable-research-agent/
-│   ├── agent.py            # ⭐ The durable task (this is the interesting part)
-│   ├── app.py              # HTTP plumbing (just wires agent.py to the protocol)
-│   ├── entrypoint.sh       # Auto-restarts on crash
+│   ├── agent.py            # ⭐ The durable task (12-stage research pipeline)
+│   ├── app.py              # HTTP handlers (invoke, GET reconnect, cancel)
+│   ├── supervisor.py       # PID 1 reverse proxy (keeps /readiness alive)
 │   ├── agent.yaml          # Agent definition for Foundry
 │   ├── Dockerfile
 │   ├── requirements.txt
