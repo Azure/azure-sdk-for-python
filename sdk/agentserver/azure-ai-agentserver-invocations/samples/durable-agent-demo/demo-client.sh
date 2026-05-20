@@ -377,7 +377,7 @@ cmd_logs() {
     echo ""
 
     # Stream real-time container logs via azd ai agent monitor
-    azd ai agent monitor --session "${SESSION_ID}" --follow
+    azd ai agent monitor --session-id "${SESSION_ID}" --follow
 }
 
 # ── Main ──────────────────────────────────────────────────────────────────────

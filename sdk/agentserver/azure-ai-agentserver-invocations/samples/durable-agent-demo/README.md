@@ -219,7 +219,7 @@ Stream real-time container logs (stdout/stderr) in a separate terminal:
 ./demo-client.sh logs
 
 # Or directly via azd:
-azd ai agent monitor --session <session-id> --follow
+azd ai agent monitor --session-id <session-id> --follow
 
 # Recent logs (last 20 lines):
 azd ai agent monitor --tail 20
