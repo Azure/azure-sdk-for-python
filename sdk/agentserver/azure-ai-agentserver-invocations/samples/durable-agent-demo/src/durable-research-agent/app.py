@@ -1,14 +1,8 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-"""HTTP host for the LangGraph-based durable research agent.
+"""HTTP host for the durable research agent.
 
-Durability is provided by LangGraph's SQLite checkpointer — no @durable_task
-decorator needed. The graph automatically resumes from its last checkpoint
-when invoked with the same thread_id after a crash.
-
-Streaming: Live token events via asyncio.Queue during execution.
-GET reconnect: Replays completed stage results from checkpoint state.
-Cancel: Sets an asyncio.Event checked between graph nodes.
+This file is minimal plumbing — the durability logic is in ``agent.py``.
 """
 
 from __future__ import annotations
@@ -21,9 +15,10 @@ import os
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
+from azure.ai.agentserver.core.durable import TaskCancelled, TaskConflictError, TaskFailed, TaskTerminated
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-from agent import get_checkpoint_state, get_stream_queue, init_checkpointer, run_research, STAGES
+from agent import deep_research
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -31,16 +26,6 @@ logger = logging.getLogger(__name__)
 # ── HTTP handlers ─────────────────────────────────────────────────────────────
 
 app = InvocationAgentServerHost()
-
-# Track cancel events per session
-_cancel_events: dict[str, asyncio.Event] = {}
-
-
-@app.on_event("startup")
-async def startup():
-    """Initialize checkpointer on app startup."""
-    await init_checkpointer()
-    logger.info("LangGraph research agent ready")
 
 
 @app.invoke_handler
@@ -70,7 +55,7 @@ async def handle_invoke(request: Request) -> Response:
 
         async def crash_after_response():
             yield f"data: {json.dumps({'type': 'done', 'full_text': '💥 Process crashing now...'})}\n\n"
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.1)  # ensure response is flushed
             os._exit(137)
 
         return StreamingResponse(
@@ -79,28 +64,36 @@ async def handle_invoke(request: Request) -> Response:
             headers={"Cache-Control": "no-cache"},
         )
 
+    invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
-    thread_id = f"research-{session_id}"
-    logger.info(f"POST handler: session_id={session_id!r}, thread_id={thread_id!r}")
+    task_id = f"research-{session_id}"
+    logger.info(f"POST handler: session_id={session_id!r}, task_id={task_id!r}")
 
-    # Create cancel event for this session
-    cancel_event = asyncio.Event()
-    _cancel_events[session_id] = cancel_event
+    try:
+        run = await deep_research.start(
+            task_id=task_id,
+            input={"topic": topic, "invocation_id": invocation_id},
+            session_id=session_id,
+        )
+    except TaskConflictError:
+        # Task still in_progress (recovered after crash and still running)
+        return JSONResponse(
+            {"status": "in_progress", "message": "Research task is still running (recovered after crash). Use GET to reconnect."},
+            status_code=200,
+        )
 
-    # Start or resume the graph — returns a live stream queue
-    queue = await run_research(thread_id, topic, cancel_event=cancel_event)
-
-    # Stream SSE events from the queue
+    # Stream SSE events in Foundry-compatible format
     async def event_stream():
         try:
-            while True:
-                item = await queue.get()
-                if item is None:  # sentinel — done
-                    yield f"data: {json.dumps({'type': 'done', 'full_text': ''})}\n\n"
-                    break
-                yield f"data: {json.dumps(item)}\n\n"
-        finally:
-            _cancel_events.pop(session_id, None)
+            async for chunk in run:
+                # Each chunk from ctx.stream() is already a JSON string
+                yield f"data: {chunk}\n\n"
+            result = await run.result()
+            yield f"data: {json.dumps({'type': 'done', 'full_text': result.output.get('report', '')})}\n\n"
+        except (TaskCancelled, TaskTerminated):
+            yield f"data: {json.dumps({'type': 'done', 'full_text': '[Task was cancelled]'})}\n\n"
+        except TaskFailed as exc:
+            yield f"data: {json.dumps({'type': 'done', 'full_text': f'[Error: {exc}]'})}\n\n"
 
     return StreamingResponse(
         event_stream(),
@@ -111,30 +104,35 @@ async def handle_invoke(request: Request) -> Response:
 
 @app.get_invocation_handler
 async def handle_get(request: Request) -> Response:
-    """Reconnect to an existing research session.
+    """Reconnect to an existing invocation — stream from the active task.
 
-    1. If a live stream queue exists (graph still running), attach to it.
-    2. Otherwise, replay completed stage results from the LangGraph checkpoint.
+    After a crash, the client calls GET /invocations/{id} to resume receiving
+    the SSE stream. First tries the in-memory task handle; if unavailable
+    (task completed or not yet recovered), falls back to replaying from the
+    persisted stream file.
     """
     session_id = (
         request.query_params.get("agent_session_id")
         or os.environ.get("FOUNDRY_AGENT_SESSION_ID", "")
     )
-    thread_id = f"research-{session_id}"
-    logger.info(f"GET handler: session_id={session_id!r}, thread_id={thread_id!r}")
+    task_id = f"research-{session_id}"
+    logger.info(f"GET handler: session_id={session_id!r}, task_id={task_id!r}")
 
-    # Try live stream first
-    queue = get_stream_queue(thread_id)
-    if queue is not None:
-        logger.info("GET handler: attaching to live stream")
+    run = deep_research.get_active_run(task_id)
+    logger.info(f"GET handler: get_active_run({task_id!r}) -> {run}")
 
+    if run is not None:
+        # Live task — stream from it
         async def live_stream():
-            while True:
-                item = await queue.get()
-                if item is None:
-                    yield f"data: {json.dumps({'type': 'done', 'full_text': ''})}\n\n"
-                    break
-                yield f"data: {json.dumps(item)}\n\n"
+            try:
+                async for chunk in run:
+                    yield f"data: {chunk}\n\n"
+                result = await run.result()
+                yield f"data: {json.dumps({'type': 'done', 'full_text': result.output.get('report', '')})}\n\n"
+            except (TaskCancelled, TaskTerminated):
+                yield f"data: {json.dumps({'type': 'done', 'full_text': '[Task was cancelled]'})}\n\n"
+            except TaskFailed as exc:
+                yield f"data: {json.dumps({'type': 'done', 'full_text': f'[Error: {exc}]'})}\n\n"
 
         return StreamingResponse(
             live_stream(),
@@ -142,37 +140,30 @@ async def handle_get(request: Request) -> Response:
             headers={"Cache-Control": "no-cache"},
         )
 
-    # Fallback: replay from checkpoint state
-    state = await get_checkpoint_state(thread_id)
-    if state is None:
-        return JSONResponse({"status": "not_found", "message": "No research session found."})
+    # Fallback: replay from persisted stream file
+    from pathlib import Path
 
-    logger.info(f"GET handler: replaying from checkpoint (stage {state.get('current_stage', 0)}/{len(STAGES)})")
+    stream_file = Path.home() / ".durable-tasks" / "_streams" / task_id / "stream.jsonl"
+    if not stream_file.exists():
+        return JSONResponse({"status": "not_found", "message": "No active task or stream history for this session."})
 
-    async def replay_stream():
-        results = state.get("results", [])
-        total = len(STAGES)
+    logger.info(f"GET handler: falling back to stream file {stream_file}")
 
-        for i, r in enumerate(results):
-            stage_name = r["stage"]
-            header = f"\n\n**[Stage {i+1}/{total}]** {stage_name}...\n"
-            yield f"data: {json.dumps({'type': 'token', 'content': header})}\n\n"
-            yield f"data: {json.dumps({'type': 'token', 'content': r['result']})}\n\n"
-            footer = f"\n\u2705 Stage {i+1}/{total} complete.\n"
-            yield f"data: {json.dumps({'type': 'token', 'content': footer})}\n\n"
-
-        current = state.get("current_stage", 0)
-        if current >= total:
-            done_msg = "\n\n---\n\u2705 **Research complete!**\n"
-            yield f"data: {json.dumps({'type': 'token', 'content': done_msg})}\n\n"
-            yield f"data: {json.dumps({'type': 'done', 'full_text': ''})}\n\n"
-        else:
-            partial_msg = f"\n\n[Completed {current}/{total} stages \u2014 task may be recovering...]\n"
-            yield f"data: {json.dumps({'type': 'token', 'content': partial_msg})}\n\n"
-            yield f"data: {json.dumps({'type': 'done', 'full_text': ''})}\n\n"
+    async def file_stream():
+        for line in stream_file.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            data = json.loads(line)
+            if "__done__" in data:
+                yield f"data: {json.dumps({'type': 'done', 'full_text': ''})}\n\n"
+                return
+            yield f"data: {json.dumps(data)}\n\n"
+        # File exists but no __done__ sentinel — task may still be running
+        yield f"data: {json.dumps({'type': 'done', 'full_text': '[Stream replay complete — task may still be recovering]'})}\n\n"
 
     return StreamingResponse(
-        replay_stream(),
+        file_stream(),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache"},
     )
@@ -185,13 +176,14 @@ async def handle_cancel(request: Request) -> Response:
         request.query_params.get("agent_session_id")
         or os.environ.get("FOUNDRY_AGENT_SESSION_ID", "")
     )
-    logger.info(f"CANCEL handler: session_id={session_id!r}")
+    task_id = f"research-{session_id}"
+    logger.info(f"CANCEL handler: session_id={session_id!r}, task_id={task_id!r}")
 
-    cancel_event = _cancel_events.get(session_id)
-    if cancel_event is None:
+    run = deep_research.get_active_run(task_id)
+    if run is None:
         return JSONResponse({"status": "not_found", "message": "No active task to cancel."})
 
-    cancel_event.set()
+    await run.cancel()
     return JSONResponse({"status": "cancelled", "message": "Task cancellation requested."})
 
 

@@ -6,10 +6,5 @@ azure-ai-agentserver-invocations
 azure-ai-projects>=1.0.0b10
 azure-identity>=1.17.0
 
-# LangGraph with SQLite checkpointer (provides crash-resilient state)
-langgraph>=0.2
-langgraph-checkpoint-sqlite>=2.0
-aiosqlite>=0.20.0
-
 # Supervisor proxy (also a transitive dep of core)
 aiohttp>=3.9.0

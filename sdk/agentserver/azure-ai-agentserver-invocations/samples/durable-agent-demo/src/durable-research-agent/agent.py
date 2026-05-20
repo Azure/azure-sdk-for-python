@@ -1,30 +1,27 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-"""LangGraph-powered deep research agent with SQLite checkpointing.
+"""The durable research task — this is what makes the agent crash-resilient.
 
-Durability is handled entirely by LangGraph's checkpoint system:
-  - SqliteSaver persists graph state after each node execution
-  - On crash recovery, resuming with the same thread_id picks up from the
-    last completed node automatically
-  - No manual checkpointing, no FileStreamHandler, no metadata management
+The ONLY things you need for durability:
+  1. ``@durable_task`` decorator
+  2. ``ctx.metadata[...] = value`` + ``await ctx.metadata.flush()`` to checkpoint
 
-The graph loops through 12 research stages. Each stage is a node execution
-that makes an LLM call and streams tokens to the consumer via an asyncio.Queue.
+That's it. Everything else here is just normal agent logic.
 """
 
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import os
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Any
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
-from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
-from langgraph.graph import END, START, StateGraph
-from typing_extensions import TypedDict
+
+from azure.ai.agentserver.core.durable import TaskContext, durable_task
 
 logger = logging.getLogger(__name__)
 
@@ -39,31 +36,67 @@ _credential = DefaultAzureCredential()
 _project_client = AIProjectClient(endpoint=_endpoint, credential=_credential)
 _openai_client = _project_client.get_openai_client()
 
-STAGE_DURATION = int(os.environ.get("STAGE_DURATION", "5"))
+# ── File-backed stream handler ────────────────────────────────────────────────
+# Stores stream items to disk so consumers can reconnect after a crash/disconnect
+# and replay from where they left off.
 
-# ── Checkpoint store ──────────────────────────────────────────────────────────
-
-_DATA_DIR = Path.home() / ".durable-research"
-_DATA_DIR.mkdir(parents=True, exist_ok=True)
-_DB_PATH = _DATA_DIR / "checkpoints.db"
-
-checkpointer: AsyncSqliteSaver | None = None
-_checkpointer_conn = None
+_STREAM_DIR = Path.home() / ".durable-tasks" / "_streams"
 
 
-async def init_checkpointer() -> AsyncSqliteSaver:
-    """Initialize the async SQLite checkpointer (call once at startup)."""
-    global checkpointer, _checkpointer_conn
-    if checkpointer is None:
-        import aiosqlite
-        _checkpointer_conn = await aiosqlite.connect(str(_DB_PATH))
-        checkpointer = AsyncSqliteSaver(_checkpointer_conn)
-        await checkpointer.setup()
-        logger.info("LangGraph checkpoints: %s", _DB_PATH)
-    return checkpointer
+class FileStreamHandler:
+    """Stream handler that persists items to a file for crash-resilient replay.
+
+    On init, if the stream file already exists (i.e. recovering after crash),
+    all previously written items are loaded back into the queue so that a
+    consumer iterating via ``get()`` sees the full history followed by new items.
+    """
+
+    def __init__(self, task_id: str) -> None:
+        self._task_id = task_id
+        self._dir = _STREAM_DIR / task_id
+        self._dir.mkdir(parents=True, exist_ok=True)
+        self._file = self._dir / "stream.jsonl"
+        self._queue: asyncio.Queue[Any] = asyncio.Queue()
+        self._closed = False
+        self._SENTINEL = object()
+
+        # Replay persisted items into the queue on recovery
+        if self._file.exists():
+            for line in self._file.read_text(encoding="utf-8").splitlines():
+                if line.strip():
+                    data = json.loads(line)
+                    if "__done__" not in data:
+                        self._queue.put_nowait(data)
+
+    async def put(self, item: Any) -> None:
+        """Persist item to disk and enqueue for live consumer."""
+        with open(self._file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(item) + "\n")
+        await self._queue.put(item)
+
+    async def get(self) -> Any:
+        """Get next item (live consumer path)."""
+        item = await self._queue.get()
+        if item is self._SENTINEL:
+            raise StopAsyncIteration
+        return item
+
+    async def close(self) -> None:
+        """Mark stream as done."""
+        self._closed = True
+        with open(self._file, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"__done__": True}) + "\n")
+        await self._queue.put(self._SENTINEL)
+
+
+def file_stream_factory(task_id: str) -> FileStreamHandler:
+    """Factory for creating file-backed stream handlers."""
+    return FileStreamHandler(task_id)
 
 
 # ── Research stages ───────────────────────────────────────────────────────────
+# A realistic deep-research pipeline — each stage is a distinct step that
+# naturally takes time (LLM call + processing delay).
 
 STAGES = [
     "Decomposing topic into focused research questions",
@@ -80,70 +113,84 @@ STAGES = [
     "Generating key insights and recommendations",
 ]
 
-
-# ── Graph state ───────────────────────────────────────────────────────────────
-
-
-def _append_results(existing: list[dict], new: list[dict]) -> list[dict]:
-    """Reducer: append new results to existing list."""
-    return existing + new
+STAGE_DURATION = int(os.environ.get("STAGE_DURATION", "5"))
 
 
-class ResearchState(TypedDict):
-    """State for the research graph."""
-    topic: str
-    current_stage: int
-    results: Annotated[list[dict], _append_results]
-    is_cancelled: bool
-    is_complete: bool
+# ── The durable task ──────────────────────────────────────────────────────────
 
+@durable_task(name="deep_research", stream_handler_factory=file_stream_factory)
+async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
+    """Long-running deep research task that survives crashes.
 
-# ── Streaming infrastructure ──────────────────────────────────────────────────
-# Each running graph gets an asyncio.Queue for live token streaming.
-# The HTTP handler iterates this queue to emit SSE events.
-
-_active_streams: dict[str, asyncio.Queue] = {}
-_active_cancel: asyncio.Event | None = None  # cancel event for current execution
-_SENTINEL = object()
-
-
-def get_stream_queue(thread_id: str) -> asyncio.Queue | None:
-    """Get the live stream queue for a running graph, or None."""
-    return _active_streams.get(thread_id)
-
-
-# ── Graph nodes ───────────────────────────────────────────────────────────────
-
-
-async def research_stage(state: ResearchState) -> dict[str, Any]:
-    """Execute one research stage: LLM call with token streaming."""
-    stage_idx = state["current_stage"]
-    topic = state["topic"]
+    Runs through 12 distinct research stages, each making an LLM call.
+    On crash recovery, resumes from the last checkpointed stage.
+    Can be cancelled early via the cancel invocation handler.
+    """
+    topic: str = ctx.input["topic"]
+    completed: int = ctx.metadata.get("completed_stages", 0)
+    results: list = ctx.metadata.get("results", [])
     total = len(STAGES)
 
-    if stage_idx >= total:
-        return {"is_complete": True}
+    if ctx.entry_mode == "recovered":
+        logger.warning("⚡ Recovered! Resuming from stage %d/%d", completed + 1, total)
+        await ctx.stream(json.dumps({
+            "type": "token",
+            "content": f"\n\n⚡ **Recovered from crash!** Resuming from stage {completed + 1}/{total}...\n\n",
+        }))
 
-    # Check cancel before starting work
-    if _active_cancel and _active_cancel.is_set():
-        return {"is_cancelled": True}
+    for stage_idx in range(completed, total):
+        # Check for cancellation
+        if ctx.cancel.is_set():
+            await ctx.stream(json.dumps({
+                "type": "token",
+                "content": "\n\n---\n🛑 **Research cancelled.**\n",
+            }))
+            return {"topic": topic, "stages_completed": stage_idx, "cancelled": True}
 
-    stage = STAGES[stage_idx]
-    results = state.get("results", [])
+        stage = STAGES[stage_idx]
 
-    # Find the stream queue for this graph execution
-    queue = _active_streams.get("_current_")
+        # Announce stage
+        await ctx.stream(json.dumps({
+            "type": "token",
+            "content": f"\n\n**[Stage {stage_idx + 1}/{total}]** {stage}...\n",
+        }))
 
-    # Announce stage
-    if queue:
-        await queue.put({"type": "token", "content": f"\n\n**[Stage {stage_idx + 1}/{total}]** {stage}...\n"})
+        # Do the work — streaming LLM tokens
+        result = await _run_stage_streaming(ctx, topic, stage, prior_results=results[-3:])
+        results.append({"stage": stage, "result": result})
 
-    # Simulate processing delay
+        # ── CHECKPOINT ── crash-recovery boundary ─────
+        ctx.metadata["completed_stages"] = stage_idx + 1
+        ctx.metadata["results"] = results
+        await ctx.metadata.flush()
+
+        await ctx.stream(json.dumps({
+            "type": "token",
+            "content": f"\n✅ Stage {stage_idx + 1}/{total} complete.\n",
+        }))
+
+    # Done!
+    await ctx.stream(json.dumps({
+        "type": "token",
+        "content": "\n\n---\n✅ **Research complete!**\n",
+    }))
+    return {
+        "topic": topic,
+        "report": results[-1]["result"] if results else "",
+        "stages_completed": total,
+    }
+
+
+# ── LLM helpers ───────────────────────────────────────────────────────────────
+
+async def _run_stage_streaming(
+    ctx: TaskContext, topic: str, stage: str, *, prior_results: list
+) -> str:
+    """Call the LLM for one research stage, streaming tokens to the consumer."""
     await asyncio.sleep(STAGE_DURATION)
 
-    # Build prompt with prior context
-    if results:
-        findings = "\n".join(f"- {r['stage']}: {r['result'][:80]}" for r in results[-3:])
+    if prior_results:
+        findings = "\n".join(f"- {r['stage']}: {r['result'][:80]}" for r in prior_results[-3:])
         instructions = (
             f"You are a research assistant performing: '{stage}'. "
             f"Build on these prior findings:\n{findings}\n\n"
@@ -154,154 +201,19 @@ async def research_stage(state: ResearchState) -> dict[str, Any]:
             f"You are a research assistant performing: '{stage}'. "
             "Provide 3-4 sentences of specific, detailed findings. Be informative and engaging."
         )
+    input_text = f"Research topic: {topic}"
 
     # Stream tokens from the LLM
     full_text = ""
     async for event in await _openai_client.responses.create(
         model=_model,
         instructions=instructions,
-        input=f"Research topic: {topic}",
+        input=input_text,
         store=False,
         stream=True,
     ):
         if event.type == "response.output_text.delta":
             full_text += event.delta
-            if queue:
-                await queue.put({"type": "token", "content": event.delta})
+            await ctx.stream(json.dumps({"type": "token", "content": event.delta}))
 
-    # Announce completion
-    if queue:
-        await queue.put({"type": "token", "content": f"\n✅ Stage {stage_idx + 1}/{total} complete.\n"})
-
-    return {
-        "current_stage": stage_idx + 1,
-        "results": [{"stage": stage, "result": full_text}],
-    }
-
-
-def should_continue(state: ResearchState) -> str:
-    """Route: continue to next stage or finish."""
-    if state.get("is_cancelled", False):
-        return "end"
-    if state.get("is_complete", False):
-        return "end"
-    if state["current_stage"] >= len(STAGES):
-        return "end"
-    return "next_stage"
-
-
-# ── Build the graph ───────────────────────────────────────────────────────────
-
-
-def build_graph() -> StateGraph:
-    """Construct the research state graph."""
-    builder = StateGraph(ResearchState)
-
-    builder.add_node("research_stage", research_stage)
-
-    builder.add_edge(START, "research_stage")
-    builder.add_conditional_edges(
-        "research_stage",
-        should_continue,
-        {"next_stage": "research_stage", "end": END},
-    )
-
-    return builder
-
-
-_graph_builder = build_graph()
-
-
-async def get_compiled_graph():
-    """Get the compiled graph with checkpointer."""
-    cp = await init_checkpointer()
-    return _graph_builder.compile(checkpointer=cp)
-
-
-# ── Public API ────────────────────────────────────────────────────────────────
-
-
-async def run_research(thread_id: str, topic: str, *, cancel_event: asyncio.Event | None = None) -> asyncio.Queue:
-    """Start or resume a research graph, returning the live stream queue.
-
-    If the graph already has checkpoint state for this thread_id, it resumes
-    from where it left off (re-invokes with the checkpointed state).
-    Otherwise it starts fresh.
-
-    The returned queue yields dicts: {"type": "token", "content": "..."}.
-    A sentinel None signals completion.
-    """
-    global _active_cancel
-    queue: asyncio.Queue = asyncio.Queue()
-    _active_streams[thread_id] = queue
-    _active_streams["_current_"] = queue  # for the node to find
-    _active_cancel = cancel_event  # for the node to check
-
-    async def _run():
-        global _active_cancel
-        try:
-            graph = await get_compiled_graph()
-            config = {"configurable": {"thread_id": thread_id}}
-
-            # Check existing state — if we have a checkpoint, resume from it
-            snapshot = await graph.aget_state(config)
-            existing_stage = 0
-            if snapshot and snapshot.values:
-                existing_stage = snapshot.values.get("current_stage", 0)
-
-            if existing_stage > 0 and existing_stage < len(STAGES):
-                # Resuming from crash — re-invoke with checkpointed state
-                total = len(STAGES)
-                logger.warning(
-                    "\u26a1 Resuming from stage %d/%d (thread=%s)",
-                    existing_stage + 1, total, thread_id,
-                )
-                await queue.put({
-                    "type": "token",
-                    "content": f"\n\n\u26a1 **Recovered from crash!** Resuming from stage {existing_stage + 1}/{total}...\n\n",
-                })
-                # Clear any stale cancel flag from previous run
-                resume_state = {**snapshot.values, "is_cancelled": False}
-                async for _ in graph.astream(resume_state, config):
-                    pass
-            elif existing_stage >= len(STAGES):
-                # Already complete — just signal done
-                await queue.put({"type": "token", "content": "\n\n---\n\u2705 **Research already complete!**\n"})
-            else:
-                # Fresh start
-                initial_state = {
-                    "topic": topic,
-                    "current_stage": 0,
-                    "results": [],
-                    "is_cancelled": False,
-                    "is_complete": False,
-                }
-                async for _ in graph.astream(initial_state, config):
-                    pass
-
-            # Signal completion
-            if cancel_event and cancel_event.is_set():
-                await queue.put({"type": "token", "content": "\n\n---\n\U0001f6d1 **Research cancelled.**\n"})
-            elif existing_stage < len(STAGES):
-                await queue.put({"type": "token", "content": "\n\n---\n\u2705 **Research complete!**\n"})
-        except Exception as exc:
-            logger.exception("Graph execution failed: %s", exc)
-            await queue.put({"type": "error", "content": f"Error: {exc}"})
-        finally:
-            await queue.put(None)  # sentinel
-            _active_streams.pop(thread_id, None)
-            _active_streams.pop("_current_", None)
-            _active_cancel = None
-
-    asyncio.create_task(_run())
-    return queue
-
-
-async def get_checkpoint_state(thread_id: str) -> dict[str, Any] | None:
-    """Load the latest checkpoint state for replay (used by GET handler)."""
-    graph = await get_compiled_graph()
-    config = {"configurable": {"thread_id": thread_id}}
-    state = await graph.aget_state(config)
-    if state and state.values:
-        return state.values
-    return None
+    return full_text
