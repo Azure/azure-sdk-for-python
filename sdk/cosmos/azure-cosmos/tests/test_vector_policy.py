@@ -1,14 +1,23 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import copy
+import copy
+import os
 import unittest
 import uuid
+from unittest.mock import MagicMock
 
 import pytest
 
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos.database import DatabaseProxy
+
+EGS_SKIP_REASON = "Set COSMOS_ENABLE_EGS_TESTS=1 to run; requires server-side EGS preview."
+
+
 
 VectorPolicyTestData = {
     "valid_vector_indexing_policy" : {
@@ -49,7 +58,30 @@ VectorPolicyTestData = {
                 },
             ]
         }
-    }
+    },
+    "valid_vector_embedding_policy_with_source": {
+        "vectorEmbeddings": [
+            {
+                "path": "/embedding",
+                "dataType": "float32",
+                "dimensions": 1536,
+                "distanceFunction": "cosine",
+                "embeddingSource": {
+                    "sourcePaths": [
+                        "/journal_title",
+                        "/title",
+                        "/toc_abstract",
+                        "/abstract",
+                        "/full_text",
+                    ],
+                    "deploymentName": "text-embedding-3-small",
+                    "modelName": "text-embedding-3-small",
+                    "endpoint": "https://example.com",
+                    "authType": "ApiKey",
+                },
+            }
+        ]
+    },
 }
 
 @pytest.mark.cosmosSearchQuery
@@ -88,13 +120,16 @@ class TestVectorPolicy(unittest.TestCase):
                         "dimensions": 256,
                         "distanceFunction": "euclidean"
                     }]}
+            container_id = 'vector_container_' + data_type
             created_container = self.test_db.create_container(
-                id='vector_container_' + data_type,
+                id=container_id,
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy)
-            properties = created_container.read()
-            assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
-            self.test_db.delete_container('vector_container_' + data_type)
+            try:
+                properties = created_container.read()
+                assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
+            finally:
+                self.test_db.delete_container(container_id)
 
     @unittest.skip
     def test_create_valid_vector_indexing_policy(self):
@@ -107,9 +142,11 @@ class TestVectorPolicy(unittest.TestCase):
             partition_key=PartitionKey(path="/id"),
             vector_embedding_policy=vector_embedding_policy,
             indexing_policy=indexing_policy)
-        properties = created_container.read()
-        assert properties['indexingPolicy']['vectorIndexes'] == indexing_policy['vectorIndexes']
-        self.test_db.delete_container(created_container.id)
+        try:
+            properties = created_container.read()
+            assert properties['indexingPolicy']['vectorIndexes'] == indexing_policy['vectorIndexes']
+        finally:
+            self.test_db.delete_container(created_container.id)
 
     def test_create_vector_embedding_container(self):
         indexing_policy = {
@@ -148,10 +185,12 @@ class TestVectorPolicy(unittest.TestCase):
             vector_embedding_policy=vector_embedding_policy,
             indexing_policy=indexing_policy
         )
-        properties = created_container.read()
-        assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
-        assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
-        self.test_db.delete_container(container_id)
+        try:
+            properties = created_container.read()
+            assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+            assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+        finally:
+            self.test_db.delete_container(container_id)
 
         # Pass a vector indexing policy with hierarchical vectorIndexShardKey value
         indexing_policy = {
@@ -165,10 +204,12 @@ class TestVectorPolicy(unittest.TestCase):
             indexing_policy=indexing_policy,
             vector_embedding_policy=vector_embedding_policy
         )
-        properties = created_container.read()
-        assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
-        assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
-        self.test_db.delete_container(container_id)
+        try:
+            properties = created_container.read()
+            assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+            assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+        finally:
+            self.test_db.delete_container(container_id)
 
     def test_replace_vector_indexing_policy(self):
         # Replace should work so long as the new indexing policy doesn't change the vector indexes, and as long as
@@ -240,15 +281,18 @@ class TestVectorPolicy(unittest.TestCase):
                     "indexingSearchListSize": 100
                 }]
         }
-        self.test_db.replace_container(
-            created_container,
-            PartitionKey(path="/id"),
-            vector_embedding_policy=vector_embedding_policy,
-            indexing_policy=new_indexing_policy)
-        properties = created_container.read()
-        assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
-        assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
-        self.test_db.delete_container(container_id)
+
+        try:
+            self.test_db.replace_container(
+                created_container,
+                PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy,
+                indexing_policy=new_indexing_policy)
+            properties = created_container.read()
+            assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+            assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+        finally:
+            self.test_db.delete_container(container_id)
 
     def test_fail_create_vector_indexing_policy(self):
         vector_embedding_policy = {
@@ -453,53 +497,55 @@ class TestVectorPolicy(unittest.TestCase):
             indexing_policy=indexing_policy,
             vector_embedding_policy=vector_embedding_policy
         )
-        # don't provide vector embedding policy
         try:
-            self.test_db.replace_container(
-                created_container,
-                PartitionKey(path="/id"),
-                indexing_policy=indexing_policy)
-            pytest.fail("Container replace should have failed for missing embedding policy.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
-                    in e.http_error_message)
-        # using a new indexing policy
-        new_indexing_policy = {
-            "vectorIndexes": [
-                {"path": "/vector1", "type": "quantizedFlat"}]
-        }
-        try:
-            self.test_db.replace_container(
-                created_container,
-                PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy,
-                indexing_policy=new_indexing_policy)
-            pytest.fail("Container replace should have failed for new indexing policy.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert ("Paths in existing vector indexing policy cannot be modified in Collection Replace"
-                    in e.http_error_message)
-        # using a new vector embedding policy
-        new_embedding_policy = {
-            "vectorEmbeddings": [
-                {
-                    "path": "/vector1",
-                    "dataType": "float32",
-                    "dimensions": 384,
-                    "distanceFunction": "euclidean"}]}
-        try:
-            self.test_db.replace_container(
-                created_container,
-                PartitionKey(path="/id"),
-                vector_embedding_policy=new_embedding_policy,
-                indexing_policy=indexing_policy)
-            pytest.fail("Container replace should have failed for new embedding policy.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert ("Paths in existing embedding policy cannot be modified in Collection Replace"
-                    in e.http_error_message)
-        self.test_db.delete_container(container_id)
+            # don't provide vector embedding policy
+            try:
+                self.test_db.replace_container(
+                    created_container,
+                    PartitionKey(path="/id"),
+                    indexing_policy=indexing_policy)
+                pytest.fail("Container replace should have failed for missing embedding policy.")
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 400
+                assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
+                        in e.http_error_message)
+            # using a new indexing policy
+            new_indexing_policy = {
+                "vectorIndexes": [
+                    {"path": "/vector1", "type": "quantizedFlat"}]
+            }
+            try:
+                self.test_db.replace_container(
+                    created_container,
+                    PartitionKey(path="/id"),
+                    vector_embedding_policy=vector_embedding_policy,
+                    indexing_policy=new_indexing_policy)
+                pytest.fail("Container replace should have failed for new indexing policy.")
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 400
+                assert ("Paths in existing vector indexing policy cannot be modified in Collection Replace"
+                        in e.http_error_message)
+            # using a new vector embedding policy
+            new_embedding_policy = {
+                "vectorEmbeddings": [
+                    {
+                        "path": "/vector1",
+                        "dataType": "float32",
+                        "dimensions": 384,
+                        "distanceFunction": "euclidean"}]}
+            try:
+                self.test_db.replace_container(
+                    created_container,
+                    PartitionKey(path="/id"),
+                    vector_embedding_policy=new_embedding_policy,
+                    indexing_policy=indexing_policy)
+                pytest.fail("Container replace should have failed for new embedding policy.")
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 400
+                assert ("Paths in existing embedding policy cannot be modified in Collection Replace"
+                        in e.http_error_message)
+        finally:
+            self.test_db.delete_container(container_id)
 
     def test_fail_create_vector_embedding_policy(self):
         # Using invalid data type
@@ -580,6 +626,87 @@ class TestVectorPolicy(unittest.TestCase):
             assert e.status_code == 400
             assert "The Vector Embedding Policy has an invalid DistanceFunction:handMeasured" in e.http_error_message
 
+    @unittest.skipUnless(os.getenv("COSMOS_ENABLE_EGS_TESTS"), EGS_SKIP_REASON)
+    def test_create_vector_embedding_with_embedding_source(self):
+        for auth_type in ["ApiKey", "Entra"]:
+            vector_embedding_policy = copy.deepcopy(
+                VectorPolicyTestData["valid_vector_embedding_policy_with_source"])
+            vector_embedding_policy["vectorEmbeddings"][0]["embeddingSource"]["authType"] = auth_type
+            container_id = "vector_embedding_source_container_" + auth_type.lower() + "_" + str(uuid.uuid4())
+            created_container = self.test_db.create_container(
+                id=container_id,
+                partition_key=PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy,
+            )
+            try:
+                properties = created_container.read()
+                assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+            finally:
+                self.test_db.delete_container(container_id)
+
+    @unittest.skipUnless(os.getenv("COSMOS_ENABLE_EGS_TESTS"), EGS_SKIP_REASON)
+    def test_fail_create_vector_embedding_source_invalid_auth_type(self):
+        vector_embedding_policy = copy.deepcopy(
+            VectorPolicyTestData["valid_vector_embedding_policy_with_source"])
+        vector_embedding_policy["vectorEmbeddings"][0]["embeddingSource"]["authType"] = "NotAnAuthType"
+
+        try:
+            self.test_db.create_container(
+                id="vector_embedding_source_bad_auth_" + str(uuid.uuid4()),
+                partition_key=PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy,
+            )
+            pytest.fail("Container creation should have failed for invalid embeddingSource authType.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "The auth type provided in the embedding source of vector policy is invalid." \
+                in e.http_error_message
+
+    @unittest.skipUnless(os.getenv("COSMOS_ENABLE_EGS_TESTS"), EGS_SKIP_REASON)
+    def test_fail_create_vector_embedding_source_missing_required_fields(self):
+        for field_name in ["sourcePaths", "endpoint", "deploymentName"]:
+            vector_embedding_policy = copy.deepcopy(
+                VectorPolicyTestData["valid_vector_embedding_policy_with_source"])
+            embedding_source = vector_embedding_policy["vectorEmbeddings"][0]["embeddingSource"]
+            if field_name == "sourcePaths":
+                embedding_source["sourcePaths"] = []
+            else:
+                del embedding_source[field_name]
+
+            container_id = "vector_embedding_source_missing_" + field_name.lower() + "_" + str(uuid.uuid4())
+            try:
+                self.test_db.create_container(
+                    id=container_id,
+                    partition_key=PartitionKey(path="/id"),
+                    vector_embedding_policy=vector_embedding_policy,
+                )
+                pytest.fail(
+                    "Container creation should have failed for embeddingSource missing '{}'.".format(field_name)
+                )
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 400, (
+                    "Expected 400 for missing '{}', got {}".format(field_name, e.status_code)
+                )
+
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestVectorEmbeddingPolicyOffline(unittest.TestCase):
+
+    def test_embedding_source_round_trips_through_create_container_definition(self):
+        vector_embedding_policy = VectorPolicyTestData["valid_vector_embedding_policy_with_source"]
+
+        mock_connection = MagicMock()
+        mock_connection.CreateContainer.return_value = {"id": "c", "_self": "dbs/x/colls/c"}
+        db = DatabaseProxy(mock_connection, "x")
+
+        db.create_container(
+            id="c",
+            partition_key=PartitionKey(path="/id"),
+            vector_embedding_policy=vector_embedding_policy,
+        )
+
+        sent_collection = mock_connection.CreateContainer.call_args.kwargs["collection"]
+        assert sent_collection["vectorEmbeddingPolicy"] == vector_embedding_policy
