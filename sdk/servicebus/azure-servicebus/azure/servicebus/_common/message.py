@@ -124,18 +124,18 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
                 self._raw_amqp_message = AmqpAnnotatedMessage(message=kwargs["message"])
         else:
             self._build_annotated_message(body)
-            self.application_properties = application_properties
-            self.session_id = session_id
-            self.message_id = message_id
-            self.content_type = content_type
-            self.correlation_id = correlation_id
-            self.to = to
-            self.reply_to = reply_to
-            self.reply_to_session_id = reply_to_session_id
-            self.subject = subject
-            self.scheduled_enqueue_time_utc = scheduled_enqueue_time_utc
-            self.time_to_live = time_to_live
-            self.partition_key = partition_key
+            self.application_properties = application_properties  # type: ignore[assignment]
+            self.session_id = session_id  # type: ignore[assignment]
+            self.message_id = message_id  # type: ignore[assignment]
+            self.content_type = content_type  # type: ignore[assignment]
+            self.correlation_id = correlation_id  # type: ignore[assignment]
+            self.to = to  # type: ignore[assignment]
+            self.reply_to = reply_to  # type: ignore[assignment]
+            self.reply_to_session_id = reply_to_session_id  # type: ignore[assignment]
+            self.subject = subject  # type: ignore[assignment]
+            self.scheduled_enqueue_time_utc = scheduled_enqueue_time_utc  # type: ignore[assignment]
+            self.time_to_live = time_to_live  # type: ignore[assignment]
+            self.partition_key = partition_key  # type: ignore[assignment]
 
     def __str__(self) -> str:
         return str(self.raw_amqp_message)
