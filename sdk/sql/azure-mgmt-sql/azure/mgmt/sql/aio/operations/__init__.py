@@ -102,6 +102,7 @@ from ._workload_classifiers_operations import WorkloadClassifiersOperations  # t
 from ._workload_groups_operations import WorkloadGroupsOperations  # type: ignore
 from ._backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations  # type: ignore
 from ._database_extensions_operations import DatabaseExtensionsOperations  # type: ignore
+from ._database_operations_operations import DatabaseOperationsOperations  # type: ignore
 from ._database_usages_operations import DatabaseUsagesOperations  # type: ignore
 from ._ledger_digest_uploads_operations import LedgerDigestUploadsOperations  # type: ignore
 from ._outbound_firewall_rules_operations import OutboundFirewallRulesOperations  # type: ignore
@@ -109,6 +110,7 @@ from ._usages_operations import UsagesOperations  # type: ignore
 from ._long_term_retention_managed_instance_backups_operations import LongTermRetentionManagedInstanceBackupsOperations  # type: ignore
 from ._restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations  # type: ignore
 from ._server_connection_policies_operations import ServerConnectionPoliciesOperations  # type: ignore
+from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations  # type: ignore
 from ._server_trust_certificates_operations import ServerTrustCertificatesOperations  # type: ignore
 from ._endpoint_certificates_operations import EndpointCertificatesOperations  # type: ignore
 from ._managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations  # type: ignore
@@ -124,6 +126,7 @@ from ._server_advanced_threat_protection_settings_operations import ServerAdvanc
 from ._managed_server_dns_aliases_operations import ManagedServerDnsAliasesOperations  # type: ignore
 from ._managed_database_advanced_threat_protection_settings_operations import ManagedDatabaseAdvancedThreatProtectionSettingsOperations  # type: ignore
 from ._managed_instance_advanced_threat_protection_settings_operations import ManagedInstanceAdvancedThreatProtectionSettingsOperations  # type: ignore
+from ._replication_links_operations import ReplicationLinksOperations  # type: ignore
 from ._managed_database_move_operations_operations import ManagedDatabaseMoveOperationsOperations  # type: ignore
 from ._managed_instance_dtcs_operations import ManagedInstanceDtcsOperations  # type: ignore
 from ._synapse_link_workspaces_operations import SynapseLinkWorkspacesOperations  # type: ignore
@@ -156,13 +159,10 @@ from ._database_sql_vulnerability_assessment_scans_operations import DatabaseSql
 from ._database_sql_vulnerability_assessments_settings_operations import DatabaseSqlVulnerabilityAssessmentsSettingsOperations  # type: ignore
 from ._failover_groups_operations import FailoverGroupsOperations  # type: ignore
 from ._instance_pools_operations import InstancePoolsOperations  # type: ignore
-from ._managed_instances_operations import ManagedInstancesOperations  # type: ignore
-from ._replication_links_operations import ReplicationLinksOperations  # type: ignore
-from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations  # type: ignore
-from ._servers_operations import ServersOperations  # type: ignore
 from ._long_term_retention_backups_operations import LongTermRetentionBackupsOperations  # type: ignore
 from ._long_term_retention_policies_operations import LongTermRetentionPoliciesOperations  # type: ignore
-from ._database_operations_operations import DatabaseOperationsOperations  # type: ignore
+from ._managed_instances_operations import ManagedInstancesOperations  # type: ignore
+from ._servers_operations import ServersOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -258,6 +258,7 @@ __all__ = [
     "WorkloadGroupsOperations",
     "BackupShortTermRetentionPoliciesOperations",
     "DatabaseExtensionsOperations",
+    "DatabaseOperationsOperations",
     "DatabaseUsagesOperations",
     "LedgerDigestUploadsOperations",
     "OutboundFirewallRulesOperations",
@@ -265,6 +266,7 @@ __all__ = [
     "LongTermRetentionManagedInstanceBackupsOperations",
     "RestorableDroppedManagedDatabasesOperations",
     "ServerConnectionPoliciesOperations",
+    "DistributedAvailabilityGroupsOperations",
     "ServerTrustCertificatesOperations",
     "EndpointCertificatesOperations",
     "ManagedDatabaseSensitivityLabelsOperations",
@@ -280,6 +282,7 @@ __all__ = [
     "ManagedServerDnsAliasesOperations",
     "ManagedDatabaseAdvancedThreatProtectionSettingsOperations",
     "ManagedInstanceAdvancedThreatProtectionSettingsOperations",
+    "ReplicationLinksOperations",
     "ManagedDatabaseMoveOperationsOperations",
     "ManagedInstanceDtcsOperations",
     "SynapseLinkWorkspacesOperations",
@@ -312,13 +315,10 @@ __all__ = [
     "DatabaseSqlVulnerabilityAssessmentsSettingsOperations",
     "FailoverGroupsOperations",
     "InstancePoolsOperations",
-    "ManagedInstancesOperations",
-    "ReplicationLinksOperations",
-    "DistributedAvailabilityGroupsOperations",
-    "ServersOperations",
     "LongTermRetentionBackupsOperations",
     "LongTermRetentionPoliciesOperations",
-    "DatabaseOperationsOperations",
+    "ManagedInstancesOperations",
+    "ServersOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

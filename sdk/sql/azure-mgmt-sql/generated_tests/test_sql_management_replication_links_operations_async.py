@@ -26,7 +26,7 @@ class TestSqlManagementReplicationLinksOperationsAsync(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2023-05-01-preview",
+            api_version="2022-02-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,41 +40,8 @@ class TestSqlManagementReplicationLinksOperationsAsync(AzureMgmtRecordedTestCase
             server_name="str",
             database_name="str",
             link_id="str",
-            api_version="2023-05-01-preview",
+            api_version="2022-02-01-preview",
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_replication_links_begin_create_or_update(self, resource_group):
-        response = await (
-            await self.client.replication_links.begin_create_or_update(
-                resource_group_name=resource_group.name,
-                server_name="str",
-                database_name="str",
-                link_id="str",
-                parameters={
-                    "id": "str",
-                    "isTerminationAllowed": bool,
-                    "linkType": "str",
-                    "name": "str",
-                    "partnerDatabase": "str",
-                    "partnerDatabaseId": "str",
-                    "partnerLocation": "str",
-                    "partnerRole": "str",
-                    "partnerServer": "str",
-                    "percentComplete": 0,
-                    "replicationMode": "str",
-                    "replicationState": "str",
-                    "role": "str",
-                    "startTime": "2020-02-20 00:00:00",
-                    "type": "str",
-                },
-                api_version="2023-05-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
@@ -88,24 +55,7 @@ class TestSqlManagementReplicationLinksOperationsAsync(AzureMgmtRecordedTestCase
                 server_name="str",
                 database_name="str",
                 link_id="str",
-                api_version="2023-05-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_replication_links_begin_update(self, resource_group):
-        response = await (
-            await self.client.replication_links.begin_update(
-                resource_group_name=resource_group.name,
-                server_name="str",
-                database_name="str",
-                link_id="str",
-                parameters={"id": "str", "linkType": "str", "name": "str", "type": "str"},
-                api_version="2023-05-01-preview",
+                api_version="2022-02-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -121,7 +71,7 @@ class TestSqlManagementReplicationLinksOperationsAsync(AzureMgmtRecordedTestCase
                 server_name="str",
                 database_name="str",
                 link_id="str",
-                api_version="2023-05-01-preview",
+                api_version="2022-02-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -137,7 +87,7 @@ class TestSqlManagementReplicationLinksOperationsAsync(AzureMgmtRecordedTestCase
                 server_name="str",
                 database_name="str",
                 link_id="str",
-                api_version="2023-05-01-preview",
+                api_version="2022-02-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -150,7 +100,7 @@ class TestSqlManagementReplicationLinksOperationsAsync(AzureMgmtRecordedTestCase
         response = self.client.replication_links.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2023-05-01-preview",
+            api_version="2022-02-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

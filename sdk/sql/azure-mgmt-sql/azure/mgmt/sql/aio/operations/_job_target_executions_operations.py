@@ -60,7 +60,7 @@ class JobTargetExecutionsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_job_execution(
+    def list_by_job_execution(  # pylint: disable=too-many-locals
         self,
         resource_group_name: str,
         server_name: str,
@@ -180,7 +180,7 @@ class JobTargetExecutionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_step(
+    def list_by_step(  # pylint: disable=too-many-locals
         self,
         resource_group_name: str,
         server_name: str,

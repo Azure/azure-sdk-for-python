@@ -54,14 +54,73 @@ class DatabaseOperationsOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+    @distributed_trace_async
+    async def cancel(
+        self, resource_group_name: str, server_name: str, database_name: str, operation_id: str, **kwargs: Any
+    ) -> None:
+        """Cancels the asynchronous operation on the database.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal. Required.
+        :type resource_group_name: str
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param database_name: The name of the database. Required.
+        :type database_name: str
+        :param operation_id: The operation identifier. Required.
+        :type operation_id: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_cancel_request(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            database_name=database_name,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
     @distributed_trace
     def list_by_database(
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.DatabaseOperation"]:
         """Gets a list of operations performed on the database.
 
-        :param resource_group_name: The name of the resource group that contains the resource.
-         Required.
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
@@ -74,7 +133,7 @@ class DatabaseOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
         cls: ClsType[_models.DatabaseOperationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -123,69 +182,8 @@ class DatabaseOperationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    async def cancel(
-        self, resource_group_name: str, server_name: str, database_name: str, operation_id: str, **kwargs: Any
-    ) -> None:
-        """Cancels the asynchronous operation on the database.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal. Required.
-        :type resource_group_name: str
-        :param server_name: The name of the server. Required.
-        :type server_name: str
-        :param database_name: The name of the database. Required.
-        :type database_name: str
-        :param operation_id: The operation identifier. Required.
-        :type operation_id: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_cancel_request(
-            resource_group_name=resource_group_name,
-            server_name=server_name,
-            database_name=database_name,
-            operation_id=operation_id,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore

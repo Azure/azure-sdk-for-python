@@ -415,6 +415,8 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
     :ivar database_extensions: DatabaseExtensionsOperations operations
     :vartype database_extensions: azure.mgmt.sql.operations.DatabaseExtensionsOperations
+    :ivar database_operations: DatabaseOperationsOperations operations
+    :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperationsOperations
     :ivar database_usages: DatabaseUsagesOperations operations
     :vartype database_usages: azure.mgmt.sql.operations.DatabaseUsagesOperations
     :ivar ledger_digest_uploads: LedgerDigestUploadsOperations operations
@@ -434,6 +436,9 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar server_connection_policies: ServerConnectionPoliciesOperations operations
     :vartype server_connection_policies:
      azure.mgmt.sql.operations.ServerConnectionPoliciesOperations
+    :ivar distributed_availability_groups: DistributedAvailabilityGroupsOperations operations
+    :vartype distributed_availability_groups:
+     azure.mgmt.sql.operations.DistributedAvailabilityGroupsOperations
     :ivar server_trust_certificates: ServerTrustCertificatesOperations operations
     :vartype server_trust_certificates: azure.mgmt.sql.operations.ServerTrustCertificatesOperations
     :ivar endpoint_certificates: EndpointCertificatesOperations operations
@@ -484,6 +489,8 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      ManagedInstanceAdvancedThreatProtectionSettingsOperations operations
     :vartype managed_instance_advanced_threat_protection_settings:
      azure.mgmt.sql.operations.ManagedInstanceAdvancedThreatProtectionSettingsOperations
+    :ivar replication_links: ReplicationLinksOperations operations
+    :vartype replication_links: azure.mgmt.sql.operations.ReplicationLinksOperations
     :ivar managed_database_move_operations: ManagedDatabaseMoveOperationsOperations operations
     :vartype managed_database_move_operations:
      azure.mgmt.sql.operations.ManagedDatabaseMoveOperationsOperations
@@ -585,23 +592,16 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
     :ivar instance_pools: InstancePoolsOperations operations
     :vartype instance_pools: azure.mgmt.sql.operations.InstancePoolsOperations
-    :ivar managed_instances: ManagedInstancesOperations operations
-    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
-    :ivar replication_links: ReplicationLinksOperations operations
-    :vartype replication_links: azure.mgmt.sql.operations.ReplicationLinksOperations
-    :ivar distributed_availability_groups: DistributedAvailabilityGroupsOperations operations
-    :vartype distributed_availability_groups:
-     azure.mgmt.sql.operations.DistributedAvailabilityGroupsOperations
-    :ivar servers: ServersOperations operations
-    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar long_term_retention_backups: LongTermRetentionBackupsOperations operations
     :vartype long_term_retention_backups:
      azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
     :ivar long_term_retention_policies: LongTermRetentionPoliciesOperations operations
     :vartype long_term_retention_policies:
      azure.mgmt.sql.operations.LongTermRetentionPoliciesOperations
-    :ivar database_operations: DatabaseOperationsOperations operations
-    :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperationsOperations
+    :ivar managed_instances: ManagedInstancesOperations operations
+    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
+    :ivar servers: ServersOperations operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
@@ -886,6 +886,9 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.database_extensions = DatabaseExtensionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.database_operations = DatabaseOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.database_usages = DatabaseUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.ledger_digest_uploads = LedgerDigestUploadsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -901,6 +904,9 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.server_connection_policies = ServerConnectionPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.distributed_availability_groups = DistributedAvailabilityGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.server_trust_certificates = ServerTrustCertificatesOperations(
@@ -951,6 +957,9 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             ManagedInstanceAdvancedThreatProtectionSettingsOperations(
                 self._client, self._config, self._serialize, self._deserialize
             )
+        )
+        self.replication_links = ReplicationLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_database_move_operations = ManagedDatabaseMoveOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -1048,25 +1057,16 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.managed_instances = ManagedInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.replication_links = ReplicationLinksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.distributed_availability_groups = DistributedAvailabilityGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.long_term_retention_backups = LongTermRetentionBackupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.long_term_retention_policies = LongTermRetentionPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.database_operations = DatabaseOperationsOperations(
+        self.managed_instances = ManagedInstancesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

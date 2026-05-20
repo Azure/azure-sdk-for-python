@@ -53,7 +53,7 @@ def build_list_by_location_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -95,7 +95,7 @@ def build_list_by_server_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -141,7 +141,7 @@ def build_list_by_database_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -188,7 +188,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -230,7 +230,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -272,7 +272,7 @@ def build_change_access_tier_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -317,7 +317,7 @@ def build_copy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -351,174 +351,6 @@ def build_copy_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lock_time_based_immutability_request(  # pylint: disable=name-too-long
-    location_name: str,
-    long_term_retention_server_name: str,
-    long_term_retention_database_name: str,
-    backup_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionServers/{longTermRetentionServerName}/longTermRetentionDatabases/{longTermRetentionDatabaseName}/longTermRetentionBackups/{backupName}/lockTimeBasedImmutability",
-    )
-    path_format_arguments = {
-        "locationName": _SERIALIZER.url("location_name", location_name, "str"),
-        "longTermRetentionServerName": _SERIALIZER.url(
-            "long_term_retention_server_name", long_term_retention_server_name, "str"
-        ),
-        "longTermRetentionDatabaseName": _SERIALIZER.url(
-            "long_term_retention_database_name", long_term_retention_database_name, "str"
-        ),
-        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_remove_legal_hold_immutability_request(  # pylint: disable=name-too-long
-    location_name: str,
-    long_term_retention_server_name: str,
-    long_term_retention_database_name: str,
-    backup_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionServers/{longTermRetentionServerName}/longTermRetentionDatabases/{longTermRetentionDatabaseName}/longTermRetentionBackups/{backupName}/removeLegalHoldImmutability",
-    )
-    path_format_arguments = {
-        "locationName": _SERIALIZER.url("location_name", location_name, "str"),
-        "longTermRetentionServerName": _SERIALIZER.url(
-            "long_term_retention_server_name", long_term_retention_server_name, "str"
-        ),
-        "longTermRetentionDatabaseName": _SERIALIZER.url(
-            "long_term_retention_database_name", long_term_retention_database_name, "str"
-        ),
-        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_remove_time_based_immutability_request(  # pylint: disable=name-too-long
-    location_name: str,
-    long_term_retention_server_name: str,
-    long_term_retention_database_name: str,
-    backup_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionServers/{longTermRetentionServerName}/longTermRetentionDatabases/{longTermRetentionDatabaseName}/longTermRetentionBackups/{backupName}/removeTimeBasedImmutability",
-    )
-    path_format_arguments = {
-        "locationName": _SERIALIZER.url("location_name", location_name, "str"),
-        "longTermRetentionServerName": _SERIALIZER.url(
-            "long_term_retention_server_name", long_term_retention_server_name, "str"
-        ),
-        "longTermRetentionDatabaseName": _SERIALIZER.url(
-            "long_term_retention_database_name", long_term_retention_database_name, "str"
-        ),
-        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_set_legal_hold_immutability_request(  # pylint: disable=name-too-long
-    location_name: str,
-    long_term_retention_server_name: str,
-    long_term_retention_database_name: str,
-    backup_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionServers/{longTermRetentionServerName}/longTermRetentionDatabases/{longTermRetentionDatabaseName}/longTermRetentionBackups/{backupName}/setLegalHoldImmutability",
-    )
-    path_format_arguments = {
-        "locationName": _SERIALIZER.url("location_name", location_name, "str"),
-        "longTermRetentionServerName": _SERIALIZER.url(
-            "long_term_retention_server_name", long_term_retention_server_name, "str"
-        ),
-        "longTermRetentionDatabaseName": _SERIALIZER.url(
-            "long_term_retention_database_name", long_term_retention_database_name, "str"
-        ),
-        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_update_request(
     location_name: str,
     long_term_retention_server_name: str,
@@ -530,7 +362,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -576,7 +408,7 @@ def build_list_by_resource_group_location_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -620,7 +452,7 @@ def build_list_by_resource_group_server_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -668,7 +500,7 @@ def build_list_by_resource_group_database_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -717,7 +549,7 @@ def build_get_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -761,7 +593,7 @@ def build_delete_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -805,7 +637,7 @@ def build_change_access_tier_by_resource_group_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -852,7 +684,7 @@ def build_copy_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -887,182 +719,6 @@ def build_copy_by_resource_group_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_lock_time_based_immutability_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    location_name: str,
-    long_term_retention_server_name: str,
-    long_term_retention_database_name: str,
-    backup_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionServers/{longTermRetentionServerName}/longTermRetentionDatabases/{longTermRetentionDatabaseName}/longTermRetentionBackups/{backupName}/lockTimeBasedImmutability",
-    )
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "locationName": _SERIALIZER.url("location_name", location_name, "str"),
-        "longTermRetentionServerName": _SERIALIZER.url(
-            "long_term_retention_server_name", long_term_retention_server_name, "str"
-        ),
-        "longTermRetentionDatabaseName": _SERIALIZER.url(
-            "long_term_retention_database_name", long_term_retention_database_name, "str"
-        ),
-        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_remove_legal_hold_immutability_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    location_name: str,
-    long_term_retention_server_name: str,
-    long_term_retention_database_name: str,
-    backup_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionServers/{longTermRetentionServerName}/longTermRetentionDatabases/{longTermRetentionDatabaseName}/longTermRetentionBackups/{backupName}/removeLegalHoldImmutability",
-    )
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "locationName": _SERIALIZER.url("location_name", location_name, "str"),
-        "longTermRetentionServerName": _SERIALIZER.url(
-            "long_term_retention_server_name", long_term_retention_server_name, "str"
-        ),
-        "longTermRetentionDatabaseName": _SERIALIZER.url(
-            "long_term_retention_database_name", long_term_retention_database_name, "str"
-        ),
-        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_remove_time_based_immutability_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    location_name: str,
-    long_term_retention_server_name: str,
-    long_term_retention_database_name: str,
-    backup_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionServers/{longTermRetentionServerName}/longTermRetentionDatabases/{longTermRetentionDatabaseName}/longTermRetentionBackups/{backupName}/removeTimeBasedImmutability",
-    )
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "locationName": _SERIALIZER.url("location_name", location_name, "str"),
-        "longTermRetentionServerName": _SERIALIZER.url(
-            "long_term_retention_server_name", long_term_retention_server_name, "str"
-        ),
-        "longTermRetentionDatabaseName": _SERIALIZER.url(
-            "long_term_retention_database_name", long_term_retention_database_name, "str"
-        ),
-        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_set_legal_hold_immutability_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    location_name: str,
-    long_term_retention_server_name: str,
-    long_term_retention_database_name: str,
-    backup_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionServers/{longTermRetentionServerName}/longTermRetentionDatabases/{longTermRetentionDatabaseName}/longTermRetentionBackups/{backupName}/setLegalHoldImmutability",
-    )
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "locationName": _SERIALIZER.url("location_name", location_name, "str"),
-        "longTermRetentionServerName": _SERIALIZER.url(
-            "long_term_retention_server_name", long_term_retention_server_name, "str"
-        ),
-        "longTermRetentionDatabaseName": _SERIALIZER.url(
-            "long_term_retention_database_name", long_term_retention_database_name, "str"
-        ),
-        "backupName": _SERIALIZER.url("backup_name", backup_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_update_by_resource_group_request(
     resource_group_name: str,
     location_name: str,
@@ -1075,7 +731,7 @@ def build_update_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1155,7 +811,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[_models.LongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1204,7 +860,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1240,7 +899,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[_models.LongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1290,7 +949,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1329,7 +991,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[_models.LongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1380,7 +1042,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1421,7 +1086,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -1445,7 +1110,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("LongTermRetentionBackup", pipeline_response.http_response)
@@ -1474,7 +1142,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
@@ -1503,17 +1171,16 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -1543,7 +1210,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1602,7 +1269,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -1643,17 +1310,16 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -1755,7 +1421,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -1821,7 +1487,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -1862,17 +1528,16 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -1976,7 +1641,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LongTermRetentionBackupOperationResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -2022,534 +1687,6 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _lock_time_based_immutability_initial(
-        self,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_lock_time_based_immutability_request(
-            location_name=location_name,
-            long_term_retention_server_name=long_term_retention_server_name,
-            long_term_retention_database_name=long_term_retention_database_name,
-            backup_name=backup_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_lock_time_based_immutability(
-        self,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.LongTermRetentionBackup]:
-        """Lock time based immutability of an existing long term retention backup.
-
-        :param location_name: Required.
-        :type location_name: str
-        :param long_term_retention_server_name: The name of the server. Required.
-        :type long_term_retention_server_name: str
-        :param long_term_retention_database_name: The name of the database. Required.
-        :type long_term_retention_database_name: str
-        :param backup_name: The backup name. Required.
-        :type backup_name: str
-        :return: An instance of LROPoller that returns either LongTermRetentionBackup or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.LongTermRetentionBackup]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._lock_time_based_immutability_initial(
-                location_name=location_name,
-                long_term_retention_server_name=long_term_retention_server_name,
-                long_term_retention_database_name=long_term_retention_database_name,
-                backup_name=backup_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LongTermRetentionBackup", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.LongTermRetentionBackup].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.LongTermRetentionBackup](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _remove_legal_hold_immutability_initial(
-        self,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_remove_legal_hold_immutability_request(
-            location_name=location_name,
-            long_term_retention_server_name=long_term_retention_server_name,
-            long_term_retention_database_name=long_term_retention_database_name,
-            backup_name=backup_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_remove_legal_hold_immutability(
-        self,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.LongTermRetentionBackup]:
-        """Remove legal hold immutability of an existing long term retention backup.
-
-        :param location_name: Required.
-        :type location_name: str
-        :param long_term_retention_server_name: The name of the server. Required.
-        :type long_term_retention_server_name: str
-        :param long_term_retention_database_name: The name of the database. Required.
-        :type long_term_retention_database_name: str
-        :param backup_name: The backup name. Required.
-        :type backup_name: str
-        :return: An instance of LROPoller that returns either LongTermRetentionBackup or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.LongTermRetentionBackup]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._remove_legal_hold_immutability_initial(
-                location_name=location_name,
-                long_term_retention_server_name=long_term_retention_server_name,
-                long_term_retention_database_name=long_term_retention_database_name,
-                backup_name=backup_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LongTermRetentionBackup", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.LongTermRetentionBackup].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.LongTermRetentionBackup](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _remove_time_based_immutability_initial(
-        self,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_remove_time_based_immutability_request(
-            location_name=location_name,
-            long_term_retention_server_name=long_term_retention_server_name,
-            long_term_retention_database_name=long_term_retention_database_name,
-            backup_name=backup_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_remove_time_based_immutability(
-        self,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.LongTermRetentionBackup]:
-        """Remove time based immutability of an existing long term retention backup.
-
-        :param location_name: Required.
-        :type location_name: str
-        :param long_term_retention_server_name: The name of the server. Required.
-        :type long_term_retention_server_name: str
-        :param long_term_retention_database_name: The name of the database. Required.
-        :type long_term_retention_database_name: str
-        :param backup_name: The backup name. Required.
-        :type backup_name: str
-        :return: An instance of LROPoller that returns either LongTermRetentionBackup or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.LongTermRetentionBackup]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._remove_time_based_immutability_initial(
-                location_name=location_name,
-                long_term_retention_server_name=long_term_retention_server_name,
-                long_term_retention_database_name=long_term_retention_database_name,
-                backup_name=backup_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LongTermRetentionBackup", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.LongTermRetentionBackup].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.LongTermRetentionBackup](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _set_legal_hold_immutability_initial(
-        self,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_set_legal_hold_immutability_request(
-            location_name=location_name,
-            long_term_retention_server_name=long_term_retention_server_name,
-            long_term_retention_database_name=long_term_retention_database_name,
-            backup_name=backup_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_set_legal_hold_immutability(
-        self,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.LongTermRetentionBackup]:
-        """Set legal hold immutability of an existing long term retention backup.
-
-        :param location_name: Required.
-        :type location_name: str
-        :param long_term_retention_server_name: The name of the server. Required.
-        :type long_term_retention_server_name: str
-        :param long_term_retention_database_name: The name of the database. Required.
-        :type long_term_retention_database_name: str
-        :param backup_name: The backup name. Required.
-        :type backup_name: str
-        :return: An instance of LROPoller that returns either LongTermRetentionBackup or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.LongTermRetentionBackup]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._set_legal_hold_immutability_initial(
-                location_name=location_name,
-                long_term_retention_server_name=long_term_retention_server_name,
-                long_term_retention_database_name=long_term_retention_database_name,
-                backup_name=backup_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LongTermRetentionBackup", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.LongTermRetentionBackup].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.LongTermRetentionBackup](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
     def _update_initial(
         self,
         location_name: str,
@@ -2570,7 +1707,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -2611,17 +1748,16 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -2725,7 +1861,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LongTermRetentionBackupOperationResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -2801,7 +1937,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[_models.LongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2851,7 +1987,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2891,7 +2030,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[_models.LongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2942,7 +2081,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2985,7 +2127,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[_models.LongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -3037,7 +2179,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3082,7 +2227,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
 
         _request = build_get_by_resource_group_request(
@@ -3107,7 +2252,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("LongTermRetentionBackup", pipeline_response.http_response)
@@ -3137,7 +2285,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_by_resource_group_request(
@@ -3167,17 +2315,16 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -3211,7 +2358,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3272,7 +2419,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -3314,17 +2461,16 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -3438,7 +2584,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -3506,7 +2652,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -3548,17 +2694,16 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -3674,7 +2819,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LongTermRetentionBackupOperationResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -3721,558 +2866,6 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _lock_time_based_immutability_by_resource_group_initial(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_lock_time_based_immutability_by_resource_group_request(
-            resource_group_name=resource_group_name,
-            location_name=location_name,
-            long_term_retention_server_name=long_term_retention_server_name,
-            long_term_retention_database_name=long_term_retention_database_name,
-            backup_name=backup_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_lock_time_based_immutability_by_resource_group(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.LongTermRetentionBackup]:
-        """Lock time based immutability of an existing long term retention backup.
-
-        :param resource_group_name: The resource group name of the database. Required.
-        :type resource_group_name: str
-        :param location_name: Required.
-        :type location_name: str
-        :param long_term_retention_server_name: The name of the server. Required.
-        :type long_term_retention_server_name: str
-        :param long_term_retention_database_name: The name of the database. Required.
-        :type long_term_retention_database_name: str
-        :param backup_name: The backup name. Required.
-        :type backup_name: str
-        :return: An instance of LROPoller that returns either LongTermRetentionBackup or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.LongTermRetentionBackup]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._lock_time_based_immutability_by_resource_group_initial(
-                resource_group_name=resource_group_name,
-                location_name=location_name,
-                long_term_retention_server_name=long_term_retention_server_name,
-                long_term_retention_database_name=long_term_retention_database_name,
-                backup_name=backup_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LongTermRetentionBackup", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.LongTermRetentionBackup].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.LongTermRetentionBackup](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _remove_legal_hold_immutability_by_resource_group_initial(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_remove_legal_hold_immutability_by_resource_group_request(
-            resource_group_name=resource_group_name,
-            location_name=location_name,
-            long_term_retention_server_name=long_term_retention_server_name,
-            long_term_retention_database_name=long_term_retention_database_name,
-            backup_name=backup_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_remove_legal_hold_immutability_by_resource_group(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.LongTermRetentionBackup]:
-        """Remove legal hold immutability of an existing long term retention backup.
-
-        :param resource_group_name: The resource group name of the database. Required.
-        :type resource_group_name: str
-        :param location_name: Required.
-        :type location_name: str
-        :param long_term_retention_server_name: The name of the server. Required.
-        :type long_term_retention_server_name: str
-        :param long_term_retention_database_name: The name of the database. Required.
-        :type long_term_retention_database_name: str
-        :param backup_name: The backup name. Required.
-        :type backup_name: str
-        :return: An instance of LROPoller that returns either LongTermRetentionBackup or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.LongTermRetentionBackup]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._remove_legal_hold_immutability_by_resource_group_initial(
-                resource_group_name=resource_group_name,
-                location_name=location_name,
-                long_term_retention_server_name=long_term_retention_server_name,
-                long_term_retention_database_name=long_term_retention_database_name,
-                backup_name=backup_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LongTermRetentionBackup", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.LongTermRetentionBackup].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.LongTermRetentionBackup](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _remove_time_based_immutability_by_resource_group_initial(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_remove_time_based_immutability_by_resource_group_request(
-            resource_group_name=resource_group_name,
-            location_name=location_name,
-            long_term_retention_server_name=long_term_retention_server_name,
-            long_term_retention_database_name=long_term_retention_database_name,
-            backup_name=backup_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_remove_time_based_immutability_by_resource_group(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.LongTermRetentionBackup]:
-        """Remove time based immutability of an existing long term retention backup.
-
-        :param resource_group_name: The resource group name of the database. Required.
-        :type resource_group_name: str
-        :param location_name: Required.
-        :type location_name: str
-        :param long_term_retention_server_name: The name of the server. Required.
-        :type long_term_retention_server_name: str
-        :param long_term_retention_database_name: The name of the database. Required.
-        :type long_term_retention_database_name: str
-        :param backup_name: The backup name. Required.
-        :type backup_name: str
-        :return: An instance of LROPoller that returns either LongTermRetentionBackup or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.LongTermRetentionBackup]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._remove_time_based_immutability_by_resource_group_initial(
-                resource_group_name=resource_group_name,
-                location_name=location_name,
-                long_term_retention_server_name=long_term_retention_server_name,
-                long_term_retention_database_name=long_term_retention_database_name,
-                backup_name=backup_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LongTermRetentionBackup", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.LongTermRetentionBackup].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.LongTermRetentionBackup](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _set_legal_hold_immutability_by_resource_group_initial(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_set_legal_hold_immutability_by_resource_group_request(
-            resource_group_name=resource_group_name,
-            location_name=location_name,
-            long_term_retention_server_name=long_term_retention_server_name,
-            long_term_retention_database_name=long_term_retention_database_name,
-            backup_name=backup_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_set_legal_hold_immutability_by_resource_group(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        location_name: str,
-        long_term_retention_server_name: str,
-        long_term_retention_database_name: str,
-        backup_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.LongTermRetentionBackup]:
-        """Set legal hold immutability of an existing long term retention backup.
-
-        :param resource_group_name: The resource group name of the database. Required.
-        :type resource_group_name: str
-        :param location_name: Required.
-        :type location_name: str
-        :param long_term_retention_server_name: The name of the server. Required.
-        :type long_term_retention_server_name: str
-        :param long_term_retention_database_name: The name of the database. Required.
-        :type long_term_retention_database_name: str
-        :param backup_name: The backup name. Required.
-        :type backup_name: str
-        :return: An instance of LROPoller that returns either LongTermRetentionBackup or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.LongTermRetentionBackup]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
-        cls: ClsType[_models.LongTermRetentionBackup] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._set_legal_hold_immutability_by_resource_group_initial(
-                resource_group_name=resource_group_name,
-                location_name=location_name,
-                long_term_retention_server_name=long_term_retention_server_name,
-                long_term_retention_database_name=long_term_retention_database_name,
-                backup_name=backup_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LongTermRetentionBackup", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.LongTermRetentionBackup].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.LongTermRetentionBackup](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
     def _update_by_resource_group_initial(
         self,
         resource_group_name: str,
@@ -4294,7 +2887,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -4336,17 +2929,16 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -4462,7 +3054,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LongTermRetentionBackupOperationResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)

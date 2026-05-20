@@ -1724,8 +1724,8 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
     :vartype is_azure_monitor_target_enabled: bool
     :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
-     actions are forced to be processed.
-     The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+     actions are forced to be processed. The default minimum value is 1000 (1 second). The maximum
+     is 2,147,483,647.
     :vartype queue_delay_ms: int
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
@@ -1891,8 +1891,8 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
          or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
         :paramtype is_azure_monitor_target_enabled: bool
         :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-         audit actions are forced to be processed.
-         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+         audit actions are forced to be processed. The default minimum value is 1000 (1 second). The
+         maximum is 2,147,483,647.
         :paramtype queue_delay_ms: int
         :keyword is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
          storage.
@@ -1978,7 +1978,7 @@ class DatabaseColumn(ProxyResource):
      "date", "time", "datetime2", "datetimeoffset", "tinyint", "smallint", "int", "smalldatetime",
      "real", "money", "datetime", "float", "sql_variant", "ntext", "bit", "decimal", "numeric",
      "smallmoney", "bigint", "hierarchyid", "geometry", "geography", "varbinary", "varchar",
-     "binary", "char", "timestamp", "nvarchar", "nchar", "xml", "sysname", and "int".
+     "binary", "char", "timestamp", "nvarchar", "nchar", "xml", and "sysname".
     :vartype column_type: str or ~azure.mgmt.sql.models.ColumnDataType
     :ivar temporal_type: The table temporal type. Known values are: "NonTemporalTable",
      "HistoryTable", and "SystemVersionedTemporalTable".
@@ -2019,8 +2019,8 @@ class DatabaseColumn(ProxyResource):
          "uniqueidentifier", "date", "time", "datetime2", "datetimeoffset", "tinyint", "smallint",
          "int", "smalldatetime", "real", "money", "datetime", "float", "sql_variant", "ntext", "bit",
          "decimal", "numeric", "smallmoney", "bigint", "hierarchyid", "geometry", "geography",
-         "varbinary", "varchar", "binary", "char", "timestamp", "nvarchar", "nchar", "xml", "sysname",
-         and "int".
+         "varbinary", "varchar", "binary", "char", "timestamp", "nvarchar", "nchar", "xml", and
+         "sysname".
         :paramtype column_type: str or ~azure.mgmt.sql.models.ColumnDataType
         :keyword temporal_type: The table temporal type. Known values are: "NonTemporalTable",
          "HistoryTable", and "SystemVersionedTemporalTable".
@@ -2078,8 +2078,8 @@ class DatabaseExtensions(ProxyResource):
     :vartype type: str
     :ivar operation_mode: Operation Mode. "PolybaseImport"
     :vartype operation_mode: str or ~azure.mgmt.sql.models.OperationMode
-    :ivar storage_key_type: Storage key type. Known values are: "SharedAccessKey",
-     "StorageAccessKey", and "ManagedIdentity".
+    :ivar storage_key_type: Storage key type. Known values are: "SharedAccessKey" and
+     "StorageAccessKey".
     :vartype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
     :ivar storage_key: Storage key.
     :vartype storage_key: str
@@ -2115,8 +2115,8 @@ class DatabaseExtensions(ProxyResource):
         """
         :keyword operation_mode: Operation Mode. "PolybaseImport"
         :paramtype operation_mode: str or ~azure.mgmt.sql.models.OperationMode
-        :keyword storage_key_type: Storage key type. Known values are: "SharedAccessKey",
-         "StorageAccessKey", and "ManagedIdentity".
+        :keyword storage_key_type: Storage key type. Known values are: "SharedAccessKey" and
+         "StorageAccessKey".
         :paramtype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
         :keyword storage_key: Storage key.
         :paramtype storage_key: str
@@ -2278,8 +2278,6 @@ class DatabaseOperation(ProxyResource):
     :vartype description: str
     :ivar is_cancellable: Whether the operation can be cancelled.
     :vartype is_cancellable: bool
-    :ivar operation_phase_details: The operation phase details.
-    :vartype operation_phase_details: ~azure.mgmt.sql.models.PhaseDetails
     """
 
     _validation = {
@@ -2300,7 +2298,6 @@ class DatabaseOperation(ProxyResource):
         "estimated_completion_time": {"readonly": True},
         "description": {"readonly": True},
         "is_cancellable": {"readonly": True},
-        "operation_phase_details": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2321,7 +2318,6 @@ class DatabaseOperation(ProxyResource):
         "estimated_completion_time": {"key": "properties.estimatedCompletionTime", "type": "iso-8601"},
         "description": {"key": "properties.description", "type": "str"},
         "is_cancellable": {"key": "properties.isCancellable", "type": "bool"},
-        "operation_phase_details": {"key": "properties.operationPhaseDetails", "type": "PhaseDetails"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -2341,7 +2337,6 @@ class DatabaseOperation(ProxyResource):
         self.estimated_completion_time: Optional[datetime.datetime] = None
         self.description: Optional[str] = None
         self.is_cancellable: Optional[bool] = None
-        self.operation_phase_details: Optional["_models.PhaseDetails"] = None
 
 
 class DatabaseOperationListResult(_serialization.Model):
@@ -4114,8 +4109,7 @@ class DistributedAvailabilityGroup(ProxyResource):
     :vartype distributed_availability_group_name: str
     :ivar distributed_availability_group_id: ID of the distributed availability group.
     :vartype distributed_availability_group_id: str
-    :ivar replication_mode: Replication mode of the link. Known values are: "Async", "Sync", and
-     "Async".
+    :ivar replication_mode: Replication mode of the link. Known values are: "Async" and "Sync".
     :vartype replication_mode: str or ~azure.mgmt.sql.models.ReplicationModeType
     :ivar partner_link_role: SQL server side link role. Known values are: "Primary" and
      "Secondary".
@@ -4180,8 +4174,7 @@ class DistributedAvailabilityGroup(ProxyResource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword replication_mode: Replication mode of the link. Known values are: "Async", "Sync", and
-         "Async".
+        :keyword replication_mode: Replication mode of the link. Known values are: "Async" and "Sync".
         :paramtype replication_mode: str or ~azure.mgmt.sql.models.ReplicationModeType
         :keyword partner_availability_group_name: SQL server side availability group name.
         :paramtype partner_availability_group_name: str
@@ -4783,7 +4776,7 @@ class ElasticPoolActivity(ProxyResource):
         "requested_dtu_guarantee": {"key": "properties.requestedDtuGuarantee", "type": "int"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -5838,8 +5831,8 @@ class ExportDatabaseDefinition(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey",
-     "StorageAccessKey", and "ManagedIdentity".
+    :ivar storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey" and
+     "StorageAccessKey".
     :vartype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
     :ivar storage_key: Storage key. Required.
     :vartype storage_key: str
@@ -5886,8 +5879,8 @@ class ExportDatabaseDefinition(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey",
-         "StorageAccessKey", and "ManagedIdentity".
+        :keyword storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey" and
+         "StorageAccessKey".
         :paramtype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
         :keyword storage_key: Storage key. Required.
         :paramtype storage_key: str
@@ -6023,8 +6016,8 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
     :vartype is_azure_monitor_target_enabled: bool
     :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
-     actions are forced to be processed.
-     The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+     actions are forced to be processed. The default minimum value is 1000 (1 second). The maximum
+     is 2,147,483,647.
     :vartype queue_delay_ms: int
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
@@ -6192,8 +6185,8 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
          or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
         :paramtype is_azure_monitor_target_enabled: bool
         :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-         audit actions are forced to be processed.
-         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+         audit actions are forced to be processed. The default minimum value is 1000 (1 second). The
+         maximum is 2,147,483,647.
         :paramtype queue_delay_ms: int
         :keyword is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
          storage.
@@ -6390,8 +6383,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
     :vartype is_azure_monitor_target_enabled: bool
     :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
-     actions are forced to be processed.
-     The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+     actions are forced to be processed. The default minimum value is 1000 (1 second). The maximum
+     is 2,147,483,647.
     :vartype queue_delay_ms: int
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
@@ -6577,8 +6570,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
          or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
         :paramtype is_azure_monitor_target_enabled: bool
         :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-         audit actions are forced to be processed.
-         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+         audit actions are forced to be processed. The default minimum value is 1000 (1 second). The
+         maximum is 2,147,483,647.
         :paramtype queue_delay_ms: int
         :keyword is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
          storage.
@@ -6678,9 +6671,6 @@ class FailoverGroup(ProxyResource):
     :vartype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
     :ivar databases: List of databases in the failover group.
     :vartype databases: list[str]
-    :ivar secondary_type: Databases secondary type on partner server. Known values are: "Geo" and
-     "Standby".
-    :vartype secondary_type: str or ~azure.mgmt.sql.models.FailoverGroupDatabasesSecondaryType
     """
 
     _validation = {
@@ -6704,7 +6694,6 @@ class FailoverGroup(ProxyResource):
         "replication_state": {"key": "properties.replicationState", "type": "str"},
         "partner_servers": {"key": "properties.partnerServers", "type": "[PartnerInfo]"},
         "databases": {"key": "properties.databases", "type": "[str]"},
-        "secondary_type": {"key": "properties.secondaryType", "type": "str"},
     }
 
     def __init__(
@@ -6715,7 +6704,6 @@ class FailoverGroup(ProxyResource):
         read_only_endpoint: Optional["_models.FailoverGroupReadOnlyEndpoint"] = None,
         partner_servers: Optional[list["_models.PartnerInfo"]] = None,
         databases: Optional[list[str]] = None,
-        secondary_type: Optional[Union[str, "_models.FailoverGroupDatabasesSecondaryType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6729,9 +6717,6 @@ class FailoverGroup(ProxyResource):
         :paramtype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
         :keyword databases: List of databases in the failover group.
         :paramtype databases: list[str]
-        :keyword secondary_type: Databases secondary type on partner server. Known values are: "Geo"
-         and "Standby".
-        :paramtype secondary_type: str or ~azure.mgmt.sql.models.FailoverGroupDatabasesSecondaryType
         """
         super().__init__(**kwargs)
         self.location: Optional[str] = None
@@ -6742,7 +6727,6 @@ class FailoverGroup(ProxyResource):
         self.replication_state: Optional[str] = None
         self.partner_servers = partner_servers
         self.databases = databases
-        self.secondary_type = secondary_type
 
 
 class FailoverGroupListResult(_serialization.Model):
@@ -6869,9 +6853,6 @@ class FailoverGroupUpdate(_serialization.Model):
     :vartype databases: list[str]
     :ivar partner_servers: List of partner server information for the failover group.
     :vartype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
-    :ivar secondary_type: Databases secondary type on partner server. Known values are: "Geo" and
-     "Standby".
-    :vartype secondary_type: str or ~azure.mgmt.sql.models.FailoverGroupDatabasesSecondaryType
     """
 
     _attribute_map = {
@@ -6880,7 +6861,6 @@ class FailoverGroupUpdate(_serialization.Model):
         "read_only_endpoint": {"key": "properties.readOnlyEndpoint", "type": "FailoverGroupReadOnlyEndpoint"},
         "databases": {"key": "properties.databases", "type": "[str]"},
         "partner_servers": {"key": "properties.partnerServers", "type": "[PartnerInfo]"},
-        "secondary_type": {"key": "properties.secondaryType", "type": "str"},
     }
 
     def __init__(
@@ -6891,7 +6871,6 @@ class FailoverGroupUpdate(_serialization.Model):
         read_only_endpoint: Optional["_models.FailoverGroupReadOnlyEndpoint"] = None,
         databases: Optional[list[str]] = None,
         partner_servers: Optional[list["_models.PartnerInfo"]] = None,
-        secondary_type: Optional[Union[str, "_models.FailoverGroupDatabasesSecondaryType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6905,9 +6884,6 @@ class FailoverGroupUpdate(_serialization.Model):
         :paramtype databases: list[str]
         :keyword partner_servers: List of partner server information for the failover group.
         :paramtype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
-        :keyword secondary_type: Databases secondary type on partner server. Known values are: "Geo"
-         and "Standby".
-        :paramtype secondary_type: str or ~azure.mgmt.sql.models.FailoverGroupDatabasesSecondaryType
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -6915,7 +6891,6 @@ class FailoverGroupUpdate(_serialization.Model):
         self.read_only_endpoint = read_only_endpoint
         self.databases = databases
         self.partner_servers = partner_servers
-        self.secondary_type = secondary_type
 
 
 class ResourceWithWritableName(_serialization.Model):
@@ -7154,8 +7129,8 @@ class ImportExistingDatabaseDefinition(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey",
-     "StorageAccessKey", and "ManagedIdentity".
+    :ivar storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey" and
+     "StorageAccessKey".
     :vartype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
     :ivar storage_key: Storage key. Required.
     :vartype storage_key: str
@@ -7202,8 +7177,8 @@ class ImportExistingDatabaseDefinition(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey",
-         "StorageAccessKey", and "ManagedIdentity".
+        :keyword storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey" and
+         "StorageAccessKey".
         :paramtype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
         :keyword storage_key: Storage key. Required.
         :paramtype storage_key: str
@@ -7420,23 +7395,18 @@ class ImportNewDatabaseDefinition(_serialization.Model):
     :vartype service_objective_name: str
     :ivar max_size_bytes: Max size in bytes for the import database.
     :vartype max_size_bytes: str
-    :ivar storage_key_type: Storage key type: StorageAccessKey, SharedAccessKey, or
-     ManagedIdentity. Required. Known values are: "SharedAccessKey", "StorageAccessKey", and
-     "ManagedIdentity".
+    :ivar storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey" and
+     "StorageAccessKey".
     :vartype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
-    :ivar storage_key: Storage key for the storage account. If StorageKeyType is ManagedIdentity,
-     this field should specify the Managed Identity's resource ID. Required.
+    :ivar storage_key: Storage key. Required.
     :vartype storage_key: str
     :ivar storage_uri: Storage Uri. Required.
     :vartype storage_uri: str
-    :ivar administrator_login: Administrator login name. If AuthenticationType is ManagedIdentity,
-     this field should specify the Managed Identity's resource ID. Required.
+    :ivar administrator_login: Administrator login name. Required.
     :vartype administrator_login: str
-    :ivar administrator_login_password: Administrator login password. If AuthenticationType is
-     ManagedIdentity, this field should not be specified.
+    :ivar administrator_login_password: Administrator login password. Required.
     :vartype administrator_login_password: str
-    :ivar authentication_type: Type of credentials provided for access to the target SQL server:
-     SQL, ADPassword or ManagedIdentity.
+    :ivar authentication_type: Authentication type.
     :vartype authentication_type: str
     :ivar network_isolation: Optional resource information to enable network isolation for request.
     :vartype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
@@ -7447,6 +7417,7 @@ class ImportNewDatabaseDefinition(_serialization.Model):
         "storage_key": {"required": True},
         "storage_uri": {"required": True},
         "administrator_login": {"required": True},
+        "administrator_login_password": {"required": True},
     }
 
     _attribute_map = {
@@ -7470,11 +7441,11 @@ class ImportNewDatabaseDefinition(_serialization.Model):
         storage_key: str,
         storage_uri: str,
         administrator_login: str,
+        administrator_login_password: str,
         database_name: Optional[str] = None,
         edition: Optional[str] = None,
         service_objective_name: Optional[str] = None,
         max_size_bytes: Optional[str] = None,
-        administrator_login_password: Optional[str] = None,
         authentication_type: Optional[str] = None,
         network_isolation: Optional["_models.NetworkIsolationSettings"] = None,
         **kwargs: Any
@@ -7488,23 +7459,18 @@ class ImportNewDatabaseDefinition(_serialization.Model):
         :paramtype service_objective_name: str
         :keyword max_size_bytes: Max size in bytes for the import database.
         :paramtype max_size_bytes: str
-        :keyword storage_key_type: Storage key type: StorageAccessKey, SharedAccessKey, or
-         ManagedIdentity. Required. Known values are: "SharedAccessKey", "StorageAccessKey", and
-         "ManagedIdentity".
+        :keyword storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey" and
+         "StorageAccessKey".
         :paramtype storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
-        :keyword storage_key: Storage key for the storage account. If StorageKeyType is
-         ManagedIdentity, this field should specify the Managed Identity's resource ID. Required.
+        :keyword storage_key: Storage key. Required.
         :paramtype storage_key: str
         :keyword storage_uri: Storage Uri. Required.
         :paramtype storage_uri: str
-        :keyword administrator_login: Administrator login name. If AuthenticationType is
-         ManagedIdentity, this field should specify the Managed Identity's resource ID. Required.
+        :keyword administrator_login: Administrator login name. Required.
         :paramtype administrator_login: str
-        :keyword administrator_login_password: Administrator login password. If AuthenticationType is
-         ManagedIdentity, this field should not be specified.
+        :keyword administrator_login_password: Administrator login password. Required.
         :paramtype administrator_login_password: str
-        :keyword authentication_type: Type of credentials provided for access to the target SQL server:
-         SQL, ADPassword or ManagedIdentity.
+        :keyword authentication_type: Authentication type.
         :paramtype authentication_type: str
         :keyword network_isolation: Optional resource information to enable network isolation for
          request.
@@ -9514,17 +9480,6 @@ class LongTermRetentionBackup(ProxyResource):
      ~azure.mgmt.sql.models.BackupStorageRedundancy
     :ivar is_backup_immutable: The setting whether the LTR backup is immutable.
     :vartype is_backup_immutable: bool
-    :ivar time_based_immutability: The setting for whether or not time-based immutability is
-     enabled for the LTR backup. When time-based immutability is enabled and locked, the backup
-     cannot be deleted until BackupExpirationTime. Known values are: "Enabled" and "Disabled".
-    :vartype time_based_immutability: str or ~azure.mgmt.sql.models.TimeBasedImmutability
-    :ivar time_based_immutability_mode: The time-based immutability mode. Only applicable if
-     time-based immutability is enabled. Known values are: "Locked" and "Unlocked".
-    :vartype time_based_immutability_mode: str or ~azure.mgmt.sql.models.TimeBasedImmutabilityMode
-    :ivar legal_hold_immutability: The setting for whether LegalHold is enabled or disabled on the
-     LTR backup. When LegalHold is enabled, the backup cannot be deleted until the LegalHold is
-     removed. Known values are: "Enabled" and "Disabled".
-    :vartype legal_hold_immutability: str or ~azure.mgmt.sql.models.SetLegalHoldImmutability
     :ivar backup_storage_access_tier: The BackupStorageAccessTier for the LTR backup. Known values
      are: "Hot" and "Archive".
     :vartype backup_storage_access_tier: str or ~azure.mgmt.sql.models.BackupStorageAccessTier
@@ -9557,9 +9512,6 @@ class LongTermRetentionBackup(ProxyResource):
         "backup_storage_redundancy": {"key": "properties.backupStorageRedundancy", "type": "str"},
         "requested_backup_storage_redundancy": {"key": "properties.requestedBackupStorageRedundancy", "type": "str"},
         "is_backup_immutable": {"key": "properties.isBackupImmutable", "type": "bool"},
-        "time_based_immutability": {"key": "properties.timeBasedImmutability", "type": "str"},
-        "time_based_immutability_mode": {"key": "properties.timeBasedImmutabilityMode", "type": "str"},
-        "legal_hold_immutability": {"key": "properties.legalHoldImmutability", "type": "str"},
         "backup_storage_access_tier": {"key": "properties.backupStorageAccessTier", "type": "str"},
     }
 
@@ -9568,9 +9520,6 @@ class LongTermRetentionBackup(ProxyResource):
         *,
         requested_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
         is_backup_immutable: Optional[bool] = None,
-        time_based_immutability: Optional[Union[str, "_models.TimeBasedImmutability"]] = None,
-        time_based_immutability_mode: Optional[Union[str, "_models.TimeBasedImmutabilityMode"]] = None,
-        legal_hold_immutability: Optional[Union[str, "_models.SetLegalHoldImmutability"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9580,18 +9529,6 @@ class LongTermRetentionBackup(ProxyResource):
          ~azure.mgmt.sql.models.BackupStorageRedundancy
         :keyword is_backup_immutable: The setting whether the LTR backup is immutable.
         :paramtype is_backup_immutable: bool
-        :keyword time_based_immutability: The setting for whether or not time-based immutability is
-         enabled for the LTR backup. When time-based immutability is enabled and locked, the backup
-         cannot be deleted until BackupExpirationTime. Known values are: "Enabled" and "Disabled".
-        :paramtype time_based_immutability: str or ~azure.mgmt.sql.models.TimeBasedImmutability
-        :keyword time_based_immutability_mode: The time-based immutability mode. Only applicable if
-         time-based immutability is enabled. Known values are: "Locked" and "Unlocked".
-        :paramtype time_based_immutability_mode: str or
-         ~azure.mgmt.sql.models.TimeBasedImmutabilityMode
-        :keyword legal_hold_immutability: The setting for whether LegalHold is enabled or disabled on
-         the LTR backup. When LegalHold is enabled, the backup cannot be deleted until the LegalHold is
-         removed. Known values are: "Enabled" and "Disabled".
-        :paramtype legal_hold_immutability: str or ~azure.mgmt.sql.models.SetLegalHoldImmutability
         """
         super().__init__(**kwargs)
         self.server_name: Optional[str] = None
@@ -9603,9 +9540,6 @@ class LongTermRetentionBackup(ProxyResource):
         self.backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None
         self.requested_backup_storage_redundancy = requested_backup_storage_redundancy
         self.is_backup_immutable = is_backup_immutable
-        self.time_based_immutability = time_based_immutability
-        self.time_based_immutability_mode = time_based_immutability_mode
-        self.legal_hold_immutability = legal_hold_immutability
         self.backup_storage_access_tier: Optional[Union[str, "_models.BackupStorageAccessTier"]] = None
 
 
@@ -9715,15 +9649,11 @@ class LongTermRetentionPolicy(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar time_based_immutability: The setting for whether to enable time-based immutability for
-     future backups. When set, future backups will have TimeBasedImmutability enabled. Known values
-     are: "Enabled" and "Disabled".
-    :vartype time_based_immutability: str or ~azure.mgmt.sql.models.TimeBasedImmutability
-    :ivar time_based_immutability_mode: The setting for time-based immutability mode for future
-     backup (Value can be either Locked or UnLocked. Only effective if TimeBasedImmutability is
-     enabled). Caution: Immutability of LTR backup cannot be removed if TimeBasedImmutabilityMode is
-     Locked. Known values are: "Locked" and "Unlocked".
-    :vartype time_based_immutability_mode: str or ~azure.mgmt.sql.models.TimeBasedImmutabilityMode
+    :ivar make_backups_immutable: The setting whether to make LTR backups immutable.
+    :vartype make_backups_immutable: bool
+    :ivar backup_storage_access_tier: The BackupStorageAccessTier for the LTR backups. Known values
+     are: "Hot" and "Archive".
+    :vartype backup_storage_access_tier: str or ~azure.mgmt.sql.models.BackupStorageAccessTier
     :ivar weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
     :vartype weekly_retention: str
     :ivar monthly_retention: The monthly retention policy for an LTR backup in an ISO 8601 format.
@@ -9744,8 +9674,8 @@ class LongTermRetentionPolicy(ProxyResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "time_based_immutability": {"key": "properties.timeBasedImmutability", "type": "str"},
-        "time_based_immutability_mode": {"key": "properties.timeBasedImmutabilityMode", "type": "str"},
+        "make_backups_immutable": {"key": "properties.makeBackupsImmutable", "type": "bool"},
+        "backup_storage_access_tier": {"key": "properties.backupStorageAccessTier", "type": "str"},
         "weekly_retention": {"key": "properties.weeklyRetention", "type": "str"},
         "monthly_retention": {"key": "properties.monthlyRetention", "type": "str"},
         "yearly_retention": {"key": "properties.yearlyRetention", "type": "str"},
@@ -9755,8 +9685,8 @@ class LongTermRetentionPolicy(ProxyResource):
     def __init__(
         self,
         *,
-        time_based_immutability: Optional[Union[str, "_models.TimeBasedImmutability"]] = None,
-        time_based_immutability_mode: Optional[Union[str, "_models.TimeBasedImmutabilityMode"]] = None,
+        make_backups_immutable: Optional[bool] = None,
+        backup_storage_access_tier: Optional[Union[str, "_models.BackupStorageAccessTier"]] = None,
         weekly_retention: Optional[str] = None,
         monthly_retention: Optional[str] = None,
         yearly_retention: Optional[str] = None,
@@ -9764,16 +9694,11 @@ class LongTermRetentionPolicy(ProxyResource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword time_based_immutability: The setting for whether to enable time-based immutability for
-         future backups. When set, future backups will have TimeBasedImmutability enabled. Known values
-         are: "Enabled" and "Disabled".
-        :paramtype time_based_immutability: str or ~azure.mgmt.sql.models.TimeBasedImmutability
-        :keyword time_based_immutability_mode: The setting for time-based immutability mode for future
-         backup (Value can be either Locked or UnLocked. Only effective if TimeBasedImmutability is
-         enabled). Caution: Immutability of LTR backup cannot be removed if TimeBasedImmutabilityMode is
-         Locked. Known values are: "Locked" and "Unlocked".
-        :paramtype time_based_immutability_mode: str or
-         ~azure.mgmt.sql.models.TimeBasedImmutabilityMode
+        :keyword make_backups_immutable: The setting whether to make LTR backups immutable.
+        :paramtype make_backups_immutable: bool
+        :keyword backup_storage_access_tier: The BackupStorageAccessTier for the LTR backups. Known
+         values are: "Hot" and "Archive".
+        :paramtype backup_storage_access_tier: str or ~azure.mgmt.sql.models.BackupStorageAccessTier
         :keyword weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
         :paramtype weekly_retention: str
         :keyword monthly_retention: The monthly retention policy for an LTR backup in an ISO 8601
@@ -9785,8 +9710,8 @@ class LongTermRetentionPolicy(ProxyResource):
         :paramtype week_of_year: int
         """
         super().__init__(**kwargs)
-        self.time_based_immutability = time_based_immutability
-        self.time_based_immutability_mode = time_based_immutability_mode
+        self.make_backups_immutable = make_backups_immutable
+        self.backup_storage_access_tier = backup_storage_access_tier
         self.weekly_retention = weekly_retention
         self.monthly_retention = monthly_retention
         self.yearly_retention = yearly_retention
@@ -10816,7 +10741,7 @@ class ManagedDatabaseRestoreDetailsResult(ProxyResource):
         },
     }
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type_properties_type: Optional[str] = None
@@ -11346,12 +11271,12 @@ class ManagedInstance(TrackedResource):
      Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
      number of vCores.
     :vartype storage_size_in_gb: int
-    :ivar storage_iops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
+    :ivar storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
      IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
-    :vartype storage_iops: int
-    :ivar storage_throughput_mbps: Storage throughput MBps parameter is not supported in the
+    :vartype storage_i_ops: int
+    :ivar storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
      instance create/update operation.
-    :vartype storage_throughput_mbps: int
+    :vartype storage_throughput_m_bps: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
     :ivar dns_zone: The Dns Zone that the managed instance is in.
@@ -11372,12 +11297,11 @@ class ManagedInstance(TrackedResource):
     :vartype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
     :ivar timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
      Windows keeps details on supported timezones, including the id, in registry under
-     KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones.
-     You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
-     sys.time_zone_info.
-     List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
-     PowerShell.
-     An example of valid timezone id is "Pacific Standard Time" or "W. Europe Standard Time".
+     KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones. You can get
+     those registry values via SQL Server by querying SELECT name AS timezone_id FROM
+     sys.time_zone_info. List of Ids can also be obtained by executing
+     [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell. An example of valid timezone id is
+     "Pacific Standard Time" or "W. Europe Standard Time".
     :vartype timezone_id: str
     :ivar instance_pool_id: The Id of the instance pool this managed server belongs to.
     :vartype instance_pool_id: str
@@ -11470,8 +11394,8 @@ class ManagedInstance(TrackedResource):
         "hybrid_secondary_usage_detected": {"key": "properties.hybridSecondaryUsageDetected", "type": "str"},
         "v_cores": {"key": "properties.vCores", "type": "int"},
         "storage_size_in_gb": {"key": "properties.storageSizeInGB", "type": "int"},
-        "storage_iops": {"key": "properties.storageIOps", "type": "int"},
-        "storage_throughput_mbps": {"key": "properties.storageThroughputMBps", "type": "int"},
+        "storage_i_ops": {"key": "properties.storageIOps", "type": "int"},
+        "storage_throughput_m_bps": {"key": "properties.storageThroughputMBps", "type": "int"},
         "collation": {"key": "properties.collation", "type": "str"},
         "dns_zone": {"key": "properties.dnsZone", "type": "str"},
         "dns_zone_partner": {"key": "properties.dnsZonePartner", "type": "str"},
@@ -11518,8 +11442,8 @@ class ManagedInstance(TrackedResource):
         hybrid_secondary_usage: Optional[Union[str, "_models.HybridSecondaryUsage"]] = None,
         v_cores: Optional[int] = None,
         storage_size_in_gb: Optional[int] = None,
-        storage_iops: Optional[int] = None,
-        storage_throughput_mbps: Optional[int] = None,
+        storage_i_ops: Optional[int] = None,
+        storage_throughput_m_bps: Optional[int] = None,
         collation: Optional[str] = None,
         dns_zone_partner: Optional[str] = None,
         public_data_endpoint_enabled: Optional[bool] = None,
@@ -11584,12 +11508,12 @@ class ManagedInstance(TrackedResource):
          Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
          number of vCores.
         :paramtype storage_size_in_gb: int
-        :keyword storage_iops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
+        :keyword storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
          IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
-        :paramtype storage_iops: int
-        :keyword storage_throughput_mbps: Storage throughput MBps parameter is not supported in the
+        :paramtype storage_i_ops: int
+        :keyword storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
          instance create/update operation.
-        :paramtype storage_throughput_mbps: int
+        :paramtype storage_throughput_m_bps: int
         :keyword collation: Collation of the managed instance.
         :paramtype collation: str
         :keyword dns_zone_partner: The resource id of another managed instance whose DNS zone this
@@ -11608,12 +11532,11 @@ class ManagedInstance(TrackedResource):
         :paramtype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
         :keyword timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
          Windows keeps details on supported timezones, including the id, in registry under
-         KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones.
-         You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
-         sys.time_zone_info.
-         List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
-         PowerShell.
-         An example of valid timezone id is "Pacific Standard Time" or "W. Europe Standard Time".
+         KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones. You can get
+         those registry values via SQL Server by querying SELECT name AS timezone_id FROM
+         sys.time_zone_info. List of Ids can also be obtained by executing
+         [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell. An example of valid timezone id is
+         "Pacific Standard Time" or "W. Europe Standard Time".
         :paramtype timezone_id: str
         :keyword instance_pool_id: The Id of the instance pool this managed server belongs to.
         :paramtype instance_pool_id: str
@@ -11667,8 +11590,8 @@ class ManagedInstance(TrackedResource):
         self.hybrid_secondary_usage_detected: Optional[Union[str, "_models.HybridSecondaryUsageDetected"]] = None
         self.v_cores = v_cores
         self.storage_size_in_gb = storage_size_in_gb
-        self.storage_iops = storage_iops
-        self.storage_throughput_mbps = storage_throughput_mbps
+        self.storage_i_ops = storage_i_ops
+        self.storage_throughput_m_bps = storage_throughput_m_bps
         self.collation = collation
         self.dns_zone: Optional[str] = None
         self.dns_zone_partner = dns_zone_partner
@@ -13423,12 +13346,12 @@ class ManagedInstanceUpdate(_serialization.Model):
      Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
      number of vCores.
     :vartype storage_size_in_gb: int
-    :ivar storage_iops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
+    :ivar storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
      IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
-    :vartype storage_iops: int
-    :ivar storage_throughput_mbps: Storage throughput MBps parameter is not supported in the
+    :vartype storage_i_ops: int
+    :ivar storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
      instance create/update operation.
-    :vartype storage_throughput_mbps: int
+    :vartype storage_throughput_m_bps: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
     :ivar dns_zone: The Dns Zone that the managed instance is in.
@@ -13449,12 +13372,11 @@ class ManagedInstanceUpdate(_serialization.Model):
     :vartype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
     :ivar timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
      Windows keeps details on supported timezones, including the id, in registry under
-     KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones.
-     You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
-     sys.time_zone_info.
-     List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
-     PowerShell.
-     An example of valid timezone id is "Pacific Standard Time" or "W. Europe Standard Time".
+     KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones. You can get
+     those registry values via SQL Server by querying SELECT name AS timezone_id FROM
+     sys.time_zone_info. List of Ids can also be obtained by executing
+     [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell. An example of valid timezone id is
+     "Pacific Standard Time" or "W. Europe Standard Time".
     :vartype timezone_id: str
     :ivar instance_pool_id: The Id of the instance pool this managed server belongs to.
     :vartype instance_pool_id: str
@@ -13539,8 +13461,8 @@ class ManagedInstanceUpdate(_serialization.Model):
         "hybrid_secondary_usage_detected": {"key": "properties.hybridSecondaryUsageDetected", "type": "str"},
         "v_cores": {"key": "properties.vCores", "type": "int"},
         "storage_size_in_gb": {"key": "properties.storageSizeInGB", "type": "int"},
-        "storage_iops": {"key": "properties.storageIOps", "type": "int"},
-        "storage_throughput_mbps": {"key": "properties.storageThroughputMBps", "type": "int"},
+        "storage_i_ops": {"key": "properties.storageIOps", "type": "int"},
+        "storage_throughput_m_bps": {"key": "properties.storageThroughputMBps", "type": "int"},
         "collation": {"key": "properties.collation", "type": "str"},
         "dns_zone": {"key": "properties.dnsZone", "type": "str"},
         "dns_zone_partner": {"key": "properties.dnsZonePartner", "type": "str"},
@@ -13586,8 +13508,8 @@ class ManagedInstanceUpdate(_serialization.Model):
         hybrid_secondary_usage: Optional[Union[str, "_models.HybridSecondaryUsage"]] = None,
         v_cores: Optional[int] = None,
         storage_size_in_gb: Optional[int] = None,
-        storage_iops: Optional[int] = None,
-        storage_throughput_mbps: Optional[int] = None,
+        storage_i_ops: Optional[int] = None,
+        storage_throughput_m_bps: Optional[int] = None,
         collation: Optional[str] = None,
         dns_zone_partner: Optional[str] = None,
         public_data_endpoint_enabled: Optional[bool] = None,
@@ -13649,12 +13571,12 @@ class ManagedInstanceUpdate(_serialization.Model):
          Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
          number of vCores.
         :paramtype storage_size_in_gb: int
-        :keyword storage_iops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
+        :keyword storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
          IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
-        :paramtype storage_iops: int
-        :keyword storage_throughput_mbps: Storage throughput MBps parameter is not supported in the
+        :paramtype storage_i_ops: int
+        :keyword storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
          instance create/update operation.
-        :paramtype storage_throughput_mbps: int
+        :paramtype storage_throughput_m_bps: int
         :keyword collation: Collation of the managed instance.
         :paramtype collation: str
         :keyword dns_zone_partner: The resource id of another managed instance whose DNS zone this
@@ -13673,12 +13595,11 @@ class ManagedInstanceUpdate(_serialization.Model):
         :paramtype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
         :keyword timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
          Windows keeps details on supported timezones, including the id, in registry under
-         KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones.
-         You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
-         sys.time_zone_info.
-         List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
-         PowerShell.
-         An example of valid timezone id is "Pacific Standard Time" or "W. Europe Standard Time".
+         KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones. You can get
+         those registry values via SQL Server by querying SELECT name AS timezone_id FROM
+         sys.time_zone_info. List of Ids can also be obtained by executing
+         [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell. An example of valid timezone id is
+         "Pacific Standard Time" or "W. Europe Standard Time".
         :paramtype timezone_id: str
         :keyword instance_pool_id: The Id of the instance pool this managed server belongs to.
         :paramtype instance_pool_id: str
@@ -13733,8 +13654,8 @@ class ManagedInstanceUpdate(_serialization.Model):
         self.hybrid_secondary_usage_detected: Optional[Union[str, "_models.HybridSecondaryUsageDetected"]] = None
         self.v_cores = v_cores
         self.storage_size_in_gb = storage_size_in_gb
-        self.storage_iops = storage_iops
-        self.storage_throughput_mbps = storage_throughput_mbps
+        self.storage_i_ops = storage_i_ops
+        self.storage_throughput_m_bps = storage_throughput_m_bps
         self.collation = collation
         self.dns_zone: Optional[str] = None
         self.dns_zone_partner = dns_zone_partner
@@ -15184,35 +15105,6 @@ class PerformanceLevelCapability(_serialization.Model):
         super().__init__(**kwargs)
         self.value: Optional[float] = None
         self.unit: Optional[Union[str, "_models.PerformanceLevelUnit"]] = None
-
-
-class PhaseDetails(_serialization.Model):
-    """The phase details properties of a database operation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar phase: The operation phase. Known values are: "LogTransitionInProgress", "Copying",
-     "BuildingHyperscaleComponents", "Catchup", "WaitingForCutover", and "CutoverInProgress".
-    :vartype phase: str or ~azure.mgmt.sql.models.Phase
-    :ivar phase_information: The operation phase information.
-    :vartype phase_information: dict[str, str]
-    """
-
-    _validation = {
-        "phase": {"readonly": True},
-        "phase_information": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "phase": {"key": "phase", "type": "str"},
-        "phase_information": {"key": "phaseInformation", "type": "{str}"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.phase: Optional[Union[str, "_models.Phase"]] = None
-        self.phase_information: Optional[dict[str, str]] = None
 
 
 class PrivateEndpointConnection(ProxyResource):
@@ -16684,8 +16576,6 @@ class ReplicationLink(ProxyResource):
     :vartype partner_server: str
     :ivar partner_database: Resource partner database.
     :vartype partner_database: str
-    :ivar partner_database_id: Resource partner database Id.
-    :vartype partner_database_id: str
     :ivar partner_location: Resource partner location.
     :vartype partner_location: str
     :ivar role: Local replication role. Known values are: "Primary", "Secondary",
@@ -16705,8 +16595,8 @@ class ReplicationLink(ProxyResource):
     :vartype replication_state: str or ~azure.mgmt.sql.models.ReplicationState
     :ivar is_termination_allowed: Whether the user is currently allowed to terminate the link.
     :vartype is_termination_allowed: bool
-    :ivar link_type: Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED.
-     Known values are: "GEO", "NAMED", and "STANDBY".
+    :ivar link_type: Link type (GEO, NAMED, STANDBY). Known values are: "GEO", "NAMED", and
+     "STANDBY".
     :vartype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
     """
 
@@ -16716,7 +16606,6 @@ class ReplicationLink(ProxyResource):
         "type": {"readonly": True},
         "partner_server": {"readonly": True},
         "partner_database": {"readonly": True},
-        "partner_database_id": {"readonly": True},
         "partner_location": {"readonly": True},
         "role": {"readonly": True},
         "partner_role": {"readonly": True},
@@ -16725,6 +16614,7 @@ class ReplicationLink(ProxyResource):
         "percent_complete": {"readonly": True},
         "replication_state": {"readonly": True},
         "is_termination_allowed": {"readonly": True},
+        "link_type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -16733,7 +16623,6 @@ class ReplicationLink(ProxyResource):
         "type": {"key": "type", "type": "str"},
         "partner_server": {"key": "properties.partnerServer", "type": "str"},
         "partner_database": {"key": "properties.partnerDatabase", "type": "str"},
-        "partner_database_id": {"key": "properties.partnerDatabaseId", "type": "str"},
         "partner_location": {"key": "properties.partnerLocation", "type": "str"},
         "role": {"key": "properties.role", "type": "str"},
         "partner_role": {"key": "properties.partnerRole", "type": "str"},
@@ -16745,16 +16634,11 @@ class ReplicationLink(ProxyResource):
         "link_type": {"key": "properties.linkType", "type": "str"},
     }
 
-    def __init__(self, *, link_type: Optional[Union[str, "_models.ReplicationLinkType"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword link_type: Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED.
-         Known values are: "GEO", "NAMED", and "STANDBY".
-        :paramtype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.partner_server: Optional[str] = None
         self.partner_database: Optional[str] = None
-        self.partner_database_id: Optional[str] = None
         self.partner_location: Optional[str] = None
         self.role: Optional[Union[str, "_models.ReplicationRole"]] = None
         self.partner_role: Optional[Union[str, "_models.ReplicationRole"]] = None
@@ -16763,7 +16647,7 @@ class ReplicationLink(ProxyResource):
         self.percent_complete: Optional[int] = None
         self.replication_state: Optional[Union[str, "_models.ReplicationState"]] = None
         self.is_termination_allowed: Optional[bool] = None
-        self.link_type = link_type
+        self.link_type: Optional[Union[str, "_models.ReplicationLinkType"]] = None
 
 
 class ReplicationLinkListResult(_serialization.Model):
@@ -16792,45 +16676,6 @@ class ReplicationLinkListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value: Optional[list["_models.ReplicationLink"]] = None
         self.next_link: Optional[str] = None
-
-
-class ReplicationLinkUpdate(ProxyResource):
-    """A replication link update request.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar link_type: Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED.
-     Known values are: "GEO", "NAMED", and "STANDBY".
-    :vartype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "link_type": {"key": "properties.linkType", "type": "str"},
-    }
-
-    def __init__(self, *, link_type: Optional[Union[str, "_models.ReplicationLinkType"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword link_type: Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED.
-         Known values are: "GEO", "NAMED", and "STANDBY".
-        :paramtype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
-        """
-        super().__init__(**kwargs)
-        self.link_type = link_type
 
 
 class ResourceIdentity(_serialization.Model):
@@ -17731,9 +17576,9 @@ class Server(TrackedResource):
     :vartype federated_client_id: str
     :ivar key_id: A CMK URI of the key to use for encryption.
     :vartype key_id: str
-    :ivar administrators: The Azure Active Directory administrator can be utilized during server
-     creation and for server updates, except for the azureADOnlyAuthentication property. To update
-     the azureADOnlyAuthentication property, individual API must be used.
+    :ivar administrators: The Azure Active Directory administrator of the server. This can only be
+     used at server create time. If used for server update, it will be ignored or it will result in
+     an error. For updates individual APIs will need to be used.
     :vartype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
     :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access for
      this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values
@@ -17747,11 +17592,6 @@ class Server(TrackedResource):
     :ivar external_governance_status: Status of external governance. Known values are: "Enabled"
      and "Disabled".
     :vartype external_governance_status: str or ~azure.mgmt.sql.models.ExternalGovernanceStatus
-    :ivar retention_days: Number of days this server will stay soft-deleted.
-    :vartype retention_days: int
-    :ivar create_mode: Create mode for server, only valid values for this are Normal and Restore.
-     Known values are: "Normal" and "Restore".
-    :vartype create_mode: str or ~azure.mgmt.sql.models.ServerCreateMode
     """
 
     _validation = {
@@ -17794,11 +17634,9 @@ class Server(TrackedResource):
         "restrict_outbound_network_access": {"key": "properties.restrictOutboundNetworkAccess", "type": "str"},
         "is_i_pv6_enabled": {"key": "properties.isIPv6Enabled", "type": "str"},
         "external_governance_status": {"key": "properties.externalGovernanceStatus", "type": "str"},
-        "retention_days": {"key": "properties.retentionDays", "type": "int"},
-        "create_mode": {"key": "properties.createMode", "type": "str"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         location: str,
@@ -17815,8 +17653,6 @@ class Server(TrackedResource):
         administrators: Optional["_models.ServerExternalAdministrator"] = None,
         restrict_outbound_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
         is_i_pv6_enabled: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
-        retention_days: Optional[int] = None,
-        create_mode: Optional[Union[str, "_models.ServerCreateMode"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -17848,9 +17684,9 @@ class Server(TrackedResource):
         :paramtype federated_client_id: str
         :keyword key_id: A CMK URI of the key to use for encryption.
         :paramtype key_id: str
-        :keyword administrators: The Azure Active Directory administrator can be utilized during server
-         creation and for server updates, except for the azureADOnlyAuthentication property. To update
-         the azureADOnlyAuthentication property, individual API must be used.
+        :keyword administrators: The Azure Active Directory administrator of the server. This can only
+         be used at server create time. If used for server update, it will be ignored or it will result
+         in an error. For updates individual APIs will need to be used.
         :paramtype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
         :keyword restrict_outbound_network_access: Whether or not to restrict outbound network access
          for this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known
@@ -17861,11 +17697,6 @@ class Server(TrackedResource):
          optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are: "Enabled" and
          "Disabled".
         :paramtype is_i_pv6_enabled: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
-        :keyword retention_days: Number of days this server will stay soft-deleted.
-        :paramtype retention_days: int
-        :keyword create_mode: Create mode for server, only valid values for this are Normal and
-         Restore. Known values are: "Normal" and "Restore".
-        :paramtype create_mode: str or ~azure.mgmt.sql.models.ServerCreateMode
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
@@ -17886,8 +17717,6 @@ class Server(TrackedResource):
         self.restrict_outbound_network_access = restrict_outbound_network_access
         self.is_i_pv6_enabled = is_i_pv6_enabled
         self.external_governance_status: Optional[Union[str, "_models.ExternalGovernanceStatus"]] = None
-        self.retention_days = retention_days
-        self.create_mode = create_mode
 
 
 class ServerAdvancedThreatProtection(ProxyResource):
@@ -18229,8 +18058,8 @@ class ServerBlobAuditingPolicy(ProxyResource):
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
     :vartype is_azure_monitor_target_enabled: bool
     :ivar queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before audit
-     actions are forced to be processed.
-     The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+     actions are forced to be processed. The default minimum value is 1000 (1 second). The maximum
+     is 2,147,483,647.
     :vartype queue_delay_ms: int
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
@@ -18412,8 +18241,8 @@ class ServerBlobAuditingPolicy(ProxyResource):
          or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
         :paramtype is_azure_monitor_target_enabled: bool
         :keyword queue_delay_ms: Specifies the amount of time in milliseconds that can elapse before
-         audit actions are forced to be processed.
-         The default minimum value is 1000 (1 second). The maximum is 2,147,483,647.
+         audit actions are forced to be processed. The default minimum value is 1000 (1 second). The
+         maximum is 2,147,483,647.
         :paramtype queue_delay_ms: int
         :keyword is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
          storage.
@@ -19650,9 +19479,9 @@ class ServerUpdate(_serialization.Model):
     :vartype federated_client_id: str
     :ivar key_id: A CMK URI of the key to use for encryption.
     :vartype key_id: str
-    :ivar administrators: The Azure Active Directory administrator can be utilized during server
-     creation and for server updates, except for the azureADOnlyAuthentication property. To update
-     the azureADOnlyAuthentication property, individual API must be used.
+    :ivar administrators: The Azure Active Directory administrator of the server. This can only be
+     used at server create time. If used for server update, it will be ignored or it will result in
+     an error. For updates individual APIs will need to be used.
     :vartype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
     :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access for
      this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values
@@ -19666,11 +19495,6 @@ class ServerUpdate(_serialization.Model):
     :ivar external_governance_status: Status of external governance. Known values are: "Enabled"
      and "Disabled".
     :vartype external_governance_status: str or ~azure.mgmt.sql.models.ExternalGovernanceStatus
-    :ivar retention_days: Number of days this server will stay soft-deleted.
-    :vartype retention_days: int
-    :ivar create_mode: Create mode for server, only valid values for this are Normal and Restore.
-     Known values are: "Normal" and "Restore".
-    :vartype create_mode: str or ~azure.mgmt.sql.models.ServerCreateMode
     """
 
     _validation = {
@@ -19703,8 +19527,6 @@ class ServerUpdate(_serialization.Model):
         "restrict_outbound_network_access": {"key": "properties.restrictOutboundNetworkAccess", "type": "str"},
         "is_i_pv6_enabled": {"key": "properties.isIPv6Enabled", "type": "str"},
         "external_governance_status": {"key": "properties.externalGovernanceStatus", "type": "str"},
-        "retention_days": {"key": "properties.retentionDays", "type": "int"},
-        "create_mode": {"key": "properties.createMode", "type": "str"},
     }
 
     def __init__(
@@ -19723,8 +19545,6 @@ class ServerUpdate(_serialization.Model):
         administrators: Optional["_models.ServerExternalAdministrator"] = None,
         restrict_outbound_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
         is_i_pv6_enabled: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
-        retention_days: Optional[int] = None,
-        create_mode: Optional[Union[str, "_models.ServerCreateMode"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -19754,9 +19574,9 @@ class ServerUpdate(_serialization.Model):
         :paramtype federated_client_id: str
         :keyword key_id: A CMK URI of the key to use for encryption.
         :paramtype key_id: str
-        :keyword administrators: The Azure Active Directory administrator can be utilized during server
-         creation and for server updates, except for the azureADOnlyAuthentication property. To update
-         the azureADOnlyAuthentication property, individual API must be used.
+        :keyword administrators: The Azure Active Directory administrator of the server. This can only
+         be used at server create time. If used for server update, it will be ignored or it will result
+         in an error. For updates individual APIs will need to be used.
         :paramtype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
         :keyword restrict_outbound_network_access: Whether or not to restrict outbound network access
          for this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known
@@ -19767,11 +19587,6 @@ class ServerUpdate(_serialization.Model):
          optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are: "Enabled" and
          "Disabled".
         :paramtype is_i_pv6_enabled: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
-        :keyword retention_days: Number of days this server will stay soft-deleted.
-        :paramtype retention_days: int
-        :keyword create_mode: Create mode for server, only valid values for this are Normal and
-         Restore. Known values are: "Normal" and "Restore".
-        :paramtype create_mode: str or ~azure.mgmt.sql.models.ServerCreateMode
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -19792,8 +19607,6 @@ class ServerUpdate(_serialization.Model):
         self.restrict_outbound_network_access = restrict_outbound_network_access
         self.is_i_pv6_enabled = is_i_pv6_enabled
         self.external_governance_status: Optional[Union[str, "_models.ExternalGovernanceStatus"]] = None
-        self.retention_days = retention_days
-        self.create_mode = create_mode
 
 
 class ServerUsage(_serialization.Model):

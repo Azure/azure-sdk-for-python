@@ -16,7 +16,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python remove_legal_hold_immutability_long_term_retention_backup.py
+    python create_or_update_job_min.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,15 +31,29 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.long_term_retention_backups.begin_remove_legal_hold_immutability(
-        location_name="japaneast",
-        long_term_retention_server_name="testserver",
-        long_term_retention_database_name="testDatabase",
-        backup_name="55555555-6666-7777-8888-999999999999;131637960820000000;Hot",
-    ).result()
+    response = client.jobs.create_or_update(
+        resource_group_name="group1",
+        server_name="server1",
+        job_agent_name="agent1",
+        job_name="job1",
+        parameters={
+            "description": "",
+            "id": "str",
+            "name": "str",
+            "schedule": {
+                "enabled": bool,
+                "endTime": "9999-12-31T11:59:59+00:00",
+                "interval": "str",
+                "startTime": "0001-01-01T00:00:00+00:00",
+                "type": "Once",
+            },
+            "type": "str",
+            "version": 0,
+        },
+    )
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/RemoveLegalHoldImmutabilityLongTermRetentionBackup.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/CreateOrUpdateJobMin.json
 if __name__ == "__main__":
     main()

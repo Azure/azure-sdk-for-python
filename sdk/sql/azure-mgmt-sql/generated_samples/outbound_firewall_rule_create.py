@@ -16,7 +16,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python lock_time_based_immutability_long_term_retention_backup.py
+    python outbound_firewall_rule_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,15 +31,15 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.long_term_retention_backups.begin_lock_time_based_immutability(
-        location_name="japaneast",
-        long_term_retention_server_name="testserver",
-        long_term_retention_database_name="testDatabase",
-        backup_name="55555555-6666-7777-8888-999999999999;131637960820000000;Hot",
+    response = client.outbound_firewall_rules.begin_create_or_update(
+        resource_group_name="sqlcrudtest-7398",
+        server_name="sqlcrudtest-4645",
+        outbound_rule_fqdn="server.database.windows.net",
+        parameters={"id": "str", "name": "str", "provisioningState": "str", "type": "str"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/LockTimeBasedImmutabilityLongTermRetentionBackup.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-02-01-preview/examples/OutboundFirewallRuleCreate.json
 if __name__ == "__main__":
     main()

@@ -269,7 +269,6 @@ class ColumnDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NCHAR = "nchar"
     XML = "xml"
     SYSNAME = "sysname"
-    INT_ENUM = "int"
 
 
 class ConnectionPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -503,13 +502,6 @@ class ExternalGovernanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
-
-
-class FailoverGroupDatabasesSecondaryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Databases secondary type on partner server."""
-
-    GEO = "Geo"
-    STANDBY = "Standby"
 
 
 class FailoverGroupReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -800,7 +792,9 @@ class ManagedInstanceLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BASE_PRICE = "BasePrice"
 
 
-class ManagedInstanceLongTermRetentionPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ManagedInstanceLongTermRetentionPolicyName(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """ManagedInstanceLongTermRetentionPolicyName."""
 
     DEFAULT = "default"
@@ -919,17 +913,6 @@ class PerformanceLevelUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V_CORES = "VCores"
 
 
-class Phase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation phase."""
-
-    LOG_TRANSITION_IN_PROGRESS = "LogTransitionInProgress"
-    COPYING = "Copying"
-    BUILDING_HYPERSCALE_COMPONENTS = "BuildingHyperscaleComponents"
-    CATCHUP = "Catchup"
-    WAITING_FOR_CUTOVER = "WaitingForCutover"
-    CUTOVER_IN_PROGRESS = "CutoverInProgress"
-
-
 class PrimaryAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The primary aggregation type defining how metric values are displayed."""
 
@@ -959,7 +942,9 @@ class PrivateEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     REJECTING = "Rejecting"
 
 
-class PrivateLinkServiceConnectionStateActionsRequire(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateLinkServiceConnectionStateActionsRequire(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The actions required for private link service connection."""
 
     NONE = "None"
@@ -1075,7 +1060,7 @@ class ReplicaSynchronizationHealth(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
 
 class ReplicationLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED."""
+    """Link type (GEO, NAMED, STANDBY)."""
 
     GEO = "GEO"
     NAMED = "NAMED"
@@ -1087,7 +1072,6 @@ class ReplicationModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ASYNC = "Async"
     SYNC = "Sync"
-    ASYNC_ENUM = "Async"
 
 
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1266,13 +1250,6 @@ class ServerConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROXY = "Proxy"
 
 
-class ServerCreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Create mode for server, only valid values for this are Normal and Restore."""
-
-    NORMAL = "Normal"
-    RESTORE = "Restore"
-
-
 class ServerKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The encryption protector type like 'ServiceManaged', 'AzureKeyVault'."""
 
@@ -1299,7 +1276,9 @@ class ServerPublicNetworkAccessFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta
     SECURED_BY_PERIMETER = "SecuredByPerimeter"
 
 
-class ServerTrustGroupPropertiesTrustScopesItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServerTrustGroupPropertiesTrustScopesItem(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """ServerTrustGroupPropertiesTrustScopesItem."""
 
     GLOBAL_TRANSACTIONS = "GlobalTransactions"
@@ -1392,15 +1371,6 @@ class ServicePrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_ASSIGNED = "SystemAssigned"
 
 
-class SetLegalHoldImmutability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The setting for whether LegalHold is enabled or disabled on the LTR backup. When LegalHold is
-    enabled, the backup cannot be deleted until the LegalHold is removed.
-    """
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-
 class ShortTermRetentionPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ShortTermRetentionPolicyName."""
 
@@ -1448,7 +1418,6 @@ class StorageKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SHARED_ACCESS_KEY = "SharedAccessKey"
     STORAGE_ACCESS_KEY = "StorageAccessKey"
-    MANAGED_IDENTITY = "ManagedIdentity"
 
 
 class SyncAgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1540,23 +1509,6 @@ class TableTemporalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_VERSIONED_TEMPORAL_TABLE = "SystemVersionedTemporalTable"
 
 
-class TimeBasedImmutability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The setting for whether or not time-based immutability is enabled for the LTR backup. When
-    time-based immutability is enabled and locked, the backup cannot be deleted until
-    BackupExpirationTime.
-    """
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-
-class TimeBasedImmutabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The time-based immutability mode. Only applicable if time-based immutability is enabled."""
-
-    LOCKED = "Locked"
-    UNLOCKED = "Unlocked"
-
-
 class TransparentDataEncryptionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TransparentDataEncryptionName."""
 
@@ -1620,7 +1572,9 @@ class VulnerabilityAssessmentName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEFAULT = "default"
 
 
-class VulnerabilityAssessmentPolicyBaselineName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class VulnerabilityAssessmentPolicyBaselineName(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """VulnerabilityAssessmentPolicyBaselineName."""
 
     MASTER = "master"

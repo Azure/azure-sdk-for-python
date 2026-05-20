@@ -32,14 +32,14 @@ def main():
     )
 
     response = client.database_operations.list_by_database(
-        resource_group_name="Default-SQL-SouthEastAsia",
-        server_name="testsvr",
+        resource_group_name="sqlcrudtest-7398",
+        server_name="sqlcrudtest-4645",
         database_name="testdb",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/ListDatabaseOperations.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-02-01-preview/examples/ListDatabaseOperations.json
 if __name__ == "__main__":
     main()

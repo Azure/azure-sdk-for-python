@@ -625,7 +625,7 @@ class JobExecutionsOperations:
         )
 
     @distributed_trace
-    def list_by_job(
+    def list_by_job(  # pylint: disable=too-many-locals
         self,
         resource_group_name: str,
         server_name: str,

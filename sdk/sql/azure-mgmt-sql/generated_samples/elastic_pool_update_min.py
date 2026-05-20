@@ -16,7 +16,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python replication_link_create_or_update.py
+    python elastic_pool_update_min.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,16 +31,27 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.replication_links.begin_create_or_update(
-        resource_group_name="Default",
-        server_name="sourcesvr",
-        database_name="gamma-db",
-        link_id="00000000-1111-2222-3333-666666666666",
-        parameters={"properties": {"linkType": "STANDBY"}},
+    response = client.elastic_pools.begin_update(
+        resource_group_name="sqlcrudtest-2369",
+        server_name="sqlcrudtest-8069",
+        elastic_pool_name="sqlcrudtest-8102",
+        parameters={
+            "availabilityZone": "str",
+            "highAvailabilityReplicaCount": 0,
+            "licenseType": "str",
+            "maintenanceConfigurationId": "str",
+            "maxSizeBytes": 0,
+            "minCapacity": 0.0,
+            "perDatabaseSettings": {"maxCapacity": 0.0, "minCapacity": 0.0},
+            "preferredEnclaveType": "str",
+            "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
+            "tags": {"str": "str"},
+            "zoneRedundant": bool,
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/ReplicationLinkCreateOrUpdate.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ElasticPoolUpdateMin.json
 if __name__ == "__main__":
     main()
