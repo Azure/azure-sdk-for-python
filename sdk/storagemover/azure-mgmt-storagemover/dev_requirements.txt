@@ -1,3 +1,10 @@
 -e ../../../eng/tools/azure-sdk-tools
 ../../identity/azure-identity
 aiohttp
+# Cross-sub mgmt clients used by scenario-test matrix row #31
+# (`test_start_c2c_job_with_private_source`) and row #10's extended public-bucket
+# E2E (`test_job_definition_job_run`). Test-only deps; not in the package's
+# runtime install_requires.
+azure-mgmt-network
+azure-mgmt-authorization
+azure-mgmt-storage
