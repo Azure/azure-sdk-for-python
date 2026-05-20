@@ -12,6 +12,7 @@ from azure.keyvault.keys import KeyReleasePolicy
 from azure.keyvault.keys._shared.client_base import ApiVersion
 from devtools_testutils import AzureRecordedTestCase
 
+
 HSM_UNSUPPORTED_VERSIONS = {ApiVersion.V2016_10_01, ApiVersion.V7_0, ApiVersion.V7_1}
 
 

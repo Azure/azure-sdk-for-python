@@ -6,7 +6,6 @@
 Tests for the HTTP challenge authentication implementation. These tests aren't parallelizable, because
 the challenge cache is global to the process.
 """
-
 import asyncio
 import functools
 from itertools import product
