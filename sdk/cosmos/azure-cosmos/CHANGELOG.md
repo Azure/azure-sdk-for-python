@@ -28,6 +28,9 @@
 * Added InferenceRequestTimeout property for HttpTimeout Policy to Reranking API. See [45469](https://github.com/Azure/azure-sdk-for-python/pull/45469)
 * Added `full_text_score_scope` parameter to `query_items()` for controlling BM25 statistics scope in hybrid search queries. Supports "Local" and "Global" (default) scopes. See [45686](https://github.com/Azure/azure-sdk-for-python/pull/45686)
 
+#### Breaking Changes
+* Added `start_time` support for change feed queries in `query_items_change_feed` API. See [PR 44621](https://github.com/Azure/azure-sdk-for-python/pull/44621)
+
 #### Bugs Fixed
 * Fixed bug where a compound session token (containing multiple partition tokens) was sent for single-partition feed range queries. See [PR 44484](https://github.com/Azure/azure-sdk-for-python/pull/44484)
 * Fixed regression where `user_agent_overwrite` kwarg was not cleaned up properly, causing `TypeError` crash on sync client construction. See [PR 45653](https://github.com/Azure/azure-sdk-for-python/pull/45653)
