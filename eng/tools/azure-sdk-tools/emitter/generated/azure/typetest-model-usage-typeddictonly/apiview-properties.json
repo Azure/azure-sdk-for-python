@@ -1,0 +1,12 @@
+{
+    "CrossLanguagePackageId": "Type.Model.Usage",
+    "CrossLanguageDefinitionId": {
+        "typetest.model.usage.typeddictonly.UsageClient.input": "Type.Model.Usage.input",
+        "typetest.model.usage.typeddictonly.aio.UsageClient.input": "Type.Model.Usage.input",
+        "typetest.model.usage.typeddictonly.UsageClient.output": "Type.Model.Usage.output",
+        "typetest.model.usage.typeddictonly.aio.UsageClient.output": "Type.Model.Usage.output",
+        "typetest.model.usage.typeddictonly.UsageClient.input_and_output": "Type.Model.Usage.inputAndOutput",
+        "typetest.model.usage.typeddictonly.aio.UsageClient.input_and_output": "Type.Model.Usage.inputAndOutput"
+    },
+    "CrossLanguageVersion": "f962027db695"
+}
