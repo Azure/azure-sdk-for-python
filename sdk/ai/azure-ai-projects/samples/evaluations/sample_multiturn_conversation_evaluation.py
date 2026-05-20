@@ -119,12 +119,19 @@ with (
     print(f"Evaluation created (id: {eval_object.id})")
 
     # Upload the conversation dataset
-    data_id = project_client.datasets.upload_file(
-        name="multiturn-conversation-data",
-        version="1",
-        file_path=data_file,
-    ).id
-    print(f"Dataset uploaded (id: {data_id})")
+    try:
+        data_id = project_client.datasets.upload_file(
+            name="multiturn-conversation-data",
+            version="1",
+            file_path=data_file,
+        ).id
+        print(f"Dataset uploaded (id: {data_id})")
+    except Exception:
+        # Dataset already exists — use the existing URI
+        account = endpoint.split("/")[2].split(".")[0]
+        project = endpoint.rstrip("/").split("/")[-1]
+        data_id = f"azureai://accounts/{account}/projects/{project}/data/multiturn-conversation-data/versions/1"
+        print(f"Using existing dataset (id: {data_id})")
 
     # Create a run with evaluation_level set to "conversation"
     # so evaluators score each conversation as a whole.
