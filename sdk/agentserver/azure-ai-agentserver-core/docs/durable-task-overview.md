@@ -30,6 +30,21 @@ Most agent frameworks already provide durability for state *between* turns (Lang
 
 **That's the gap `@durable_task` closes.** It wraps a durable boundary around the developer's agent function — a unit of work the platform can see, lease, restart, and resume — so whatever framework is underneath has somewhere to plug in.
 
+Agent frameworks fall into two camps:
+
+| Category | Examples | What they need |
+|----------|----------|----------------|
+| **Externally stateful** — the framework owns durability | Temporal, Durable Functions, Orleans | Platform visibility: lifecycle tracking, lease-based liveness, status reporting on top of the framework's own durability |
+| **Locally stateful** — the container holds state | LangGraph (SQLite checkpointer), Claude SDK tool loops, hand-written agents | A crash-safe entry point: lease-based liveness so the platform knows when to restart, plus run / resume / progress / suspend primitives the developer would otherwise hand-roll |
+
+`@durable_task` serves both camps. It is **not** a replacement for Temporal or
+Durable Functions — it is the thin durable wrapper around the boundary between
+the platform and your code. It does not make your function deterministic or
+replayable. It turns `run(input) → output` into a unit of work that survives
+a container crash, a deployment, or an idle-deactivation — with hooks for
+progress, suspension, cancellation, and steering that compose with whatever
+framework you use underneath.
+
 ---
 
 ## The Solution: One Decorator
