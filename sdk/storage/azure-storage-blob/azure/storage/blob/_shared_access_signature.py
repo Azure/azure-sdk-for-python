@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import (
-    Any, Callable, Dict, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Callable, Dict, Optional, Union, TYPE_CHECKING
 from urllib.parse import parse_qs
 
 from ._shared import sign_string, url_quote
@@ -22,7 +19,7 @@ if TYPE_CHECKING:
 
 
 class BlobQueryStringConstants(object):
-    SIGNED_TIMESTAMP = 'snapshot'
+    SIGNED_TIMESTAMP = "snapshot"
 
 
 class BlobSharedAccessSignature(SharedAccessSignature):
@@ -34,9 +31,10 @@ class BlobSharedAccessSignature(SharedAccessSignature):
     """
 
     def __init__(
-        self, account_name: str,
+        self,
+        account_name: str,
         account_key: Optional[str] = None,
-        user_delegation_key: Optional[UserDelegationKey] = None
+        user_delegation_key: Optional[UserDelegationKey] = None,
     ) -> None:
         """
         :param str account_name:
@@ -52,7 +50,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         self.user_delegation_key = user_delegation_key
 
     def generate_blob(
-        self, container_name: str,
+        self,
+        container_name: str,
         blob_name: str,
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
@@ -72,7 +71,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         request_query_params: Optional[Dict[str, str]] = None,
         is_directory: Optional[bool] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> str:
         """
         Generates a shared access signature for the blob or one of its snapshots.
@@ -161,26 +160,26 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
-        resource_path = container_name + '/' + blob_name
+        resource_path = container_name + "/" + blob_name
 
         sas = _BlobSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
         sas.add_user_delegation_oid(user_delegation_oid)
 
-        resource = 'bs' if snapshot else 'b'
-        resource = 'bv' if version_id else resource
-        resource = 'd' if is_directory else resource
+        resource = "bs" if snapshot else "b"
+        resource = "bv" if version_id else resource
+        resource = "d" if is_directory else resource
         sas.add_resource(resource)
 
         sas.add_timestamp(snapshot or version_id)
-        sas.add_override_response_headers(cache_control, content_disposition,
-                                          content_encoding, content_language,
-                                          content_type)
+        sas.add_override_response_headers(
+            cache_control, content_disposition, content_encoding, content_language, content_type
+        )
         sas.add_encryption_scope(**kwargs)
 
         if is_directory:
-            sas.add_directory_depth(blob_name, kwargs.pop('sdd', None))
+            sas.add_directory_depth(blob_name, kwargs.pop("sdd", None))
 
         sas.add_info_for_hns_account(**kwargs)
         sas.add_resource_signature(
@@ -189,7 +188,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
             resource_path,
             user_delegation_key=self.user_delegation_key,
             request_headers=request_headers,
-            request_query_params=request_query_params
+            request_query_params=request_query_params,
         )
 
         if sts_hook is not None:
@@ -198,7 +197,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         return sas.get_token()
 
     def generate_container(
-        self, container_name: str,
+        self,
+        container_name: str,
         permission: Optional[Union["ContainerSasPermissions", str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
@@ -214,7 +214,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         request_headers: Optional[Dict[str, str]] = None,
         request_query_params: Optional[Dict[str, str]] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> str:
         """
         Generates a shared access signature for the container.
@@ -293,10 +293,10 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
         sas.add_user_delegation_oid(user_delegation_oid)
-        sas.add_resource('c')
-        sas.add_override_response_headers(cache_control, content_disposition,
-                                          content_encoding, content_language,
-                                          content_type)
+        sas.add_resource("c")
+        sas.add_override_response_headers(
+            cache_control, content_disposition, content_encoding, content_language, content_type
+        )
         sas.add_encryption_scope(**kwargs)
         sas.add_info_for_hns_account(**kwargs)
         sas.add_resource_signature(
@@ -305,7 +305,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
             container_name,
             user_delegation_key=self.user_delegation_key,
             request_headers=request_headers,
-            request_query_params=request_query_params
+            request_query_params=request_query_params,
         )
 
         if sts_hook is not None:
@@ -330,13 +330,13 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, str(sdd))
 
     def add_info_for_hns_account(self, **kwargs):
-        self._add_query(QueryStringConstants.SIGNED_AUTHORIZED_OID, kwargs.pop('preauthorized_agent_object_id', None))
-        self._add_query(QueryStringConstants.SIGNED_UNAUTHORIZED_OID, kwargs.pop('agent_object_id', None))
-        self._add_query(QueryStringConstants.SIGNED_CORRELATION_ID, kwargs.pop('correlation_id', None))
+        self._add_query(QueryStringConstants.SIGNED_AUTHORIZED_OID, kwargs.pop("preauthorized_agent_object_id", None))
+        self._add_query(QueryStringConstants.SIGNED_UNAUTHORIZED_OID, kwargs.pop("agent_object_id", None))
+        self._add_query(QueryStringConstants.SIGNED_CORRELATION_ID, kwargs.pop("correlation_id", None))
 
     def get_value_to_append(self, query):
-        return_value = self.query_dict.get(query) or ''
-        return return_value + '\n'
+        return_value = self.query_dict.get(query) or ""
+        return return_value + "\n"
 
     def add_resource_signature(
         self,
@@ -346,20 +346,21 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         user_delegation_key=None,
         *,
         request_headers=None,
-        request_query_params=None
+        request_query_params=None,
     ):
-        if path[0] != '/':
-            path = '/' + path
+        if path[0] != "/":
+            path = "/" + path
 
-        canonicalized_resource = '/blob/' + account_name + path + '\n'
+        canonicalized_resource = "/blob/" + account_name + path + "\n"
 
         # Form the string to sign from shared_access_policy and canonicalized
         # resource. The order of values is important.
-        string_to_sign = \
-            (self.get_value_to_append(QueryStringConstants.SIGNED_PERMISSION) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_START) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
-             canonicalized_resource)
+        string_to_sign = (
+            self.get_value_to_append(QueryStringConstants.SIGNED_PERMISSION)
+            + self.get_value_to_append(QueryStringConstants.SIGNED_START)
+            + self.get_value_to_append(QueryStringConstants.SIGNED_EXPIRY)
+            + canonicalized_resource
+        )
 
         if user_delegation_key is not None:
             self._add_query(QueryStringConstants.SIGNED_OID, user_delegation_key.signed_oid)
@@ -369,34 +370,34 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
             self._add_query(QueryStringConstants.SIGNED_KEY_SERVICE, user_delegation_key.signed_service)
             self._add_query(QueryStringConstants.SIGNED_KEY_VERSION, user_delegation_key.signed_version)
             self._add_query(
-                QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
-                user_delegation_key.signed_delegated_user_tid
+                QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID, user_delegation_key.signed_delegated_user_tid
             )
             self.add_request_headers(request_headers)
             self.add_request_query_params(request_query_params)
 
-            string_to_sign += \
-                (self.get_value_to_append(QueryStringConstants.SIGNED_OID) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_TID) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_KEY_START) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_KEY_EXPIRY) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_KEY_SERVICE) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_AUTHORIZED_OID) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_UNAUTHORIZED_OID) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_CORRELATION_ID) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_DELEGATED_USER_OID))
+            string_to_sign += (
+                self.get_value_to_append(QueryStringConstants.SIGNED_OID)
+                + self.get_value_to_append(QueryStringConstants.SIGNED_TID)
+                + self.get_value_to_append(QueryStringConstants.SIGNED_KEY_START)
+                + self.get_value_to_append(QueryStringConstants.SIGNED_KEY_EXPIRY)
+                + self.get_value_to_append(QueryStringConstants.SIGNED_KEY_SERVICE)
+                + self.get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION)
+                + self.get_value_to_append(QueryStringConstants.SIGNED_AUTHORIZED_OID)
+                + self.get_value_to_append(QueryStringConstants.SIGNED_UNAUTHORIZED_OID)
+                + self.get_value_to_append(QueryStringConstants.SIGNED_CORRELATION_ID)
+                + self.get_value_to_append(QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID)
+                + self.get_value_to_append(QueryStringConstants.SIGNED_DELEGATED_USER_OID)
+            )
         else:
             string_to_sign += self.get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
 
         string_to_sign += (
-             self.get_value_to_append(QueryStringConstants.SIGNED_IP) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_RESOURCE) +
-             self.get_value_to_append(BlobQueryStringConstants.SIGNED_TIMESTAMP) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE)
+            self.get_value_to_append(QueryStringConstants.SIGNED_IP)
+            + self.get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL)
+            + self.get_value_to_append(QueryStringConstants.SIGNED_VERSION)
+            + self.get_value_to_append(QueryStringConstants.SIGNED_RESOURCE)
+            + self.get_value_to_append(BlobQueryStringConstants.SIGNED_TIMESTAMP)
+            + self.get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE)
         )
 
         if user_delegation_key is not None:
@@ -404,20 +405,21 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
             string_to_sign += (self._sts_srq + "\n") if self._sts_srq else "\n"
 
         string_to_sign += (
-             self.get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_ENCODING) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_LANGUAGE) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_TYPE)
+            self.get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL)
+            + self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION)
+            + self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_ENCODING)
+            + self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_LANGUAGE)
+            + self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_TYPE)
         )
 
         # remove the trailing newline
-        if string_to_sign[-1] == '\n':
+        if string_to_sign[-1] == "\n":
             string_to_sign = string_to_sign[:-1]
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
-                        sign_string(account_key if user_delegation_key is None else user_delegation_key.value,
-                                    string_to_sign))
+        self._add_query(
+            QueryStringConstants.SIGNED_SIGNATURE,
+            sign_string(account_key if user_delegation_key is None else user_delegation_key.value, string_to_sign),
+        )
         self.string_to_sign = string_to_sign
 
     def get_token(self) -> str:
@@ -425,8 +427,13 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         # this is to avoid having two snapshot ids in the query parameters when the user appends the snapshot timestamp
         exclude = [BlobQueryStringConstants.SIGNED_TIMESTAMP]
         no_quote = [QueryStringConstants.SIGNED_REQUEST_HEADERS, QueryStringConstants.SIGNED_REQUEST_QUERY_PARAMS]
-        return '&'.join([f'{n}={url_quote(v)}' if n not in no_quote else f"{n}={v}"
-                         for n, v in self.query_dict.items() if v is not None and n not in exclude])
+        return "&".join(
+            [
+                f"{n}={url_quote(v)}" if n not in no_quote else f"{n}={v}"
+                for n, v in self.query_dict.items()
+                if v is not None and n not in exclude
+            ]
+        )
 
 
 def generate_account_sas(
@@ -440,7 +447,7 @@ def generate_account_sas(
     *,
     services: Union[Services, str] = Services(blob=True),
     sts_hook: Optional[Callable[[str], None]] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> str:
     """Generates a shared access signature for the blob service.
 
@@ -506,7 +513,7 @@ def generate_account_sas(
         start=start,
         ip=ip,
         sts_hook=sts_hook,
-        **kwargs
+        **kwargs,
     )
 
 
@@ -525,7 +532,7 @@ def generate_container_sas(
     request_headers: Optional[Dict[str, str]] = None,
     request_query_params: Optional[Dict[str, str]] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> str:
     """Generates a shared access signature for a container.
 
@@ -648,7 +655,7 @@ def generate_container_sas(
         request_headers=request_headers,
         request_query_params=request_query_params,
         sts_hook=sts_hook,
-        **kwargs
+        **kwargs,
     )
 
 
@@ -670,7 +677,7 @@ def generate_blob_sas(
     request_query_params: Optional[Dict[str, str]] = None,
     is_directory: Optional[bool] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> str:
     """Generates a shared access signature for a blob.
 
@@ -785,7 +792,7 @@ def generate_blob_sas(
         raise ValueError("Either user_delegation_key or account_key must be provided.")
     if isinstance(account_key, UserDelegationKey):
         user_delegation_key = account_key
-    version_id = kwargs.pop('version_id', None)
+    version_id = kwargs.pop("version_id", None)
     if version_id and snapshot:
         raise ValueError("snapshot and version_id cannot be set at the same time.")
     if user_delegation_key:
@@ -807,8 +814,9 @@ def generate_blob_sas(
         request_query_params=request_query_params,
         is_directory=is_directory,
         sts_hook=sts_hook,
-        **kwargs
+        **kwargs,
     )
+
 
 def _is_credential_sastoken(credential: Any) -> bool:
     if not credential or not isinstance(credential, str):

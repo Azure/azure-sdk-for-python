@@ -16,7 +16,6 @@ from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
 
-
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
 
