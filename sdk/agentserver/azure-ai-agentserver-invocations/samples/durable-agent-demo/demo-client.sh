@@ -199,6 +199,10 @@ dispatch_task() {
     if [[ -n "$sess" ]]; then
         SESSION_ID="$sess"
     fi
+    # Reset event tracking when a fresh task starts (not a reconnect)
+    if [[ "$status" == "started" ]]; then
+        LAST_EVENT_ID="0"
+    fi
     save_session
 
     echo -e "${DIM}Task ${status}: inv=${INV_ID:0:30}...${RESET}"
