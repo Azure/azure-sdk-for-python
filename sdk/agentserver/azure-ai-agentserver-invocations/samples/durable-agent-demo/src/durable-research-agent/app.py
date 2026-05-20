@@ -30,7 +30,12 @@ app = InvocationAgentServerHost()
 
 @app.invoke_handler
 async def handle_invoke(request: Request) -> Response:
-    """Start a research task. Send ``{"message": "crash"}`` to trigger a crash."""
+    """Dispatch a research task (fire-and-forget).
+
+    Returns immediately with 202 + invocation/session IDs.
+    The client then calls GET /invocations/{id} to stream results.
+    Send ``{"message": "crash"}`` to trigger a deliberate crash for demo.
+    """
     body = await request.body()
     try:
         data = json.loads(body) if body else {}
@@ -49,19 +54,18 @@ async def handle_invoke(request: Request) -> Response:
     if not topic.strip():
         return JSONResponse({"error": "Provide a 'message' field"}, status_code=400)
 
-    # Deliberate crash trigger for demo — respond first, then crash
+    # Deliberate crash trigger for demo — return 202, then crash asynchronously
     if topic.strip().lower() in ("crash", "💥", "kill"):
-        logger.critical("💥 CRASH triggered via API — will exit after response")
+        logger.critical("💥 CRASH triggered via API — will exit shortly")
 
-        async def crash_after_response():
-            yield f"data: {json.dumps({'type': 'done', 'full_text': '💥 Process crashing now...'})}\n\n"
-            await asyncio.sleep(0.1)  # ensure response is flushed
+        async def _crash():
+            await asyncio.sleep(0.3)  # give time for response to flush
             os._exit(137)
 
-        return StreamingResponse(
-            crash_after_response(),
-            media_type="text/event-stream",
-            headers={"Cache-Control": "no-cache"},
+        asyncio.get_event_loop().create_task(_crash())
+        return JSONResponse(
+            {"status": "crashing", "message": "💥 Process will crash now"},
+            status_code=202,
         )
 
     invocation_id: str = request.state.invocation_id
@@ -69,70 +73,71 @@ async def handle_invoke(request: Request) -> Response:
     task_id = f"research-{session_id}"
     logger.info(f"POST handler: session_id={session_id!r}, task_id={task_id!r}")
 
+    status = "started"
     try:
-        run = await deep_research.start(
+        await deep_research.start(
             task_id=task_id,
             input={"topic": topic, "invocation_id": invocation_id},
             session_id=session_id,
         )
     except TaskConflictError:
-        # Task still in_progress (recovered after crash and still running)
-        return JSONResponse(
-            {"status": "in_progress", "message": "Research task is still running (recovered after crash). Use GET to reconnect."},
-            status_code=200,
-        )
+        # Task already running (recovered after crash)
+        status = "in_progress"
+        logger.info(f"POST handler: TaskConflictError — task already running")
 
-    # Stream SSE events in Foundry-compatible format
-    async def event_stream():
-        try:
-            async for chunk in run:
-                # Each chunk from ctx.stream() is already a JSON string
-                yield f"data: {chunk}\n\n"
-            result = await run.result()
-            yield f"data: {json.dumps({'type': 'done', 'full_text': result.output.get('report', '')})}\n\n"
-        except (TaskCancelled, TaskTerminated):
-            yield f"data: {json.dumps({'type': 'done', 'full_text': '[Task was cancelled]'})}\n\n"
-        except TaskFailed as exc:
-            yield f"data: {json.dumps({'type': 'done', 'full_text': f'[Error: {exc}]'})}\n\n"
-
-    return StreamingResponse(
-        event_stream(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache"},
+    # Return immediately — platform sees 202 and preserves invocation mapping
+    return JSONResponse(
+        {
+            "status": status,
+            "invocation_id": invocation_id,
+            "session_id": session_id,
+            "task_id": task_id,
+        },
+        status_code=202,
     )
 
 
 @app.get_invocation_handler
 async def handle_get(request: Request) -> Response:
-    """Reconnect to an existing invocation — stream from the active task.
+    """Stream SSE from the active task or replay from persisted file.
 
-    After a crash, the client calls GET /invocations/{id} to resume receiving
-    the SSE stream. First tries the in-memory task handle; if unavailable
-    (task completed or not yet recovered), falls back to replaying from the
-    persisted stream file.
+    The platform routes GET /invocations/{id} to this container based on
+    the invocation→session mapping preserved from the fire-and-forget POST.
+    Session ID is derived from the framework config (FOUNDRY_AGENT_SESSION_ID).
+
+    Supports ``last_event_id`` query param to skip already-received events
+    on reconnect (platform strips non x-client- headers, so we use a param).
     """
-    session_id = (
-        request.query_params.get("agent_session_id")
-        or os.environ.get("FOUNDRY_AGENT_SESSION_ID", "")
-    )
+    session_id = request.state.session_id if hasattr(request.state, "session_id") and request.state.session_id else app.config.session_id
     task_id = f"research-{session_id}"
-    logger.info(f"GET handler: session_id={session_id!r}, task_id={task_id!r}")
+
+    # Skip already-seen events: client passes last_event_id query param on reconnect
+    last_event_id = request.query_params.get("last_event_id", "")
+    skip_count = int(last_event_id) if last_event_id.isdigit() else 0
+    logger.info(f"GET handler: session_id={session_id!r}, task_id={task_id!r}, skip={skip_count}")
 
     run = deep_research.get_active_run(task_id)
     logger.info(f"GET handler: get_active_run({task_id!r}) -> {run}")
 
     if run is not None:
-        # Live task — stream from it
+        # Live task — stream from it, skipping already-seen events
         async def live_stream():
+            event_id = 0
             try:
                 async for chunk in run:
-                    yield f"data: {chunk}\n\n"
+                    event_id += 1
+                    if event_id <= skip_count:
+                        continue
+                    yield f"id: {event_id}\ndata: {chunk}\n\n"
                 result = await run.result()
-                yield f"data: {json.dumps({'type': 'done', 'full_text': result.output.get('report', '')})}\n\n"
+                event_id += 1
+                yield f"id: {event_id}\ndata: {json.dumps({'type': 'done', 'full_text': result.output.get('report', '')})}\n\n"
             except (TaskCancelled, TaskTerminated):
-                yield f"data: {json.dumps({'type': 'done', 'full_text': '[Task was cancelled]'})}\n\n"
+                event_id += 1
+                yield f"id: {event_id}\ndata: {json.dumps({'type': 'done', 'full_text': '[Task was cancelled]'})}\n\n"
             except TaskFailed as exc:
-                yield f"data: {json.dumps({'type': 'done', 'full_text': f'[Error: {exc}]'})}\n\n"
+                event_id += 1
+                yield f"id: {event_id}\ndata: {json.dumps({'type': 'done', 'full_text': f'[Error: {exc}]'})}\n\n"
 
         return StreamingResponse(
             live_stream(),
@@ -150,17 +155,23 @@ async def handle_get(request: Request) -> Response:
     logger.info(f"GET handler: falling back to stream file {stream_file}")
 
     async def file_stream():
+        event_id = 0
         for line in stream_file.read_text(encoding="utf-8").splitlines():
             line = line.strip()
             if not line:
                 continue
             data = json.loads(line)
             if "__done__" in data:
-                yield f"data: {json.dumps({'type': 'done', 'full_text': ''})}\n\n"
+                event_id += 1
+                yield f"id: {event_id}\ndata: {json.dumps({'type': 'done', 'full_text': ''})}\n\n"
                 return
-            yield f"data: {json.dumps(data)}\n\n"
+            event_id += 1
+            if event_id <= skip_count:
+                continue
+            yield f"id: {event_id}\ndata: {json.dumps(data)}\n\n"
         # File exists but no __done__ sentinel — task may still be running
-        yield f"data: {json.dumps({'type': 'done', 'full_text': '[Stream replay complete — task may still be recovering]'})}\n\n"
+        event_id += 1
+        yield f"id: {event_id}\ndata: {json.dumps({'type': 'done', 'full_text': '[Stream replay complete — task may still be recovering]'})}\n\n"
 
     return StreamingResponse(
         file_stream(),
@@ -172,10 +183,7 @@ async def handle_get(request: Request) -> Response:
 @app.cancel_invocation_handler
 async def handle_cancel(request: Request) -> Response:
     """Cancel the running research task."""
-    session_id = (
-        request.query_params.get("agent_session_id")
-        or os.environ.get("FOUNDRY_AGENT_SESSION_ID", "")
-    )
+    session_id = request.state.session_id if hasattr(request.state, "session_id") and request.state.session_id else app.config.session_id
     task_id = f"research-{session_id}"
     logger.info(f"CANCEL handler: session_id={session_id!r}, task_id={task_id!r}")
 
