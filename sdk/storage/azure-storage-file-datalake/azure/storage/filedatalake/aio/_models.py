@@ -39,10 +39,7 @@ class FileSystemPropertiesPaged(ContainerPropertiesPaged):
     """The current page of listed results."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super(FileSystemPropertiesPaged, self).__init__(
-            *args,
-            **kwargs
-        )
+        super(FileSystemPropertiesPaged, self).__init__(*args, **kwargs)
 
     @staticmethod
     def _build_item(item):

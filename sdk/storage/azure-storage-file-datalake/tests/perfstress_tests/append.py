@@ -24,14 +24,8 @@ class AppendTest(_FileSystemTest):
 
     def run_sync(self):
         self.upload_stream.reset()
-        self.file_client.append_data(
-            self.upload_stream,
-            length=self.args.size,
-            offset=0)
+        self.file_client.append_data(self.upload_stream, length=self.args.size, offset=0)
 
     async def run_async(self):
         self.upload_stream_async.reset()
-        await self.async_file_client.append_data(
-            self.upload_stream_async,
-            length=self.args.size,
-            offset=0)
+        await self.async_file_client.append_data(self.upload_stream_async, length=self.args.size, offset=0)

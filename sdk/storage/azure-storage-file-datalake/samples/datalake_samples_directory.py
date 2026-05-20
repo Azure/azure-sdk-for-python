@@ -52,8 +52,7 @@ def directory_sample(filesystem_client):
     # [START rename_directory]
     new_dir_name = "testdir2"
     print("Renaming the directory named '{}' to '{}'.".format(dir_name, new_dir_name))
-    new_directory = directory_client\
-        .rename_directory(new_name=directory_client.file_system_name + '/' + new_dir_name)
+    new_directory = directory_client.rename_directory(new_name=directory_client.file_system_name + "/" + new_dir_name)
     # [END rename_directory]
 
     # display the properties of the new directory to make sure it was renamed successfully
@@ -72,11 +71,13 @@ def directory_sample(filesystem_client):
 def create_child_files(directory_client, num_child_files):
     import concurrent.futures
     import itertools
+
     # Use a thread pool because it is too slow otherwise
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+
         def create_file():
             # generate a random name
-            file_name = str(uuid.uuid4()).replace('-', '')
+            file_name = str(uuid.uuid4()).replace("-", "")
             directory_client.get_file_client(file_name).create_file()
 
         futures = {executor.submit(create_file) for _ in itertools.repeat(None, num_child_files)}
@@ -85,14 +86,13 @@ def create_child_files(directory_client, num_child_files):
 
 
 def run():
-    account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
-    account_key = os.getenv('DATALAKE_STORAGE_ACCOUNT_KEY', "")
+    account_name = os.getenv("DATALAKE_STORAGE_ACCOUNT_NAME", "")
+    account_key = os.getenv("DATALAKE_STORAGE_ACCOUNT_KEY", "")
 
     # set up the service client with the credentials from the environment variables
-    service_client = DataLakeServiceClient(account_url="{}://{}.dfs.core.windows.net".format(
-        "https",
-        account_name
-    ), credential=account_key)
+    service_client = DataLakeServiceClient(
+        account_url="{}://{}.dfs.core.windows.net".format("https", account_name), credential=account_key
+    )
 
     # generate a random name for testing purpose
     fs_name = "dicretorytestfs{}".format(random.randint(1, 1000))
@@ -109,5 +109,5 @@ def run():
         filesystem_client.delete_file_system()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

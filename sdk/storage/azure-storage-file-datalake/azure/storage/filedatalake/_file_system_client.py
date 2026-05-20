@@ -6,10 +6,7 @@
 # pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
 import functools
-from typing import (
-    Any, cast, Dict, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, cast, Dict, Optional, Union, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -30,7 +27,7 @@ from ._models import (
     FileProperties,
     FileSystemProperties,
     LocationMode,
-    PublicAccess
+    PublicAccess,
 )
 from ._shared.base_client import parse_connection_str, parse_query, TransportWrapper, StorageAccountHostsMixin
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
@@ -93,10 +90,13 @@ class FileSystemClient(StorageAccountHostsMixin):
     """The hostname of the primary endpoint."""
 
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         file_system_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
     ) -> None:
         if not file_system_name:
             raise ValueError("Please specify a file system name.")
@@ -107,24 +107,21 @@ class FileSystemClient(StorageAccountHostsMixin):
         # TODO: add self.account_url to base_client and remove _blob_account_url
         self._blob_account_url = blob_account_url
 
-        datalake_hosts = kwargs.pop('_hosts', None)
+        datalake_hosts = kwargs.pop("_hosts", None)
         blob_hosts = None
         if datalake_hosts:
             blob_primary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.PRIMARY])
             blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url, LocationMode.SECONDARY: ""}
         self._container_client = ContainerClient(
-            self._blob_account_url,
-            self.file_system_name,
-            credential=credential,
-            _hosts=blob_hosts,
-            **kwargs
+            self._blob_account_url, self.file_system_name, credential=credential, _hosts=blob_hosts, **kwargs
         )
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 
-        super(FileSystemClient, self).__init__(parsed_url, service='dfs', credential=self._raw_credential,
-                                               _hosts=datalake_hosts, **kwargs)
+        super(FileSystemClient, self).__init__(
+            parsed_url, service="dfs", credential=self._raw_credential, _hosts=datalake_hosts, **kwargs
+        )
 
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
@@ -156,11 +153,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
-            url,
-            version=self._api_version,
-            base_url=url,
-            file_system=self.file_system_name,
-            pipeline=self._pipeline
+            url, version=self._api_version, base_url=url, file_system=self.file_system_name, pipeline=self._pipeline
         )
         return client
 
@@ -169,10 +162,13 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
+        cls,
+        conn_str: str,
         file_system_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
     ) -> Self:
         """
         Create FileSystemClient from a Connection String.
@@ -210,14 +206,12 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Create FileSystemClient from connection string
         """
-        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
+        account_url, _, credential = parse_connection_str(conn_str, credential, "dfs")
         return cls(account_url, file_system_name=file_system_name, credential=credential, **kwargs)
 
     @distributed_trace
     def acquire_lease(
-        self, lease_duration: int = -1,
-        lease_id: Optional[str] = None,
-        **kwargs: Any
+        self, lease_duration: int = -1, lease_id: Optional[str] = None, **kwargs: Any
     ) -> DataLakeLeaseClient:
         """
         Requests a new lease. If the file system does not have an active lease,
@@ -273,9 +267,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def create_file_system(
-        self, metadata: Optional[Dict[str, str]] = None,
-        public_access: Optional[PublicAccess] = None,
-        **kwargs: Any
+        self, metadata: Optional[Dict[str, str]] = None, public_access: Optional[PublicAccess] = None, **kwargs: Any
     ) -> Dict[str, Union[str, "datetime"]]:
         """Creates a new file system under the specified account.
 
@@ -315,12 +307,12 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Creating a file system in the datalake service.
         """
-        encryption_scope_options = kwargs.pop('encryption_scope_options', None)
+        encryption_scope_options = kwargs.pop("encryption_scope_options", None)
         return self._container_client.create_container(
             metadata=metadata,
             public_access=public_access,
             container_encryption_scope=encryption_scope_options,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -360,11 +352,17 @@ class FileSystemClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         self._container_client._rename_container(new_name, **kwargs)  # pylint: disable=protected-access
-        #TODO: self._raw_credential would not work with SAS tokens
+        # TODO: self._raw_credential would not work with SAS tokens
         renamed_file_system = FileSystemClient(
-            f"{self.scheme}://{self.primary_hostname}", file_system_name=new_name,
-            credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-            _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts)
+            f"{self.scheme}://{self.primary_hostname}",
+            file_system_name=new_name,
+            credential=self._raw_credential,
+            api_version=self.api_version,
+            _configuration=self._config,
+            _pipeline=self._pipeline,
+            _location_mode=self._location_mode,
+            _hosts=self._hosts,
+        )
         return renamed_file_system
 
     @distributed_trace
@@ -441,13 +439,12 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: Getting properties on the file system.
         """
         container_properties = self._container_client.get_container_properties(**kwargs)
-        return FileSystemProperties._convert_from_container_props(container_properties)  # pylint: disable=protected-access
+        return FileSystemProperties._convert_from_container_props(
+            container_properties
+        )  # pylint: disable=protected-access
 
     @distributed_trace
-    def set_file_system_metadata(
-        self, metadata: Dict[str, str],
-        **kwargs: Any
-    ) -> Dict[str, Union[str, "datetime"]]:
+    def set_file_system_metadata(self, metadata: Dict[str, str], **kwargs: Any) -> Dict[str, Union[str, "datetime"]]:
         """Sets one or more user-defined name-value pairs for the specified
         file system. Each call to this operation replaces all existing metadata
         attached to the file system. To remove all metadata from the file system,
@@ -499,9 +496,10 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_file_system_access_policy(
-        self, signed_identifiers: Dict[str, "AccessPolicy"],
+        self,
+        signed_identifiers: Dict[str, "AccessPolicy"],
         public_access: Optional[Union[str, "PublicAccess"]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Union[str, "datetime"]]:
         """Sets the permissions for the specified file system or stored access
         policies that may be used with Shared Access Signatures. The permissions
@@ -540,9 +538,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :rtype: Dict[str, Union[str, ~datetime.datetime]]
         """
         return self._container_client.set_container_access_policy(
-            cast(Dict[str, "BlobAccessPolicy"], signed_identifiers),
-            public_access=public_access,
-            **kwargs
+            cast(Dict[str, "BlobAccessPolicy"], signed_identifiers), public_access=public_access, **kwargs
         )
 
     @distributed_trace
@@ -565,16 +561,19 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         access_policy = self._container_client.get_container_access_policy(**kwargs)
         return {
-            'public_access': PublicAccess._from_generated(access_policy['public_access']),  # pylint: disable=protected-access
-            'signed_identifiers': access_policy['signed_identifiers']
+            "public_access": PublicAccess._from_generated(
+                access_policy["public_access"]
+            ),  # pylint: disable=protected-access
+            "signed_identifiers": access_policy["signed_identifiers"],
         }
 
     @distributed_trace
     def get_paths(
-        self, path: Optional[str] = None,
+        self,
+        path: Optional[str] = None,
         recursive: Optional[bool] = True,
         max_results: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged["PathProperties"]:
         """Returns a generator to list the paths(could be files or directories) under the specified file system.
         The generator will lazily follow the continuation tokens returned by
@@ -617,25 +616,18 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: List the paths in the file system.
         """
-        timeout = kwargs.pop('timeout', None)
+        timeout = kwargs.pop("timeout", None)
         begin_from = kwargs.pop("start_from", None)
         command = functools.partial(
-            self._client.file_system.list_paths,
-            path=path,
-            timeout=timeout,
-            begin_from=begin_from,
-            **kwargs
+            self._client.file_system.list_paths, path=path, timeout=timeout, begin_from=begin_from, **kwargs
         )
         return ItemPaged(
-            command, recursive, path=path, max_results=max_results,
-            page_iterator_class=PathPropertiesPaged, **kwargs
+            command, recursive, path=path, max_results=max_results, page_iterator_class=PathPropertiesPaged, **kwargs
         )
 
     @distributed_trace
     def create_directory(
-        self, directory: Union[DirectoryProperties, str],
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        self, directory: Union[DirectoryProperties, str], metadata: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> DataLakeDirectoryClient:
         """
         Create directory
@@ -726,8 +718,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_directory(  # pylint: disable=delete-operation-wrong-return-type
-        self, directory: Union[DirectoryProperties, str],
-        **kwargs: Any
+        self, directory: Union[DirectoryProperties, str], **kwargs: Any
     ) -> DataLakeDirectoryClient:
         """
         Marks the specified path for deletion.
@@ -780,10 +771,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         return directory_client
 
     @distributed_trace
-    def create_file(
-        self, file: Union[FileProperties, str],
-        **kwargs: Any
-    ) -> DataLakeFileClient:
+    def create_file(self, file: Union[FileProperties, str], **kwargs: Any) -> DataLakeFileClient:
         """
         Create file
 
@@ -881,8 +869,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def delete_file(  # pylint: disable=delete-operation-wrong-return-type
-        self, file: Union[FileProperties, str],
-        **kwargs: Any
+        self, file: Union[FileProperties, str], **kwargs: Any
     ) -> DataLakeFileClient:
         """
         Marks the specified file for deletion.
@@ -935,9 +922,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         return file_client
 
     def _undelete_path(
-        self, deleted_path_name: str,
-        deletion_id: str,
-        **kwargs: Any
+        self, deleted_path_name: str, deletion_id: str, **kwargs: Any
     ) -> Union[DataLakeDirectoryClient, DataLakeFileClient]:
         """Restores soft-deleted path.
 
@@ -964,14 +949,10 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         path_client = AzureDataLakeStorageRESTAPI(
-            url,
-            version=self._api_version,
-            filesystem=self.file_system_name,
-            path=deleted_path_name,
-            pipeline=pipeline
+            url, version=self._api_version, filesystem=self.file_system_name, path=deleted_path_name, pipeline=pipeline
         )
         try:
             is_file = path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)
@@ -987,7 +968,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
-        return self.get_directory_client('/')
+        return self.get_directory_client("/")
 
     def get_directory_client(self, directory: Union[DirectoryProperties, str]) -> DataLakeDirectoryClient:
         """Get a client to interact with the specified directory.
@@ -1011,18 +992,23 @@ class FileSystemClient(StorageAccountHostsMixin):
                 :caption: Getting the directory client to interact with a specific directory.
         """
         if isinstance(directory, DirectoryProperties):
-            directory_name = directory.get('name')
+            directory_name = directory.get("name")
         else:
             directory_name = str(directory)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
         )
-        return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
-                                       credential=self._raw_credential,
-                                       api_version=self.api_version,
-                                       _configuration=self._config, _pipeline=_pipeline,
-                                       _hosts=self._hosts)
+        return DataLakeDirectoryClient(
+            self.url,
+            self.file_system_name,
+            directory_name=directory_name,
+            credential=self._raw_credential,
+            api_version=self.api_version,
+            _configuration=self._config,
+            _pipeline=_pipeline,
+            _hosts=self._hosts,
+        )
 
     def get_file_client(self, file_path: Union[FileProperties, str]) -> DataLakeFileClient:
         """Get a client to interact with the specified file.
@@ -1051,12 +1037,18 @@ class FileSystemClient(StorageAccountHostsMixin):
             file_path = str(file_path)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         return DataLakeFileClient(
-            self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
+            self.url,
+            self.file_system_name,
+            file_path=file_path,
+            credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
+            _hosts=self._hosts,
+            _configuration=self._config,
+            _pipeline=_pipeline,
+        )
 
     @distributed_trace
     def list_deleted_paths(self, **kwargs: Any) -> ItemPaged[DeletedPathProperties]:
@@ -1082,14 +1074,19 @@ class FileSystemClient(StorageAccountHostsMixin):
         :rtype:
             ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
         """
-        path_prefix = kwargs.pop('path_prefix', None)
-        timeout = kwargs.pop('timeout', None)
-        results_per_page = kwargs.pop('results_per_page', None)
+        path_prefix = kwargs.pop("path_prefix", None)
+        timeout = kwargs.pop("timeout", None)
+        results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
             self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
             showonly="deleted",
             timeout=timeout,
-            **kwargs)
+            **kwargs,
+        )
         return ItemPaged(
-            command, prefix=path_prefix, page_iterator_class=DeletedPathPropertiesPaged,
-            results_per_page=results_per_page, **kwargs)
+            command,
+            prefix=path_prefix,
+            page_iterator_class=DeletedPathPropertiesPaged,
+            results_per_page=results_per_page,
+            **kwargs,
+        )

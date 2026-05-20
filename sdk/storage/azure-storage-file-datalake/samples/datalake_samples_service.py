@@ -27,33 +27,37 @@ import os
 
 class DataLakeServiceSamples(object):
 
-    connection_string = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
-    account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
+    connection_string = os.environ["DATALAKE_STORAGE_CONNECTION_STRING"]
+    account_name = os.getenv("DATALAKE_STORAGE_ACCOUNT_NAME", "")
 
-
-    #--Begin DataLake Service Samples-----------------------------------------------------------------
+    # --Begin DataLake Service Samples-----------------------------------------------------------------
 
     def data_lake_service_sample(self):
 
         # Instantiate a DataLakeServiceClient using a connection string
         # [START create_datalake_service_client]
         from azure.storage.filedatalake import DataLakeServiceClient
+
         datalake_service_client = DataLakeServiceClient.from_connection_string(self.connection_string)
         # [END create_datalake_service_client]
 
         # Instantiate a DataLakeServiceClient Azure Identity credentials.
         # [START create_datalake_service_client_oauth]
         from azure.identity import DefaultAzureCredential
+
         token_credential = DefaultAzureCredential()
-        datalake_service_client = DataLakeServiceClient("https://{}.dfs.core.windows.net".format(self.account_name),
-                                                        credential=token_credential)
+        datalake_service_client = DataLakeServiceClient(
+            "https://{}.dfs.core.windows.net".format(self.account_name), credential=token_credential
+        )
         # [END create_datalake_service_client_oauth]
 
         # get user delegation key
         # [START get_user_delegation_key]
         from datetime import datetime, timedelta
-        user_delegation_key = datalake_service_client.get_user_delegation_key(datetime.utcnow(),
-                                                                              datetime.utcnow() + timedelta(hours=1))
+
+        user_delegation_key = datalake_service_client.get_user_delegation_key(
+            datetime.utcnow(), datetime.utcnow() + timedelta(hours=1)
+        )
         # [END get_user_delegation_key]
 
         # Create file systems
@@ -72,19 +76,19 @@ class DataLakeServiceSamples(object):
         # Get Clients from DataLakeServiceClient
         file_system_client = datalake_service_client.get_file_system_client(file_system_client.file_system_name)
         # [START get_directory_client_from_service_client]
-        directory_client = datalake_service_client.get_directory_client(file_system_client.file_system_name,
-                                                                        "mydirectory")
+        directory_client = datalake_service_client.get_directory_client(
+            file_system_client.file_system_name, "mydirectory"
+        )
         # [END get_directory_client_from_service_client]
         # [START get_file_client_from_service_client]
         file_client = datalake_service_client.get_file_client(file_system_client.file_system_name, "myfile")
         # [END get_file_client_from_service_client]
 
         # Create file and set properties
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         from azure.storage.filedatalake import ContentSettings
-        content_settings = ContentSettings(
-            content_language='spanish',
-            content_disposition='inline')
+
+        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
         file_client.create_file(content_settings=content_settings)
         file_client.set_metadata(metadata=metadata)
         file_props = file_client.get_file_properties()
@@ -102,6 +106,6 @@ class DataLakeServiceSamples(object):
         file_system_client.delete_file_system()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = DataLakeServiceSamples()
     sample.data_lake_service_sample()
