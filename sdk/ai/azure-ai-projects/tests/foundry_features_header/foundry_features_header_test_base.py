@@ -46,7 +46,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "toolboxes": "Toolboxes=V1Preview",
     "skills": "Skills=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "HostedAgents=V1Preview,AgentEndpoints=V1Preview,CodeAgents=V1Preview,ExternalAgents=V1Preview",
+    "agents": "HostedAgents=V1Preview,WorkflowAgents=V1Preview,AgentEndpoints=V1Preview,CodeAgents=V1Preview,ExternalAgents=V1Preview,AgentsOptimization=V1Preview",
 }
 
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.
@@ -61,7 +61,7 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "HostedAgents=V1Preview,WorkflowAgents=V1Preview,AgentEndpoints=V1Preview",
+        "HostedAgents=V1Preview,WorkflowAgents=V1Preview,AgentEndpoints=V1Preview,CodeAgents=V1Preview,ExternalAgents=V1Preview,AgentsOptimization=V1Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",
