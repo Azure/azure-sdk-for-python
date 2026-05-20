@@ -2,10 +2,13 @@
 
 This document lists all sub-clients available on `AIProjectClient` and their public method counts. Overload methods are not counted. Only synchronous methods are counted (but each one has an equivalent asynchronous method).
 
+## Summary
 
-## Top-level Sub-clients
+There are a total of 132 unique public methods across all sub-clients.
 
-| Subclient | Class Name | Public Methods |
+### Top-level Sub-clients (stable operations)
+
+| Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
 | `agents` | AgentsOperations | 8 |
 | `evaluation_rules` | EvaluationRulesOperations | 4 |
@@ -14,11 +17,10 @@ This document lists all sub-clients available on `AIProjectClient` and their pub
 | `deployments` | DeploymentsOperations | 2 |
 | `indexes` | IndexesOperations | 5 |
 | `telemetry` | TelemetryOperations | 1 |
-| `beta` | BetaOperations | 0 (container only) |
 
-## Nested Sub-clients on `.beta`
+### Nested Sub-clients (beta operations)
 
-| Subclient | Class Name | Public Methods |
+| Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
 | `beta.agents` | BetaAgentsOperations | 21 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
@@ -33,67 +35,160 @@ This document lists all sub-clients available on `AIProjectClient` and their pub
 | `beta.skills` | BetaSkillsOperations | 7 |
 | `beta.toolboxes` | BetaToolboxesOperations | 8 |
 
-## Summary
 
-**Total: 132 unique public methods across all subclients**
+## Method list table
 
----
+Alphabetically sorted, with ".beta" sub-client at the end.
 
-### Method Details
+```
+.agents.create_version
+.agents.create_version_from_manifest
+.agents.delete
+.agents.delete_version
+.agents.get
+.agents.get_version
+.agents.list
+.agents.list_versions
 
-#### AgentsOperations (8)
-`get`, `delete`, `list`, `create_version`, `create_version_from_manifest`, `get_version`, `delete_version`, `list_versions`
+.connections.get
+.connections.get_default
+.connections.list
 
-#### EvaluationRulesOperations (4)
-`get`, `delete`, `create_or_update`, `list`
+.datasets.create_or_update
+.datasets.delete
+.datasets.get
+.datasets.get_credentials
+.datasets.list
+.datasets.list_versions
+.datasets.pending_upload
+.datasets.upload_file
+.datasets.upload_folder
 
-#### ConnectionsOperations (3)
-`get`, `get_default`, `list`
+.deployments.get
+.deployments.list
 
-#### DatasetsOperations (9)
-`list_versions`, `list`, `get`, `delete`, `create_or_update`, `pending_upload`, `get_credentials`, `upload_file`, `upload_folder`
+.evaluation_rules.create_or_update
+.evaluation_rules.delete
+.evaluation_rules.get
+.evaluation_rules.list
 
-#### DeploymentsOperations (2)
-`get`, `list`
+.indexes.create_or_update
+.indexes.delete
+.indexes.get
+.indexes.list
+.indexes.list_versions
 
-#### IndexesOperations (5)
-`list_versions`, `list`, `get`, `delete`, `create_or_update`
+.telemetry.get_application_insights_connection_string
 
-#### TelemetryOperations (1)
-`get_application_insights_connection_string`
+.beta.agents.cancel_optimization_job
+.beta.agents.create_optimization_job
+.beta.agents.create_session
+.beta.agents.create_version_from_code
+.beta.agents.delete_optimization_job
+.beta.agents.delete_session
+.beta.agents.delete_session_file
+.beta.agents.download_agent_code
+.beta.agents.download_session_file
+.beta.agents.get_optimization_candidate
+.beta.agents.get_optimization_candidate_config
+.beta.agents.get_optimization_candidate_results
+.beta.agents.get_optimization_job
+.beta.agents.get_session
+.beta.agents.get_session_files
+.beta.agents.get_session_log_stream
+.beta.agents.list_optimization_candidates
+.beta.agents.list_optimization_jobs
+.beta.agents.list_sessions
+.beta.agents.patch_agent_details
+.beta.agents.upload_session_file
 
-#### BetaAgentsOperations (21)
-`patch_agent_details`, `create_version_from_code`, `download_agent_code`, `create_session`, `get_session`, `delete_session`, `list_sessions`, `get_session_log_stream`, `upload_session_file`, `download_session_file`, `get_session_files`, `delete_session_file`, `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `delete_optimization_job`, `list_optimization_candidates`, `get_optimization_candidate`, `get_optimization_candidate_config`, `get_optimization_candidate_results`
+.beta.datasets.cancel_generation_job
+.beta.datasets.create_generation_job
+.beta.datasets.delete_generation_job
+.beta.datasets.get_generation_job
+.beta.datasets.list_generation_jobs
 
-#### BetaDatasetsOperations (5)
-`cancel_generation_job`, `create_generation_job`, `delete_generation_job`, `get_generation_job`, `list_generation_jobs`
+.beta.evaluation_taxonomies.create
+.beta.evaluation_taxonomies.delete
+.beta.evaluation_taxonomies.get
+.beta.evaluation_taxonomies.list
+.beta.evaluation_taxonomies.update
 
-#### BetaEvaluationTaxonomiesOperations (5)
-`create`, `delete`, `get`, `list`, `update`
+.beta.evaluators.cancel_generation_job
+.beta.evaluators.create_generation_job
+.beta.evaluators.create_version
+.beta.evaluators.delete_generation_job
+.beta.evaluators.delete_version
+.beta.evaluators.get_credentials
+.beta.evaluators.get_generation_job
+.beta.evaluators.get_version
+.beta.evaluators.list
+.beta.evaluators.list_generation_jobs
+.beta.evaluators.list_versions
+.beta.evaluators.pending_upload
+.beta.evaluators.update_version
 
-#### BetaEvaluatorsOperations (13)
-`cancel_generation_job`, `create_generation_job`, `create_version`, `delete_generation_job`, `delete_version`, `get_credentials`, `get_generation_job`, `get_version`, `list`, `list_generation_jobs`, `list_versions`, `pending_upload`, `update_version`
+.beta.insights.generate
+.beta.insights.get
+.beta.insights.list
 
-#### BetaInsightsOperations (3)
-`generate`, `get`, `list`
+.beta.memory_stores.begin_update_memories
+.beta.memory_stores.create
+.beta.memory_stores.create_memory
+.beta.memory_stores.delete
+.beta.memory_stores.delete_memory
+.beta.memory_stores.delete_scope
+.beta.memory_stores.get
+.beta.memory_stores.get_memory
+.beta.memory_stores.list
+.beta.memory_stores.list_memories
+.beta.memory_stores.search_memories
+.beta.memory_stores.update
+.beta.memory_stores.update_memory
 
-#### BetaMemoryStoresOperations (13)
-`begin_update_memories`, `create`, `create_memory`, `delete`, `delete_memory`, `delete_scope`, `get`, `get_memory`, `list`, `list_memories`, `search_memories`, `update`, `update_memory`
+.beta.models.create_async
+.beta.models.delete
+.beta.models.get
+.beta.models.get_credentials
+.beta.models.list
+.beta.models.list_versions
+.beta.models.pending_upload
+.beta.models.update
 
-#### BetaModelsOperations (8)
-`create_async`, `delete`, `get`, `get_credentials`, `list`, `list_versions`, `pending_upload`, `update`
+.beta.red_teams.create
+.beta.red_teams.get
+.beta.red_teams.list
 
-#### BetaRedTeamsOperations (3)
-`create`, `get`, `list`
+.beta.routines.create_or_update
+.beta.routines.delete
+.beta.routines.disable
+.beta.routines.dispatch_async
+.beta.routines.enable
+.beta.routines.get
+.beta.routines.list
+.beta.routines.list_runs
 
-#### BetaRoutinesOperations (8)
-`create_or_update`, `delete`, `disable`, `dispatch_async`, `enable`, `get`, `list`, `list_runs`
+.beta.schedules.create_or_update
+.beta.schedules.delete
+.beta.schedules.get
+.beta.schedules.get_run
+.beta.schedules.list
+.beta.schedules.list_runs
 
-#### BetaSchedulesOperations (6)
-`create_or_update`, `delete`, `get`, `get_run`, `list`, `list_runs`
+.beta.skills.create
+.beta.skills.create_from_package
+.beta.skills.delete
+.beta.skills.download
+.beta.skills.get
+.beta.skills.list
+.beta.skills.update
 
-#### BetaSkillsOperations (7)
-`create`, `create_from_package`, `delete`, `download`, `get`, `list`, `update`
-
-#### BetaToolboxesOperations (8)
-`create_version`, `delete`, `delete_version`, `get`, `get_version`, `list`, `list_versions`, `update`
+.beta.toolboxes.create_version
+.beta.toolboxes.delete
+.beta.toolboxes.delete_version
+.beta.toolboxes.get
+.beta.toolboxes.get_version
+.beta.toolboxes.list
+.beta.toolboxes.list_versions
+.beta.toolboxes.update
+```
