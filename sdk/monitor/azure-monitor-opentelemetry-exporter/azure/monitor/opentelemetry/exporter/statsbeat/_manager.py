@@ -89,8 +89,8 @@ class StatsbeatConfig:
             disable_offline_storage=exporter._disable_offline_storage,
             credential=exporter._credential,
             distro_version=exporter._distro_version,
-            mot_distro_features=exporter._mot_distro_features,
-            mot_distro_instrumentations=exporter._mot_distro_instrumentations,
+            mot_distro_features=getattr(exporter, "_mot_distro_features", 0),
+            mot_distro_instrumentations=getattr(exporter, "_mot_distro_instrumentations", 0),
         )
 
     @classmethod
@@ -136,8 +136,8 @@ class StatsbeatConfig:
             disable_offline_storage=disable_offline_storage_config,  # TODO: Use config value once supported
             credential=base_config.credential,
             distro_version=base_config.distro_version,
-            mot_distro_features=base_config.mot_distro_features,
-            mot_distro_instrumentations=base_config.mot_distro_instrumentations,
+            mot_distro_features=getattr(base_config, "mot_distro_features", 0),
+            mot_distro_instrumentations=getattr(base_config, "mot_distro_instrumentations", 0),
             connection_string=connection_string,
         )
 
