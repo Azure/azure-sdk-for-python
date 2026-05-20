@@ -82,7 +82,6 @@ is_stable = true
 is_arm = true
 sample_link = ""
 title = "ResourceGraphClient"
-auto_update = false
 package_nspkg = "azure-mgmt-nspkg"
 need_msrestazure = false
 need_azuremgmtcore = true

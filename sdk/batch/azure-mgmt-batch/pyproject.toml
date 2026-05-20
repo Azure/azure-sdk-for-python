@@ -81,7 +81,6 @@ package_doc_id = "batch"
 is_stable = true
 sample_link = ""
 title = "BatchManagementClient"
-auto_update = false
 package_nspkg = "azure-mgmt-nspkg"
 is_arm = true
 need_msrestazure = false
