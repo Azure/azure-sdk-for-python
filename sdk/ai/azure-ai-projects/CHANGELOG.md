@@ -4,6 +4,7 @@
 
 ### Features Added
 
+* New `.beta.jobs` sub-client with CommandJob operations: `create_or_update`, `get`, `list`, `begin_delete`, `begin_cancel`, `validate`, `show_services`, `stream`, `download`.
 * New Agent tool `FabricIQPreviewTool`.
 * New Agent tool `ToolboxSearchPreviewTool`.
 * New optional string properties `description` and `name` added to Agent tools which did not have them before.

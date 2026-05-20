@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,protected-access
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -7,10 +7,11 @@
 
 import datetime
 import json
-import yaml  # type: ignore[import-untyped]
 from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
+
+import yaml  # type: ignore[import-untyped]
 from ._models import (
     CommandJob as _RestCommandJob,
     CommandJobLimits as _RestCommandJobLimits,
@@ -64,7 +65,9 @@ class CommandJob(_RestCommandJob):
         """Construct a :class:`CommandJob` from a service response object.
 
         :param rest_obj: The deserialized response from the service.
+        :type rest_obj: ~azure.ai.projects.models.Job or Any
         :returns: A :class:`CommandJob` with ``name``, ``id``, and ``system_data`` populated.
+        :rtype: ~azure.ai.projects.models.CommandJob
         :raises ValueError: If the job properties are missing.
         :raises TypeError: If the job is not a Command job.
         """

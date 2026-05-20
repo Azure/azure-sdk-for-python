@@ -12,5 +12,5 @@ if TYPE_CHECKING:
     from . import models as _models
 Filters = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
 EvalItemContentItem = Union[str, "_models.EvalItemContentItemObject"]
-EvalItemContent = Union["_types.EvalItemContentItem", list["_types.EvalItemContentItem"]]
+EvalItemContent = Union["_types.EvalItemContentItem", list["_types.EvalItemContentItem"]]  # type: ignore[name-defined]  # pyright: ignore[reportUndefinedVariable]
 ToolCallOutputContent = Union[dict[str, Any], str, list[Any]]

@@ -1,11 +1,11 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,protected-access,too-many-statements,too-many-locals
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 """Async customized jobs operations — flat CommandJob UX, no envelope required."""
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import logging
 import sys
@@ -248,7 +248,11 @@ class JobsOperations(_GeneratedJobsOps):
         await self._resolve_input_paths(name, job)
 
     def _inject_preview_header(self, kwargs: dict) -> None:
-        """Add the Jobs preview feature header if not already present."""
+        """Add the Jobs preview feature header if not already present.
+
+        :param kwargs: The keyword arguments dictionary to inject the header into.
+        :type kwargs: dict
+        """
         headers = kwargs.get("headers", {}) or {}
         if not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
             kwargs["headers"] = dict(headers)
@@ -333,7 +337,14 @@ class JobsOperations(_GeneratedJobsOps):
         return CommandJob._from_rest_object(rest_result)
 
     @distributed_trace_async
-    async def create_or_update(self, name: str, job: CommandJob, **kwargs: Any) -> CommandJob:  # type: ignore[override]
+    async def create_or_update(  # type: ignore[override]
+        self,
+        name: str,
+        job: CommandJob,
+        *,
+        skip_validation: bool = False,
+        **kwargs: Any,
+    ) -> CommandJob:
         """Create or update a training job.
 
         :param name: The name of the job. Required.
@@ -348,7 +359,6 @@ class JobsOperations(_GeneratedJobsOps):
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ValueError: If required fields are missing or empty.
         """
-        skip_validation = kwargs.pop("skip_validation", False)
         if not skip_validation:
             _validate_command_job(job).try_raise(raise_on_failure=True)
         await self._resolve_local_paths(name, job)

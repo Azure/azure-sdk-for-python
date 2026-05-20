@@ -1,3 +1,4 @@
+# pylint: disable=protected-access
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -80,7 +81,13 @@ _GIT_PATH_PREFIXES: Tuple[str, ...] = ("git://", "git+")
 
 
 def _resolve_symlink(path: Path) -> Path:
-    """Follow symlink chains until the real target is reached."""
+    """Follow symlink chains until the real target is reached.
+
+    :param path: The path to resolve.
+    :type path: ~pathlib.Path
+    :returns: The resolved path.
+    :rtype: ~pathlib.Path
+    """
     while path.is_symlink():
         link_path = path.resolve()
         if not link_path.is_absolute():
@@ -90,7 +97,13 @@ def _resolve_symlink(path: Path) -> Path:
 
 
 def _load_gitignore_patterns(directory: Path) -> List[str]:
-    """Load patterns from a .gitignore file in the given directory."""
+    """Load patterns from a .gitignore file in the given directory.
+
+    :param directory: The directory containing the .gitignore file.
+    :type directory: ~pathlib.Path
+    :returns: A list of gitignore patterns.
+    :rtype: list[str]
+    """
     gitignore_file = ".gitignore"
     gitignore = directory / gitignore_file
     if not gitignore.is_file():
@@ -105,7 +118,15 @@ def _load_gitignore_patterns(directory: Path) -> List[str]:
 
 
 def _is_excluded(rel_path: str, patterns: List[str]) -> bool:
-    """Check if a relative path matches any gitignore-style pattern."""
+    """Check if a relative path matches any gitignore-style pattern.
+
+    :param rel_path: The relative path to check.
+    :type rel_path: str
+    :param patterns: The list of gitignore patterns.
+    :type patterns: list[str]
+    :returns: True if the path matches any pattern.
+    :rtype: bool
+    """
     rel_path = rel_path.replace("\\", "/")
     parts = rel_path.split("/")
     for pattern in patterns:
@@ -119,7 +140,13 @@ def _is_excluded(rel_path: str, patterns: List[str]) -> bool:
 
 
 def _update_hash(path: Path, sha: "hashlib._Hash") -> None:
-    """Read file at *path* in chunks and feed each chunk into *sha*."""
+    """Read file at *path* in chunks and feed each chunk into *sha*.
+
+    :param path: The file path to read.
+    :type path: ~pathlib.Path
+    :param sha: The hash object to update.
+    :type sha: hashlib._Hash
+    """
     chunk_size = 1024
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(chunk_size), b""):
@@ -131,7 +158,12 @@ def _collect_files(
 ) -> List[Tuple[Path, str]]:
     """Collect all files in a directory, respecting gitignore patterns and resolving symlinks.
 
-    Returns a sorted list of (resolved_path, relative_posix_path) tuples.
+    :param directory: The directory to collect files from.
+    :type directory: ~pathlib.Path
+    :param ignore_patterns: Patterns to exclude.
+    :type ignore_patterns: list[str]
+    :returns: A sorted list of (resolved_path, relative_posix_path) tuples.
+    :rtype: list[tuple[~pathlib.Path, str]]
     """
     files: List[Tuple[Path, str]] = []
     for root, _, filenames in os.walk(directory, followlinks=True):
@@ -147,6 +179,11 @@ def _content_hash(path: Path) -> str:
     """Compute a truncated SHA-256 content hash for a file or directory.
 
     Respects ``.gitignore`` when hashing directories.
+
+    :param path: The file or directory path to hash.
+    :type path: ~pathlib.Path
+    :returns: The truncated hex digest.
+    :rtype: str
     """
     path = _resolve_symlink(path)
     sha = hashlib.sha256()
@@ -211,7 +248,13 @@ def _validate_output_for_download(output_name: str, output: _Output) -> None:
 
 
 def _path_looks_local(value: Any) -> bool:
-    """Return True if *value* looks like a local filesystem path (vs. a remote URI or asset reference)."""
+    """Return True if *value* looks like a local filesystem path (vs. a remote URI or asset reference).
+
+    :param value: The value to check.
+    :type value: Any
+    :returns: True if the value looks like a local path.
+    :rtype: bool
+    """
     if not isinstance(value, str) or not value:
         return False
     if "://" in value:
@@ -232,7 +275,17 @@ def _check_local_path(
     yaml_path: str,
     base_path: Optional[Union[str, "PathLike[str]"]] = None,
 ) -> None:
-    """Verify a local path exists; record missing paths as errors and IO failures as warnings."""
+    """Verify a local path exists; record missing paths as errors and IO failures as warnings.
+
+    :param result: The validation result to append findings to.
+    :type result: ~azure.ai.projects.models.ValidationResult
+    :param path_value: The path string to verify.
+    :type path_value: str
+    :param yaml_path: The YAML key path for error reporting.
+    :type yaml_path: str
+    :param base_path: Optional base path to resolve relative paths against.
+    :type base_path: str or ~os.PathLike[str] or None
+    """
     candidate = Path(path_value)
     if not candidate.is_absolute() and base_path is not None:
         candidate = (Path(base_path) / candidate).resolve()
@@ -256,7 +309,13 @@ def _check_local_path(
 
 
 def _validate_command_job(job: CommandJob) -> ValidationResult:
-    """Run local validation checks on a CommandJob, collecting every finding into a ValidationResult."""
+    """Run local validation checks on a CommandJob, collecting every finding into a ValidationResult.
+
+    :param job: The command job to validate.
+    :type job: ~azure.ai.projects.models.CommandJob
+    :returns: The validation result.
+    :rtype: ~azure.ai.projects.models.ValidationResult
+    """
     result = ValidationResult()
 
     # Required-field checks.
@@ -326,7 +385,15 @@ def _get_sorted_streamable_logs(
     logs_iterable: Iterable[str],
     processed_logs: Optional[Dict[str, int]] = None,
 ) -> List[str]:
-    """Return streamable CommandJob log file names, sorted, starting from the last processed entry."""
+    """Return streamable CommandJob log file names, sorted, starting from the last processed entry.
+
+    :param logs_iterable: An iterable of log file names.
+    :type logs_iterable: ~typing.Iterable[str]
+    :param processed_logs: A mapping of previously processed log names to line counts.
+    :type processed_logs: dict[str, int] or None
+    :returns: Sorted list of streamable log names.
+    :rtype: list[str]
+    """
     processed_logs = processed_logs if processed_logs else {}
     logs = list(logs_iterable)
     filtered_logs = [x for x in logs if _COMMON_RUNTIME_STREAM_LOG_PATTERN.search(x)]
@@ -348,7 +415,17 @@ def _incremental_print(
     current_log_name: str,
     fileout: TextIO,
 ) -> None:
-    """Print only the new lines of *log* that have not yet been written for *current_log_name*."""
+    """Print only the new lines of *log* that have not yet been written for *current_log_name*.
+
+    :param log: The full log text.
+    :type log: str
+    :param processed_logs: A mapping of log names to previously printed line counts.
+    :type processed_logs: dict[str, int]
+    :param current_log_name: The name of the log being printed.
+    :type current_log_name: str
+    :param fileout: The output stream.
+    :type fileout: ~typing.TextIO
+    """
     lines = log.splitlines()
     doc_length = len(lines)
     if doc_length == 0:
@@ -365,7 +442,13 @@ def _incremental_print(
 
 
 def _wait_before_polling(current_seconds: float) -> int:
-    """Sigmoid backoff bounded by ``_POLLING_INTERVAL_MIN`` and ``_POLLING_INTERVAL_MAX``."""
+    """Sigmoid backoff bounded by ``_POLLING_INTERVAL_MIN`` and ``_POLLING_INTERVAL_MAX``.
+
+    :param current_seconds: Elapsed time in seconds.
+    :type current_seconds: float
+    :returns: The polling interval in seconds.
+    :rtype: int
+    """
     if current_seconds < 0:
         raise ValueError("current_seconds must be positive")
     duration = int(
@@ -378,10 +461,20 @@ def _download_log_text(
     url: str,
     timeout: Tuple[float, float] = _DEFAULT_GET_CONTENT_TIMEOUT,
 ) -> str:
-    """Fetch the body of a log file URL as text, returning ``""`` on 404."""
+    """Fetch the body of a log file URL as text, returning ``""`` on 404.
+
+    :param url: The URL to fetch.
+    :type url: str
+    :param timeout: A (connect, read) timeout tuple.
+    :type timeout: tuple[float, float]
+    :returns: The log text content.
+    :rtype: str
+    """
     _, read_timeout = timeout
     try:
-        with urllib.request.urlopen(url, timeout=read_timeout) as response:  # nosec B310
+        with urllib.request.urlopen(
+            url, timeout=read_timeout
+        ) as response:  # nosec B310
             charset = response.headers.get_content_charset() or "utf-8"
             return response.read().decode(charset, errors="replace")
     except urllib.error.HTTPError as exc:
@@ -391,7 +484,15 @@ def _download_log_text(
 
 
 def _safe_join(dest: Path, rel: str) -> Path:
-    """Join *rel* under *dest*, rejecting traversal escapes and OS-absolute relpaths."""
+    """Join *rel* under *dest*, rejecting traversal escapes and OS-absolute relpaths.
+
+    :param dest: The destination root directory.
+    :type dest: ~pathlib.Path
+    :param rel: The relative path to join.
+    :type rel: str
+    :returns: The safely joined path.
+    :rtype: ~pathlib.Path
+    """
     if not rel:
         raise ValueError("Empty artifact path.")
     rel_path = Path(rel)
@@ -409,7 +510,13 @@ def _safe_join(dest: Path, rel: str) -> Path:
 
 
 def _atomic_write(local_path: Path, downloader: Any) -> None:
-    """Stream *downloader* to ``<local_path>.tmp`` then atomically rename to *local_path*."""
+    """Stream *downloader* to ``<local_path>.tmp`` then atomically rename to *local_path*.
+
+    :param local_path: The final destination path.
+    :type local_path: ~pathlib.Path
+    :param downloader: The blob downloader object.
+    :type downloader: Any
+    """
     tmp_path = local_path.with_name(local_path.name + _TMP_SUFFIX)
     try:
         with open(tmp_path, "wb") as fh:
@@ -424,7 +531,11 @@ def _atomic_write(local_path: Path, downloader: Any) -> None:
 
 
 def _sweep_tmp_files(root: Path) -> None:
-    """Best-effort removal of stale ``*.tmp`` files left by previous interrupted runs."""
+    """Best-effort removal of stale ``*.tmp`` files left by previous interrupted runs.
+
+    :param root: The root directory to scan.
+    :type root: ~pathlib.Path
+    """
     if not root.exists():
         return
     for stale in root.rglob("*" + _TMP_SUFFIX):
@@ -439,7 +550,17 @@ def _collect_artifact_paths(
     name: str,
     experiment_id: str,
 ) -> List[str]:
-    """Page through the list-artifacts API and return every artifact path."""
+    """Page through the list-artifacts API and return every artifact path.
+
+    :param list_artifacts: The callable to list artifacts.
+    :type list_artifacts: ~typing.Callable[..., Any]
+    :param name: The job name.
+    :type name: str
+    :param experiment_id: The experiment ID.
+    :type experiment_id: str
+    :returns: A list of artifact paths.
+    :rtype: list[str]
+    """
     paths: List[str] = []
     continuation: Optional[str] = None
     while True:
@@ -459,7 +580,13 @@ def _collect_artifact_paths(
 
 
 def _group_paths_by_prefix(paths: Iterable[str]) -> Set[str]:
-    """Return the unique top-level path segments (or full path if no ``/``)."""
+    """Return the unique top-level path segments (or full path if no ``/``).
+
+    :param paths: An iterable of artifact paths.
+    :type paths: ~typing.Iterable[str]
+    :returns: The set of unique top-level prefixes.
+    :rtype: set[str]
+    """
     return {p.split("/", 1)[0] for p in paths if p}
 
 
@@ -469,7 +596,19 @@ def _resolve_artifact_uris(
     experiment_id: str,
     prefixes: Iterable[str],
 ) -> Dict[str, Tuple[str, int]]:
-    """Page API 3 once per prefix and return ``path -> (content_uri, content_length)``."""
+    """Page API 3 once per prefix and return ``path -> (content_uri, content_length)``.
+
+    :param get_content_information: The callable to get content information.
+    :type get_content_information: ~typing.Callable[..., Any]
+    :param name: The job name.
+    :type name: str
+    :param experiment_id: The experiment ID.
+    :type experiment_id: str
+    :param prefixes: The path prefixes to resolve.
+    :type prefixes: ~typing.Iterable[str]
+    :returns: A mapping of path to (content_uri, content_length).
+    :rtype: dict[str, tuple[str, int]]
+    """
     uri_map: Dict[str, Tuple[str, int]] = {}
     for prefix in prefixes:
         if not prefix:
@@ -497,7 +636,17 @@ def _download_artifact_to_path(
     local_path: Path,
     max_chunks_per_file: int,
 ) -> int:
-    """Download a single SAS-signed blob to *local_path* atomically; return bytes written."""
+    """Download a single SAS-signed blob to *local_path* atomically; return bytes written.
+
+    :param content_uri: The SAS-signed blob URL.
+    :type content_uri: str
+    :param local_path: The local file path to write to.
+    :type local_path: ~pathlib.Path
+    :param max_chunks_per_file: Maximum download concurrency.
+    :type max_chunks_per_file: int
+    :returns: Number of bytes written.
+    :rtype: int
+    """
     local_path.parent.mkdir(parents=True, exist_ok=True)
     with BlobClient.from_blob_url(blob_url=content_uri) as blob_client:
         downloader = blob_client.download_blob(max_concurrency=max_chunks_per_file)
