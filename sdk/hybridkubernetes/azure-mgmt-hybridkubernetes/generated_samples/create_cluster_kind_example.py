@@ -15,7 +15,7 @@ from azure.mgmt.hybridkubernetes import ConnectedKubernetesClient
     pip install azure-identity
     pip install azure-mgmt-hybridkubernetes
 # USAGE
-    python connected_clusters_list_cluster_credential_result_csp_token.py
+    python create_cluster_kind_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,36 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.connected_cluster.list_cluster_user_credential(
+    response = client.connected_cluster.begin_create_or_replace(
         resource_group_name="k8sc-rg",
         cluster_name="testCluster",
-        properties={"authenticationMethod": "Token", "clientProxy": True},
-    )
+        connected_cluster={
+            "identity": {"type": "SystemAssigned"},
+            "kind": "ProvisionedCluster",
+            "location": "East US",
+            "properties": {
+                "aadProfile": {
+                    "adminGroupObjectIDs": ["56f988bf-86f1-41af-91ab-2d7cd011db47"],
+                    "enableAzureRBAC": True,
+                    "tenantID": "82f988bf-86f1-41af-91ab-2d7cd011db47",
+                },
+                "agentPublicKeyCertificate": "",
+                "arcAgentProfile": {
+                    "agentAutoUpgrade": "Enabled",
+                    "desiredAgentVersion": "0.1.0",
+                    "systemComponents": [{"majorVersion": 0, "type": "Strato", "userSpecifiedVersion": "0.1.1"}],
+                },
+                "azureHybridBenefit": "NotApplicable",
+                "distribution": "AKS",
+                "distributionVersion": "1.0",
+                "oidcIssuerProfile": {"enabled": True},
+            },
+            "tags": {},
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/ConnectedClustersListClusterCredentialResultCSPToken.json
+# x-ms-original-file: 2026-02-01-preview/CreateCluster_KindExample.json
 if __name__ == "__main__":
     main()
