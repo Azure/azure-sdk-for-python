@@ -92,7 +92,7 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
     @ServiceBusQueuePreparer(name_prefix="servicebustest", requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_list_queue_sessions_updated_since_async(
+    async def test_list_queue_sessions_updated_after_async(
         self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
     ):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
@@ -109,11 +109,11 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
             session_id = str(uuid.uuid4())
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage(
-                    "test updated_since", session_id=session_id))
+                    "test updated_after", session_id=session_id))
 
-            # updated_since mode: sessions whose state was updated after before_send
+            # updated_after mode: sessions whose state was updated after before_send
             result = await sb_client.list_queue_sessions(
-                servicebus_queue.name, updated_since=before_send)
+                servicebus_queue.name, updated_after=before_send)
 
             assert isinstance(result, list)
             assert session_id in result
@@ -189,7 +189,7 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
     @ServiceBusSubscriptionPreparer(name_prefix="servicebustest", requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_list_subscription_sessions_updated_since_async(
+    async def test_list_subscription_sessions_updated_after_async(
         self, uamqp_transport, *, servicebus_namespace=None,
         servicebus_topic=None, servicebus_subscription=None, **kwargs
     ):
@@ -207,12 +207,12 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
             session_id = str(uuid.uuid4())
             async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                 await sender.send_messages(ServiceBusMessage(
-                    "test updated_since", session_id=session_id))
+                    "test updated_after", session_id=session_id))
 
-            # updated_since mode: sessions whose state was updated after before_send
+            # updated_after mode: sessions whose state was updated after before_send
             result = await sb_client.list_subscription_sessions(
                 servicebus_topic.name, servicebus_subscription.name,
-                updated_since=before_send)
+                updated_after=before_send)
 
             assert isinstance(result, list)
             assert session_id in result

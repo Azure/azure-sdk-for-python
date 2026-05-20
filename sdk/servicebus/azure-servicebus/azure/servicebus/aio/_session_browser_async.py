@@ -5,7 +5,7 @@
 import asyncio  # pylint:disable=do-not-import-asyncio
 import uuid
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import AsyncIterator, Optional
 
 from ._base_handler_async import BaseHandler as AsyncBaseHandler
 from .._common.constants import (
@@ -65,19 +65,19 @@ class _SessionBrowserAsync(AsyncBaseHandler):
     async def list_sessions(
         self,
         *,
-        updated_since: Optional[datetime] = None,
+        updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
-    ) -> List[str]:
+    ) -> AsyncIterator[str]:
         """List session IDs for this entity.
 
-        :keyword ~datetime.datetime updated_since: If specified, only sessions whose last update
-            (state change or message activity) is after this time are returned. If not specified,
+        :keyword ~datetime.datetime updated_after: If specified, only sessions whose
+            session state was set or updated after this time are returned. If not specified,
             returns sessions with active messages in the entity.
         :keyword float timeout: The total operation timeout in seconds.
-        :returns: A list of session ID strings.
-        :rtype: list[str]
+        :returns: An async iterator of session ID strings.
+        :rtype: asynciterator[str]
         """
-        if updated_since is None:
+        if updated_after is None:
             last_updated_time_ms = _MAX_DATETIME_MS
         else:
             # Normalize naive datetimes to UTC. Python's datetime.timestamp()
@@ -85,13 +85,12 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             # value depend on the host's timezone. Treat naive values as UTC
             # (consistent with how naive datetimes are handled elsewhere in
             # this SDK) and convert aware values to UTC before serializing.
-            if updated_since.tzinfo is None:
-                normalized = updated_since.replace(tzinfo=timezone.utc)
+            if updated_after.tzinfo is None:
+                normalized = updated_after.replace(tzinfo=timezone.utc)
             else:
-                normalized = updated_since.astimezone(timezone.utc)
+                normalized = updated_after.astimezone(timezone.utc)
             last_updated_time_ms = int(normalized.timestamp() * 1000)
 
-        all_session_ids: List[str] = []
         skip = 0
 
         while True:
@@ -109,9 +108,8 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             )
             if not result:
                 break
-            all_session_ids.extend(result)
+            for sid in result:
+                yield sid
             if len(result) < _PAGE_SIZE:
                 break
             skip += len(result)
-
-        return all_session_ids

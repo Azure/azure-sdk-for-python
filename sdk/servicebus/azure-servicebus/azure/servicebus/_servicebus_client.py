@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator
-from typing import Any, List, Union, Optional, TYPE_CHECKING, Type
+from typing import Any, Iterator, List, Union, Optional, TYPE_CHECKING, Type
 from datetime import datetime
 import logging
 import warnings
@@ -737,22 +737,22 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         self,
         queue_name: str,
         *,
-        updated_since: Optional[datetime] = None,
+        updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
         **kwargs: Any,
-    ) -> List[str]:
+    ) -> Iterator[str]:
         """List session IDs with active messages in a session-enabled queue.
 
-        If ``updated_since`` is specified, only sessions whose last update (state change
-        or message activity) is after that time are returned. If not specified, returns
+        If ``updated_after`` is specified, only sessions whose
+        session state was set or updated after that time are returned. If not specified, returns
         sessions with active messages in the queue.
 
         :param str queue_name: The name of the session-enabled queue.
-        :keyword ~datetime.datetime updated_since: If specified, only sessions whose last update
-            (state change or message activity) is after this time are returned.
+        :keyword ~datetime.datetime updated_after: If specified, only sessions whose
+            session state was set or updated after this time are returned.
         :keyword float timeout: The total operation timeout in seconds.
-        :returns: A list of session ID strings.
-        :rtype: list[str]
+        :returns: An iterator of session ID strings.
+        :rtype: iterator[str]
         """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
@@ -760,7 +760,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             raise ValueError("The timeout must be greater than 0.")
         browser = self._create_session_browser(queue_name)
         try:
-            return browser.list_sessions(updated_since=updated_since, timeout=timeout)
+            yield from browser.list_sessions(updated_after=updated_after, timeout=timeout)
         finally:
             browser.close()
 
@@ -769,23 +769,23 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         topic_name: str,
         subscription_name: str,
         *,
-        updated_since: Optional[datetime] = None,
+        updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
         **kwargs: Any,
-    ) -> List[str]:
+    ) -> Iterator[str]:
         """List session IDs with active messages in a session-enabled subscription.
 
-        If ``updated_since`` is specified, only sessions whose last update (state change
-        or message activity) is after that time are returned. If not specified, returns
+        If ``updated_after`` is specified, only sessions whose
+        session state was set or updated after that time are returned. If not specified, returns
         sessions with active messages in the subscription.
 
         :param str topic_name: The name of the topic.
         :param str subscription_name: The name of the subscription.
-        :keyword ~datetime.datetime updated_since: If specified, only sessions whose last update
-            (state change or message activity) is after this time are returned.
+        :keyword ~datetime.datetime updated_after: If specified, only sessions whose
+            session state was set or updated after this time are returned.
         :keyword float timeout: The total operation timeout in seconds.
-        :returns: A list of session ID strings.
-        :rtype: list[str]
+        :returns: An iterator of session ID strings.
+        :rtype: iterator[str]
         """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
@@ -793,6 +793,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             raise ValueError("The timeout must be greater than 0.")
         browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
         try:
-            return browser.list_sessions(updated_since=updated_since, timeout=timeout)
+            yield from browser.list_sessions(updated_after=updated_after, timeout=timeout)
         finally:
             browser.close()
