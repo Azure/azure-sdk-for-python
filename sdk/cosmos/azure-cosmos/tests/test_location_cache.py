@@ -670,5 +670,120 @@ class TestLocationCache:
         assert read_after_second == [ctx.get_primary() for ctx in expected_read]
         assert write_after_second == [ctx.get_primary() for ctx in expected_write]
 
+
+class TestEmulatorEndpointRewrite:
+    """Tests that emulator setups (localhost / 127.0.0.1) ignore the host:port
+    advertised by the gateway and reuse the user-supplied endpoint instead.
+
+    This addresses the issue where the Cosmos emulator running in Docker with
+    a remapped port (e.g. host port 8888 -> container port 8081) advertises its
+    internal port back to the client, making the returned regional endpoints
+    unreachable from the host.
+    """
+
+    @staticmethod
+    def _make_db_account(advertised_endpoint):
+        db_acc = DatabaseAccount()
+        db_acc._WritableLocations = [
+            {"name": "South Central US", "databaseAccountEndpoint": advertised_endpoint}
+        ]
+        db_acc._ReadableLocations = [
+            {"name": "South Central US", "databaseAccountEndpoint": advertised_endpoint}
+        ]
+        db_acc._EnableMultipleWritableLocations = False
+        return db_acc
+
+    @pytest.mark.parametrize("user_endpoint", [
+        "http://localhost:8888/",
+        "http://127.0.0.1:9000/",
+    ])
+    def test_emulator_endpoint_is_preserved(self, user_endpoint):
+        connection_policy = documents.ConnectionPolicy()
+        lc = LocationCache(default_endpoint=user_endpoint, connection_policy=connection_policy)
+        db_acc = self._make_db_account("https://127.0.0.1:8081/")
+
+        lc.perform_on_database_account_read(db_acc)
+
+        write_contexts = lc.get_write_regional_routing_contexts()
+        read_contexts = lc.get_read_regional_routing_contexts()
+        assert len(write_contexts) == 1
+        assert len(read_contexts) == 1
+        # The advertised 127.0.0.1:8081 host:port should be replaced with the
+        # user-supplied host:port so the SDK can reach the emulator.
+        assert write_contexts[0].get_primary() == user_endpoint
+        assert read_contexts[0].get_primary() == user_endpoint
+
+    def test_emulator_matching_port_preserves_advertised_host(self):
+        # When the user-supplied endpoint and the advertised endpoint already
+        # use the same port, the rewrite is intentionally skipped so the
+        # advertised hostname is preserved. This matters for test
+        # infrastructure (e.g. FaultInjectionTransport) that simulates
+        # multiple regions by advertising different hostnames (localhost vs
+        # 127.0.0.1) against the same physical emulator instance.
+        user_endpoint = "https://localhost:8081/"
+        advertised_endpoint = "https://127.0.0.1:8081/"
+        connection_policy = documents.ConnectionPolicy()
+        lc = LocationCache(default_endpoint=user_endpoint, connection_policy=connection_policy)
+        db_acc = self._make_db_account(advertised_endpoint)
+
+        lc.perform_on_database_account_read(db_acc)
+
+        write_contexts = lc.get_write_regional_routing_contexts()
+        read_contexts = lc.get_read_regional_routing_contexts()
+        assert write_contexts[0].get_primary() == advertised_endpoint
+        assert read_contexts[0].get_primary() == advertised_endpoint
+
+    def test_non_emulator_endpoints_are_not_rewritten(self):
+        user_endpoint = "https://contoso.documents.azure.com:443/"
+        advertised_endpoint = "https://contoso-southcentralus.documents.azure.com:443/"
+        connection_policy = documents.ConnectionPolicy()
+        lc = LocationCache(default_endpoint=user_endpoint, connection_policy=connection_policy)
+        db_acc = self._make_db_account(advertised_endpoint)
+
+        lc.perform_on_database_account_read(db_acc)
+
+        write_contexts = lc.get_write_regional_routing_contexts()
+        read_contexts = lc.get_read_regional_routing_contexts()
+        assert write_contexts[0].get_primary() == advertised_endpoint
+        assert read_contexts[0].get_primary() == advertised_endpoint
+
+    def test_emulator_endpoint_with_advertised_localhost_is_rewritten(self):
+        # Even when the advertised endpoint is also a localhost address (just
+        # with a different port like the in-container 8081), it should still
+        # be rewritten to the user-supplied host:port.
+        user_endpoint = "http://localhost:8888/"
+        advertised_endpoint = "http://localhost:8081/"
+        connection_policy = documents.ConnectionPolicy()
+        lc = LocationCache(default_endpoint=user_endpoint, connection_policy=connection_policy)
+        db_acc = self._make_db_account(advertised_endpoint)
+
+        lc.perform_on_database_account_read(db_acc)
+
+        write_contexts = lc.get_write_regional_routing_contexts()
+        assert write_contexts[0].get_primary() == user_endpoint
+
+    def test_endpoint_discovery_disabled_skips_rewrite(self):
+        # When endpoint discovery is disabled, update_location_cache short-circuits
+        # before populating the per-region routing contexts at all, so the rewrite
+        # path is never reached and the SDK falls back to the user-supplied
+        # default endpoint for every request.
+        user_endpoint = "http://localhost:8888/"
+        advertised_endpoint = "https://127.0.0.1:8081/"
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.EnableEndpointDiscovery = False
+        lc = LocationCache(default_endpoint=user_endpoint, connection_policy=connection_policy)
+        db_acc = self._make_db_account(advertised_endpoint)
+
+        lc.perform_on_database_account_read(db_acc)
+
+        # No per-region contexts are populated when endpoint discovery is off.
+        assert lc.account_write_regional_routing_contexts_by_location == {}
+        assert lc.account_read_regional_routing_contexts_by_location == {}
+        # Routing falls back to the user-supplied default endpoint, not the
+        # gateway-advertised 127.0.0.1:8081.
+        assert lc.get_write_regional_routing_context() == user_endpoint
+        assert lc.get_read_regional_routing_context() == user_endpoint
+
+
 if __name__ == "__main__":
     unittest.main()
