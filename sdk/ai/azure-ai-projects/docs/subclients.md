@@ -1,8 +1,9 @@
 # AIProjectClient Subclients
 
-This document lists all subclients available on `AIProjectClient` and their public method counts.
+This document lists all sub-clients available on `AIProjectClient` and their public method counts. Overload methods are not counted. Only synchronous methods are counted (but each one has an equivalent asynchronous method).
 
-## Top-level Subclients
+
+## Top-level Sub-clients
 
 | Subclient | Class Name | Public Methods |
 |-----------|------------|----------------|
@@ -15,24 +16,26 @@ This document lists all subclients available on `AIProjectClient` and their publ
 | `telemetry` | TelemetryOperations | 1 |
 | `beta` | BetaOperations | 0 (container only) |
 
-## Nested Subclients on `.beta`
+## Nested Sub-clients on `.beta`
 
 | Subclient | Class Name | Public Methods |
 |-----------|------------|----------------|
-| `beta.agents` | BetaAgentsOperations | 14 |
-| `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
-| `beta.evaluators` | BetaEvaluatorsOperations | 11 |
-| `beta.insights` | BetaInsightsOperations | 3 |
-| `beta.memory_stores` | BetaMemoryStoresOperations | 8 |
-| `beta.red_teams` | BetaRedTeamsOperations | 3 |
-| `beta.schedules` | BetaSchedulesOperations | 6 |
-| `beta.toolboxes` | BetaToolboxesOperations | 8 |
-| `beta.skills` | BetaSkillsOperations | 7 |
+| `beta.agents` | BetaAgentsOperations | 21 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
+| `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
+| `beta.evaluators` | BetaEvaluatorsOperations | 13 |
+| `beta.insights` | BetaInsightsOperations | 3 |
+| `beta.memory_stores` | BetaMemoryStoresOperations | 13 |
+| `beta.models` | BetaModelsOperations | 8 |
+| `beta.red_teams` | BetaRedTeamsOperations | 3 |
+| `beta.routines` | BetaRoutinesOperations | 8 |
+| `beta.schedules` | BetaSchedulesOperations | 6 |
+| `beta.skills` | BetaSkillsOperations | 7 |
+| `beta.toolboxes` | BetaToolboxesOperations | 8 |
 
 ## Summary
 
-**Total: 102 unique public methods across all subclients**
+**Total: 132 unique public methods across all subclients**
 
 ---
 
@@ -45,7 +48,7 @@ This document lists all subclients available on `AIProjectClient` and their publ
 `get`, `delete`, `create_or_update`, `list`
 
 #### ConnectionsOperations (3)
-`list`, `get`, `get_default`
+`get`, `get_default`, `list`
 
 #### DatasetsOperations (9)
 `list_versions`, `list`, `get`, `delete`, `create_or_update`, `pending_upload`, `get_credentials`, `upload_file`, `upload_folder`
@@ -59,32 +62,38 @@ This document lists all subclients available on `AIProjectClient` and their publ
 #### TelemetryOperations (1)
 `get_application_insights_connection_string`
 
-#### BetaAgentsOperations (14)
-`create_agent_version_from_code`, `create_session`, `delete_session`, `delete_session_file`, `download_agent_code`, `download_agent_version_code`, `download_session_file`, `get_session`, `get_session_files`, `get_session_log_stream`, `list_sessions`, `patch_agent_details`, `update_agent_from_code`, `upload_session_file`
+#### BetaAgentsOperations (21)
+`patch_agent_details`, `create_version_from_code`, `download_agent_code`, `create_session`, `get_session`, `delete_session`, `list_sessions`, `get_session_log_stream`, `upload_session_file`, `download_session_file`, `get_session_files`, `delete_session_file`, `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `delete_optimization_job`, `list_optimization_candidates`, `get_optimization_candidate`, `get_optimization_candidate_config`, `get_optimization_candidate_results`
+
+#### BetaDatasetsOperations (5)
+`cancel_generation_job`, `create_generation_job`, `delete_generation_job`, `get_generation_job`, `list_generation_jobs`
 
 #### BetaEvaluationTaxonomiesOperations (5)
-`get`, `list`, `delete`, `create`, `update`
+`create`, `delete`, `get`, `list`, `update`
 
-#### BetaEvaluatorsOperations (11)
-`list_versions`, `list`, `get_version`, `delete_version`, `create_version`, `update_version`, `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`
+#### BetaEvaluatorsOperations (13)
+`cancel_generation_job`, `create_generation_job`, `create_version`, `delete_generation_job`, `delete_version`, `get_credentials`, `get_generation_job`, `get_version`, `list`, `list_generation_jobs`, `list_versions`, `pending_upload`, `update_version`
 
 #### BetaInsightsOperations (3)
 `generate`, `get`, `list`
 
-#### BetaMemoryStoresOperations (8)
-`create`, `update`, `get`, `list`, `delete`, `delete_scope`, `search_memories`, `begin_update_memories`
+#### BetaMemoryStoresOperations (13)
+`begin_update_memories`, `create`, `create_memory`, `delete`, `delete_memory`, `delete_scope`, `get`, `get_memory`, `list`, `list_memories`, `search_memories`, `update`, `update_memory`
+
+#### BetaModelsOperations (8)
+`create_async`, `delete`, `get`, `get_credentials`, `list`, `list_versions`, `pending_upload`, `update`
 
 #### BetaRedTeamsOperations (3)
-`get`, `list`, `create`
+`create`, `get`, `list`
+
+#### BetaRoutinesOperations (8)
+`create_or_update`, `delete`, `disable`, `dispatch_async`, `enable`, `get`, `list`, `list_runs`
 
 #### BetaSchedulesOperations (6)
-`delete`, `get`, `list`, `create_or_update`, `get_run`, `list_runs`
-
-#### BetaToolboxesOperations (8)
-`create_version`, `get`, `list`, `list_versions`, `get_version`, `update`, `delete`, `delete_version`
+`create_or_update`, `delete`, `get`, `get_run`, `list`, `list_runs`
 
 #### BetaSkillsOperations (7)
-`create`, `create_from_package`, `get`, `download`, `list`, `update`, `delete`
+`create`, `create_from_package`, `delete`, `download`, `get`, `list`, `update`
 
-#### BetaDatasetsOperations (5)
-`get_generation_job`, `list_generation_jobs`, `create_generation_job`, `cancel_generation_job`, `delete_generation_job`
+#### BetaToolboxesOperations (8)
+`create_version`, `delete`, `delete_version`, `get`, `get_version`, `list`, `list_versions`, `update`
