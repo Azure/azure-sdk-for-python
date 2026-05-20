@@ -9,6 +9,4 @@ from ._version import VERSION
 
 __version__ = VERSION
 
-__all__ = [
-    'ChangeFeedClient'
-]
+__all__ = ["ChangeFeedClient"]
