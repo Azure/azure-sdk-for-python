@@ -16,11 +16,12 @@
 
 ### Breaking Changes
 
-  - Model `Trigger` deleted or renamed its instance variable `kind`
-  - Model `Trigger` deleted or renamed its instance variable `status`
-  - Model `Trigger` deleted or renamed its instance variable `provisioning_state`
-  - Deleted or renamed model `RunOutputCollection`
-  - Deleted or renamed model `TriggerCollection`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `Trigger` moved instance variable `kind`, `status` and `provisioning_state` under property `properties`
+
+### Other Changes
+
+  - Deleted model `RunOutputCollection`/`TriggerCollection` which actually were not used by SDK users
 
 ## 1.4.0 (2024-06-17)
 
