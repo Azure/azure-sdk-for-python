@@ -7,7 +7,8 @@
 * Support integration of external Agents (in preview). See new `ExternalAgentDefinition` class.
 * New Agent tool in preview `FabricIQPreviewTool`.
 * New Agent tool in preview `ToolboxSearchPreviewTool`.
-* New optional string properties `description` and `name` added to Agent tools which did not have them before.
+* New optional string properties `description` and `name` added to Agent tools classes which did not have them before.
+* New optional `tool_configs` added to Agent tool classes.
 * New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New `.beta.models` sub-client to handle AI model weights: `list_versions`, `list`, `get`, `delete`, `update`, `create_async`, `pending_upload`, `get_credentials`.
 * New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `list_runs`, `dispatch_async`.
@@ -18,6 +19,7 @@
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 * New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
+
 
 ### Breaking Changes
 
