@@ -2633,9 +2633,6 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertEqual(read_permission.id, created_permission.id)
 
     def test_delete_all_items_by_partition_key(self):
-        # enable the test only for the emulator
-        if "localhost" not in self.host and "127.0.0.1" not in self.host:
-            return
         key_db = self.key_databaseForTest
         data_db = self.databaseForTest
 
@@ -2659,8 +2656,18 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
         pk2_item = data_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), no_response=False)
 
-        # delete all items for partition key 1
-        data_collection.delete_all_items_by_partition_key(partition_key1)
+        try:
+            # delete all items for partition key 1
+            data_collection.delete_all_items_by_partition_key(partition_key1)
+        except exceptions.CosmosHttpResponseError as e:
+            error_text = " ".join(
+                message for message in (getattr(e, "http_error_message", None), str(e))
+                if message
+            ).lower()
+            if e.status_code == 400 and "partition key delete feature is disabled" in error_text:
+                key_db.delete_container(created_collection.id)
+                pytest.skip("delete_all_items_by_partition_key is not enabled for this account")
+            raise
 
         # check that only items from partition key 1 have been deleted
         items = list(data_collection.read_all_items())

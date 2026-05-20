@@ -9,6 +9,7 @@ import uuid
 
 
 import test_config
+import azure.cosmos.exceptions as exceptions
 from azure.cosmos import http_constants
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
@@ -219,13 +220,22 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         # add items for partition key 2
         pk2_item = await data_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
 
-        # delete all items for partition key 1
-        await data_collection.delete_all_items_by_partition_key(
-            partition_key1,
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-
-        await self.database.delete_container(created_collection_ref)
+        try:
+            # delete all items for partition key 1
+            await data_collection.delete_all_items_by_partition_key(
+                partition_key1,
+                throughput_bucket=request_throughput_bucket_number,
+                raw_response_hook=request_raw_response_hook)
+        except exceptions.CosmosHttpResponseError as e:
+            error_text = " ".join(
+                message for message in (getattr(e, "http_error_message", None), str(e))
+                if message
+            ).lower()
+            if e.status_code == 400 and "partition key delete feature is disabled" in error_text:
+                pytest.skip("delete_all_items_by_partition_key is not enabled for this account")
+            raise
+        finally:
+            await self.database.delete_container(created_collection_ref.id)
 
     # TODO Re-enable once Throughput Bucket Validation Changes are rolled out
     """

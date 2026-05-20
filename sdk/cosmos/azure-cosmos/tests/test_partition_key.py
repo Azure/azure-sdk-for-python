@@ -23,6 +23,14 @@ VERSIONS = [1, 2]
 AAD_PK_DELETE_SKIP_REASON = "DeleteAllItemsByPartitionKey account capability isn't enabled in AAD live lane."
 
 
+def _is_pk_delete_feature_disabled_error(error: CosmosHttpResponseError) -> bool:
+    error_text = " ".join(
+        message for message in (getattr(error, "http_error_message", None), str(error))
+        if message
+    ).lower()
+    return error.status_code == 400 and "partition key delete feature is disabled" in error_text
+
+
 def _new_null_pk_doc(pk_field: PkField) -> ItemDict:
     if pk_field is None:
         return {'id': str(uuid.uuid4())}
@@ -176,7 +184,12 @@ def _perform_operations_on_pk(created_container, pk_field, pk_value):
     created_container.delete_item(item=document_definition['id'], partition_key=pk_value)
     # recreate the item to test delete item api
     created_container.create_item(body=document_definition)
-    created_container.delete_all_items_by_partition_key(partition_key=pk_value)
+    try:
+        created_container.delete_all_items_by_partition_key(partition_key=pk_value)
+    except CosmosHttpResponseError as error:
+        if _is_pk_delete_feature_disabled_error(error):
+            pytest.skip(AAD_PK_DELETE_SKIP_REASON)
+        raise
 
 
 @pytest.mark.cosmosEmulator
@@ -197,10 +210,6 @@ class TestPartitionKey:
     TEST_CONTAINER_ID: str = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     @pytest.mark.parametrize("version", VERSIONS)
-    @pytest.mark.skipif(
-        test_config.TestConfig.data_auth_mode == 'aad',
-        reason=AAD_PK_DELETE_SKIP_REASON,
-    )
     def test_multi_partition_collection_read_document_with_no_pk(self, setup, version) -> None:
         pk_val: PkField = partition_key.NonePartitionKeyValue  # type: ignore[assignment]
         # Control-plane container creation.
@@ -217,10 +226,6 @@ class TestPartitionKey:
             setup["key_db"].delete_container(container_id)
 
     @pytest.mark.parametrize("version", VERSIONS)
-    @pytest.mark.skipif(
-        test_config.TestConfig.data_auth_mode == 'aad',
-        reason=AAD_PK_DELETE_SKIP_REASON,
-    )
     def test_with_null_pk(self, setup, version) -> None:
         pk_field = 'pk'
         pk_vals = [None, partition_key.NullPartitionKeyValue]

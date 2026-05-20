@@ -1721,9 +1721,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
 
     async def test_delete_all_items_by_partition_key_async(self):
-        # enable the test only for the emulator
-        if "localhost" not in self.host and "127.0.0.1" not in self.host:
-            return
         # create container via setup client (control-plane)
         created_collection = await self._create_container_for_test(
             container_id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
@@ -1742,8 +1739,18 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # add items for partition key 2
         pk2_item = await created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
 
-        # delete all items for partition key 1
-        await created_collection.delete_all_items_by_partition_key(partition_key1)
+        try:
+            # delete all items for partition key 1
+            await created_collection.delete_all_items_by_partition_key(partition_key1)
+        except exceptions.CosmosHttpResponseError as e:
+            error_text = " ".join(
+                message for message in (getattr(e, "http_error_message", None), str(e))
+                if message
+            ).lower()
+            if e.status_code == 400 and "partition key delete feature is disabled" in error_text:
+                await self._delete_container_for_test(created_collection)
+                pytest.skip("delete_all_items_by_partition_key is not enabled for this account")
+            raise
 
         # check that only items from partition key 1 have been deleted
         items = [item async for item in created_collection.read_all_items()]

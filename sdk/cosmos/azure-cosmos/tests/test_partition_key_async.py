@@ -9,7 +9,7 @@ import pytest_asyncio
 from azure.core.exceptions import AzureError
 from azure.cosmos import PartitionKey
 
-from azure.cosmos.exceptions import CosmosResourceNotFoundError
+from azure.cosmos.exceptions import CosmosResourceNotFoundError, CosmosHttpResponseError
 
 import azure.cosmos.partition_key as partition_key
 import test_config
@@ -22,6 +22,14 @@ COLLECTION = "created_collection"
 DATABASE = "created_db"
 CLIENT = "client"
 AAD_PK_DELETE_SKIP_REASON = "DeleteAllItemsByPartitionKey account capability isn't enabled in AAD live lane."
+
+
+def _is_pk_delete_feature_disabled_error(error: CosmosHttpResponseError) -> bool:
+    error_text = " ".join(
+        message for message in (getattr(error, "http_error_message", None), str(error))
+        if message
+    ).lower()
+    return error.status_code == 400 and "partition key delete feature is disabled" in error_text
 
 async def _read_and_assert(container: ContainerProxy, doc_id: str, pk_field: Optional[str] = 'pk', pk_value: Any = None) -> None:
     item = await container.read_item(item=doc_id, partition_key=pk_value)
@@ -141,7 +149,12 @@ async def _perform_operations_on_pk(created_container, pk_field, pk_value):
     await created_container.delete_item(item=document_definition['id'], partition_key=pk_value)
     # recreate the item to test delete item api
     await created_container.create_item(body=document_definition)
-    await created_container.delete_all_items_by_partition_key(partition_key=pk_value)
+    try:
+        await created_container.delete_all_items_by_partition_key(partition_key=pk_value)
+    except CosmosHttpResponseError as error:
+        if _is_pk_delete_feature_disabled_error(error):
+            pytest.skip(AAD_PK_DELETE_SKIP_REASON)
+        raise
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_async")
@@ -161,10 +174,6 @@ class TestPartitionKeyAsync:
     TEST_CONTAINER_ID: str = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     @pytest.mark.parametrize("version", VERSIONS)
-    @pytest.mark.skipif(
-        test_config.TestConfig.data_auth_mode == 'aad',
-        reason=AAD_PK_DELETE_SKIP_REASON,
-    )
     async def test_multi_partition_collection_read_document_with_no_pk_async(self, setup_async, version) -> None:
         pk_val = partition_key.NonePartitionKeyValue
         # Control-plane container creation.
@@ -181,10 +190,6 @@ class TestPartitionKeyAsync:
 
 
     @pytest.mark.parametrize("version", VERSIONS)
-    @pytest.mark.skipif(
-        test_config.TestConfig.data_auth_mode == 'aad',
-        reason=AAD_PK_DELETE_SKIP_REASON,
-    )
     async def test_with_null_pk_async(self, setup_async, version) -> None:
         pk_field = 'pk'
         pk_values = [None, partition_key.NullPartitionKeyValue]
