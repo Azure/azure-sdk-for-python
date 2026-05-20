@@ -91,6 +91,7 @@ class ExportResult(Enum):
 
 # pylint: disable=broad-except
 # pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-statements
 # pylint: disable=C0301
 class BaseExporter:
     """Azure Monitor base exporter for OpenTelemetry."""
@@ -290,7 +291,7 @@ class BaseExporter:
                 granted = self._rate_limiter.try_consume(len(envelopes))
                 if granted == 0:
                     logger.warning(
-                        "Rate limiter rejected entire batch of %d envelopes. " "Routing to local storage for retry.",
+                        "Rate limiter rejected entire batch of %d envelopes. Routing to local storage for retry.",
                         len(envelopes),
                     )
                     return ExportResult.FAILED_RETRYABLE
@@ -303,7 +304,7 @@ class BaseExporter:
                     overflow = envelopes[granted:]
                     del envelopes[granted:]
                     logger.info(
-                        "Rate limiter admitted %d of %d envelopes; " "%d envelopes deferred to local storage.",
+                        "Rate limiter admitted %d of %d envelopes; %d envelopes deferred to local storage.",
                         granted,
                         granted + len(overflow),
                         len(overflow),
