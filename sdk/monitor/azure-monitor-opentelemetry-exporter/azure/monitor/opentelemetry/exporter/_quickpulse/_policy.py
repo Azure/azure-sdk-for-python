@@ -1,14 +1,52 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import logging
 from typing import Any, Optional
 from urllib.parse import urlparse
 from weakref import ReferenceType
 
 from azure.core.pipeline import PipelineResponse, policies
 
-from azure.monitor.opentelemetry.exporter._quickpulse._constants import _QUICKPULSE_REDIRECT_HEADER_NAME
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics import LiveMetricsClient
+from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
+    _QUICKPULSE_REDIRECT_HEADER_NAME,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics import (
+    LiveMetricsClient,
+)
+
+_logger = logging.getLogger(__name__)
+
+# Allowed domain suffixes for QuickPulse redirect targets.
+# Only redirects to these trusted Azure Monitor domains are accepted.
+_ALLOWED_REDIRECT_DOMAIN_SUFFIXES = (
+    ".livediagnostics.monitor.azure.com",
+    ".monitor.azure.com",
+    ".services.visualstudio.com",
+    ".applicationinsights.azure.com",
+    ".monitor.azure.us",
+    ".applicationinsights.azure.us",
+    ".monitor.azure.cn",
+    ".applicationinsights.azure.cn",
+)
+
+
+def _is_redirect_target_allowed(netloc: str) -> bool:
+    """Validate that the redirect target host belongs to a known Azure Monitor domain.
+
+    :param str netloc: The network location (host:port) from the parsed redirect URL.
+    :return: True if the host is in an allowed Azure Monitor domain, False otherwise.
+    :rtype: bool
+    """
+    # Use urlparse to safely extract the hostname, which handles port stripping
+    # and detects userinfo (username/password) that could be used to spoof the host.
+    parsed = urlparse(f"//{netloc}")
+    if parsed.username is not None or parsed.password is not None:
+        return False
+    host = parsed.hostname
+    if host is None:
+        return False
+    return any(host.endswith(suffix) for suffix in _ALLOWED_REDIRECT_DOMAIN_SUFFIXES)
 
 
 # Quickpulse endpoint handles redirects via header instead of status codes
@@ -27,6 +65,19 @@ class _QuickpulseRedirectPolicy(policies.RedirectPolicy):
         if redirect_location:
             redirected_url = urlparse(redirect_location)
             if redirected_url.scheme and redirected_url.netloc:
+                # Only allow HTTPS redirects to trusted Azure Monitor domains
+                if redirected_url.scheme.lower() != "https":
+                    _logger.warning(
+                        "QuickPulse redirect rejected: non-HTTPS scheme '%s' in redirect target.",
+                        redirected_url.scheme,
+                    )
+                    return None
+                if not _is_redirect_target_allowed(redirected_url.netloc):
+                    _logger.warning(
+                        "QuickPulse redirect rejected: host '%s' is not in the allowed domain list.",
+                        redirected_url.netloc,
+                    )
+                    return None
                 if self._qp_client_ref:
                     qp_client = self._qp_client_ref()
                 if qp_client and qp_client._client:
