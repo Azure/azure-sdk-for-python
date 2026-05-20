@@ -1,11 +1,16 @@
 # Release History
 
+## 7.15.0b1 (Unreleased)
+
+### Features Added
+
+- Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages, with optional filtering by session-state update timestamp. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
+
 ## 7.14.4 (Unreleased)
 
 ### Bugs Fixed
 
 - Read `com.microsoft:max-message-batch-size` vendor property from the AMQP sender link to correctly limit batch size on Premium large-message entities, where `max-message-size` can be up to 100 MB but the batch limit is 1 MB.
-
 ## 7.14.3 (2025-11-11)
 
 ### Bugs Fixed
