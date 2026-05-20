@@ -8,7 +8,6 @@
   - Client `ImageBuilderClient` added method `send_request`
   - Model `ImageTemplatePropertiesOptimize` added property `workload`
   - Model `ImageTemplateSharedImageDistributor` added property `replication_mode`
-  - Model `Trigger` added property `properties`
   - Added model `DataDisk`
   - Added model `ImageTemplatePropertiesOptimizeWorkload`
   - Added enum `ReplicationMode`
