@@ -1,5 +1,51 @@
 # Release History
 
+## 3.0.0b1 (2026-05-20)
+
+### Features Added
+
+  - Model `CustomLocationOperation` added property `display`
+  - Model `PatchableCustomLocations` added property `properties`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `CustomLocationFindTargetResourceGroupProperties`
+  - Added model `CustomLocationFindTargetResourceGroupResult`
+  - Added model `CustomLocationOperationValueDisplay`
+  - Added model `MatchExpressionsProperties`
+  - Added model `PatchableResourceSyncRule`
+  - Added model `ResourceSyncRule`
+  - Added model `ResourceSyncRuleProperties`
+  - Added model `ResourceSyncRulePropertiesSelector`
+  - Model `CustomLocationsOperations` added method `find_target_resource_group`
+  - Added model `ResourceSyncRulesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `CustomLocations`
+  - Model `CustomLocationOperation` deleted or renamed its instance variable `description`
+  - Model `CustomLocationOperation` deleted or renamed its instance variable `operation`
+  - Model `CustomLocationOperation` deleted or renamed its instance variable `provider`
+  - Model `CustomLocationOperation` deleted or renamed its instance variable `resource`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `authentication`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `cluster_extension_ids`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `display_name`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `host_resource_id`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `host_type`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `namespace`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `provisioning_state`
+  - Deleted or renamed model `CustomLocationOperationsList`
+  - Method `CustomLocationsOperations.update` inserted a `positional_or_keyword` parameter `parameters`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `identity` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `authentication` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `cluster_extension_ids` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `display_name` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `host_resource_id` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `host_type` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `namespace` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `provisioning_state` of kind `positional_or_keyword`
+
 ## 2.0.0 (2024-10-30)
 
 ### Breaking Changes
