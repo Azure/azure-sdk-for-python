@@ -16,7 +16,8 @@
 * New methods on `.beta.agents` for optimization jobs: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `list_optimization_candidates`.
 * New methods on `.beta.memory_stores` to handle individual memory items:`.beta.memory_stores`: `get_memory`, `delete_memory`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
-* New optional `force` parameter on `agents.delete()` and `agents.delete_version()`.
+* New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
+* New optional `blueprint_reference` parameters on `agents.create_version` method.
 
 ### Breaking Changes
 

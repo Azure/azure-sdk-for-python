@@ -8,46 +8,18 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Union, Optional, Any, IO, overload, Final
+from typing import Union, Optional, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from .. import models as _models
-from ..models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
-from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
-
-"""
-Example service response payload when the caller is trying to use a feature preview without opt-in flag (service error 403 (Forbidden)): 
-
-"error": {
-    "code": "preview_feature_required",
-    "message": "Workflow agents is in preview. This operation requires the following opt-in preview feature(s): WorkflowAgents=V1Preview. Include the 'Foundry-Features: WorkflowAgents=V1Preview' header in your request.",
-    "param": "Foundry-Features",
-    "type": "invalid_request_error",
-    "details": [],
-    "additionalInfo": {
-      "request_id": "fdbc95804b7599404973026cd9ec732a"
-    }
-  }
-
-"""
-_PREVIEW_FEATURE_REQUIRED_CODE: Final = "preview_feature_required"
-_PREVIEW_FEATURE_ADDED_ERROR_MESSAGE: Final = (
-    '\n**Python SDK users**: This operation requires you to set "allow_preview=True" '
-    "when calling the AIProjectClient constructor. "
-    "\nNote that preview features are under development and subject to change. They should not be used in production environments."
+from ..models._patch import (
+    _FOUNDRY_FEATURES_HEADER_NAME,
+    _has_header_case_insensitive,
+    _AGENT_OPERATION_FEATURE_HEADERS,
+    _PREVIEW_FEATURE_REQUIRED_CODE,
+    _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE,
 )
-_AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
-    [
-        _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
-        _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
-        _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
-        _AgentDefinitionOptInKeys.CODE_AGENTS_V1_PREVIEW.value,
-        _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
-        _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V1_PREVIEW.value,
-    ]
-)
-
 
 class AgentsOperations(GeneratedAgentsOperations):
     """
@@ -68,6 +40,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
+        blueprint_reference: Optional[_models.AgentBlueprintReference] = None,        
         **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
@@ -94,6 +67,8 @@ class AgentsOperations(GeneratedAgentsOperations):
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
+        :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
+        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference        
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -157,6 +132,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         definition: _models.AgentDefinition = _Unset,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
+        blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
         **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
@@ -182,6 +158,8 @@ class AgentsOperations(GeneratedAgentsOperations):
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
+        :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
+        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -203,9 +181,25 @@ class AgentsOperations(GeneratedAgentsOperations):
                 definition=definition,
                 metadata=metadata,
                 description=description,
+                blueprint_reference=blueprint_reference,
                 **kwargs,
             )
         except HttpResponseError as exc:
+            """
+            Example service response payload when the caller is trying to use a feature preview without opt-in flag (service error 403 (Forbidden)): 
+
+            "error": {
+                "code": "preview_feature_required",
+                "message": "Workflow agents is in preview. This operation requires the following opt-in preview feature(s): WorkflowAgents=V1Preview. Include the 'Foundry-Features: WorkflowAgents=V1Preview' header in your request.",
+                "param": "Foundry-Features",
+                "type": "invalid_request_error",
+                "details": [],
+                "additionalInfo": {
+                "request_id": "fdbc95804b7599404973026cd9ec732a"
+                }
+            }
+
+            """
             if exc.status_code == 403 and not self._config.allow_preview and exc.model is not None:
                 api_error_response = exc.model
                 if hasattr(api_error_response, "error") and api_error_response.error is not None:
