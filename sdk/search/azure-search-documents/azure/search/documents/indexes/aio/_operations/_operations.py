@@ -52,6 +52,7 @@ from ..._operations._operations import (
     build_search_index_delete_alias_request,
     build_search_index_delete_index_request,
     build_search_index_delete_knowledge_base_request,
+    build_search_index_delete_knowledge_source_file_request,
     build_search_index_delete_knowledge_source_request,
     build_search_index_delete_synonym_map_request,
     build_search_index_get_alias_request,
@@ -68,7 +69,9 @@ from ..._operations._operations import (
     build_search_index_list_indexes_request,
     build_search_index_list_indexes_with_selected_properties_request,
     build_search_index_list_knowledge_bases_request,
+    build_search_index_list_knowledge_source_files_request,
     build_search_index_list_knowledge_sources_request,
+    build_search_index_upload_knowledge_source_file_request,
     build_search_indexer_create_data_source_connection_request,
     build_search_indexer_create_indexer_request,
     build_search_indexer_create_or_update_data_source_connection_request,
@@ -2869,6 +2872,243 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={"2026-05-01-preview": ["api_version", "content_type", "client_request_id", "name", "accept"]},
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def _upload_knowledge_source_file(
+        self, name: str, file: bytes, **kwargs: Any
+    ) -> _models2.KnowledgeSourceFile:
+        """Uploads a file to a File knowledge source for processing and indexing.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param file: The file content to upload. Required.
+        :type file: bytes
+        :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
+        cls: ClsType[_models2.KnowledgeSourceFile] = kwargs.pop("cls", None)
+
+        _content = file
+
+        _request = build_search_index_upload_knowledge_source_file_request(
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models3.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models2.KnowledgeSourceFile, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={"2026-05-01-preview": ["api_version", "accept", "client_request_id", "name"]},
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def list_knowledge_source_files(self, name: str, **kwargs: Any) -> AsyncItemPaged["_models2.KnowledgeSourceFile"]:
+        """Lists all files in a File knowledge source.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :return: An iterator like instance of KnowledgeSourceFile
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeSourceFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models2.KnowledgeSourceFile]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_search_index_list_knowledge_source_files_request(
+                    name=name,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models2.KnowledgeSourceFile],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models3.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={"2026-05-01-preview": ["api_version", "file_id", "accept", "client_request_id", "name"]},
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def _delete_knowledge_source_file(self, file_id: str, name: str, **kwargs: Any) -> None:
+        """Deletes a file from a File knowledge source and removes all indexed content derived from it.
+
+        :param file_id: The unique identifier of the file to delete. Required.
+        :type file_id: str
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_search_index_delete_knowledge_source_file_request(
+            file_id=file_id,
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models3.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs: Any) -> _models2.SearchServiceStatistics:

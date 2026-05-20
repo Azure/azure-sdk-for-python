@@ -40,6 +40,7 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         # IndexedSql
         f"{_IM}.IndexedSqlKnowledgeSource",
         f"{_IM}.IndexedSqlKnowledgeSourceParameters",
+        f"{_KBM}.IndexedSqlKnowledgeSourceParams",
         f"{_IM}.ContentColumnMapping",
         f"{_IM}.EmbeddingColumnMapping",
         # WorkIQ (parameters live in knowledgebases.models)
@@ -56,9 +57,11 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         # File
         f"{_IM}.FileKnowledgeSource",
         f"{_IM}.FileKnowledgeSourceParameters",
+        f"{_KBM}.FileKnowledgeSourceParams",
         # MCP server
         f"{_IM}.McpServerKnowledgeSource",
         f"{_IM}.McpServerKnowledgeSourceParameters",
+        f"{_KBM}.McpServerKnowledgeSourceParams",
         f"{_IM}.McpServerAuthentication",
         f"{_IM}.McpServerFoundryConnectionAuthentication",
         f"{_IM}.McpServerFoundryConnectionParameters",
@@ -271,6 +274,9 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
         f"{_IDX}.SearchIndexClient.get_knowledge_base",
         f"{_IDX}.SearchIndexClient.get_knowledge_source",
         f"{_IDX}.SearchIndexClient.get_knowledge_source_status",
+        f"{_IDX}.SearchIndexClient.upload_knowledge_source_file",
+        f"{_IDX}.SearchIndexClient.list_knowledge_source_files",
+        f"{_IDX}.SearchIndexClient.delete_knowledge_source_file",
         f"{_IDX}.SearchIndexClient.list_knowledge_bases",
         f"{_IDX}.SearchIndexClient.list_knowledge_sources",
         f"{_IDX}.SearchIndexerClient.resync",
@@ -286,6 +292,9 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
         f"{_IDX}.aio.SearchIndexClient.get_knowledge_base",
         f"{_IDX}.aio.SearchIndexClient.get_knowledge_source",
         f"{_IDX}.aio.SearchIndexClient.get_knowledge_source_status",
+        f"{_IDX}.aio.SearchIndexClient.upload_knowledge_source_file",
+        f"{_IDX}.aio.SearchIndexClient.list_knowledge_source_files",
+        f"{_IDX}.aio.SearchIndexClient.delete_knowledge_source_file",
         f"{_IDX}.aio.SearchIndexClient.list_knowledge_bases",
         f"{_IDX}.aio.SearchIndexClient.list_knowledge_sources",
         f"{_IDX}.aio.SearchIndexerClient.resync",

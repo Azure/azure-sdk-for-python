@@ -135,3 +135,41 @@ class TestListIndexNamesAsync:
         assert kwargs["skip"] == 0
         assert kwargs["count"] is True
         assert callable(kwargs["cls"])
+
+
+@pytest.mark.asyncio
+class TestKnowledgeSourceFileOperationsAsync:
+    async def test_upload_knowledge_source_file_forwards_content(self):
+        require_capability("azure.search.documents.indexes.aio.SearchIndexClient.upload_knowledge_source_file")
+
+        with mock.patch(
+            "azure.search.documents.indexes.aio._operations._operations."
+            "_SearchIndexClientOperationsMixin._upload_knowledge_source_file",
+            new_callable=mock.AsyncMock,
+        ) as mock_upload:
+            await _client().upload_knowledge_source_file(
+                "files-source",
+                b"content",
+                content_type="application/octet-stream",
+            )
+
+        mock_upload.assert_awaited_once()
+        kwargs = mock_upload.call_args.kwargs
+        assert kwargs["name"] == "files-source"
+        assert kwargs["file"] == b"content"
+        assert kwargs["content_type"] == "application/octet-stream"
+
+    async def test_delete_knowledge_source_file_forwards_file_id(self):
+        require_capability("azure.search.documents.indexes.aio.SearchIndexClient.delete_knowledge_source_file")
+
+        with mock.patch(
+            "azure.search.documents.indexes.aio._operations._operations."
+            "_SearchIndexClientOperationsMixin._delete_knowledge_source_file",
+            new_callable=mock.AsyncMock,
+        ) as mock_delete:
+            await _client().delete_knowledge_source_file("files-source", "file-1")
+
+        mock_delete.assert_awaited_once()
+        kwargs = mock_delete.call_args.kwargs
+        assert kwargs["name"] == "files-source"
+        assert kwargs["file_id"] == "file-1"

@@ -120,3 +120,34 @@ class TestListIndexNames:
         assert kwargs["count"] is True
         # The names projection passes a `cls` callback that maps to .name strings.
         assert callable(kwargs["cls"])
+
+
+class TestKnowledgeSourceFileOperations:
+    @mock.patch(
+        "azure.search.documents.indexes._operations._operations."
+        "_SearchIndexClientOperationsMixin._upload_knowledge_source_file"
+    )
+    def test_upload_knowledge_source_file_forwards_content(self, mock_upload):
+        require_capability("azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file")
+
+        _client().upload_knowledge_source_file("files-source", b"content", content_type="application/octet-stream")
+
+        mock_upload.assert_called_once()
+        kwargs = mock_upload.call_args.kwargs
+        assert kwargs["name"] == "files-source"
+        assert kwargs["file"] == b"content"
+        assert kwargs["content_type"] == "application/octet-stream"
+
+    @mock.patch(
+        "azure.search.documents.indexes._operations._operations."
+        "_SearchIndexClientOperationsMixin._delete_knowledge_source_file"
+    )
+    def test_delete_knowledge_source_file_forwards_file_id(self, mock_delete):
+        require_capability("azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source_file")
+
+        _client().delete_knowledge_source_file("files-source", "file-1")
+
+        mock_delete.assert_called_once()
+        kwargs = mock_delete.call_args.kwargs
+        assert kwargs["name"] == "files-source"
+        assert kwargs["file_id"] == "file-1"

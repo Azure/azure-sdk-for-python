@@ -31,6 +31,12 @@ class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Fabric Data Agent retrieval activity."""
     FABRIC_ONTOLOGY = "fabricOntology"
     """Fabric Ontology retrieval activity."""
+    MCP_SERVER = "mcpServer"
+    """MCP server retrieval activity."""
+    FILE = "file"
+    """File retrieval activity."""
+    INDEXED_SQL = "indexedSql"
+    """Indexed SQL retrieval activity."""
     MODEL_QUERY_PLANNING = "modelQueryPlanning"
     """LLM query planning activity."""
     MODEL_ANSWER_SYNTHESIS = "modelAnswerSynthesis"
@@ -71,6 +77,12 @@ class KnowledgeBaseReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Fabric Data Agent document reference."""
     FABRIC_ONTOLOGY = "fabricOntology"
     """Fabric Ontology document reference."""
+    MCP_SERVER = "mcpServer"
+    """MCP server document reference."""
+    FILE = "file"
+    """File document reference."""
+    INDEXED_SQL = "indexedSql"
+    """Indexed SQL document reference."""
 
 
 class KnowledgeRetrievalIntentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

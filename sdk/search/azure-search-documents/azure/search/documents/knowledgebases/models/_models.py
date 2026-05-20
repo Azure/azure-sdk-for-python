@@ -101,9 +101,11 @@ class KnowledgeSourceParams(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureBlobKnowledgeSourceParams, FabricDataAgentKnowledgeSourceParams,
-    FabricOntologyKnowledgeSourceParams, IndexedOneLakeKnowledgeSourceParams,
-    IndexedSharePointKnowledgeSourceParams, RemoteSharePointKnowledgeSourceParams,
-    SearchIndexKnowledgeSourceParams, WebKnowledgeSourceParams, WorkIQKnowledgeSourceParams
+    FabricOntologyKnowledgeSourceParams, FileKnowledgeSourceParams,
+    IndexedOneLakeKnowledgeSourceParams, IndexedSharePointKnowledgeSourceParams,
+    IndexedSqlKnowledgeSourceParams, McpServerKnowledgeSourceParams,
+    RemoteSharePointKnowledgeSourceParams, SearchIndexKnowledgeSourceParams,
+    WebKnowledgeSourceParams, WorkIQKnowledgeSourceParams
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
     :vartype knowledge_source_name: str
@@ -447,6 +449,68 @@ class FabricOntologyKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
         self.kind = KnowledgeSourceKind.FABRIC_ONTOLOGY  # type: ignore
 
 
+class FileKnowledgeSourceParams(KnowledgeSourceParams, discriminator="file"):
+    """Specifies runtime parameters for a File knowledge source.
+
+    :ivar knowledge_source_name: The name of the index the params apply to. Required.
+    :vartype knowledge_source_name: str
+    :ivar include_references: Indicates whether references should be included for data retrieved
+     from this source.
+    :vartype include_references: bool
+    :ivar include_reference_source_data: Indicates whether references should include the structured
+     data obtained during retrieval in their payload.
+    :vartype include_reference_source_data: bool
+    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+     and always be queried at retrieval time.
+    :vartype always_query_source: bool
+    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+     this knowledge source encounters an error. Defaults to false.
+    :vartype fail_on_error: bool
+    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+     included in the response.
+    :vartype reranker_threshold: float
+    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+     source.
+    :vartype max_output_documents: int
+    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
+     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
+     to downstream models.
+    :vartype enable_image_serving: bool
+    :ivar kind: The discriminator value. Required. A knowledge source that supports direct file
+     upload and indexing.
+    :vartype kind: str or ~azure.search.documents.indexes.models.FILE
+    """
+
+    kind: Literal[KnowledgeSourceKind.FILE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. A knowledge source that supports direct file upload and
+     indexing."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        knowledge_source_name: str,
+        include_references: Optional[bool] = None,
+        include_reference_source_data: Optional[bool] = None,
+        always_query_source: Optional[bool] = None,
+        fail_on_error: Optional[bool] = None,
+        reranker_threshold: Optional[float] = None,
+        max_output_documents: Optional[int] = None,
+        enable_image_serving: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = KnowledgeSourceKind.FILE  # type: ignore
+
+
 class FreshnessPolicy(_Model):
     """Configuration for freshness-aware retrieval. When set, newer documents receive a ranking boost
     during retrieval.
@@ -602,6 +666,68 @@ class IndexedSharePointKnowledgeSourceParams(KnowledgeSourceParams, discriminato
         self.kind = KnowledgeSourceKind.INDEXED_SHARE_POINT  # type: ignore
 
 
+class IndexedSqlKnowledgeSourceParams(KnowledgeSourceParams, discriminator="indexedSql"):
+    """Specifies runtime parameters for an indexed SQL knowledge source.
+
+    :ivar knowledge_source_name: The name of the index the params apply to. Required.
+    :vartype knowledge_source_name: str
+    :ivar include_references: Indicates whether references should be included for data retrieved
+     from this source.
+    :vartype include_references: bool
+    :ivar include_reference_source_data: Indicates whether references should include the structured
+     data obtained during retrieval in their payload.
+    :vartype include_reference_source_data: bool
+    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+     and always be queried at retrieval time.
+    :vartype always_query_source: bool
+    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+     this knowledge source encounters an error. Defaults to false.
+    :vartype fail_on_error: bool
+    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+     included in the response.
+    :vartype reranker_threshold: float
+    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+     source.
+    :vartype max_output_documents: int
+    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
+     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
+     to downstream models.
+    :vartype enable_image_serving: bool
+    :ivar kind: The discriminator value. Required. A knowledge source that retrieves and ingests
+     data from Azure SQL Database or SQL Managed Instance to a Search Index.
+    :vartype kind: str or ~azure.search.documents.indexes.models.INDEXED_SQL
+    """
+
+    kind: Literal[KnowledgeSourceKind.INDEXED_SQL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. A knowledge source that retrieves and ingests data from
+     Azure SQL Database or SQL Managed Instance to a Search Index."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        knowledge_source_name: str,
+        include_references: Optional[bool] = None,
+        include_reference_source_data: Optional[bool] = None,
+        always_query_source: Optional[bool] = None,
+        fail_on_error: Optional[bool] = None,
+        reranker_threshold: Optional[float] = None,
+        max_output_documents: Optional[int] = None,
+        enable_image_serving: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = KnowledgeSourceKind.INDEXED_SQL  # type: ignore
+
+
 class KnowledgeBaseActivityRecord(_Model):
     """Base type for activity records. Tracks execution details, timing, and errors for knowledge base
     operations.
@@ -614,8 +740,8 @@ class KnowledgeBaseActivityRecord(_Model):
     :vartype id: int
     :ivar type: The type of the activity record. Required. Known values are: "searchIndex",
      "azureBlob", "indexedSharePoint", "indexedOneLake", "web", "remoteSharePoint", "workIQ",
-     "fabricDataAgent", "fabricOntology", "modelQueryPlanning", "modelAnswerSynthesis",
-     "modelWebSummarization", and "agenticReasoning".
+     "fabricDataAgent", "fabricOntology", "mcpServer", "file", "indexedSql", "modelQueryPlanning",
+     "modelAnswerSynthesis", "modelWebSummarization", and "agenticReasoning".
     :vartype type: str or
      ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordType
     :ivar elapsed_ms: The elapsed time in milliseconds for the retrieval activity.
@@ -635,8 +761,9 @@ class KnowledgeBaseActivityRecord(_Model):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of the activity record. Required. Known values are: \"searchIndex\", \"azureBlob\",
      \"indexedSharePoint\", \"indexedOneLake\", \"web\", \"remoteSharePoint\", \"workIQ\",
-     \"fabricDataAgent\", \"fabricOntology\", \"modelQueryPlanning\", \"modelAnswerSynthesis\",
-     \"modelWebSummarization\", and \"agenticReasoning\"."""
+     \"fabricDataAgent\", \"fabricOntology\", \"mcpServer\", \"file\", \"indexedSql\",
+     \"modelQueryPlanning\", \"modelAnswerSynthesis\", \"modelWebSummarization\", and
+     \"agenticReasoning\"."""
     elapsed_ms: Optional[int] = rest_field(name="elapsedMs", visibility=["read", "create", "update", "delete", "query"])
     """The elapsed time in milliseconds for the retrieval activity."""
     error: Optional["_models.KnowledgeBaseErrorDetail"] = rest_field(
@@ -735,13 +862,15 @@ class KnowledgeBaseReference(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     KnowledgeBaseAzureBlobReference, KnowledgeBaseFabricDataAgentReference,
-    KnowledgeBaseFabricOntologyReference, KnowledgeBaseIndexedOneLakeReference,
-    KnowledgeBaseIndexedSharePointReference, KnowledgeBaseRemoteSharePointReference,
-    KnowledgeBaseSearchIndexReference, KnowledgeBaseWebReference, KnowledgeBaseWorkIQReference
+    KnowledgeBaseFabricOntologyReference, KnowledgeBaseFileReference,
+    KnowledgeBaseIndexedOneLakeReference, KnowledgeBaseIndexedSharePointReference,
+    KnowledgeBaseIndexedSqlReference, KnowledgeBaseMcpServerReference,
+    KnowledgeBaseRemoteSharePointReference, KnowledgeBaseSearchIndexReference,
+    KnowledgeBaseWebReference, KnowledgeBaseWorkIQReference
 
     :ivar type: The type of the reference. Required. Known values are: "searchIndex", "azureBlob",
      "indexedSharePoint", "indexedOneLake", "web", "remoteSharePoint", "workIQ", "fabricDataAgent",
-     and "fabricOntology".
+     "fabricOntology", "mcpServer", "file", and "indexedSql".
     :vartype type: str or ~azure.search.documents.knowledgebases.models.KnowledgeBaseReferenceType
     :ivar id: The ID of the reference. Required.
     :vartype id: str
@@ -757,7 +886,7 @@ class KnowledgeBaseReference(_Model):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of the reference. Required. Known values are: \"searchIndex\", \"azureBlob\",
      \"indexedSharePoint\", \"indexedOneLake\", \"web\", \"remoteSharePoint\", \"workIQ\",
-     \"fabricDataAgent\", and \"fabricOntology\"."""
+     \"fabricDataAgent\", \"fabricOntology\", \"mcpServer\", \"file\", and \"indexedSql\"."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the reference. Required."""
     activity_source: int = rest_field(name="activitySource", visibility=["read", "create", "update", "delete", "query"])
@@ -999,6 +1128,51 @@ class KnowledgeBaseFabricOntologyReference(KnowledgeBaseReference, discriminator
         self.type = KnowledgeBaseReferenceType.FABRIC_ONTOLOGY  # type: ignore
 
 
+class KnowledgeBaseFileReference(KnowledgeBaseReference, discriminator="file"):
+    """Represents a file document reference.
+
+    :ivar id: The ID of the reference. Required.
+    :vartype id: str
+    :ivar activity_source: The source activity ID for the reference. Required.
+    :vartype activity_source: int
+    :ivar source_data: The source data for the reference.
+    :vartype source_data: dict[str, any]
+    :ivar reranker_score: The reranker score for the document reference.
+    :vartype reranker_score: float
+    :ivar type: The discriminator value. Required. File document reference.
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.FILE
+    :ivar doc_name: The document name for the reference.
+    :vartype doc_name: str
+    """
+
+    type: Literal[KnowledgeBaseReferenceType.FILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. File document reference."""
+    doc_name: Optional[str] = rest_field(name="docName", visibility=["read", "create", "update", "delete", "query"])
+    """The document name for the reference."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        activity_source: int,
+        source_data: Optional[dict[str, Any]] = None,
+        reranker_score: Optional[float] = None,
+        doc_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = KnowledgeBaseReferenceType.FILE  # type: ignore
+
+
 class KnowledgeBaseImageContent(_Model):
     """Image content.
 
@@ -1131,6 +1305,101 @@ class KnowledgeBaseIndexedSharePointReference(KnowledgeBaseReference, discrimina
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = KnowledgeBaseReferenceType.INDEXED_SHARE_POINT  # type: ignore
+
+
+class KnowledgeBaseIndexedSqlReference(KnowledgeBaseReference, discriminator="indexedSql"):
+    """Represents an Azure SQL document reference.
+
+    :ivar id: The ID of the reference. Required.
+    :vartype id: str
+    :ivar activity_source: The source activity ID for the reference. Required.
+    :vartype activity_source: int
+    :ivar source_data: The source data for the reference.
+    :vartype source_data: dict[str, any]
+    :ivar reranker_score: The reranker score for the document reference.
+    :vartype reranker_score: float
+    :ivar type: The discriminator value. Required. Indexed SQL document reference.
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.INDEXED_SQL
+    :ivar doc_url: The document URL for the reference.
+    :vartype doc_url: str
+    """
+
+    type: Literal[KnowledgeBaseReferenceType.INDEXED_SQL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Indexed SQL document reference."""
+    doc_url: Optional[str] = rest_field(name="docUrl", visibility=["read", "create", "update", "delete", "query"])
+    """The document URL for the reference."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        activity_source: int,
+        source_data: Optional[dict[str, Any]] = None,
+        reranker_score: Optional[float] = None,
+        doc_url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = KnowledgeBaseReferenceType.INDEXED_SQL  # type: ignore
+
+
+class KnowledgeBaseMcpServerReference(KnowledgeBaseReference, discriminator="mcpServer"):
+    """Represents an MCP server document reference.
+
+    :ivar id: The ID of the reference. Required.
+    :vartype id: str
+    :ivar activity_source: The source activity ID for the reference. Required.
+    :vartype activity_source: int
+    :ivar source_data: The source data for the reference.
+    :vartype source_data: dict[str, any]
+    :ivar reranker_score: The reranker score for the document reference.
+    :vartype reranker_score: float
+    :ivar type: The discriminator value. Required. MCP server document reference.
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.MCP_SERVER
+    :ivar tool_name: The name of the MCP server tool that produced the reference.
+    :vartype tool_name: str
+    :ivar title: The title of the MCP server tool result.
+    :vartype title: str
+    """
+
+    type: Literal[KnowledgeBaseReferenceType.MCP_SERVER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. MCP server document reference."""
+    tool_name: Optional[str] = rest_field(name="toolName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the MCP server tool that produced the reference."""
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The title of the MCP server tool result."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        activity_source: int,
+        source_data: Optional[dict[str, Any]] = None,
+        reranker_score: Optional[float] = None,
+        tool_name: Optional[str] = None,
+        title: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = KnowledgeBaseReferenceType.MCP_SERVER  # type: ignore
 
 
 class KnowledgeBaseMessage(_Model):
@@ -2363,6 +2632,68 @@ class KnowledgeSourceSynchronizationError(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class McpServerKnowledgeSourceParams(KnowledgeSourceParams, discriminator="mcpServer"):
+    """Specifies runtime parameters for an MCP server knowledge source.
+
+    :ivar knowledge_source_name: The name of the index the params apply to. Required.
+    :vartype knowledge_source_name: str
+    :ivar include_references: Indicates whether references should be included for data retrieved
+     from this source.
+    :vartype include_references: bool
+    :ivar include_reference_source_data: Indicates whether references should include the structured
+     data obtained during retrieval in their payload.
+    :vartype include_reference_source_data: bool
+    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
+     and always be queried at retrieval time.
+    :vartype always_query_source: bool
+    :ivar fail_on_error: Indicates that the entire retrieval request should fail if retrieval from
+     this knowledge source encounters an error. Defaults to false.
+    :vartype fail_on_error: bool
+    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
+     included in the response.
+    :vartype reranker_threshold: float
+    :ivar max_output_documents: Limits the maximum number of documents returned from this knowledge
+     source.
+    :vartype max_output_documents: int
+    :ivar enable_image_serving: Indicates whether image serving should be enabled for this
+     knowledge source at retrieval time. When true, images extracted during ingestion are delivered
+     to downstream models.
+    :vartype enable_image_serving: bool
+    :ivar kind: The discriminator value. Required. A knowledge source backed by an MCP (Model
+     Context Protocol) server.
+    :vartype kind: str or ~azure.search.documents.indexes.models.MCP_SERVER
+    """
+
+    kind: Literal[KnowledgeSourceKind.MCP_SERVER] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. A knowledge source backed by an MCP (Model Context Protocol)
+     server."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        knowledge_source_name: str,
+        include_references: Optional[bool] = None,
+        include_reference_source_data: Optional[bool] = None,
+        always_query_source: Optional[bool] = None,
+        fail_on_error: Optional[bool] = None,
+        reranker_threshold: Optional[float] = None,
+        max_output_documents: Optional[int] = None,
+        enable_image_serving: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = KnowledgeSourceKind.MCP_SERVER  # type: ignore
 
 
 class PurviewSensitivityLabelInfo(_Model):

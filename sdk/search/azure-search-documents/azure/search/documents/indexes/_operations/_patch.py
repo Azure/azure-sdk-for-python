@@ -371,6 +371,44 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             )
 
     @distributed_trace
+    def upload_knowledge_source_file(
+        self,
+        name: str,
+        file: Union[bytes, IO[bytes]],
+        **kwargs: Any,
+    ) -> _models.KnowledgeSourceFile:
+        """Uploads a file to a File knowledge source for processing and indexing.
+
+        :param name: The name of the File knowledge source. Required.
+        :type name: str
+        :param file: The file content to upload. Required.
+        :type file: bytes or IO[bytes]
+        :return: KnowledgeSourceFile
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return self._upload_knowledge_source_file(name=name, file=cast(bytes, file), **kwargs)
+
+    @distributed_trace
+    def delete_knowledge_source_file(
+        self,
+        name: str,
+        file_id: str,
+        **kwargs: Any,
+    ) -> None:
+        """Deletes a file from a File knowledge source and removes all indexed content derived from it.
+
+        :param name: The name of the File knowledge source. Required.
+        :type name: str
+        :param file_id: The unique identifier of the file to delete. Required.
+        :type file_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return self._delete_knowledge_source_file(name=name, file_id=file_id, **kwargs)
+
+    @distributed_trace
     def list_indexes(
         self,
         *,

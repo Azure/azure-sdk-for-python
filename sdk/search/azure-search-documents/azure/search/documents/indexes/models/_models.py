@@ -4381,14 +4381,16 @@ class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
      unaffected. Encryption with customer-managed keys is not available for free search services,
      and is only available for paid services created on or after January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar kind: Required. A knowledge source that supports direct file upload and indexing.
+    :ivar kind: The discriminator value. Required. A knowledge source that supports direct file
+     upload and indexing.
     :vartype kind: str or ~azure.search.documents.indexes.models.FILE
     :ivar file_parameters: The parameters for the File knowledge source. Required.
     :vartype file_parameters: ~azure.search.documents.indexes.models.FileKnowledgeSourceParameters
     """
 
     kind: Literal[KnowledgeSourceKind.FILE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. A knowledge source that supports direct file upload and indexing."""
+    """The discriminator value. Required. A knowledge source that supports direct file upload and
+     indexing."""
     file_parameters: "_models.FileKnowledgeSourceParameters" = rest_field(
         name="fileParameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6195,6 +6197,39 @@ class KnowledgeBaseAzureOpenAIModel(KnowledgeBaseModel, discriminator="azureOpen
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = KnowledgeBaseModelKind.AZURE_OPEN_AI  # type: ignore
+
+
+class KnowledgeSourceFile(_Model):
+    """Metadata for a file uploaded to a File knowledge source.
+
+    :ivar file_id: The unique identifier for the file.
+    :vartype file_id: str
+    :ivar file_name: The original file name.
+    :vartype file_name: str
+    :ivar file_size_bytes: The file size in bytes.
+    :vartype file_size_bytes: int
+    :ivar created_at: The timestamp when the file was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar last_updated_at: The timestamp when the file was last updated.
+    :vartype last_updated_at: ~datetime.datetime
+    :ivar error_message: The error message if file processing failed, null otherwise.
+    :vartype error_message: str
+    """
+
+    file_id: Optional[str] = rest_field(name="fileId", visibility=["read"])
+    """The unique identifier for the file."""
+    file_name: Optional[str] = rest_field(name="fileName", visibility=["read"])
+    """The original file name."""
+    file_size_bytes: Optional[int] = rest_field(name="fileSizeBytes", visibility=["read"])
+    """The file size in bytes."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The timestamp when the file was created."""
+    last_updated_at: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedAt", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp when the file was last updated."""
+    error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
+    """The error message if file processing failed, null otherwise."""
 
 
 class KnowledgeSourceReference(_Model):
@@ -13552,12 +13587,12 @@ class WorkIQKnowledgeSource(KnowledgeSource, discriminator="workIQ"):
      unaffected. Encryption with customer-managed keys is not available for free search services,
      and is only available for paid services created on or after January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar kind: Required. A knowledge source that reads data from work IQ.
+    :ivar kind: The discriminator value. Required. A knowledge source that reads data from work IQ.
     :vartype kind: str or ~azure.search.documents.indexes.models.WORK_IQ
     """
 
     kind: Literal[KnowledgeSourceKind.WORK_IQ] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. A knowledge source that reads data from work IQ."""
+    """The discriminator value. Required. A knowledge source that reads data from work IQ."""
 
     @overload
     def __init__(
