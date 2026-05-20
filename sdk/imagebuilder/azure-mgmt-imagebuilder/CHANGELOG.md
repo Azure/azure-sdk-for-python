@@ -8,7 +8,6 @@
   - Client `ImageBuilderClient` added method `send_request`
   - Model `ImageTemplatePropertiesOptimize` added property `workload`
   - Model `ImageTemplateSharedImageDistributor` added property `replication_mode`
-  - Model `Trigger` added property `properties`
   - Added model `DataDisk`
   - Added model `ImageTemplatePropertiesOptimizeWorkload`
   - Added enum `ReplicationMode`
@@ -16,11 +15,12 @@
 
 ### Breaking Changes
 
-  - Model `Trigger` deleted or renamed its instance variable `kind`
-  - Model `Trigger` deleted or renamed its instance variable `status`
-  - Model `Trigger` deleted or renamed its instance variable `provisioning_state`
-  - Deleted or renamed model `RunOutputCollection`
-  - Deleted or renamed model `TriggerCollection`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `Trigger` moved instance variable `kind`, `status` and `provisioning_state` under property `properties`
+
+### Other Changes
+
+  - Deleted model `RunOutputCollection`/`TriggerCollection` which actually were not used by SDK users
 
 ## 1.0.0b1 (1970-01-01)
 
