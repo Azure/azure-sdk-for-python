@@ -472,9 +472,9 @@ def _download_log_text(
     """
     _, read_timeout = timeout
     try:
-        with urllib.request.urlopen(
+        with urllib.request.urlopen(  # nosec B310
             url, timeout=read_timeout
-        ) as response:  # nosec B310
+        ) as response:
             charset = response.headers.get_content_charset() or "utf-8"
             return response.read().decode(charset, errors="replace")
     except urllib.error.HTTPError as exc:
