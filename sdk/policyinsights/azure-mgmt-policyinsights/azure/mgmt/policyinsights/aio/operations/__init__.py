@@ -16,11 +16,9 @@ from ._policy_tracked_resources_operations import PolicyTrackedResourcesOperatio
 from ._remediations_operations import RemediationsOperations  # type: ignore
 from ._policy_events_operations import PolicyEventsOperations  # type: ignore
 from ._policy_states_operations import PolicyStatesOperations  # type: ignore
+from ._operations import Operations  # type: ignore
 from ._policy_metadata_operations import PolicyMetadataOperations  # type: ignore
 from ._policy_restrictions_operations import PolicyRestrictionsOperations  # type: ignore
-from ._component_policy_states_operations import ComponentPolicyStatesOperations  # type: ignore
-from ._operations import Operations  # type: ignore
-from ._attestations_operations import AttestationsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -31,11 +29,9 @@ __all__ = [
     "RemediationsOperations",
     "PolicyEventsOperations",
     "PolicyStatesOperations",
+    "Operations",
     "PolicyMetadataOperations",
     "PolicyRestrictionsOperations",
-    "ComponentPolicyStatesOperations",
-    "Operations",
-    "AttestationsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -17,11 +17,11 @@ DESCRIPTION:
 
 USAGE:
     python async_function_calling_sample.py
-    
+
     Set the environment variables with your own values before running the sample:
     1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key
     2) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
-    
+
 REQUIREMENTS:
     - azure-ai-voicelive
     - python-dotenv

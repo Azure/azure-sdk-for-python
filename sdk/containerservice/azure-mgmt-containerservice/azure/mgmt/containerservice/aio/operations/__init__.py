@@ -19,11 +19,19 @@ from ._operations import ManagedNamespacesOperations  # type: ignore
 from ._operations import MachinesOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import SnapshotsOperations  # type: ignore
+from ._operations import ManagedClusterSnapshotsOperations  # type: ignore
 from ._operations import TrustedAccessRoleBindingsOperations  # type: ignore
+from ._operations import LoadBalancersOperations  # type: ignore
+from ._operations import IdentityBindingsOperations  # type: ignore
+from ._operations import JWTAuthenticatorsOperations  # type: ignore
+from ._operations import MeshMembershipsOperations  # type: ignore
 from ._operations import Operations  # type: ignore
+from ._operations import OperationStatusResultOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import ResolvePrivateLinkServiceIdOperations  # type: ignore
 from ._operations import TrustedAccessRolesOperations  # type: ignore
+from ._operations import ContainerServiceOperations  # type: ignore
+from ._operations import VmSkusOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -37,11 +45,19 @@ __all__ = [
     "MachinesOperations",
     "PrivateEndpointConnectionsOperations",
     "SnapshotsOperations",
+    "ManagedClusterSnapshotsOperations",
     "TrustedAccessRoleBindingsOperations",
+    "LoadBalancersOperations",
+    "IdentityBindingsOperations",
+    "JWTAuthenticatorsOperations",
+    "MeshMembershipsOperations",
     "Operations",
+    "OperationStatusResultOperations",
     "PrivateLinkResourcesOperations",
     "ResolvePrivateLinkServiceIdOperations",
     "TrustedAccessRolesOperations",
+    "ContainerServiceOperations",
+    "VmSkusOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

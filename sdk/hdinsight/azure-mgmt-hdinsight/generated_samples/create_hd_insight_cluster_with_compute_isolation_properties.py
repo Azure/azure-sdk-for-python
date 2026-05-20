@@ -81,7 +81,6 @@ def main():
                     "storageaccounts": [
                         {
                             "container": "containername",
-                            "enableSecureChannel": True,
                             "isDefault": True,
                             "key": "storage account key",
                             "name": "mystorage",
@@ -94,6 +93,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2025-01-15-preview/examples/CreateHDInsightClusterWithComputeIsolationProperties.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/CreateHDInsightClusterWithComputeIsolationProperties.json
 if __name__ == "__main__":
     main()
