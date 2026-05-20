@@ -43,6 +43,7 @@ from .._base import (_build_properties_cache, _deserialize_throughput, _replace_
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
+from ._cosmos_span_attributes_async import cosmos_span_attributes_async
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
@@ -167,6 +168,7 @@ class ContainerProxy:
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.READ_CONTAINER)
     async def read(
         self,
         *,
@@ -215,6 +217,7 @@ class ContainerProxy:
         return container
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.CREATE_ITEM)
     async def create_item(
         self,
         body: dict[str, Any],
@@ -315,6 +318,7 @@ class ContainerProxy:
         return result
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.READ_ITEM)
     async def read_item(
         self,
         item: Union[str, Mapping[str, Any]],
@@ -397,6 +401,7 @@ class ContainerProxy:
         return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.READ_ALL_ITEMS)
     def read_all_items(
         self,
         *,
@@ -465,6 +470,7 @@ class ContainerProxy:
         return items
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.READ_MANY_ITEMS)
     async def read_items(
             self,
             items: Sequence[Tuple[str, PartitionKeyType]],
@@ -822,6 +828,7 @@ class ContainerProxy:
         ...
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.QUERY_ITEMS)
     def query_items(
         self,
         *args: Any,
@@ -1158,6 +1165,7 @@ class ContainerProxy:
         ...
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.QUERY_CHANGE_FEED)
     def query_items_change_feed(  # pylint: disable=unused-argument
             self,
             **kwargs: Any
@@ -1246,6 +1254,7 @@ class ContainerProxy:
         return result
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.UPSERT_ITEM)
     async def upsert_item(
         self,
         body: dict[str, Any],
@@ -1383,6 +1392,7 @@ class ContainerProxy:
         return result
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.REPLACE_ITEM)
     async def replace_item(
         self,
         item: Union[str, Mapping[str, Any]],
@@ -1477,6 +1487,7 @@ class ContainerProxy:
         return result
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.PATCH_ITEM)
     async def patch_item(
         self,
         item: Union[str, dict[str, Any]],
@@ -1578,6 +1589,7 @@ class ContainerProxy:
         return result
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.DELETE_ITEM)
     async def delete_item(
         self,
         item: Union[str, Mapping[str, Any]],
@@ -1665,6 +1677,7 @@ class ContainerProxy:
         await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.READ_CONTAINER_THROUGHPUT)
     async def get_throughput(
             self,
             *,
@@ -1699,6 +1712,7 @@ class ContainerProxy:
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.REPLACE_CONTAINER_THROUGHPUT)
     async def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
@@ -1738,6 +1752,7 @@ class ContainerProxy:
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.READ_ALL_CONFLICTS)
     def list_conflicts(
         self,
         *,
@@ -1767,6 +1782,7 @@ class ContainerProxy:
         return result
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.QUERY_CONFLICTS)
     def query_conflicts(
         self,
         query: str,
@@ -1813,6 +1829,7 @@ class ContainerProxy:
         return result
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.READ_CONFLICT)
     async def get_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
@@ -1844,6 +1861,7 @@ class ContainerProxy:
         return result
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.DELETE_CONFLICT)
     async def delete_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
@@ -1877,6 +1895,7 @@ class ContainerProxy:
         )
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.DELETE_ALL_ITEMS_BY_PARTITION_KEY)
     async def delete_all_items_by_partition_key(
         self,
         partition_key: PartitionKeyType,
@@ -1939,6 +1958,7 @@ class ContainerProxy:
                                                                   options=request_options, **kwargs)
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.EXECUTE_BATCH)
     async def execute_item_batch(
         self,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]],

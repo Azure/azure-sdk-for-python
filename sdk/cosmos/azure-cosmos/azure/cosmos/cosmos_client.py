@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,6 +34,7 @@ from ._base import build_options, _set_throughput_options
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
 from ._cosmos_responses import CosmosDict
+from ._cosmos_span_attributes import cosmos_span_attributes
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
@@ -381,6 +382,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.CREATE_DATABASE)
     def create_database(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         *args: Any,
@@ -522,6 +524,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.CREATE_DATABASE_IF_NOT_EXISTS)
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         *args: Any,
@@ -612,6 +615,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return DatabaseProxy(self.client_connection, id_value)
 
     @distributed_trace
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.READ_ALL_DATABASES)
     def list_databases(  # pylint:disable=docstring-missing-param
         self,
         max_item_count: Optional[int] = None,
@@ -656,6 +660,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return result
 
     @distributed_trace
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.QUERY_DATABASES)
     def query_databases(  # pylint:disable=docstring-missing-param
         self,
         query: Optional[str] = None,
@@ -719,6 +724,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return result
 
     @distributed_trace
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.DELETE_DATABASE)
     def delete_database(  # pylint:disable=docstring-missing-param
         self,
         database: Union[str, DatabaseProxy, Mapping[str, Any]],
