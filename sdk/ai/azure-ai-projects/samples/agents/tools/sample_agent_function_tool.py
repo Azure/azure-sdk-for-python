@@ -48,7 +48,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START tool_declaration]
     tool = FunctionTool(
         name="get_horoscope",
         parameters={
@@ -65,7 +64,6 @@ with (
         description="Get today's horoscope for an astrological sign.",
         strict=True,
     )
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",

@@ -47,7 +47,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START tool_declaration]
     tool = BrowserAutomationPreviewTool(
         browser_automation_preview=BrowserAutomationToolParameters(
             connection=BrowserAutomationToolConnectionParameters(
@@ -55,7 +54,6 @@ with (
             )
         )
     )
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",

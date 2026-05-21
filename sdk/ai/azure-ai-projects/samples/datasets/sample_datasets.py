@@ -62,7 +62,6 @@ with (
                 "or set CONNECTION_NAME explicitly."
             ) from e
 
-    # [START datasets_sample]
     print(
         f"Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version_1}`, to reference the file."
     )
@@ -105,4 +104,3 @@ with (
     print("Delete all Dataset versions created above:")
     project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
     project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
-    # [END dataset_sample]

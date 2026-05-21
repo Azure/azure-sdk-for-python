@@ -52,7 +52,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START tool_declaration]
     tool = AzureFunctionTool(
         azure_function=AzureFunctionDefinition(
             input_binding=AzureFunctionBinding(
@@ -77,7 +76,6 @@ with (
             ),
         )
     )
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",

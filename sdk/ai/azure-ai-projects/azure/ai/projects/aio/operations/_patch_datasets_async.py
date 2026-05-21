@@ -22,7 +22,7 @@ from ...models._models import (
     FileDatasetVersion,
     FolderDatasetVersion,
     PendingUploadRequest,
-    PendingUploadResponse,
+    PendingUploadResult,
     PendingUploadType,
 )
 
@@ -48,7 +48,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         connection_name: Optional[str] = None,
     ) -> Tuple[ContainerClient, str]:
 
-        pending_upload_response: PendingUploadResponse = await self.pending_upload(
+        pending_upload_response: PendingUploadResult = await self.pending_upload(
             name=name,
             version=input_version,
             pending_upload_request=PendingUploadRequest(

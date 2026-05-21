@@ -40,7 +40,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START tool_declaration]
     # Load the CSV file to be processed
     asset_file_path = os.path.abspath(
         os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv")
@@ -51,7 +50,6 @@ with (
         file = openai_client.files.create(purpose="assistants", file=f)
 
     tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))
-    # [END tool_declaration]
 
     print(f"File uploaded (id: {file.id})")
 

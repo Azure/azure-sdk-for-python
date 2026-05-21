@@ -31,11 +31,9 @@ USAGE:
 import os
 from dotenv import load_dotenv
 
-# [START imports_for_azure_monitor_tracing]
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
-# [END imports_for_azure_monitor_tracing]
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition
@@ -48,18 +46,14 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
 ):
-    # [START setup_azure_monitor_tracing]
     # Enable Azure Monitor tracing
     application_insights_connection_string = project_client.telemetry.get_application_insights_connection_string()
     configure_azure_monitor(connection_string=application_insights_connection_string)
-    # [END setup_azure_monitor_tracing]
 
-    # [START create_span_for_scenario]
     tracer = trace.get_tracer(__name__)
     scenario = os.path.basename(__file__)
 
     with tracer.start_as_current_span(scenario):
-        # [END create_span_for_scenario]
         with project_client.get_openai_client() as openai_client:
             agent_definition = PromptAgentDefinition(
                 model=os.environ["FOUNDRY_MODEL_NAME"],

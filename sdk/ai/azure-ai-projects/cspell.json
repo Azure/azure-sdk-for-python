@@ -12,6 +12,7 @@
     "closefd",
     "cogsvc",
     "CSDL",
+    "dargilco",
     "dedup",
     "evals",
     "FineTuning",
@@ -31,8 +32,8 @@
     "Tadmaq",
     "Udbk",
     "UPIA",
-    "xhigh",
-    "Vnext"
+    "Vnext",
+    "xhigh"
   ],
   "ignorePaths": [
     "*.csv",

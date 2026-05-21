@@ -31,7 +31,6 @@ import os
 from typing import Any
 from dotenv import load_dotenv
 
-# [START imports_for_console_tracing]
 from azure.core.settings import settings
 
 settings.tracing_implementation = "opentelemetry"
@@ -40,7 +39,6 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.projects.telemetry import AIProjectInstrumentor
 
-# [END imports_for_console_tracing]
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -72,7 +70,6 @@ def display_conversation_item(item: Any) -> None:  # pylint: disable=redefined-o
     print("---")
 
 
-# [START setup_console_tracing]
 # Setup tracing to console
 # Requires opentelemetry-sdk
 span_exporter = ConsoleSpanExporter()
@@ -83,12 +80,9 @@ tracer = trace.get_tracer(__name__)
 
 # Enable instrumentation with content tracing
 AIProjectInstrumentor().instrument()
-# [END setup_console_tracing]
 
-# [START create_span_for_scenario]
 scenario = os.path.basename(__file__)
 with tracer.start_as_current_span(scenario):
-    # [END create_span_for_scenario]
     with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,

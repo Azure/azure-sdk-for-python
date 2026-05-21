@@ -39,9 +39,7 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START tool_declaration]
     tool = CodeInterpreterTool()
-    # [END tool_declaration]
 
     # Create agent with code interpreter tool
     agent = project_client.agents.create_version(
@@ -69,11 +67,9 @@ with (
     print(f"Response completed (id: {response.id})")
 
     # Print code executed by the code interpreter tool.
-    # [START code_output_extraction]
     code = next((output.code for output in response.output if output.type == "code_interpreter_call"), "")
     print("Code Interpreter code:")
     print(code)
-    # [END code_output_extraction]
 
     # Print final assistant text output.
     print(f"Agent response: {response.output_text}")

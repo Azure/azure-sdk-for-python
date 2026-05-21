@@ -62,13 +62,11 @@ with (
 ):
     image_generation_model = os.environ["IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"]
 
-    # [START tool_declaration]
     tool = ImageGenTool(
         model=image_generation_model,  # Model such as "gpt-image-1"
         quality="low",
         size="1024x1024",
     )
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
@@ -94,7 +92,6 @@ with (
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
 
-    # [START download_image]
     image_data = [output.result for output in response.output if output.type == "image_generation_call"]
     if image_data and image_data[0]:
         print("Downloading generated image...")
@@ -104,5 +101,4 @@ with (
         with open(file_path, "wb") as f:
             f.write(base64.b64decode(image_data[0]))
 
-        # [END download_image]
         print(f"Image saved to: {file_path}")

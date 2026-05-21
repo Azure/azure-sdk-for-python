@@ -38,7 +38,6 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    # [START connections_sample]
     print("List all connections:")
     for connection in project_client.connections.list():
         print(connection)
@@ -66,4 +65,3 @@ with (
     print(f"Get the connection named `{connection_name}`, with its credentials:")
     connection = project_client.connections.get(connection_name, include_credentials=True)
     print(connection)
-    # [END connection_sample]

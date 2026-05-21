@@ -41,7 +41,6 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 
-    # [START deployments_sample]
     print("List all deployments:")
     for deployment in project_client.deployments.list():
         print(deployment)
@@ -68,4 +67,3 @@ with (
         print(f"Capabilities: {deployment.capabilities}")
         print(f"SKU: {deployment.sku}")
         print(f"Connection Name: {deployment.connection_name}")
-    # [END deployments_sample]

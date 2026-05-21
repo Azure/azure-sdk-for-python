@@ -54,7 +54,6 @@ with (
         os.path.join(os.path.dirname(__file__), "../assets/tripadvisor_openapi.json")
     )
 
-    # [START tool_declaration]
     with open(tripadvisor_asset_file_path, "r", encoding="utf-8") as f:
         openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(f.read()))
 
@@ -70,7 +69,6 @@ with (
             ),
         )
     )
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",

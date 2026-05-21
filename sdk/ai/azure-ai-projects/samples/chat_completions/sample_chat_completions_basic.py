@@ -41,7 +41,6 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    # [START chat_completions]
     with project_client.get_openai_client() as openai_client:
         messages: list[ChatCompletionMessageParam] = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -53,7 +52,6 @@ with (
             messages=messages,
             temperature=0,
         )
-        # [END chat_completions]
 
         assistant_message = completion.choices[0].message.content
         print(f"Assistant: {assistant_message}")
