@@ -93,6 +93,14 @@ class ArchiveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REHYDRATE_PENDING_TO_SMART = "rehydrate-pending-to-smart"
 
 
+class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of authentication required to create the session. The only type currently supported is
+    HMAC.
+    """
+
+    HMAC = "HMAC"
+
+
 class BlobCopySourceTags(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BlobCopySourceTags."""
 

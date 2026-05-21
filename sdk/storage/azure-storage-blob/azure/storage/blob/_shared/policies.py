@@ -843,3 +843,18 @@ class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
 
         return True
+
+
+class StorageSessionPolicy:
+
+    def __init__(self):
+        pass
+
+    def on_request(self):
+        pass
+
+    def send(self):
+        pass
+
+    def on_response(self):
+        pass

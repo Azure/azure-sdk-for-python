@@ -1456,6 +1456,84 @@ class CpkScopeInfo(_serialization.Model):
         self.encryption_scope = encryption_scope
 
 
+class CreateSessionConfiguration(_serialization.Model):
+    """CreateSessionConfiguration.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar authentication_type: The type of authentication required to create the session. The only
+     type currently supported is HMAC. Required. "HMAC"
+    :vartype authentication_type: str or ~azure.storage.blob.models.AuthenticationType
+    """
+
+    _validation = {
+        "authentication_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "authentication_type": {"key": "AuthenticationType", "type": "str"},
+    }
+    _xml_map = {"name": "CreateSessionRequest"}
+
+    def __init__(self, *, authentication_type: Union[str, "_models.AuthenticationType"], **kwargs: Any) -> None:
+        """
+        :keyword authentication_type: The type of authentication required to create the session. The
+         only type currently supported is HMAC. Required. "HMAC"
+        :paramtype authentication_type: str or ~azure.storage.blob.models.AuthenticationType
+        """
+        super().__init__(**kwargs)
+        self.authentication_type = authentication_type
+
+
+class CreateSessionResponse(_serialization.Model):
+    """CreateSessionResponse.
+
+    :ivar id: A unique identifier for the created session.
+    :vartype id: str
+    :ivar expiration: The time when the session will expire. The format follows RFC 1123.
+    :vartype expiration: ~datetime.datetime
+    :ivar authentication_type: The type of authentication required to create the session. The only
+     type currently supported is HMAC. "HMAC"
+    :vartype authentication_type: str or ~azure.storage.blob.models.AuthenticationType
+    :ivar credentials:
+    :vartype credentials: ~azure.storage.blob.models.SessionCredentials
+    """
+
+    _attribute_map = {
+        "id": {"key": "Id", "type": "str"},
+        "expiration": {"key": "Expiration", "type": "rfc-1123"},
+        "authentication_type": {"key": "AuthenticationType", "type": "str"},
+        "credentials": {"key": "Credentials", "type": "SessionCredentials"},
+    }
+    _xml_map = {"name": "CreateSessionResult"}
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        expiration: Optional[datetime.datetime] = None,
+        authentication_type: Optional[Union[str, "_models.AuthenticationType"]] = None,
+        credentials: Optional["_models.SessionCredentials"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: A unique identifier for the created session.
+        :paramtype id: str
+        :keyword expiration: The time when the session will expire. The format follows RFC 1123.
+        :paramtype expiration: ~datetime.datetime
+        :keyword authentication_type: The type of authentication required to create the session. The
+         only type currently supported is HMAC. "HMAC"
+        :paramtype authentication_type: str or ~azure.storage.blob.models.AuthenticationType
+        :keyword credentials:
+        :paramtype credentials: ~azure.storage.blob.models.SessionCredentials
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.expiration = expiration
+        self.authentication_type = authentication_type
+        self.credentials = credentials
+
+
 class DelimitedTextConfiguration(_serialization.Model):
     """Groups the settings used for interpreting the blob data if the blob is delimited text
     formatted.
@@ -2481,6 +2559,39 @@ class SequenceNumberAccessConditions(_serialization.Model):
         self.if_sequence_number_less_than_or_equal_to = if_sequence_number_less_than_or_equal_to
         self.if_sequence_number_less_than = if_sequence_number_less_than
         self.if_sequence_number_equal_to = if_sequence_number_equal_to
+
+
+class SessionCredentials(_serialization.Model):
+    """SessionCredentials.
+
+    :ivar session_token: An opaque token used to authorize subsequent requests in the session. Must
+     be treated as a security credential.
+    :vartype session_token: str
+    :ivar session_key: Only returned when AuthenticationType is HMAC. A symmetric encryption key
+     used to sign requests in the session using the Shared Key protocol.
+    :vartype session_key: str
+    """
+
+    _attribute_map = {
+        "session_token": {"key": "SessionToken", "type": "str"},
+        "session_key": {"key": "SessionKey", "type": "str"},
+    }
+    _xml_map = {"name": "Credentials"}
+
+    def __init__(
+        self, *, session_token: Optional[str] = None, session_key: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword session_token: An opaque token used to authorize subsequent requests in the session.
+         Must be treated as a security credential.
+        :paramtype session_token: str
+        :keyword session_key: Only returned when AuthenticationType is HMAC. A symmetric encryption key
+         used to sign requests in the session using the Shared Key protocol.
+        :paramtype session_key: str
+        """
+        super().__init__(**kwargs)
+        self.session_token = session_token
+        self.session_key = session_key
 
 
 class SignedIdentifier(_serialization.Model):
