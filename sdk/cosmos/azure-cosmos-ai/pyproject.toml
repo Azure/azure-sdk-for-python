@@ -1,0 +1,7 @@
+[tool.azure-sdk-build]
+mypy = true
+pyright = false
+pylint = true
+
+[tool.azure-sdk-conda]
+in_bundle = false
