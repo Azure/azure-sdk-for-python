@@ -14,34 +14,48 @@ class AlertsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AlertsState."""
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class AuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the authentication type."""
 
     INVALID = "Invalid"
+    """INVALID."""
     ACS = "ACS"
+    """ACS."""
     AAD = "AAD"
+    """AAD."""
     ACCESS_CONTROL_SERVICE = "AccessControlService"
+    """ACCESS_CONTROL_SERVICE."""
     AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
+    """AZURE_ACTIVE_DIRECTORY."""
 
 
 class BackupStorageVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup storage version."""
 
     V1 = "V1"
+    """V1."""
     V2 = "V2"
+    """V2."""
     UNASSIGNED = "Unassigned"
+    """UNASSIGNED."""
 
 
 class BCDRSecurityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Security levels of Recovery Services Vault for business continuity and disaster recovery."""
 
     POOR = "Poor"
+    """POOR."""
     FAIR = "Fair"
+    """FAIR."""
     GOOD = "Good"
+    """GOOD."""
     EXCELLENT = "Excellent"
+    """EXCELLENT."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -61,79 +75,108 @@ class CrossRegionRestore(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Flag to show if Cross Region Restore is enabled on the Vault or not."""
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class CrossSubscriptionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of CrossSubscriptionRestoreState."""
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
     PERMANENTLY_DISABLED = "PermanentlyDisabled"
+    """PERMANENTLY_DISABLED."""
 
 
 class EnhancedSecurityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of EnhancedSecurityState."""
 
     INVALID = "Invalid"
+    """INVALID."""
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
     ALWAYS_ON = "AlwaysON"
+    """ALWAYS_ON."""
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Identity type that should be used for an operation."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
+    """SYSTEM_ASSIGNED."""
     USER_ASSIGNED = "UserAssigned"
+    """USER_ASSIGNED."""
 
 
 class ImmutabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ImmutabilityState."""
 
     DISABLED = "Disabled"
+    """DISABLED."""
     UNLOCKED = "Unlocked"
+    """UNLOCKED."""
     LOCKED = "Locked"
+    """LOCKED."""
 
 
 class InfrastructureEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enabling/Disabling the Double Encryption state."""
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class MultiUserAuthorization(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MUA Settings of vault."""
 
     INVALID = "Invalid"
+    """INVALID."""
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class PrivateEndpointConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the status."""
 
     PENDING = "Pending"
+    """PENDING."""
     APPROVED = "Approved"
+    """APPROVED."""
     REJECTED = "Rejected"
+    """REJECTED."""
     DISCONNECTED = "Disconnected"
+    """DISCONNECTED."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets provisioning state of the private endpoint connection."""
 
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     DELETING = "Deleting"
+    """DELETING."""
     FAILED = "Failed"
+    """FAILED."""
     PENDING = "Pending"
+    """PENDING."""
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """property to enable or disable resource provider inbound network traffic from public clients."""
 
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -143,33 +186,51 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
+    """SYSTEM_ASSIGNED."""
     NONE = "None"
+    """NONE."""
     USER_ASSIGNED = "UserAssigned"
+    """USER_ASSIGNED."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    """SYSTEM_ASSIGNED_USER_ASSIGNED."""
 
 
 class ResourceMoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The State of the Resource after the move operation."""
 
     UNKNOWN = "Unknown"
+    """UNKNOWN."""
     IN_PROGRESS = "InProgress"
+    """IN_PROGRESS."""
     PREPARE_FAILED = "PrepareFailed"
+    """PREPARE_FAILED."""
     COMMIT_FAILED = "CommitFailed"
+    """COMMIT_FAILED."""
     PREPARE_TIMEDOUT = "PrepareTimedout"
+    """PREPARE_TIMEDOUT."""
     COMMIT_TIMEDOUT = "CommitTimedout"
+    """COMMIT_TIMEDOUT."""
     MOVE_SUCCEEDED = "MoveSucceeded"
+    """MOVE_SUCCEEDED."""
     FAILURE = "Failure"
+    """FAILURE."""
     CRITICAL_FAILURE = "CriticalFailure"
+    """CRITICAL_FAILURE."""
     PARTIAL_SUCCESS = "PartialSuccess"
+    """PARTIAL_SUCCESS."""
 
 
 class SecureScoreLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Secure Score of Recovery Services Vault."""
 
     NONE = "None"
+    """NONE."""
     MINIMUM = "Minimum"
+    """MINIMUM."""
     ADEQUATE = "Adequate"
+    """ADEQUATE."""
     MAXIMUM = "Maximum"
+    """MAXIMUM."""
 
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -179,72 +240,102 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     STANDARD = "Standard"
+    """STANDARD."""
     RS0 = "RS0"
+    """RS0."""
 
 
 class SoftDeleteState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of SoftDeleteState."""
 
     INVALID = "Invalid"
+    """INVALID."""
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
     ALWAYS_ON = "AlwaysON"
+    """ALWAYS_ON."""
 
 
 class StandardTierStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The storage redundancy setting of a vault."""
 
     INVALID = "Invalid"
+    """INVALID."""
     LOCALLY_REDUNDANT = "LocallyRedundant"
+    """LOCALLY_REDUNDANT."""
     GEO_REDUNDANT = "GeoRedundant"
+    """GEO_REDUNDANT."""
     ZONE_REDUNDANT = "ZoneRedundant"
+    """ZONE_REDUNDANT."""
 
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of State."""
 
     INVALID = "Invalid"
+    """INVALID."""
     ENABLED = "Enabled"
+    """ENABLED."""
     DISABLED = "Disabled"
+    """DISABLED."""
 
 
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The way the vault upgrade was triggered."""
 
     USER_TRIGGERED = "UserTriggered"
+    """USER_TRIGGERED."""
     FORCED_UPGRADE = "ForcedUpgrade"
+    """FORCED_UPGRADE."""
 
 
 class UsagesUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unit of the usage."""
 
     COUNT = "Count"
+    """COUNT."""
     BYTES = "Bytes"
+    """BYTES."""
     SECONDS = "Seconds"
+    """SECONDS."""
     PERCENT = "Percent"
+    """PERCENT."""
     COUNT_PER_SECOND = "CountPerSecond"
+    """COUNT_PER_SECOND."""
     BYTES_PER_SECOND = "BytesPerSecond"
+    """BYTES_PER_SECOND."""
 
 
 class VaultPrivateEndpointState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Private endpoint state for backup."""
 
     NONE = "None"
+    """NONE."""
     ENABLED = "Enabled"
+    """ENABLED."""
 
 
 class VaultSubResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Subresource type for vault AzureBackup, AzureBackup_secondary or AzureSiteRecovery."""
 
     AZURE_BACKUP = "AzureBackup"
+    """AZURE_BACKUP."""
     AZURE_BACKUP_SECONDARY = "AzureBackup_secondary"
+    """AZURE_BACKUP_SECONDARY."""
     AZURE_SITE_RECOVERY = "AzureSiteRecovery"
+    """AZURE_SITE_RECOVERY."""
 
 
 class VaultUpgradeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the vault upgrade operation."""
 
     UNKNOWN = "Unknown"
+    """UNKNOWN."""
     IN_PROGRESS = "InProgress"
+    """IN_PROGRESS."""
     UPGRADED = "Upgraded"
+    """UPGRADED."""
     FAILED = "Failed"
+    """FAILED."""

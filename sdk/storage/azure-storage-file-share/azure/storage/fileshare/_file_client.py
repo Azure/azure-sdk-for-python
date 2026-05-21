@@ -45,6 +45,7 @@ from ._shared.constants import DEFAULT_MAX_CONCURRENCY
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
+from ._shared.validation import CV_TYPE_PARSED, parse_validation_option
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -58,7 +59,7 @@ def _upload_file_helper(
     size: Optional[int],
     metadata: Optional[Dict[str, str]],
     content_settings: Optional["ContentSettings"],
-    validate_content: bool,
+    validate_content: CV_TYPE_PARSED,
     timeout: Optional[int],
     max_concurrency: int,
     file_settings: "StorageConfiguration",
@@ -447,8 +448,13 @@ class ShareFileClient(StorageAccountHostsMixin):
                 Restore - apply changes without further modification.
 
         :paramtype file_property_semantics: Optional[Literal["New", "Restore"]]
-        :keyword data: Optional initial data to upload, up to 4MB.
-        :paramtype data: bytes
+        :keyword bytes data: Optional initial data to upload, up to 4MB.
+        :keyword validate_content:
+            Only applicable when `data` is provided.
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the file.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5".
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[Literal['auto', 'crc64', 'md5']]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -471,6 +477,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         content_settings = kwargs.pop('content_settings', None)
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
+        validate_content = parse_validation_option(
+            kwargs.pop('validate_content', None),
+            force_structured_message=True
+        )
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         data = kwargs.pop('data', None)
@@ -498,6 +508,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
                 optionalbody=data,
+                validate_content=validate_content,
                 content_length=len(data) if data is not None else None,
                 lease_access_conditions=access_conditions,
                 headers=headers,
@@ -562,13 +573,11 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each range of the file. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
-            already validate. Note that this MD5 hash is not stored with the
-            file.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the file.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword int max_concurrency:
             Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
@@ -610,7 +619,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         max_concurrency = kwargs.pop('max_concurrency', None)
         if max_concurrency is None:
             max_concurrency = DEFAULT_MAX_CONCURRENCY
-        validate_content = kwargs.pop('validate_content', False)
+        validate_content = parse_validation_option(
+            kwargs.pop('validate_content', None),
+            force_structured_message=True
+        )
         progress_hook = kwargs.pop('progress_hook', None)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
@@ -877,15 +889,11 @@ class ShareFileClient(StorageAccountHostsMixin):
             Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
             require a separate configuration of the connection pool.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the file. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https as https (the default) will
-            already validate. Note that this MD5 hash is not stored with the
-            file. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used, because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the file.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -925,12 +933,14 @@ class ShareFileClient(StorageAccountHostsMixin):
             range_end = offset + length - 1  # Service actually uses an end-range inclusive index
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
 
         return StorageStreamDownloader(
             client=self._client.file,
             config=self._config,
             start_range=offset,
             end_range=range_end,
+            validate_content=validate_content,
             name=self.file_name,
             path='/'.join(self.file_path),
             share=self.share_name,
@@ -1296,13 +1306,11 @@ class ShareFileClient(StorageAccountHostsMixin):
         :param int length:
             Number of bytes to use for uploading a section of the file.
             The range can be up to 4 MB in size.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the page content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https as https (the default)
-            will already validate. Note that this MD5 hash is not stored with the
-            file.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the file.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword file_last_write_mode:
             If the file last write time should be preserved or overwritten. Possible values
             are "preserve" or "now". If not specified, file last write time will be changed to
@@ -1331,7 +1339,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        validate_content = kwargs.pop('validate_content', False)
+        validate_content = parse_validation_option(
+            kwargs.pop('validate_content', None),
+            force_structured_message=True
+        )
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
         file_last_write_mode = kwargs.pop('file_last_write_mode', None)

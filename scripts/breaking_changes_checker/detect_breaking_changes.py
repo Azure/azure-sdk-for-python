@@ -239,9 +239,41 @@ def get_properties(cls: Type) -> Dict:
     return attribute_names
 
 
+def _is_overload_decorator(dec: ast.expr) -> bool:
+    """Return True if the AST decorator node is `@overload` or `@typing.overload`."""
+    # Bare `@overload`
+    if isinstance(dec, ast.Name) and dec.id == "overload":
+        return True
+    # Qualified `@typing.overload` (or any `pkg.overload`)
+    if isinstance(dec, ast.Attribute) and dec.attr == "overload":
+        return True
+    return False
+
+
+def _find_function_def_in_body(
+    body, target_name: str
+) -> Optional[Union[ast.FunctionDef, ast.AsyncFunctionDef]]:
+    """Return the first non-overload (Async)FunctionDef in ``body`` matching ``target_name``.
+
+    Only scans direct children of ``body`` -- does NOT recurse -- so a method
+    lookup is scoped to the owning class body and a module-level function
+    lookup is scoped to the module's top level.
+    """
+    for node in body:
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if node.name != target_name:
+            continue
+        # Skip @overload stubs - handled separately by `get_overload_data`.
+        if any(_is_overload_decorator(dec) for dec in node.decorator_list):
+            continue
+        return node
+    return None
+
+
 def create_function_report(f: Callable, is_async: bool = False) -> Dict:
     function = inspect.signature(f)
-    func_obj = {"parameters": {}, "is_async": is_async}
+    func_obj = {"parameters": {}, "is_async": is_async, "return_type": None}
 
     for par in function.parameters.values():
         default_value = get_parameter_default(par)
@@ -262,6 +294,54 @@ def create_function_report(f: Callable, is_async: bool = False) -> Dict:
         param[par.name]["param_type"] = param_type
         func_obj["parameters"].update(param)
 
+    # Capture the return type annotation by inspecting the source AST. We use
+    # the AST rather than `inspect.signature(f).return_annotation` because the
+    # latter resolves to live type objects whose `str()` representation differs
+    # from the source-level annotation (e.g. fully qualified module paths,
+    # generic alias quirks). Using AST keeps the captured value consistent with
+    # how parameter types are recorded for overloads via `get_parameter_type`.
+    #
+    # Scope the lookup so we don't pick up an unrelated same-named function or
+    # a method on a different class in the same module:
+    #   - For methods (qualname like "Cls.method"), search only the owning
+    #     ClassDef's direct body.
+    #   - For module-level functions, search only the module's top-level body.
+    try:
+        lookup_target = f
+        try:
+            lookup_target = inspect.unwrap(f)
+        except (AttributeError, ValueError, TypeError):
+            # Fall back to the original callable when unwrap is not possible.
+            lookup_target = f
+
+        source_path = inspect.getsourcefile(lookup_target)
+        target_name = getattr(lookup_target, "__name__", None)
+        qualname = getattr(lookup_target, "__qualname__", target_name) or ""
+        if source_path and target_name:
+            module_ast = _get_parsed_module(source_path)
+            target_node = None
+            # Heuristic: a qualname of the form "Owner.method" with no
+            # "<locals>" segment indicates a method bound to a class named
+            # by the first qualname component.
+            qualname_parts = qualname.split(".")
+            if (
+                len(qualname_parts) >= 2
+                and qualname_parts[-1] == target_name
+                and "<locals>" not in qualname_parts
+            ):
+                owner_class = qualname_parts[-2]
+                cls_node = _find_class_node(module_ast, owner_class)
+                if cls_node is not None:
+                    target_node = _find_function_def_in_body(cls_node.body, target_name)
+            if target_node is None:
+                # Module-level function (or fallback if class lookup failed).
+                target_node = _find_function_def_in_body(module_ast.body, target_name)
+            if target_node is not None and target_node.returns is not None:
+                func_obj["return_type"] = get_parameter_type(target_node.returns)
+    except (TypeError, OSError, SyntaxError) as exc:
+        # Built-ins, C-implemented functions, or unreadable source files.
+        _LOGGER.debug("Unable to capture return type for %r: %s", f, exc)
+
     return func_obj
 
 
@@ -276,6 +356,8 @@ def get_parameter_default_ast(default):
 
 
 def get_parameter_type(annotation) -> str:
+    if annotation is None:
+        return None
     if isinstance(annotation, ast.Name):
         return annotation.id
     if isinstance(annotation, ast.Attribute):
@@ -291,7 +373,26 @@ def get_parameter_type(annotation) -> str:
         return f"{get_parameter_type(annotation.value)}[{get_parameter_type(annotation.slice)}]"
     if isinstance(annotation, ast.Tuple):
         return ", ".join([get_parameter_type(el) for el in annotation.elts])
-    return annotation
+    # PEP 604 union syntax (e.g. ``int | None``) parses as ``ast.BinOp`` with
+    # ``ast.BitOr``. Represent it as a ``Union[...]`` string so the captured
+    # value remains JSON-serializable.
+    if isinstance(annotation, ast.BinOp) and isinstance(annotation.op, ast.BitOr):
+        parts = []
+        def _flatten(node):
+            if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+                _flatten(node.left)
+                _flatten(node.right)
+            else:
+                parts.append(get_parameter_type(node))
+        _flatten(annotation)
+        return f"Union[{', '.join(str(p) for p in parts)}]"
+    # Fall back to a source-level string representation so we never return a
+    # raw AST node (which would not be JSON-serializable when the report is
+    # written via ``json.dump``).
+    try:
+        return ast.unparse(annotation)
+    except Exception:  # pylint: disable=broad-except
+        return str(annotation)
 
 
 def create_parameters(args: ast.arg) -> Dict:
@@ -391,11 +492,14 @@ def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
             is_async = True
         # method_overloads.update({func.name: {"parameters": {}, "is_async": False, "return_type": None}})
         for decorator in func.decorator_list:
-            if hasattr(decorator, "id") and decorator.id == "overload":
+            if _is_overload_decorator(decorator):
+                overload_return_type = None
+                if func.returns is not None:
+                    overload_return_type = get_parameter_type(func.returns)
                 overload_report = {
                     "parameters": create_parameters(func.args),
                     "is_async": is_async,
-                    "return_type": None,
+                    "return_type": overload_return_type,
                 }
                 cls_methods[func.name]["overloads"].append(overload_report)
 
