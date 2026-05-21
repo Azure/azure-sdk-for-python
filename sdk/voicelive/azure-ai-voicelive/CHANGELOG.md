@@ -34,7 +34,7 @@
   - Response & function call ID tracking for end-to-end tracing
   - Agent v2 telemetry with agent identity and configuration tracking
   - MCP telemetry with tool call and approval flow tracking
-- **Agent Session Configuration**: Added `AgentSessionConfig` for configuring Azure AI Foundry agents
+- **Agent Session Configuration**: Added flattened `connect()` keyword arguments for configuring Azure AI Foundry agents
   at connection time with `agent_name`, `project_name`, `agent_version`, `conversation_id`, and more
 - **Transcription Improvements**:
   - Added `TranscriptionPhrase` and `TranscriptionWord` models for detailed transcription data
@@ -56,7 +56,7 @@
 ### Breaking Changes
 
 - Removed Foundry Agent Tool classes (`FoundryAgentTool`, `ResponseFoundryAgentCallItem`, etc.) —
-  use `AgentSessionConfig` with `connect()` instead
+  use flattened Azure AI Foundry keyword arguments with `connect()` instead
 - Renamed `AvatarConfig.type` field to `avatar_type` to avoid conflict with Python's built-in `type`
 
 ### Other Changes
@@ -101,7 +101,7 @@
 - **Agent v2 Telemetry**: Added agent identity and configuration tracking on the connect span:
   - `gen_ai.agent.id` and `gen_ai.agent.thread_id` extracted from `session.created`/`session.updated`
     server events.
-  - `gen_ai.agent.version` and `gen_ai.agent.project_name` from `AgentSessionConfig` at connect time.
+  - `gen_ai.agent.version` and `gen_ai.agent.project_name` from Azure AI Foundry `connect()` keyword arguments at connect time.
 - **MCP (Model Context Protocol) Telemetry**: Added tracking for MCP tool calls and approval flows:
   - Per-event: `gen_ai.voice.mcp.server_label`, `gen_ai.voice.mcp.tool_name`,
     `gen_ai.voice.mcp.approval_request_id`, `gen_ai.voice.mcp.approve` on recv/send spans.
@@ -117,7 +117,7 @@
 
 ### Features Added
 
-- **Agent Session Configuration**: Added `AgentSessionConfig` TypedDict for configuring Azure AI Foundry agents at connection time:
+- **Agent Session Configuration**: Added flattened `connect()` keyword arguments for configuring Azure AI Foundry agents at connection time:
   - `agent_name`: The name of the agent (required)
   - `project_name`: The Foundry project containing the agent (required)
   - `agent_version`: Optional version specification
@@ -130,7 +130,7 @@
 ### Breaking Changes
 
 - **Removed Foundry Agent Tools**: The following classes and enums related to Foundry agent tools have been removed:
-  - `FoundryAgentTool` - Use `AgentSessionConfig` with `connect()` instead
+  - `FoundryAgentTool` - Use flattened Azure AI Foundry keyword arguments with `connect()` instead
   - `ResponseFoundryAgentCallItem`
   - `FoundryAgentContextType` enum
   - `ToolType.FOUNDRY_AGENT` enum value

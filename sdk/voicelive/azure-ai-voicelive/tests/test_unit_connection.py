@@ -18,7 +18,7 @@ from azure.ai.voicelive.aio import (
     ResponseResource,
     ConnectionError,
     ConnectionClosed,
-    AgentSessionConfig,
+    connect,
 )
 from azure.ai.voicelive.aio._patch import _VoiceLiveConnectionManager
 from azure.ai.voicelive.models import (
@@ -382,45 +382,71 @@ class TestAsyncContextBehavior:
         assert mock_connection.send.call_count == 2
 
 
-class TestAgentSessionConfig:
-    """Test AgentSessionConfig TypedDict and URL preparation with agent configuration."""
+class TestConnectFoundryKwargs:
+    """Test connect() with flattened Azure AI Foundry keyword arguments."""
 
-    def test_agent_session_config_required_fields(self):
-        """Test AgentSessionConfig with required fields only."""
-        config: AgentSessionConfig = {
+    def setup_method(self):
+        """Set up test fixtures."""
+        self.credential = AzureKeyCredential("test-key")
+        self.endpoint = "https://test-endpoint.azure.com"
+
+    def test_connect_with_flattened_agent_kwargs(self):
+        """Test connect() builds internal agent config from flattened kwargs."""
+        manager = connect(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            agent_name="my-agent",
+            project_name="my-project",
+            agent_version="2.0",
+            conversation_id="conv-abc123",
+            authentication_identity_client_id="client-xyz",
+            foundry_resource_override="custom-foundry",
+        )
+
+        assert isinstance(manager, _VoiceLiveConnectionManager)
+        assert manager._VoiceLiveConnectionManager__agent_config == {
             "agent_name": "my-agent",
             "project_name": "my-project",
+            "agent_version": "2.0",
+            "conversation_id": "conv-abc123",
+            "authentication_identity_client_id": "client-xyz",
+            "foundry_resource_override": "custom-foundry",
         }
-        assert config["agent_name"] == "my-agent"
-        assert config["project_name"] == "my-project"
 
-    def test_agent_session_config_all_fields(self):
-        """Test AgentSessionConfig with all fields."""
-        config: AgentSessionConfig = {
-            "agent_name": "my-agent",
-            "project_name": "my-project",
-            "agent_version": "1.0",
-            "conversation_id": "conv-123",
-            "authentication_identity_client_id": "client-456",
-            "foundry_resource_override": "custom-resource",
-        }
-        assert config["agent_name"] == "my-agent"
-        assert config["project_name"] == "my-project"
-        assert config["agent_version"] == "1.0"
-        assert config["conversation_id"] == "conv-123"
-        assert config["authentication_identity_client_id"] == "client-456"
-        assert config["foundry_resource_override"] == "custom-resource"
+    def test_connect_with_flattened_agent_kwargs_requires_required_fields(self):
+        """Test connect() rejects incomplete flattened Foundry arguments."""
+        with pytest.raises(
+            ValueError,
+            match="Both 'agent_name' and 'project_name' are required",
+        ):
+            connect(
+                credential=self.credential,
+                endpoint=self.endpoint,
+                agent_name="my-agent",
+            )
 
-    def test_agent_session_config_optional_fields_absent(self):
-        """Test AgentSessionConfig with optional fields not present."""
-        config: AgentSessionConfig = {
-            "agent_name": "test-agent",
-            "project_name": "test-project",
-        }
-        assert config.get("agent_version") is None
-        assert config.get("conversation_id") is None
-        assert config.get("authentication_identity_client_id") is None
-        assert config.get("foundry_resource_override") is None
+    def test_connect_without_foundry_kwargs_has_no_agent_config(self):
+        """Test connect() leaves agent config unset outside Foundry mode."""
+        manager = connect(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            model="gpt-4o-realtime",
+        )
+
+        assert isinstance(manager, _VoiceLiveConnectionManager)
+        assert manager._VoiceLiveConnectionManager__agent_config is None
+
+    def test_connect_accepts_additional_kwargs_for_compatibility(self):
+        """Test connect() accepts legacy passthrough kwargs for runtime compatibility."""
+        manager = connect(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            model="gpt-4o-realtime",
+            legacy_option=True,
+        )
+
+        assert isinstance(manager, _VoiceLiveConnectionManager)
+        assert manager._VoiceLiveConnectionManager__agent_config is None
 
 
 class TestAgentConfigUrlPreparation:
@@ -433,7 +459,7 @@ class TestAgentConfigUrlPreparation:
 
     def test_url_with_agent_config_required_params(self):
         """Test URL preparation with required agent config parameters."""
-        agent_config: AgentSessionConfig = {
+        agent_config = {
             "agent_name": "my-agent",
             "project_name": "my-project",
         }
@@ -459,7 +485,7 @@ class TestAgentConfigUrlPreparation:
 
     def test_url_with_agent_config_all_params(self):
         """Test URL preparation with all agent config parameters."""
-        agent_config: AgentSessionConfig = {
+        agent_config = {
             "agent_name": "my-agent",
             "project_name": "my-project",
             "agent_version": "2.0",
@@ -488,7 +514,7 @@ class TestAgentConfigUrlPreparation:
 
     def test_url_with_agent_config_partial_optional_params(self):
         """Test URL preparation with some optional agent config parameters."""
-        agent_config: AgentSessionConfig = {
+        agent_config = {
             "agent_name": "test-agent",
             "project_name": "test-project",
             "agent_version": "1.5",
@@ -535,7 +561,7 @@ class TestAgentConfigUrlPreparation:
 
     def test_url_with_agent_config_and_model(self):
         """Test URL preparation with both agent config and model."""
-        agent_config: AgentSessionConfig = {
+        agent_config = {
             "agent_name": "agent-with-model",
             "project_name": "project-name",
         }
@@ -558,7 +584,7 @@ class TestAgentConfigUrlPreparation:
 
     def test_url_with_agent_config_and_extra_query(self):
         """Test URL preparation with agent config and extra query parameters."""
-        agent_config: AgentSessionConfig = {
+        agent_config = {
             "agent_name": "my-agent",
             "project_name": "my-project",
         }
@@ -580,7 +606,7 @@ class TestAgentConfigUrlPreparation:
 
     def test_url_scheme_conversion_https_to_wss(self):
         """Test that https endpoint is converted to wss scheme."""
-        agent_config: AgentSessionConfig = {
+        agent_config = {
             "agent_name": "test",
             "project_name": "test",
         }
@@ -599,7 +625,7 @@ class TestAgentConfigUrlPreparation:
 
     def test_url_scheme_conversion_http_to_ws(self):
         """Test that http endpoint is converted to ws scheme."""
-        agent_config: AgentSessionConfig = {
+        agent_config = {
             "agent_name": "test",
             "project_name": "test",
         }
@@ -618,7 +644,7 @@ class TestAgentConfigUrlPreparation:
 
     def test_url_path_includes_voice_live_realtime(self):
         """Test that URL path includes /voice-live/realtime."""
-        agent_config: AgentSessionConfig = {
+        agent_config = {
             "agent_name": "test",
             "project_name": "test",
         }
@@ -637,7 +663,7 @@ class TestAgentConfigUrlPreparation:
 
     def test_url_includes_api_version(self):
         """Test that URL includes api-version parameter."""
-        agent_config: AgentSessionConfig = {
+        agent_config = {
             "agent_name": "test",
             "project_name": "test",
         }
