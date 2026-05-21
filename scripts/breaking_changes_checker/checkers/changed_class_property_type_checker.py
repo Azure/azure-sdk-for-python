@@ -4,9 +4,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import sys
-import os
-sys.path.append(os.path.abspath("../../scripts/breaking_changes_checker"))
 from _models import CheckerType
 import jsondiff
 
