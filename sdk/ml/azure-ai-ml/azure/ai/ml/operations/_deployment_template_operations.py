@@ -8,11 +8,16 @@
 
 from typing import Any, Dict, Iterable, Optional, cast
 
+# cspell:disable-next-line
+from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import (
+    MachineLearningServicesClient as AzureAiAssetsClient,
+)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import DeploymentTemplate
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
@@ -33,15 +38,33 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: "OperationConfig",
-        service_client_04_2024_dataplanepreview,
+        credential: TokenCredential,
         **kwargs: Dict[str, Any],
     ):
         super(DeploymentTemplateOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
         self._operation_scope = operation_scope
         self._operation_config = operation_config
-        self._service_client = service_client_04_2024_dataplanepreview
+        self._credential = credential
+        self._service_client_kwargs: Dict[str, Any] = kwargs.pop("_service_client_kwargs", {})
         self._init_kwargs = kwargs
+        self.__service_client: Optional[AzureAiAssetsClient] = None
+
+    @property
+    def _service_client(self) -> AzureAiAssetsClient:
+        """Lazily instantiated client for azure ai assets API.
+
+        The client is created on first access since the endpoint depends on the registry region.
+        """
+        if self.__service_client is None:
+            endpoint = self._get_registry_endpoint()
+            self.__service_client = AzureAiAssetsClient(
+                endpoint=endpoint,
+                subscription_id=self._operation_scope.subscription_id,
+                resource_group_name=self._operation_scope.resource_group_name,
+                credential=self._credential,
+                **self._service_client_kwargs,
+            )
+        return self.__service_client
 
     def _get_registry_endpoint(self) -> str:
         """Dynamically determine the registry endpoint based on registry region.
@@ -56,24 +79,17 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             )
             from azure.ai.ml.operations import RegistryOperations
 
-            # Try to get credential from service client or operation config
-            credential = None
-            if hasattr(self._service_client, "_config") and hasattr(self._service_client._config, "credential"):
-                credential = self._service_client._config.credential
-            elif hasattr(self._operation_config, "credential"):
-                credential = self._operation_config.credential
-
-            if credential and self._operation_scope.registry_name:
+            if self._credential and self._operation_scope.registry_name:
                 # Get registry information to determine the region
                 registry_operations = RegistryOperations(
                     operation_scope=self._operation_scope,
                     service_client=ServiceClient102022(
-                        credential=credential,
+                        credential=self._credential,
                         subscription_id=self._operation_scope.subscription_id,
                         resource_group_name=self._operation_scope.resource_group_name,
                     ),
                     all_operations=None,  # type: ignore[arg-type]
-                    credentials=credential,
+                    credentials=self._credential,
                 )
 
                 registry = registry_operations.get(self._operation_scope.registry_name)
@@ -86,15 +102,13 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     region = registry.replication_locations[0].location
 
                 if region:
-                    # Format the endpoint using the detected region
-                    # return f"https://int.experiments.azureml-test.net"
                     return f"https://{region}.api.azureml.ms"
 
         except Exception as e:
             module_logger.debug("Could not determine registry region dynamically: %s. Using default.", e)
 
         # Fallback to default region if unable to determine dynamically
-        return f"https://int.experiments.azureml-test.net"
+        return "https://int.experiments.azureml-test.net"
 
     def _convert_dict_to_deployment_template(self, dict_data: Dict[str, Any]) -> DeploymentTemplate:
         """Convert dictionary format to DeploymentTemplate object.
@@ -288,20 +302,19 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.DeploymentTemplate]
         """
 
-        endpoint = self._get_registry_endpoint()
         return cast(
             Iterable[DeploymentTemplate],
-            self._service_client.deployment_templates.list(
-                endpoint=endpoint,
-                subscription_id=self._operation_scope.subscription_id,
-                resource_group_name=self._operation_scope.resource_group_name,
-                registry_name=self._operation_scope.registry_name,
-                name=name,
-                tags=tags,
-                count=count,
-                stage=stage,
-                list_view_type=list_view_type,
-                **kwargs,
+            (
+                DeploymentTemplate._from_rest_object(item)
+                for item in self._service_client.deployment_templates.list(
+                    registry_name=self._operation_scope.registry_name,
+                    name=name,
+                    tags=tags,
+                    count=count,
+                    stage=stage,
+                    list_view_type=list_view_type,
+                    **kwargs,
+                )
             ),
         )
 
@@ -321,12 +334,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         version = version or "latest"
 
         try:
-            endpoint = self._get_registry_endpoint()
-
             result = self._service_client.deployment_templates.get(
-                endpoint=endpoint,
-                subscription_id=self._operation_scope.subscription_id,
-                resource_group_name=self._operation_scope.resource_group_name,
                 registry_name=self._operation_scope.registry_name,
                 name=name,
                 version=version,
@@ -352,23 +360,15 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         if not isinstance(deployment_template, DeploymentTemplate):
             raise ValueError("deployment_template must be a DeploymentTemplate object")
 
-        if hasattr(self._service_client, "deployment_templates"):
-            endpoint = self._get_registry_endpoint()
-
-            rest_object = deployment_template._to_rest_object()
-            self._service_client.deployment_templates.begin_create(
-                endpoint=endpoint,
-                subscription_id=self._operation_scope.subscription_id,
-                resource_group_name=self._operation_scope.resource_group_name,
-                registry_name=self._operation_scope.registry_name,
-                name=deployment_template.name,
-                version=deployment_template.version,
-                body=rest_object,
-                **kwargs,
-            )
-            return deployment_template
-        else:
-            raise RuntimeError("DeploymentTemplate service not available")
+        rest_object = deployment_template._to_rest_object()
+        self._service_client.deployment_templates.begin_create(
+            registry_name=self._operation_scope.registry_name,
+            name=deployment_template.name,
+            version=deployment_template.version,
+            body=rest_object,
+            **kwargs,
+        )
+        return deployment_template
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Delete", ActivityType.PUBLICAPI)
@@ -383,20 +383,12 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         version = version or "latest"
 
         try:
-            if hasattr(self._service_client, "deployment_templates"):
-                endpoint = self._get_registry_endpoint()
-
-                self._service_client.deployment_templates.delete_deployment_template(
-                    endpoint=endpoint,
-                    subscription_id=self._operation_scope.subscription_id,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    registry_name=self._operation_scope.registry_name,
-                    name=name,
-                    version=version,
-                    **kwargs,
-                )
-            else:
-                raise RuntimeError("DeploymentTemplate service not available")
+            self._service_client.deployment_templates.delete(
+                registry_name=self._operation_scope.registry_name,
+                name=name,
+                version=version,
+                **kwargs,
+            )
         except ResourceNotFoundError:
             raise
         except Exception as e:

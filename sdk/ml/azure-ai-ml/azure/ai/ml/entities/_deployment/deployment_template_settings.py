@@ -8,10 +8,15 @@ import logging
 from typing import Optional
 
 from azure.ai.ml._restclient.arm_ml_service.models import BatchRetrySettings as RestBatchRetrySettings
-from azure.ai.ml._restclient.v2024_04_01_dataplanepreview.models import (
+
+# cspell:disable-next-line
+# cspell:disable-next-line
+from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import (
     OnlineRequestSettings as RestOnlineRequestSettings,
 )
-from azure.ai.ml._restclient.v2024_04_01_dataplanepreview.models import ProbeSettings as RestProbeSettings
+from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import (
+    ProbeSettings as RestProbeSettings,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import (
     from_iso_duration_format,

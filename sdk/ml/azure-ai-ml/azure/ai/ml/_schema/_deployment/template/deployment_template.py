@@ -55,9 +55,9 @@ class DeploymentTemplateSchema(PathAwareSchema):
             NestedField(AnonymousEnvironmentSchema),
         ]
     )
+    accelerator_maps = fields.List(NestedField(AcceleratorMapSchema))
     scoring_port = fields.Int()
     scoring_path = fields.Str()
-    accelerator_maps = fields.List(NestedField(AcceleratorMapSchema))
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument

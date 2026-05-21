@@ -341,8 +341,26 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         # Get the properties dictionary where the actual data is stored
         properties = get_value(obj, "properties", {})
 
-        # Extract name and version from properties first, then fallback to top-level
+        # Extract name and version from properties first, then fallback to top-level, then parse from id
         name = get_value(properties, "name") or get_value(obj, "name")
+        version = get_value(properties, "version") or get_value(obj, "version")
+
+        # Parse name/version from id field if not found directly
+        # id format: azureml://registries/{reg}/deploymenttemplates/{name}/versions/{version}
+        if not name or not version:
+            obj_id = get_value(obj, "id") or ""
+            if "deploymenttemplates/" in obj_id:
+                parts = obj_id.split("/")
+                try:
+                    dt_idx = parts.index("deploymenttemplates")
+                    if not name and dt_idx + 1 < len(parts):
+                        name = parts[dt_idx + 1]
+                    ver_idx = parts.index("versions") if "versions" in parts else -1
+                    if not version and ver_idx >= 0 and ver_idx + 1 < len(parts):
+                        version = parts[ver_idx + 1]
+                except (ValueError, IndexError):
+                    pass
+
         if not name:
             additional_props = get_value(obj, "additional_properties", {})
             if isinstance(additional_props, dict):
@@ -350,7 +368,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             else:
                 name = "unknown"
 
-        version = get_value(properties, "version") or get_value(obj, "version")
         if not version:
             additional_props = get_value(obj, "additional_properties", {})
             if isinstance(additional_props, dict):
@@ -380,8 +397,11 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         )
 
         # Extract additional fields
-        allowed_instance_types = get_value(properties, "allowedInstanceTypes") or get_value(
-            obj, "allowed_instance_types"
+        allowed_instance_types = (
+            get_value(properties, "allowedInstanceTypes")
+            or get_value(properties, "allowedInstanceType")
+            or get_value(obj, "allowed_instance_types")
+            or get_value(obj, "allowed_instance_type")
         )
         scoring_port = get_value(properties, "scoringPort") or get_value(obj, "scoring_port")
         scoring_path = get_value(properties, "scoringPath") or get_value(obj, "scoring_path")
@@ -591,7 +611,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
 
         # Handle allowed instance types
         if hasattr(self, "allowed_instance_types") and self.allowed_instance_types:
-            result["allowedInstanceTypes"] = self.allowed_instance_types  # type: ignore[assignment]
+            result["allowedInstanceType"] = self.allowed_instance_types  # type: ignore[assignment]
 
         if self.accelerator_maps:
             result["acceleratorMaps"] = [am._to_rest_dict() for am in self.accelerator_maps]
