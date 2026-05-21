@@ -21,10 +21,10 @@ from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
 from ._patch_sessions import BetaAgentsOperations
 from ._operations import (
+    BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
-    BetaModelsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
     BetaRoutinesOperations,
@@ -119,6 +119,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.operations.BetaToolboxesOperations` operations"""
     skills: BetaSkillsOperations
     """:class:`~azure.ai.projects.operations.BetaSkillsOperations` operations"""
+    datasets: BetaDatasetsOperations
+    """:class:`~azure.ai.projects.operations.BetaDatasetsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -142,6 +144,7 @@ class BetaOperations(GeneratedBetaOperations):
 __all__: List[str] = [
     "AgentsOperations",
     "BetaAgentsOperations",
+    "BetaDatasetsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
