@@ -24,7 +24,7 @@ from azure.ai.evaluation._legacy.prompty._exceptions import (
     NotSupportedError,
     WrappedOpenAIError,
 )
-from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection, Connection, OpenAIConnection
+from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection, AnthropicConnection, Connection, OpenAIConnection
 from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml_string
 from azure.ai.evaluation._legacy.prompty._utils import (
     dataclass_from_dict,
@@ -314,6 +314,13 @@ class AsyncPrompty:
                 max_retries=max_retries,
                 default_headers=default_headers,
             )
+        elif isinstance(connection, AnthropicConnection):
+            return await self._call_anthropic(
+                connection=connection,
+                params=params,
+                inputs=inputs,
+                timeout=timeout,
+            )
         else:
             raise NotSupportedError(
                 f"'{type(connection).__name__}' is not a supported connection type.", target=ErrorTarget.EVAL_RUN
@@ -347,6 +354,187 @@ class AsyncPrompty:
         inputs = self._resolve_inputs(kwargs)
         messages = build_messages(prompt=self._template, working_dir=self.path.parent, **inputs)
         return messages
+
+    async def _call_anthropic(
+        self,
+        connection: "AnthropicConnection",
+        params: Mapping[str, Any],
+        inputs: Mapping[str, Any],
+        timeout: Optional[float],
+    ) -> dict:
+        """Call the Anthropic API and return a response dict compatible with the expected output format.
+
+        :param AnthropicConnection connection: The Anthropic connection to use.
+        :param Mapping[str, Any] params: The request parameters (messages, model, etc.).
+        :param Mapping[str, Any] inputs: The original inputs used to build the prompt.
+        :param Optional[float] timeout: The timeout for the request.
+        :return: A dict containing llm_output and token usage information.
+        :rtype: dict
+        """
+        try:
+            from anthropic import AsyncAnthropic, APIConnectionError as AnthropicConnectionError, APIStatusError as AnthropicStatusError
+        except ImportError as e:
+            raise ImportError(
+                "The 'anthropic' package is required to use Anthropic models as judge models. "
+                "Please install it with: pip install anthropic"
+            ) from e
+
+        import json
+
+        # Separate system messages from non-system messages (Anthropic requires them apart)
+        all_messages: List[Mapping[str, Any]] = list(params.get("messages", []))
+        system_parts: List[str] = []
+        non_system_messages: List[Mapping[str, Any]] = []
+        for msg in all_messages:
+            role = msg.get("role", "")
+            content = msg.get("content", "")
+            if role == "system":
+                if isinstance(content, list):
+                    # Content may be a list of content blocks
+                    for block in content:
+                        if isinstance(block, dict) and block.get("type") == "text":
+                            system_parts.append(block["text"])
+                        elif isinstance(block, str):
+                            system_parts.append(block)
+                else:
+                    system_parts.append(str(content))
+            else:
+                non_system_messages.append(msg)
+
+        # Build Anthropic client kwargs
+        client_kwargs: Dict[str, Any] = {"api_key": connection.api_key}
+        if connection.base_url:
+            client_kwargs["base_url"] = connection.base_url
+
+        # Anthropic-supported parameters that may come from prompty params
+        _ANTHROPIC_SUPPORTED_PARAMS = {"temperature", "top_p", "top_k", "stop_sequences", "metadata"}
+        extra_kwargs: Dict[str, Any] = {
+            k: v for k, v in params.items() if k in _ANTHROPIC_SUPPORTED_PARAMS
+        }
+
+        max_tokens: int = connection.max_tokens
+        if "max_tokens" in params:
+            max_tokens = params["max_tokens"]
+
+        api_client = AsyncAnthropic(**client_kwargs)
+
+        # Build create kwargs
+        create_kwargs: Dict[str, Any] = {
+            "model": connection.model,
+            "max_tokens": max_tokens,
+            "messages": non_system_messages,
+            **extra_kwargs,
+        }
+        if system_parts:
+            create_kwargs["system"] = "\n\n".join(system_parts)
+
+        if timeout is not None:
+            create_kwargs["timeout"] = timeout
+
+        max_retries = 10
+        max_entity_retries = 3
+        entity_retries: List[int] = [0]
+        retry: int = 0
+
+        while True:
+            try:
+                response = await api_client.messages.create(**create_kwargs)
+                break
+            except (AnthropicConnectionError, AnthropicStatusError) as error:
+                should_retry, delay = self._anthropic_error_retryable(
+                    error, retry, entity_retries, max_entity_retries
+                )
+                if should_retry and retry < max_retries:
+                    self._logger.warning(
+                        "[%d/%d] Anthropic request failed. %s: %s. Retrying in %f seconds.",
+                        retry,
+                        max_retries,
+                        type(error).__name__,
+                        str(error),
+                        delay or 0.0,
+                        exc_info=True,
+                    )
+                    await asyncio.sleep(delay or 0.0)
+                    retry += 1
+                else:
+                    self._logger.exception(
+                        "[%d/%d] Anthropic request failed. %s: %s",
+                        retry,
+                        max_retries,
+                        type(error).__name__,
+                        str(error),
+                    )
+                    raise
+
+        # Extract text content from the response
+        llm_output = ""
+        if response.content:
+            text_blocks = [block.text for block in response.content if hasattr(block, "text")]
+            llm_output = "".join(text_blocks)
+
+        input_token_count = response.usage.input_tokens if response.usage else 0
+        output_token_count = response.usage.output_tokens if response.usage else 0
+        total_token_count = input_token_count + output_token_count
+        finish_reason = response.stop_reason or ""
+        model_id = response.model or ""
+
+        sample_output_list = [{"role": "assistant", "content": llm_output}] if llm_output else []
+        sample_output = json.dumps(sample_output_list)
+
+        input_str = f"{json.dumps(inputs)}" if inputs else ""
+        sample_input = json.dumps([{"role": "user", "content": input_str}]) if input_str else ""
+
+        return {
+            "llm_output": llm_output,
+            "input_token_count": input_token_count,
+            "output_token_count": output_token_count,
+            "total_token_count": total_token_count,
+            "finish_reason": finish_reason,
+            "model_id": model_id,
+            "sample_input": sample_input,
+            "sample_output": sample_output,
+        }
+
+    @staticmethod
+    def _anthropic_error_retryable(
+        error: Any,
+        retry: int,
+        entity_retry: List[int],
+        max_entity_retries: int,
+    ) -> Tuple[bool, float]:
+        """Determine if an Anthropic error is retryable and the delay to use.
+
+        :param error: The error to handle.
+        :param int retry: The current retry count.
+        :param List[int] entity_retry: The current retry count for entity errors.
+        :param int max_entity_retries: The maximum number of retries for entity errors.
+        :return: A tuple of (should_retry, delay).
+        :rtype: Tuple[bool, float]
+        """
+        try:
+            from anthropic import APIConnectionError as AnthropicConnectionError, APIStatusError as AnthropicStatusError
+        except ImportError:
+            return (False, 0.0)
+
+        should_retry: bool = False
+        delay: float = min(60, 2 + 2**retry)
+
+        if isinstance(error, AnthropicConnectionError):
+            should_retry = True
+        elif isinstance(error, AnthropicStatusError):
+            status_code: int = error.status_code
+            if status_code == 422:
+                should_retry = entity_retry[0] < max_entity_retries
+                entity_retry[0] += 1
+            elif status_code == 429:
+                should_retry = True
+                retry_after = getattr(error.response, "headers", {}).get("retry-after", None)
+                if retry_after is not None:
+                    delay = float(retry_after)
+            else:
+                should_retry = status_code >= 500
+
+        return (should_retry, delay)
 
     async def _send_with_retries(
         self,
