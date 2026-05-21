@@ -1,0 +1,100 @@
+import pytest
+
+from azure.servicebus._pyamqp._decode import (
+    _decode_array_large,
+    _decode_list_large,
+    _decode_map_large,
+    _decode_map_small,
+    decode_frame,
+    _MAX_COMPOUND_COUNT,
+)
+
+
+def _header(count: int) -> bytes:
+    # 4 bytes size (unused by the decoder beyond slicing) + 4 bytes big-endian count
+    return b"\x00\x00\x00\x00" + count.to_bytes(4, "big")
+
+
+HUGE_COUNT = 0x7FFFFFFF
+JUST_OVER = _MAX_COMPOUND_COUNT + 1
+
+
+@pytest.mark.parametrize("count", [HUGE_COUNT, JUST_OVER])
+def test_decode_array_large_rejects_oversized_count(count):
+    buffer = memoryview(_header(count))
+    with pytest.raises(ValueError, match="exceeds maximum"):
+        _decode_array_large(buffer)
+
+
+@pytest.mark.parametrize("count", [HUGE_COUNT, JUST_OVER])
+def test_decode_list_large_rejects_oversized_count(count):
+    buffer = memoryview(_header(count))
+    with pytest.raises(ValueError, match="exceeds maximum"):
+        _decode_list_large(buffer)
+
+
+@pytest.mark.parametrize("count", [HUGE_COUNT, JUST_OVER])
+def test_decode_map_large_rejects_oversized_count(count):
+    buffer = memoryview(_header(count))
+    with pytest.raises(ValueError, match="exceeds maximum"):
+        _decode_map_large(buffer)
+
+
+def test_decode_array_large_accepts_boundary():
+    # COUNT exactly at the cap with a null subconstructor (0x40). _decode_null
+    # consumes no bytes, so the result is a list of _MAX_COMPOUND_COUNT Nones.
+    buffer = memoryview(_header(_MAX_COMPOUND_COUNT) + b"\x40")
+    remaining, values = _decode_array_large(buffer)
+    assert len(values) == _MAX_COMPOUND_COUNT
+    assert all(v is None for v in values)
+    assert bytes(remaining) == b""
+
+
+def test_decode_list_large_accepts_boundary():
+    # Each element carries its own constructor byte; _MAX_COMPOUND_COUNT nulls.
+    body = b"\x40" * _MAX_COMPOUND_COUNT
+    buffer = memoryview(_header(_MAX_COMPOUND_COUNT) + body)
+    remaining, values = _decode_list_large(buffer)
+    assert len(values) == _MAX_COMPOUND_COUNT
+    assert all(v is None for v in values)
+    assert bytes(remaining) == b""
+
+
+def test_decode_map_large_accepts_boundary():
+    # COUNT counts entries (keys + values); pairs = count // 2.
+    body = b"\x40" * _MAX_COMPOUND_COUNT
+    buffer = memoryview(_header(_MAX_COMPOUND_COUNT) + body)
+    remaining, values = _decode_map_large(buffer)
+    # All keys collapse to None, so the dict has a single entry.
+    assert values == {None: None}
+    assert bytes(remaining) == b""
+
+
+def _frame_list32(count: int) -> bytes:
+    # decode_frame skips data[0:2] (described/ulong constructors), reads
+    # frame_type at data[2], the compound marker at data[3], size at
+    # data[4:8], and the COUNT under test at data[8:12].
+    return b"\x00\x53\x00\xd0" + b"\x00\x00\x00\x00" + count.to_bytes(4, "big")
+
+
+@pytest.mark.parametrize("count", [HUGE_COUNT, JUST_OVER])
+def test_decode_frame_rejects_oversized_list32_count(count):
+    buffer = memoryview(_frame_list32(count))
+    with pytest.raises(ValueError, match="exceeds maximum"):
+        decode_frame(buffer)
+
+
+def test_decode_map_large_rejects_odd_count():
+    # An odd raw COUNT would silently floor to pairs = (count - 1) // 2 and
+    # leave a trailing key with no value, corrupting subsequent decoding.
+    buffer = memoryview(_header(3))
+    with pytest.raises(ValueError, match="must be even"):
+        _decode_map_large(buffer)
+
+
+def test_decode_map_small_rejects_odd_count():
+    # _decode_map_small reads the COUNT from buffer[1] (1 byte, 0-255). An
+    # odd value has the same trailing-key problem as the large variant.
+    buffer = memoryview(b"\x00\x03")
+    with pytest.raises(ValueError, match="must be even"):
+        _decode_map_small(buffer)
