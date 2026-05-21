@@ -4,37 +4,25 @@
 
 ### Features Added
 
-  - Model `CustomLocationOperation` added property `display`
-  - Model `PatchableCustomLocations` added property `properties`
   - Model `ProxyResource` added property `system_data`
   - Model `Resource` added property `system_data`
   - Model `TrackedResource` added property `system_data`
   - Added model `CustomLocationFindTargetResourceGroupProperties`
   - Added model `CustomLocationFindTargetResourceGroupResult`
-  - Added model `CustomLocationOperationValueDisplay`
   - Added model `MatchExpressionsProperties`
   - Added model `PatchableResourceSyncRule`
   - Added model `ResourceSyncRule`
   - Added model `ResourceSyncRuleProperties`
   - Added model `ResourceSyncRulePropertiesSelector`
-  - Model `CustomLocationsOperations` added method `find_target_resource_group`
-  - Added model `ResourceSyncRulesOperations`
+  - Operation group `CustomLocationsOperations` added method `find_target_resource_group`
+  - Added operation group `ResourceSyncRulesOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed model `CustomLocations`
-  - Model `CustomLocationOperation` deleted or renamed its instance variable `description`
-  - Model `CustomLocationOperation` deleted or renamed its instance variable `operation`
-  - Model `CustomLocationOperation` deleted or renamed its instance variable `provider`
-  - Model `CustomLocationOperation` deleted or renamed its instance variable `resource`
-  - Model `PatchableCustomLocations` deleted or renamed its instance variable `authentication`
-  - Model `PatchableCustomLocations` deleted or renamed its instance variable `cluster_extension_ids`
-  - Model `PatchableCustomLocations` deleted or renamed its instance variable `display_name`
-  - Model `PatchableCustomLocations` deleted or renamed its instance variable `host_resource_id`
-  - Model `PatchableCustomLocations` deleted or renamed its instance variable `host_type`
-  - Model `PatchableCustomLocations` deleted or renamed its instance variable `namespace`
-  - Model `PatchableCustomLocations` deleted or renamed its instance variable `provisioning_state`
-  - Deleted or renamed model `CustomLocationOperationsList`
+  - Model `CustomLocationOperation` moved instance variable `description`, `operation`, `provider` and `resource` under property `display` whose type is `CustomLocationOperationValueDisplay`
+  - Model `PatchableCustomLocations` moved instance variable `authentication`, `cluster_extension_ids`, `display_name`, `host_resource_id`, `host_type`, `namespace` and `provisioning_state` under property `properties` whose type is `CustomLocationProperties`
   - Method `CustomLocationsOperations.update` inserted a `positional_or_keyword` parameter `parameters`
   - Method `CustomLocationsOperations.update` deleted or renamed its parameter `identity` of kind `positional_or_keyword`
   - Method `CustomLocationsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
@@ -45,6 +33,10 @@
   - Method `CustomLocationsOperations.update` deleted or renamed its parameter `host_type` of kind `positional_or_keyword`
   - Method `CustomLocationsOperations.update` deleted or renamed its parameter `namespace` of kind `positional_or_keyword`
   - Method `CustomLocationsOperations.update` deleted or renamed its parameter `provisioning_state` of kind `positional_or_keyword`
+
+### Other Changes
+
+  - Deleted model `CustomLocationOperationsList` which actually was not used by SDK users
 
 ## 2.0.0 (2024-10-30)
 
