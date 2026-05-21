@@ -154,8 +154,6 @@
         "azure.mgmt.computefleet.operations.FleetsOperations.list_virtual_machine_scale_sets": "Microsoft.AzureFleet.Fleets.listVirtualMachineScaleSets",
         "azure.mgmt.computefleet.aio.operations.FleetsOperations.list_virtual_machine_scale_sets": "Microsoft.AzureFleet.Fleets.listVirtualMachineScaleSets",
         "azure.mgmt.computefleet.operations.FleetsOperations.list_virtual_machines": "Microsoft.AzureFleet.Fleets.listVirtualMachines",
-        "azure.mgmt.computefleet.aio.operations.FleetsOperations.list_virtual_machines": "Microsoft.AzureFleet.Fleets.listVirtualMachines",
-        "azure.mgmt.computefleet.operations.FleetsOperations.begin_cancel": "Microsoft.AzureFleet.Fleets.cancel",
-        "azure.mgmt.computefleet.aio.operations.FleetsOperations.begin_cancel": "Microsoft.AzureFleet.Fleets.cancel"
+        "azure.mgmt.computefleet.aio.operations.FleetsOperations.list_virtual_machines": "Microsoft.AzureFleet.Fleets.listVirtualMachines"
     }
 }
