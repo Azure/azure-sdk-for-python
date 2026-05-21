@@ -69,6 +69,7 @@ These samples require additional setup or Azure services:
 | [sample_evaluations_score_model_grader_with_audio.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_audio.py) | Evaluate with audio data | Audio file, audio-capable model deployment |
 | [sample_evaluations_score_model_grader_with_audio_model_target.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_audio_model_target.py) | Evaluate audio data using a model as the target | Audio file, audio-capable model deployment |
 | [sample_evaluations_builtin_with_inline_data_oai.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_inline_data_oai.py) | Use OpenAI client directly | OpenAI SDK |
+| [sample_human_evaluations.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_human_evaluations.py) | Emit human evaluation events (binary / Likert-5) as OpenTelemetry custom events to Application Insights | Connected Application Insights on Foundry Project, `azure-monitor-opentelemetry` |
 
 ### Evaluator Types
 

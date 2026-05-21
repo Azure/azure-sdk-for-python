@@ -124,6 +124,9 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
       uses azure-monitor-query to fetch traces.
     - sample_scheduled_evaluations.py: Requires Azure RBAC assignment via
       azure-mgmt-authorization and azure-mgmt-resource, AND uploads Dataset.
+    - sample_human_evaluations.py: Requires Azure Application Insights (fetches
+      the connection string from the Foundry project and emits OTel events via
+      `azure-monitor-opentelemetry`); not meaningful to record/replay.
 
     Complex prerequisites (require manual portal setup):
     - sample_continuous_evaluation_rule.py: Requires manual RBAC assignment in Azure
@@ -152,6 +155,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
+                "sample_human_evaluations.py",  # Requires real Foundry App Insights connection string + emits OTel events; not suitable for recorded playback
             ],
         ),
     )
