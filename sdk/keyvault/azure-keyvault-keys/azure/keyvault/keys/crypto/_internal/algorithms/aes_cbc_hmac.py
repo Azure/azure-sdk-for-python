@@ -30,11 +30,13 @@ class _AesCbcHmacCryptoTransform(AuthenticatedCryptoTransform):
         self._hmac.update(auth_data)
         self._hmac.update(iv)
 
+    @property
     def tag(self):
         return self._tag
 
+    @property
+    @abstractmethod
     def block_size(self):
-        # return self._cipher.block_size
         raise NotImplementedError()
 
     @abstractmethod
@@ -70,6 +72,7 @@ class _AesCbcHmacEncryptor(_AesCbcHmacCryptoTransform):
         self._tag.extend(self._hmac.finalize()[: len(self._hmac_key)])
         return cipher_text
 
+    @property
     def block_size(self):
         raise NotImplementedError()
 
@@ -99,6 +102,7 @@ class _AesCbcHmacDecryptor(_AesCbcHmacCryptoTransform):
         padded = self._ctx.update(data) + self._ctx.finalize()
         return self._padder.update(padded) + self._padder.finalize()
 
+    @property
     def block_size(self):
         raise NotImplementedError()
 
