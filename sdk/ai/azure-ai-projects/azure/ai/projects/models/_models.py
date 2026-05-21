@@ -59,16 +59,16 @@ class Tool(_Model):
     A2APreviewTool, ApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
     BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationPreviewTool,
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerUsePreviewTool, CustomToolParam,
-    MicrosoftFabricPreviewTool, FileSearchTool, FunctionTool, ImageGenTool, LocalShellToolParam,
-    MCPTool, MemorySearchPreviewTool, OpenApiTool, SharepointPreviewTool, FunctionShellToolParam,
-    WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool, ImageGenTool,
+    LocalShellToolParam, MCPTool, MemorySearchPreviewTool, OpenApiTool, SharepointPreviewTool,
+    FunctionShellToolParam, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer_use_preview",
      "web_search", "mcp", "code_interpreter", "image_generation", "local_shell", "shell", "custom",
      "web_search_preview", "apply_patch", "a2a_preview", "bing_custom_search_preview",
      "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
-     "memory_search_preview", "work_iq_preview", "azure_ai_search", "azure_function",
-     "bing_grounding", "capture_structured_outputs", and "openapi".
+     "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "azure_ai_search",
+     "azure_function", "bing_grounding", "capture_structured_outputs", and "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -79,8 +79,8 @@ class Tool(_Model):
      \"shell\", \"custom\", \"web_search_preview\", \"apply_patch\", \"a2a_preview\",
      \"bing_custom_search_preview\", \"browser_automation_preview\", \"fabric_dataagent_preview\",
      \"sharepoint_grounding_preview\", \"memory_search_preview\", \"work_iq_preview\",
-     \"azure_ai_search\", \"azure_function\", \"bing_grounding\", \"capture_structured_outputs\",
-     and \"openapi\"."""
+     \"fabric_iq_preview\", \"azure_ai_search\", \"azure_function\", \"bing_grounding\",
+     \"capture_structured_outputs\", and \"openapi\"."""
 
     @overload
     def __init__(
@@ -2699,6 +2699,10 @@ class CodeConfiguration(_Model):
     :vartype runtime: str
     :ivar entry_point: The entry point command and arguments for the code execution. Required.
     :vartype entry_point: list[str]
+    :ivar content_hash: The SHA-256 hex digest of the uploaded code zip. Set by the service from
+     the ``x-ms-code-zip-sha256`` request header; read-only in responses and never accepted in
+     request payloads.
+    :vartype content_hash: str
     """
 
     runtime: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2706,6 +2710,10 @@ class CodeConfiguration(_Model):
      Required."""
     entry_point: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The entry point command and arguments for the code execution. Required."""
+    content_hash: Optional[str] = rest_field(visibility=["read"])
+    """The SHA-256 hex digest of the uploaded code zip. Set by the service from the
+     ``x-ms-code-zip-sha256`` request header; read-only in responses and never accepted in request
+     payloads."""
 
     @overload
     def __init__(
@@ -5051,6 +5059,90 @@ class FabricDataAgentToolParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
+class FabricIQPreviewTool(Tool, discriminator="fabric_iq_preview"):
+    """FabricIQPreviewTool.
+
+    :ivar type: The object type, which is always 'fabric_iq_preview'. Required. FABRIC_IQ_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.FABRIC_IQ_PREVIEW
+    :ivar fabric_iq_preview: The FabricIQ tool parameters. Required.
+    :vartype fabric_iq_preview: ~azure.ai.projects.models.FabricIQPreviewToolParameters
+    """
+
+    type: Literal[ToolType.FABRIC_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_iq_preview'. Required. FABRIC_IQ_PREVIEW."""
+    fabric_iq_preview: "_models.FabricIQPreviewToolParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The FabricIQ tool parameters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        fabric_iq_preview: "_models.FabricIQPreviewToolParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.FABRIC_IQ_PREVIEW  # type: ignore
+
+
+class FabricIQPreviewToolParameters(_Model):
+    """FabricIQPreviewToolParameters.
+
+    :ivar project_connection_id: The ID of the FabricIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: (Optional) The label of the FabricIQ MCP server to connect to.
+    :vartype server_label: str
+    :ivar server_url: (Optional) The URL of the FabricIQ MCP server. If not provided, the URL from
+     the project connection will be used.
+    :vartype server_url: str
+    :ivar require_approval: (Optional) Whether the agent requires approval before executing
+     actions. Default is always. Is either a MCPToolRequireApproval type or a str type.
+    :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str
+    """
+
+    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the FabricIQ project connection. Required."""
+    server_label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """(Optional) The label of the FabricIQ MCP server to connect to."""
+    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """(Optional) The URL of the FabricIQ MCP server. If not provided, the URL from the project
+     connection will be used."""
+    require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """(Optional) Whether the agent requires approval before executing actions. Default is always. Is
+     either a MCPToolRequireApproval type or a str type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_connection_id: str,
+        server_label: Optional[str] = None,
+        server_url: Optional[str] = None,
+        require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FieldMapping(_Model):
     """Field mapping configuration class.
 
@@ -5513,25 +5605,14 @@ class HeaderIsolationKeySource(IsolationKeySource, discriminator="Header"):
 
     :ivar kind: Required. HEADER.
     :vartype kind: str or ~azure.ai.projects.models.HEADER
-    :ivar user_isolation_key: The user isolation key header value. Required.
-    :vartype user_isolation_key: str
-    :ivar chat_isolation_key: The chat isolation key header value. Required.
-    :vartype chat_isolation_key: str
     """
 
     kind: Literal[IsolationKeySourceKind.HEADER] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. HEADER."""
-    user_isolation_key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The user isolation key header value. Required."""
-    chat_isolation_key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The chat isolation key header value. Required."""
 
     @overload
     def __init__(
         self,
-        *,
-        user_isolation_key: str,
-        chat_isolation_key: str,
     ) -> None: ...
 
     @overload

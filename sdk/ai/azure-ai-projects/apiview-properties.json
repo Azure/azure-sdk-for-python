@@ -120,6 +120,8 @@
         "azure.ai.projects.models.EvaluatorMetric": "Azure.AI.Projects.EvaluatorMetric",
         "azure.ai.projects.models.EvaluatorVersion": "Azure.AI.Projects.EvaluatorVersion",
         "azure.ai.projects.models.FabricDataAgentToolParameters": "Azure.AI.Projects.FabricDataAgentToolParameters",
+        "azure.ai.projects.models.FabricIQPreviewTool": "Azure.AI.Projects.FabricIQPreviewTool",
+        "azure.ai.projects.models.FabricIQPreviewToolParameters": "Azure.AI.Projects.FabricIQPreviewToolParameters",
         "azure.ai.projects.models.FieldMapping": "Azure.AI.Projects.FieldMapping",
         "azure.ai.projects.models.FileDatasetVersion": "Azure.AI.Projects.FileDatasetVersion",
         "azure.ai.projects.models.FileSearchTool": "OpenAI.FileSearchTool",

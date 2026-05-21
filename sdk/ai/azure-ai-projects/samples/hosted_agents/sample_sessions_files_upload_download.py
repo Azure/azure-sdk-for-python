@@ -24,11 +24,10 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
+    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
 
-    You can build and push an example image from
-    `samples/hosted_agents/assets/responses-echo-agent` and use that image value
-    for `FOUNDRY_AGENT_CONTAINER_IMAGE`.
+    If you don't have a Hosted Agent, run `sample_hosted_agent_create.py` first
+    to create one as a prerequisite.
 """
 
 import os
@@ -38,12 +37,13 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
-from hosted_agents_util import create_agent_and_session
+from azure.ai.projects.models import VersionRefIndicator
+from hosted_agents_util import get_latest_active_agent_version
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
+agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 
 # Construct the paths to the data folder and data file used in this sample
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -62,10 +62,14 @@ with (
         allow_preview=True,
     ) as project_client,
 ):
-    agent_name = "MySessionHostedAgent"
-
-    with create_agent_and_session(project_client, agent_name, image) as (_, session):
-
+    agent = get_latest_active_agent_version(project_client, agent_name)
+    session = project_client.beta.agents.create_session(
+        agent_name=agent_name,
+        isolation_key="sample-isolation-key",
+        version_indicator=VersionRefIndicator(agent_version=agent.version),
+    )
+    print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
+    try:
         # Upload and list session files
         project_client.beta.agents.upload_session_file(
             agent_name=agent_name,
@@ -115,3 +119,10 @@ with (
             agent_session_id=session.agent_session_id,
             path=remote_file_path2,
         )
+    finally:
+        project_client.beta.agents.delete_session(
+            agent_name=agent_name,
+            session_id=session.agent_session_id,
+            isolation_key="sample-isolation-key",
+        )
+        print(f"Session deleted (id: {session.agent_session_id})")

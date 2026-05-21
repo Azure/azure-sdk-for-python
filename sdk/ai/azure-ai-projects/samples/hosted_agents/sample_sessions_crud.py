@@ -24,11 +24,17 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
+    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
 
-    You can build and push an example image from
-    `samples/hosted_agents/assets/responses-echo-agent` and use that image value
-    for `FOUNDRY_AGENT_CONTAINER_IMAGE`.
+    If you don't have a Hosted Agent, run `sample_hosted_agent_create.py` first
+    to create one as a prerequisite.
+
+SDK FUNCTIONS:
+    - project_client.agents.list_versions: resolves the active version for the existing hosted agent.
+    - project_client.beta.agents.create_session: creates a session for the agent.
+    - project_client.beta.agents.get_session: retrieves a session by ID.
+    - project_client.beta.agents.list_sessions: lists sessions for an agent.
+    - project_client.beta.agents.delete_session: deletes a session by ID.
 """
 
 import os
@@ -38,13 +44,14 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import HostedAgentDefinition, VersionRefIndicator, ProtocolVersionRecord
-from hosted_agents_util import wait_for_agent_version_active
+from azure.ai.projects.models import VersionRefIndicator
+from hosted_agents_util import get_latest_active_agent_version
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
+agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
+isolation_key = "sample-isolation-key"
 
 with (
     DefaultAzureCredential() as credential,
@@ -54,39 +61,13 @@ with (
         allow_preview=True,
     ) as project_client,
 ):
-    agent_name = "MySessionHostedAgent"
-
-    # Create an agent version to back the session
-    agent = project_client.agents.create_version(
-        agent_name=agent_name,
-        definition=HostedAgentDefinition(
-            cpu="0.5",
-            memory="1Gi",
-            image=image,
-            container_protocol_versions=[
-                ProtocolVersionRecord(protocol="responses", version="1.0.0"),
-            ],
-        ),
-        metadata={"enableVnextExperience": "true"},
-    )
-    print(f"Agent created (name: {agent.name}, version: {agent.version})")
-
-    wait_for_agent_version_active(
-        project_client=project_client,
-        agent_name=agent_name,
-        agent_version=agent.version,
-    )
-
-    isolation_key = "sample-isolation-key"
-
-    # Create a session for the agent
-    print(f"Creating {3} sessions for the agent...")
+    agent = get_latest_active_agent_version(project_client, agent_name)
     session = project_client.beta.agents.create_session(
         agent_name=agent_name,
         isolation_key=isolation_key,
         version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
-    print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
+    print(f"Created session (id: {session.agent_session_id}, status: {session.status})")
 
     # Retrieve the session by its ID
     fetched = project_client.beta.agents.get_session(
@@ -102,11 +83,9 @@ with (
     for item in sessions:
         print(f"  - {item.agent_session_id} (status: {item.status})")
 
-    # Delete the session
-    print(f"Deleting session with id: {session.agent_session_id}...")
     project_client.beta.agents.delete_session(
         agent_name=agent_name,
         session_id=session.agent_session_id,
         isolation_key=isolation_key,
     )
-    print(f"Session with id: {session.agent_session_id} deleted.")
+    print(f"Deleted session (id: {session.agent_session_id})")

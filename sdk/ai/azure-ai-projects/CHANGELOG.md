@@ -1,9 +1,30 @@
 # Release History
 
+## 2.2.0 (Unreleased)
+
+### Features Added
+
+* New `FabricIQPreviewTool`.
+* New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
+
+### Breaking Changes
+
+* Agent Endpoint beta operations: Removed required parameters `user_isolation_key` and `chat_isolation_key` from the `HeaderIsolationKeySource` class constructor.
+
+### Bugs Fixed
+* Fixed telemetry instrumentor to correctly call is_recording() as a method on spans, ensuring non-recording spans are properly skipped (e.g., when sampling is configured) ([GitHub issue 46544](https://github.com/Azure/azure-sdk-for-python/issues/46544)).
+
+### Sample updates
+
+* Added Hosted Agent creation sample `sample_hosted_agent_create.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`.
+* The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
+* Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
+
 ## 2.1.0 (2026-04-20)
 
 ### Features Added
 
+* New `WorkIQPreviewTool`.
 * `get_openai_client()` on `AIProjectClient` now takes an optional input argument `agent_name`. If provided, the returned OpenAI
 client will use a base URL of Agent endpoint instead of Foundry Project endpoint. As Agent endpoints are a preview feature, you
 need to set `allow_preview=True` on the `AIProjectClient` constructor.
