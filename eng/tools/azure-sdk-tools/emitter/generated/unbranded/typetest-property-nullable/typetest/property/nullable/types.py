@@ -1,0 +1,122 @@
+# coding=utf-8
+
+import datetime
+from typing_extensions import Required, TypedDict
+
+
+class BytesProperty(TypedDict, total=False):
+    """Template type for testing models with nullable property. Pass in the type of the property you
+    are looking for.
+
+    :ivar required_property: Required property. Required.
+    :vartype required_property: str
+    :ivar nullable_property: Property. Required.
+    :vartype nullable_property: bytes
+    """
+
+    requiredProperty: Required[str]
+    """Required property. Required."""
+    nullableProperty: Required[bytes]
+    """Property. Required."""
+
+
+class CollectionsByteProperty(TypedDict, total=False):
+    """Model with collection bytes properties.
+
+    :ivar required_property: Required property. Required.
+    :vartype required_property: str
+    :ivar nullable_property: Property. Required.
+    :vartype nullable_property: list[bytes]
+    """
+
+    requiredProperty: Required[str]
+    """Required property. Required."""
+    nullableProperty: Required[list[bytes]]
+    """Property. Required."""
+
+
+class CollectionsModelProperty(TypedDict, total=False):
+    """Model with collection models properties.
+
+    :ivar required_property: Required property. Required.
+    :vartype required_property: str
+    :ivar nullable_property: Property. Required.
+    :vartype nullable_property: list[~typetest.property.nullable.models.InnerModel]
+    """
+
+    requiredProperty: Required[str]
+    """Required property. Required."""
+    nullableProperty: Required[list["InnerModel"]]
+    """Property. Required."""
+
+
+class CollectionsStringProperty(TypedDict, total=False):
+    """Model with collection string properties.
+
+    :ivar required_property: Required property. Required.
+    :vartype required_property: str
+    :ivar nullable_property: Property. Required.
+    :vartype nullable_property: list[str]
+    """
+
+    requiredProperty: Required[str]
+    """Required property. Required."""
+    nullableProperty: Required[list[str]]
+    """Property. Required."""
+
+
+class DatetimeProperty(TypedDict, total=False):
+    """Model with a datetime property.
+
+    :ivar required_property: Required property. Required.
+    :vartype required_property: str
+    :ivar nullable_property: Property. Required.
+    :vartype nullable_property: ~datetime.datetime
+    """
+
+    requiredProperty: Required[str]
+    """Required property. Required."""
+    nullableProperty: Required[datetime.datetime]
+    """Property. Required."""
+
+
+class DurationProperty(TypedDict, total=False):
+    """Model with a duration property.
+
+    :ivar required_property: Required property. Required.
+    :vartype required_property: str
+    :ivar nullable_property: Property. Required.
+    :vartype nullable_property: ~datetime.timedelta
+    """
+
+    requiredProperty: Required[str]
+    """Required property. Required."""
+    nullableProperty: Required[datetime.timedelta]
+    """Property. Required."""
+
+
+class InnerModel(TypedDict, total=False):
+    """Inner model used in collections model property.
+
+    :ivar property: Inner model property. Required.
+    :vartype property: str
+    """
+
+    property: Required[str]
+    """Inner model property. Required."""
+
+
+class StringProperty(TypedDict, total=False):
+    """Template type for testing models with nullable property. Pass in the type of the property you
+    are looking for.
+
+    :ivar required_property: Required property. Required.
+    :vartype required_property: str
+    :ivar nullable_property: Property. Required.
+    :vartype nullable_property: str
+    """
+
+    requiredProperty: Required[str]
+    """Required property. Required."""
+    nullableProperty: Required[str]
+    """Property. Required."""
