@@ -42,7 +42,6 @@ def main():
                     "excludedPrincipals": ["principal"],
                     "mode": "denyDelete",
                 },
-                "extensionConfigs": {"contoso": {"configOne": {"value": "config1Value"}, "configTwo": {"value": True}}},
                 "parameters": {"parameter1": {"value": "a string"}},
             },
             "tags": {"tagkey": "tagVal"},
@@ -51,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/DeploymentStackSubscriptionCreate.json
+# x-ms-original-file: 2024-03-01/DeploymentStackSubscriptionCreate.json
 if __name__ == "__main__":
     main()

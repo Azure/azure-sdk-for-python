@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/DeploymentStackResourceGroupValidate.json
+# x-ms-original-file: 2024-03-01/DeploymentStackResourceGroupValidate.json
 if __name__ == "__main__":
     main()

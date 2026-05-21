@@ -47,114 +47,36 @@ class DenyStatusMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authorized users can only read from a resource, but cannot modify or delete it."""
     REMOVED_BY_SYSTEM = "removedBySystem"
     """Deny assignment has been removed by Azure due to a resource management change (management group
-    move, etc.)"""
+    move, etc.)."""
     NONE = "none"
     """No denyAssignments have been applied."""
-    UNKNOWN = "unknown"
-    """The denyAssignment status is unknown."""
 
 
 class DeploymentStackProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the deployment stack."""
 
     CREATING = "creating"
-    """The deployment stack is currently being created"""
+    """The deployment stack is currently being created."""
     VALIDATING = "validating"
-    """The deployment stack is currently being validated"""
+    """The deployment stack is currently being validated."""
     WAITING = "waiting"
-    """The deployment stack is currently waiting"""
+    """The deployment stack is currently waiting."""
     DEPLOYING = "deploying"
-    """The deployment stack is currently deploying"""
+    """The deployment stack is currently deploying."""
     CANCELING = "canceling"
-    """The deployment stack is being cancelled"""
+    """The deployment stack is being cancelled."""
     UPDATING_DENY_ASSIGNMENTS = "updatingDenyAssignments"
-    """The deployment stack is updating deny assignments"""
+    """The deployment stack is updating deny assignments."""
     DELETING_RESOURCES = "deletingResources"
-    """The deployment stack is deleting resources"""
+    """The deployment stack is deleting resources."""
     SUCCEEDED = "succeeded"
-    """The deployment stack completed successfully"""
+    """The deployment stack completed successfully."""
     FAILED = "failed"
-    """The deployment stack has failed"""
+    """The deployment stack has failed."""
     CANCELED = "canceled"
-    """The deployment stack has been cancelled"""
+    """The deployment stack has been cancelled."""
     DELETING = "deleting"
-    """The deployment stack is being deleted"""
-    INITIALIZING = "initializing"
-    """The deployment stack is currently being initialized"""
-    RUNNING = "running"
-    """The deployment stack is currently performing an operation"""
-
-
-class DeploymentStacksDiagnosticLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Denotes the additional response level."""
-
-    INFO = "info"
-    """Informational message."""
-    WARNING = "warning"
-    """Warning message."""
-    ERROR = "error"
-    """Error message."""
-
-
-class DeploymentStacksManagementStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The management status of the deployment stack resource."""
-
-    MANAGED = "managed"
-    """The resource is managed by the deployment stack."""
-    UNMANAGED = "unmanaged"
-    """The resource is not managed by the deployment stack."""
-    UNKNOWN = "unknown"
-    """The management state of the resource could not be determined."""
-
-
-class DeploymentStacksWhatIfChangeCertainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Denotes the confidence level of the predicted change."""
-
-    DEFINITE = "definite"
-    """The change is definite."""
-    POTENTIAL = "potential"
-    """The change may or may not happen, based on deployment-time conditions."""
-
-
-class DeploymentStacksWhatIfChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of change that will be made to the resource when the deployment is executed."""
-
-    CREATE = "create"
-    """The resource does not exist in the current state but is present in the desired state. The
-    resource will be created when the deployment is executed."""
-    DELETE = "delete"
-    """The resource exists in the current state and is missing from the desired state. The resource
-    will be deleted from Azure after the deployment is executed."""
-    DETACH = "detach"
-    """The resource exists in the current state and is missing from the desired state. The resource
-    will be removed from the deployment stack, but will remain in Azure, after the deployment is
-    executed."""
-    MODIFY = "modify"
-    """The resource exists in the current state and the desired state and will be redeployed when the
-    deployment is executed. The properties of the resource will change."""
-    NO_CHANGE = "noChange"
-    """The resource exists in the current state and the desired state and will be redeployed when the
-    deployment is executed. The properties of the resource will not change."""
-    UNSUPPORTED = "unsupported"
-    """The resource is not supported by What-If."""
-
-
-class DeploymentStacksWhatIfPropertyChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of property change."""
-
-    ARRAY = "array"
-    """The property is an array and contains nested changes."""
-    CREATE = "create"
-    """The property does not exist in the current state but is present in the desired state. The
-    property will be created when the deployment is executed."""
-    DELETE = "delete"
-    """The property exists in the current state and is missing from the desired state. It will be
-    deleted when the deployment is executed."""
-    MODIFY = "modify"
-    """The property exists in both current and desired state and is different. The value of the
-    property will change when the deployment is executed."""
-    NO_EFFECT = "noEffect"
-    """The property will not be set or updated."""
+    """The deployment stack is being deleted."""
 
 
 class ResourceStatusMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -167,15 +89,6 @@ class ResourceStatusMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETE_FAILED = "deleteFailed"
     """Unable to delete the resource from Azure. The delete will be retried on the next stack
     deployment, or can be deleted manually."""
-
-
-class ResourcesWithoutDeleteSupportAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies an action for resources that do not support deletion."""
-
-    DETACH = "detach"
-    """Detach the specified resources from the deployment stack and continue."""
-    FAIL = "fail"
-    """Fail the deployment stack if resources cannot be deleted."""
 
 
 class UnmanageActionManagementGroupMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -200,21 +113,6 @@ class UnmanageActionResourceMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies an action for a newly unmanaged resource."""
 
     DELETE = "delete"
-    """Delete the resources from Azure"""
+    """Delete the resources from Azure."""
     DETACH = "detach"
-    """Keep the resources in Azure"""
-
-
-class ValidationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The level of validation performed on the deployment."""
-
-    TEMPLATE = "Template"
-    """Static analysis of the template is performed."""
-    PROVIDER = "Provider"
-    """Static analysis of the template is performed and resource declarations are sent to resource
-    providers for semantic validation. Validates that the caller has RBAC write permissions on each
-    resource."""
-    PROVIDER_NO_RBAC = "ProviderNoRbac"
-    """Static analysis of the template is performed and resource declarations are sent to resource
-    providers for semantic validation. Skips validating that the caller has RBAC write permissions
-    on each resource."""
+    """Keep the resources in Azure."""

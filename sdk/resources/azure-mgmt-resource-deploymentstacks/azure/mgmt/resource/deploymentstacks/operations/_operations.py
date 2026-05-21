@@ -41,523 +41,9 @@ from .._validation import api_version_validation
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-
-
-def build_deployment_stacks_what_if_results_at_resource_group_get_request(  # pylint: disable=name-too-long
-    resource_group_name: str, deployment_stacks_what_if_result_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_resource_group_list_request(  # pylint: disable=name-too-long
-    resource_group_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacksWhatIfResults"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_resource_group_create_or_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str, deployment_stacks_what_if_result_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_resource_group_delete_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    deployment_stacks_what_if_result_name: str,
-    subscription_id: str,
-    *,
-    unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
-    unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
-    unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-    unmanage_action_resources_without_delete_support: Optional[
-        Union[str, _models.ResourcesWithoutDeleteSupportAction]
-    ] = None,
-    bypass_stack_out_of_sync_error: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if unmanage_action_resources is not None:
-        _params["unmanageAction.Resources"] = _SERIALIZER.query(
-            "unmanage_action_resources", unmanage_action_resources, "str"
-        )
-    if unmanage_action_resource_groups is not None:
-        _params["unmanageAction.ResourceGroups"] = _SERIALIZER.query(
-            "unmanage_action_resource_groups", unmanage_action_resource_groups, "str"
-        )
-    if unmanage_action_management_groups is not None:
-        _params["unmanageAction.ManagementGroups"] = _SERIALIZER.query(
-            "unmanage_action_management_groups", unmanage_action_management_groups, "str"
-        )
-    if unmanage_action_resources_without_delete_support is not None:
-        _params["unmanageAction.ResourcesWithoutDeleteSupport"] = _SERIALIZER.query(
-            "unmanage_action_resources_without_delete_support", unmanage_action_resources_without_delete_support, "str"
-        )
-    if bypass_stack_out_of_sync_error is not None:
-        _params["bypassStackOutOfSyncError"] = _SERIALIZER.query(
-            "bypass_stack_out_of_sync_error", bypass_stack_out_of_sync_error, "bool"
-        )
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_resource_group_what_if_request(  # pylint: disable=name-too-long
-    resource_group_name: str, deployment_stacks_what_if_result_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}/whatIf"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_subscription_get_request(  # pylint: disable=name-too-long
-    deployment_stacks_what_if_result_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_subscription_list_request(  # pylint: disable=name-too-long
-    subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacksWhatIfResults"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_subscription_create_or_update_request(  # pylint: disable=name-too-long
-    deployment_stacks_what_if_result_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_subscription_delete_request(  # pylint: disable=name-too-long
-    deployment_stacks_what_if_result_name: str,
-    subscription_id: str,
-    *,
-    unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
-    unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
-    unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-    unmanage_action_resources_without_delete_support: Optional[
-        Union[str, _models.ResourcesWithoutDeleteSupportAction]
-    ] = None,
-    bypass_stack_out_of_sync_error: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if unmanage_action_resources is not None:
-        _params["unmanageAction.Resources"] = _SERIALIZER.query(
-            "unmanage_action_resources", unmanage_action_resources, "str"
-        )
-    if unmanage_action_resource_groups is not None:
-        _params["unmanageAction.ResourceGroups"] = _SERIALIZER.query(
-            "unmanage_action_resource_groups", unmanage_action_resource_groups, "str"
-        )
-    if unmanage_action_management_groups is not None:
-        _params["unmanageAction.ManagementGroups"] = _SERIALIZER.query(
-            "unmanage_action_management_groups", unmanage_action_management_groups, "str"
-        )
-    if unmanage_action_resources_without_delete_support is not None:
-        _params["unmanageAction.ResourcesWithoutDeleteSupport"] = _SERIALIZER.query(
-            "unmanage_action_resources_without_delete_support", unmanage_action_resources_without_delete_support, "str"
-        )
-    if bypass_stack_out_of_sync_error is not None:
-        _params["bypassStackOutOfSyncError"] = _SERIALIZER.query(
-            "bypass_stack_out_of_sync_error", bypass_stack_out_of_sync_error, "bool"
-        )
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_subscription_what_if_request(  # pylint: disable=name-too-long
-    deployment_stacks_what_if_result_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}/whatIf"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_management_group_get_request(  # pylint: disable=name-too-long
-    management_group_id: str, deployment_stacks_what_if_result_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}"
-    path_format_arguments = {
-        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_management_group_list_request(  # pylint: disable=name-too-long
-    management_group_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacksWhatIfResults"
-    path_format_arguments = {
-        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_management_group_create_or_update_request(  # pylint: disable=name-too-long
-    management_group_id: str, deployment_stacks_what_if_result_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}"
-    path_format_arguments = {
-        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_management_group_delete_request(  # pylint: disable=name-too-long
-    management_group_id: str,
-    deployment_stacks_what_if_result_name: str,
-    *,
-    unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
-    unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
-    unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-    unmanage_action_resources_without_delete_support: Optional[
-        Union[str, _models.ResourcesWithoutDeleteSupportAction]
-    ] = None,
-    bypass_stack_out_of_sync_error: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    # Construct URL
-    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}"
-    path_format_arguments = {
-        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if unmanage_action_resources is not None:
-        _params["unmanageAction.Resources"] = _SERIALIZER.query(
-            "unmanage_action_resources", unmanage_action_resources, "str"
-        )
-    if unmanage_action_resource_groups is not None:
-        _params["unmanageAction.ResourceGroups"] = _SERIALIZER.query(
-            "unmanage_action_resource_groups", unmanage_action_resource_groups, "str"
-        )
-    if unmanage_action_management_groups is not None:
-        _params["unmanageAction.ManagementGroups"] = _SERIALIZER.query(
-            "unmanage_action_management_groups", unmanage_action_management_groups, "str"
-        )
-    if unmanage_action_resources_without_delete_support is not None:
-        _params["unmanageAction.ResourcesWithoutDeleteSupport"] = _SERIALIZER.query(
-            "unmanage_action_resources_without_delete_support", unmanage_action_resources_without_delete_support, "str"
-        )
-    if bypass_stack_out_of_sync_error is not None:
-        _params["bypassStackOutOfSyncError"] = _SERIALIZER.query(
-            "bypass_stack_out_of_sync_error", bypass_stack_out_of_sync_error, "bool"
-        )
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_deployment_stacks_what_if_results_at_management_group_what_if_request(  # pylint: disable=name-too-long
-    management_group_id: str, deployment_stacks_what_if_result_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacksWhatIfResults/{deploymentStacksWhatIfResultName}/whatIf"
-    path_format_arguments = {
-        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
-        "deploymentStacksWhatIfResultName": _SERIALIZER.url(
-            "deployment_stacks_what_if_result_name", deployment_stacks_what_if_result_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_deployment_stacks_get_at_resource_group_request(  # pylint: disable=name-too-long
@@ -566,7 +52,7 @@ def build_deployment_stacks_get_at_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -594,7 +80,7 @@ def build_deployment_stacks_list_at_resource_group_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -622,7 +108,7 @@ def build_deployment_stacks_validate_stack_at_resource_group_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -653,7 +139,7 @@ def build_deployment_stacks_create_or_update_at_resource_group_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -685,15 +171,12 @@ def build_deployment_stacks_delete_at_resource_group_request(  # pylint: disable
     unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
     unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
     unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-    unmanage_action_resources_without_delete_support: Optional[
-        Union[str, _models.ResourcesWithoutDeleteSupportAction]
-    ] = None,
     bypass_stack_out_of_sync_error: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
     path_format_arguments = {
@@ -718,10 +201,6 @@ def build_deployment_stacks_delete_at_resource_group_request(  # pylint: disable
         _params["unmanageAction.ManagementGroups"] = _SERIALIZER.query(
             "unmanage_action_management_groups", unmanage_action_management_groups, "str"
         )
-    if unmanage_action_resources_without_delete_support is not None:
-        _params["unmanageAction.ResourcesWithoutDeleteSupport"] = _SERIALIZER.query(
-            "unmanage_action_resources_without_delete_support", unmanage_action_resources_without_delete_support, "str"
-        )
     if bypass_stack_out_of_sync_error is not None:
         _params["bypassStackOutOfSyncError"] = _SERIALIZER.query(
             "bypass_stack_out_of_sync_error", bypass_stack_out_of_sync_error, "bool"
@@ -736,7 +215,7 @@ def build_deployment_stacks_export_template_at_resource_group_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -764,7 +243,7 @@ def build_deployment_stacks_get_at_subscription_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -791,7 +270,7 @@ def build_deployment_stacks_list_at_subscription_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -818,7 +297,7 @@ def build_deployment_stacks_validate_stack_at_subscription_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -850,7 +329,7 @@ def build_deployment_stacks_create_or_update_at_subscription_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -880,15 +359,12 @@ def build_deployment_stacks_delete_at_subscription_request(  # pylint: disable=n
     unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
     unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
     unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-    unmanage_action_resources_without_delete_support: Optional[
-        Union[str, _models.ResourcesWithoutDeleteSupportAction]
-    ] = None,
     bypass_stack_out_of_sync_error: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
     path_format_arguments = {
@@ -912,10 +388,6 @@ def build_deployment_stacks_delete_at_subscription_request(  # pylint: disable=n
         _params["unmanageAction.ManagementGroups"] = _SERIALIZER.query(
             "unmanage_action_management_groups", unmanage_action_management_groups, "str"
         )
-    if unmanage_action_resources_without_delete_support is not None:
-        _params["unmanageAction.ResourcesWithoutDeleteSupport"] = _SERIALIZER.query(
-            "unmanage_action_resources_without_delete_support", unmanage_action_resources_without_delete_support, "str"
-        )
     if bypass_stack_out_of_sync_error is not None:
         _params["bypassStackOutOfSyncError"] = _SERIALIZER.query(
             "bypass_stack_out_of_sync_error", bypass_stack_out_of_sync_error, "bool"
@@ -930,7 +402,7 @@ def build_deployment_stacks_export_template_at_subscription_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -957,7 +429,7 @@ def build_deployment_stacks_get_at_management_group_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -984,7 +456,7 @@ def build_deployment_stacks_list_at_management_group_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1011,7 +483,7 @@ def build_deployment_stacks_validate_stack_at_management_group_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1041,7 +513,7 @@ def build_deployment_stacks_create_or_update_at_management_group_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1071,15 +543,12 @@ def build_deployment_stacks_delete_at_management_group_request(  # pylint: disab
     unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
     unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
     unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-    unmanage_action_resources_without_delete_support: Optional[
-        Union[str, _models.ResourcesWithoutDeleteSupportAction]
-    ] = None,
     bypass_stack_out_of_sync_error: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     # Construct URL
     _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Resources/deploymentStacks/{deploymentStackName}"
     path_format_arguments = {
@@ -1103,10 +572,6 @@ def build_deployment_stacks_delete_at_management_group_request(  # pylint: disab
         _params["unmanageAction.ManagementGroups"] = _SERIALIZER.query(
             "unmanage_action_management_groups", unmanage_action_management_groups, "str"
         )
-    if unmanage_action_resources_without_delete_support is not None:
-        _params["unmanageAction.ResourcesWithoutDeleteSupport"] = _SERIALIZER.query(
-            "unmanage_action_resources_without_delete_support", unmanage_action_resources_without_delete_support, "str"
-        )
     if bypass_stack_out_of_sync_error is not None:
         _params["bypassStackOutOfSyncError"] = _SERIALIZER.query(
             "bypass_stack_out_of_sync_error", bypass_stack_out_of_sync_error, "bool"
@@ -1121,7 +586,7 @@ def build_deployment_stacks_export_template_at_management_group_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1140,2142 +605,6 @@ def build_deployment_stacks_export_template_at_management_group_request(  # pyli
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class DeploymentStacksWhatIfResultsAtResourceGroupOperations:  # pylint: disable=name-too-long
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.deploymentstacks.DeploymentStacksClient`'s
-        :attr:`deployment_stacks_what_if_results_at_resource_group` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DeploymentStacksClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "deployment_stacks_what_if_result_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def get(
-        self, resource_group_name: str, deployment_stacks_what_if_result_name: str, **kwargs: Any
-    ) -> _models.DeploymentStacksWhatIfResult:
-        """Gets the Deployment stack with the given name.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :return: DeploymentStacksWhatIfResult. The DeploymentStacksWhatIfResult is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DeploymentStacksWhatIfResult] = kwargs.pop("cls", None)
-
-        _request = build_deployment_stacks_what_if_results_at_resource_group_get_request(
-            resource_group_name=resource_group_name,
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.DeploymentStacksWhatIfResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={"2025-07-01": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2025-07-01"],
-    )
-    def list(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.DeploymentStacksWhatIfResult"]:
-        """Lists Deployment stacks at the specified scope.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :return: An iterator like instance of DeploymentStacksWhatIfResult
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.DeploymentStacksWhatIfResult]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_deployment_stacks_what_if_results_at_resource_group_list_request(
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeploymentStacksWhatIfResult], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "deployment_stacks_what_if_result_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def _create_or_update_initial(
-        self,
-        resource_group_name: str,
-        deployment_stacks_what_if_result_name: str,
-        resource: Union[_models.DeploymentStacksWhatIfResult, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
-        else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_deployment_stacks_what_if_results_at_resource_group_create_or_update_request(
-            resource_group_name=resource_group_name,
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        deployment_stacks_what_if_result_name: str,
-        resource: _models.DeploymentStacksWhatIfResult,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        deployment_stacks_what_if_result_name: str,
-        resource: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        deployment_stacks_what_if_result_name: str,
-        resource: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "deployment_stacks_what_if_result_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        deployment_stacks_what_if_result_name: str,
-        resource: Union[_models.DeploymentStacksWhatIfResult, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         DeploymentStacksWhatIfResult, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult or
-         JSON or IO[bytes]
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DeploymentStacksWhatIfResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-                resource=resource,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.DeploymentStacksWhatIfResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.DeploymentStacksWhatIfResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.DeploymentStacksWhatIfResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "deployment_stacks_what_if_result_name",
-                "unmanage_action_resources",
-                "unmanage_action_resource_groups",
-                "unmanage_action_management_groups",
-                "unmanage_action_resources_without_delete_support",
-                "bypass_stack_out_of_sync_error",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        deployment_stacks_what_if_result_name: str,
-        *,
-        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-        unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.ResourcesWithoutDeleteSupportAction]
-        ] = None,
-        bypass_stack_out_of_sync_error: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a Deployment stack by name at the specified scope. When operation completes, status
-        code 200 returned without content.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :keyword unmanage_action_resources: Flag to indicate delete rather than detach for unmanaged
-         resources. Known values are: "delete" and "detach". Default value is None.
-        :paramtype unmanage_action_resources: str or
-         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceMode
-        :keyword unmanage_action_resource_groups: Flag to indicate delete rather than detach for
-         unmanaged resource groups. Known values are: "delete" and "detach". Default value is None.
-        :paramtype unmanage_action_resource_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceGroupMode
-        :keyword unmanage_action_management_groups: Flag to indicate delete rather than detach for
-         unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
-        :paramtype unmanage_action_management_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
-        :keyword unmanage_action_resources_without_delete_support: Some resources do not support
-         deletion.  This flag will denote how the stack should handle those resources. Known values are:
-         "detach" and "fail". Default value is None.
-        :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
-        :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
-         resource list is not correctly synchronized. Default value is None.
-        :paramtype bypass_stack_out_of_sync_error: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_deployment_stacks_what_if_results_at_resource_group_delete_request(
-            resource_group_name=resource_group_name,
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            subscription_id=self._config.subscription_id,
-            unmanage_action_resources=unmanage_action_resources,
-            unmanage_action_resource_groups=unmanage_action_resource_groups,
-            unmanage_action_management_groups=unmanage_action_management_groups,
-            unmanage_action_resources_without_delete_support=unmanage_action_resources_without_delete_support,
-            bypass_stack_out_of_sync_error=bypass_stack_out_of_sync_error,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "deployment_stacks_what_if_result_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def _what_if_initial(
-        self, resource_group_name: str, deployment_stacks_what_if_result_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_deployment_stacks_what_if_results_at_resource_group_what_if_request(
-            resource_group_name=resource_group_name,
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "deployment_stacks_what_if_result_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def begin_what_if(
-        self, resource_group_name: str, deployment_stacks_what_if_result_name: str, **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Returns property-level changes that will be made by the deployment if executed.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DeploymentStacksWhatIfResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._what_if_initial(
-                resource_group_name=resource_group_name,
-                deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.DeploymentStacksWhatIfResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.DeploymentStacksWhatIfResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.DeploymentStacksWhatIfResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-
-class DeploymentStacksWhatIfResultsAtSubscriptionOperations:  # pylint: disable=name-too-long
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.deploymentstacks.DeploymentStacksClient`'s
-        :attr:`deployment_stacks_what_if_results_at_subscription` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DeploymentStacksClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": ["api_version", "subscription_id", "deployment_stacks_what_if_result_name", "accept"]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def get(self, deployment_stacks_what_if_result_name: str, **kwargs: Any) -> _models.DeploymentStacksWhatIfResult:
-        """Gets the Deployment stack with the given name.
-
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :return: DeploymentStacksWhatIfResult. The DeploymentStacksWhatIfResult is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DeploymentStacksWhatIfResult] = kwargs.pop("cls", None)
-
-        _request = build_deployment_stacks_what_if_results_at_subscription_get_request(
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.DeploymentStacksWhatIfResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={"2025-07-01": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-07-01"],
-    )
-    def list(self, **kwargs: Any) -> ItemPaged["_models.DeploymentStacksWhatIfResult"]:
-        """Lists Deployment stacks at the specified scope.
-
-        :return: An iterator like instance of DeploymentStacksWhatIfResult
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.DeploymentStacksWhatIfResult]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_deployment_stacks_what_if_results_at_subscription_list_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeploymentStacksWhatIfResult], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "subscription_id",
-                "deployment_stacks_what_if_result_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def _create_or_update_initial(
-        self,
-        deployment_stacks_what_if_result_name: str,
-        resource: Union[_models.DeploymentStacksWhatIfResult, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
-        else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_deployment_stacks_what_if_results_at_subscription_create_or_update_request(
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create_or_update(
-        self,
-        deployment_stacks_what_if_result_name: str,
-        resource: _models.DeploymentStacksWhatIfResult,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        deployment_stacks_what_if_result_name: str,
-        resource: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        deployment_stacks_what_if_result_name: str,
-        resource: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "subscription_id",
-                "deployment_stacks_what_if_result_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def begin_create_or_update(
-        self,
-        deployment_stacks_what_if_result_name: str,
-        resource: Union[_models.DeploymentStacksWhatIfResult, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         DeploymentStacksWhatIfResult, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult or
-         JSON or IO[bytes]
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DeploymentStacksWhatIfResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-                resource=resource,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.DeploymentStacksWhatIfResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.DeploymentStacksWhatIfResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.DeploymentStacksWhatIfResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "subscription_id",
-                "deployment_stacks_what_if_result_name",
-                "unmanage_action_resources",
-                "unmanage_action_resource_groups",
-                "unmanage_action_management_groups",
-                "unmanage_action_resources_without_delete_support",
-                "bypass_stack_out_of_sync_error",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        deployment_stacks_what_if_result_name: str,
-        *,
-        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-        unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.ResourcesWithoutDeleteSupportAction]
-        ] = None,
-        bypass_stack_out_of_sync_error: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a Deployment stack by name at the specified scope. When operation completes, status
-        code 200 returned without content.
-
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :keyword unmanage_action_resources: Flag to indicate delete rather than detach for unmanaged
-         resources. Known values are: "delete" and "detach". Default value is None.
-        :paramtype unmanage_action_resources: str or
-         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceMode
-        :keyword unmanage_action_resource_groups: Flag to indicate delete rather than detach for
-         unmanaged resource groups. Known values are: "delete" and "detach". Default value is None.
-        :paramtype unmanage_action_resource_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceGroupMode
-        :keyword unmanage_action_management_groups: Flag to indicate delete rather than detach for
-         unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
-        :paramtype unmanage_action_management_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
-        :keyword unmanage_action_resources_without_delete_support: Some resources do not support
-         deletion.  This flag will denote how the stack should handle those resources. Known values are:
-         "detach" and "fail". Default value is None.
-        :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
-        :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
-         resource list is not correctly synchronized. Default value is None.
-        :paramtype bypass_stack_out_of_sync_error: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_deployment_stacks_what_if_results_at_subscription_delete_request(
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            subscription_id=self._config.subscription_id,
-            unmanage_action_resources=unmanage_action_resources,
-            unmanage_action_resource_groups=unmanage_action_resource_groups,
-            unmanage_action_management_groups=unmanage_action_management_groups,
-            unmanage_action_resources_without_delete_support=unmanage_action_resources_without_delete_support,
-            bypass_stack_out_of_sync_error=bypass_stack_out_of_sync_error,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": ["api_version", "subscription_id", "deployment_stacks_what_if_result_name", "accept"]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def _what_if_initial(self, deployment_stacks_what_if_result_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_deployment_stacks_what_if_results_at_subscription_what_if_request(
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": ["api_version", "subscription_id", "deployment_stacks_what_if_result_name", "accept"]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def begin_what_if(
-        self, deployment_stacks_what_if_result_name: str, **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Returns property-level changes that will be made by the deployment if executed.
-
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DeploymentStacksWhatIfResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._what_if_initial(
-                deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.DeploymentStacksWhatIfResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.DeploymentStacksWhatIfResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.DeploymentStacksWhatIfResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-
-class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disable=name-too-long
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.deploymentstacks.DeploymentStacksClient`'s
-        :attr:`deployment_stacks_what_if_results_at_management_group` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DeploymentStacksClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": ["api_version", "management_group_id", "deployment_stacks_what_if_result_name", "accept"]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def get(
-        self, management_group_id: str, deployment_stacks_what_if_result_name: str, **kwargs: Any
-    ) -> _models.DeploymentStacksWhatIfResult:
-        """Gets the Deployment stack with the given name.
-
-        :param management_group_id: The management group ID. Required.
-        :type management_group_id: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :return: DeploymentStacksWhatIfResult. The DeploymentStacksWhatIfResult is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DeploymentStacksWhatIfResult] = kwargs.pop("cls", None)
-
-        _request = build_deployment_stacks_what_if_results_at_management_group_get_request(
-            management_group_id=management_group_id,
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.DeploymentStacksWhatIfResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={"2025-07-01": ["api_version", "management_group_id", "accept"]},
-        api_versions_list=["2025-07-01"],
-    )
-    def list(self, management_group_id: str, **kwargs: Any) -> ItemPaged["_models.DeploymentStacksWhatIfResult"]:
-        """Lists Deployment stacks at the specified scope.
-
-        :param management_group_id: The management group ID. Required.
-        :type management_group_id: str
-        :return: An iterator like instance of DeploymentStacksWhatIfResult
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.DeploymentStacksWhatIfResult]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_deployment_stacks_what_if_results_at_management_group_list_request(
-                    management_group_id=management_group_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeploymentStacksWhatIfResult], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "management_group_id",
-                "deployment_stacks_what_if_result_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def _create_or_update_initial(
-        self,
-        management_group_id: str,
-        deployment_stacks_what_if_result_name: str,
-        resource: Union[_models.DeploymentStacksWhatIfResult, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
-        else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_deployment_stacks_what_if_results_at_management_group_create_or_update_request(
-            management_group_id=management_group_id,
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create_or_update(
-        self,
-        management_group_id: str,
-        deployment_stacks_what_if_result_name: str,
-        resource: _models.DeploymentStacksWhatIfResult,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param management_group_id: The management group ID. Required.
-        :type management_group_id: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        management_group_id: str,
-        deployment_stacks_what_if_result_name: str,
-        resource: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param management_group_id: The management group ID. Required.
-        :type management_group_id: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        management_group_id: str,
-        deployment_stacks_what_if_result_name: str,
-        resource: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param management_group_id: The management group ID. Required.
-        :type management_group_id: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "management_group_id",
-                "deployment_stacks_what_if_result_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def begin_create_or_update(
-        self,
-        management_group_id: str,
-        deployment_stacks_what_if_result_name: str,
-        resource: Union[_models.DeploymentStacksWhatIfResult, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Creates or updates a Deployment stack at the specified scope.
-
-        :param management_group_id: The management group ID. Required.
-        :type management_group_id: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         DeploymentStacksWhatIfResult, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult or
-         JSON or IO[bytes]
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DeploymentStacksWhatIfResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                management_group_id=management_group_id,
-                deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-                resource=resource,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.DeploymentStacksWhatIfResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.DeploymentStacksWhatIfResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.DeploymentStacksWhatIfResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": [
-                "api_version",
-                "management_group_id",
-                "deployment_stacks_what_if_result_name",
-                "unmanage_action_resources",
-                "unmanage_action_resource_groups",
-                "unmanage_action_management_groups",
-                "unmanage_action_resources_without_delete_support",
-                "bypass_stack_out_of_sync_error",
-            ]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        management_group_id: str,
-        deployment_stacks_what_if_result_name: str,
-        *,
-        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-        unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.ResourcesWithoutDeleteSupportAction]
-        ] = None,
-        bypass_stack_out_of_sync_error: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a Deployment stack by name at the specified scope. When operation completes, status
-        code 200 returned without content.
-
-        :param management_group_id: The management group ID. Required.
-        :type management_group_id: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :keyword unmanage_action_resources: Flag to indicate delete rather than detach for unmanaged
-         resources. Known values are: "delete" and "detach". Default value is None.
-        :paramtype unmanage_action_resources: str or
-         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceMode
-        :keyword unmanage_action_resource_groups: Flag to indicate delete rather than detach for
-         unmanaged resource groups. Known values are: "delete" and "detach". Default value is None.
-        :paramtype unmanage_action_resource_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceGroupMode
-        :keyword unmanage_action_management_groups: Flag to indicate delete rather than detach for
-         unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
-        :paramtype unmanage_action_management_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
-        :keyword unmanage_action_resources_without_delete_support: Some resources do not support
-         deletion.  This flag will denote how the stack should handle those resources. Known values are:
-         "detach" and "fail". Default value is None.
-        :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
-        :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
-         resource list is not correctly synchronized. Default value is None.
-        :paramtype bypass_stack_out_of_sync_error: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_deployment_stacks_what_if_results_at_management_group_delete_request(
-            management_group_id=management_group_id,
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            unmanage_action_resources=unmanage_action_resources,
-            unmanage_action_resource_groups=unmanage_action_resource_groups,
-            unmanage_action_management_groups=unmanage_action_management_groups,
-            unmanage_action_resources_without_delete_support=unmanage_action_resources_without_delete_support,
-            bypass_stack_out_of_sync_error=bypass_stack_out_of_sync_error,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": ["api_version", "management_group_id", "deployment_stacks_what_if_result_name", "accept"]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def _what_if_initial(
-        self, management_group_id: str, deployment_stacks_what_if_result_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_deployment_stacks_what_if_results_at_management_group_what_if_request(
-            management_group_id=management_group_id,
-            deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-01",
-        params_added_on={
-            "2025-07-01": ["api_version", "management_group_id", "deployment_stacks_what_if_result_name", "accept"]
-        },
-        api_versions_list=["2025-07-01"],
-    )
-    def begin_what_if(
-        self, management_group_id: str, deployment_stacks_what_if_result_name: str, **kwargs: Any
-    ) -> LROPoller[_models.DeploymentStacksWhatIfResult]:
-        """Returns property-level changes that will be made by the deployment if executed.
-
-        :param management_group_id: The management group ID. Required.
-        :type management_group_id: str
-        :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
-         Required.
-        :type deployment_stacks_what_if_result_name: str
-        :return: An instance of LROPoller that returns DeploymentStacksWhatIfResult. The
-         DeploymentStacksWhatIfResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DeploymentStacksWhatIfResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._what_if_initial(
-                management_group_id=management_group_id,
-                deployment_stacks_what_if_result_name=deployment_stacks_what_if_result_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.DeploymentStacksWhatIfResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.DeploymentStacksWhatIfResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.DeploymentStacksWhatIfResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
 
 
 class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
@@ -3336,6 +665,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3357,7 +687,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeploymentStack, response.json())
 
@@ -3381,7 +711,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DeploymentStack]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DeploymentStack]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3419,7 +749,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3432,7 +765,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeploymentStack], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.DeploymentStack],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3470,7 +806,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2024-03-01", "2025-07-01"],
+        api_versions_list=["2024-03-01"],
     )
     def _validate_stack_at_resource_group_initial(  # pylint: disable=name-too-long
         self,
@@ -3515,6 +851,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3539,7 +876,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3649,7 +986,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2024-03-01", "2025-07-01"],
+        api_versions_list=["2024-03-01"],
     )
     def begin_validate_stack_at_resource_group(
         self,
@@ -3699,14 +1036,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.DeploymentStackValidateResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3775,6 +1108,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3801,7 +1135,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3973,11 +1307,8 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         )
 
     @api_version_validation(
-        params_added_on={
-            "2025-07-01": ["unmanage_action_resources_without_delete_support"],
-            "2024-03-01": ["bypass_stack_out_of_sync_error"],
-        },
-        api_versions_list=["2022-08-01-preview", "2024-03-01", "2025-07-01"],
+        params_added_on={"2024-03-01": ["bypass_stack_out_of_sync_error"]},
+        api_versions_list=["2022-08-01-preview", "2024-03-01"],
     )
     def _delete_at_resource_group_initial(
         self,
@@ -3987,9 +1318,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
         unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
         unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-        unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.ResourcesWithoutDeleteSupportAction]
-        ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -4013,7 +1341,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             unmanage_action_resources=unmanage_action_resources,
             unmanage_action_resource_groups=unmanage_action_resource_groups,
             unmanage_action_management_groups=unmanage_action_management_groups,
-            unmanage_action_resources_without_delete_support=unmanage_action_resources_without_delete_support,
             bypass_stack_out_of_sync_error=bypass_stack_out_of_sync_error,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4024,6 +1351,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4048,7 +1376,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4057,11 +1385,8 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        params_added_on={
-            "2025-07-01": ["unmanage_action_resources_without_delete_support"],
-            "2024-03-01": ["bypass_stack_out_of_sync_error"],
-        },
-        api_versions_list=["2022-08-01-preview", "2024-03-01", "2025-07-01"],
+        params_added_on={"2024-03-01": ["bypass_stack_out_of_sync_error"]},
+        api_versions_list=["2022-08-01-preview", "2024-03-01"],
     )
     def begin_delete_at_resource_group(
         self,
@@ -4071,9 +1396,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
         unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
         unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-        unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.ResourcesWithoutDeleteSupportAction]
-        ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -4097,11 +1419,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
          unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_management_groups: str or
          ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
-        :keyword unmanage_action_resources_without_delete_support: Some resources do not support
-         deletion.  This flag will denote how the stack should handle those resources. Known values are:
-         "detach" and "fail". Default value is None.
-        :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
         :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
          resource list is not correctly synchronized. Default value is None.
         :paramtype bypass_stack_out_of_sync_error: bool
@@ -4123,7 +1440,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                 unmanage_action_resources=unmanage_action_resources,
                 unmanage_action_resource_groups=unmanage_action_resource_groups,
                 unmanage_action_management_groups=unmanage_action_management_groups,
-                unmanage_action_resources_without_delete_support=unmanage_action_resources_without_delete_support,
                 bypass_stack_out_of_sync_error=bypass_stack_out_of_sync_error,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -4200,6 +1516,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4221,7 +1538,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeploymentStackTemplateDefinition, response.json())
 
@@ -4265,6 +1582,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4286,7 +1604,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeploymentStack, response.json())
 
@@ -4307,7 +1625,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DeploymentStack]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DeploymentStack]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4344,7 +1662,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4357,7 +1678,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeploymentStack], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.DeploymentStack],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4388,7 +1712,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2024-03-01": ["api_version", "subscription_id", "deployment_stack_name", "content_type", "accept"]
         },
-        api_versions_list=["2024-03-01", "2025-07-01"],
+        api_versions_list=["2024-03-01"],
     )
     def _validate_stack_at_subscription_initial(
         self,
@@ -4431,6 +1755,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4455,7 +1780,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4546,7 +1871,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2024-03-01": ["api_version", "subscription_id", "deployment_stack_name", "content_type", "accept"]
         },
-        api_versions_list=["2024-03-01", "2025-07-01"],
+        api_versions_list=["2024-03-01"],
     )
     def begin_validate_stack_at_subscription(
         self,
@@ -4591,14 +1916,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.DeploymentStackValidateResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -4665,6 +1986,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4691,7 +2013,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4846,11 +2168,8 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         )
 
     @api_version_validation(
-        params_added_on={
-            "2025-07-01": ["unmanage_action_resources_without_delete_support"],
-            "2024-03-01": ["bypass_stack_out_of_sync_error"],
-        },
-        api_versions_list=["2022-08-01-preview", "2024-03-01", "2025-07-01"],
+        params_added_on={"2024-03-01": ["bypass_stack_out_of_sync_error"]},
+        api_versions_list=["2022-08-01-preview", "2024-03-01"],
     )
     def _delete_at_subscription_initial(
         self,
@@ -4859,9 +2178,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
         unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
         unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-        unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.ResourcesWithoutDeleteSupportAction]
-        ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -4884,7 +2200,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             unmanage_action_resources=unmanage_action_resources,
             unmanage_action_resource_groups=unmanage_action_resource_groups,
             unmanage_action_management_groups=unmanage_action_management_groups,
-            unmanage_action_resources_without_delete_support=unmanage_action_resources_without_delete_support,
             bypass_stack_out_of_sync_error=bypass_stack_out_of_sync_error,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4895,6 +2210,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4919,7 +2235,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4928,11 +2244,8 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        params_added_on={
-            "2025-07-01": ["unmanage_action_resources_without_delete_support"],
-            "2024-03-01": ["bypass_stack_out_of_sync_error"],
-        },
-        api_versions_list=["2022-08-01-preview", "2024-03-01", "2025-07-01"],
+        params_added_on={"2024-03-01": ["bypass_stack_out_of_sync_error"]},
+        api_versions_list=["2022-08-01-preview", "2024-03-01"],
     )
     def begin_delete_at_subscription(
         self,
@@ -4941,9 +2254,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
         unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
         unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-        unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.ResourcesWithoutDeleteSupportAction]
-        ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -4964,11 +2274,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
          unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_management_groups: str or
          ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
-        :keyword unmanage_action_resources_without_delete_support: Some resources do not support
-         deletion.  This flag will denote how the stack should handle those resources. Known values are:
-         "detach" and "fail". Default value is None.
-        :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
         :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
          resource list is not correctly synchronized. Default value is None.
         :paramtype bypass_stack_out_of_sync_error: bool
@@ -4989,7 +2294,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                 unmanage_action_resources=unmanage_action_resources,
                 unmanage_action_resource_groups=unmanage_action_resource_groups,
                 unmanage_action_management_groups=unmanage_action_management_groups,
-                unmanage_action_resources_without_delete_support=unmanage_action_resources_without_delete_support,
                 bypass_stack_out_of_sync_error=bypass_stack_out_of_sync_error,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -5062,6 +2366,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5083,7 +2388,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeploymentStackTemplateDefinition, response.json())
 
@@ -5131,6 +2436,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5152,7 +2458,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeploymentStack, response.json())
 
@@ -5175,7 +2481,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DeploymentStack]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DeploymentStack]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5212,7 +2518,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5225,7 +2534,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeploymentStack], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.DeploymentStack],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5256,7 +2568,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2024-03-01": ["api_version", "management_group_id", "deployment_stack_name", "content_type", "accept"]
         },
-        api_versions_list=["2024-03-01", "2025-07-01"],
+        api_versions_list=["2024-03-01"],
     )
     def _validate_stack_at_management_group_initial(  # pylint: disable=name-too-long
         self,
@@ -5300,6 +2612,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5324,7 +2637,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5424,7 +2737,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2024-03-01": ["api_version", "management_group_id", "deployment_stack_name", "content_type", "accept"]
         },
-        api_versions_list=["2024-03-01", "2025-07-01"],
+        api_versions_list=["2024-03-01"],
     )
     def begin_validate_stack_at_management_group(
         self,
@@ -5473,14 +2786,10 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.DeploymentStackValidateResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -5548,6 +2857,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5574,7 +2884,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5742,11 +3052,8 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         )
 
     @api_version_validation(
-        params_added_on={
-            "2025-07-01": ["unmanage_action_resources_without_delete_support"],
-            "2024-03-01": ["bypass_stack_out_of_sync_error"],
-        },
-        api_versions_list=["2022-08-01-preview", "2024-03-01", "2025-07-01"],
+        params_added_on={"2024-03-01": ["bypass_stack_out_of_sync_error"]},
+        api_versions_list=["2022-08-01-preview", "2024-03-01"],
     )
     def _delete_at_management_group_initial(
         self,
@@ -5756,9 +3063,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
         unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
         unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-        unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.ResourcesWithoutDeleteSupportAction]
-        ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -5781,7 +3085,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             unmanage_action_resources=unmanage_action_resources,
             unmanage_action_resource_groups=unmanage_action_resource_groups,
             unmanage_action_management_groups=unmanage_action_management_groups,
-            unmanage_action_resources_without_delete_support=unmanage_action_resources_without_delete_support,
             bypass_stack_out_of_sync_error=bypass_stack_out_of_sync_error,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5792,6 +3095,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5816,7 +3120,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5825,11 +3129,8 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        params_added_on={
-            "2025-07-01": ["unmanage_action_resources_without_delete_support"],
-            "2024-03-01": ["bypass_stack_out_of_sync_error"],
-        },
-        api_versions_list=["2022-08-01-preview", "2024-03-01", "2025-07-01"],
+        params_added_on={"2024-03-01": ["bypass_stack_out_of_sync_error"]},
+        api_versions_list=["2022-08-01-preview", "2024-03-01"],
     )
     def begin_delete_at_management_group(
         self,
@@ -5839,9 +3140,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
         unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
         unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
-        unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.ResourcesWithoutDeleteSupportAction]
-        ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -5864,11 +3162,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
          unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_management_groups: str or
          ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
-        :keyword unmanage_action_resources_without_delete_support: Some resources do not support
-         deletion.  This flag will denote how the stack should handle those resources. Known values are:
-         "detach" and "fail". Default value is None.
-        :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
         :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
          resource list is not correctly synchronized. Default value is None.
         :paramtype bypass_stack_out_of_sync_error: bool
@@ -5890,7 +3183,6 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
                 unmanage_action_resources=unmanage_action_resources,
                 unmanage_action_resource_groups=unmanage_action_resource_groups,
                 unmanage_action_management_groups=unmanage_action_management_groups,
-                unmanage_action_resources_without_delete_support=unmanage_action_resources_without_delete_support,
                 bypass_stack_out_of_sync_error=bypass_stack_out_of_sync_error,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -5965,6 +3257,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5986,7 +3279,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeploymentStackTemplateDefinition, response.json())
 

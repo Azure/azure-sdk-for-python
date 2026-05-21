@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/DeploymentStackManagementGroupGet.json
+# x-ms-original-file: 2024-03-01/DeploymentStackManagementGroupGet.json
 if __name__ == "__main__":
     main()

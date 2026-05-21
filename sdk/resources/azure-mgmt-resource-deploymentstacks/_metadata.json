@@ -1,7 +1,10 @@
 {
-  "apiVersion": "2025-07-01",
-  "commit": "2d6a141062015bb3db923d5442af293954b36a38",
+  "apiVersion": "2024-03-01",
+  "apiVersions": {
+    "Microsoft.Resources.DeploymentStacks": "2024-03-01"
+  },
+  "commit": "f34830624e2040e4777496c73aa7c6fe764f4bfc",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/resources/resource-manager/Microsoft.Resources/deploymentStacks",
-  "emitterVersion": "0.59.0"
+  "emitterVersion": "0.62.1"
 }

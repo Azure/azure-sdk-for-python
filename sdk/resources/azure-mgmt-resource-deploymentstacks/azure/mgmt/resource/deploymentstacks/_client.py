@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -19,12 +19,12 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import DeploymentStacksClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import (
-    DeploymentStacksOperations,
-    DeploymentStacksWhatIfResultsAtManagementGroupOperations,
-    DeploymentStacksWhatIfResultsAtResourceGroupOperations,
-    DeploymentStacksWhatIfResultsAtSubscriptionOperations,
-)
+from .operations import DeploymentStacksOperations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -34,18 +34,6 @@ if TYPE_CHECKING:
 class DeploymentStacksClient:
     """DeploymentStacksClient.
 
-    :ivar deployment_stacks_what_if_results_at_resource_group:
-     DeploymentStacksWhatIfResultsAtResourceGroupOperations operations
-    :vartype deployment_stacks_what_if_results_at_resource_group:
-     azure.mgmt.resource.deploymentstacks.operations.DeploymentStacksWhatIfResultsAtResourceGroupOperations
-    :ivar deployment_stacks_what_if_results_at_subscription:
-     DeploymentStacksWhatIfResultsAtSubscriptionOperations operations
-    :vartype deployment_stacks_what_if_results_at_subscription:
-     azure.mgmt.resource.deploymentstacks.operations.DeploymentStacksWhatIfResultsAtSubscriptionOperations
-    :ivar deployment_stacks_what_if_results_at_management_group:
-     DeploymentStacksWhatIfResultsAtManagementGroupOperations operations
-    :vartype deployment_stacks_what_if_results_at_management_group:
-     azure.mgmt.resource.deploymentstacks.operations.DeploymentStacksWhatIfResultsAtManagementGroupOperations
     :ivar deployment_stacks: DeploymentStacksOperations operations
     :vartype deployment_stacks:
      azure.mgmt.resource.deploymentstacks.operations.DeploymentStacksOperations
@@ -58,7 +46,8 @@ class DeploymentStacksClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-07-01".
+    :keyword api_version: The API version to use for this operation. Known values are "2024-03-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -112,19 +101,6 @@ class DeploymentStacksClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.deployment_stacks_what_if_results_at_resource_group = (
-            DeploymentStacksWhatIfResultsAtResourceGroupOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
-        )
-        self.deployment_stacks_what_if_results_at_subscription = DeploymentStacksWhatIfResultsAtSubscriptionOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.deployment_stacks_what_if_results_at_management_group = (
-            DeploymentStacksWhatIfResultsAtManagementGroupOperations(
-                self._client, self._config, self._serialize, self._deserialize
-            )
-        )
         self.deployment_stacks = DeploymentStacksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

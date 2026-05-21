@@ -33,10 +33,6 @@ class ActionOnUnmanage(_Model):
      Known values are: "delete" and "detach".
     :vartype management_groups: str or
      ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
-    :ivar resources_without_delete_support: Some resources do not support deletion.  This flag will
-     denote how the stack should handle those resources. Known values are: "detach" and "fail".
-    :vartype resources_without_delete_support: str or
-     ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
     """
 
     resources: Union[str, "_models.UnmanageActionResourceMode"] = rest_field(
@@ -54,11 +50,6 @@ class ActionOnUnmanage(_Model):
     )
     """Specifies an action for a newly unmanaged resource management group. Known values are:
      \"delete\" and \"detach\"."""
-    resources_without_delete_support: Optional[Union[str, "_models.ResourcesWithoutDeleteSupportAction"]] = rest_field(
-        name="resourcesWithoutDeleteSupport", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Some resources do not support deletion.  This flag will denote how the stack should handle
-     those resources. Known values are: \"detach\" and \"fail\"."""
 
     @overload
     def __init__(
@@ -67,7 +58,6 @@ class ActionOnUnmanage(_Model):
         resources: Union[str, "_models.UnmanageActionResourceMode"],
         resource_groups: Optional[Union[str, "_models.UnmanageActionResourceGroupMode"]] = None,
         management_groups: Optional[Union[str, "_models.UnmanageActionManagementGroupMode"]] = None,
-        resources_without_delete_support: Optional[Union[str, "_models.ResourcesWithoutDeleteSupportAction"]] = None,
     ) -> None: ...
 
     @overload
@@ -147,164 +137,6 @@ class DenySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentExtension(_Model):
-    """Details about the usage of a deployment extension.
-
-    :ivar name: The extension name. Required.
-    :vartype name: str
-    :ivar version: The extension version. Required.
-    :vartype version: str
-    :ivar config_id: The configuration ID of the extension usage. It uniquely identifies a target
-     the extension deploys to.
-    :vartype config_id: str
-    :ivar config: The configuration used for deployment. The keys of this object should align with
-     the extension config schema.
-    :vartype config: ~azure.mgmt.resource.deploymentstacks.models.DeploymentExtensionConfig
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The extension name. Required."""
-    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The extension version. Required."""
-    config_id: Optional[str] = rest_field(name="configId", visibility=["read", "create", "update", "delete", "query"])
-    """The configuration ID of the extension usage. It uniquely identifies a target the extension
-     deploys to."""
-    config: Optional["_models.DeploymentExtensionConfig"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The configuration used for deployment. The keys of this object should align with the extension
-     config schema."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        version: str,
-        config_id: Optional[str] = None,
-        config: Optional["_models.DeploymentExtensionConfig"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentExtensionConfig(_Model):
-    """The configuration of a deployment extension. The keys of this object should align with the
-    extension config schema.
-
-    """
-
-
-class DeploymentExtensionConfigItem(_Model):
-    """The value or how to get a value for an extension config property.
-
-    :ivar type: The type of the value.
-    :vartype type: str
-    :ivar value: The value of the config item. The type is determined by the extension config
-     schema.
-    :vartype value: any
-    :ivar key_vault_reference: The key vault reference of the config item.
-    :vartype key_vault_reference:
-     ~azure.mgmt.resource.deploymentstacks.models.KeyVaultParameterReference
-    """
-
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the value."""
-    value: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The value of the config item. The type is determined by the extension config schema."""
-    key_vault_reference: Optional["_models.KeyVaultParameterReference"] = rest_field(
-        name="keyVaultReference", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The key vault reference of the config item."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: Optional[Any] = None,
-        key_vault_reference: Optional["_models.KeyVaultParameterReference"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentExternalInput(_Model):
-    """Deployment external input for parameterization.
-
-    :ivar value: External input value. Required.
-    :vartype value: any
-    """
-
-    value: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """External input value. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: Any,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentExternalInputDefinition(_Model):
-    """Deployment external input definition for parameterization.
-
-    :ivar kind: The kind of external input. Required.
-    :vartype kind: str
-    :ivar config: Configuration for the external input.
-    :vartype config: any
-    """
-
-    kind: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The kind of external input. Required."""
-    config: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Configuration for the external input."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-        config: Optional[Any] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class DeploymentParameter(_Model):
     """Deployment parameter for the template.
 
@@ -314,8 +146,6 @@ class DeploymentParameter(_Model):
     :vartype type: str
     :ivar reference: Azure Key Vault parameter reference.
     :vartype reference: ~azure.mgmt.resource.deploymentstacks.models.KeyVaultParameterReference
-    :ivar expression: Input expression to the parameter.
-    :vartype expression: str
     """
 
     value: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -326,8 +156,6 @@ class DeploymentParameter(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure Key Vault parameter reference."""
-    expression: Optional[str] = rest_field(visibility=["create", "update"])
-    """Input expression to the parameter."""
 
     @overload
     def __init__(
@@ -336,7 +164,6 @@ class DeploymentParameter(_Model):
         value: Optional[Any] = None,
         type: Optional[str] = None,
         reference: Optional["_models.KeyVaultParameterReference"] = None,
-        expression: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -436,9 +263,6 @@ class DeploymentStack(ProxyResource):
         "template_link",
         "parameters",
         "parameters_link",
-        "extension_configs",
-        "external_inputs",
-        "external_input_definitions",
         "action_on_unmanage",
         "debug_setting",
         "deployment_scope",
@@ -446,13 +270,11 @@ class DeploymentStack(ProxyResource):
         "deny_settings",
         "provisioning_state",
         "correlation_id",
-        "validation_level",
         "bypass_stack_out_of_sync_error",
         "detached_resources",
         "deleted_resources",
         "failed_resources",
         "resources",
-        "deployment_extensions",
         "deployment_id",
         "outputs",
         "duration",
@@ -521,18 +343,6 @@ class DeploymentStackProperties(_Model):
      both.
     :vartype parameters_link:
      ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksParametersLink
-    :ivar extension_configs: The deployment extension configs. Keys of this object are extension
-     aliases as defined in the deployment template.
-    :vartype extension_configs: dict[str,
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentExtensionConfig]
-    :ivar external_inputs: External input values, used by external tooling for parameter
-     evaluation.
-    :vartype external_inputs: dict[str,
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentExternalInput]
-    :ivar external_input_definitions: External input definitions, used by external tooling to
-     define expected external input values.
-    :vartype external_input_definitions: dict[str,
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentExternalInputDefinition]
     :ivar action_on_unmanage: Defines the behavior of resources that are no longer managed after
      the Deployment stack is updated or deleted. Required.
     :vartype action_on_unmanage: ~azure.mgmt.resource.deploymentstacks.models.ActionOnUnmanage
@@ -552,16 +362,12 @@ class DeploymentStackProperties(_Model):
     :vartype deny_settings: ~azure.mgmt.resource.deploymentstacks.models.DenySettings
     :ivar provisioning_state: State of the deployment stack. Known values are: "creating",
      "validating", "waiting", "deploying", "canceling", "updatingDenyAssignments",
-     "deletingResources", "succeeded", "failed", "canceled", "deleting", "initializing", and
-     "running".
+     "deletingResources", "succeeded", "failed", "canceled", and "deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.deploymentstacks.models.DeploymentStackProvisioningState
     :ivar correlation_id: The correlation id of the last Deployment stack upsert or delete
      operation. It is in GUID format and is used for tracing.
     :vartype correlation_id: str
-    :ivar validation_level: The validation level of the deployment stack. Known values are:
-     "Template", "Provider", and "ProviderNoRbac".
-    :vartype validation_level: str or ~azure.mgmt.resource.deploymentstacks.models.ValidationLevel
     :ivar bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
      resource list is not correctly synchronized.
     :vartype bypass_stack_out_of_sync_error: bool
@@ -582,10 +388,6 @@ class DeploymentStackProperties(_Model):
      list[~azure.mgmt.resource.deploymentstacks.models.ResourceReferenceExtended]
     :ivar resources: An array of resources currently managed by the deployment stack.
     :vartype resources: list[~azure.mgmt.resource.deploymentstacks.models.ManagedResourceReference]
-    :ivar deployment_extensions: The extensions used during deployment. Contains extension data for
-     all extensible resources managed by the stack.
-    :vartype deployment_extensions:
-     list[~azure.mgmt.resource.deploymentstacks.models.DeploymentExtension]
     :ivar deployment_id: The resourceId of the deployment resource created by the deployment stack.
     :vartype deployment_id: str
     :ivar outputs: The outputs of the deployment resource created by the deployment stack.
@@ -617,19 +419,6 @@ class DeploymentStackProperties(_Model):
     )
     """The URI of parameters file. Use this element to link to an existing parameters file. Use either
      the parametersLink property or the parameters property, but not both."""
-    extension_configs: Optional[dict[str, "_models.DeploymentExtensionConfig"]] = rest_field(
-        name="extensionConfigs", visibility=["create", "update"]
-    )
-    """The deployment extension configs. Keys of this object are extension aliases as defined in the
-     deployment template."""
-    external_inputs: Optional[dict[str, "_models.DeploymentExternalInput"]] = rest_field(
-        name="externalInputs", visibility=["create", "update"]
-    )
-    """External input values, used by external tooling for parameter evaluation."""
-    external_input_definitions: Optional[dict[str, "_models.DeploymentExternalInputDefinition"]] = rest_field(
-        name="externalInputDefinitions", visibility=["create", "update"]
-    )
-    """External input definitions, used by external tooling to define expected external input values."""
     action_on_unmanage: "_models.ActionOnUnmanage" = rest_field(
         name="actionOnUnmanage", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -658,15 +447,10 @@ class DeploymentStackProperties(_Model):
     )
     """State of the deployment stack. Known values are: \"creating\", \"validating\", \"waiting\",
      \"deploying\", \"canceling\", \"updatingDenyAssignments\", \"deletingResources\",
-     \"succeeded\", \"failed\", \"canceled\", \"deleting\", \"initializing\", and \"running\"."""
+     \"succeeded\", \"failed\", \"canceled\", and \"deleting\"."""
     correlation_id: Optional[str] = rest_field(name="correlationId", visibility=["read"])
     """The correlation id of the last Deployment stack upsert or delete operation. It is in GUID
      format and is used for tracing."""
-    validation_level: Optional[Union[str, "_models.ValidationLevel"]] = rest_field(
-        name="validationLevel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The validation level of the deployment stack. Known values are: \"Template\", \"Provider\", and
-     \"ProviderNoRbac\"."""
     bypass_stack_out_of_sync_error: Optional[bool] = rest_field(
         name="bypassStackOutOfSyncError", visibility=["create", "update"]
     )
@@ -692,11 +476,6 @@ class DeploymentStackProperties(_Model):
      resourceId is accompanied by an error message."""
     resources: Optional[list["_models.ManagedResourceReference"]] = rest_field(visibility=["read"])
     """An array of resources currently managed by the deployment stack."""
-    deployment_extensions: Optional[list["_models.DeploymentExtension"]] = rest_field(
-        name="deploymentExtensions", visibility=["read"]
-    )
-    """The extensions used during deployment. Contains extension data for all extensible resources
-     managed by the stack."""
     deployment_id: Optional[str] = rest_field(name="deploymentId", visibility=["read"])
     """The resourceId of the deployment resource created by the deployment stack."""
     outputs: Optional[dict[str, Any]] = rest_field(visibility=["read"])
@@ -714,217 +493,10 @@ class DeploymentStackProperties(_Model):
         template_link: Optional["_models.DeploymentStacksTemplateLink"] = None,
         parameters: Optional[dict[str, "_models.DeploymentParameter"]] = None,
         parameters_link: Optional["_models.DeploymentStacksParametersLink"] = None,
-        extension_configs: Optional[dict[str, "_models.DeploymentExtensionConfig"]] = None,
-        external_inputs: Optional[dict[str, "_models.DeploymentExternalInput"]] = None,
-        external_input_definitions: Optional[dict[str, "_models.DeploymentExternalInputDefinition"]] = None,
         debug_setting: Optional["_models.DeploymentStacksDebugSetting"] = None,
         deployment_scope: Optional[str] = None,
         description: Optional[str] = None,
-        validation_level: Optional[Union[str, "_models.ValidationLevel"]] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentStacksChangeBase(_Model):
-    """Base model for properties with the before-and-after property values.
-
-    :ivar before: The predicted value before the deployment is executed.
-    :vartype before: str
-    :ivar after: The predicted value after the deployment is executed.
-    :vartype after: str
-    """
-
-    before: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The predicted value before the deployment is executed."""
-    after: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The predicted value after the deployment is executed."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        before: Optional[str] = None,
-        after: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentStacksChangeBaseDenyStatusMode(_Model):
-    """Base model for properties with the before-and-after property values.
-
-    :ivar before: The predicted value before the deployment is executed. Known values are:
-     "denyDelete", "notSupported", "inapplicable", "denyWriteAndDelete", "removedBySystem", "none",
-     and "unknown".
-    :vartype before: str or ~azure.mgmt.resource.deploymentstacks.models.DenyStatusMode
-    :ivar after: The predicted value after the deployment is executed. Known values are:
-     "denyDelete", "notSupported", "inapplicable", "denyWriteAndDelete", "removedBySystem", "none",
-     and "unknown".
-    :vartype after: str or ~azure.mgmt.resource.deploymentstacks.models.DenyStatusMode
-    """
-
-    before: Optional[Union[str, "_models.DenyStatusMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The predicted value before the deployment is executed. Known values are: \"denyDelete\",
-     \"notSupported\", \"inapplicable\", \"denyWriteAndDelete\", \"removedBySystem\", \"none\", and
-     \"unknown\"."""
-    after: Optional[Union[str, "_models.DenyStatusMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The predicted value after the deployment is executed. Known values are: \"denyDelete\",
-     \"notSupported\", \"inapplicable\", \"denyWriteAndDelete\", \"removedBySystem\", \"none\", and
-     \"unknown\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        before: Optional[Union[str, "_models.DenyStatusMode"]] = None,
-        after: Optional[Union[str, "_models.DenyStatusMode"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentStacksChangeBaseDeploymentStacksManagementStatus(_Model):  # pylint: disable=name-too-long
-    """Base model for properties with the before-and-after property values.
-
-    :ivar before: The predicted value before the deployment is executed. Known values are:
-     "managed", "unmanaged", and "unknown".
-    :vartype before: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksManagementStatus
-    :ivar after: The predicted value after the deployment is executed. Known values are: "managed",
-     "unmanaged", and "unknown".
-    :vartype after: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksManagementStatus
-    """
-
-    before: Optional[Union[str, "_models.DeploymentStacksManagementStatus"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The predicted value before the deployment is executed. Known values are: \"managed\",
-     \"unmanaged\", and \"unknown\"."""
-    after: Optional[Union[str, "_models.DeploymentStacksManagementStatus"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The predicted value after the deployment is executed. Known values are: \"managed\",
-     \"unmanaged\", and \"unknown\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        before: Optional[Union[str, "_models.DeploymentStacksManagementStatus"]] = None,
-        after: Optional[Union[str, "_models.DeploymentStacksManagementStatus"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentStacksChangeDeltaDenySettings(_Model):
-    """Model to show the before-and-after property values, along with the delta between them.
-
-    :ivar before: The predicted value before the deployment is executed.
-    :vartype before: ~azure.mgmt.resource.deploymentstacks.models.DenySettings
-    :ivar after: The predicted value after the deployment is executed.
-    :vartype after: ~azure.mgmt.resource.deploymentstacks.models.DenySettings
-    :ivar delta: The predicted changes to the properties.".
-    :vartype delta:
-     list[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfPropertyChange]
-    """
-
-    before: Optional["_models.DenySettings"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The predicted value before the deployment is executed."""
-    after: Optional["_models.DenySettings"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The predicted value after the deployment is executed."""
-    delta: Optional[list["_models.DeploymentStacksWhatIfPropertyChange"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The predicted changes to the properties.\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        before: Optional["_models.DenySettings"] = None,
-        after: Optional["_models.DenySettings"] = None,
-        delta: Optional[list["_models.DeploymentStacksWhatIfPropertyChange"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentStacksChangeDeltaRecord(_Model):
-    """Model to show the before-and-after property values, along with the delta between them.
-
-    :ivar before: The predicted value before the deployment is executed.
-    :vartype before: dict[str, any]
-    :ivar after: The predicted value after the deployment is executed.
-    :vartype after: dict[str, any]
-    :ivar delta: The predicted changes to the properties.".
-    :vartype delta:
-     list[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfPropertyChange]
-    """
-
-    before: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The predicted value before the deployment is executed."""
-    after: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The predicted value after the deployment is executed."""
-    delta: Optional[list["_models.DeploymentStacksWhatIfPropertyChange"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The predicted changes to the properties.\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        before: Optional[dict[str, Any]] = None,
-        after: Optional[dict[str, Any]] = None,
-        delta: Optional[list["_models.DeploymentStacksWhatIfPropertyChange"]] = None,
     ) -> None: ...
 
     @overload
@@ -965,62 +537,6 @@ class DeploymentStacksDebugSetting(_Model):
         self,
         *,
         detail_level: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentStacksDiagnostic(_Model):
-    """The error additional info.
-
-    :ivar level: Denotes the additional response level. Required. Known values are: "info",
-     "warning", and "error".
-    :vartype level: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDiagnosticLevel
-    :ivar code: The error code. Required.
-    :vartype code: str
-    :ivar message: The error message. Required.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar additional_info: Additional error information.
-    :vartype additional_info:
-     list[~azure.mgmt.resource.deploymentstacks.models.ErrorAdditionalInfo]
-    """
-
-    level: Union[str, "_models.DeploymentStacksDiagnosticLevel"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Denotes the additional response level. Required. Known values are: \"info\", \"warning\", and
-     \"error\"."""
-    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error code. Required."""
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error message. Required."""
-    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error target."""
-    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
-        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Additional error information."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        level: Union[str, "_models.DeploymentStacksDiagnosticLevel"],
-        code: str,
-        message: str,
-        target: Optional[str] = None,
-        additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None,
     ) -> None: ...
 
     @overload
@@ -1130,484 +646,6 @@ class DeploymentStacksTemplateLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentStacksWhatIfChange(_Model):
-    """Changes predicted to the deployment stack as a result of the what-if operation.
-
-    :ivar resource_changes: List of resource changes predicted by What-If operation. Required.
-    :vartype resource_changes:
-     list[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResourceChange]
-    :ivar deny_settings_change: Predicted changes to the deployment stack deny settings. Required.
-    :vartype deny_settings_change:
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksChangeDeltaDenySettings
-    :ivar deployment_scope_change: Predicted changes to the deployment scope for the deployment
-     stack.
-    :vartype deployment_scope_change:
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksChangeBase
-    """
-
-    resource_changes: list["_models.DeploymentStacksWhatIfResourceChange"] = rest_field(
-        name="resourceChanges", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of resource changes predicted by What-If operation. Required."""
-    deny_settings_change: "_models.DeploymentStacksChangeDeltaDenySettings" = rest_field(
-        name="denySettingsChange", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Predicted changes to the deployment stack deny settings. Required."""
-    deployment_scope_change: Optional["_models.DeploymentStacksChangeBase"] = rest_field(
-        name="deploymentScopeChange", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Predicted changes to the deployment scope for the deployment stack."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_changes: list["_models.DeploymentStacksWhatIfResourceChange"],
-        deny_settings_change: "_models.DeploymentStacksChangeDeltaDenySettings",
-        deployment_scope_change: Optional["_models.DeploymentStacksChangeBase"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentStacksWhatIfPropertyChange(_Model):
-    """The predicted change to the resource property.
-
-    :ivar before: The predicted value before the deployment is executed.
-    :vartype before: any
-    :ivar after: The predicted value after the deployment is executed.
-    :vartype after: any
-    :ivar path: Type of change that will be made to the resource when the deployment is executed.
-     Required.
-    :vartype path: str
-    :ivar change_type: Type of change that will be made to the resource when the deployment is
-     executed. Required. Known values are: "array", "create", "delete", "modify", and "noEffect".
-    :vartype change_type: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfPropertyChangeType
-    :ivar children: Nested property changes.
-    :vartype children:
-     list[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfPropertyChange]
-    """
-
-    before: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The predicted value before the deployment is executed."""
-    after: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The predicted value after the deployment is executed."""
-    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Type of change that will be made to the resource when the deployment is executed. Required."""
-    change_type: Union[str, "_models.DeploymentStacksWhatIfPropertyChangeType"] = rest_field(
-        name="changeType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of change that will be made to the resource when the deployment is executed. Required.
-     Known values are: \"array\", \"create\", \"delete\", \"modify\", and \"noEffect\"."""
-    children: Optional[list["_models.DeploymentStacksWhatIfPropertyChange"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Nested property changes."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        path: str,
-        change_type: Union[str, "_models.DeploymentStacksWhatIfPropertyChangeType"],
-        before: Optional[Any] = None,
-        after: Optional[Any] = None,
-        children: Optional[list["_models.DeploymentStacksWhatIfPropertyChange"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentStacksWhatIfResourceChange(_Model):
-    """Information about a single resource change predicted by What-If operation.
-
-    :ivar id: The ARM Resource ID of a resource managed by the deployment stack.
-    :vartype id: str
-    :ivar extension: The extension the resource was deployed with.
-    :vartype extension: ~azure.mgmt.resource.deploymentstacks.models.DeploymentExtension
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar identifiers: The extensible resource identifiers.
-    :vartype identifiers: dict[str, any]
-    :ivar api_version: The API version the resource was deployed with.
-    :vartype api_version: str
-    :ivar deployment_id: The resource id of the Deployment responsible for this change.
-    :vartype deployment_id: str
-    :ivar symbolic_name: The symbolic name of the resource being changed.
-    :vartype symbolic_name: str
-    :ivar change_type: Type of change that will be made to the resource when the deployment is
-     executed. Required. Known values are: "create", "delete", "detach", "modify", "noChange", and
-     "unsupported".
-    :vartype change_type: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfChangeType
-    :ivar change_certainty: The confidence level of the predicted change. Required. Known values
-     are: "definite" and "potential".
-    :vartype change_certainty: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfChangeCertainty
-    :ivar management_status_change: The predicted changes to the deployment stack management status
-     of the resource.
-    :vartype management_status_change:
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksChangeBaseDeploymentStacksManagementStatus
-    :ivar deny_status_change: The predicted changes to the deployment stack deny status of the
-     resource.
-    :vartype deny_status_change:
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksChangeBaseDenyStatusMode
-    :ivar unsupported_reason: The explanation about why the resource is unsupported by What-If.
-    :vartype unsupported_reason: str
-    :ivar resource_configuration_changes: The predicted changes to the resource configuration.
-    :vartype resource_configuration_changes:
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksChangeDeltaRecord
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """The ARM Resource ID of a resource managed by the deployment stack."""
-    extension: Optional["_models.DeploymentExtension"] = rest_field(visibility=["read"])
-    """The extension the resource was deployed with."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The resource type."""
-    identifiers: Optional[dict[str, Any]] = rest_field(visibility=["read"])
-    """The extensible resource identifiers."""
-    api_version: Optional[str] = rest_field(name="apiVersion", visibility=["read"])
-    """The API version the resource was deployed with."""
-    deployment_id: Optional[str] = rest_field(
-        name="deploymentId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource id of the Deployment responsible for this change."""
-    symbolic_name: Optional[str] = rest_field(
-        name="symbolicName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The symbolic name of the resource being changed."""
-    change_type: Union[str, "_models.DeploymentStacksWhatIfChangeType"] = rest_field(
-        name="changeType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of change that will be made to the resource when the deployment is executed. Required.
-     Known values are: \"create\", \"delete\", \"detach\", \"modify\", \"noChange\", and
-     \"unsupported\"."""
-    change_certainty: Union[str, "_models.DeploymentStacksWhatIfChangeCertainty"] = rest_field(
-        name="changeCertainty", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The confidence level of the predicted change. Required. Known values are: \"definite\" and
-     \"potential\"."""
-    management_status_change: Optional["_models.DeploymentStacksChangeBaseDeploymentStacksManagementStatus"] = (
-        rest_field(name="managementStatusChange", visibility=["read", "create", "update", "delete", "query"])
-    )
-    """The predicted changes to the deployment stack management status of the resource."""
-    deny_status_change: Optional["_models.DeploymentStacksChangeBaseDenyStatusMode"] = rest_field(
-        name="denyStatusChange", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The predicted changes to the deployment stack deny status of the resource."""
-    unsupported_reason: Optional[str] = rest_field(
-        name="unsupportedReason", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The explanation about why the resource is unsupported by What-If."""
-    resource_configuration_changes: Optional["_models.DeploymentStacksChangeDeltaRecord"] = rest_field(
-        name="resourceConfigurationChanges", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The predicted changes to the resource configuration."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        change_type: Union[str, "_models.DeploymentStacksWhatIfChangeType"],
-        change_certainty: Union[str, "_models.DeploymentStacksWhatIfChangeCertainty"],
-        deployment_id: Optional[str] = None,
-        symbolic_name: Optional[str] = None,
-        management_status_change: Optional["_models.DeploymentStacksChangeBaseDeploymentStacksManagementStatus"] = None,
-        deny_status_change: Optional["_models.DeploymentStacksChangeBaseDenyStatusMode"] = None,
-        unsupported_reason: Optional[str] = None,
-        resource_configuration_changes: Optional["_models.DeploymentStacksChangeDeltaRecord"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentStacksWhatIfResult(ProxyResource):
-    """Deployment stack object.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.resource.deploymentstacks.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties:
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfResultProperties
-    :ivar location: The geo-location where the resource lives. Required for subscription and
-     management group scoped stacks. The location is inherited from the resource group for resource
-     group scoped stacks.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    properties: Optional["_models.DeploymentStacksWhatIfResultProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    location: Optional[str] = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required for subscription and management group
-     scoped stacks. The location is inherited from the resource group for resource group scoped
-     stacks."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.DeploymentStacksWhatIfResultProperties"] = None,
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentStacksWhatIfResultProperties(_Model):
-    """DeploymentStack WhatIfResult Properties.
-
-    :ivar error: The error detail.
-    :vartype error: ~azure.mgmt.resource.deploymentstacks.models.ErrorDetail
-    :ivar template: The template content. You use this element when you want to pass the template
-     syntax directly in the request rather than link to an existing template. It can be a JObject or
-     well-formed JSON string. Use either the templateLink property or the template property, but not
-     both.
-    :vartype template: dict[str, any]
-    :ivar template_link: The URI of the template. Use either the templateLink property or the
-     template property, but not both.
-    :vartype template_link:
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksTemplateLink
-    :ivar parameters: Name and value pairs that define the deployment parameters for the template.
-     Use this element when providing the parameter values directly in the request, rather than
-     linking to an existing parameter file. Use either the parametersLink property or the parameters
-     property, but not both.
-    :vartype parameters: dict[str,
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentParameter]
-    :ivar parameters_link: The URI of parameters file. Use this element to link to an existing
-     parameters file. Use either the parametersLink property or the parameters property, but not
-     both.
-    :vartype parameters_link:
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksParametersLink
-    :ivar extension_configs: The deployment extension configs. Keys of this object are extension
-     aliases as defined in the deployment template.
-    :vartype extension_configs: dict[str,
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentExtensionConfig]
-    :ivar external_inputs: External input values, used by external tooling for parameter
-     evaluation.
-    :vartype external_inputs: dict[str,
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentExternalInput]
-    :ivar external_input_definitions: External input definitions, used by external tooling to
-     define expected external input values.
-    :vartype external_input_definitions: dict[str,
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentExternalInputDefinition]
-    :ivar action_on_unmanage: Defines the behavior of resources that are no longer managed after
-     the Deployment stack is updated or deleted. Required.
-    :vartype action_on_unmanage: ~azure.mgmt.resource.deploymentstacks.models.ActionOnUnmanage
-    :ivar debug_setting: The debug setting of the deployment.
-    :vartype debug_setting:
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDebugSetting
-    :ivar deployment_scope: The scope at which the initial deployment should be created. If a scope
-     is not specified, it will default to the scope of the deployment stack. Valid scopes are:
-     management group (format:
-     '/providers/Microsoft.Management/managementGroups/{managementGroupId}'), subscription (format:
-     '/subscriptions/{subscriptionId}'), resource group (format:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}').
-    :vartype deployment_scope: str
-    :ivar description: Deployment stack description. Max length of 4096 characters.
-    :vartype description: str
-    :ivar deny_settings: Defines how resources deployed by the stack are locked. Required.
-    :vartype deny_settings: ~azure.mgmt.resource.deploymentstacks.models.DenySettings
-    :ivar provisioning_state: State of the deployment stack. Known values are: "creating",
-     "validating", "waiting", "deploying", "canceling", "updatingDenyAssignments",
-     "deletingResources", "succeeded", "failed", "canceled", "deleting", "initializing", and
-     "running".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStackProvisioningState
-    :ivar correlation_id: The correlation id of the last Deployment stack upsert or delete
-     operation. It is in GUID format and is used for tracing.
-    :vartype correlation_id: str
-    :ivar validation_level: The validation level of the deployment stack. Known values are:
-     "Template", "Provider", and "ProviderNoRbac".
-    :vartype validation_level: str or ~azure.mgmt.resource.deploymentstacks.models.ValidationLevel
-    :ivar deployment_stack_resource_id: The deployment stack id to use as the basis for comparison.
-     Required.
-    :vartype deployment_stack_resource_id: str
-    :ivar deployment_stack_last_modified: The timestamp for when the deployment stack was last
-     modified. This can be used to determine if the what-if data is still current.
-    :vartype deployment_stack_last_modified: ~datetime.datetime
-    :ivar retention_interval: The interval to persist the deployment stack what-if result in ISO
-     8601 format. Required.
-    :vartype retention_interval: ~datetime.timedelta
-    :ivar changes: All of the changes predicted by the deployment stack what-if operation.
-    :vartype changes: ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksWhatIfChange
-    :ivar diagnostics: List of resource diagnostics detected by What-If operation.
-    :vartype diagnostics:
-     list[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDiagnostic]
-    """
-
-    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
-    """The error detail."""
-    template: Optional[dict[str, Any]] = rest_field(visibility=["create", "update"])
-    """The template content. You use this element when you want to pass the template syntax directly
-     in the request rather than link to an existing template. It can be a JObject or well-formed
-     JSON string. Use either the templateLink property or the template property, but not both."""
-    template_link: Optional["_models.DeploymentStacksTemplateLink"] = rest_field(
-        name="templateLink", visibility=["create", "update"]
-    )
-    """The URI of the template. Use either the templateLink property or the template property, but not
-     both."""
-    parameters: Optional[dict[str, "_models.DeploymentParameter"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Name and value pairs that define the deployment parameters for the template. Use this element
-     when providing the parameter values directly in the request, rather than linking to an existing
-     parameter file. Use either the parametersLink property or the parameters property, but not
-     both."""
-    parameters_link: Optional["_models.DeploymentStacksParametersLink"] = rest_field(
-        name="parametersLink", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The URI of parameters file. Use this element to link to an existing parameters file. Use either
-     the parametersLink property or the parameters property, but not both."""
-    extension_configs: Optional[dict[str, "_models.DeploymentExtensionConfig"]] = rest_field(
-        name="extensionConfigs", visibility=["create", "update"]
-    )
-    """The deployment extension configs. Keys of this object are extension aliases as defined in the
-     deployment template."""
-    external_inputs: Optional[dict[str, "_models.DeploymentExternalInput"]] = rest_field(
-        name="externalInputs", visibility=["create", "update"]
-    )
-    """External input values, used by external tooling for parameter evaluation."""
-    external_input_definitions: Optional[dict[str, "_models.DeploymentExternalInputDefinition"]] = rest_field(
-        name="externalInputDefinitions", visibility=["create", "update"]
-    )
-    """External input definitions, used by external tooling to define expected external input values."""
-    action_on_unmanage: "_models.ActionOnUnmanage" = rest_field(
-        name="actionOnUnmanage", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Defines the behavior of resources that are no longer managed after the Deployment stack is
-     updated or deleted. Required."""
-    debug_setting: Optional["_models.DeploymentStacksDebugSetting"] = rest_field(
-        name="debugSetting", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The debug setting of the deployment."""
-    deployment_scope: Optional[str] = rest_field(
-        name="deploymentScope", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The scope at which the initial deployment should be created. If a scope is not specified, it
-     will default to the scope of the deployment stack. Valid scopes are: management group (format:
-     '/providers/Microsoft.Management/managementGroups/{managementGroupId}'), subscription (format:
-     '/subscriptions/{subscriptionId}'), resource group (format:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}')."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deployment stack description. Max length of 4096 characters."""
-    deny_settings: "_models.DenySettings" = rest_field(
-        name="denySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Defines how resources deployed by the stack are locked. Required."""
-    provisioning_state: Optional[Union[str, "_models.DeploymentStackProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """State of the deployment stack. Known values are: \"creating\", \"validating\", \"waiting\",
-     \"deploying\", \"canceling\", \"updatingDenyAssignments\", \"deletingResources\",
-     \"succeeded\", \"failed\", \"canceled\", \"deleting\", \"initializing\", and \"running\"."""
-    correlation_id: Optional[str] = rest_field(name="correlationId", visibility=["read"])
-    """The correlation id of the last Deployment stack upsert or delete operation. It is in GUID
-     format and is used for tracing."""
-    validation_level: Optional[Union[str, "_models.ValidationLevel"]] = rest_field(
-        name="validationLevel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The validation level of the deployment stack. Known values are: \"Template\", \"Provider\", and
-     \"ProviderNoRbac\"."""
-    deployment_stack_resource_id: str = rest_field(
-        name="deploymentStackResourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The deployment stack id to use as the basis for comparison. Required."""
-    deployment_stack_last_modified: Optional[datetime.datetime] = rest_field(
-        name="deploymentStackLastModified", visibility=["read"], format="rfc3339"
-    )
-    """The timestamp for when the deployment stack was last modified. This can be used to determine if
-     the what-if data is still current."""
-    retention_interval: datetime.timedelta = rest_field(
-        name="retentionInterval", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The interval to persist the deployment stack what-if result in ISO 8601 format. Required."""
-    changes: Optional["_models.DeploymentStacksWhatIfChange"] = rest_field(visibility=["read"])
-    """All of the changes predicted by the deployment stack what-if operation."""
-    diagnostics: Optional[list["_models.DeploymentStacksDiagnostic"]] = rest_field(visibility=["read"])
-    """List of resource diagnostics detected by What-If operation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        action_on_unmanage: "_models.ActionOnUnmanage",
-        deny_settings: "_models.DenySettings",
-        deployment_stack_resource_id: str,
-        retention_interval: datetime.timedelta,
-        template: Optional[dict[str, Any]] = None,
-        template_link: Optional["_models.DeploymentStacksTemplateLink"] = None,
-        parameters: Optional[dict[str, "_models.DeploymentParameter"]] = None,
-        parameters_link: Optional["_models.DeploymentStacksParametersLink"] = None,
-        extension_configs: Optional[dict[str, "_models.DeploymentExtensionConfig"]] = None,
-        external_inputs: Optional[dict[str, "_models.DeploymentExternalInput"]] = None,
-        external_input_definitions: Optional[dict[str, "_models.DeploymentExternalInputDefinition"]] = None,
-        debug_setting: Optional["_models.DeploymentStacksDebugSetting"] = None,
-        deployment_scope: Optional[str] = None,
-        description: Optional[str] = None,
-        validation_level: Optional[Union[str, "_models.ValidationLevel"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class DeploymentStackTemplateDefinition(_Model):
     """Export Template specific properties of the Deployment stack.
 
@@ -1674,12 +712,6 @@ class DeploymentStackValidateProperties(_Model):
     :ivar validated_resources: The array of resources that were validated.
     :vartype validated_resources:
      list[~azure.mgmt.resource.deploymentstacks.models.ResourceReference]
-    :ivar deployment_extensions: The deployment extensions.
-    :vartype deployment_extensions:
-     list[~azure.mgmt.resource.deploymentstacks.models.DeploymentExtension]
-    :ivar validation_level: The validation level of the deployment stack. Known values are:
-     "Template", "Provider", and "ProviderNoRbac".
-    :vartype validation_level: str or ~azure.mgmt.resource.deploymentstacks.models.ValidationLevel
     """
 
     action_on_unmanage: Optional["_models.ActionOnUnmanage"] = rest_field(
@@ -1714,15 +746,6 @@ class DeploymentStackValidateProperties(_Model):
         name="validatedResources", visibility=["read", "create", "update", "delete", "query"]
     )
     """The array of resources that were validated."""
-    deployment_extensions: Optional[list["_models.DeploymentExtension"]] = rest_field(
-        name="deploymentExtensions", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The deployment extensions."""
-    validation_level: Optional[Union[str, "_models.ValidationLevel"]] = rest_field(
-        name="validationLevel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The validation level of the deployment stack. Known values are: \"Template\", \"Provider\", and
-     \"ProviderNoRbac\"."""
 
     @overload
     def __init__(
@@ -1736,8 +759,6 @@ class DeploymentStackValidateProperties(_Model):
         parameters: Optional[dict[str, "_models.DeploymentParameter"]] = None,
         template_link: Optional["_models.DeploymentStacksTemplateLink"] = None,
         validated_resources: Optional[list["_models.ResourceReference"]] = None,
-        deployment_extensions: Optional[list["_models.DeploymentExtension"]] = None,
-        validation_level: Optional[Union[str, "_models.ValidationLevel"]] = None,
     ) -> None: ...
 
     @overload
@@ -1951,26 +972,10 @@ class ResourceReference(_Model):
 
     :ivar id: The ARM Resource ID of a resource managed by the deployment stack.
     :vartype id: str
-    :ivar extension: The extension the resource was deployed with.
-    :vartype extension: ~azure.mgmt.resource.deploymentstacks.models.DeploymentExtension
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar identifiers: The extensible resource identifiers.
-    :vartype identifiers: dict[str, any]
-    :ivar api_version: The API version the resource was deployed with.
-    :vartype api_version: str
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
     """The ARM Resource ID of a resource managed by the deployment stack."""
-    extension: Optional["_models.DeploymentExtension"] = rest_field(visibility=["read"])
-    """The extension the resource was deployed with."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The resource type."""
-    identifiers: Optional[dict[str, Any]] = rest_field(visibility=["read"])
-    """The extensible resource identifiers."""
-    api_version: Optional[str] = rest_field(name="apiVersion", visibility=["read"])
-    """The API version the resource was deployed with."""
 
 
 class ManagedResourceReference(ResourceReference):
@@ -1978,20 +983,12 @@ class ManagedResourceReference(ResourceReference):
 
     :ivar id: The ARM Resource ID of a resource managed by the deployment stack.
     :vartype id: str
-    :ivar extension: The extension the resource was deployed with.
-    :vartype extension: ~azure.mgmt.resource.deploymentstacks.models.DeploymentExtension
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar identifiers: The extensible resource identifiers.
-    :vartype identifiers: dict[str, any]
-    :ivar api_version: The API version the resource was deployed with.
-    :vartype api_version: str
     :ivar status: Current management state of the resource in the deployment stack. Known values
      are: "managed", "removeDenyFailed", and "deleteFailed".
     :vartype status: str or ~azure.mgmt.resource.deploymentstacks.models.ResourceStatusMode
     :ivar deny_status: denyAssignment settings applied to the resource. Known values are:
-     "denyDelete", "notSupported", "inapplicable", "denyWriteAndDelete", "removedBySystem", "none",
-     and "unknown".
+     "denyDelete", "notSupported", "inapplicable", "denyWriteAndDelete", "removedBySystem", and
+     "none".
     :vartype deny_status: str or ~azure.mgmt.resource.deploymentstacks.models.DenyStatusMode
     """
 
@@ -2004,8 +1001,7 @@ class ManagedResourceReference(ResourceReference):
         name="denyStatus", visibility=["read", "create", "update", "delete", "query"]
     )
     """denyAssignment settings applied to the resource. Known values are: \"denyDelete\",
-     \"notSupported\", \"inapplicable\", \"denyWriteAndDelete\", \"removedBySystem\", \"none\", and
-     \"unknown\"."""
+     \"notSupported\", \"inapplicable\", \"denyWriteAndDelete\", \"removedBySystem\", and \"none\"."""
 
     @overload
     def __init__(
@@ -2032,28 +1028,12 @@ class ResourceReferenceExtended(_Model):
 
     :ivar id: The ARM Resource ID of a resource managed by the deployment stack.
     :vartype id: str
-    :ivar extension: The extension the resource was deployed with.
-    :vartype extension: ~azure.mgmt.resource.deploymentstacks.models.DeploymentExtension
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar identifiers: The extensible resource identifiers.
-    :vartype identifiers: dict[str, any]
-    :ivar api_version: The API version the resource was deployed with.
-    :vartype api_version: str
     :ivar error: The error detail.
     :vartype error: ~azure.mgmt.resource.deploymentstacks.models.ErrorDetail
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
     """The ARM Resource ID of a resource managed by the deployment stack."""
-    extension: Optional["_models.DeploymentExtension"] = rest_field(visibility=["read"])
-    """The extension the resource was deployed with."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The resource type."""
-    identifiers: Optional[dict[str, Any]] = rest_field(visibility=["read"])
-    """The extensible resource identifiers."""
-    api_version: Optional[str] = rest_field(name="apiVersion", visibility=["read"])
-    """The API version the resource was deployed with."""
     error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
     """The error detail."""
 

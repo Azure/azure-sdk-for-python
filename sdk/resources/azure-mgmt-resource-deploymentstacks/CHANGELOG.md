@@ -1,5 +1,63 @@
 # Release History
 
+## 2.0.0b1 (2026-05-21)
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `DeploymentStacksClient.deployment_stacks_what_if_results_at_resource_group`
+  - Deleted or renamed client operation group `DeploymentStacksClient.deployment_stacks_what_if_results_at_subscription`
+  - Deleted or renamed client operation group `DeploymentStacksClient.deployment_stacks_what_if_results_at_management_group`
+  - Model `ActionOnUnmanage` deleted or renamed its instance variable `resources_without_delete_support`
+  - Deleted or renamed enum value `DenyStatusMode.UNKNOWN`
+  - Model `DeploymentParameter` deleted or renamed its instance variable `expression`
+  - Model `DeploymentStackProperties` deleted or renamed its instance variable `extension_configs`
+  - Model `DeploymentStackProperties` deleted or renamed its instance variable `external_inputs`
+  - Model `DeploymentStackProperties` deleted or renamed its instance variable `external_input_definitions`
+  - Model `DeploymentStackProperties` deleted or renamed its instance variable `validation_level`
+  - Model `DeploymentStackProperties` deleted or renamed its instance variable `deployment_extensions`
+  - Deleted or renamed enum value `DeploymentStackProvisioningState.INITIALIZING`
+  - Deleted or renamed enum value `DeploymentStackProvisioningState.RUNNING`
+  - Model `DeploymentStackValidateProperties` deleted or renamed its instance variable `deployment_extensions`
+  - Model `DeploymentStackValidateProperties` deleted or renamed its instance variable `validation_level`
+  - Model `ManagedResourceReference` deleted or renamed its instance variable `extension`
+  - Model `ManagedResourceReference` deleted or renamed its instance variable `type`
+  - Model `ManagedResourceReference` deleted or renamed its instance variable `identifiers`
+  - Model `ManagedResourceReference` deleted or renamed its instance variable `api_version`
+  - Model `ResourceReference` deleted or renamed its instance variable `extension`
+  - Model `ResourceReference` deleted or renamed its instance variable `type`
+  - Model `ResourceReference` deleted or renamed its instance variable `identifiers`
+  - Model `ResourceReference` deleted or renamed its instance variable `api_version`
+  - Model `ResourceReferenceExtended` deleted or renamed its instance variable `extension`
+  - Model `ResourceReferenceExtended` deleted or renamed its instance variable `type`
+  - Model `ResourceReferenceExtended` deleted or renamed its instance variable `identifiers`
+  - Model `ResourceReferenceExtended` deleted or renamed its instance variable `api_version`
+  - Deleted or renamed model `DeploymentExtension`
+  - Deleted or renamed model `DeploymentExtensionConfig`
+  - Deleted or renamed model `DeploymentExtensionConfigItem`
+  - Deleted or renamed model `DeploymentExternalInput`
+  - Deleted or renamed model `DeploymentExternalInputDefinition`
+  - Deleted or renamed model `DeploymentStacksChangeBase`
+  - Deleted or renamed model `DeploymentStacksChangeBaseDenyStatusMode`
+  - Deleted or renamed model `DeploymentStacksChangeBaseDeploymentStacksManagementStatus`
+  - Deleted or renamed model `DeploymentStacksChangeDeltaDenySettings`
+  - Deleted or renamed model `DeploymentStacksChangeDeltaRecord`
+  - Deleted or renamed model `DeploymentStacksDiagnostic`
+  - Deleted or renamed model `DeploymentStacksDiagnosticLevel`
+  - Deleted or renamed model `DeploymentStacksManagementStatus`
+  - Deleted or renamed model `DeploymentStacksWhatIfChange`
+  - Deleted or renamed model `DeploymentStacksWhatIfChangeCertainty`
+  - Deleted or renamed model `DeploymentStacksWhatIfChangeType`
+  - Deleted or renamed model `DeploymentStacksWhatIfPropertyChange`
+  - Deleted or renamed model `DeploymentStacksWhatIfPropertyChangeType`
+  - Deleted or renamed model `DeploymentStacksWhatIfResourceChange`
+  - Deleted or renamed model `DeploymentStacksWhatIfResult`
+  - Deleted or renamed model `DeploymentStacksWhatIfResultProperties`
+  - Deleted or renamed model `ResourcesWithoutDeleteSupportAction`
+  - Deleted or renamed model `ValidationLevel`
+  - Deleted or renamed model `DeploymentStacksWhatIfResultsAtManagementGroupOperations`
+  - Deleted or renamed model `DeploymentStacksWhatIfResultsAtResourceGroupOperations`
+  - Deleted or renamed model `DeploymentStacksWhatIfResultsAtSubscriptionOperations`
+
 ## 1.0.0 (2026-02-10)
 
 ### Features Added

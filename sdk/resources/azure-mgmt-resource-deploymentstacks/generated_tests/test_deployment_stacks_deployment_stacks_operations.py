@@ -50,12 +50,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                 "location": "str",
                 "name": "str",
                 "properties": {
-                    "actionOnUnmanage": {
-                        "resources": "str",
-                        "managementGroups": "str",
-                        "resourceGroups": "str",
-                        "resourcesWithoutDeleteSupport": "str",
-                    },
+                    "actionOnUnmanage": {"resources": "str", "managementGroups": "str", "resourceGroups": "str"},
                     "denySettings": {
                         "mode": "str",
                         "applyToChildScopes": bool,
@@ -65,28 +60,11 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     "bypassStackOutOfSyncError": bool,
                     "correlationId": "str",
                     "debugSetting": {"detailLevel": "str"},
-                    "deletedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
-                    "deploymentExtensions": [{"name": "str", "version": "str", "config": {}, "configId": "str"}],
+                    "deletedResources": [{"id": "str"}],
                     "deploymentId": "str",
                     "deploymentScope": "str",
                     "description": "str",
-                    "detachedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
+                    "detachedResources": [{"id": "str"}],
                     "duration": "str",
                     "error": {
                         "additionalInfo": [{"info": {}, "type": "str"}],
@@ -95,12 +73,8 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "message": "str",
                         "target": "str",
                     },
-                    "extensionConfigs": {"str": {}},
-                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
-                    "externalInputs": {"str": {"value": {}}},
                     "failedResources": [
                         {
-                            "apiVersion": "str",
                             "error": {
                                 "additionalInfo": [{"info": {}, "type": "str"}],
                                 "code": "str",
@@ -108,16 +82,12 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                                 "message": "str",
                                 "target": "str",
                             },
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
                             "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
                         }
                     ],
                     "outputs": {"str": {}},
                     "parameters": {
                         "str": {
-                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "type": "str",
                             "value": {},
@@ -125,17 +95,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     },
                     "parametersLink": {"uri": "str", "contentVersion": "str"},
                     "provisioningState": "str",
-                    "resources": [
-                        {
-                            "apiVersion": "str",
-                            "denyStatus": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "status": "str",
-                            "type": "str",
-                        }
-                    ],
+                    "resources": [{"denyStatus": "str", "id": "str", "status": "str"}],
                     "template": {"str": {}},
                     "templateLink": {
                         "contentVersion": "str",
@@ -144,7 +104,6 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
-                    "validationLevel": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -173,12 +132,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                 "location": "str",
                 "name": "str",
                 "properties": {
-                    "actionOnUnmanage": {
-                        "resources": "str",
-                        "managementGroups": "str",
-                        "resourceGroups": "str",
-                        "resourcesWithoutDeleteSupport": "str",
-                    },
+                    "actionOnUnmanage": {"resources": "str", "managementGroups": "str", "resourceGroups": "str"},
                     "denySettings": {
                         "mode": "str",
                         "applyToChildScopes": bool,
@@ -188,28 +142,11 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     "bypassStackOutOfSyncError": bool,
                     "correlationId": "str",
                     "debugSetting": {"detailLevel": "str"},
-                    "deletedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
-                    "deploymentExtensions": [{"name": "str", "version": "str", "config": {}, "configId": "str"}],
+                    "deletedResources": [{"id": "str"}],
                     "deploymentId": "str",
                     "deploymentScope": "str",
                     "description": "str",
-                    "detachedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
+                    "detachedResources": [{"id": "str"}],
                     "duration": "str",
                     "error": {
                         "additionalInfo": [{"info": {}, "type": "str"}],
@@ -218,12 +155,8 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "message": "str",
                         "target": "str",
                     },
-                    "extensionConfigs": {"str": {}},
-                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
-                    "externalInputs": {"str": {"value": {}}},
                     "failedResources": [
                         {
-                            "apiVersion": "str",
                             "error": {
                                 "additionalInfo": [{"info": {}, "type": "str"}],
                                 "code": "str",
@@ -231,16 +164,12 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                                 "message": "str",
                                 "target": "str",
                             },
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
                             "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
                         }
                     ],
                     "outputs": {"str": {}},
                     "parameters": {
                         "str": {
-                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "type": "str",
                             "value": {},
@@ -248,17 +177,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     },
                     "parametersLink": {"uri": "str", "contentVersion": "str"},
                     "provisioningState": "str",
-                    "resources": [
-                        {
-                            "apiVersion": "str",
-                            "denyStatus": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "status": "str",
-                            "type": "str",
-                        }
-                    ],
+                    "resources": [{"denyStatus": "str", "id": "str", "status": "str"}],
                     "template": {"str": {}},
                     "templateLink": {
                         "contentVersion": "str",
@@ -267,7 +186,6 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
-                    "validationLevel": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -335,12 +253,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                 "location": "str",
                 "name": "str",
                 "properties": {
-                    "actionOnUnmanage": {
-                        "resources": "str",
-                        "managementGroups": "str",
-                        "resourceGroups": "str",
-                        "resourcesWithoutDeleteSupport": "str",
-                    },
+                    "actionOnUnmanage": {"resources": "str", "managementGroups": "str", "resourceGroups": "str"},
                     "denySettings": {
                         "mode": "str",
                         "applyToChildScopes": bool,
@@ -350,28 +263,11 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     "bypassStackOutOfSyncError": bool,
                     "correlationId": "str",
                     "debugSetting": {"detailLevel": "str"},
-                    "deletedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
-                    "deploymentExtensions": [{"name": "str", "version": "str", "config": {}, "configId": "str"}],
+                    "deletedResources": [{"id": "str"}],
                     "deploymentId": "str",
                     "deploymentScope": "str",
                     "description": "str",
-                    "detachedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
+                    "detachedResources": [{"id": "str"}],
                     "duration": "str",
                     "error": {
                         "additionalInfo": [{"info": {}, "type": "str"}],
@@ -380,12 +276,8 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "message": "str",
                         "target": "str",
                     },
-                    "extensionConfigs": {"str": {}},
-                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
-                    "externalInputs": {"str": {"value": {}}},
                     "failedResources": [
                         {
-                            "apiVersion": "str",
                             "error": {
                                 "additionalInfo": [{"info": {}, "type": "str"}],
                                 "code": "str",
@@ -393,16 +285,12 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                                 "message": "str",
                                 "target": "str",
                             },
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
                             "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
                         }
                     ],
                     "outputs": {"str": {}},
                     "parameters": {
                         "str": {
-                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "type": "str",
                             "value": {},
@@ -410,17 +298,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     },
                     "parametersLink": {"uri": "str", "contentVersion": "str"},
                     "provisioningState": "str",
-                    "resources": [
-                        {
-                            "apiVersion": "str",
-                            "denyStatus": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "status": "str",
-                            "type": "str",
-                        }
-                    ],
+                    "resources": [{"denyStatus": "str", "id": "str", "status": "str"}],
                     "template": {"str": {}},
                     "templateLink": {
                         "contentVersion": "str",
@@ -429,7 +307,6 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
-                    "validationLevel": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -457,12 +334,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                 "location": "str",
                 "name": "str",
                 "properties": {
-                    "actionOnUnmanage": {
-                        "resources": "str",
-                        "managementGroups": "str",
-                        "resourceGroups": "str",
-                        "resourcesWithoutDeleteSupport": "str",
-                    },
+                    "actionOnUnmanage": {"resources": "str", "managementGroups": "str", "resourceGroups": "str"},
                     "denySettings": {
                         "mode": "str",
                         "applyToChildScopes": bool,
@@ -472,28 +344,11 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     "bypassStackOutOfSyncError": bool,
                     "correlationId": "str",
                     "debugSetting": {"detailLevel": "str"},
-                    "deletedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
-                    "deploymentExtensions": [{"name": "str", "version": "str", "config": {}, "configId": "str"}],
+                    "deletedResources": [{"id": "str"}],
                     "deploymentId": "str",
                     "deploymentScope": "str",
                     "description": "str",
-                    "detachedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
+                    "detachedResources": [{"id": "str"}],
                     "duration": "str",
                     "error": {
                         "additionalInfo": [{"info": {}, "type": "str"}],
@@ -502,12 +357,8 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "message": "str",
                         "target": "str",
                     },
-                    "extensionConfigs": {"str": {}},
-                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
-                    "externalInputs": {"str": {"value": {}}},
                     "failedResources": [
                         {
-                            "apiVersion": "str",
                             "error": {
                                 "additionalInfo": [{"info": {}, "type": "str"}],
                                 "code": "str",
@@ -515,16 +366,12 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                                 "message": "str",
                                 "target": "str",
                             },
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
                             "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
                         }
                     ],
                     "outputs": {"str": {}},
                     "parameters": {
                         "str": {
-                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "type": "str",
                             "value": {},
@@ -532,17 +379,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     },
                     "parametersLink": {"uri": "str", "contentVersion": "str"},
                     "provisioningState": "str",
-                    "resources": [
-                        {
-                            "apiVersion": "str",
-                            "denyStatus": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "status": "str",
-                            "type": "str",
-                        }
-                    ],
+                    "resources": [{"denyStatus": "str", "id": "str", "status": "str"}],
                     "template": {"str": {}},
                     "templateLink": {
                         "contentVersion": "str",
@@ -551,7 +388,6 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
-                    "validationLevel": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -621,12 +457,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                 "location": "str",
                 "name": "str",
                 "properties": {
-                    "actionOnUnmanage": {
-                        "resources": "str",
-                        "managementGroups": "str",
-                        "resourceGroups": "str",
-                        "resourcesWithoutDeleteSupport": "str",
-                    },
+                    "actionOnUnmanage": {"resources": "str", "managementGroups": "str", "resourceGroups": "str"},
                     "denySettings": {
                         "mode": "str",
                         "applyToChildScopes": bool,
@@ -636,28 +467,11 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     "bypassStackOutOfSyncError": bool,
                     "correlationId": "str",
                     "debugSetting": {"detailLevel": "str"},
-                    "deletedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
-                    "deploymentExtensions": [{"name": "str", "version": "str", "config": {}, "configId": "str"}],
+                    "deletedResources": [{"id": "str"}],
                     "deploymentId": "str",
                     "deploymentScope": "str",
                     "description": "str",
-                    "detachedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
+                    "detachedResources": [{"id": "str"}],
                     "duration": "str",
                     "error": {
                         "additionalInfo": [{"info": {}, "type": "str"}],
@@ -666,12 +480,8 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "message": "str",
                         "target": "str",
                     },
-                    "extensionConfigs": {"str": {}},
-                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
-                    "externalInputs": {"str": {"value": {}}},
                     "failedResources": [
                         {
-                            "apiVersion": "str",
                             "error": {
                                 "additionalInfo": [{"info": {}, "type": "str"}],
                                 "code": "str",
@@ -679,16 +489,12 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                                 "message": "str",
                                 "target": "str",
                             },
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
                             "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
                         }
                     ],
                     "outputs": {"str": {}},
                     "parameters": {
                         "str": {
-                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "type": "str",
                             "value": {},
@@ -696,17 +502,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     },
                     "parametersLink": {"uri": "str", "contentVersion": "str"},
                     "provisioningState": "str",
-                    "resources": [
-                        {
-                            "apiVersion": "str",
-                            "denyStatus": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "status": "str",
-                            "type": "str",
-                        }
-                    ],
+                    "resources": [{"denyStatus": "str", "id": "str", "status": "str"}],
                     "template": {"str": {}},
                     "templateLink": {
                         "contentVersion": "str",
@@ -715,7 +511,6 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
-                    "validationLevel": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -744,12 +539,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                 "location": "str",
                 "name": "str",
                 "properties": {
-                    "actionOnUnmanage": {
-                        "resources": "str",
-                        "managementGroups": "str",
-                        "resourceGroups": "str",
-                        "resourcesWithoutDeleteSupport": "str",
-                    },
+                    "actionOnUnmanage": {"resources": "str", "managementGroups": "str", "resourceGroups": "str"},
                     "denySettings": {
                         "mode": "str",
                         "applyToChildScopes": bool,
@@ -759,28 +549,11 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     "bypassStackOutOfSyncError": bool,
                     "correlationId": "str",
                     "debugSetting": {"detailLevel": "str"},
-                    "deletedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
-                    "deploymentExtensions": [{"name": "str", "version": "str", "config": {}, "configId": "str"}],
+                    "deletedResources": [{"id": "str"}],
                     "deploymentId": "str",
                     "deploymentScope": "str",
                     "description": "str",
-                    "detachedResources": [
-                        {
-                            "apiVersion": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
-                        }
-                    ],
+                    "detachedResources": [{"id": "str"}],
                     "duration": "str",
                     "error": {
                         "additionalInfo": [{"info": {}, "type": "str"}],
@@ -789,12 +562,8 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "message": "str",
                         "target": "str",
                     },
-                    "extensionConfigs": {"str": {}},
-                    "externalInputDefinitions": {"str": {"kind": "str", "config": {}}},
-                    "externalInputs": {"str": {"value": {}}},
                     "failedResources": [
                         {
-                            "apiVersion": "str",
                             "error": {
                                 "additionalInfo": [{"info": {}, "type": "str"}],
                                 "code": "str",
@@ -802,16 +571,12 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                                 "message": "str",
                                 "target": "str",
                             },
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
                             "id": "str",
-                            "identifiers": {"str": {}},
-                            "type": "str",
                         }
                     ],
                     "outputs": {"str": {}},
                     "parameters": {
                         "str": {
-                            "expression": "str",
                             "reference": {"keyVault": {"id": "str"}, "secretName": "str", "secretVersion": "str"},
                             "type": "str",
                             "value": {},
@@ -819,17 +584,7 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                     },
                     "parametersLink": {"uri": "str", "contentVersion": "str"},
                     "provisioningState": "str",
-                    "resources": [
-                        {
-                            "apiVersion": "str",
-                            "denyStatus": "str",
-                            "extension": {"name": "str", "version": "str", "config": {}, "configId": "str"},
-                            "id": "str",
-                            "identifiers": {"str": {}},
-                            "status": "str",
-                            "type": "str",
-                        }
-                    ],
+                    "resources": [{"denyStatus": "str", "id": "str", "status": "str"}],
                     "template": {"str": {}},
                     "templateLink": {
                         "contentVersion": "str",
@@ -838,7 +593,6 @@ class TestDeploymentStacksDeploymentStacksOperations(AzureMgmtRecordedTestCase):
                         "relativePath": "str",
                         "uri": "str",
                     },
-                    "validationLevel": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
