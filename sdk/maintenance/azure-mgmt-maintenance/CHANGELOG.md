@@ -1,5 +1,25 @@
 # Release History
 
+## 2.2.0b3 (2026-05-21)
+
+### Features Added
+
+  - Client `MaintenanceManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `MaintenanceManagementClient` added method `send_request`
+  - Model `Operation` added property `action_type`
+  - Added enum `ActionType`
+  - Added model `MaintenanceWindow`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+
+### Breaking Changes
+
+  - Model `Operation` deleted or renamed its instance variable `properties`
+  - Deleted or renamed model `ListApplyUpdate`
+  - Deleted or renamed model `ListConfigurationAssignmentsResult`
+  - Deleted or renamed model `ListMaintenanceConfigurationsResult`
+  - Deleted or renamed model `ListUpdatesResult`
+
 ## 2.2.0b2 (2024-05-20)
 
 ### Features Added
