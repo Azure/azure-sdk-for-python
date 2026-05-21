@@ -69,6 +69,26 @@ class TestFrontDoorManagementPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                         "frontendEndpointLinks": [{"id": "str"}],
                         "managedRules": {
+                            "exceptionsList": {
+                                "exceptions": [
+                                    {
+                                        "matchValues": ["str"],
+                                        "matchVariable": "str",
+                                        "scopes": [
+                                            {
+                                                "ruleSetType": "str",
+                                                "ruleSetVersion": "str",
+                                                "ruleGroupScopes": [
+                                                    {"ruleGroupName": "str", "ruleScopes": [{"ruleId": "str"}]}
+                                                ],
+                                            }
+                                        ],
+                                        "valueMatchOperator": "str",
+                                        "selector": "str",
+                                        "selectorMatchOperator": "str",
+                                    }
+                                ]
+                            },
                             "managedRuleSets": [
                                 {
                                     "ruleSetType": "str",
@@ -105,7 +125,7 @@ class TestFrontDoorManagementPoliciesOperationsAsync(AzureMgmtRecordedTestCase):
                                     ],
                                     "ruleSetAction": "str",
                                 }
-                            ]
+                            ],
                         },
                         "policySettings": {
                             "captchaExpirationInMinutes": 0,

@@ -224,6 +224,18 @@ class TestFrontDoorManagementFrontDoorsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_front_doors_begin_update(self, resource_group):
+        response = self.client.front_doors.begin_update(
+            resource_group_name=resource_group.name,
+            front_door_name="str",
+            properties={"tags": {"str": "str"}},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_front_doors_validate_custom_domain(self, resource_group):
         response = self.client.front_doors.validate_custom_domain(
             resource_group_name=resource_group.name,
