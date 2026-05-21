@@ -4077,7 +4077,7 @@ class CronTrigger(Trigger, discriminator="Cron"):
     :vartype type: str or ~azure.ai.projects.models.CRON
     :ivar expression: Cron expression that defines the schedule frequency. Required.
     :vartype expression: str
-    :ivar time_zone: Time zone for the cron schedule.
+    :ivar time_zone: Time zone for the cron schedule. Defaults to ``UTC``.
     :vartype time_zone: str
     :ivar start_time: Start time for the cron schedule in ISO 8601 format.
     :vartype start_time: ~datetime.datetime
@@ -4090,7 +4090,7 @@ class CronTrigger(Trigger, discriminator="Cron"):
     expression: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Cron expression that defines the schedule frequency. Required."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
-    """Time zone for the cron schedule."""
+    """Time zone for the cron schedule. Defaults to ``UTC``."""
     start_time: Optional[datetime.datetime] = rest_field(
         name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
@@ -5161,7 +5161,7 @@ class DeleteAgentVersionResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteMemoryResponse(_Model):
+class DeleteMemoryResult(_Model):
     """Response for deleting a memory item from a memory store.
 
     :ivar object: The object type. Always 'memory_store.item.deleted'. Required. MEMORY_DELETED.
@@ -5329,7 +5329,7 @@ class Dimension(_Model):
     :ivar always_applicable: When true, the LLM judge always scores this dimension regardless of
      relevance (skips applicability assessment). The service-generated general quality/policy
      dimension has this set to true and is non-editable. Users may set this on their own custom
-     dimensions.
+     dimensions. Defaults to ``false``.
     :vartype always_applicable: bool
     """
 
@@ -5347,7 +5347,8 @@ class Dimension(_Model):
     always_applicable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """When true, the LLM judge always scores this dimension regardless of relevance (skips
      applicability assessment). The service-generated general quality/policy dimension has this set
-     to true and is non-editable. Users may set this on their own custom dimensions."""
+     to true and is non-editable. Users may set this on their own custom dimensions. Defaults to
+     ``false``."""
 
     @overload
     def __init__(
@@ -5370,7 +5371,7 @@ class Dimension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DispatchRoutineResponse(_Model):
+class DispatchRoutineResult(_Model):
     """Identifiers returned after a routine dispatch is queued.
 
     :ivar dispatch_id: The dispatch identifier created for the routine dispatch.
@@ -9384,14 +9385,14 @@ class MemoryStoreDefaultOptions(_Model):
     :ivar user_profile_details: Specific categories or types of user profile information to extract
      and store.
     :vartype user_profile_details: str
-    :ivar chat_summary_enabled: Whether to enable chat summary extraction and storage. Default is
-     true. Required.
+    :ivar chat_summary_enabled: Whether to enable chat summary extraction and storage. Defaults to
+     ``true``. Required.
     :vartype chat_summary_enabled: bool
     :ivar procedural_memory_enabled: Whether to enable procedural memory extraction and storage.
-     Default is true.
+     Defaults to ``true``.
     :vartype procedural_memory_enabled: bool
-    :ivar default_ttl_seconds: The default time-to-live for memories in seconds.  A value of 0
-     indicates that memories do not expire.
+    :ivar default_ttl_seconds: The default time-to-live for memories in seconds. A value of ``0``
+     indicates that memories do not expire. Defaults to ``0``.
     :vartype default_ttl_seconds: int
     """
 
@@ -9400,12 +9401,12 @@ class MemoryStoreDefaultOptions(_Model):
     user_profile_details: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specific categories or types of user profile information to extract and store."""
     chat_summary_enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to enable chat summary extraction and storage. Default is true. Required."""
+    """Whether to enable chat summary extraction and storage. Defaults to ``true``. Required."""
     procedural_memory_enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to enable procedural memory extraction and storage. Default is true."""
+    """Whether to enable procedural memory extraction and storage. Defaults to ``true``."""
     default_ttl_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The default time-to-live for memories in seconds.  A value of 0 indicates that memories do not
-     expire."""
+    """The default time-to-live for memories in seconds. A value of ``0`` indicates that memories do
+     not expire. Defaults to ``0``."""
 
     @overload
     def __init__(
@@ -10260,7 +10261,7 @@ class OneTimeTrigger(Trigger, discriminator="OneTime"):
     :vartype type: str or ~azure.ai.projects.models.ONE_TIME
     :ivar trigger_at: Date and time for the one-time trigger in ISO 8601 format. Required.
     :vartype trigger_at: ~datetime.datetime
-    :ivar time_zone: Time zone for the one-time trigger.
+    :ivar time_zone: Time zone for the one-time trigger. Defaults to ``UTC``.
     :vartype time_zone: str
     """
 
@@ -10271,7 +10272,7 @@ class OneTimeTrigger(Trigger, discriminator="OneTime"):
     )
     """Date and time for the one-time trigger in ISO 8601 format. Required."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
-    """Time zone for the one-time trigger."""
+    """Time zone for the one-time trigger. Defaults to ``UTC``."""
 
     @overload
     def __init__(
@@ -11430,7 +11431,7 @@ class PendingUploadRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PendingUploadResult(_Model):
+class PendingUploadResponse(_Model):
     """Represents the response for a pending upload request.
 
     :ivar blob_reference: Container-level read, write, list SAS. Required.
@@ -11537,14 +11538,13 @@ class PromptAgentDefinition(AgentDefinition, discriminator="prompt"):
     :vartype instructions: str
     :ivar temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
      will make the output more random, while lower values like 0.2 will make it more focused and
-     deterministic. We generally recommend altering this or ``top_p`` but not both.
+     deterministic. We generally recommend altering this or ``top_p`` but not both. Defaults to
+     ``1``.
     :vartype temperature: float
-    :ivar top_p: An alternative to sampling with temperature, called nucleus sampling,
-     where the model considers the results of the tokens with top_p probability
-     mass. So 0.1 means only the tokens comprising the top 10% probability mass
-     are considered.
-
-     We generally recommend altering this or ``temperature`` but not both.
+    :ivar top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+     model considers the results of the tokens with top_p probability mass. So 0.1 means only the
+     tokens comprising the top 10% probability mass are considered. We generally recommend altering
+     this or ``temperature`` but not both. Defaults to ``1``.
     :vartype top_p: float
     :ivar reasoning:
     :vartype reasoning: ~azure.ai.projects.models.Reasoning
@@ -11572,14 +11572,12 @@ class PromptAgentDefinition(AgentDefinition, discriminator="prompt"):
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output
      more random, while lower values like 0.2 will make it more focused and deterministic. We
-     generally recommend altering this or ``top_p`` but not both."""
+     generally recommend altering this or ``top_p`` but not both. Defaults to ``1``."""
     top_p: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An alternative to sampling with temperature, called nucleus sampling,
-     where the model considers the results of the tokens with top_p probability
-     mass. So 0.1 means only the tokens comprising the top 10% probability mass
-     are considered.
-     
-     We generally recommend altering this or ``temperature`` but not both."""
+    """An alternative to sampling with temperature, called nucleus sampling, where the model considers
+     the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising
+     the top 10% probability mass are considered. We generally recommend altering this or
+     ``temperature`` but not both. Defaults to ``1``."""
     reasoning: Optional["_models.Reasoning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of tools the model may call while generating a response. You can specify which tool to
@@ -11958,7 +11956,7 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
     :vartype start_time: ~datetime.datetime
     :ivar end_time: End time for the recurrence schedule in ISO 8601 format.
     :vartype end_time: ~datetime.datetime
-    :ivar time_zone: Time zone for the recurrence schedule.
+    :ivar time_zone: Time zone for the recurrence schedule. Defaults to ``UTC``.
     :vartype time_zone: str
     :ivar interval: Interval for the recurrence schedule. Required.
     :vartype interval: int
@@ -11977,7 +11975,7 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
     )
     """End time for the recurrence schedule in ISO 8601 format."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
-    """Time zone for the recurrence schedule."""
+    """Time zone for the recurrence schedule. Defaults to ``UTC``."""
     interval: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Interval for the recurrence schedule. Required."""
     schedule: "_models.RecurrenceSchedule" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -12781,10 +12779,12 @@ class SessionLogEvent(_Model):
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}.
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -13160,7 +13160,8 @@ class StructuredInputDefinition(_Model):
     :vartype default_value: any
     :ivar schema: The JSON schema for the structured input (optional).
     :vartype schema: dict[str, any]
-    :ivar required: Whether the input property is required when the agent is invoked.
+    :ivar required: Whether the input property is required when the agent is invoked. Defaults to
+     ``false``.
     :vartype required: bool
     """
 
@@ -13171,7 +13172,7 @@ class StructuredInputDefinition(_Model):
     schema: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The JSON schema for the structured input (optional)."""
     required: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether the input property is required when the agent is invoked."""
+    """Whether the input property is required when the agent is invoked. Defaults to ``false``."""
 
     @overload
     def __init__(
@@ -13825,7 +13826,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      or a Literal["required"] type.
     :vartype mode: str or str
     :ivar tools: A list of tool definitions that the model should be allowed to call. For the
-     Responses API, the list of tool definitions might look like the following. Required.
+     Responses API, the list of tool definitions might look like:
 
      .. code-block:: json
 
@@ -13833,7 +13834,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
           { "type": "function", "name": "get_weather" },
           { "type": "mcp", "server_label": "deepwiki" },
           { "type": "image_generation" }
-        ]
+        ]. Required.
     :vartype tools: list[dict[str, any]]
     """
 
@@ -13846,7 +13847,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      Literal[\"required\"] type."""
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of tool definitions that the model should be allowed to call. For the Responses API, the
-     list of tool definitions might look like the following. Required.
+     list of tool definitions might look like:
      
      .. code-block:: json
      
@@ -13854,7 +13855,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
           { \"type\": \"function\", \"name\": \"get_weather\" },
           { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
           { \"type\": \"image_generation\" }
-        ]"""
+        ]. Required."""
 
     @overload
     def __init__(
@@ -14123,12 +14124,12 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
-    :ivar type: Required. WEB_SEARCH_PREVIEW_2025_03_11.
-    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW_2025_03_11
+    :ivar type: Required. WEB_SEARCH_PREVIEW2025_03_11.
+    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW2025_03_11
     """
 
-    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. WEB_SEARCH_PREVIEW_2025_03_11."""
+    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. WEB_SEARCH_PREVIEW2025_03_11."""
 
     @overload
     def __init__(
@@ -14144,7 +14145,7 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11  # type: ignore
+        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11  # type: ignore
 
 
 class ToolConfig(_Model):
