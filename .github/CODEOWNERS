@@ -103,11 +103,6 @@
 # PRLabel: %Cognitive - Language
 /sdk/cognitivelanguage/    @ahmedaashour @bidisha-c @mikaelsitruk @quentinRobinson @sarkar-rajarshi
 
-# AzureSdkOwners: @iscai-msft
-# ServiceLabel: %Cognitive - Metrics Advisor
-# PRLabel: %Cognitive - Metrics Advisor
-/sdk/metricsadvisor/    @iscai-msft
-
 # PRLabel: %Cognitive - Mgmt
 /sdk/cognitiveservices/    @lmazuel
 
