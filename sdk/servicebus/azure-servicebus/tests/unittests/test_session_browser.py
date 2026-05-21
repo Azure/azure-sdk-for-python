@@ -4,16 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-"""Unit tests for the _SessionBrowser sentinel value and message construction.
+"""Unit tests for the _SessionBrowser sentinel value and page size.
 
 These tests verify the active-messages sentinel matches the value the service
 expects, without requiring Azure credentials or a live Service Bus namespace.
 """
 
-import pytest
-
 from azure.servicebus._session_browser import _MAX_DATETIME_MS, _PAGE_SIZE
-from azure.servicebus._pyamqp.types import AMQPTypes, TYPE, VALUE
 
 
 class TestSessionBrowserSentinel:
