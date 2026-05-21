@@ -32,19 +32,25 @@ def my_callback_on_fail(_):
     print("Refresh failed!")
 
 
-# Connecting to Azure App Configuration using AAD, and refreshing when the configuration setting message
-# changes
+# [START refresh_feature_flags]
+import os
+from azure.appconfiguration.provider import load, WatchKey
+
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
 config = load(
     endpoint=endpoint,
     credential=credential,
     refresh_on=[WatchKey("message")],
     refresh_on_feature_flags=True,
-    refresh_interval=1,
-    on_refresh_error=my_callback_on_fail,
+    refresh_interval=60,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
     **kwargs,
 )
+# [END refresh_feature_flags]
+
+# Reload with test-specific configuration
 
 print(config["message"])
 print(config["my_json"]["key"])

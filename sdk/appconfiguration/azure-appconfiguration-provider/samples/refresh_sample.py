@@ -33,19 +33,29 @@ def my_callback_on_fail(_):
 rand = random.random()
 watch_key = WatchKey("message" + str(rand))
 
-# Connecting to Azure App Configuration using AAD, and refreshing when the configuration setting message
-# changes
+# [START refresh_provider]
+import os
+from azure.appconfiguration.provider import load, WatchKey
+
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
 config = load(
     endpoint=endpoint,
     credential=credential,
-    refresh_on=[watch_key],
-    refresh_interval=1,
-    on_refresh_error=my_callback_on_fail,
+    refresh_on=[WatchKey("Sentinel")],
+    refresh_interval=60,
     **kwargs,
 )
+# [END refresh_provider]
+
+# Reload with test-specific configuration
 
 print(config["message"])
 print(config["my_json"]["key"])
+
+# [START refresh_call]
+config.refresh()
+# [END refresh_call]
 
 # Updating the configuration setting
 configuration_setting.value = "Hello World Updated!"
