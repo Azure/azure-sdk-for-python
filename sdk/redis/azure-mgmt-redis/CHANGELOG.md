@@ -10,92 +10,30 @@
   - Model `ProxyResource` added property `system_data`
   - Model `RedisCacheAccessPolicy` added property `system_data`
   - Model `RedisCacheAccessPolicyAssignment` added property `system_data`
-  - Model `RedisCreateParameters` added property `properties`
   - Model `RedisFirewallRule` added property `system_data`
-  - Model `RedisLinkedServerWithProperties` added property `properties`
   - Model `RedisLinkedServerWithProperties` added property `system_data`
-  - Model `RedisPatchSchedule` added property `properties`
   - Model `RedisPatchSchedule` added property `system_data`
-  - Model `RedisResource` added property `properties`
   - Model `RedisResource` added property `system_data`
-  - Model `RedisUpdateParameters` added property `properties`
   - Model `Resource` added property `system_data`
   - Model `TrackedResource` added property `system_data`
   - Added enum `CreatedByType`
-  - Added model `ScheduleEntries`
   - Added model `SystemData`
 
 ### Breaking Changes
 
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `redis_configuration`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `redis_version`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `enable_non_ssl_port`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `replicas_per_master`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `replicas_per_primary`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `tenant_settings`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `shard_count`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `minimum_tls_version`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `public_network_access`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `update_channel`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `disable_access_key_authentication`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `zonal_allocation_policy`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `sku`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `subnet_id`
-  - Model `RedisCreateParameters` deleted or renamed its instance variable `static_ip`
-  - Model `RedisLinkedServerCreateParameters` deleted or renamed its instance variable `linked_redis_cache_id`
-  - Model `RedisLinkedServerCreateParameters` deleted or renamed its instance variable `linked_redis_cache_location`
-  - Model `RedisLinkedServerCreateParameters` deleted or renamed its instance variable `server_role`
-  - Model `RedisLinkedServerCreateParameters` deleted or renamed its instance variable `geo_replicated_primary_host_name`
-  - Model `RedisLinkedServerCreateParameters` deleted or renamed its instance variable `primary_host_name`
-  - Model `RedisLinkedServerWithProperties` deleted or renamed its instance variable `linked_redis_cache_id`
-  - Model `RedisLinkedServerWithProperties` deleted or renamed its instance variable `linked_redis_cache_location`
-  - Model `RedisLinkedServerWithProperties` deleted or renamed its instance variable `server_role`
-  - Model `RedisLinkedServerWithProperties` deleted or renamed its instance variable `geo_replicated_primary_host_name`
-  - Model `RedisLinkedServerWithProperties` deleted or renamed its instance variable `primary_host_name`
-  - Model `RedisLinkedServerWithProperties` deleted or renamed its instance variable `provisioning_state`
-  - Model `RedisPatchSchedule` deleted or renamed its instance variable `schedule_entries`
-  - Model `RedisResource` deleted or renamed its instance variable `redis_configuration`
-  - Model `RedisResource` deleted or renamed its instance variable `redis_version`
-  - Model `RedisResource` deleted or renamed its instance variable `enable_non_ssl_port`
-  - Model `RedisResource` deleted or renamed its instance variable `replicas_per_master`
-  - Model `RedisResource` deleted or renamed its instance variable `replicas_per_primary`
-  - Model `RedisResource` deleted or renamed its instance variable `tenant_settings`
-  - Model `RedisResource` deleted or renamed its instance variable `shard_count`
-  - Model `RedisResource` deleted or renamed its instance variable `minimum_tls_version`
-  - Model `RedisResource` deleted or renamed its instance variable `public_network_access`
-  - Model `RedisResource` deleted or renamed its instance variable `update_channel`
-  - Model `RedisResource` deleted or renamed its instance variable `disable_access_key_authentication`
-  - Model `RedisResource` deleted or renamed its instance variable `zonal_allocation_policy`
-  - Model `RedisResource` deleted or renamed its instance variable `sku`
-  - Model `RedisResource` deleted or renamed its instance variable `subnet_id`
-  - Model `RedisResource` deleted or renamed its instance variable `static_ip`
-  - Model `RedisResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `RedisResource` deleted or renamed its instance variable `host_name`
-  - Model `RedisResource` deleted or renamed its instance variable `port`
-  - Model `RedisResource` deleted or renamed its instance variable `ssl_port`
-  - Model `RedisResource` deleted or renamed its instance variable `access_keys`
-  - Model `RedisResource` deleted or renamed its instance variable `linked_servers`
-  - Model `RedisResource` deleted or renamed its instance variable `instances`
-  - Model `RedisResource` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `redis_configuration`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `redis_version`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `enable_non_ssl_port`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `replicas_per_master`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `replicas_per_primary`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `tenant_settings`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `shard_count`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `minimum_tls_version`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `public_network_access`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `update_channel`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `disable_access_key_authentication`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `zonal_allocation_policy`
-  - Model `RedisUpdateParameters` deleted or renamed its instance variable `sku`
-  - Deleted or renamed model `NotificationListResponse`
-  - Deleted or renamed model `RedisCacheAccessPolicyAssignmentList`
-  - Deleted or renamed model `RedisCacheAccessPolicyList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `RedisCreateParameters` moved instance variable `redis_configuration`, `redis_version`, `enable_non_ssl_port`, `replicas_per_master`, `replicas_per_primary`, `tenant_settings`, `shard_count`, `minimum_tls_version`, `public_network_access`, `update_channel`, `disable_access_key_authentication`, `zonal_allocation_policy`, `sku`, `subnet_id` and `static_ip` under property `properties` whose type is `RedisCreateProperties`
+  - Model `RedisLinkedServerCreateParameters` moved instance variable `linked_redis_cache_id`, `linked_redis_cache_location`, `server_role`, `geo_replicated_primary_host_name` and `primary_host_name` under property `properties` whose type is `RedisLinkedServerCreateProperties`
+  - Model `RedisLinkedServerWithProperties` moved instance variable `linked_redis_cache_id`, `linked_redis_cache_location`, `server_role`, `geo_replicated_primary_host_name`, `primary_host_name` and `provisioning_state` under property `properties` whose type is `RedisLinkedServerProperties`
+  - Model `RedisPatchSchedule` moved instance variable `schedule_entries` under property `properties` whose type is `ScheduleEntries`
+  - Model `RedisResource` moved instance variable `redis_configuration`, `redis_version`, `enable_non_ssl_port`, `replicas_per_master`, `replicas_per_primary`, `tenant_settings`, `shard_count`, `minimum_tls_version`, `public_network_access`, `update_channel`, `disable_access_key_authentication`, `zonal_allocation_policy`, `sku`, `subnet_id`, `static_ip`, `provisioning_state`, `host_name`, `port`, `ssl_port`, `access_keys`, `linked_servers`, `instances` and `private_endpoint_connections` under property `properties` whose type is `RedisProperties`
+  - Model `RedisUpdateParameters` moved instance variable `redis_configuration`, `redis_version`, `enable_non_ssl_port`, `replicas_per_master`, `replicas_per_primary`, `tenant_settings`, `shard_count`, `minimum_tls_version`, `public_network_access`, `update_channel`, `disable_access_key_authentication`, `zonal_allocation_policy` and `sku` under property `properties` whose type is `RedisUpdateProperties`
   - Deleted or renamed model `RedisFirewallRuleCreateParameters`
-  - Deleted or renamed model `RedisLinkedServerWithPropertiesList`
   - Method `RedisOperations.list_upgrade_notifications` changed its parameter `history` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `NotificationListResponse`/`RedisCacheAccessPolicyAssignmentList`/`RedisCacheAccessPolicyList`/`RedisLinkedServerWithPropertiesList` which actually were not used by SDK users
 
 ## 14.5.0 (2025-01-20)
 
