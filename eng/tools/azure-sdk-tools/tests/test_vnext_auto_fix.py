@@ -17,7 +17,6 @@ from gh_tools.vnext_issue_creator import (
     COPILOT_AUTOFIX_END,
     COPILOT_AUTOFIX_START,
     LABEL_AUTO_FIX,
-    LABEL_AUTO_FIX_DISABLED,
     _is_copilot_already_assigned,
     _try_auto_fix,
     _upsert_copilot_instructions,
@@ -87,6 +86,27 @@ def _make_pr(
 
 
 # ---------------------------------------------------------------------------
+# Helpers for pyproject.toml-based eligibility tests
+# ---------------------------------------------------------------------------
+
+
+def _write_pyproject(tmp_path, vnext_copilot_fix=None):
+    """Create a minimal pyproject.toml under *tmp_path*.
+
+    When *vnext_copilot_fix* is not None the setting is written under
+    ``[tool.azure-sdk-build]``.
+    """
+    lines = [
+        '[build-system]\nrequires = ["setuptools"]\nbuild-backend = "setuptools.build_meta"\n',
+        '[project]\nname = "azure-test-pkg"\nversion = "1.0.0"\ndependencies = []\n',
+    ]
+    if vnext_copilot_fix is not None:
+        lines.append(f"[tool.azure-sdk-build]\nvnext_copilot_fix = {str(vnext_copilot_fix).lower()}\n")
+    (tmp_path / "pyproject.toml").write_text("\n".join(lines))
+    return str(tmp_path)
+
+
+# ---------------------------------------------------------------------------
 # Eligibility tests
 # ---------------------------------------------------------------------------
 
@@ -94,13 +114,17 @@ def _make_pr(
 class TestIsAutoFixEligible:
     """Tests for is_auto_fix_eligible."""
 
-    def test_eligible_by_default(self):
-        assert is_auto_fix_eligible([]) is True
-        assert is_auto_fix_eligible(["pylint"]) is True
-        assert is_auto_fix_eligible(["mypy", "some-service-label"]) is True
+    def test_eligible_by_default(self, tmp_path):
+        pkg = _write_pyproject(tmp_path)
+        assert is_auto_fix_eligible(pkg) is True
 
-    def test_opt_out_label(self):
-        assert is_auto_fix_eligible([LABEL_AUTO_FIX_DISABLED]) is False
+    def test_eligible_when_true(self, tmp_path):
+        pkg = _write_pyproject(tmp_path, vnext_copilot_fix=True)
+        assert is_auto_fix_eligible(pkg) is True
+
+    def test_opt_out_via_pyproject(self, tmp_path):
+        pkg = _write_pyproject(tmp_path, vnext_copilot_fix=False)
+        assert is_auto_fix_eligible(pkg) is False
 
 
 # ---------------------------------------------------------------------------
@@ -313,13 +337,14 @@ class TestIsCopilotAlreadyAssigned:
 
 class TestTryAutoFix:
 
-    def test_eligible_no_duplicate_assigns(self):
+    def test_eligible_no_duplicate_assigns(self, tmp_path):
+        pkg = _write_pyproject(tmp_path)
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint"])
         g = _make_github_instance()
 
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", ["pylint"])
+        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
 
         # Labels reconciled
         issue.add_to_labels.assert_any_call(LABEL_AUTO_FIX)
@@ -331,7 +356,8 @@ class TestTryAutoFix:
         g._Github__requester.graphql_named_mutation.assert_called_once()
         g._Github__requester.graphql_query.assert_called_once()
 
-    def test_eligible_with_duplicate_pr_skips(self):
+    def test_eligible_with_duplicate_pr_skips(self, tmp_path):
+        pkg = _write_pyproject(tmp_path)
         repo = MagicMock()
         repo.get_pulls.return_value = [
             _make_pr(body="Fixes #1"),
@@ -339,14 +365,15 @@ class TestTryAutoFix:
         issue = _make_issue(number=1, labels=["pylint"])
         g = _make_github_instance()
 
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", ["pylint"])
+        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
 
         # Should NOT assign Copilot
         g._Github__requester.graphql_named_mutation.assert_not_called()
 
-    def test_opt_out_label_prevents_assignment(self):
+    def test_opt_out_pyproject_prevents_assignment(self, tmp_path):
+        pkg = _write_pyproject(tmp_path, vnext_copilot_fix=False)
         repo = MagicMock()
-        issue = _make_issue(labels=["pylint", LABEL_AUTO_FIX_DISABLED])
+        issue = _make_issue(labels=["pylint"])
         g = _make_github_instance()
 
         _try_auto_fix(
@@ -356,35 +383,38 @@ class TestTryAutoFix:
             "azure-ai-test",
             "sdk/ai/azure-ai-test",
             "pylint",
-            ["pylint", LABEL_AUTO_FIX_DISABLED],
+            pkg,
         )
 
         g._Github__requester.graphql_named_mutation.assert_not_called()
 
-    def test_weekly_retry_reassigns_when_no_pr(self):
+    def test_weekly_retry_reassigns_when_no_pr(self, tmp_path):
         """Simulates a weekly re-run: issue already has copilot-auto-fix label
         but no matching PR exists, so Copilot should be reassigned."""
+        pkg = _write_pyproject(tmp_path)
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint", LABEL_AUTO_FIX])
         g = _make_github_instance()
 
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", ["pylint", LABEL_AUTO_FIX])
+        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
 
         g._Github__requester.graphql_named_mutation.assert_called_once()
 
-    def test_assignment_failure_does_not_crash(self):
+    def test_assignment_failure_does_not_crash(self, tmp_path):
+        pkg = _write_pyproject(tmp_path)
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint"])
         g = _make_github_instance()
         g._Github__requester.graphql_named_mutation.side_effect = Exception("mutation failed")
 
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", ["pylint"])
+        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
 
         issue.add_to_labels.assert_not_called()
 
-    def test_missing_copilot_node_id_skips_assignment(self):
+    def test_missing_copilot_node_id_skips_assignment(self, tmp_path):
+        pkg = _write_pyproject(tmp_path)
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint"])
@@ -394,7 +424,7 @@ class TestTryAutoFix:
             {"data": {"node": {"suggestedActors": {"nodes": []}}}},
         )
 
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", ["pylint"])
+        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", pkg)
 
         g._Github__requester.graphql_query.assert_called_once()
         g._Github__requester.graphql_named_mutation.assert_not_called()

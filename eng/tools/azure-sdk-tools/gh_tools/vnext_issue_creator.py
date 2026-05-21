@@ -19,6 +19,7 @@ import pathlib
 from typing_extensions import Literal
 from github import Github, Auth, GithubException
 
+from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import discover_repo_root
 
 logging.getLogger().setLevel(logging.INFO)
@@ -29,9 +30,8 @@ CHECK_TYPE = Literal["mypy", "pylint", "pyright", "sphinx"]
 # Auto-fix automation constants
 # ---------------------------------------------------------------------------
 
-#: Label constants for auto-fix state management.
+#: Label constant for auto-fix state management.
 LABEL_AUTO_FIX = "copilot-auto-fix"
-LABEL_AUTO_FIX_DISABLED = "copilot-auto-fix-disabled"
 
 #: Managed block markers for Copilot instructions in issue bodies.
 COPILOT_AUTOFIX_START = "<!-- copilot-autofix:start -->"
@@ -85,12 +85,16 @@ def _resolve_copilot_node_id(issue, github_instance) -> Optional[str]:
 
 
 def is_auto_fix_eligible(
-    issue_labels: list[str],
+    package_dir: str,
 ) -> bool:
-    """Return True when the issue is eligible for auto-fix."""
-    if LABEL_AUTO_FIX_DISABLED in issue_labels:
-        return False
-    return True
+    """Return True when the issue is eligible for auto-fix.
+
+    Reads the ``vnext_copilot_fix`` setting from ``[tool.azure-sdk-build]``
+    in the package's ``pyproject.toml`` via :class:`ParsedSetup`.  The
+    setting defaults to ``True`` (eligible) when absent.
+    """
+    parsed = ParsedSetup.from_path(package_dir)
+    return bool(parsed.get_config_setting("vnext_copilot_fix", default=True))
 
 
 def _references_issue(text: str, issue_number: int) -> bool:
@@ -266,7 +270,7 @@ def _try_auto_fix(
     package_name: str,
     package_path: str,
     check_type: str,
-    issue_labels: list[str],
+    package_dir: str,
     version_changed: bool = False,
 ) -> None:
     """Run the auto-fix eligibility → duplicate check → assign flow.
@@ -274,7 +278,8 @@ def _try_auto_fix(
     When *version_changed* is True (e.g. checker version bump), Copilot is
     unassigned and reassigned so a fresh session picks up the new errors.
     """
-    eligible = is_auto_fix_eligible(issue_labels)
+
+    eligible = is_auto_fix_eligible(package_dir)
 
     if not eligible:
         return
@@ -496,8 +501,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
                 logging.warning(f"Failed to assign {assignee} to issue for {package_name}: {e}")
 
         # Auto-fix: check eligibility and assign Copilot
-        issue_label_names = [lbl if isinstance(lbl, str) else lbl.name for lbl in issue.labels]
-        _try_auto_fix(repo, issue, g, package_name, package_path, check_type, issue_label_names)
+        _try_auto_fix(repo, issue, g, package_name, package_path, check_type, package_dir)
         return
 
     # an issue exists, let's update it so it reflects the latest typing/linting errors
@@ -526,7 +530,6 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
             logging.warning(f"Failed to assign {assignee} to issue for {package_name}: {e}")
 
     # Auto-fix: reconcile labels and retry assignment if no matching PR
-    issue_label_names = [lbl.name if hasattr(lbl, "name") else str(lbl) for lbl in vnext_issue[0].labels]
     _try_auto_fix(
         repo,
         vnext_issue[0],
@@ -534,7 +537,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
         package_name,
         package_path,
         check_type,
-        issue_label_names,
+        package_dir,
         version_changed=version_changed,
     )
 
