@@ -149,14 +149,25 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm()
 
+    @servicePreparer()
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_dataset_generation_job_with_evaluation",
+                sample_filename="sample_dataset_generation_job_with_evaluation.py",
+                env_vars={
+                    "POLL_INTERVAL_SECONDS": "60",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
             "datasets",
-            samples_to_skip=[],
+            samples_to_skip=["sample_dataset_generation_job_with_evaluation.py"],
         ),
     )
-    @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_datasets_samples(self, sample_path: str, **kwargs) -> None:

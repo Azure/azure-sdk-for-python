@@ -231,6 +231,11 @@ def add_sanitizers(test_proxy, sanitized_values):
         headers="x-stainless-arch, x-stainless-async, x-stainless-lang, x-stainless-os, x-stainless-package-version, x-stainless-read-timeout, x-stainless-retry-count, x-stainless-runtime, x-stainless-runtime-version"
     )
 
+    # Strip Content-Encoding so playback doesn't try to decompress a body that the test-proxy
+    # has already stored decoded (notably brotli responses from openai endpoints which httpx
+    # would otherwise fail to decode -> UnicodeDecodeError).
+    add_remove_header_sanitizer(headers="Content-Encoding")
+
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name
     #  - AZSDK3430: $..id
