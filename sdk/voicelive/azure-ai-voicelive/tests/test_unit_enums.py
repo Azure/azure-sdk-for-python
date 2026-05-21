@@ -204,6 +204,11 @@ class TestOutputAudioFormat:
         assert OutputAudioFormat.PCM16_8000_HZ == "pcm16_8000hz"
         assert OutputAudioFormat.PCM16_16000_HZ == "pcm16_16000hz"
 
+    def test_legacy_hyphenated_pcm_formats(self):
+        """Test legacy hyphenated PCM values still resolve to current enum members."""
+        assert OutputAudioFormat("pcm16-8000hz") is OutputAudioFormat.PCM16_8000_HZ
+        assert OutputAudioFormat("PCM16-16000HZ") is OutputAudioFormat.PCM16_16000_HZ
+
     def test_g711_formats(self):
         """Test G.711 format values."""
         assert OutputAudioFormat.G711_ULAW == "g711_ulaw"

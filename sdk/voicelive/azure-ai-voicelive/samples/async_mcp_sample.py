@@ -371,12 +371,12 @@ class AsyncMCPCallClient:
             logger.info(f"Connecting to VoiceLive API with model {self.model}")
 
             # Connect to VoiceLive WebSocket API asynchronously
-            # Using 2026-01-01-preview API version for MCP support
+            # Using 2026-04-10 API version for MCP support
             async with connect(
                 endpoint=self.endpoint,
                 credential=self.credential,
                 model=self.model,
-                api_version="2026-01-01-preview",
+                api_version="2026-04-10",
             ) as connection:
                 # Initialize audio processor
                 self.audio_processor = AudioProcessor(connection)
@@ -648,7 +648,7 @@ async def main():
     """Main async function."""
     # Get credentials from environment variables
     api_key = os.environ.get("AZURE_VOICELIVE_API_KEY")
-    # Note: Use api_version="2026-01-01-preview" to enable MCP features
+    # Note: Use api_version="2026-04-10" to enable MCP features
     endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "https://test.voicelive.com/")
 
     if not api_key:
@@ -745,3 +745,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("\n👋 Voice Live MCP shut down.")
+

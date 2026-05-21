@@ -1797,12 +1797,12 @@ class TestAgentConfigExtraction:
 
 
 # ------------------------------------------------------------------ #
-#  Agent session config extraction on connect span                    #
+#  Foundry connect attributes on connect span                         #
 # ------------------------------------------------------------------ #
 
 
-class TestAgentSessionConfigOnConnect:
-    """Tests for agent_version and project_name on the connect span."""
+class TestFoundryConnectAttributesOnConnect:
+    """Tests for Foundry connect attributes on the connect span."""
 
     def test_agent_version_and_project_name_on_connect(self):
         """Verify agent_version and project_name are set on the connect span."""
@@ -1811,8 +1811,8 @@ class TestAgentSessionConfigOnConnect:
         conn = MagicMock()
         span = MagicMock()
 
-        # Simulate _trace_aenter agent config extraction
-        agent_config = {
+        # Simulate _trace_aenter extraction from flattened connect kwargs.
+        foundry_connect_config = {
             "agent_name": "TestAgent",
             "project_name": "TestProject",
             "agent_version": "v2.1",
@@ -1820,16 +1820,16 @@ class TestAgentSessionConfigOnConnect:
         }
 
         # Extract logic inline (as done in _trace_aenter)
-        agent_name = agent_config.get("agent_name")
+        agent_name = foundry_connect_config.get("agent_name")
         if agent_name:
             span.add_attribute("gen_ai.agent.name", agent_name)
-        conv_id = agent_config.get("conversation_id")
+        conv_id = foundry_connect_config.get("conversation_id")
         if conv_id:
             span.add_attribute("gen_ai.conversation.id", conv_id)
-        agent_version = agent_config.get("agent_version")
+        agent_version = foundry_connect_config.get("agent_version")
         if agent_version:
             span.add_attribute("gen_ai.agent.version", agent_version)
-        project_name = agent_config.get("project_name")
+        project_name = foundry_connect_config.get("project_name")
         if project_name:
             span.add_attribute("gen_ai.agent.project_name", project_name)
 

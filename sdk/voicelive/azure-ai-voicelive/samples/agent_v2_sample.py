@@ -12,12 +12,12 @@ FILE: agent_v2_sample.py
 
 DESCRIPTION:
     This sample demonstrates how to connect to an Azure AI Foundry agent using
-    the AgentSessionConfig TypedDict. Instead of configuring the agent as a tool
-    in the session, the agent is specified at connection time through the
-    agent_config parameter. This allows the agent to be the primary responder
-    for the voice session.
+    flattened connect() keyword arguments. Instead of configuring the agent as a
+    tool in the session, the agent is specified at connection time through
+    connect(). This allows the agent to be the primary responder for the voice
+    session.
 
-    The AgentSessionConfig TypedDict supports the following fields:
+    The Foundry-specific connect() keyword arguments used here are:
     - agent_name (required): The name of the agent in Azure AI Foundry
     - project_name (required): The name of the Foundry project containing the agent
     - agent_version (optional): The version of the agent to use
@@ -41,6 +41,7 @@ USAGE:
 
     Optional environment variables:
     - AGENT_VERSION - The version of the agent (if not specified, uses latest)
+    - AGENT_CONVERSATION_ID - Existing conversation ID to continue
     - AGENT_VOICE - Voice to use (default: en-US-Ava:DragonHDLatestNeural)
     - FOUNDRY_RESOURCE_OVERRIDE - Override for the Foundry resource URL
     - AGENT_AUTH_IDENTITY_CLIENT_ID - Client ID for agent authentication
@@ -79,7 +80,7 @@ except ImportError:
 
 # Azure VoiceLive SDK imports
 from azure.ai.voicelive._types import InterimResponseConfig
-from azure.ai.voicelive.aio import VoiceLiveConnection, connect, AgentSessionConfig
+from azure.ai.voicelive.aio import VoiceLiveConnection, connect
 from azure.ai.voicelive.models import (
     AudioEchoCancellation,
     AudioNoiseReduction,
@@ -117,6 +118,7 @@ agent_project_name = _get_required_env("AGENT_PROJECT_NAME")
 
 # Optional configuration
 agent_version = os.environ.get("AGENT_VERSION")  # Optional
+agent_conversation_id = os.environ.get("AGENT_CONVERSATION_ID")  # Optional
 agent_voice = os.environ.get("AGENT_VOICE", "en-US-Ava:DragonHDLatestNeural")
 foundry_resource_override = os.environ.get("FOUNDRY_RESOURCE_OVERRIDE")  # Optional
 agent_auth_identity_client_id = os.environ.get("AGENT_AUTH_IDENTITY_CLIENT_ID")  # Optional
@@ -306,10 +308,10 @@ class AudioProcessor:
 
 class AgentV2VoiceAssistant:
     """
-    Voice assistant using Azure AI Foundry agent with AgentSessionConfig.
+    Voice assistant using Azure AI Foundry agent with flattened connect() keywords.
 
     This demonstrates the new pattern where the agent is configured at
-    connection time using AgentSessionConfig, rather than as a tool in the session.
+    connection time using connect() keyword arguments, rather than as a tool in the session.
     This sample also collects a conversation log of user and agent interactions.
     """
 
@@ -317,12 +319,22 @@ class AgentV2VoiceAssistant:
         self,
         endpoint: str,
         credential: AsyncTokenCredential,
-        agent_config: AgentSessionConfig,
+        agent_name: str,
+        project_name: str,
+        agent_version: Optional[str],
+        conversation_id: Optional[str],
+        foundry_resource_override: Optional[str],
+        authentication_identity_client_id: Optional[str],
         voice: str,
     ) -> None:
         self.endpoint = endpoint
         self.credential = credential
-        self.agent_config = agent_config
+        self.agent_name = agent_name
+        self.project_name = project_name
+        self.agent_version = agent_version
+        self.conversation_id = conversation_id
+        self.foundry_resource_override = foundry_resource_override
+        self.authentication_identity_client_id = authentication_identity_client_id
         self.voice = voice
         self.connection: Optional[VoiceLiveConnection] = None
         self.audio_processor: Optional[AudioProcessor] = None
@@ -333,15 +345,20 @@ class AgentV2VoiceAssistant:
         try:
             logger.info(
                 "Connecting to VoiceLive API with agent %s for project %s",
-                self.agent_config.get("agent_name"),
-                self.agent_config.get("project_name"),
+                self.agent_name,
+                self.project_name,
             )
 
-            # Connect using AgentSessionConfig
+            # Connect using flattened Foundry keyword arguments.
             async with connect(
                 endpoint=self.endpoint,
                 credential=self.credential,
-                agent_config=self.agent_config,  # Agent configured at connection time
+                agent_name=self.agent_name,
+                project_name=self.project_name,
+                agent_version=self.agent_version,
+                conversation_id=self.conversation_id,
+                foundry_resource_override=self.foundry_resource_override,
+                authentication_identity_client_id=self.authentication_identity_client_id,
             ) as connection:
                 conn = connection
                 self.connection = conn
@@ -359,10 +376,12 @@ class AgentV2VoiceAssistant:
                 logger.info("Voice assistant ready! Start speaking...")
                 print("\n" + "=" * 60)
                 print("🎤 AGENT V2 VOICE ASSISTANT READY")
-                print(f"Agent: {self.agent_config.get('agent_name')}")
-                print(f"Project: {self.agent_config.get('project_name')}")
-                if self.agent_config.get("agent_version"):
-                    print(f"Version: {self.agent_config.get('agent_version')}")
+                print(f"Agent: {self.agent_name}")
+                print(f"Project: {self.project_name}")
+                if self.agent_version:
+                    print(f"Version: {self.agent_version}")
+                if self.conversation_id:
+                    print(f"Conversation: {self.conversation_id}")
                 print("Start speaking to begin conversation")
                 print("Press Ctrl+C to exit")
                 print("=" * 60 + "\n")
@@ -508,20 +527,6 @@ async def write_conversation_log(message: str) -> None:
 
 async def run_assistant():
     """Run the voice assistant."""
-    # Create AgentSessionConfig from environment variables
-    agent_config: AgentSessionConfig = {
-        "agent_name": agent_name,
-        "project_name": agent_project_name,
-    }
-
-    # Add optional fields if provided
-    if agent_version:
-        agent_config["agent_version"] = agent_version
-    if foundry_resource_override:
-        agent_config["foundry_resource_override"] = foundry_resource_override
-    if agent_auth_identity_client_id:
-        agent_config["authentication_identity_client_id"] = agent_auth_identity_client_id
-
     # Create client with token credential (required for Agent mode)
     credential: AsyncTokenCredential = DefaultAzureCredential()
     logger.info("Using DefaultAzureCredential")
@@ -530,7 +535,12 @@ async def run_assistant():
     assistant = AgentV2VoiceAssistant(
         endpoint=endpoint,
         credential=credential,
-        agent_config=agent_config,
+        agent_name=agent_name,
+        project_name=agent_project_name,
+        agent_version=agent_version,
+        conversation_id=agent_conversation_id,
+        foundry_resource_override=foundry_resource_override,
+        authentication_identity_client_id=agent_auth_identity_client_id,
         voice=agent_voice,
     )
 
@@ -592,7 +602,9 @@ if __name__ == "__main__":
     print(f"Project: {agent_project_name}")
     if agent_version:
         print(f"Version: {agent_version}")
-    print("Using AgentSessionConfig for agent configuration")
+    if agent_conversation_id:
+        print(f"Conversation: {agent_conversation_id}")
+    print("Using flattened connect() keyword arguments for agent configuration")
     print("=" * 50)
 
     # Run the assistant

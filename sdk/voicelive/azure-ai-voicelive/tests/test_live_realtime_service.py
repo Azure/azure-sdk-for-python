@@ -1485,3 +1485,4 @@ class TestRealtimeService(AzureRecordedTestCase):
             contents, audio_bytes = await _collect_event(conn, event_type=ServerEventType.RESPONSE_CONTENT_PART_ADDED)
             assert contents >= 1, "Response should be generated with echo cancellation"
             assert audio_bytes > 0, "Audio bytes should be greater than 0"
+
