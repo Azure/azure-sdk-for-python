@@ -43,3 +43,7 @@ extends:
       safeName: azuremonitorquerymetrics
     - name: azure-mgmt-monitorslis
       safeName: azuremgmtmonitorslis
+    - name: azure-mgmt-monitoraccounts
+      safeName: azuremgmtmonitoraccounts
+    - name: azure-mgmt-monitorworkspaces
+      safeName: azuremgmtmonitorworkspaces
