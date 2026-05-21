@@ -16,7 +16,7 @@ from azure.mgmt.hybridkubernetes import ConnectedKubernetesClient
     pip install azure-identity
     pip install azure-mgmt-hybridkubernetes
 # USAGE
-    python create_cluster_example.py
+    python update_cluster_by_put_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -42,6 +42,7 @@ def main():
                 "azureHybridBenefit": "NotApplicable",
                 "distribution": "AKS",
                 "distributionVersion": "1.0",
+                "gateway": {"enabled": True},
             },
             "tags": {},
         },
@@ -49,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01/CreateClusterExample.json
+# x-ms-original-file: 2026-05-01/UpdateClusterByPutExample.json
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ from azure.mgmt.hybridkubernetes import ConnectedKubernetesClient
     pip install azure-identity
     pip install azure-mgmt-hybridkubernetes
 # USAGE
-    python get_clusters_by_subscription_example.py
+    python update_cluster_by_patch_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,22 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.connected_cluster.list_by_subscription()
-    for item in response:
-        print(item)
+    response = client.connected_cluster.begin_update_async(
+        resource_group_name="k8sc-rg",
+        cluster_name="testCluster",
+        connected_cluster_patch={
+            "properties": {
+                "azureHybridBenefit": "NotApplicable",
+                "distribution": "AKS",
+                "distributionVersion": "1.0",
+                "gateway": {"enabled": True},
+            },
+            "tags": {"tag1": "value1", "tag2": "value2"},
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-05-01/GetClustersBySubscriptionExample.json
+# x-ms-original-file: 2026-05-01/UpdateClusterByPatchExample.json
 if __name__ == "__main__":
     main()

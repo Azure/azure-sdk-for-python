@@ -16,7 +16,7 @@ from azure.mgmt.hybridkubernetes import ConnectedKubernetesClient
     pip install azure-identity
     pip install azure-mgmt-hybridkubernetes
 # USAGE
-    python create_cluster_example.py
+    python create_cluster_private_link_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -42,6 +42,8 @@ def main():
                 "azureHybridBenefit": "NotApplicable",
                 "distribution": "AKS",
                 "distributionVersion": "1.0",
+                "privateLinkScopeResourceId": "/subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.HybridCompute/privateLinkScopes/privateLinkScopeName",
+                "privateLinkState": "Enabled",
             },
             "tags": {},
         },
@@ -49,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01/CreateClusterExample.json
+# x-ms-original-file: 2026-05-01/CreateClusterPrivateLinkExample.json
 if __name__ == "__main__":
     main()
