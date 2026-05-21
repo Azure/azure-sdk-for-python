@@ -371,7 +371,7 @@ PY
 
     # GPT_4_1_MINI_DEPLOYMENT
     if [ -z "$gpt41mini" ]; then
-        read -r -p "Enter GPT_4_1_MINI_DEPLOYMENT (default: gpt-4.1-mini): " gpt41mini || gpt41mini="" gpt41mini
+        read -r -p "Enter GPT_4_1_MINI_DEPLOYMENT (default: gpt-4.1-mini): " gpt41mini || gpt41mini=""
         gpt41mini="${gpt41mini:-gpt-4.1-mini}"
     else
         echo "  ✓ Using detected GPT_4_1_MINI_DEPLOYMENT=$gpt41mini"

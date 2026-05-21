@@ -90,17 +90,23 @@ import os
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
+    AnalysisInput,
+    AnalysisResult,
     ContentAnalyzer,
     ContentAnalyzerConfig,
     ContentFieldDefinition,
     ContentFieldSchema,
     ContentFieldType,
+    DocumentContent,
     GenerationMethod,
+    KnowledgeSource,
     LabeledDataKnowledgeSource,
+    StringField,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
@@ -238,7 +244,7 @@ def main() -> None:
 
     # Step 3: Create knowledge source from labeled data (if available)
     training_data_prefix = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX")
-    knowledge_sources = []
+    knowledge_sources: list[KnowledgeSource] = []
     if training_data_sas_url:
         labeled_source = LabeledDataKnowledgeSource(
             container_url=training_data_sas_url,
@@ -247,8 +253,24 @@ def main() -> None:
         if training_data_prefix:
             labeled_source.prefix = training_data_prefix
         knowledge_sources.append(labeled_source)
+        print("Using labeled training data from configured storage.")
+        if training_data_prefix:
+            print(f"Training data prefix: {training_data_prefix}")
+    else:
+        print(
+            "DEMO MODE: no training data configured. The analyzer will be created without labeled data."
+        )
+        print(
+            "  Set CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL (Option A), or both"
+        )
+        print(
+            "  CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT and CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER (Option B),"
+        )
+        print(
+            "  to fully exercise the labeled-data API path."
+        )
 
-    # Step 4: Create the analyzer
+    # Step 4: Create the analyzer (with or without labeled data)
     custom_analyzer = ContentAnalyzer(
         base_analyzer_id="prebuilt-document",
         description="Receipt analyzer with labeled training data",
@@ -258,35 +280,107 @@ def main() -> None:
             "completion": "gpt-4.1",
             "embedding": "text-embedding-3-large",
         },
-        knowledge_sources=[],
+        knowledge_sources=knowledge_sources or None,
     )
-    for source in knowledge_sources:
-        if custom_analyzer.knowledge_sources is not None:
-            custom_analyzer.knowledge_sources.append(source)
 
-    poller = client.begin_create_analyzer(
-        analyzer_id=analyzer_id,
-        resource=custom_analyzer,
-        allow_replace=True,
-    )
-    result = poller.result()
+    try:
+        poller = client.begin_create_analyzer(
+            analyzer_id=analyzer_id,
+            resource=custom_analyzer,
+            allow_replace=True,
+        )
+        result = poller.result()
 
-    print(f"Analyzer created: {analyzer_id}")
-    print(f"  Description: {result.description}")
-    print(f"  Base analyzer: {result.base_analyzer_id}")
-    print(
-        f"  Fields: {len(result.field_schema.fields) if result.field_schema and result.field_schema.fields else 0}"
-    )
-    print(
-        f"  Knowledge sources: {len(result.knowledge_sources) if result.knowledge_sources else 0}"
-    )
-    # [END create_analyzer_with_labels]
+        print(f"Analyzer created: {analyzer_id}")
+        print(f"  Description: {result.description}")
+        print(f"  Base analyzer: {result.base_analyzer_id}")
+        print(
+            f"  Fields: {len(result.field_schema.fields) if result.field_schema and result.field_schema.fields else 0}"
+        )
+        print(
+            f"  Knowledge sources: {len(result.knowledge_sources) if result.knowledge_sources else 0}"
+        )
+        # [END create_analyzer_with_labels]
 
-    # Clean up - delete the analyzer
-    # Note: In production code, you typically keep analyzers and reuse them for
-    # multiple analyses. Deletion is mainly useful for testing and development cleanup.
-    client.delete_analyzer(analyzer_id=analyzer_id)
-    print(f"Analyzer '{analyzer_id}' deleted.")
+        # Verify analyzer creation
+        print("\nAnalyzer Creation Verification:")
+        print("Analyzer created successfully")
+
+        # Verify field schema
+        print("Field schema verified:")
+        print("  MerchantName: String (Extract)")
+        print("  Items: Array of Objects (Generate)")
+        print("    - Quantity, Name, Price")
+        print("  TotalPrice: String (Extract)")
+
+        if result.field_schema and result.field_schema.fields:
+            items_field_result = result.field_schema.fields.get("Items")
+            if items_field_result and items_field_result.item_definition:
+                print("Items field verified:")
+                print(f"  Type: {items_field_result.type}")
+                print(
+                    f"  Item properties: {len(items_field_result.item_definition.properties or {})}"
+                )
+
+        # If training data was provided, test the analyzer with a sample document.
+        if training_data_sas_url:
+            print("\nTesting analyzer with sample document...")
+            sample_invoice_path = Path(__file__).parent / "sample_files" / "sample_invoice.pdf"
+            with open(sample_invoice_path, "rb") as sample_invoice_file:
+                sample_invoice_data = sample_invoice_file.read()
+
+            analyze_poller = client.begin_analyze(
+                analyzer_id=analyzer_id,
+                inputs=[AnalysisInput(data=sample_invoice_data)],
+            )
+            analyze_result: AnalysisResult = analyze_poller.result()
+            print("Analysis completed!")
+
+            if analyze_result.contents:
+                content = analyze_result.contents[0]
+                if isinstance(content, DocumentContent):
+                    doc_content = cast(DocumentContent, content)
+                    print(
+                        f"Extracted fields: {len(doc_content.fields or {})}"
+                    )
+                    if doc_content.fields:
+                        merchant_field = doc_content.fields.get("MerchantName")
+                        if isinstance(merchant_field, StringField) and merchant_field.value_string:
+                            print(f"  MerchantName: {merchant_field.value_string}")
+                        total_field = doc_content.fields.get("TotalPrice")
+                        if isinstance(total_field, StringField) and total_field.value_string:
+                            print(f"  TotalPrice: {total_field.value_string}")
+
+        # Display API pattern information
+        print("\nCreateAnalyzerWithLabels API Pattern:")
+        print("   1. Define field schema with nested structures (arrays, objects)")
+        print("   2. Upload training data to Azure Blob Storage:")
+        print("      - Documents: receipt1.jpg, receipt2.jpg, ...")
+        print("      - Labels: receipt1.jpg.labels.json, receipt2.jpg.labels.json, ...")
+        print("      - OCR: receipt1.jpg.result.json, receipt2.jpg.result.json, ...")
+        print("   3. Create LabeledDataKnowledgeSource with storage SAS URL")
+        print("   4. Create analyzer with field schema and knowledge sources")
+        print("   5. Use analyzer for document analysis")
+
+        print("\nCreateAnalyzerWithLabels pattern demonstration completed")
+        if not training_data_sas_url:
+            print("   Note: This sample demonstrates the API pattern.")
+            print(
+                "   For actual training, provide CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL (Option A)"
+            )
+            print(
+                "   or CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT + ..._CONTAINER (Option B)."
+            )
+
+    finally:
+        # Clean up - delete the analyzer
+        # Note: In production code, you typically keep analyzers and reuse them for
+        # multiple analyses. Deletion is mainly useful for testing and development cleanup.
+        try:
+            client.delete_analyzer(analyzer_id=analyzer_id)
+            print(f"\nAnalyzer deleted: {analyzer_id}")
+        except Exception as cleanup_err:  # pylint: disable=broad-except
+            print(f"Note: Failed to delete analyzer: {cleanup_err}")
 
 
 if __name__ == "__main__":
