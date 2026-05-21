@@ -2733,18 +2733,6 @@ class UpdateGroup(_Model):
     :ivar name: Name of the group. It must match a group name of an existing fleet member.
      Required.
     :vartype name: str
-    :ivar max_concurrency: The max number of upgrades that can run concurrently in this specific
-     group. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within the
-     group you want to tolerate at a time. Actual concurrency may be lower depending on stage-level
-     concurrency limits or individual member conditions. Group maxConcurrency has a min value of
-     "1". The max value is min(number of clusters in the group, the stage maxConcurrency). If no
-     value is provided, defaults to 1. Accepts either: • A fixed count, e.g. "3" • A percentage,
-     e.g. "25%" (range 1–100). Percentage is of the number of clusters in the group. Fractional
-     results are rounded down. A minimum of 1 upgrade is enforced. Examples: • "3" --> up to 3
-     members from this group upgrade at once. • "100%" --> “all at once”, up to all members for this
-     group upgrade at the same time. • "25%" --> up to 25% of the members in the group will be
-     upgraded at the same time.
-    :vartype max_concurrency: str
     :ivar before_gates: A list of Gates that will be created before this Group is executed.
     :vartype before_gates: list[~azure.mgmt.containerservicefleet.models.GateConfiguration]
     :ivar after_gates: A list of Gates that will be created after this Group is executed.
@@ -2753,20 +2741,6 @@ class UpdateGroup(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the group. It must match a group name of an existing fleet member. Required."""
-    max_concurrency: Optional[str] = rest_field(
-        name="maxConcurrency", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The max number of upgrades that can run concurrently in this specific group. Acts as a ceiling
-     (and not a quota) for the number of concurrent upgrades within the group you want to tolerate
-     at a time. Actual concurrency may be lower depending on stage-level concurrency limits or
-     individual member conditions. Group maxConcurrency has a min value of \"1\". The max value is
-     min(number of clusters in the group, the stage maxConcurrency). If no value is provided,
-     defaults to 1. Accepts either: • A fixed count, e.g. \"3\" • A percentage, e.g. \"25%\" (range
-     1–100). Percentage is of the number of clusters in the group. Fractional results are rounded
-     down. A minimum of 1 upgrade is enforced. Examples: • \"3\" --> up to 3 members from this group
-     upgrade at once. • \"100%\" --> “all at once”, up to all members for this group upgrade at the
-     same time. • \"25%\" --> up to 25% of the members in the group will be upgraded at the same
-     time."""
     before_gates: Optional[list["_models.GateConfiguration"]] = rest_field(
         name="beforeGates", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2781,7 +2755,6 @@ class UpdateGroup(_Model):
         self,
         *,
         name: str,
-        max_concurrency: Optional[str] = None,
         before_gates: Optional[list["_models.GateConfiguration"]] = None,
         after_gates: Optional[list["_models.GateConfiguration"]] = None,
     ) -> None: ...
@@ -2804,10 +2777,6 @@ class UpdateGroupStatus(_Model):
     :vartype status: ~azure.mgmt.containerservicefleet.models.UpdateStatus
     :ivar name: The name of the UpdateGroup.
     :vartype name: str
-    :ivar max_concurrency:   The max number of upgrades that can run concurrently in this group,
-     resolved from the UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided,
-     this value defaults to "1".
-    :vartype max_concurrency: int
     :ivar members: The list of member this UpdateGroup updates.
     :vartype members: list[~azure.mgmt.containerservicefleet.models.MemberUpdateStatus]
     :ivar before_gates: The list of Gates that will run before this UpdateGroup.
@@ -2820,10 +2789,6 @@ class UpdateGroupStatus(_Model):
     """The status of the UpdateGroup."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateGroup."""
-    max_concurrency: Optional[int] = rest_field(name="maxConcurrency", visibility=["read"])
-    """The max number of upgrades that can run concurrently in this group, resolved from the
-     UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided, this value defaults
-     to \"1\"."""
     members: Optional[list["_models.MemberUpdateStatus"]] = rest_field(visibility=["read"])
     """The list of member this UpdateGroup updates."""
     before_gates: Optional[list["_models.UpdateRunGateStatus"]] = rest_field(name="beforeGates", visibility=["read"])
@@ -3142,17 +3107,6 @@ class UpdateStage(_Model):
     :ivar after_stage_wait_in_seconds: The time in seconds to wait at the end of this stage before
      starting the next one. Defaults to 0 seconds if unspecified.
     :vartype after_stage_wait_in_seconds: int
-    :ivar max_concurrency: The max number of upgrades that can run concurrently across all groups
-     in this stage. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within
-     the stage you want to tolerate at a time. Actual concurrency may be lower depending on
-     group-level concurrency limits or individual member conditions. Stage maxConcurrency has a min
-     value of "1". Accepts either: • A fixed count, e.g., "3" • A percentage, e.g., "25%" (range
-     1–100). Percentage is of the total number of clusters across all groups in the stage.
-     Fractional results are rounded down. A minimum of 1 upgrade is enforced. Examples: • "3"
-     --> up to 3 clusters from this stage upgrade at once (across all groups). • "100%"  --> “all at
-     once”; up to all clusters in this stage upgrade at the same time. • "25%"   --> up to 25% of
-     the stage’s total clusters upgrade at the same time.
-    :vartype max_concurrency: str
     :ivar before_gates: A list of Gates that will be created before this Stage is executed.
     :vartype before_gates: list[~azure.mgmt.containerservicefleet.models.GateConfiguration]
     :ivar after_gates: A list of Gates that will be created after this Stage is executed.
@@ -3171,19 +3125,6 @@ class UpdateStage(_Model):
     )
     """The time in seconds to wait at the end of this stage before starting the next one. Defaults to
      0 seconds if unspecified."""
-    max_concurrency: Optional[str] = rest_field(
-        name="maxConcurrency", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The max number of upgrades that can run concurrently across all groups in this stage. Acts as a
-     ceiling (and not a quota) for the number of concurrent upgrades within the stage you want to
-     tolerate at a time. Actual concurrency may be lower depending on group-level concurrency limits
-     or individual member conditions. Stage maxConcurrency has a min value of \"1\". Accepts either:
-     • A fixed count, e.g., \"3\" • A percentage, e.g., \"25%\" (range 1–100). Percentage is of the
-     total number of clusters across all groups in the stage. Fractional results are rounded down. A
-     minimum of 1 upgrade is enforced. Examples: • \"3\"     --> up to 3 clusters from this stage
-     upgrade at once (across all groups). • \"100%\"  --> “all at once”; up to all clusters in this
-     stage upgrade at the same time. • \"25%\"   --> up to 25% of the stage’s total clusters upgrade
-     at the same time."""
     before_gates: Optional[list["_models.GateConfiguration"]] = rest_field(
         name="beforeGates", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3200,7 +3141,6 @@ class UpdateStage(_Model):
         name: str,
         groups: Optional[list["_models.UpdateGroup"]] = None,
         after_stage_wait_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[str] = None,
         before_gates: Optional[list["_models.GateConfiguration"]] = None,
         after_gates: Optional[list["_models.GateConfiguration"]] = None,
     ) -> None: ...
@@ -3223,9 +3163,6 @@ class UpdateStageStatus(_Model):
     :vartype status: ~azure.mgmt.containerservicefleet.models.UpdateStatus
     :ivar name: The name of the UpdateStage.
     :vartype name: str
-    :ivar max_concurrency: The max number of upgrades that can run concurrently across all groups
-     in this stage, resolved from the UpdateStrategy.UpdateStage.maxConcurrency value.
-    :vartype max_concurrency: int
     :ivar groups: The list of groups to be updated as part of this UpdateStage.
     :vartype groups: list[~azure.mgmt.containerservicefleet.models.UpdateGroupStatus]
     :ivar before_gates: The list of Gates that will run before this UpdateStage.
@@ -3240,9 +3177,6 @@ class UpdateStageStatus(_Model):
     """The status of the UpdateStage."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateStage."""
-    max_concurrency: Optional[int] = rest_field(name="maxConcurrency", visibility=["read"])
-    """The max number of upgrades that can run concurrently across all groups in this stage, resolved
-     from the UpdateStrategy.UpdateStage.maxConcurrency value."""
     groups: Optional[list["_models.UpdateGroupStatus"]] = rest_field(visibility=["read"])
     """The list of groups to be updated as part of this UpdateStage."""
     before_gates: Optional[list["_models.UpdateRunGateStatus"]] = rest_field(name="beforeGates", visibility=["read"])

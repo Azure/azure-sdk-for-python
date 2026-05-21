@@ -1,10 +1,10 @@
 {
-  "apiVersion": "2026-02-01-preview",
+  "apiVersion": "2025-08-01-preview",
   "apiVersions": {
-    "Microsoft.ContainerService": "2026-02-01-preview"
+    "Microsoft.ContainerService": "2025-08-01-preview"
   },
-  "commit": "1648ecb14fca10c3febb2cc0468a8fef4288983c",
+  "commit": "5b8c01eed693ebeb0e8677310b649901fac47314",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/containerservice/resource-manager/Microsoft.ContainerService/fleet",
-  "emitterVersion": "0.61.0"
+  "emitterVersion": "0.61.2"
 }

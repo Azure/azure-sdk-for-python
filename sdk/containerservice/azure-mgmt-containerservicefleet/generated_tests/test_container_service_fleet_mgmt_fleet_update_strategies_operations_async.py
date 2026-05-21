@@ -56,10 +56,8 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperationsAsync(AzureMgm
                                             "name": "str",
                                             "afterGates": [{"type": "str", "displayName": "str"}],
                                             "beforeGates": [{"type": "str", "displayName": "str"}],
-                                            "maxConcurrency": "str",
                                         }
                                     ],
-                                    "maxConcurrency": "str",
                                 }
                             ]
                         },
