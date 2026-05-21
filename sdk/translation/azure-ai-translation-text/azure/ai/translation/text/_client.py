@@ -7,10 +7,11 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any
+from typing import Any, Optional, TYPE_CHECKING, Union
 from typing_extensions import Self
 
 from azure.core import PipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
@@ -18,40 +19,34 @@ from ._configuration import TextTranslationClientConfiguration
 from ._operations import _TextTranslationClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
 
 class TextTranslationClient(_TextTranslationClientOperationsMixin):
-    """Text translation is a cloud-based REST API feature of the Translator service that uses neural
-    machine translation technology to enable quick and accurate source-to-target text translation
-    in real time across all supported languages.
-
-    The following methods are supported by the Text Translation feature:
-
-    Languages. Returns a list of languages supported by Translate, Transliterate, and Dictionary
-    Lookup operations.
-
-    Translate. Renders single source-language text to multiple target-language texts with a single
-    request.
-
-    Transliterate. Converts characters or letters of a source language to the corresponding
-    characters or letters of a target language.
-
-    Detect. Returns the source code language code and a boolean variable denoting whether the
-    detected language is supported for text translation and transliteration.
+    """Azure Translator is a cloud-based, multilingual, neural machine translation service. The Text
+    Translation API enables robust and scalable translation capabilities suitable for diverse
+    applications.
 
     :param endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
-         `https://api.cognitive.microsofttranslator.com
+     `https://api.cognitive.microsofttranslator.com
      <https://api.cognitive.microsofttranslator.com>`_). Required.
     :type endpoint: str
-    :keyword api_version: Mandatory API version parameter. Default value is "2025-10-01-preview".
-     Note that overriding this default value may result in unsupported behavior.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Default value is None.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :keyword api_version: Mandatory API version parameter. Known values are "2026-06-06". Default
+     value is "2026-06-06". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs: Any
+    def __init__(
+        self, endpoint: str, credential: Optional[Union[AzureKeyCredential, "TokenCredential"]] = None, **kwargs: Any
     ) -> None:
         _endpoint = "{Endpoint}"
-        self._config = TextTranslationClientConfiguration(endpoint=endpoint, **kwargs)
+        self._config = TextTranslationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
