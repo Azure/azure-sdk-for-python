@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0 (2026-05-23)
+## 1.2.0 (2026-05-21)
 
 ### Features Added
 
@@ -57,6 +57,9 @@
 
 - Removed Foundry Agent Tool classes (`FoundryAgentTool`, `ResponseFoundryAgentCallItem`, etc.) —
   use flattened Azure AI Foundry keyword arguments with `connect()` instead
+- **Audio Format Values**: Changed `OutputAudioFormat` enum values to use underscore format
+  (`pcm16_8000hz`, `pcm16_16000hz`) instead of the previous hyphenated values.
+  This is a breaking change for code that compares, persists, or serializes the raw enum values.
 - Renamed `AvatarConfig.type` field to `avatar_type` to avoid conflict with Python's built-in `type`
 
 ### Other Changes
