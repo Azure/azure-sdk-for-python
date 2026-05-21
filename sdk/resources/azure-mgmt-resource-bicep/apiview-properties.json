@@ -9,5 +9,6 @@
         "azure.mgmt.resource.bicep.models.FileDefinition": "BicepClient.FileDefinition",
         "azure.mgmt.resource.bicep.operations.DecompileOperationGroupOperations.bicep": "BicepClient.DecompileOperationGroup.bicep",
         "azure.mgmt.resource.bicep.aio.operations.DecompileOperationGroupOperations.bicep": "BicepClient.DecompileOperationGroup.bicep"
-    }
+    },
+    "CrossLanguageVersion": "b774b8849695"
 }
