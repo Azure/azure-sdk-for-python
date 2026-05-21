@@ -9,10 +9,7 @@ import collections
 import copy
 import json
 from datetime import datetime
-from typing import (
-    Any, Dict, Iterator, List, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Dict, Iterator, List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -35,10 +32,11 @@ PATH_DELIMITER = "/"
 
 class Segment:
     def __init__(
-        self, client: Union["ContainerClient", "AsyncContainerClient"],
+        self,
+        client: Union["ContainerClient", "AsyncContainerClient"],
         segment_path: str,
         page_size: int,
-        segment_cursor: Optional[Dict[str, Any]] = None
+        segment_cursor: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.client = client
         self.segment_path = segment_path
@@ -91,8 +89,9 @@ class Segment:
                 self.shards.append(Shard(self.client, shard_path))
         else:
             start_shard_path = segment_cursor["CurrentShardPath"]
-            shard_cursors = {shard_cursor["CurrentChunkPath"][:-10]: shard_cursor
-                             for shard_cursor in segment_cursor["ShardCursors"]}
+            shard_cursors = {
+                shard_cursor["CurrentChunkPath"][:-10]: shard_cursor for shard_cursor in segment_cursor["ShardCursors"]
+            }
 
             if shard_paths:
                 # Initialize all shards using the shard cursors
@@ -129,30 +128,37 @@ class ChangeFeedPaged(PageIterator):
     """The current page of listed results."""
 
     def __init__(
-        self, container_client: Union["ContainerClient", "AsyncContainerClient"],
+        self,
+        container_client: Union["ContainerClient", "AsyncContainerClient"],
         results_per_page: Optional[int] = None,
         start_time: Optional[datetime] = None,
         end_time: Optional[datetime] = None,
-        continuation_token: Optional[str] = None
+        continuation_token: Optional[str] = None,
     ) -> None:
         if (start_time or end_time) and continuation_token:
             raise ValueError("start_time/end_time and continuation_token shouldn't be specified at the same time")
         super(ChangeFeedPaged, self).__init__(
-            get_next=self._get_next_cf,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cf, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         dict_continuation_token = json.loads(continuation_token) if continuation_token else None
 
-        if dict_continuation_token and (container_client.primary_hostname != dict_continuation_token["UrlHost"]):  # pylint: disable=unsubscriptable-object
+        if dict_continuation_token and (
+            container_client.primary_hostname != dict_continuation_token["UrlHost"]
+        ):  # pylint: disable=unsubscriptable-object
             raise ValueError("The token is not for the current storage account.")
-        if dict_continuation_token and (dict_continuation_token["CursorVersion"] != 1):  # pylint: disable=unsubscriptable-object
+        if dict_continuation_token and (
+            dict_continuation_token["CursorVersion"] != 1
+        ):  # pylint: disable=unsubscriptable-object
             raise ValueError("The CursorVersion is not supported by the current SDK.")
         self.results_per_page = results_per_page or 5000
         self.current_page = None
-        self._change_feed = ChangeFeed(container_client, self.results_per_page, start_time=start_time,
-                                       end_time=end_time,
-                                       cf_cursor=dict_continuation_token)
+        self._change_feed = ChangeFeed(
+            container_client,
+            self.results_per_page,
+            start_time=start_time,
+            end_time=end_time,
+            cf_cursor=dict_continuation_token,
+        )
 
     def _get_next_cf(self, continuation_token):  # pylint:disable=inconsistent-return-statements, unused-argument
         try:
@@ -174,11 +180,12 @@ class ChangeFeedPaged(PageIterator):
 
 class ChangeFeed:
     def __init__(
-        self, client: Union["ContainerClient", "AsyncContainerClient"],
+        self,
+        client: Union["ContainerClient", "AsyncContainerClient"],
         page_size: int,
         start_time: Optional[datetime] = None,
         end_time: Optional[datetime] = None,
-        cf_cursor: Optional[Dict[str, Any]] = None
+        cf_cursor: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.client = client
         self.page_size = page_size
@@ -189,16 +196,19 @@ class ChangeFeed:
         # the end time is in str format
         end_time_in_cursor = cf_cursor["EndTime"] if cf_cursor else None
         # convert the end time in str format to a datetime object
-        end_time_in_cursor_obj = \
+        end_time_in_cursor_obj = (
             datetime.strptime(end_time_in_cursor, "%Y-%m-%dT%H:%M:%S+00:00") if end_time_in_cursor else None
+        )
         # self.end_time is in datetime format
         self.end_time = end_time or end_time_in_cursor_obj
 
         cur_segment_cursor = cf_cursor["CurrentSegmentCursor"] if cf_cursor else None
 
-        self.cursor = {"CursorVersion": 1,
-                       "EndTime": self.end_time.strftime("%Y-%m-%dT%H:%M:%S+00:00") if self.end_time else "",
-                       "UrlHost": self.client.primary_hostname}
+        self.cursor = {
+            "CursorVersion": 1,
+            "EndTime": self.end_time.strftime("%Y-%m-%dT%H:%M:%S+00:00") if self.end_time else "",
+            "UrlHost": self.client.primary_hostname,
+        }
         self._initialize(cur_segment_cursor=cur_segment_cursor)
 
     def __iter__(self) -> Self:
@@ -257,9 +267,8 @@ class ChangeFeed:
                 next_segment_path = next(self._segment_paths_generator)
 
         self.current_segment = self._get_next_segment(
-            next_segment_path,
-            self.page_size,
-            segment_cursor=cur_segment_cursor if cur_segment_cursor else None)
+            next_segment_path, self.page_size, segment_cursor=cur_segment_cursor if cur_segment_cursor else None
+        )
 
     def _get_next_segment(self, segment_path, page_size, segment_cursor=None):
         if segment_path:
@@ -297,23 +306,24 @@ class ChangeFeed:
 
     def _is_earlier_than_start_time(self, segment_path):
         segment_date = self._parse_datetime_from_segment_path(segment_path)
-        opaque_start_date = datetime(self.start_time.year, self.start_time.month,
-                                     self.start_time.day, self.start_time.hour)
+        opaque_start_date = datetime(
+            self.start_time.year, self.start_time.month, self.start_time.day, self.start_time.hour
+        )
 
         return segment_date < opaque_start_date
 
     def _is_later_than_end_time(self, segment_path):
         segment_date = self._parse_datetime_from_segment_path(segment_path)
-        opaque_end_date = datetime(self.end_time.year, self.end_time.month,
-                                   self.end_time.day, self.end_time.hour)
+        opaque_end_date = datetime(self.end_time.year, self.end_time.month, self.end_time.day, self.end_time.hour)
         return segment_date > opaque_end_date
 
 
 class Shard:
     def __init__(
-        self, client: Union["ContainerClient", "AsyncContainerClient"],
+        self,
+        client: Union["ContainerClient", "AsyncContainerClient"],
         shard_path: str,
-        shard_cursor: Optional[Dict[str, Any]] = None
+        shard_cursor: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.client = client
         self.shard_path = shard_path
@@ -348,8 +358,9 @@ class Shard:
 
         # move cursor to the expected chunk
         if shard_cursor:
-            while self.unprocessed_chunk_path_props and \
-                    self.unprocessed_chunk_path_props[0].name != shard_cursor.get("CurrentChunkPath"):
+            while self.unprocessed_chunk_path_props and self.unprocessed_chunk_path_props[0].name != shard_cursor.get(
+                "CurrentChunkPath"
+            ):
                 self.unprocessed_chunk_path_props.popleft()
             self.current_chunk = self._get_next_chunk(chunk_cursor=shard_cursor)
         else:
@@ -365,10 +376,7 @@ class Shard:
 class ChangeFeedStreamer:
     """File-like streaming iterator."""
 
-    def __init__(
-        self, blob_client: "BlobClient",
-        chunk_file_start: int = 0
-    ) -> None:
+    def __init__(self, blob_client: "BlobClient", chunk_file_start: int = 0) -> None:
         self._chunk_file_start = chunk_file_start or 0  # this value will never be updated
         self._download_offset = self._chunk_file_start  # range start of the next download
         self.object_position = self._chunk_file_start  # track the most recently read sync marker position
@@ -378,8 +386,9 @@ class ChangeFeedStreamer:
         self._buf_start = self._chunk_file_start  # the start position of the chunk file to buffer
         self._chunk_size_snapshot = blob_client.get_blob_properties().size
         length = self._chunk_size_snapshot - self._chunk_file_start
-        self._iterator = blob_client.download_blob(offset=self._chunk_file_start,
-                                                   length=length).chunks() if length > 0 else iter([])
+        self._iterator = (
+            blob_client.download_blob(offset=self._chunk_file_start, length=length).chunks() if length > 0 else iter([])
+        )
 
     def __len__(self) -> int:
         return self._download_offset
@@ -430,7 +439,7 @@ class ChangeFeedStreamer:
         if relative_start < 0:
             raise ValueError("Buffer has dumped too much data")
         relative_end = relative_start + size
-        data = self._buf[relative_start: relative_end]
+        data = self._buf[relative_start:relative_end]
 
         # dump the extra data in buffer
         # buffer start--------------------16bytes----current read position
@@ -449,9 +458,10 @@ class ChangeFeedStreamer:
 
 class Chunk:
     def __init__(
-        self, client: Union["ContainerClient", "AsyncContainerClient"],
+        self,
+        client: Union["ContainerClient", "AsyncContainerClient"],
         chunk_path: str,
-        chunk_cursor: Optional[Dict[str, Any]] = None
+        chunk_cursor: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.client = client
         self.chunk_path = chunk_path

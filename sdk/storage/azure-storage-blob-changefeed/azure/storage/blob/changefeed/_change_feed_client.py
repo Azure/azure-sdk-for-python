@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import (
-    Any, Dict, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Dict, Optional, Union, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core.paging import ItemPaged
@@ -60,17 +57,24 @@ class ChangeFeedClient:
             :dedent: 8
             :caption: Creating the ChangeFeedClient from a URL to a public blob (no auth needed).
     """
+
     def __init__(
-        self, account_url: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        self,
+        account_url: str,
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         self._blob_service_client = BlobServiceClient(account_url, credential, **kwargs)
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        cls,
+        conn_str: str,
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Self:
         """Create ChangeFeedClient from a Connection String.
@@ -94,9 +98,9 @@ class ChangeFeedClient:
         :returns: A change feed client.
         :rtype: ~azure.storage.blob.changefeed.ChangeFeedClient
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, "blob")
+        if "secondary_hostname" not in kwargs:
+            kwargs["secondary_hostname"] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
@@ -130,11 +134,8 @@ class ChangeFeedClient:
                 :dedent: 8
                 :caption: List change feed events by page.
         """
-        results_per_page = kwargs.pop('results_per_page', None)
+        results_per_page = kwargs.pop("results_per_page", None)
         container_client = self._blob_service_client.get_container_client("$blobchangefeed")
         return ItemPaged(
-            container_client,
-            results_per_page=results_per_page,
-            page_iterator_class=ChangeFeedPaged,
-            **kwargs
+            container_client, results_per_page=results_per_page, page_iterator_class=ChangeFeedPaged, **kwargs
         )
