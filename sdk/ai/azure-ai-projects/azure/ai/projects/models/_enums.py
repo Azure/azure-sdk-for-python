@@ -18,12 +18,12 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HOSTED_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
-    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
-    """CONTAINER_AGENTS_V1_PREVIEW."""
     AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
     """AGENT_ENDPOINT_V1_PREVIEW."""
     CODE_AGENTS_V1_PREVIEW = "CodeAgents=V1Preview"
     """CODE_AGENTS_V1_PREVIEW."""
+    EXTERNAL_AGENTS_V1_PREVIEW = "ExternalAgents=V1Preview"
+    """EXTERNAL_AGENTS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -39,14 +39,16 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INSIGHTS_V1_PREVIEW."""
     MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
     """MEMORY_STORES_V1_PREVIEW."""
-    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
-    """TOOLBOXES_V1_PREVIEW."""
+    ROUTINES_V1_PREVIEW = "Routines=V1Preview"
+    """ROUTINES_V1_PREVIEW."""
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
     DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
     """DATA_GENERATION_JOBS_V1_PREVIEW."""
     MODELS_V1_PREVIEW = "Models=V1Preview"
     """MODELS_V1_PREVIEW."""
+    AGENTS_OPTIMIZATION_V1_PREVIEW = "AgentsOptimization=V1Preview"
+    """AGENTS_OPTIMIZATION_V1_PREVIEW."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -91,6 +93,8 @@ class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HOSTED."""
     WORKFLOW = "workflow"
     """WORKFLOW."""
+    EXTERNAL = "external"
+    """EXTERNAL."""
 
 
 class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -385,26 +389,15 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Model deployment."""
 
 
-class EvalItemContentItemObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of EvalItemContentItemObjectType."""
+class EvalRunOutputItemResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The evaluation status for an evaluation run output item result."""
 
-    INPUT_TEXT = "input_text"
-    """INPUT_TEXT."""
-    OUTPUT_TEXT = "output_text"
-    """OUTPUT_TEXT."""
-    INPUT_IMAGE = "input_image"
-    """INPUT_IMAGE."""
-    INPUT_AUDIO = "input_audio"
-    """INPUT_AUDIO."""
-
-
-class EvaluationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The level at which evaluation is performed."""
-
-    TURN = "turn"
-    """Evaluation is performed at the turn level."""
-    CONVERSATION = "conversation"
-    """Evaluation is performed at the conversation level."""
+    COMPLETED = "completed"
+    """The evaluator completed successfully for this result item."""
+    ERRORED = "errored"
+    """The evaluator encountered an error for this result item."""
+    SKIPPED = "skipped"
+    """The evaluator skipped this result item."""
 
 
 class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -467,6 +460,22 @@ class EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Service-based evaluator."""
     OPENAI_GRADERS = "openai_graders"
     """OpenAI graders."""
+    RUBRIC = "rubric"
+    """Rubric-based evaluator definition. Stores dimensions (the scoring blueprint) for both quality
+    and safety evaluators. Can be created via the generate API or manually via createVersion."""
+
+
+class EvaluatorGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported source types for evaluator generation jobs."""
+
+    PROMPT = "prompt"
+    """Prompt source — inline text provided by the user."""
+    AGENT = "agent"
+    """Agent source — references an agent to fetch instructions and metadata from."""
+    TRACES = "traces"
+    """Traces source — conversation traces from Application Insights."""
+    DATASET = "dataset"
+    """Dataset source — reference to a dataset."""
 
 
 class EvaluatorMetricDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -623,6 +632,15 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation Comparison."""
 
 
+class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of IsolationKeySourceKind."""
+
+    ENTRA = "Entra"
+    """ENTRA."""
+    HEADER = "Header"
+    """HEADER."""
+
+
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Extensible status values shared by Foundry jobs."""
 
@@ -645,6 +663,8 @@ class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """User profile information extracted from conversations."""
     CHAT_SUMMARY = "chat_summary"
     """Summary of chat conversations."""
+    PROCEDURAL = "procedural"
+    """Routine procedures extracted from conversations."""
 
 
 class MemoryOperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -674,6 +694,8 @@ class MemoryStoreObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORE_DELETED."""
     MEMORY_STORE_SCOPE_DELETED = "memory_store.scope.deleted"
     """MEMORY_STORE_SCOPE_DELETED."""
+    MEMORY_DELETED = "memory_store.item.deleted"
+    """MEMORY_DELETED."""
 
 
 class MemoryStoreUpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -720,6 +742,24 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has failed."""
     CANCELED = "Canceled"
     """The operation has been canceled by the user."""
+
+
+class OptimizationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Run mode for an optimization job."""
+
+    OPTIMIZE = "optimize"
+    """Full optimization: baseline + mutation strategies."""
+
+
+class OptimizationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Optimization strategy dimension."""
+
+    INSTRUCTION = "instruction"
+    """Instruction-tuning strategy — rewrites agent system prompts."""
+    MODEL = "model"
+    """Model-selection strategy — evaluates alternative LLM deployments."""
+    SKILL = "skill"
+    """Skill-tuning strategy — generates or modifies agent tool descriptions."""
 
 
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -788,6 +828,63 @@ class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents content that involves sensitive data leakage."""
     TASK_ADHERENCE = "TaskAdherence"
     """Represents content that involves task adherence."""
+
+
+class RoutineActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The discriminator values supported for routine actions."""
+
+    INVOKE_AGENT_RESPONSES_API = "invoke_agent_responses_api"
+    """Dispatches through the responses API."""
+    INVOKE_AGENT_INVOCATIONS_API = "invoke_agent_invocations_api"
+    """Dispatches through the raw invocations API."""
+
+
+class RoutineAttemptSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known source paths that can produce a routine run."""
+
+    EVENT_FIRE = "event_fire"
+    """A dispatch fired from an event delivery."""
+    MANUAL_DISPATCH = "manual_dispatch"
+    """A dispatch executed synchronously by a direct request."""
+    QUEUED_DISPATCH = "queued_dispatch"
+    """A dispatch executed asynchronously from the dispatch queue."""
+    SCHEDULE_DELIVERY = "schedule_delivery"
+    """A dispatch fired from a schedule delivery."""
+    TIMER_DELIVERY = "timer_delivery"
+    """A dispatch fired from a timer delivery."""
+
+
+class RoutineDispatchPayloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The discriminator values supported for manual routine dispatch payloads."""
+
+    INVOKE_AGENT_RESPONSES_API = "invoke_agent_responses_api"
+    """A manual payload for a responses API routine dispatch."""
+    INVOKE_AGENT_INVOCATIONS_API = "invoke_agent_invocations_api"
+    """A manual payload for an invocations API routine dispatch."""
+
+
+class RoutineRunPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known lifecycle phases recorded for a routine run."""
+
+    QUEUED = "queued"
+    """The run is queued for dispatch."""
+    DISPATCHING = "dispatching"
+    """The run is currently being dispatched."""
+    COMPLETED = "completed"
+    """The run finished successfully."""
+    FAILED = "failed"
+    """The run finished with an error."""
+
+
+class RoutineTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The discriminator values supported for routine triggers."""
+
+    GITHUB_ISSUE_OPENED = "github_issue_opened"
+    """A GitHub issue-opened trigger."""
+    SCHEDULE = "schedule"
+    """A recurring cron-based trigger."""
+    TIMER = "timer"
+    """A one-shot timer trigger."""
 
 
 class SampleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

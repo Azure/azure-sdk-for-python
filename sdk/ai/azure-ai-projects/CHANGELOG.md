@@ -4,13 +4,22 @@
 
 ### Features Added
 
-* New Agent tool `FabricIQPreviewTool`.
-* New Agent tool `ToolboxSearchPreviewTool`.
-* New optional string properties `description` and `name` added to Agent tools which did not have them before.
+* Support integration of external Agents (in preview). See new `ExternalAgentDefinition` class.
+* New Agent tool in preview `FabricIQPreviewTool`.
+* New Agent tool in preview `ToolboxSearchPreviewTool`.
+* New optional string properties `description` and `name` added to Agent tools classes which did not have them before.
+* New optional `tool_configs` added to Agent tool classes.
 * New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
-* New evaluator generation job operations on `.beta.evaluators`: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
-* New methods on `.beta.agents` sub-client for code-based hosted agents: `update_agent_from_code()`, `create_agent_version_from_code()`, `download_agent_version_code()`, `download_agent_code()`.
+* New `.beta.models` sub-client to handle AI model weights: `list_versions`, `list`, `get`, `delete`, `update`, `create_async`, `pending_upload`, `get_credentials`.
+* New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `list_runs`, `dispatch_async`.
+* New methods on `.beta.evaluators` for evaluator generation jobs: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
+* New methods on `.beta.agents` for code-based hosted agents: `create_version_from_code`, `download_agent_code`.
+* New methods on `.beta.agents` for optimization jobs: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `list_optimization_candidates`.
+* New methods on `.beta.memory_stores` to handle individual memory items:`.beta.memory_stores`: `get_memory`, `delete_memory`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
+* New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
+* New optional `blueprint_reference` parameters on `agents.create_version` method.
+
 * New `.beta.models` sub-client for registering and managing local model weights as Foundry `ModelVersion` resources. Generated operations: `list`, `list_versions`, `get`, `update`, `delete`, `pending_upload`, `create_async`, `get_credentials`.
 * New convenience method `.beta.models.models_create()` that wraps the spec's three-step upload-first sequence (`pending_upload` → `azcopy copy` → `create_async`) and polls `get()` until the new `ModelVersion` is observable.
 
@@ -29,6 +38,8 @@ Breaking changes in beta classes:
 * Renamed class `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
 * Renamed class `SessionFileWriteResponse` to `SessionFileWriteResult`.
 * Renamed class `SkillObject` to `SkillDetails`.
+* Renamed class `Target` to `EvaluationTarget`.
+* Renamed class `TargetConfig` to `RedTeamTargetConfig`.
 * Removed class `FabricIQPreviewToolParameters`.
 * Removed class `WorkIQPreviewToolParameters`.
 
@@ -38,7 +49,8 @@ Breaking changes in beta classes:
 
 ### Sample updates
 
-* Added Hosted Agent creation sample `sample_hosted_agent_create.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`.
+* Added Hosted Agent creation samples `sample_create_hosted_agent.py` and `sample_create_hosted_agent_async.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`.
+* Added Hosted Agent code-upload samples `sample_create_hosted_agent_from_code.py` and `sample_create_hosted_agent_from_code_async.py`, demonstrating uploading a code package (zip) as a new hosted agent version.
 * The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
 * Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
 * Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.

@@ -1,0 +1,3 @@
+azure-ai-agentserver-core==2.0.0b3
+azure-ai-agentserver-invocations==1.0.0b3
+azure-ai-agentserver-responses==1.0.0b5

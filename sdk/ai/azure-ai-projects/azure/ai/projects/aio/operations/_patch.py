@@ -21,8 +21,10 @@ from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
+    BetaModelsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
+    BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
     BetaToolboxesOperations,
@@ -49,8 +51,12 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaInsightsOperations` operations"""
     memory_stores: BetaMemoryStoresOperations
     """:class:`~azure.ai.projects.aio.operations.BetaMemoryStoresOperations` operations"""
+    models: BetaModelsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaModelsOperations` operations"""
     red_teams: BetaRedTeamsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaRedTeamsOperations` operations"""
+    routines: BetaRoutinesOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaRoutinesOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
     toolboxes: BetaToolboxesOperations
@@ -82,8 +88,10 @@ __all__: List[str] = [
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
+    "BetaModelsOperations",
     "BetaOperations",
     "BetaRedTeamsOperations",
+    "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
     "BetaToolboxesOperations",

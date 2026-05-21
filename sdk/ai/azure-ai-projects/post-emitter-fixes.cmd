@@ -62,6 +62,15 @@ REM Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + as
 REM The emitter wraps bullet/code-block lines with insufficient indentation.
 powershell -Command "$files='azure\ai\projects\operations\_operations.py','azure\ai\projects\aio\operations\_operations.py'; foreach ($f in $files) { $c=Get-Content $f -Raw; $c=$c -replace 'schema\r?\n\s+is not contractual and may include additional keys or change format\r?\n\s+over time [^\r\n]*clients should treat it as an opaque string\)', 'schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)'; $c=$c -replace '(message\":\"Starting)\r?\n\s+(FoundryCBAgent server on port 8088\"})', '$1 $2'; $c=$c -replace '(message\":\"INFO: Application)\r?\n\s+(startup complete\.\"})', '$1 $2'; $c=$c -replace '(message\":\"Successfully)\r?\n\s+(connected to container\"})', '$1 $2'; $c=$c -replace '(message\":\"No logs since)\r?\n\s+(last 60 seconds\"})', '$1 $2'; Set-Content $f $c -NoNewline }"
 
+REM Reorder loops in `prepare_multipart_form_data` (azure\ai\projects\_utils\utils.py).
+REM The emitter generates the multipart-file loop before the data-field loop, so JSON
+REM metadata parts end up after large binary file parts in the encoded body. Some
+REM streaming server-side parsers (e.g. the Foundry hosted-agents
+REM `create_agent_version_from_code` endpoint) require the small JSON metadata parts
+REM to precede the binary file parts; otherwise they report the metadata part as missing.
+REM This rewrite swaps the two loops so data fields are appended first.
+powershell -Command "$f='azure\ai\projects\_utils\utils.py'; $c=Get-Content $f -Raw; if ($c -notmatch 'Append data fields first') { $pattern='(?s)    files: list\[FileType\] = \[\]\r?\n.*?    return files'; $new=(@('    files: list[FileType] = []','','    # Append data fields first so they appear before file parts in the encoded','    # multipart body. Some streaming server-side parsers (e.g. the Foundry','    # hosted-agents `create_agent_version_from_code` endpoint) require small','    # JSON metadata parts to precede large binary file parts; otherwise they','    # report the metadata part as missing.','    for data_field in data_fields:','        data_entry = body.get(data_field)','        if data_entry:','            files.append((data_field, str(serialize_multipart_data_entry(data_entry))))','','    for multipart_field in multipart_fields:','        multipart_entry = body.get(multipart_field)','        if isinstance(multipart_entry, list):','            files.extend([(multipart_field, e) for e in multipart_entry])','        elif multipart_entry:','            files.append((multipart_field, multipart_entry))','','    return files') -join [Environment]::NewLine); $c=[regex]::Replace($c, $pattern, $new); Set-Content $f $c -NoNewline }"
+
 REM Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml . || echo black not found, skipping formatting.

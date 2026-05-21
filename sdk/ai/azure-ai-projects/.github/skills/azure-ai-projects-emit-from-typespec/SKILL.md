@@ -91,7 +91,31 @@ Note:
 
 ---
 
-## Step 5: Run post-emitter fixes
+## Step 5: Revert changes to file pyproject.toml
+
+After the emit, there will be changes to `pyproject.toml` that are not needed. Revert any changes to `pyproject.toml` by running:
+
+```
+git restore pyproject.toml
+```
+
+---
+
+## Step 6: Commit and push
+
+Stage all changes (excluding file names that start with `.env`), commit, and push the topic branch:
+
+```
+git add -A -- ':!.env*'
+git commit -m "Part 1: Emit SDK from TypeSpec"
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git push -u origin <topic-branch>
+```
+
+---
+
+## Step 7: Run post-emitter fixes
 
 After a successful emit, run the post-emitter fix script located in the `sdk/ai/azure-ai-projects` folder:
 
@@ -105,7 +129,21 @@ This script applies azure-ai-projects-specific corrections to the emitted code (
 
 ---
 
-## Step 6: Fix patched code related to preview feature headers
+## Step 8: Commit and push
+
+Stage all changes (excluding file names that start with `.env`), commit, and push the topic branch:
+
+```
+git add -A -- ':!.env*'
+git commit -m "Part 2: Apply post-emitter-fixes.cmd"
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git push -u origin <topic-branch>
+```
+
+---
+
+## Step 9: Fix patched code related to preview feature headers
 
 The emitted code may have introduced another beta sub-client (a new property on class `BetaOperations`). It may have also added another enum value to the existing internal class `_FoundryFeaturesOptInKeys`. This means that the client library needs to set a new HTTP request header when making REST API calls to the service, to opt-in to the new service features which are still in preview. If that's the case, do the following:
 
@@ -117,9 +155,11 @@ The emitted code may have introduced another beta sub-client (a new property on 
 
 If a new enum value was added to `_AgentDefinitionOptInKeys`, please print a note on screen that mentions which value was added, and tell the user that a review is needed to make sure this new value is properly used. But otherwise continue on.
 
+Important: Under the `azure\ai\projects` folder, you are only allowed to edit Python source files that start with "_patch". If you see that changes are needed in other files, stop and report this to the user instead of making the changes yourself.
+
 ---
 
-## Step 7: Update samples and tests
+## Step 10: Update samples and tests
 
 If there were any breaking changes in existing APIs, like class or method renames:
 * update the patched code accordingly in the client library to reflect those changes. Changes should be made to Python source file names that start with "_patch", under the `azure\ai\projects` folder.
@@ -128,13 +168,13 @@ If there were any breaking changes in existing APIs, like class or method rename
 
 ---
 
-## Step 8: Install package from sources
+## Step 11: Install package from sources
 
 In the folder `sdk\ai\azure-ai-projects`, run `pip install -e .` to install the package from sources. If there are any errors, stop and report the error to the user. Do not continue.
 
 ---
 
-## Step 9: Update CHANGELOG.md
+## Step 12: Update CHANGELOG.md
 
 Use the **`azsdk-common-generate-sdk-locally`** skill's changelog capability (`azsdk_package_update_changelog_content`) to update `CHANGELOG.md` in the `sdk/ai/azure-ai-projects` folder with a summary of changes from the TypeSpec emit. Some guidelines to follow:
 * Start by examining the public SDK API surface of the latest released version of the azure-ai-projects package. The source code for this version can be found in the Main branch of the `azure-sdk-for-python` repository, in the folder `sdk\ai\azure-ai-projects`. 
@@ -145,13 +185,13 @@ Use the **`azsdk-common-generate-sdk-locally`** skill's changelog capability (`a
 
 ---
 
-## Step 10: Commit and push
+## Step 13: Commit and push
 
 Stage all changes (excluding file names that start with `.env`), commit, and push the topic branch:
 
 ```
 git add -A -- ':!.env*'
-git commit -m "Emit SDK from TypeSpec and apply post-emitter fixes
+git commit -m "Part 3: Additional edits"
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
 git push -u origin <topic-branch>
@@ -159,7 +199,7 @@ git push -u origin <topic-branch>
 
 ---
 
-## Step 11: Create a Pull Request
+## Step 14: Create a Pull Request
 
 Create a draft PR from the **topic branch** to the **base branch** (recorded in Step 2):
 
@@ -176,7 +216,7 @@ Open a new tab in the default browser and navigate to the PR URL.
 
 ---
 
-## Step 12: Optionally run tests locally
+## Step 15: Optionally run tests locally
 
 Prompt the user with this message: "Tests will run as part of the Pull Request. However, you can optionally run tests locally in a Python virtual environment, right now. It will take a few minutes. Do you want to run tests locally? (yes/no)"
 

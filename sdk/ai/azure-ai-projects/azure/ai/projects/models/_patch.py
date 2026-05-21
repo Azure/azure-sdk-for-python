@@ -39,6 +39,23 @@ from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
 _FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
 """The HTTP header name used to opt in to Foundry preview features."""
 
+_PREVIEW_FEATURE_REQUIRED_CODE: Final = "preview_feature_required"
+_PREVIEW_FEATURE_ADDED_ERROR_MESSAGE: Final = (
+    '\n**Python SDK users**: This operation requires you to set "allow_preview=True" '
+    "when calling the AIProjectClient constructor. "
+    "\nNote that preview features are under development and subject to change. They should not be used in production environments."
+)
+_AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
+    [
+        _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.CODE_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
+        _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V1_PREVIEW.value,
+    ]
+)
+
 _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
@@ -46,16 +63,12 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
     "models": _FoundryFeaturesOptInKeys.MODELS_V1_PREVIEW.value,
     "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
+    "routines": _FoundryFeaturesOptInKeys.ROUTINES_V1_PREVIEW.value,
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
-    "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
+    "toolboxes": "Toolboxes=V1Preview",
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
-    "agents": ",".join(
-        [
-            _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
-            _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
-            _AgentDefinitionOptInKeys.CODE_AGENTS_V1_PREVIEW.value,
-        ]
-    ),
+    "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
+    "agents": _AGENT_OPERATION_FEATURE_HEADERS,
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
 
