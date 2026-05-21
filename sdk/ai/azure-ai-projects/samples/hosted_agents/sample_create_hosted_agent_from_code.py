@@ -114,7 +114,7 @@ with (
     version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
     sha = hashlib.sha256()
     with open(version_zip_path, "wb") as f:
-        for chunk in project_client.beta.agents.download_agent_code(
+        for chunk in project_client.beta.agents.download_code(
             agent_name=agent_name,
             agent_version=created.version,
         ):
