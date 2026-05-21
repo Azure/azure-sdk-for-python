@@ -42,9 +42,9 @@ from azure.ai.voicelive.models._models import (
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import AzureError
+from azure.ai.voicelive.models import ClientEvent, ServerEvent, RequestSession
 
 # === Local ===
-from ..models import ClientEvent, ServerEvent, RequestSession
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired  # noqa: F401
@@ -877,7 +877,6 @@ def connect(
     headers: Optional[Mapping[str, Any]] = None,
     connection_options: Optional[WebsocketConnectionOptions] = None,
     credential_scopes: Optional[Union[str, Sequence[str]]] = None,
-    **kwargs: Any,
 ) -> AbstractAsyncContextManager["VoiceLiveConnection"]:
     ...
 
@@ -899,7 +898,6 @@ def connect(
     headers: Optional[Mapping[str, Any]] = None,
     connection_options: Optional[WebsocketConnectionOptions] = None,
     credential_scopes: Optional[Union[str, Sequence[str]]] = None,
-    **kwargs: Any,
 ) -> AbstractAsyncContextManager["VoiceLiveConnection"]:
     ...
 
@@ -932,11 +930,11 @@ def connect(
     - Automatically cleans up the connection when the context exits.
 
     :keyword credential: The credential used to authenticate with the service.
-    :paramtype type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
+    :paramtype credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
     :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
-    :paramtype type endpoint: str
+    :paramtype endpoint: str
     :keyword api_version: The API version to use. Defaults to ``"2026-04-10"``.
-    :paramtype type api_version: str
+    :paramtype api_version: str
     :keyword model: Model identifier to use for the session.
      In most scenarios, this parameter is required.
      It may be omitted only when connecting through an **Agent** scenario,
@@ -955,15 +953,15 @@ def connect(
     :keyword foundry_resource_override: Optional override for the Azure AI Foundry resource.
     :paramtype foundry_resource_override: str
     :keyword query: Optional query parameters to include in the WebSocket URL.
-    :paramtype type query: Mapping[str, Any]
+    :paramtype query: Mapping[str, Any]
     :keyword headers: Optional HTTP headers to include in the WebSocket handshake.
-    :paramtype type headers: Mapping[str, Any]
+    :paramtype headers: Mapping[str, Any]
     :keyword connection_options: Optional advanced WebSocket options compatible with :mod:`aiohttp`.
-    :paramtype type connection_options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
+    :paramtype connection_options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
     :keyword credential_scopes: Optional scope override for token-based authentication.
     :paramtype credential_scopes: str | Sequence[str]
-    :keyword kwargs: Additional keyword arguments accepted for backward compatibility.
-        Unknown values are ignored.
+    Additional legacy keyword arguments are accepted for backward compatibility.
+    Unknown values are ignored.
     :return: An async context manager yielding a connected :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
     :rtype: collections.abc.AsyncContextManager[~azure.ai.voicelive.aio.VoiceLiveConnection]
     :raises ValueError: If only one of ``agent_name`` or ``project_name`` is provided.
