@@ -37,7 +37,6 @@
   - Operation group `ProfilesOperations` added method `begin_cdn_can_migrate_to_afd`
   - Operation group `ProfilesOperations` added method `begin_cdn_migrate_to_afd`
   - Operation group `ProfilesOperations` added method `begin_migration_abort`
-  - Operation group `RuleSetsOperations` added method `begin_create`
 
 ### Breaking Changes
 
@@ -116,8 +115,8 @@
   - Method `LogAnalyticsOperations.get_log_analytics_rankings` changed its parameter `rankings`/`metrics`/`max_ranking`/`date_time_begin`/`date_time_end`/`custom_domains` from `positional_or_keyword` to `keyword_only`
   - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `metrics`/`date_time_begin`/`date_time_end`/`granularity`/`actions`/`group_by`/`rule_types` from `positional_or_keyword` to `keyword_only`
   - Method `LogAnalyticsOperations.get_waf_log_analytics_rankings` changed its parameter `metrics`/`date_time_begin`/`date_time_end`/`max_ranking`/`rankings`/`actions`/`rule_types` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `RuleSetsOperations.create`
-  - Deleted or renamed model `CdnManagementClientOperationsMixin`
+  - Operation group `RuleSetsOperations` renamed method `create` to `begin_create`
+  - Deleted model `CdnManagementClientOperationsMixin`
 
 ### Other Changes
 
