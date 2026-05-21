@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterable
-from typing import TYPE_CHECKING, AsyncIterator, Iterator, cast
+from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator, cast
 
 from ...models import _generated as generated_models
 from ._base import BaseOutputItemBuilder, _require_non_empty
@@ -540,26 +540,39 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
             self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_MCP_CALL_FAILED.value),
         )
 
-    def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
+    def emit_done(
+        self,
+        *,
+        output: str | None = None,
+        error: dict[str, Any] | None = None,
+    ) -> generated_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this MCP call.
 
         The ``status`` field reflects the most recent terminal state event
         (``emit_completed`` or ``emit_failed``). Defaults to ``"completed"``
         if neither was called.
 
+        :keyword output: Optional MCP tool output payload.
+        :keyword type output: str | None
+        :keyword error: Optional MCP tool error payload.
+        :keyword type error: dict[str, Any] | None
+
         :returns: The emitted event dict.
         :rtype: ResponseOutputItemDoneEvent
         """
-        return self._emit_done(
-            {
-                "type": "mcp_call",
-                "id": self._item_id,
-                "server_label": self._server_label,
-                "name": self._name,
-                "arguments": self._final_arguments or "",
-                "status": self._terminal_status or "completed",
-            }
-        )
+        item: dict[str, Any] = {
+            "type": "mcp_call",
+            "id": self._item_id,
+            "server_label": self._server_label,
+            "name": self._name,
+            "arguments": self._final_arguments or "",
+            "status": self._terminal_status or "completed",
+        }
+        if output is not None:
+            item["output"] = output
+        if error is not None:
+            item["error"] = error
+        return self._emit_done(item)
 
     # ---- Sub-item convenience generators (S-053) ----
 
