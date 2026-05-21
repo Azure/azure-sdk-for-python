@@ -13,11 +13,13 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._operations import Operations  # type: ignore
+from ._operations import AccessBridgesOperations  # type: ignore
 from ._operations import BareMetalMachinesOperations  # type: ignore
 from ._operations import CloudServicesNetworksOperations  # type: ignore
 from ._operations import ClusterManagersOperations  # type: ignore
 from ._operations import ClustersOperations  # type: ignore
 from ._operations import KubernetesClustersOperations  # type: ignore
+from ._operations import KubernetesVersionsOperations  # type: ignore
 from ._operations import L2NetworksOperations  # type: ignore
 from ._operations import L3NetworksOperations  # type: ignore
 from ._operations import RackSkusOperations  # type: ignore
@@ -39,11 +41,13 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Operations",
+    "AccessBridgesOperations",
     "BareMetalMachinesOperations",
     "CloudServicesNetworksOperations",
     "ClusterManagersOperations",
     "ClustersOperations",
     "KubernetesClustersOperations",
+    "KubernetesVersionsOperations",
     "L2NetworksOperations",
     "L3NetworksOperations",
     "RackSkusOperations",

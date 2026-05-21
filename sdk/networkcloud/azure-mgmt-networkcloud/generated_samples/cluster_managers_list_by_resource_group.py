@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-09-01/ClusterManagers_ListByResourceGroup.json
+# x-ms-original-file: 2026-05-01-preview/ClusterManagers_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

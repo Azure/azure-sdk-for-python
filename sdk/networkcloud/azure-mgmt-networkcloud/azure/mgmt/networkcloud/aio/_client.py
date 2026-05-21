@@ -20,6 +20,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import NetworkCloudMgmtClientConfiguration
 from .operations import (
+    AccessBridgesOperations,
     AgentPoolsOperations,
     BareMetalMachineKeySetsOperations,
     BareMetalMachinesOperations,
@@ -30,6 +31,7 @@ from .operations import (
     ConsolesOperations,
     KubernetesClusterFeaturesOperations,
     KubernetesClustersOperations,
+    KubernetesVersionsOperations,
     L2NetworksOperations,
     L3NetworksOperations,
     MetricsConfigurationsOperations,
@@ -53,6 +55,8 @@ class NetworkCloudMgmtClient:  # pylint: disable=too-many-instance-attributes
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.networkcloud.aio.operations.Operations
+    :ivar access_bridges: AccessBridgesOperations operations
+    :vartype access_bridges: azure.mgmt.networkcloud.aio.operations.AccessBridgesOperations
     :ivar bare_metal_machines: BareMetalMachinesOperations operations
     :vartype bare_metal_machines:
      azure.mgmt.networkcloud.aio.operations.BareMetalMachinesOperations
@@ -66,6 +70,9 @@ class NetworkCloudMgmtClient:  # pylint: disable=too-many-instance-attributes
     :ivar kubernetes_clusters: KubernetesClustersOperations operations
     :vartype kubernetes_clusters:
      azure.mgmt.networkcloud.aio.operations.KubernetesClustersOperations
+    :ivar kubernetes_versions: KubernetesVersionsOperations operations
+    :vartype kubernetes_versions:
+     azure.mgmt.networkcloud.aio.operations.KubernetesVersionsOperations
     :ivar l2_networks: L2NetworksOperations operations
     :vartype l2_networks: azure.mgmt.networkcloud.aio.operations.L2NetworksOperations
     :ivar l3_networks: L3NetworksOperations operations
@@ -106,9 +113,9 @@ class NetworkCloudMgmtClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-09-01".
-     Default value is "2025-09-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-05-01-preview". Default value is "2026-05-01-preview". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -164,6 +171,7 @@ class NetworkCloudMgmtClient:  # pylint: disable=too-many-instance-attributes
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.access_bridges = AccessBridgesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.bare_metal_machines = BareMetalMachinesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -175,6 +183,9 @@ class NetworkCloudMgmtClient:  # pylint: disable=too-many-instance-attributes
         )
         self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kubernetes_clusters = KubernetesClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.kubernetes_versions = KubernetesVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.l2_networks = L2NetworksOperations(self._client, self._config, self._serialize, self._deserialize)
