@@ -23,6 +23,8 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import asyncio  # pylint: disable=do-not-import-asyncio
+import copy
 import logging
 import os
 from urllib.parse import urlparse
@@ -3149,57 +3151,123 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # 3) will match exactly with the current over lapping physical partition, so we just return the over lapping
             # physical partition's partition key id.
             # 4) Will equal the feed range EPK since it is a sub range of a single physical partition
-            for over_lapping_range in over_lapping_ranges:
-                single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_range)
-                # Since the range min and max are all Upper Cased string Hex Values,
-                # we can compare the values lexicographically
-                EPK_sub_range = routing_range.Range(range_min=max(single_range.min, feed_range_epk.min),
-                                                    range_max=min(single_range.max, feed_range_epk.max),
-                                                    isMinInclusive=True, isMaxInclusive=False)
 
-                # set the session token for this specific partition to avoid sending compound token for all partitions
-                await base.set_session_token_header_async(self, req_headers, path, request_params, options,
-                                              over_lapping_range["id"])
-                if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
-                    # The Epk Sub Range spans exactly one physical partition
-                    # In this case we can route to the physical pk range id
-                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
-                else:
-                    # The Epk Sub Range spans less than a single physical partition
-                    # In this case we route to the physical partition and
-                    # pass the epk sub range to the headers to filter within partition
-                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
-                    req_headers[http_constants.HttpHeaders.StartEpkString] = EPK_sub_range.min
-                    req_headers[http_constants.HttpHeaders.EndEpkString] = EPK_sub_range.max
-                req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
-                partial_result, last_response_headers = await self.__Post(
-                    path,
-                    request_params,
-                    query,
-                    req_headers,
-                    **kwargs
-                )
-                self.last_response_headers = last_response_headers
-                if internal_headers_capture is not None:
-                    internal_headers_capture.clear()
-                    internal_headers_capture.update(last_response_headers)
-                self._UpdateSessionIfRequired(req_headers, partial_result, last_response_headers)
+            # Resolve concurrency for prefix partition key / feed range fan-out.
+            # max_concurrency from options controls whether fan-out runs in parallel.
+            from .._execution_context.aio._concurrent_helpers import _resolve_max_degree  # pylint: disable=import-outside-toplevel
+            max_degree = options.get("maxConcurrency")
+            num_ranges = len(over_lapping_ranges)
+            if max_degree is not None and max_degree != 0 and num_ranges > 1:
+                effective_concurrency = _resolve_max_degree(max_degree)
+            else:
+                effective_concurrency = 0
 
-                # Introducing a temporary complex function into a critical path to handle aggregated queries,
-                # during splits as a precaution falling back to the original logic if anything goes wrong
-                try:
-                    results = base._merge_query_results(results, partial_result, query)
-                except Exception: # pylint: disable=broad-exception-caught
-                    # If the new merge logic fails, fall back to the original logic.
-                    if results:
-                        results["Documents"].extend(partial_result["Documents"])
+            if effective_concurrency > 0:
+                # Parallel fan-out: query partition ranges concurrently using asyncio tasks
+                # bounded by a semaphore to limit the number of in-flight HTTP requests.
+                semaphore = asyncio.Semaphore(effective_concurrency)
+
+                async def _query_range(overlapping_range):
+                    """Query a single partition range with its own header and request_params copy.
+
+                    :param dict overlapping_range: The partition key range to query.
+                    :returns: A tuple of partial results and response headers.
+                    :rtype: tuple
+                    """
+                    task_headers = dict(req_headers)
+                    # request_params is mutated by the request pipeline (e.g. availability_strategy,
+                    # location_endpoint_to_route, location_index_to_route, is_hedging_request),
+                    # so each concurrent task needs its own deep copy to avoid races.
+                    task_request_params = copy.deepcopy(request_params)
+                    single_range = routing_range.Range.PartitionKeyRangeToRange(overlapping_range)
+                    EPK_sub_range = routing_range.Range(
+                        range_min=max(single_range.min, feed_range_epk.min),
+                        range_max=min(single_range.max, feed_range_epk.max),
+                        isMinInclusive=True, isMaxInclusive=False)
+                    # set the session token for this specific partition to avoid sending compound token
+                    await base.set_session_token_header_async(self, task_headers, path, task_request_params,
+                                                              options, overlapping_range["id"])
+                    if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
+                        task_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = overlapping_range["id"]
                     else:
-                        results = partial_result
+                        task_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = overlapping_range["id"]
+                        task_headers[http_constants.HttpHeaders.StartEpkString] = EPK_sub_range.min
+                        task_headers[http_constants.HttpHeaders.EndEpkString] = EPK_sub_range.max
+                    task_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
+                    async with semaphore:
+                        partial_result, resp_headers = await self.__Post(
+                            path, task_request_params, query, task_headers, **kwargs)
+                    return partial_result, resp_headers
 
-                if response_headers_list is not None:
-                    response_headers_list.append(last_response_headers.copy())
-                if response_hook:
-                    response_hook(self.last_response_headers, partial_result)
+                tasks = [asyncio.create_task(_query_range(r)) for r in over_lapping_ranges]
+                try:
+                    task_results = await asyncio.gather(*tasks)
+                except Exception:
+                    for t in tasks:
+                        if not t.done():
+                            t.cancel()
+                    await asyncio.gather(*tasks, return_exceptions=True)
+                    raise
+
+                # Merge results sequentially to maintain correct aggregation semantics
+                for partial_result, resp_headers in task_results:
+                    self.last_response_headers = resp_headers
+                    if internal_headers_capture is not None:
+                        internal_headers_capture.clear()
+                        internal_headers_capture.update(resp_headers)
+                    self._UpdateSessionIfRequired(req_headers, partial_result, resp_headers)
+                    try:
+                        results = base._merge_query_results(results, partial_result, query)
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        if results:
+                            results["Documents"].extend(partial_result["Documents"])
+                        else:
+                            results = partial_result
+                    if response_headers_list is not None:
+                        response_headers_list.append(resp_headers.copy())
+                    if response_hook:
+                        response_hook(resp_headers, partial_result)
+            else:
+                # Serial fan-out (original behavior)
+                for over_lapping_range in over_lapping_ranges:
+                    single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_range)
+                    EPK_sub_range = routing_range.Range(
+                        range_min=max(single_range.min, feed_range_epk.min),
+                        range_max=min(single_range.max, feed_range_epk.max),
+                        isMinInclusive=True, isMaxInclusive=False)
+                    # set the session token for this specific partition to avoid sending compound token
+                    await base.set_session_token_header_async(self, req_headers, path, request_params,
+                                                              options, over_lapping_range["id"])
+                    if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
+                        req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
+                    else:
+                        req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
+                        req_headers[http_constants.HttpHeaders.StartEpkString] = EPK_sub_range.min
+                        req_headers[http_constants.HttpHeaders.EndEpkString] = EPK_sub_range.max
+                    req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
+                    partial_result, last_response_headers = await self.__Post(
+                        path,
+                        request_params,
+                        query,
+                        req_headers,
+                        **kwargs
+                    )
+                    self.last_response_headers = last_response_headers
+                    if internal_headers_capture is not None:
+                        internal_headers_capture.clear()
+                        internal_headers_capture.update(last_response_headers)
+                    self._UpdateSessionIfRequired(req_headers, partial_result, last_response_headers)
+                    try:
+                        results = base._merge_query_results(results, partial_result, query)
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        if results:
+                            results["Documents"].extend(partial_result["Documents"])
+                        else:
+                            results = partial_result
+                    if response_headers_list is not None:
+                        response_headers_list.append(last_response_headers.copy())
+                    if response_hook:
+                        response_hook(self.last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
             if results:
                 if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:

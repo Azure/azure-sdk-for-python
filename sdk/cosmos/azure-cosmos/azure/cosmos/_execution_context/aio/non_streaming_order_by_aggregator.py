@@ -3,15 +3,20 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
+import asyncio  # pylint: disable=do-not-import-asyncio
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio.multi_execution_aggregator import _MultiExecutionContextAggregator
 from azure.cosmos._execution_context.aio import document_producer
+from azure.cosmos._execution_context.aio._concurrent_helpers import (
+    _resolve_max_degree,
+    concurrent_peek_producers,
+)
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
 # pylint: disable=protected-access
 
-class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
+class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):  # pylint: disable=too-many-instance-attributes
     """This class is a subclass of the query execution context base and serves for
     non-streaming order by queries. It is very similar to the existing MultiExecutionContextAggregator,
     but is needed since we're dealing with items and not document producers.
@@ -37,6 +42,10 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
             document_producer._NonStreamingOrderByComparator(partitioned_query_ex_info.get_order_by()))
         self._response_hook = response_hook
         self._raw_response_hook = raw_response_hook
+
+        # Parallelization settings
+        self._max_concurrency = options.get("maxConcurrency", 0)
+
 
 
     async def __anext__(self):
@@ -124,37 +133,106 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
                 self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
             )
 
-        self._doc_producers = []
-        for targetQueryExContext in targetPartitionQueryExecutionContextList:
-            try:
-                await targetQueryExContext.peek()
-                self._doc_producers.append(targetQueryExContext)
-            except exceptions.CosmosHttpResponseError as e:
-                if exceptions._partition_range_is_gone(e):
-                    # repairing document producer context on partition split
-                    await self._repair_document_producer()
-                else:
-                    raise
+        effective_concurrency = _resolve_max_degree(self._max_concurrency)
 
-            except StopAsyncIteration:
-                continue
+        if effective_concurrency > 0 and len(targetPartitionQueryExecutionContextList) > 1:
+            # Parallel initialization: peek all producers concurrently
+            semaphore = asyncio.Semaphore(effective_concurrency)
+            peeked_producers, gone_errors = await concurrent_peek_producers(
+                targetPartitionQueryExecutionContextList, semaphore
+            )
+            if gone_errors:
+                await self._repair_document_producer()
+            else:
+                self._doc_producers = peeked_producers
+        else:
+            # Serial initialization (original behavior)
+            self._doc_producers = []
+            for targetQueryExContext in targetPartitionQueryExecutionContextList:
+                try:
+                    await targetQueryExContext.peek()
+                    self._doc_producers.append(targetQueryExContext)
+                except exceptions.CosmosHttpResponseError as e:
+                    if exceptions._partition_range_is_gone(e):
+                        # repairing document producer context on partition split
+                        await self._repair_document_producer()
+                    else:
+                        raise
+
+                except StopAsyncIteration:
+                    continue
 
         pq_size = self._partitioned_query_ex_info.get_top() or\
                   self._partitioned_query_ex_info.get_limit() + self._partitioned_query_ex_info.get_offset()
         sort_orders = self._partitioned_query_ex_info.get_order_by()
-        for doc_producer in self._doc_producers:
+
+        if effective_concurrency > 0 and len(self._doc_producers) > 1:
+            # Parallel drain: drain all producers concurrently
+            await self._parallel_drain_producers(sort_orders, pq_size, effective_concurrency)
+        else:
+            # Serial drain (original behavior)
+            for doc_producer in self._doc_producers:
+                while True:
+                    try:
+                        result = await doc_producer.peek()
+                        item_result = document_producer._NonStreamingItemResultProducer(result, sort_orders)
+                        await self._orderByPQ.push_async(item_result, self._document_producer_comparator)
+                        await doc_producer.__anext__()
+                    except StopAsyncIteration:
+                        # this logic is necessary so that we only hold 2 * items_per_partition in memory at any time
+                        if len(self._orderByPQ._heap) > pq_size:
+                            new_heap = []
+                            for i in range(pq_size):  # pylint: disable=unused-variable
+                                new_heap.append(await self._orderByPQ.pop_async(self._document_producer_comparator))
+                            del self._orderByPQ._heap
+                            self._orderByPQ._heap = new_heap
+                        break
+
+    async def _parallel_drain_producers(self, sort_orders, pq_size, effective_concurrency):
+        """Drain all document producers concurrently, pushing results into the priority queue
+        incrementally and trimming to ``pq_size`` so memory stays bounded.
+
+        Each producer is drained in its own task. The semaphore is acquired/released around
+        each individual page (peek + ``__anext__``) rather than around the entire multi-page
+        drain, so a slow producer doesn't head-of-line block other producers from progressing.
+
+        :param list sort_orders: The sort orders for the query.
+        :param int pq_size: The maximum number of items to keep in the priority queue.
+        :param int effective_concurrency: The effective concurrency limit.
+        """
+        semaphore = asyncio.Semaphore(effective_concurrency)
+        pq_lock = asyncio.Lock()
+
+        async def _drain_one(dp):
             while True:
-                try:
-                    result = await doc_producer.peek()
-                    item_result = document_producer._NonStreamingItemResultProducer(result, sort_orders)
-                    await self._orderByPQ.push_async(item_result, self._document_producer_comparator)
-                    await doc_producer.__anext__()
-                except StopAsyncIteration:
-                    # this logic is necessary so that we only hold 2 * items_per_partition in memory at any time
+                # Acquire the semaphore per page so other producers can progress
+                # between this producer's pages instead of waiting for it to fully drain.
+                async with semaphore:
+                    try:
+                        result = await dp.peek()
+                        item = document_producer._NonStreamingItemResultProducer(result, sort_orders)
+                        await dp.__anext__()
+                    except StopAsyncIteration:
+                        break
+                # Push and trim under a lock to keep the priority queue bounded
+                # (avoids materializing the full cross-partition result set in memory).
+                async with pq_lock:
+                    await self._orderByPQ.push_async(item, self._document_producer_comparator)
                     if len(self._orderByPQ._heap) > pq_size:
                         new_heap = []
-                        for i in range(pq_size):  # pylint: disable=unused-variable
-                            new_heap.append(await self._orderByPQ.pop_async(self._document_producer_comparator))
+                        for _ in range(pq_size):
+                            new_heap.append(
+                                await self._orderByPQ.pop_async(self._document_producer_comparator)
+                            )
                         del self._orderByPQ._heap
                         self._orderByPQ._heap = new_heap
-                    break
+
+        tasks = [asyncio.create_task(_drain_one(dp)) for dp in self._doc_producers]
+        try:
+            await asyncio.gather(*tasks)
+        except Exception:
+            for t in tasks:
+                if not t.done():
+                    t.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            raise

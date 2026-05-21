@@ -3,11 +3,16 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
+import asyncio  # pylint: disable=do-not-import-asyncio
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
-    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters, \
+   _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters, \
     _FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_LOCAL, _FULL_TEXT_SCORE_SCOPE_DEFAULT
+from azure.cosmos._execution_context.aio._concurrent_helpers import (
+    _resolve_max_degree,
+    concurrent_peek_producers,
+)
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 from ..._constants import _Constants as Constants
@@ -22,9 +27,11 @@ class _Placeholders:
     formattable_order_by = "{documentdb-formattableorderbyquery-filter}"
 
 
-async def _drain_and_coalesce_results(document_producers_to_drain):
+async def _drain_and_coalesce_results(document_producers_to_drain, effective_concurrency=0):  # pylint: disable=unused-argument
     all_results = []
     is_singleton = True
+
+    # Serial drain (original behavior)
     for dp in document_producers_to_drain:
         all_results.append(await dp.peek())
         all_results.extend(dp._ex_context._buffer)
@@ -69,7 +76,13 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         self._response_hook = response_hook
         self._raw_response_hook = raw_response_hook
 
-    async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
+        # Parallelization settings
+        self._max_concurrency = options.get("maxConcurrency", 0)
+
+
+    async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements, too-many-locals
+        effective_concurrency = _resolve_max_degree(self._max_concurrency)
+
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             # When FullTextScoreScope is "Local", use only target ranges for statistics.
@@ -77,6 +90,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             full_text_score_scope = self._options.get(_FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_DEFAULT)
             use_all_ranges = full_text_score_scope != _FULL_TEXT_SCORE_SCOPE_LOCAL
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=use_all_ranges)
+            effective_concurrency = _resolve_max_degree(self._max_concurrency)
             global_statistics_doc_producers = []
             global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
 
@@ -96,22 +110,33 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                     )
                 )
 
-            # verify all document producers have items/ no splits
-            for target_query_ex_context in partitioned_query_execution_context_list:
-                try:
-                    await target_query_ex_context.peek()
-                    global_statistics_doc_producers.append(target_query_ex_context)
-                except exceptions.CosmosHttpResponseError as e:
-                    if exceptions._partition_range_is_gone(e):
-                        # repairing document producer context on partition split
-                        global_statistics_doc_producers = await self._repair_document_producer(
-                            global_statistics_query,
-                            target_all_ranges=use_all_ranges
-                        )
-                    else:
-                        raise
-                except StopAsyncIteration:
-                    continue
+            if effective_concurrency > 0 and len(partitioned_query_execution_context_list) > 1:
+                # Parallel peek for global statistics
+                semaphore = asyncio.Semaphore(effective_concurrency)
+                peeked, gone_errors = await concurrent_peek_producers(
+                    partitioned_query_execution_context_list, semaphore
+                )
+                if gone_errors:
+                    global_statistics_doc_producers = await self._repair_document_producer(
+                        global_statistics_query, target_all_ranges=use_all_ranges)
+                else:
+                    global_statistics_doc_producers = peeked
+            else:
+                # Serial peek (original behavior)
+                for target_query_ex_context in partitioned_query_execution_context_list:
+                    try:
+                        await target_query_ex_context.peek()
+                        global_statistics_doc_producers.append(target_query_ex_context)
+                    except exceptions.CosmosHttpResponseError as e:
+                        if exceptions._partition_range_is_gone(e):
+                            global_statistics_doc_producers = await self._repair_document_producer(
+                                global_statistics_query,
+                                target_all_ranges=use_all_ranges
+                            )
+                        else:
+                            raise
+                    except StopAsyncIteration:
+                        continue
 
             # Aggregate all partitioned global statistics
             self._aggregate_global_statistics(global_statistics_doc_producers)
@@ -127,6 +152,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         component_query_execution_list = []
         # for each of the query infos, run the component queries for the target partitions
         target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=False)
+        effective_concurrency = _resolve_max_degree(self._max_concurrency)
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:
                 if self._parameters:
@@ -144,26 +170,42 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                         self._raw_response_hook
                     )
                 )
-        # verify all document producers have items/ no splits
-        component_query_results = []
-        for target_query_ex_context in component_query_execution_list:
-            try:
-                await target_query_ex_context.peek()
-                component_query_results.append(target_query_ex_context)
-            except exceptions.CosmosHttpResponseError as e:
-                if exceptions._partition_range_is_gone(e):
-                    component_query_results = []
-                    # repairing document producer context on partition split
-                    for rewritten_query in rewritten_query_infos:
-                        component_query_results.extend(await self._repair_document_producer(
-                            rewritten_query['rewrittenQuery']))
-                else:
-                    raise
-            except StopAsyncIteration:
-                continue
+
+        if effective_concurrency > 0 and len(component_query_execution_list) > 1:
+            # Parallel peek for component queries
+            semaphore = asyncio.Semaphore(effective_concurrency)
+            peeked, gone_errors = await concurrent_peek_producers(
+                component_query_execution_list, semaphore
+            )
+            if gone_errors:
+                component_query_results = []
+                for rewritten_query in rewritten_query_infos:
+                    component_query_results.extend(await self._repair_document_producer(
+                        rewritten_query['rewrittenQuery']))
+            else:
+                component_query_results = peeked
+        else:
+            # Serial peek (original behavior)
+            component_query_results = []
+            for target_query_ex_context in component_query_execution_list:
+                try:
+                    await target_query_ex_context.peek()
+                    component_query_results.append(target_query_ex_context)
+                except exceptions.CosmosHttpResponseError as e:
+                    if exceptions._partition_range_is_gone(e):
+                        component_query_results = []
+                        for rewritten_query in rewritten_query_infos:
+                            component_query_results.extend(await self._repair_document_producer(
+                                rewritten_query['rewrittenQuery']))
+                    else:
+                        raise
+                except StopAsyncIteration:
+                    continue
 
         # Drain all the results and coalesce on rid
-        drained_results, is_singleton = await _drain_and_coalesce_results(component_query_results)
+        drained_results, is_singleton = await _drain_and_coalesce_results(
+            component_query_results, effective_concurrency
+        )
         # If we only have one component query, we format the response and return with no further work
         if is_singleton:
             self._format_final_results(drained_results)

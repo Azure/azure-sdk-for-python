@@ -596,6 +596,48 @@ async def create_lists():
     await client.close()
 ```
 
+### Parallel Cross-Partition Queries (Async Only)
+
+When running cross-partition queries with the async client, you can improve query latency by enabling
+parallel execution across partitions. This also applies to hierarchical partition key (HPK) prefix
+queries and feed range queries that fan out to multiple physical partitions. This trades higher
+instantaneous RU/s consumption for lower wall-clock time.
+
+Use `max_concurrency` to control how many partition requests run concurrently:
+
+```python
+from azure.cosmos.aio import CosmosClient
+import os
+
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+
+async def parallel_query_example():
+    async with CosmosClient(URL, credential=KEY) as client:
+        database = client.get_database_client('testDatabase')
+        container = database.get_container_client('products')
+
+        # Serial execution (default) - lowest RU/s, highest latency
+        results = container.query_items(
+            query='SELECT * FROM c ORDER BY c.timestamp',
+            max_concurrency=0  # default
+        )
+
+        # Parallel execution - higher RU/s, lower latency
+        results = container.query_items(
+            query='SELECT * FROM c ORDER BY c.timestamp',
+            max_concurrency=4  # up to 4 concurrent partition requests
+        )
+
+        async for item in results:
+            print(item)
+```
+
+| Value | Behavior |
+|-------|----------|
+| `0` (default) | Serial execution — current behavior, backward-compatible |
+| `> 0` | That many concurrent partition requests |
+
 ### Using Integrated Cache
 An integrated cache is an in-memory cache that helps you ensure manageable costs and low latency as your request volume grows. The integrated cache has two parts: an item cache for point reads and a query cache for queries. The code snippet below shows you how to use this feature with the point read and query cache methods.
 
