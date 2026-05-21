@@ -20,16 +20,16 @@ class DetectedLanguage(_Model):
 
     :ivar language: A string representing the code of the detected language. Required.
     :vartype language: str
-    :ivar score: A float value indicating the confidence in the result.
-     The score is between zero and one and a low score indicates a low confidence. Required.
+    :ivar score: A float value indicating the confidence in the result. The score is between zero
+     and one and a low score indicates a low confidence. Required.
     :vartype score: float
     """
 
     language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string representing the code of the detected language. Required."""
     score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A float value indicating the confidence in the result.
-     The score is between zero and one and a low score indicates a low confidence. Required."""
+    """A float value indicating the confidence in the result. The score is between zero and one and a
+     low score indicates a low confidence. Required."""
 
     @overload
     def __init__(
@@ -275,8 +275,7 @@ class TranslatedTextItem(_Model):
      when language auto-detection is requested.
     :vartype detected_language: ~azure.ai.translation.text.models.DetectedLanguage
     :ivar translations: An array of translation results. The size of the array matches the number
-     of target
-     languages specified through the to query parameter. Required.
+     of target languages specified through the to query parameter. Required.
     :vartype translations: list[~azure.ai.translation.text.models.TranslationText]
     """
 
@@ -286,8 +285,8 @@ class TranslatedTextItem(_Model):
     """The detectedLanguage property is only present in the result object when language auto-detection
      is requested."""
     translations: list["_models.TranslationText"] = rest_field(visibility=["read"])
-    """An array of translation results. The size of the array matches the number of target
-     languages specified through the to query parameter. Required."""
+    """An array of translation results. The size of the array matches the number of target languages
+     specified through the to query parameter. Required."""
 
     @overload
     def __init__(
@@ -324,9 +323,8 @@ class TranslateInputItem(_Model):
      Note: the dynamic dictionary feature is case-sensitive.
     :vartype language: str
     :ivar text_type: Defines whether the text being translated is plain text or HTML text. Any HTML
-     needs to be a well-formed,
-     complete element. Possible values are: plain (default) or html. Known values are: "Plain" and
-     "Html".
+     needs to be a well-formed, complete element. Possible values are: plain (default) or html.
+     Known values are: "Plain" and "Html".
     :vartype text_type: str or ~azure.ai.translation.text.models.TextType
     :ivar targets: Translation target parameters. Required.
     :vartype targets: list[~azure.ai.translation.text.models.TranslationTarget]
@@ -348,9 +346,8 @@ class TranslateInputItem(_Model):
         name="textType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines whether the text being translated is plain text or HTML text. Any HTML needs to be a
-     well-formed,
-     complete element. Possible values are: plain (default) or html. Known values are: \"Plain\" and
-     \"Html\"."""
+     well-formed, complete element. Possible values are: plain (default) or html. Known values are:
+     \"Plain\" and \"Html\"."""
     targets: list["_models.TranslationTarget"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Translation target parameters. Required."""
 
@@ -378,8 +375,8 @@ class TranslateInputItem(_Model):
 
 class TranslationLanguage(_Model):
     """The value of the translation property is a dictionary of (key, value) pairs. Each key is a BCP
-    47 language tag.
-    A key identifies a language for which text can be translated to or translated from.
+    47 language tag. A key identifies a language for which text can be translated to or translated
+    from.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -441,19 +438,18 @@ class TranslationTarget(_Model):
     """Target language and translation configuration parameters.
 
     :ivar language: Specifies the language of the output text. The target language must be one of
-     the supported languages included
-     in the translation scope. It's possible to translate to multiple languages simultaneously by
-     including
-     multiple string values in the targetsLanguage array. Required.
+     the supported languages included in the translation scope. It's possible to translate to
+     multiple languages simultaneously by including multiple string values in the targetsLanguage
+     array. Required.
     :vartype language: str
     :ivar script: Specifies the script of the translated text.
     :vartype script: str
-    :ivar profanity_action: Specifies how profanities should be treated in translations.
-     Possible values are: NoAction (default), Marked or Deleted. Known values are: "NoAction",
-     "Marked", and "Deleted".
+    :ivar profanity_action: Specifies how profanities should be treated in translations. Possible
+     values are: NoAction (default), Marked or Deleted. Known values are: "NoAction", "Marked", and
+     "Deleted".
     :vartype profanity_action: str or ~azure.ai.translation.text.models.ProfanityAction
-    :ivar profanity_marker: Specifies how profanities should be marked in translations.
-     Possible values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
+    :ivar profanity_marker: Specifies how profanities should be marked in translations. Possible
+     values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
     :vartype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarker
     :ivar deployment_name: Default is 'general', which uses NMT system.
      'abc-inc-gpt-4o', and 'abc-inc-gpt-4o-mini' are examples of deployment names which use GPT-4o
@@ -484,12 +480,12 @@ class TranslationTarget(_Model):
      specifies that the service is allowed to fall back to a general system when a custom system
      doesn't exist.
     :vartype allow_fallback: bool
-    :ivar grade: Defines complexity of LLM prompts to provide high accuracy translation.
-    :vartype grade: str
-    :ivar tone: Desired tone of target translation.
-    :vartype tone: str
-    :ivar gender: Desired gender of target translation.
-    :vartype gender: str
+    :ivar tone: Desired tone of target translation. Accepted values are formal, informal, or
+     neutral. Known values are: "neutral", "formal", and "informal".
+    :vartype tone: str or ~azure.ai.translation.text.models.TranslationTone
+    :ivar gender: Desired gender of target translation. Accepted values are female, male, or
+     neutral. Known values are: "neutral", "male", and "female".
+    :vartype gender: str or ~azure.ai.translation.text.models.TranslationGender
     :ivar adaptive_dataset_id: Reference dataset ID having sentence pair to generate adaptive
      customized translation.
     :vartype adaptive_dataset_id: str
@@ -499,23 +495,20 @@ class TranslationTarget(_Model):
 
     language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies the language of the output text. The target language must be one of the supported
-     languages included
-     in the translation scope. It's possible to translate to multiple languages simultaneously by
-     including
-     multiple string values in the targetsLanguage array. Required."""
+     languages included in the translation scope. It's possible to translate to multiple languages
+     simultaneously by including multiple string values in the targetsLanguage array. Required."""
     script: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies the script of the translated text."""
     profanity_action: Optional[Union[str, "_models.ProfanityAction"]] = rest_field(
         name="profanityAction", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies how profanities should be treated in translations.
-     Possible values are: NoAction (default), Marked or Deleted. Known values are: \"NoAction\",
-     \"Marked\", and \"Deleted\"."""
+    """Specifies how profanities should be treated in translations. Possible values are: NoAction
+     (default), Marked or Deleted. Known values are: \"NoAction\", \"Marked\", and \"Deleted\"."""
     profanity_marker: Optional[Union[str, "_models.ProfanityMarker"]] = rest_field(
         name="profanityMarker", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies how profanities should be marked in translations.
-     Possible values are: Asterisk (default) or Tag. Known values are: \"Asterisk\" and \"Tag\"."""
+    """Specifies how profanities should be marked in translations. Possible values are: Asterisk
+     (default) or Tag. Known values are: \"Asterisk\" and \"Tag\"."""
     deployment_name: Optional[str] = rest_field(
         name="deploymentName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -549,12 +542,16 @@ class TranslationTarget(_Model):
      allowFallback=true
      specifies that the service is allowed to fall back to a general system when a custom system
      doesn't exist."""
-    grade: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Defines complexity of LLM prompts to provide high accuracy translation."""
-    tone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Desired tone of target translation."""
-    gender: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Desired gender of target translation."""
+    tone: Optional[Union[str, "_models.TranslationTone"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Desired tone of target translation. Accepted values are formal, informal, or neutral. Known
+     values are: \"neutral\", \"formal\", and \"informal\"."""
+    gender: Optional[Union[str, "_models.TranslationGender"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Desired gender of target translation. Accepted values are female, male, or neutral. Known
+     values are: \"neutral\", \"male\", and \"female\"."""
     adaptive_dataset_id: Optional[str] = rest_field(
         name="adaptiveDatasetId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -574,9 +571,8 @@ class TranslationTarget(_Model):
         profanity_marker: Optional[Union[str, "_models.ProfanityMarker"]] = None,
         deployment_name: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
-        grade: Optional[str] = None,
-        tone: Optional[str] = None,
-        gender: Optional[str] = None,
+        tone: Optional[Union[str, "_models.TranslationTone"]] = None,
+        gender: Optional[Union[str, "_models.TranslationGender"]] = None,
         adaptive_dataset_id: Optional[str] = None,
         reference_text_pairs: Optional[list["_models.ReferenceTextPair"]] = None,
     ) -> None: ...
@@ -782,10 +778,9 @@ class TransliterateResult(_Model):
 
 
 class TransliterationLanguage(_Model):
-    """The value of the transliteration property is a dictionary of (key, value) pairs.
-    Each key is a BCP 47 language tag. A key identifies a language for which text can be converted
-    from one script
-    to another script.
+    """The value of the transliteration property is a dictionary of (key, value) pairs. Each key is a
+    BCP 47 language tag. A key identifies a language for which text can be converted from one
+    script to another script.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
