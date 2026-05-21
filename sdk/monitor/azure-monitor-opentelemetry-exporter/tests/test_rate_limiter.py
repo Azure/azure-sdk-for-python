@@ -109,9 +109,7 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
     def setUpClass(cls):
         import os
 
-        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = (
-            "1234abcd-5678-4efa-8abc-1234567890ab"
-        )
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         os.environ["APPLICATIONINSIGHTS_SDKSTATS_DISABLED"] = "true"
 
