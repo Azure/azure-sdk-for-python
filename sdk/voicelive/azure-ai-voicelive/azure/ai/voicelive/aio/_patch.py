@@ -929,6 +929,9 @@ def connect(
     - Establishes the connection and yields a :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
     - Automatically cleans up the connection when the context exits.
 
+    Additional legacy keyword arguments are accepted for backward compatibility.
+    Unknown values are ignored.
+
     :keyword credential: The credential used to authenticate with the service.
     :paramtype credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
     :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
@@ -953,15 +956,13 @@ def connect(
     :keyword foundry_resource_override: Optional override for the Azure AI Foundry resource.
     :paramtype foundry_resource_override: str
     :keyword query: Optional query parameters to include in the WebSocket URL.
-    :paramtype query: Mapping[str, Any]
+    :paramtype query: Mapping[str, Any]F
     :keyword headers: Optional HTTP headers to include in the WebSocket handshake.
     :paramtype headers: Mapping[str, Any]
     :keyword connection_options: Optional advanced WebSocket options compatible with :mod:`aiohttp`.
     :paramtype connection_options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
     :keyword credential_scopes: Optional scope override for token-based authentication.
     :paramtype credential_scopes: str | Sequence[str]
-    Additional legacy keyword arguments are accepted for backward compatibility.
-    Unknown values are ignored.
     :return: An async context manager yielding a connected :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
     :rtype: collections.abc.AsyncContextManager[~azure.ai.voicelive.aio.VoiceLiveConnection]
     :raises ValueError: If only one of ``agent_name`` or ``project_name`` is provided.

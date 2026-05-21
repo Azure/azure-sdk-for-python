@@ -178,7 +178,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1", "phi4-mm-realtime", "phi4-mini"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
@@ -232,7 +232,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_audio_enhancements(
         self,
         test_data_dir: Path,
@@ -281,7 +281,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             ),
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_turn_detection_long_tts_vad_duration(
         self, test_data_dir: Path, model: str, server_sd_conf: dict, api_version: str, **kwargs
     ):
@@ -327,7 +327,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             pytest.param("gpt-4o", {"languages": ["en", "es"]}, id="cascaded-realtime"),
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_turn_detection_multilingual(
         self, test_data_dir: Path, model: str, semantic_vad_params: dict, api_version: str, **kwargs
     ):
@@ -360,7 +360,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             "filler_word_24kHz.wav",
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_filler_word_removal(
         self,
         test_data_dir: Path,
@@ -396,7 +396,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             "filler_word_24kHz.wav",
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_filler_word_removal_multilingual(
         self, test_data_dir: Path, test_audio_file: str, api_version: str, **kwargs
     ):
@@ -428,7 +428,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4o"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_tool_call(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         audio_file = test_data_dir / "4-1.wav"
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
@@ -483,7 +483,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4o", "gpt-5-chat"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_tool_choice(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         if "realtime" in model:
             pytest.skip("Tool choice is not supported in realtime models yet")
@@ -578,7 +578,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1", "gpt-5", "gpt-5.1", "gpt-5.2", "phi4-mm-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_tool_call_parameter(
         self,
         test_data_dir: Path,
@@ -668,7 +668,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-01-01-preview"])
     async def test_realtime_service_live_session_update(
         self,
         test_data_dir: Path,
@@ -747,7 +747,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.skip()
     @pytest.mark.parametrize("model", ["gpt-4o", "gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_tool_call_no_audio_overlap(
         self,
         test_data_dir: Path,
@@ -820,7 +820,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             "mai-transcribe-1",
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-01-01-preview"])
     async def test_realtime_service_input_audio_transcription(
         self,
         test_data_dir: Path,
@@ -891,7 +891,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             ),
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_eou(
         self,
         test_data_dir: Path,
@@ -927,7 +927,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_audio_timestamp_viseme(
         self,
         test_data_dir: Path,
@@ -985,7 +985,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4o", "phi4-mm-realtime", "phi4-mini"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_wo_turn_detection(
         self,
         test_data_dir: Path,
@@ -1023,7 +1023,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1", "phi4-mm-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_voice_properties(
         self,
         test_data_dir: Path,
@@ -1059,7 +1059,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_retrieve_item(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         file = test_data_dir / "largest_lake.wav"
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
@@ -1102,7 +1102,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-01-01-preview"])
     async def test_realtime_service_truncate_item(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         file = test_data_dir / "largest_lake.wav"
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
@@ -1195,7 +1195,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             ),
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_input_audio_format(
         self,
         test_data_dir: Path,
@@ -1270,7 +1270,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             pytest.param("phi4-mm-realtime", 44100, id="phi4_mm_realtime_44kHz_no_resample"),
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_input_audio_sampling_rate(
         self, test_data_dir: Path, model: str, sampling_rate: int, api_version: str, **kwargs
     ):
@@ -1334,7 +1334,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             "g711_alaw",
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_output_formats_with_azure_voice(
         self, test_data_dir: Path, model: str, audio_output_format: str, api_version: str, **kwargs
     ):
@@ -1375,7 +1375,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             "g711_alaw",
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_output_formats_with_openai_voice(
         self, test_data_dir: Path, model: str, audio_output_format: str, api_version: str, **kwargs
     ):
@@ -1408,7 +1408,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_echo_cancellation(
         self,
         test_data_dir: Path,
@@ -1458,7 +1458,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             "g711_alaw",
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_write_loopback_audio_echo_cancellation(
         self, test_data_dir: Path, model: str, audio_output_format: str, api_version: str, **kwargs
     ):
