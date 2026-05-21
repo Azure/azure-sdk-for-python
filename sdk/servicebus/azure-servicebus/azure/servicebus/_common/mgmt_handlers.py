@@ -80,9 +80,12 @@ def list_sessions_op(  # pylint: disable=inconsistent-return-statements
         return parsed
     if status_code in [202, 204]:
         return []
-    # The service returns 404 with com.microsoft:message-not-found when there are
-    # no sessions matching the query. Other 404 conditions (entity not found,
-    # auth failures, etc.) should propagate as errors.
+    # The service returns 204 NoContent (with com.microsoft:session-not-found)
+    # when no sessions match the query, which the status_code check above handles.
+    # The 404 + message-not-found catch below is a cross-SDK safety net that .NET
+    # also carries. The service does not currently send this combination for
+    # get-message-sessions, but keeping it avoids a breaking behavior change if
+    # the service ever starts returning 404 for empty results.
     if status_code == 404 and condition == ERROR_CODE_MESSAGE_NOT_FOUND:
         return []
 
