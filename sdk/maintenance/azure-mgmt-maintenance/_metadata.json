@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2023-10-01-preview",
+  "apiVersions": {
+    "Microsoft.Maintenance": "2023-10-01-preview"
+  },
+  "commit": "f34830624e2040e4777496c73aa7c6fe764f4bfc",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/maintenance/resource-manager/Microsoft.Maintenance/Maintenance",
+  "emitterVersion": "0.62.1"
+}
