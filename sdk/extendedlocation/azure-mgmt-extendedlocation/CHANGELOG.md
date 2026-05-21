@@ -23,7 +23,6 @@
   - Deleted or renamed model `CustomLocations`
   - Model `CustomLocationOperation` moved instance variable `description`, `operation`, `provider` and `resource` under property `display` whose type is `CustomLocationOperationValueDisplay`
   - Model `PatchableCustomLocations` moved instance variable `authentication`, `cluster_extension_ids`, `display_name`, `host_resource_id`, `host_type`, `namespace` and `provisioning_state` under property `properties` whose type is `CustomLocationProperties`
-  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Method `CustomLocationsOperations.update` replaced its parameters `identity`/`tags`/`authentication`/`cluster_extension_ids`/`display_name`/`host_resource_id`/`host_type`/`namespace`/`provisioning_state` with a single `parameters` argument of type `PatchableCustomLocations`
 
 ### Other Changes
