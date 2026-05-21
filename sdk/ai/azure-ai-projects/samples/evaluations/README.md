@@ -80,6 +80,18 @@ These samples require additional setup or Azure services:
 | [sample_eval_catalog_code_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_code_based_evaluators.py) | Custom code-based (inline) evaluators |
 | [sample_eval_catalog_prompt_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_prompt_based_evaluators.py) | Custom prompt-based evaluators |
 
+### Rubric Evaluators
+
+A rubric evaluator is a collection of independent scoring dimensions evaluated by an LLM judge. You can hand-author a rubric or have the service generate one from a description of your application using one or more **source types** (prompt, agent, dataset, and traces). The samples below cover both the manual authoring path and the generation path.
+
+| Sample | Description |
+|--------|-------------|
+| [sample_rubric_evaluator_manual.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_manual.py) | Hand-author a rubric evaluator (dimensions, weights, pass threshold) with `create_version`, then use it in an OpenAI eval run |
+| [sample_rubric_evaluator_generation_basic.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_generation_basic.py) | Generate an evaluator from a single prompt source, inspect the produced dimensions, and use the auto-saved evaluator in an eval run |
+| [sample_rubric_evaluator_generation_all_sources.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_generation_all_sources.py) | Exercise every source type — prompt + agent + dataset in a combined job, plus a separate traces + agent-companion job |
+| [sample_rubric_evaluator_generation_iterate.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_generation_iterate.py) | Human-in-the-loop iteration: generate v1, edit dimensions locally, save as v2 with `create_version` |
+| [sample_rubric_evaluator_generation_lifecycle.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_generation_lifecycle.py) | Full generation-job lifecycle: idempotent `create_generation_job`, polling, list, and delete |
+
 ### Agentic Evaluators
 
 Located in the [agentic_evaluators](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/evaluations/agentic_evaluators) subfolder:
