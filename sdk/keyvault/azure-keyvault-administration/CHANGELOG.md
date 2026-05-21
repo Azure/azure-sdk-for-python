@@ -1,6 +1,24 @@
 # Release History
 
-## 4.7.0 (2026-05-18)
+## 4.8.0b1 (Unreleased)
+
+### Features Added
+
+- Added support for service API version `2026-01-01-preview` [#46895](https://github.com/Azure/azure-sdk-for-python/pull/46895)
+- Added `KeyVaultEkmClient` for managing Managed HSM External Key Manager (EKM) connections. This new client exposes `get_ekm_connection`,
+  `create_ekm_connection`, `update_ekm_connection`, `delete_ekm_connection`, `get_ekm_certificate`, and `check_ekm_connection`.
+- Added `KeyVaultEkmConnection`, `KeyVaultEkmProxyClientCertificateInfo`, and `KeyVaultEkmProxyInfo` models supporting the EKM client.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 3.9 is no longer supported. Please use Python version 3.10 or later.
+- Key Vault API version `2026-01-01-preview` is now the default.
+
+## 4.7.0 (2026-05-19)
 
 ### Features Added
 
