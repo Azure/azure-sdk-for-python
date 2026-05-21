@@ -1,5 +1,34 @@
 # Release History
 
+## 3.0.0b1 (2026-05-20)
+
+### Features Added
+
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `CustomLocationFindTargetResourceGroupProperties`
+  - Added model `CustomLocationFindTargetResourceGroupResult`
+  - Added model `MatchExpressionsProperties`
+  - Added model `PatchableResourceSyncRule`
+  - Added model `ResourceSyncRule`
+  - Added model `ResourceSyncRuleProperties`
+  - Added model `ResourceSyncRulePropertiesSelector`
+  - Operation group `CustomLocationsOperations` added method `find_target_resource_group`
+  - Added operation group `ResourceSyncRulesOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Deleted or renamed model `CustomLocations`
+  - Model `CustomLocationOperation` moved instance variable `description`, `operation`, `provider` and `resource` under property `display` whose type is `CustomLocationOperationValueDisplay`
+  - Model `PatchableCustomLocations` moved instance variable `authentication`, `cluster_extension_ids`, `display_name`, `host_resource_id`, `host_type`, `namespace` and `provisioning_state` under property `properties` whose type is `CustomLocationProperties`
+  - Method `CustomLocationsOperations.update` replaced its parameters `identity`/`tags`/`authentication`/`cluster_extension_ids`/`display_name`/`host_resource_id`/`host_type`/`namespace`/`provisioning_state` with a single `parameters` argument of type `PatchableCustomLocations`
+
+### Other Changes
+
+  - Deleted model `CustomLocationOperationsList` which actually was not used by SDK users
+
 ## 2.0.0 (2024-10-30)
 
 ### Breaking Changes

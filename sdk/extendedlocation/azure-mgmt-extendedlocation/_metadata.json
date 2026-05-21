@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2021-08-31-preview",
+  "apiVersions": {
+    "Microsoft.ExtendedLocation": "2021-08-31-preview"
+  },
+  "commit": "6d50d64d3eeca46ecf1b4af80e9994bac920a7d0",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/extendedlocation/resource-manager/Microsoft.ExtendedLocation/CustomLocations",
+  "emitterVersion": "0.62.1"
+}
