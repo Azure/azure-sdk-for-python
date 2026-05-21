@@ -52,6 +52,10 @@ class AzureFileDatastore(Datastore):
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage. Defaults to None.
     :type credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration]
+    :param subscription_id: Azure subscription ID of the storage account. Defaults to None.
+    :type subscription_id: Optional[str]
+    :param resource_group: Azure resource group of the storage account. Defaults to None.
+    :type resource_group: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -68,6 +72,8 @@ class AzureFileDatastore(Datastore):
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
         credentials: Optional[Union[AccountKeyConfiguration, SasTokenConfiguration]] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_FILE
@@ -78,6 +84,8 @@ class AzureFileDatastore(Datastore):
         self.account_name = account_name
         self.endpoint = endpoint
         self.protocol = protocol
+        self.subscription_id = subscription_id
+        self.resource_group = resource_group
 
     def _to_rest_object(self) -> DatastoreData:
         file_ds = RestAzureFileDatastore(
@@ -88,6 +96,8 @@ class AzureFileDatastore(Datastore):
             protocol=self.protocol,
             description=self.description,
             tags=self.tags,
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
         )
         return DatastoreData(properties=file_ds)
 
@@ -109,6 +119,8 @@ class AzureFileDatastore(Datastore):
             file_share_name=properties.file_share_name,
             description=properties.description,
             tags=properties.tags,
+            subscription_id=properties.subscription_id,
+            resource_group=properties.resource_group,
         )
 
     def __eq__(self, other: Any) -> bool:
@@ -152,6 +164,10 @@ class AzureBlobDatastore(Datastore):
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
     :type credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration]
+    :param subscription_id: Azure subscription ID of the storage account. Defaults to None.
+    :type subscription_id: Optional[str]
+    :param resource_group: Azure resource group of the storage account. Defaults to None.
+    :type resource_group: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -168,6 +184,8 @@ class AzureBlobDatastore(Datastore):
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
         credentials: Optional[Union[AccountKeyConfiguration, SasTokenConfiguration]] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_BLOB
@@ -179,6 +197,8 @@ class AzureBlobDatastore(Datastore):
         self.account_name = account_name
         self.endpoint = endpoint if endpoint else _get_storage_endpoint_from_metadata()
         self.protocol = protocol
+        self.subscription_id = subscription_id
+        self.resource_group = resource_group
 
     def _to_rest_object(self) -> DatastoreData:
         blob_ds = RestAzureBlobDatastore(
@@ -189,6 +209,8 @@ class AzureBlobDatastore(Datastore):
             protocol=self.protocol,
             tags=self.tags,
             description=self.description,
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
         )
         return DatastoreData(properties=blob_ds)
 
@@ -210,6 +232,8 @@ class AzureBlobDatastore(Datastore):
             container_name=properties.container_name,
             description=properties.description,
             tags=properties.tags,
+            subscription_id=properties.subscription_id,
+            resource_group=properties.resource_group,
         )
 
     def __eq__(self, other: Any) -> bool:
@@ -256,6 +280,10 @@ class AzureDataLakeGen2Datastore(Datastore):
         ]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
+    :param subscription_id: Azure subscription ID of the storage account. Defaults to None.
+    :type subscription_id: Optional[str]
+    :param resource_group: Azure resource group of the storage account. Defaults to None.
+    :type resource_group: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -272,6 +300,8 @@ class AzureDataLakeGen2Datastore(Datastore):
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
         credentials: Optional[Union[ServicePrincipalConfiguration, CertificateConfiguration]] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN2
@@ -283,6 +313,8 @@ class AzureDataLakeGen2Datastore(Datastore):
         self.filesystem = filesystem
         self.endpoint = endpoint
         self.protocol = protocol
+        self.subscription_id = subscription_id
+        self.resource_group = resource_group
 
     def _to_rest_object(self) -> DatastoreData:
         gen2_ds = RestAzureDataLakeGen2Datastore(
@@ -293,6 +325,8 @@ class AzureDataLakeGen2Datastore(Datastore):
             protocol=self.protocol,
             description=self.description,
             tags=self.tags,
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
         )
         return DatastoreData(properties=gen2_ds)
 
@@ -316,6 +350,8 @@ class AzureDataLakeGen2Datastore(Datastore):
             filesystem=properties.filesystem,
             description=properties.description,
             tags=properties.tags,
+            subscription_id=properties.subscription_id,
+            resource_group=properties.resource_group,
         )
 
     def __eq__(self, other: Any) -> bool:

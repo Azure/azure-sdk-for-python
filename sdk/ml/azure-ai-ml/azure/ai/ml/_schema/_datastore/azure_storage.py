@@ -29,6 +29,8 @@ class AzureStorageSchema(PathAwareSchema):
     protocol = fields.Str()
     description = fields.Str()
     tags = fields.Dict(keys=fields.Str(), values=fields.Str())
+    subscription_id = fields.Str()
+    resource_group = fields.Str()
 
 
 class AzureFileSchema(AzureStorageSchema):
