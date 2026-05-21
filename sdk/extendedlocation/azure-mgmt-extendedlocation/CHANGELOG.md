@@ -23,16 +23,8 @@
   - Deleted or renamed model `CustomLocations`
   - Model `CustomLocationOperation` moved instance variable `description`, `operation`, `provider` and `resource` under property `display` whose type is `CustomLocationOperationValueDisplay`
   - Model `PatchableCustomLocations` moved instance variable `authentication`, `cluster_extension_ids`, `display_name`, `host_resource_id`, `host_type`, `namespace` and `provisioning_state` under property `properties` whose type is `CustomLocationProperties`
-  - Method `CustomLocationsOperations.update` inserted a `positional_or_keyword` parameter `parameters`
-  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `identity` of kind `positional_or_keyword`
-  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
-  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `authentication` of kind `positional_or_keyword`
-  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `cluster_extension_ids` of kind `positional_or_keyword`
-  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `display_name` of kind `positional_or_keyword`
-  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `host_resource_id` of kind `positional_or_keyword`
-  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `host_type` of kind `positional_or_keyword`
-  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `namespace` of kind `positional_or_keyword`
-  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `provisioning_state` of kind `positional_or_keyword`
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Method `CustomLocationsOperations.update` replaced its parameters `identity`/`tags`/`authentication`/`cluster_extension_ids`/`display_name`/`host_resource_id`/`host_type`/`namespace`/`provisioning_state` with a single `parameters` argument of type `PatchableCustomLocations`
 
 ### Other Changes
 
