@@ -42,5 +42,6 @@
         "azure.mgmt.weightsandbiases.aio.operations.InstancesOperations.list_by_resource_group": "Microsoft.WeightsAndBiases.Instances.listByResourceGroup",
         "azure.mgmt.weightsandbiases.operations.InstancesOperations.list_by_subscription": "Microsoft.WeightsAndBiases.Instances.listBySubscription",
         "azure.mgmt.weightsandbiases.aio.operations.InstancesOperations.list_by_subscription": "Microsoft.WeightsAndBiases.Instances.listBySubscription"
-    }
+    },
+    "CrossLanguageVersion": "e203df9f2451"
 }
