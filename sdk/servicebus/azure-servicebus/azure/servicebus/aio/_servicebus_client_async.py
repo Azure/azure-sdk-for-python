@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator,client-method-missing-tracing-decorator-async
-from typing import Any, AsyncIterator, List, Union, Optional, TYPE_CHECKING, Type
+from typing import Any, AsyncIterator, Union, Optional, TYPE_CHECKING, Type
 from datetime import datetime
 import logging
 import warnings
