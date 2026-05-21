@@ -24,7 +24,6 @@
   - Model `SecurityPolicy` added property `properties`
   - Added model `CanMigrateProperties`
   - Added model `CustomDomainPropertiesParameters`
-  - Added enum `DeliveryRuleActionName`
   - Added model `OperationProperties`
   - Added model `ProfilePropertiesUpdateParameters`
   - Added model `SecurityPolicyUpdateProperties`
@@ -221,7 +220,7 @@
   - Deleted or renamed model `CdnWebApplicationFirewallPolicyList`
   - Deleted or renamed model `Certificate`
   - Deleted or renamed model `CustomerCertificate`
-  - Deleted or renamed model `DeliveryRuleActionEnum`
+  - Renamed enum `DeliveryRuleActionEnum` to `DeliveryRuleActionName`
   - Deleted or renamed model `EdgenodeResult`
   - Deleted or renamed model `ManagedCertificate`
   - Deleted or renamed model `ManagedRuleSetDefinitionList`
