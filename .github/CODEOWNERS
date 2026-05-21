@@ -65,13 +65,6 @@
 # PRLabel: %Attestation
 /sdk/attestation/azure-security-attestation/    @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
-# PRLabel: %Azure Projects
-/sdk/projects/    @annatisch
-
-# AzureSdkOwners: @annatisch
-# ServiceLabel: %Azure Projects
-# ServiceOwners: @annatisch
-
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
@@ -249,7 +242,7 @@
 /sdk/durabletask/    @berndverst @cgillum @kaibocai @philliphoff @RyanLettieri @torosent
 
 # PRLabel: %EngSys
-/sdk/template/    @benbp @scbedd @weshaggard
+/sdk/template/    @benbp @scbedd @danieljurek @weshaggard
 
 # PRLabel: %Evaluation
 /sdk/evaluation/    @Azure/azure-sdk-write-evaluation
@@ -281,7 +274,7 @@
 # PRLabel: %Hosted Agents
 /sdk/agentserver/    @ankitbko @vangarp @RaviPidaparthi
 # PRLabel: %Hosted Agents
-/sdk/agentserver/azure-ai-agentserver-githubcopilot/    @jodeklotzms @pradeepkintali @tendau @ganeshyb @code-vicar
+/sdk/agentserver/azure-ai-agentserver-ghcopilot/    @jodeklotzms @pradeepkintali @tendau @ganeshyb @code-vicar
 
 # ServiceLabel: %Hosted Agents
 # ServiceOwners: @ankitbko @vangarp @RaviPidaparthi
@@ -318,14 +311,6 @@
 # ServiceLabel: %Maps
 # PRLabel: %Maps
 /sdk/maps/    @andykao1213 @dubiety
-
-# ServiceLabel: %Mixed Reality
-# PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication/    @RamonArguelles
-
-# ServiceLabel: %Mixed Reality
-# PRLabel: %Mixed Reality
-/sdk/remoterendering/    @FlorianBorn71
 
 # PRLabel: %Monitor
 /sdk/loganalytics/    @lirenhe @msyyc
@@ -833,24 +818,25 @@
 ###########
 # Eng Sys and other
 ###########
-/eng/                                                                @scbedd @weshaggard @benbp
+/eng/                                                                @scbedd @danieljurek @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
-/eng/tools/                                                          @scbedd @mccoyp
+/eng/tools/                                                          @scbedd @danieljurek @mccoyp
 /.github/workflows/                                                  @Azure/azure-sdk-eng
+/.github/workflows/typespec-python-regenerate.yml                    @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
 /.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kashifkhan @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
 /.github/prompts/                                                    @mccoyp @l0lawrence @benbp
 /.github/skills/                                                     @mccoyp @l0lawrence @benbp
-/sdk/pullrequest.yml                                                 @scbedd @weshaggard @benbp
+/sdk/pullrequest.yml                                                 @scbedd @danieljurek @weshaggard @benbp
 
 /.config/1espt/                                                      @benbp @weshaggard
-/.devcontainer/                                                      @scbedd @mccoyp @benbp @weshaggard
-/.vscode/                                                            @scbedd @mccoyp @benbp @weshaggard
+/.devcontainer/                                                      @scbedd @danieljurek @mccoyp @benbp @weshaggard
+/.vscode/                                                            @scbedd @danieljurek @mccoyp @benbp @weshaggard
 
-/scripts/                                                            @scbedd @mccoyp
+/scripts/                                                            @scbedd @danieljurek @mccoyp
 /scripts/breaking_changes_checker/                                   @catalinaperalta
-/doc/                                                                @scbedd @Azure/azure-python-sdk
-/conda/                                                              @scbedd @xiangyan99 @lmazuel
+/doc/                                                                @scbedd @danieljurek @Azure/azure-python-sdk
+/conda/                                                              @scbedd @danieljurek @xiangyan99 @lmazuel
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
@@ -865,8 +851,8 @@
 # TypeSpec Python generated tests and regeneration workflow
 /eng/tools/emitter/                                                  @tadelesh @msyyc @iscai-msft @lmazuel @lirenhe @ChenxiJiang333
 
-/pylintrc                                                            @l0lawrence @scbedd @mccoyp
-/sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd
+/pylintrc                                                            @l0lawrence @scbedd @danieljurek @mccoyp
+/sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd @danieljurek
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
 /sdk/eventhub/azure-eventhub/* @j7nw4r

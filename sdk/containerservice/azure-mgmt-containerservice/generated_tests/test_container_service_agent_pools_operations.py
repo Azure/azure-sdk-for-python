@@ -70,8 +70,14 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                         "cpuCfsQuotaPeriod": "str",
                         "cpuManagerPolicy": "str",
                         "failSwapOn": bool,
+                        "hardEvictionThreshold": {
+                            "memoryAvailable": "str",
+                            "nodeFsAvailable": "str",
+                            "nodeFsInodesFree": "str",
+                        },
                         "imageGcHighThreshold": 0,
                         "imageGcLowThreshold": 0,
+                        "kubeReserved": {"cpuMillicores": 0, "memoryMB": 0},
                         "podMaxPids": 0,
                         "seccompDefault": "str",
                         "topologyManagerPolicy": "str",
@@ -148,7 +154,11 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                     "networkProfile": {
                         "allowedHostPorts": [{"portEnd": 0, "portStart": 0, "protocol": "str"}],
                         "applicationSecurityGroups": ["str"],
+                        "nodePublicIPPrefixIDs": ["str"],
                         "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
+                        "secondaryNetworkInterfaces": [
+                            {"enableAcceleratedNetworking": bool, "type": "str", "vnetSubnetId": "str"}
+                        ],
                     },
                     "nodeImageVersion": "str",
                     "nodeInitializationTaints": ["str"],

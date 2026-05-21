@@ -90,9 +90,9 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result
-        assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert f"{key}_score" in result
+        assert result[f"{key}_score"] == 1
+        assert result[f"{key}_passed"] is True
         assert f"{key}_reason" in result
 
     def test_evaluate_tool_selection_fail_irrelevant_tools(self, mock_model_config):
@@ -127,9 +127,9 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result
-        assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
+        assert f"{key}_score" in result
+        assert result[f"{key}_score"] == 0
+        assert result[f"{key}_passed"] is False
         assert f"{key}_reason" in result
 
     def test_evaluate_tool_selection_pass_search_query(self, mock_model_config):
@@ -158,8 +158,8 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 1
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_tool_selection_pass_data_query(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
@@ -187,8 +187,8 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 1
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_tool_selection_pass_financial_query(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
@@ -216,8 +216,8 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 1
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_tool_selection_not_applicable(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)

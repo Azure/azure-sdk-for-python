@@ -7,109 +7,118 @@ import base64
 import os
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
+from azure.core.exceptions import ResourceExistsError
 from azure.storage.filedatalake import (
     ArrowDialect,
     ArrowType,
     DelimitedJsonDialect,
     DelimitedTextDialect,
-    QuickQueryDialect
+    QuickQueryDialect,
 )
-
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import DataLakePreparer
-# ------------------------------------------------------------------------------
 from azure.storage.filedatalake import DataLakeServiceClient
+# ------------------------------------------------------------------------------
 
-CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
-           b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
-           b'\r\nEvent Hubs - Azure Storage CheckpointStore,' \
-           b'azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,' \
-           b'1.1.0-beta.1,identity,FALSE\r\nKey Vault - Certificates,azure-security-keyvault-certificates,' \
-           b'4.0.0,keyvault,FALSE\r\nKey Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,' \
-           b'FALSE\r\nKey Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n' \
-           b'Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\nStorage - Blobs Batch,' \
-           b'azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\nStorage - Blobs Cryptography,' \
-           b'azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\nStorage - File Shares,' \
-           b'azure-storage-file-share,12.2.0,storage,FALSE\r\nStorage - Queues,' \
-           b'azure-storage-queue,12.3.0,storage,FALSE\r\nText Analytics,' \
-           b'azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\nTracing,' \
-           b'azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\nService,Package,Version,RepoPath,' \
-           b'MissingDocs\r\nApp Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n' \
-           b'Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n' \
-           b'Event Hubs - Azure Storage CheckpointStore,azure-messaging-eventhubs-checkpointstore-blob,' \
-           b'1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,1.1.0-beta.1,identity,FALSE\r\n' \
-           b'Key Vault - Certificates,azure-security-keyvault-certificates,4.0.0,keyvault,FALSE\r\n' \
-           b'Key Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,FALSE\r\n' \
-           b'Key Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n' \
-           b'Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\n' \
-           b'Storage - Blobs Batch,azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\n' \
-           b'Storage - Blobs Cryptography,azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\n' \
-           b'Storage - File Shares,azure-storage-file-share,12.2.0,storage,FALSE\r\n' \
-           b'Storage - Queues,azure-storage-queue,12.3.0,storage,FALSE\r\n' \
-           b'Text Analytics,azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\n' \
-           b'Tracing,azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\n' \
-           b'Service,Package,Version,RepoPath,MissingDocs\r\n' \
-           b'App Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n' \
-           b'Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n'
 
-DATALAKE_CSV_DATA = b'DataLakeStorage,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
-           b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
-           b'\r\nEvent Hubs - Azure Storage CheckpointStore,' \
-           b'azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,' \
-           b'1.1.0-beta.1,identity,FALSE\r\nKey Vault - Certificates,azure-security-keyvault-certificates,' \
-           b'4.0.0,keyvault,FALSE\r\nKey Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,' \
-           b'FALSE\r\nKey Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n' \
-           b'Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\nStorage - Blobs Batch,' \
-           b'azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\nStorage - Blobs Cryptography,' \
-           b'azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\nStorage - File Shares,' \
-           b'azure-storage-file-share,12.2.0,storage,FALSE\r\nStorage - Queues,' \
-           b'azure-storage-queue,12.3.0,storage,FALSE\r\nText Analytics,' \
-           b'azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\nTracing,' \
-           b'azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\nService,Package,Version,RepoPath,' \
-           b'MissingDocs\r\nApp Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n' \
-           b'Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n' \
-           b'Event Hubs - Azure Storage CheckpointStore,azure-messaging-eventhubs-checkpointstore-blob,' \
-           b'1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,1.1.0-beta.1,identity,FALSE\r\n' \
-           b'Key Vault - Certificates,azure-security-keyvault-certificates,4.0.0,keyvault,FALSE\r\n' \
-           b'Key Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,FALSE\r\n' \
-           b'Key Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n' \
-           b'Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\n' \
-           b'Storage - Blobs Batch,azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\n' \
-           b'Storage - Blobs Cryptography,azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\n' \
-           b'Storage - File Shares,azure-storage-file-share,12.2.0,storage,FALSE\r\n' \
-           b'Storage - Queues,azure-storage-queue,12.3.0,storage,FALSE\r\n' \
-           b'Text Analytics,azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\n' \
-           b'Tracing,azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\n' \
-           b'Service,Package,Version,RepoPath,MissingDocs\r\n' \
-           b'App Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n' \
-           b'Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n'
-
-CONVERTED_CSV_DATA = b"Service;Package;Version;RepoPath;MissingDocs.App Configuration;azure-data-appconfiguration;" \
-                     b"1;appconfiguration;FALSE.Event Hubs.Event Hubs - Azure Storage CheckpointStore;azure-messaging-eventhubs-checkpointstore-blob;" \
-                     b"'1.0.1';eventhubs;FALSE.Identity;azure-identity;'1.1.0-beta.1';identity;FALSE.Key Vault - Certificates;" \
-                     b"azure-security-keyvault-certificates;'4.0.0';keyvault;FALSE.Key Vault - Keys;azure-security-keyvault-keys;" \
-                     b"'4.2.0-beta.1';keyvault;FALSE.Key Vault - Secrets;azure-security-keyvault-secrets;'4.1.0';keyvault;" \
-                     b"FALSE.Storage - Blobs;azure-storage-blob;'12.4.0';storage;FALSE.Storage - Blobs Batch;" \
-                     b"azure-storage-blob-batch;'12.4.0-beta.1';storage;FALSE.Storage - Blobs Cryptography;" \
-                     b"azure-storage-blob-cryptography;'12.4.0';storage;FALSE.Storage - File Shares;azure-storage-file-share;" \
-                     b"'12.2.0';storage;FALSE.Storage - Queues;azure-storage-queue;'12.3.0';storage;FALSE.Text Analytics;" \
-                     b"azure-ai-textanalytics;'1.0.0-beta.2';textanalytics;FALSE.Tracing;azure-core-tracing-opentelemetry;" \
-                     b"'1.0.0-beta.2';core;FALSE.Service;Package;Version;RepoPath;MissingDocs.App Configuration;" \
-                     b"azure-data-appconfiguration;'1.0.1';appconfiguration;FALSE.Event Hubs;azure-messaging-eventhubs;" \
-                     b"'5.0.1';eventhubs;FALSE.Event Hubs - Azure Storage CheckpointStore;azure-messaging-eventhubs-checkpointstore-blob;" \
-                     b"'1.0.1';eventhubs;FALSE.Identity;azure-identity;'1.1.0-beta.1';identity;" \
-                     b"FALSE.Key Vault - Certificates;azure-security-keyvault-certificates;'4.0.0';" \
-                     b"keyvault;FALSE.Key Vault - Keys;azure-security-keyvault-keys;'4.2.0-beta.1';keyvault;FALSE.Key Vault - Secrets;" \
-                     b"azure-security-keyvault-secrets;'4.1.0';keyvault;FALSE.Storage - Blobs;azure-storage-blob;'12.4.0';" \
-                     b"storage;FALSE.Storage - Blobs Batch;azure-storage-blob-batch;'12.4.0-beta.1';storage;FALSE.Storage - Blobs Cryptography;" \
-                     b"azure-storage-blob-cryptography;'12.4.0';storage;FALSE.Storage - File Shares;azure-storage-file-share;" \
-                     b"'12.2.0';storage;FALSE.Storage - Queues;azure-storage-queue;'12.3.0';storage;FALSE.Text Analytics;" \
-                     b"azure-ai-textanalytics;'1.0.0-beta.2';textanalytics;FALSE.Tracing;azure-core-tracing-opentelemetry;" \
-                     b"'1.0.0-beta.2';core;FALSE.Service;Package;Version;RepoPath;MissingDocs.App Configuration;" \
-                     b"azure-data-appconfiguration;'1.0.1';appconfiguration;FALSE.Event Hubs;azure-messaging-eventhubs;" \
-                     b"'5.0.1';eventhubs;FALSE."
-
+CSV_DATA = (
+    b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,'
+    b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs'
+    b'\r\nEvent Hubs - Azure Storage CheckpointStore,'
+    b'azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,'
+    b'1.1.0-beta.1,identity,FALSE\r\nKey Vault - Certificates,azure-security-keyvault-certificates,'
+    b'4.0.0,keyvault,FALSE\r\nKey Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,'
+    b'FALSE\r\nKey Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n'
+    b'Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\nStorage - Blobs Batch,'
+    b'azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\nStorage - Blobs Cryptography,'
+    b'azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\nStorage - File Shares,'
+    b'azure-storage-file-share,12.2.0,storage,FALSE\r\nStorage - Queues,'
+    b'azure-storage-queue,12.3.0,storage,FALSE\r\nText Analytics,'
+    b'azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\nTracing,'
+    b'azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\nService,Package,Version,RepoPath,'
+    b'MissingDocs\r\nApp Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n'
+    b'Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n'
+    b'Event Hubs - Azure Storage CheckpointStore,azure-messaging-eventhubs-checkpointstore-blob,'
+    b'1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,1.1.0-beta.1,identity,FALSE\r\n'
+    b'Key Vault - Certificates,azure-security-keyvault-certificates,4.0.0,keyvault,FALSE\r\n'
+    b'Key Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,FALSE\r\n'
+    b'Key Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n'
+    b'Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\n'
+    b'Storage - Blobs Batch,azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\n'
+    b'Storage - Blobs Cryptography,azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\n'
+    b'Storage - File Shares,azure-storage-file-share,12.2.0,storage,FALSE\r\n'
+    b'Storage - Queues,azure-storage-queue,12.3.0,storage,FALSE\r\n'
+    b'Text Analytics,azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\n'
+    b'Tracing,azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\n'
+    b'Service,Package,Version,RepoPath,MissingDocs\r\n'
+    b'App Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n'
+    b'Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n'
+)
+DATALAKE_CSV_DATA = (
+    b'DataLakeStorage,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,'
+    b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs'
+    b'\r\nEvent Hubs - Azure Storage CheckpointStore,'
+    b'azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,'
+    b'1.1.0-beta.1,identity,FALSE\r\nKey Vault - Certificates,azure-security-keyvault-certificates,'
+    b'4.0.0,keyvault,FALSE\r\nKey Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,'
+    b'FALSE\r\nKey Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n'
+    b'Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\nStorage - Blobs Batch,'
+    b'azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\nStorage - Blobs Cryptography,'
+    b'azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\nStorage - File Shares,'
+    b'azure-storage-file-share,12.2.0,storage,FALSE\r\nStorage - Queues,'
+    b'azure-storage-queue,12.3.0,storage,FALSE\r\nText Analytics,'
+    b'azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\nTracing,'
+    b'azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\nService,Package,Version,RepoPath,'
+    b'MissingDocs\r\nApp Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n'
+    b'Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n'
+    b'Event Hubs - Azure Storage CheckpointStore,azure-messaging-eventhubs-checkpointstore-blob,'
+    b'1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,1.1.0-beta.1,identity,FALSE\r\n'
+    b'Key Vault - Certificates,azure-security-keyvault-certificates,4.0.0,keyvault,FALSE\r\n'
+    b'Key Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,FALSE\r\n'
+    b'Key Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n'
+    b'Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\n'
+    b'Storage - Blobs Batch,azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\n'
+    b'Storage - Blobs Cryptography,azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\n'
+    b'Storage - File Shares,azure-storage-file-share,12.2.0,storage,FALSE\r\n'
+    b'Storage - Queues,azure-storage-queue,12.3.0,storage,FALSE\r\n'
+    b'Text Analytics,azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\n'
+    b'Tracing,azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\n'
+    b'Service,Package,Version,RepoPath,MissingDocs\r\n'
+    b'App Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n'
+    b'Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n'
+)
+CONVERTED_CSV_DATA = (
+    b"Service;Package;Version;RepoPath;MissingDocs.App Configuration;azure-data-appconfiguration;"
+    b"1;appconfiguration;FALSE.Event Hubs.Event Hubs - Azure Storage CheckpointStore;"
+    b"azure-messaging-eventhubs-checkpointstore-blob;"
+    b"'1.0.1';eventhubs;FALSE.Identity;azure-identity;'1.1.0-beta.1';identity;FALSE.Key Vault - Certificates;"
+    b"azure-security-keyvault-certificates;'4.0.0';keyvault;FALSE.Key Vault - Keys;azure-security-keyvault-keys;"
+    b"'4.2.0-beta.1';keyvault;FALSE.Key Vault - Secrets;azure-security-keyvault-secrets;'4.1.0';keyvault;"
+    b"FALSE.Storage - Blobs;azure-storage-blob;'12.4.0';storage;FALSE.Storage - Blobs Batch;"
+    b"azure-storage-blob-batch;'12.4.0-beta.1';storage;FALSE.Storage - Blobs Cryptography;"
+    b"azure-storage-blob-cryptography;'12.4.0';storage;FALSE.Storage - File Shares;azure-storage-file-share;"
+    b"'12.2.0';storage;FALSE.Storage - Queues;azure-storage-queue;'12.3.0';storage;FALSE.Text Analytics;"
+    b"azure-ai-textanalytics;'1.0.0-beta.2';textanalytics;FALSE.Tracing;azure-core-tracing-opentelemetry;"
+    b"'1.0.0-beta.2';core;FALSE.Service;Package;Version;RepoPath;MissingDocs.App Configuration;"
+    b"azure-data-appconfiguration;'1.0.1';appconfiguration;FALSE.Event Hubs;azure-messaging-eventhubs;"
+    b"'5.0.1';eventhubs;FALSE.Event Hubs - Azure Storage CheckpointStore;"
+    b"azure-messaging-eventhubs-checkpointstore-blob;"
+    b"'1.0.1';eventhubs;FALSE.Identity;azure-identity;'1.1.0-beta.1';identity;"
+    b"FALSE.Key Vault - Certificates;azure-security-keyvault-certificates;'4.0.0';"
+    b"keyvault;FALSE.Key Vault - Keys;azure-security-keyvault-keys;'4.2.0-beta.1';keyvault;FALSE.Key Vault - Secrets;"
+    b"azure-security-keyvault-secrets;'4.1.0';keyvault;FALSE.Storage - Blobs;azure-storage-blob;'12.4.0';"
+    b"storage;FALSE.Storage - Blobs Batch;azure-storage-blob-batch;'12.4.0-beta.1';storage;"
+    b"FALSE.Storage - Blobs Cryptography;"
+    b"azure-storage-blob-cryptography;'12.4.0';storage;FALSE.Storage - File Shares;azure-storage-file-share;"
+    b"'12.2.0';storage;FALSE.Storage - Queues;azure-storage-queue;'12.3.0';storage;FALSE.Text Analytics;"
+    b"azure-ai-textanalytics;'1.0.0-beta.2';textanalytics;FALSE.Tracing;azure-core-tracing-opentelemetry;"
+    b"'1.0.0-beta.2';core;FALSE.Service;Package;Version;RepoPath;MissingDocs.App Configuration;"
+    b"azure-data-appconfiguration;'1.0.1';appconfiguration;FALSE.Event Hubs;azure-messaging-eventhubs;"
+    b"'5.0.1';eventhubs;FALSE."
+)
 # ------------------------------------------------------------------------------
 
 
@@ -123,17 +132,8 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         if not self.is_playback():
             try:
                 self.dsc.create_file_system(self.filesystem_name)
-            except:
+            except ResourceExistsError:
                 pass
-
-    def tearDown(self):
-        if not self.is_playback():
-            try:
-                self.dsc.delete_file_system(self.filesystem_name)
-            except:
-                pass
-
-        return super(TestStorageQuickQuery, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
 
@@ -166,7 +166,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         assert len(errors) == 0
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'\n')
+        assert data == CSV_DATA.replace(b'\r\n', b'\n')
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -220,7 +220,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        assert data == CSV_DATA.replace(b'\r\n', b'')
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -246,7 +246,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         assert len(errors) == 0
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'\n').decode('utf-8')
+        assert data == CSV_DATA.replace(b'\r\n', b'\n').decode('utf-8')
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -262,13 +262,11 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         file_client.upload_data(CSV_DATA, overwrite=True)
 
         reader = file_client.query_file("SELECT * from BlobStorage", encoding='utf-8')
-        data = ''
-        for record in reader.records():
-            data += record
+        data = "".join(record for record in reader.records())
 
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'').decode('utf-8')
+        assert data == CSV_DATA.replace(b'\r\n', b'').decode('utf-8')
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -285,7 +283,11 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         input_format = DelimitedTextDialect(has_header=True)
         output_format = DelimitedTextDialect(has_header=False)
-        reader = file_client.query_file("SELECT * from BlobStorage", file_format=input_format, output_format=output_format)
+        reader = file_client.query_file(
+            "SELECT * from BlobStorage",
+            file_format=input_format,
+            output_format=output_format
+        )
         read_records = reader.records()
 
         # Assert first line does not include header
@@ -297,7 +299,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')[44:]
+        assert data == CSV_DATA.replace(b'\r\n', b'')[44:]
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -325,7 +327,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        assert data == CSV_DATA.replace(b'\r\n', b'')
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -349,7 +351,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
                 progress += len(record) + 2
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        assert data == CSV_DATA.replace(b'\r\n', b'')
         assert progress == len(reader)
 
     @DataLakePreparer()
@@ -444,12 +446,14 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
-        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
-                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
-                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
-                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
-                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data3 = (
+            b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:'
+            b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,'
+            b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:'
+            b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
+            b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        )
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         file_name = self._get_file_reference()
@@ -476,7 +480,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         query_result = resp.readall()
 
         assert len(errors) == 1
-        assert len(resp) == 43
+        assert len(resp) == len(data)
         assert query_result == b''
 
     @DataLakePreparer()
@@ -489,12 +493,14 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
-        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
-                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
-                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
-                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
-                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data3 = (
+            b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:'
+            b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,'
+            b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:'
+            b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
+            b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        )
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         file_name = self._get_file_reference()
@@ -518,13 +524,13 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             on_error=on_error,
             file_format=input_format,
             output_format=output_format)
-        data = []
+        records = []
         for record in resp.records():
-            data.append(record)
-        
+            records.append(record)
+
         assert len(errors) == 1
-        assert len(resp) == 43
-        assert data == [b'']
+        assert len(resp) == len(data)
+        assert records == [b'']
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -536,22 +542,22 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
-        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
-                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
-                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
-                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
-                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data3 = (
+            b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:'
+            b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,'
+            b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:'
+            b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
+            b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        )
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         file_name = self._get_file_reference()
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
         file_client.upload_data(data, overwrite=True)
 
-        errors = []
-
         def on_error(error):
-            raise Exception(error.description)
+            raise ValueError(error.description)
 
         input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
@@ -565,8 +571,8 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             on_error=on_error,
             file_format=input_format,
             output_format=output_format)
-        with pytest.raises(Exception):
-            query_result = resp.readall()
+        with pytest.raises(ValueError):
+            resp.readall()
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -578,22 +584,22 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
-        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
-                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
-                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
-                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
-                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data3 = (
+            b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:'
+            b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,'
+            b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:'
+            b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
+            b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        )
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         file_name = self._get_file_reference()
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
         file_client.upload_data(data, overwrite=True)
 
-        errors = []
-
         def on_error(error):
-            raise Exception(error.description)
+            raise ValueError(error.description)
 
         input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
@@ -606,9 +612,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             "SELECT * from BlobStorage",
             on_error=on_error,
             file_format=input_format,
-            output_format=output_format)
+            output_format=output_format
+        )
 
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             for record in resp.records():
                 print(record)
 
@@ -652,12 +659,14 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
-        data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
-                b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,' \
-                b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:' \
-                b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,' \
-                b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data3 = (
+            b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:'
+            b'{version:0,configVersionEtag:0x8d75ef460eb1a12,numShards:1,recordsFormat:avro,formatSchemaVersion:3,'
+            b'shardDistFnVersion:1},chunkFilePaths:[$blobchangefeed/log/00/1601/01/01/0000/],storageDiagnostics:'
+            b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
+            b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
+        )
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         file_name = self._get_file_reference()
@@ -899,7 +908,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         assert len(errors) == 0
         assert len(resp) == len(data)
-        assert listdata, [b'{"name":"owner"}',b'{}',b'{"name":"owner"}' == b'']
+        assert listdata == [b'{"name":"owner"}', b'{}', b'{"name":"owner"}', b'']
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -962,10 +971,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             on_error=on_error,
             output_format=output_format)
         query_result = base64.b64encode(resp.readall())
-        # expected_result = b'/////3gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABBAAMAAAACAAIAAAABAAIAAAABAAAAAEAAAAUAAAAEAAUAAgABgAHAAwAAAAQABAAAAAAAAEHEAAAABwAAAAEAAAAAAAAAAMAAABhYmMACAAMAAQACAAIAAAABAAAAAIAAAD/////cAAAABAAAAAAAAoADgAGAAUACAAKAAAAAAMEABAAAAAAAAoADAAAAAQACAAKAAAAMAAAAAQAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAD/////AAAAAP////+IAAAAFAAAAAAAAAAMABYABgAFAAgADAAMAAAAAAMEABgAAAAQAAAAAAAAAAAACgAYAAwABAAIAAoAAAA8AAAAEAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAAAAAAAAAAAJABAAAAAAAAAAAAAAAAAAA='
+        # expected_result = b'/////3gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABBAAMAAAACAAIAAAABAAIAAAABAAAAAEAAAAUAAAAEAAUAAgABgAHAAwAAAAQABAAAAAAAAEHEAAAABwAAAAEAAAAAAAAAAMAAABhYmMACAAMAAQACAAIAAAABAAAAAIAAAD/////cAAAABAAAAAAAAoADgAGAAUACAAKAAAAAAMEABAAAAAAAAoADAAAAAQACAAKAAAAMAAAAAQAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAD/////AAAAAP////+IAAAAFAAAAAAAAAAMABYABgAFAAgADAAMAAAAAAMEABgAAAAQAAAAAAAAAAAACgAYAAwABAAIAAoAAAA8AAAAEAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAAAAAAAAAAAJABAAAAAAAAAAAAAAAAAAA='  # pylint: disable=line-too-long
 
         assert len(errors) == 0
-        # Skip this assert for now, requires further investigation: https://github.com/Azure/azure-sdk-for-python/issues/24690
+        # Skip this assert for now, requires investigation: https://github.com/Azure/azure-sdk-for-python/issues/24690
         # assert query_result == expected_result
 
     @DataLakePreparer()

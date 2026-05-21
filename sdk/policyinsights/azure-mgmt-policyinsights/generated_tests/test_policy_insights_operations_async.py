@@ -23,7 +23,7 @@ class TestPolicyInsightsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_operations_list(self, resource_group):
         response = await self.client.operations.list(
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
 
         # please add some check logic here by yourself

@@ -58,6 +58,7 @@ from ._shared.request_handlers import (
 from ._shared.response_handlers import return_headers_and_deserialized, return_response_headers
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
+from ._shared.validation import CV_TYPE_PARSED, parse_validation_option
 from ._upload_helpers import _any_conditions
 
 if TYPE_CHECKING:
@@ -110,6 +111,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     length: Optional[int],
     metadata: Optional[Dict[str, str]],
     encryption_options: Dict[str, Any],
+    validate_content: CV_TYPE_PARSED,
     config: "StorageConfiguration",
     sdk_moniker: str,
     client: "AzureBlobStorage",
@@ -135,7 +137,6 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
 
-    validate_content = kwargs.pop('validate_content', False)
     content_settings = kwargs.pop('content_settings', None)
     overwrite = kwargs.pop('overwrite', False)
     max_concurrency = kwargs.pop('max_concurrency', None)
@@ -258,42 +259,16 @@ def _download_blob_options(
     length: Optional[int],
     encoding: Optional[str],
     encryption_options: Dict[str, Any],
+    validate_content: CV_TYPE_PARSED,
     config: "StorageConfiguration",
     sdk_moniker: str,
     client: "AzureBlobStorage",
     **kwargs
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for a download blob operation.
-
-    :param str blob_name:
-        The name of the blob.
-    :param str container_name:
-        The name of the container.
-    :param Optional[str] version_id:
-        The version id parameter is a value that, when present, specifies the version of the blob to download.
-    :param Optional[int] offset:
-        Start of byte range to use for downloading a section of the blob. Must be set if length is provided.
-    :param Optional[int] length:
-        Number of bytes to read from the stream. This is optional, but should be supplied for optimal performance.
-    :param Optional[str] encoding:
-        Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
-    :param Dict[str, Any] encryption_options:
-        The options for encryption, if enabled.
-    :param StorageConfiguration config:
-        The Storage configuration options.
-    :param str sdk_moniker:
-        The string representing the SDK package version.
-    :param AzureBlobStorage client:
-        The generated Blob Storage client.
-    :return: A dictionary containing the download blob options.
-    :rtype: Dict[str, Any]
-    """
     if length is not None:
         if offset is None:
             raise ValueError("Offset must be provided if length is provided.")
         length = offset + length - 1  # Service actually uses an end-range inclusive index
-
-    validate_content = kwargs.pop('validate_content', False)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
 
@@ -721,7 +696,7 @@ def _stage_block_options(
     if isinstance(data, bytes):
         data = data[:length]
 
-    validate_content = kwargs.pop('validate_content', False)
+    validate_content = parse_validation_option(kwargs.pop('validate_content', None))
     cpk_scope_info = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
@@ -1004,7 +979,7 @@ def _upload_page_options(
     )
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope_info = get_cpk_scope_info(kwargs)
-    validate_content = kwargs.pop('validate_content', False)
+    validate_content = parse_validation_option(kwargs.pop('validate_content', None))
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
@@ -1149,7 +1124,7 @@ def _append_block_options(
 
     appendpos_condition = kwargs.pop('appendpos_condition', None)
     maxsize_condition = kwargs.pop('maxsize_condition', None)
-    validate_content = kwargs.pop('validate_content', False)
+    validate_content = parse_validation_option(kwargs.pop('validate_content', None))
     append_conditions = None
     if maxsize_condition or appendpos_condition is not None:
         append_conditions = AppendPositionAccessConditions(
