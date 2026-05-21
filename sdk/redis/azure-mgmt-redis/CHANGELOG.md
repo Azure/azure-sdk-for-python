@@ -1,5 +1,9 @@
 # Release History
 
+## 14.6.0 (2026-05-21)
+
+skip changelog generation
+
 ## 14.5.0 (2025-01-20)
 
 ### Features Added

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,13 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class CheckNameAvailabilityParameters(_serialization.Model):
@@ -75,8 +77,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -115,11 +117,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -238,7 +240,7 @@ class ImportRDBParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        files: List[str],
+        files: list[str],
         format: Optional[str] = None,
         preferred_data_archive_auth_method: Optional[str] = None,
         storage_subscription_id: Optional[str] = None,
@@ -282,7 +284,7 @@ class ManagedServiceIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.redis.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
      The dictionary values can be empty objects ({}) in requests.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.redis.models.UserAssignedIdentity]
     """
@@ -304,7 +306,7 @@ class ManagedServiceIdentity(_serialization.Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -314,13 +316,13 @@ class ManagedServiceIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.redis.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
          resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
          The dictionary values can be empty objects ({}) in requests.
         :paramtype user_assigned_identities: dict[str, ~azure.mgmt.redis.models.UserAssignedIdentity]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -345,14 +347,14 @@ class NotificationListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.UpgradeNotification"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.UpgradeNotification"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of all notifications.
         :paramtype value: list[~azure.mgmt.redis.models.UpgradeNotification]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class Operation(_serialization.Model):
@@ -450,14 +452,14 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.redis.models.Operation]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class OperationStatusResult(_serialization.Model):
@@ -508,7 +510,7 @@ class OperationStatusResult(_serialization.Model):
         percent_complete: Optional[float] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
         **kwargs: Any
     ) -> None:
@@ -592,9 +594,9 @@ class OperationStatus(OperationStatusResult):
         percent_complete: Optional[float] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        properties: Optional[dict[str, Any]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -651,7 +653,7 @@ class PrivateEndpoint(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class Resource(_serialization.Model):
@@ -660,7 +662,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -684,9 +686,9 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class PrivateEndpointConnection(Resource):
@@ -695,7 +697,7 @@ class PrivateEndpointConnection(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -751,7 +753,7 @@ class PrivateEndpointConnection(Resource):
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
@@ -765,7 +767,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.redis.models.PrivateEndpointConnection]
@@ -780,7 +782,7 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -812,14 +814,14 @@ class PrivateLinkResource(Resource):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.group_id = None
-        self.required_members = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[list[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -834,7 +836,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.redis.models.PrivateLinkResource]
@@ -894,7 +896,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -930,8 +932,8 @@ class RedisAccessKeys(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.primary_key = None
-        self.secondary_key = None
+        self.primary_key: Optional[str] = None
+        self.secondary_key: Optional[str] = None
 
 
 class RedisCacheAccessPolicy(ProxyResource):
@@ -940,7 +942,7 @@ class RedisCacheAccessPolicy(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -982,8 +984,8 @@ class RedisCacheAccessPolicy(ProxyResource):
         :paramtype permissions: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.type_properties_type = None
+        self.provisioning_state: Optional[Union[str, "_models.AccessPolicyProvisioningState"]] = None
+        self.type_properties_type: Optional[Union[str, "_models.AccessPolicyType"]] = None
         self.permissions = permissions
 
 
@@ -993,7 +995,7 @@ class RedisCacheAccessPolicyAssignment(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1049,7 +1051,7 @@ class RedisCacheAccessPolicyAssignment(ProxyResource):
         :paramtype access_policy_name: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.AccessPolicyAssignmentProvisioningState"]] = None
         self.object_id = object_id
         self.object_id_alias = object_id_alias
         self.access_policy_name = access_policy_name
@@ -1076,7 +1078,7 @@ class RedisCacheAccessPolicyAssignmentList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RedisCacheAccessPolicyAssignment"]] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.RedisCacheAccessPolicyAssignment"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of access policies assignments (with properties) of a Redis cache.
@@ -1084,7 +1086,7 @@ class RedisCacheAccessPolicyAssignmentList(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class RedisCacheAccessPolicyList(_serialization.Model):
@@ -1107,14 +1109,14 @@ class RedisCacheAccessPolicyList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RedisCacheAccessPolicy"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.RedisCacheAccessPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of access policies (with properties) of a Redis cache.
         :paramtype value: list[~azure.mgmt.redis.models.RedisCacheAccessPolicy]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class RedisCommonProperties(_serialization.Model):
@@ -1189,7 +1191,7 @@ class RedisCommonProperties(_serialization.Model):
         enable_non_ssl_port: bool = False,
         replicas_per_master: Optional[int] = None,
         replicas_per_primary: Optional[int] = None,
-        tenant_settings: Optional[Dict[str, str]] = None,
+        tenant_settings: Optional[dict[str, str]] = None,
         shard_count: Optional[int] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
@@ -1353,7 +1355,7 @@ class RedisCommonPropertiesRedisConfiguration(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         rdb_backup_enabled: Optional[str] = None,
         rdb_backup_frequency: Optional[str] = None,
         rdb_backup_max_snapshot_count: Optional[str] = None,
@@ -1434,11 +1436,11 @@ class RedisCommonPropertiesRedisConfiguration(_serialization.Model):
         self.maxmemory_policy = maxmemory_policy
         self.maxmemory_reserved = maxmemory_reserved
         self.maxmemory_delta = maxmemory_delta
-        self.maxclients = None
+        self.maxclients: Optional[str] = None
         self.notify_keyspace_events = notify_keyspace_events
-        self.preferred_data_archive_auth_method = None
+        self.preferred_data_archive_auth_method: Optional[str] = None
         self.preferred_data_persistence_auth_method = preferred_data_persistence_auth_method
-        self.zonal_configuration = None
+        self.zonal_configuration: Optional[str] = None
         self.authnotrequired = authnotrequired
         self.storage_subscription_id = storage_subscription_id
         self.aad_enabled = aad_enabled
@@ -1505,7 +1507,7 @@ class RedisCreateParameters(_serialization.Model):
     :vartype sku: ~azure.mgmt.redis.models.Sku
     :ivar subnet_id: The full resource ID of a subnet in a virtual network to deploy the Redis
      cache in. Example format:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.
     :vartype subnet_id: str
     :ivar static_ip: Static IP address. Optionally, may be specified when deploying a Redis cache
      inside an existing Azure Virtual Network; auto assigned by default.
@@ -1551,15 +1553,15 @@ class RedisCreateParameters(_serialization.Model):
         *,
         location: str,
         sku: "_models.Sku",
-        zones: Optional[List[str]] = None,
-        tags: Optional[Dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         redis_configuration: Optional["_models.RedisCommonPropertiesRedisConfiguration"] = None,
         redis_version: Optional[str] = None,
         enable_non_ssl_port: bool = False,
         replicas_per_master: Optional[int] = None,
         replicas_per_primary: Optional[int] = None,
-        tenant_settings: Optional[Dict[str, str]] = None,
+        tenant_settings: Optional[dict[str, str]] = None,
         shard_count: Optional[int] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
@@ -1629,7 +1631,7 @@ class RedisCreateParameters(_serialization.Model):
         :paramtype sku: ~azure.mgmt.redis.models.Sku
         :keyword subnet_id: The full resource ID of a subnet in a virtual network to deploy the Redis
          cache in. Example format:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.  # pylint: disable=line-too-long
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.
         :paramtype subnet_id: str
         :keyword static_ip: Static IP address. Optionally, may be specified when deploying a Redis
          cache inside an existing Azure Virtual Network; auto assigned by default.
@@ -1710,7 +1712,7 @@ class RedisCreateProperties(RedisCommonProperties):
     :vartype sku: ~azure.mgmt.redis.models.Sku
     :ivar subnet_id: The full resource ID of a subnet in a virtual network to deploy the Redis
      cache in. Example format:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.
     :vartype subnet_id: str
     :ivar static_ip: Static IP address. Optionally, may be specified when deploying a Redis cache
      inside an existing Azure Virtual Network; auto assigned by default.
@@ -1752,7 +1754,7 @@ class RedisCreateProperties(RedisCommonProperties):
         enable_non_ssl_port: bool = False,
         replicas_per_master: Optional[int] = None,
         replicas_per_primary: Optional[int] = None,
-        tenant_settings: Optional[Dict[str, str]] = None,
+        tenant_settings: Optional[dict[str, str]] = None,
         shard_count: Optional[int] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
@@ -1814,7 +1816,7 @@ class RedisCreateProperties(RedisCommonProperties):
         :paramtype sku: ~azure.mgmt.redis.models.Sku
         :keyword subnet_id: The full resource ID of a subnet in a virtual network to deploy the Redis
          cache in. Example format:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.  # pylint: disable=line-too-long
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.
         :paramtype subnet_id: str
         :keyword static_ip: Static IP address. Optionally, may be specified when deploying a Redis
          cache inside an existing Azure Virtual Network; auto assigned by default.
@@ -1849,7 +1851,7 @@ class RedisFirewallRule(ProxyResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1899,7 +1901,7 @@ class RedisFirewallRuleCreateParameters(RedisFirewallRule):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1933,14 +1935,14 @@ class RedisFirewallRuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RedisFirewallRule"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.RedisFirewallRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Results of the list firewall rules operation.
         :paramtype value: list[~azure.mgmt.redis.models.RedisFirewallRule]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class RedisForceRebootResponse(_serialization.Model):
@@ -1963,7 +1965,7 @@ class RedisForceRebootResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.message = None
+        self.message: Optional[str] = None
 
 
 class RedisInstanceDetails(_serialization.Model):
@@ -2007,12 +2009,12 @@ class RedisInstanceDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.ssl_port = None
-        self.non_ssl_port = None
-        self.zone = None
-        self.shard_id = None
-        self.is_master = None
-        self.is_primary = None
+        self.ssl_port: Optional[int] = None
+        self.non_ssl_port: Optional[int] = None
+        self.zone: Optional[str] = None
+        self.shard_id: Optional[int] = None
+        self.is_master: Optional[bool] = None
+        self.is_primary: Optional[bool] = None
 
 
 class RedisLinkedServer(_serialization.Model):
@@ -2035,7 +2037,7 @@ class RedisLinkedServer(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class RedisLinkedServerCreateParameters(_serialization.Model):
@@ -2097,8 +2099,8 @@ class RedisLinkedServerCreateParameters(_serialization.Model):
         self.linked_redis_cache_id = linked_redis_cache_id
         self.linked_redis_cache_location = linked_redis_cache_location
         self.server_role = server_role
-        self.geo_replicated_primary_host_name = None
-        self.primary_host_name = None
+        self.geo_replicated_primary_host_name: Optional[str] = None
+        self.primary_host_name: Optional[str] = None
 
 
 class RedisLinkedServerCreateProperties(_serialization.Model):
@@ -2160,8 +2162,8 @@ class RedisLinkedServerCreateProperties(_serialization.Model):
         self.linked_redis_cache_id = linked_redis_cache_id
         self.linked_redis_cache_location = linked_redis_cache_location
         self.server_role = server_role
-        self.geo_replicated_primary_host_name = None
-        self.primary_host_name = None
+        self.geo_replicated_primary_host_name: Optional[str] = None
+        self.primary_host_name: Optional[str] = None
 
 
 class RedisLinkedServerProperties(RedisLinkedServerCreateProperties):
@@ -2229,7 +2231,7 @@ class RedisLinkedServerProperties(RedisLinkedServerCreateProperties):
             server_role=server_role,
             **kwargs
         )
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
 
 
 class RedisLinkedServerWithProperties(ProxyResource):
@@ -2238,7 +2240,7 @@ class RedisLinkedServerWithProperties(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2302,9 +2304,9 @@ class RedisLinkedServerWithProperties(ProxyResource):
         self.linked_redis_cache_id = linked_redis_cache_id
         self.linked_redis_cache_location = linked_redis_cache_location
         self.server_role = server_role
-        self.geo_replicated_primary_host_name = None
-        self.primary_host_name = None
-        self.provisioning_state = None
+        self.geo_replicated_primary_host_name: Optional[str] = None
+        self.primary_host_name: Optional[str] = None
+        self.provisioning_state: Optional[str] = None
 
 
 class RedisLinkedServerWithPropertiesList(_serialization.Model):
@@ -2328,7 +2330,7 @@ class RedisLinkedServerWithPropertiesList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RedisLinkedServerWithProperties"]] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.RedisLinkedServerWithProperties"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of linked servers (with properties) of a Redis cache.
@@ -2336,7 +2338,7 @@ class RedisLinkedServerWithPropertiesList(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class RedisListResult(_serialization.Model):
@@ -2359,14 +2361,14 @@ class RedisListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RedisResource"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.RedisResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Redis cache instances.
         :paramtype value: list[~azure.mgmt.redis.models.RedisResource]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class RedisPatchSchedule(ProxyResource):
@@ -2377,7 +2379,7 @@ class RedisPatchSchedule(ProxyResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2406,13 +2408,13 @@ class RedisPatchSchedule(ProxyResource):
         "schedule_entries": {"key": "properties.scheduleEntries", "type": "[ScheduleEntry]"},
     }
 
-    def __init__(self, *, schedule_entries: List["_models.ScheduleEntry"], **kwargs: Any) -> None:
+    def __init__(self, *, schedule_entries: list["_models.ScheduleEntry"], **kwargs: Any) -> None:
         """
         :keyword schedule_entries: List of patch schedules for a Redis cache. Required.
         :paramtype schedule_entries: list[~azure.mgmt.redis.models.ScheduleEntry]
         """
         super().__init__(**kwargs)
-        self.location = None
+        self.location: Optional[str] = None
         self.schedule_entries = schedule_entries
 
 
@@ -2436,14 +2438,14 @@ class RedisPatchScheduleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RedisPatchSchedule"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.RedisPatchSchedule"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Results of the list patch schedules operation.
         :paramtype value: list[~azure.mgmt.redis.models.RedisPatchSchedule]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class RedisProperties(RedisCreateProperties):
@@ -2501,7 +2503,7 @@ class RedisProperties(RedisCreateProperties):
     :vartype sku: ~azure.mgmt.redis.models.Sku
     :ivar subnet_id: The full resource ID of a subnet in a virtual network to deploy the Redis
      cache in. Example format:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.
     :vartype subnet_id: str
     :ivar static_ip: Static IP address. Optionally, may be specified when deploying a Redis cache
      inside an existing Azure Virtual Network; auto assigned by default.
@@ -2579,7 +2581,7 @@ class RedisProperties(RedisCreateProperties):
         enable_non_ssl_port: bool = False,
         replicas_per_master: Optional[int] = None,
         replicas_per_primary: Optional[int] = None,
-        tenant_settings: Optional[Dict[str, str]] = None,
+        tenant_settings: Optional[dict[str, str]] = None,
         shard_count: Optional[int] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
@@ -2641,7 +2643,7 @@ class RedisProperties(RedisCreateProperties):
         :paramtype sku: ~azure.mgmt.redis.models.Sku
         :keyword subnet_id: The full resource ID of a subnet in a virtual network to deploy the Redis
          cache in. Example format:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.  # pylint: disable=line-too-long
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.
         :paramtype subnet_id: str
         :keyword static_ip: Static IP address. Optionally, may be specified when deploying a Redis
          cache inside an existing Azure Virtual Network; auto assigned by default.
@@ -2665,14 +2667,14 @@ class RedisProperties(RedisCreateProperties):
             static_ip=static_ip,
             **kwargs
         )
-        self.provisioning_state = None
-        self.host_name = None
-        self.port = None
-        self.ssl_port = None
-        self.access_keys = None
-        self.linked_servers = None
-        self.instances = None
-        self.private_endpoint_connections = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.host_name: Optional[str] = None
+        self.port: Optional[int] = None
+        self.ssl_port: Optional[int] = None
+        self.access_keys: Optional["_models.RedisAccessKeys"] = None
+        self.linked_servers: Optional[list["_models.RedisLinkedServer"]] = None
+        self.instances: Optional[list["_models.RedisInstanceDetails"]] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
 
 
 class RedisRebootParameters(_serialization.Model):
@@ -2699,7 +2701,7 @@ class RedisRebootParameters(_serialization.Model):
         *,
         reboot_type: Optional[Union[str, "_models.RebootType"]] = None,
         shard_id: Optional[int] = None,
-        ports: Optional[List[int]] = None,
+        ports: Optional[list[int]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2755,7 +2757,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2783,7 +2785,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2803,7 +2805,7 @@ class RedisResource(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2866,7 +2868,7 @@ class RedisResource(TrackedResource):
     :vartype sku: ~azure.mgmt.redis.models.Sku
     :ivar subnet_id: The full resource ID of a subnet in a virtual network to deploy the Redis
      cache in. Example format:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.
     :vartype subnet_id: str
     :ivar static_ip: Static IP address. Optionally, may be specified when deploying a Redis cache
      inside an existing Azure Virtual Network; auto assigned by default.
@@ -2957,15 +2959,15 @@ class RedisResource(TrackedResource):
         *,
         location: str,
         sku: "_models.Sku",
-        tags: Optional[Dict[str, str]] = None,
-        zones: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         redis_configuration: Optional["_models.RedisCommonPropertiesRedisConfiguration"] = None,
         redis_version: Optional[str] = None,
         enable_non_ssl_port: bool = False,
         replicas_per_master: Optional[int] = None,
         replicas_per_primary: Optional[int] = None,
-        tenant_settings: Optional[Dict[str, str]] = None,
+        tenant_settings: Optional[dict[str, str]] = None,
         shard_count: Optional[int] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
@@ -3035,7 +3037,7 @@ class RedisResource(TrackedResource):
         :paramtype sku: ~azure.mgmt.redis.models.Sku
         :keyword subnet_id: The full resource ID of a subnet in a virtual network to deploy the Redis
          cache in. Example format:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.  # pylint: disable=line-too-long
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1.
         :paramtype subnet_id: str
         :keyword static_ip: Static IP address. Optionally, may be specified when deploying a Redis
          cache inside an existing Azure Virtual Network; auto assigned by default.
@@ -3059,14 +3061,14 @@ class RedisResource(TrackedResource):
         self.sku = sku
         self.subnet_id = subnet_id
         self.static_ip = static_ip
-        self.provisioning_state = None
-        self.host_name = None
-        self.port = None
-        self.ssl_port = None
-        self.access_keys = None
-        self.linked_servers = None
-        self.instances = None
-        self.private_endpoint_connections = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.host_name: Optional[str] = None
+        self.port: Optional[int] = None
+        self.ssl_port: Optional[int] = None
+        self.access_keys: Optional["_models.RedisAccessKeys"] = None
+        self.linked_servers: Optional[list["_models.RedisLinkedServer"]] = None
+        self.instances: Optional[list["_models.RedisInstanceDetails"]] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
 
 
 class RedisUpdateParameters(_serialization.Model):
@@ -3148,14 +3150,14 @@ class RedisUpdateParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         redis_configuration: Optional["_models.RedisCommonPropertiesRedisConfiguration"] = None,
         redis_version: Optional[str] = None,
         enable_non_ssl_port: bool = False,
         replicas_per_master: Optional[int] = None,
         replicas_per_primary: Optional[int] = None,
-        tenant_settings: Optional[Dict[str, str]] = None,
+        tenant_settings: Optional[dict[str, str]] = None,
         shard_count: Optional[int] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
@@ -3312,7 +3314,7 @@ class RedisUpdateProperties(RedisCommonProperties):
         enable_non_ssl_port: bool = False,
         replicas_per_master: Optional[int] = None,
         replicas_per_primary: Optional[int] = None,
-        tenant_settings: Optional[Dict[str, str]] = None,
+        tenant_settings: Optional[dict[str, str]] = None,
         shard_count: Optional[int] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
@@ -3521,9 +3523,9 @@ class UpgradeNotification(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.timestamp = None
-        self.upsell_notification = None
+        self.name: Optional[str] = None
+        self.timestamp: Optional[datetime.datetime] = None
+        self.upsell_notification: Optional[dict[str, str]] = None
 
 
 class UserAssignedIdentity(_serialization.Model):
@@ -3550,5 +3552,5 @@ class UserAssignedIdentity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
