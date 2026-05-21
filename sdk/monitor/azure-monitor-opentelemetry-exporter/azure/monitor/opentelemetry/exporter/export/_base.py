@@ -43,6 +43,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _THROTTLE_STATUS_CODES,
     DropCode,
     _exception_categories,
+    _MICROSOFT_OPENTELEMETRY_DISTRO_FEATURES_ARG,
+    _MICROSOFT_OPENTELEMETRY_DISTRO_INSTRUMENTATIONS_ARG,
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
@@ -143,6 +145,9 @@ class BaseExporter:
             _AZURE_MONITOR_DISTRO_VERSION_ARG, ""
         )  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
         # specifies whether current exporter is used for collection of instrumentation metrics
+        # Both may be an int or a zero-arg callable returning int; preserved as-is so statsbeat can resolve lazily at emission time.
+        self._mot_distro_features = kwargs.get(_MICROSOFT_OPENTELEMETRY_DISTRO_FEATURES_ARG, 0) or 0
+        self._mot_distro_instrumentations = kwargs.get(_MICROSOFT_OPENTELEMETRY_DISTRO_INSTRUMENTATIONS_ARG, 0) or 0
         self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)

@@ -65,6 +65,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = None
         exporter._distro_version = ""
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
 
         # Set up mock returns
         mock_exporter_instance = mock.Mock()
@@ -111,6 +113,8 @@ class TestStatsbeat(unittest.TestCase):
             2,
             False,
             exporter._distro_version,
+            exporter._mot_distro_features,
+            exporter._mot_distro_instrumentations,
         )
 
         # Verify initialization methods were called
@@ -133,6 +137,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = None
         exporter._distro_version = ""
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
 
         # Set up mock returns
         mock_exporter_instance = mock.Mock()
@@ -308,6 +314,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = None
         exporter._distro_version = ""
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
 
         mock_config_manager_instance = mock.Mock()
         mock_config_manager_cls.return_value = mock_config_manager_instance
@@ -340,6 +348,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = None
         exporter._distro_version = ""
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
 
         # Set up mock returns
         mock_exporter_instance = mock.Mock()
@@ -400,6 +410,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = None
         exporter._distro_version = ""
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
 
         # Set up mock returns
         mock_exporter_instance = mock.Mock()
@@ -450,6 +462,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = None
         exporter._distro_version = ""
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
 
         # Set up mock returns
         mock_exporter_instance = mock.Mock()
@@ -503,6 +517,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = TEST_CREDENTIAL
         exporter._distro_version = ""
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
         mp_mock = mock.Mock()
         mock_meter_provider.return_value = mp_mock
         manager = StatsbeatManager()
@@ -533,6 +549,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = TEST_CREDENTIAL
         exporter._distro_version = ""
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
         mp_mock = mock.Mock()
         mock_meter_provider.return_value = mp_mock
         manager = StatsbeatManager()
@@ -565,6 +583,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = TEST_CREDENTIAL
         exporter._distro_version = "1.0.0"
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
         mp_mock = mock.Mock()
         mock_meter_provider.return_value = mp_mock
         manager = StatsbeatManager()
@@ -578,6 +598,56 @@ class TestStatsbeat(unittest.TestCase):
         self.assertIsNotNone(manager._metrics)
         self.assertEqual(manager._metrics._ikey, TEST_IKEY)
         self.assertTrue(manager._metrics._feature > _StatsbeatFeature.DISTRO)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
+    def test_collect_statsbeat_metrics_mot_distro_features_and_instrumentations(
+        self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager
+    ):
+        """End-to-end: Microsoft OpenTelemetry distro feature/instrumentation bits
+        on the exporter must flow through StatsbeatConfig and _StatsbeatMetrics, be
+        OR-ed into the feature bitmap, and be OR-ed into the instrumentation
+        bitmap at collection time."""
+        # Arrange - dummy non-zero distro bit values
+        DISTRO_FEATURE_BITS = 128  # e.g. A365_EXPORT
+        DISTRO_INSTRUMENTATION_BITS = (1 << 55) | (1 << 58)  # LANGCHAIN | AGENT_FRAMEWORK
+
+        exporter = mock.Mock()
+        TEST_ENDPOINT = "test endpoint"
+        TEST_IKEY = "test ikey"
+        exporter._endpoint = TEST_ENDPOINT
+        exporter._instrumentation_key = TEST_IKEY
+        exporter._disable_offline_storage = False
+        exporter._credential = None
+        exporter._distro_version = "1.0.0"
+        exporter._mot_distro_features = DISTRO_FEATURE_BITS
+        exporter._mot_distro_instrumentations = DISTRO_INSTRUMENTATION_BITS
+        mp_mock = mock.Mock()
+        mock_meter_provider.return_value = mp_mock
+        manager = StatsbeatManager()
+        self.assertFalse(manager._initialized)
+        mock_get_manager.return_value = manager
+
+        # Act
+        _statsbeat.collect_statsbeat_metrics(exporter)
+
+        # Assert - feature bitmap contains both DISTRO and the extra distro feature bits
+        self.assertIsNotNone(manager._metrics)
+        self.assertEqual(manager._metrics._ikey, TEST_IKEY)
+        self.assertTrue(manager._metrics._feature & _StatsbeatFeature.DISTRO == _StatsbeatFeature.DISTRO)
+        self.assertTrue(manager._metrics._feature & DISTRO_FEATURE_BITS == DISTRO_FEATURE_BITS)
+
+        # Assert - instrumentation bits are OR-ed in at collection time
+        self.assertEqual(manager._metrics._mot_distro_instrumentations, DISTRO_INSTRUMENTATION_BITS)
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_instrumentations") as instrumentations:
+            instrumentations.return_value = 2  # exporter-side bit
+            manager._metrics._get_feature_metric(options=None)
+        expected = 2 | DISTRO_INSTRUMENTATION_BITS
+        from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
+
+        self.assertEqual(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"], expected)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
@@ -597,6 +667,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = TEST_CREDENTIAL
         exporter._distro_version = ""
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
         mp_mock = mock.Mock()
         mock_meter_provider.return_value = mp_mock
         manager = StatsbeatManager()
@@ -628,6 +700,8 @@ class TestStatsbeat(unittest.TestCase):
         exporter._disable_offline_storage = False
         exporter._credential = None
         exporter._distro_version = ""
+        exporter._mot_distro_features = 0
+        exporter._mot_distro_instrumentations = 0
 
         # Set up mock returns
         mock_exporter_instance = mock.Mock()

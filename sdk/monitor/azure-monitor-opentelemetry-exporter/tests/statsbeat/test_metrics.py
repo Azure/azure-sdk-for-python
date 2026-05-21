@@ -754,6 +754,116 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(len(observations), 0)
         self.assertEqual(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"], 0)
 
+    # pylint: disable=protected-access
+    def test_get_feature_metric_mot_distro_features(self):
+        # Microsoft OpenTelemetry distro passes extra feature bits (e.g. A365_EXPORT=128)
+        # which must be OR-ed into the feature bitmap.
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(mp, ikey, endpoint, True, 0, False, "", 128, 0)
+        self.assertTrue(metric._feature & 128 == 128)
+        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 128)
+        observations = metric._get_feature_metric(options=None)
+        self.assertEqual(len(observations), 1)
+        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 128)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_mot_distro_features_combined_with_distro_version(self):
+        # When both distro_version and mot_distro_features are supplied, both bits
+        # should appear in the feature bitmap.
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(mp, ikey, endpoint, True, 0, False, "1.0.0", 128, 0)
+        expected = _StatsbeatFeature.DISTRO | 128
+        self.assertTrue(metric._feature & _StatsbeatFeature.DISTRO == _StatsbeatFeature.DISTRO)
+        self.assertTrue(metric._feature & 128 == 128)
+        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], expected)
+        observations = metric._get_feature_metric(options=None)
+        self.assertEqual(len(observations), 1)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_mot_distro_features_zero_default(self):
+        # When mot_distro_features is omitted, the feature bitmap must not be
+        # affected (defaults to 0 → no-op OR).
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            0,
+            False,
+        )
+        self.assertEqual(metric._mot_distro_instrumentations, 0)
+        self.assertEqual(metric._feature, _StatsbeatFeature.NONE)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_mot_distro_instrumentations(self):
+        # mot_distro_instrumentations must be OR-ed with the instrumentations
+        # reported by _utils.get_instrumentations() each collection cycle.
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        mot_bits = 1 << 55  # LANGCHAIN-style bit not used by the exporter
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            False,
+            0,
+            False,
+            "",
+            0,
+            mot_bits,
+        )
+        metric._feature = _StatsbeatFeature.NONE
+        self.assertEqual(metric._mot_distro_instrumentations, mot_bits)
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_instrumentations") as instrumentations:
+            instrumentations.return_value = 2  # FLASK-ish bit from exporter side
+            observations = metric._get_feature_metric(options=None)
+        expected = 2 | mot_bits
+        self.assertEqual(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"], expected)
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
+        attributes["feature"] = expected
+        # One observation each for feature + instrumentation metrics
+        instr_observations = [o for o in observations if o.attributes.get("type") == _FEATURE_TYPES.INSTRUMENTATION]
+        self.assertEqual(len(instr_observations), 1)
+        for obs in instr_observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes["feature"], expected)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_mot_distro_instrumentations_only(self):
+        # If exporter-side instrumentations are empty but mot bits are present,
+        # an instrumentation observation must still be emitted.
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        mot_bits = 1 << 58  # AGENT_FRAMEWORK-style
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            False,
+            0,
+            False,
+            "",
+            0,
+            mot_bits,
+        )
+        metric._feature = _StatsbeatFeature.NONE
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_instrumentations") as instrumentations:
+            instrumentations.return_value = 0
+            observations = metric._get_feature_metric(options=None)
+        instr_observations = [o for o in observations if o.attributes.get("type") == _FEATURE_TYPES.INSTRUMENTATION]
+        self.assertEqual(len(instr_observations), 1)
+        self.assertEqual(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"], mot_bits)
+
     def test_init_non_initial_metrics(self):
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"

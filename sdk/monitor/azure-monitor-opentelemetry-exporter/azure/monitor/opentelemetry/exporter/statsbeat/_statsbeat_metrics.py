@@ -7,7 +7,7 @@ import platform
 import re
 import sys
 import threading
-from typing import Any, Dict, Optional, Iterable, List
+from typing import Any, Callable, Dict, Optional, Iterable, List, Union
 
 # mypy: disable-error-code="import-untyped"
 import requests  # pylint: disable=networking-import-outside-azure-core-transport
@@ -127,6 +127,8 @@ class _StatsbeatMetrics:
         long_interval_threshold: int,
         has_credential: bool,
         distro_version: Optional[str] = "",
+        mot_distro_features: Union[int, Callable[[], int], None] = 0,
+        mot_distro_instrumentations: Union[int, Callable[[], int], None] = 0,
     ) -> None:
         # Set the version if not already set using delayed import
         if _StatsbeatMetrics._COMMON_ATTRIBUTES["version"] is None:
@@ -140,6 +142,11 @@ class _StatsbeatMetrics:
             self._feature |= _StatsbeatFeature.AAD
         if distro_version:
             self._feature |= _StatsbeatFeature.DISTRO
+        # mot_distro_features may be an int (eager — OR in now) or a callable (lazy — resolved at emission
+        # time in _get_feature_metric so late-set distro bits, e.g. browser SDK loader, are picked up).
+        self._mot_distro_features = mot_distro_features
+        if isinstance(mot_distro_features, int) and mot_distro_features:
+            self._feature |= mot_distro_features
         if get_statsbeat_custom_events_feature_set():
             self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
         if get_statsbeat_live_metrics_feature_set():
@@ -158,6 +165,7 @@ class _StatsbeatMetrics:
             _FEATURE_METRIC_NAME[0]: sys.maxsize,
         }
         self._long_interval_lock = threading.Lock()
+        self._mot_distro_instrumentations = mot_distro_instrumentations
 
         # Initialize common attributes and set values
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
@@ -276,6 +284,15 @@ class _StatsbeatMetrics:
         if get_statsbeat_browser_sdk_loader_feature_set():
             self._feature |= _StatsbeatFeature.BROWSER_SDK_LOADER
             _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+        # Resolve mot_distro_features each emission so late-set distro bits are picked up.
+        raw_feat = self._mot_distro_features
+        try:
+            mot_feat_bits = raw_feat() if callable(raw_feat) else int(raw_feat or 0)
+        except Exception:  # pylint: disable=broad-except
+            mot_feat_bits = 0
+        if mot_feat_bits:
+            self._feature |= mot_feat_bits
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
 
         # Don't send observation if no features enabled
         if self._feature is not _StatsbeatFeature.NONE:
@@ -285,7 +302,14 @@ class _StatsbeatMetrics:
 
         # instrumentation metric
         # Don't send observation if no instrumentations enabled
-        instrumentation_bits = _utils.get_instrumentations()
+        # Resolve mot_distro_instrumentations each emission so late-registered
+        # instrumentations (e.g. discovered after exporter construction) are picked up.
+        raw = self._mot_distro_instrumentations
+        try:
+            mot_bits = raw() if callable(raw) else int(raw or 0)
+        except Exception:  # pylint: disable=broad-except
+            mot_bits = 0
+        instrumentation_bits = _utils.get_instrumentations() | mot_bits
         if instrumentation_bits != 0:
             _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = instrumentation_bits
             attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)

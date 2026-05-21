@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import logging
 import threading
-from typing import Optional, Any, Dict
+from typing import Callable, Optional, Any, Dict, Union
 
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
@@ -37,6 +37,10 @@ class StatsbeatConfig:
         credential: Optional[Any] = None,
         distro_version: Optional[str] = None,
         connection_string: Optional[str] = None,
+        # Accepts an int (eager snapshot) or a zero-arg callable returning int
+        # (resolved lazily at each statsbeat emission).
+        mot_distro_features: Union[int, Callable[[], int], None] = 0,
+        mot_distro_instrumentations: Union[int, Callable[[], int], None] = 0,
     ) -> None:
         # Customer specific information
         self.endpoint = endpoint
@@ -48,6 +52,8 @@ class StatsbeatConfig:
         self.credential = credential
         self.distro_version = distro_version
         self.connection_string: str = ""
+        self.mot_distro_features = mot_distro_features
+        self.mot_distro_instrumentations = mot_distro_instrumentations
 
         # Use provided connection_string or generate from endpoint
         if connection_string:
@@ -83,6 +89,8 @@ class StatsbeatConfig:
             disable_offline_storage=exporter._disable_offline_storage,
             credential=exporter._credential,
             distro_version=exporter._distro_version,
+            mot_distro_features=getattr(exporter, "_mot_distro_features", 0),
+            mot_distro_instrumentations=getattr(exporter, "_mot_distro_instrumentations", 0),
         )
 
     @classmethod
@@ -128,6 +136,8 @@ class StatsbeatConfig:
             disable_offline_storage=disable_offline_storage_config,  # TODO: Use config value once supported
             credential=base_config.credential,
             distro_version=base_config.distro_version,
+            mot_distro_features=getattr(base_config, "mot_distro_features", 0),
+            mot_distro_instrumentations=getattr(base_config, "mot_distro_instrumentations", 0),
             connection_string=connection_string,
         )
 
@@ -239,6 +249,8 @@ class StatsbeatManager(metaclass=Singleton):
                 long_interval_threshold,
                 config.credential is not None,
                 config.distro_version,
+                config.mot_distro_features,
+                config.mot_distro_instrumentations,
             )
 
             # Force initial flush and initialize non-initial metrics

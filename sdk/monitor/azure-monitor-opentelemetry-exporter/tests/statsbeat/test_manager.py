@@ -190,6 +190,67 @@ class TestStatsbeatConfig(unittest.TestCase):
         result = StatsbeatConfig.from_config(base_config, {})
         self.assertIsNone(result)
 
+    def test_init_with_mot_distro_kwargs(self):
+        """StatsbeatConfig stores mot_distro_features / mot_distro_instrumentations when provided."""
+        config = StatsbeatConfig(
+            endpoint="https://westus-1.in.applicationinsights.azure.com/",
+            region="westus",
+            instrumentation_key="test-key",
+            mot_distro_features=128,
+            mot_distro_instrumentations=(1 << 55),
+        )
+        self.assertEqual(config.mot_distro_features, 128)
+        self.assertEqual(config.mot_distro_instrumentations, 1 << 55)
+
+    def test_init_mot_distro_kwargs_default_zero(self):
+        """When omitted, mot_distro_* default to 0."""
+        config = StatsbeatConfig(
+            endpoint="https://westus-1.in.applicationinsights.azure.com/",
+            region="westus",
+            instrumentation_key="test-key",
+        )
+        self.assertEqual(config.mot_distro_features, 0)
+        self.assertEqual(config.mot_distro_instrumentations, 0)
+
+    def test_from_exporter_mot_distro_kwargs(self):
+        """from_exporter copies mot_distro_features / mot_distro_instrumentations off the exporter."""
+        exporter = mock.Mock()
+        exporter._endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        exporter._region = "westus"
+        exporter._instrumentation_key = "test-key"
+        exporter._disable_offline_storage = False
+        exporter._credential = None
+        exporter._distro_version = "1.0.0"
+        exporter._mot_distro_features = 128
+        exporter._mot_distro_instrumentations = 1 << 55
+
+        config = StatsbeatConfig.from_exporter(exporter)
+        self.assertIsNotNone(config)
+        if config:
+            self.assertEqual(config.mot_distro_features, 128)
+            self.assertEqual(config.mot_distro_instrumentations, 1 << 55)
+
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config")
+    def test_from_config_preserves_mot_distro_kwargs(self, mock_get_cs_for_region):
+        """from_config carries mot_distro_features / mot_distro_instrumentations from the base config."""
+        mock_get_cs_for_region.return_value = (
+            "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+        )
+        base_config = StatsbeatConfig(
+            endpoint="https://westus-1.in.applicationinsights.azure.com/",
+            region="westus",
+            instrumentation_key="test-key",
+            mot_distro_features=128,
+            mot_distro_instrumentations=1 << 55,
+        )
+
+        new_config = StatsbeatConfig.from_config(base_config, {"disable_offline_storage": "true"})
+        self.assertIsNotNone(new_config)
+        if new_config:
+            self.assertEqual(new_config.mot_distro_features, 128)
+            self.assertEqual(new_config.mot_distro_instrumentations, 1 << 55)
+
     def test_equality(self):
         """Test equality comparison between configs."""
         config1 = StatsbeatConfig(
