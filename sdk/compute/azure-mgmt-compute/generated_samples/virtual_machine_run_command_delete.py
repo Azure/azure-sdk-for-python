@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-04-01/runCommandExamples/VirtualMachineRunCommand_Delete.json
+# x-ms-original-file: 2025-11-01/runCommandExamples/VirtualMachineRunCommand_Delete.json
 if __name__ == "__main__":
     main()

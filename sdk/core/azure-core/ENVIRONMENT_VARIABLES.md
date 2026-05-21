@@ -12,7 +12,9 @@ Controls the logging level for all Azure SDK clients.
 |---|---|
 | **Used by** | `azure.core.settings.Settings.log_level` |
 | **Default** | `INFO` |
-| **Accepted values** | `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG` (case-insensitive) |
+| **Accepted values** | `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`, `VERBOSE` (case-insensitive). `VERBOSE` is treated as `DEBUG`. |
+
+If the value is not one of the accepted values, a warning is logged and `INFO` is used.
 
 **Example:**
 
@@ -36,6 +38,8 @@ If disabled, distributed tracing is disabled entirely, regardless of the other c
 
 If not set, tracing is automatically enabled if a tracing implementation is configured (via `AZURE_SDK_TRACING_IMPLEMENTATION`), and disabled otherwise.
 
+If the value is not one of the accepted values, a warning is logged and the default behavior is used.
+
 **Example:**
 
 ```bash
@@ -55,6 +59,8 @@ Specifies which distributed tracing implementation the SDK should use.
 The corresponding tracing plugin package must be installed:
 
 - `opentelemetry` — requires `azure-core-tracing-opentelemetry`
+
+If the value is not one of the accepted values, a warning is logged and the default (None) is used.
 
 **Example:**
 

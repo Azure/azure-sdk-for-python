@@ -20,7 +20,7 @@ class TestAutomationDscCompilationJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_dsc_compilation_job_begin_create(self, resource_group):
         response = self.client.dsc_compilation_job.begin_create(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -33,7 +33,7 @@ class TestAutomationDscCompilationJobOperations(AzureMgmtRecordedTestCase):
                 "parameters": {"str": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2020-01-13-preview",
+            api_version="2018-01-15",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -41,12 +41,12 @@ class TestAutomationDscCompilationJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_dsc_compilation_job_get(self, resource_group):
         response = self.client.dsc_compilation_job.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             compilation_job_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2018-01-15",
         )
 
         # please add some check logic here by yourself
@@ -54,11 +54,11 @@ class TestAutomationDscCompilationJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_automation_account(self, resource_group):
+    def test_dsc_compilation_job_list_by_automation_account(self, resource_group):
         response = self.client.dsc_compilation_job.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2018-01-15",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -66,13 +66,13 @@ class TestAutomationDscCompilationJobOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_stream(self, resource_group):
+    def test_dsc_compilation_job_get_stream(self, resource_group):
         response = self.client.dsc_compilation_job.get_stream(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_id="str",
             job_stream_id="str",
-            api_version="2020-01-13-preview",
+            api_version="2018-01-15",
         )
 
         # please add some check logic here by yourself

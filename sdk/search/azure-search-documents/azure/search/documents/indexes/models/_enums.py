@@ -567,17 +567,6 @@ class KnowledgeSourceContentExtractionMode(str, Enum, metaclass=CaseInsensitiveE
     """Performs the full default content extraction pipeline."""
 
 
-class KnowledgeSourceIngestionPermissionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Permission types to ingest together with document content."""
-
-    USER_IDS = "userIds"
-    """Ingest explicit user identifiers alongside document content."""
-    GROUP_IDS = "groupIds"
-    """Ingest group identifiers alongside document content."""
-    RBAC_SCOPE = "rbacScope"
-    """Ingest RBAC scope information alongside document content."""
-
-
 class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of the knowledge source."""
 

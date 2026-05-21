@@ -21,6 +21,8 @@ class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Indexed OneLake retrieval activity."""
     WEB = "web"
     """Web retrieval activity."""
+    MODEL_WEB_SUMMARIZATION = "modelWebSummarization"
+    """LLM web summarization activity."""
     AGENTIC_REASONING = "agenticReasoning"
     """Agentic reasoning activity."""
 

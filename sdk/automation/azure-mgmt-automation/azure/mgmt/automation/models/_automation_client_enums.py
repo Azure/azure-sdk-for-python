@@ -53,35 +53,12 @@ class CountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NODECONFIGURATION = "nodeconfiguration"
 
 
-class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource."""
-
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-
 class DscConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the state of the configuration."""
 
     NEW = "New"
     EDIT = "Edit"
     PUBLISHED = "Published"
-
-
-class EncryptionKeySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Encryption Key Source."""
-
-    MICROSOFT_AUTOMATION = "Microsoft.Automation"
-    MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
-
-
-class GraphRunbookType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Runbook Type."""
-
-    GRAPH_POWER_SHELL = "GraphPowerShell"
-    GRAPH_POWER_SHELL_WORKFLOW = "GraphPowerShellWorkflow"
 
 
 class GroupTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -141,7 +118,6 @@ class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
     GATEWAY_TIMEOUT = "GatewayTimeout"
     HTTP_VERSION_NOT_SUPPORTED = "HttpVersionNotSupported"
-    CONTINUE_ENUM = "Continue"
 
 
 class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -226,15 +202,6 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMPLETED = "Completed"
     FAILED = "Failed"
     RUNNING = "Running"
-
-
-class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The identity type."""
-
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    USER_ASSIGNED = "UserAssigned"
-    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
-    NONE = "None"
 
 
 class RunbookState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -341,10 +308,3 @@ class WindowsUpdateClasses(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEFINITION = "Definition"
     TOOLS = "Tools"
     UPDATES = "Updates"
-
-
-class WorkerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the HybridWorker."""
-
-    HYBRID_V1 = "HybridV1"
-    HYBRID_V2 = "HybridV2"

@@ -29,7 +29,7 @@ If you can provide detailed reproduction steps, it will help us locate and solve
 If the code you use needs to set wait() function for the Long Running Operation to wait for the result, it should be the SDK of Track1. We have stopped maintenance at present.
 
 We strongly recommend that you update the SDK version. Then you will find that in the SDK of Track2, we all use the function name prefixed with `begin_` for LRO operations, and the result() method can be used to get the returned result.
-(More Details: [guidance][guidance]) 
+(More Details: [guidance][guidance])
 
 ### Possible Error from Service
 Since the python SDK is generated based on the [rest API][rest API], it will not deliberately change the returned results. So if you think the returned result is not as expected, please open the issue under the [rest issue][rest issue].
@@ -56,7 +56,6 @@ Fault localization is critical to bug fix. Some tips:
 
 2. Step-by-step debugging. Most modern IDEs provide integrated debugging experience.
 
-
 ### Fix the bug
 
 Once you have confirmed the bug and found the fault location, it should be easy to fix the bug. Add a sample if it is missing. Remember to tell users when the fix will released.
@@ -65,9 +64,6 @@ Once you have confirmed the bug and found the fault location, it should be easy 
 ## Common Principles
 
 If the issue is not from the SDK but from the [rest API][rest API], you can reply to the user and reopen the issue in the appropriate place.
-
-### Error like (AttributeError: 'PipelineResponse' object has no attribute 'get')
-When this error occurs, you can check the version of `msrest` and upgrade it to latest version then try again.
 
 
 [sample repo]: https://github.com/Azure-Samples/azure-samples-python-management

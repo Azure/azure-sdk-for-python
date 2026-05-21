@@ -32,8 +32,8 @@ class TestCloudHealthMgmtAuthenticationSettingsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_authentication_settings_create_or_update(self, resource_group):
-        response = self.client.authentication_settings.create_or_update(
+    def test_authentication_settings_begin_create_or_update(self, resource_group):
+        response = self.client.authentication_settings.begin_create_or_update(
             resource_group_name=resource_group.name,
             health_model_name="str",
             authentication_setting_name="str",
@@ -51,19 +51,19 @@ class TestCloudHealthMgmtAuthenticationSettingsOperations(AzureMgmtRecordedTestC
                 },
                 "type": "str",
             },
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_authentication_settings_delete(self, resource_group):
-        response = self.client.authentication_settings.delete(
+    def test_authentication_settings_begin_delete(self, resource_group):
+        response = self.client.authentication_settings.begin_delete(
             resource_group_name=resource_group.name,
             health_model_name="str",
             authentication_setting_name="str",
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

@@ -6,7 +6,7 @@ For more questions and general overview of the process, please refer to <https:/
 
 ## Prerequisites
 
-- Python 3.9 or later is required
+- Python 3.10 or later is required
   - [download for windows](https://www.python.org/downloads/windows/)
   - linux
     - sudo apt install python3

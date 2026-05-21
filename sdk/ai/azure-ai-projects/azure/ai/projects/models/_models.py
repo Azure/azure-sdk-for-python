@@ -8800,7 +8800,7 @@ class SessionDirectoryEntry(_Model):
     :vartype size: int
     :ivar is_directory: Whether this entry is a directory. Required.
     :vartype is_directory: bool
-    :ivar modified_time: The last modification time in UTC (ISO 8601). Required.
+    :ivar modified_time: The Unix timestamp (in seconds) when the file was last modified. Required.
     :vartype modified_time: ~datetime.datetime
     """
 
@@ -8811,9 +8811,9 @@ class SessionDirectoryEntry(_Model):
     is_directory: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether this entry is a directory. Required."""
     modified_time: datetime.datetime = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
     )
-    """The last modification time in UTC (ISO 8601). Required."""
+    """The Unix timestamp (in seconds) when the file was last modified. Required."""
 
     @overload
     def __init__(

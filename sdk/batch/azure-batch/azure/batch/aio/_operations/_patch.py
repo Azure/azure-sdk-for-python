@@ -137,7 +137,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = DeleteJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
+        polling_method = DeleteJobPollingMethodAsync(
+            self, pipeline_response, None, job_id, polling_interval=polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -219,7 +221,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = DisableJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
+        polling_method = DisableJobPollingMethodAsync(
+            self, pipeline_response, None, job_id, polling_interval=polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -294,7 +298,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = EnableJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
+        polling_method = EnableJobPollingMethodAsync(
+            self, pipeline_response, None, job_id, polling_interval=polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -369,7 +375,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeleteJobSchedulePollingMethodAsync(
-            self, pipeline_response, None, job_schedule_id, polling_interval
+            self, pipeline_response, None, job_schedule_id, polling_interval=polling_interval
         )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
@@ -452,7 +458,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = DeletePoolPollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
+        polling_method = DeletePoolPollingMethodAsync(
+            self, pipeline_response, None, pool_id, polling_interval=polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -509,7 +517,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeallocateNodePollingMethodAsync(
-            self, pipeline_response, None, pool_id, node_id, polling_interval
+            self, pipeline_response, None, pool_id, node_id=node_id, polling_interval=polling_interval
         )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
@@ -566,7 +574,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = RebootNodePollingMethodAsync(self, pipeline_response, None, pool_id, node_id, polling_interval)
+        polling_method = RebootNodePollingMethodAsync(
+            self, pipeline_response, None, pool_id, node_id=node_id, polling_interval=polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -627,7 +637,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = ReimageNodePollingMethodAsync(
-            self, pipeline_response, None, pool_id, node_id, polling_interval
+            self, pipeline_response, None, pool_id, node_id=node_id, polling_interval=polling_interval
         )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
@@ -705,7 +715,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = RemoveNodePollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
+        polling_method = RemoveNodePollingMethodAsync(
+            self, pipeline_response, None, pool_id, polling_interval=polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -786,7 +798,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = ResizePoolPollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
+        polling_method = ResizePoolPollingMethodAsync(
+            self, pipeline_response, None, pool_id, polling_interval=polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -838,7 +852,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = StartNodePollingMethodAsync(self, pipeline_response, None, pool_id, node_id, polling_interval)
+        polling_method = StartNodePollingMethodAsync(
+            self, pipeline_response, None, pool_id, node_id=node_id, polling_interval=polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -915,7 +931,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = StopPoolResizePollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
+        polling_method = StopPoolResizePollingMethodAsync(
+            self, pipeline_response, None, pool_id, polling_interval=polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -1000,7 +1018,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = TerminateJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
+        polling_method = TerminateJobPollingMethodAsync(
+            self, pipeline_response, None, job_id, polling_interval=polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -1076,7 +1096,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = TerminateJobSchedulePollingMethodAsync(
-            self, pipeline_response, None, job_schedule_id, polling_interval
+            self, pipeline_response, None, job_schedule_id, polling_interval=polling_interval
         )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
@@ -1087,7 +1107,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         job_id: str,
         task_collection: List[_models.BatchTaskCreateOptions],
         *,
-        max_concurrency: int = 0,
+        max_concurrency: Optional[int] = None,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -1157,7 +1177,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         return _models.BatchCreateTaskCollectionResult(result_values=submitted_tasks)
 
     @distributed_trace
-    async def get_node_file(
+    async def download_node_file(
         self,
         pool_id: str,
         node_id: str,
@@ -1214,7 +1234,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             }
         )
         kwargs["stream"] = True
-        return await super().get_node_file(*args, **kwargs)
+        return await super().download_node_file(*args, **kwargs)
 
     @distributed_trace
     async def get_node_file_properties(
@@ -1353,7 +1373,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         return get_response
 
     @distributed_trace
-    async def get_task_file(
+    async def download_task_file(
         self,
         job_id: str,
         task_id: str,
@@ -1411,7 +1431,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             }
         )
         kwargs["stream"] = True
-        return await super().get_task_file(*args, **kwargs)
+        return await super().download_task_file(*args, **kwargs)
 
 
 class _TaskWorkflowManager:

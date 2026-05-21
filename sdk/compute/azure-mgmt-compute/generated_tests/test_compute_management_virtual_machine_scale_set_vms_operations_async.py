@@ -26,7 +26,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -98,6 +98,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                                             "time": "2020-02-20 00:00:00",
                                         }
                                     ],
+                                    "storageAlignmentStatus": "str",
                                 }
                             ],
                             "extensions": [
@@ -381,6 +382,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                                     },
                                     "name": "str",
                                     "sourceResource": {"id": "str"},
+                                    "storageFaultDomainAlignment": "str",
                                     "toBeDetached": bool,
                                     "vhd": {"uri": "str"},
                                     "writeAcceleratorEnabled": bool,
@@ -401,7 +403,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                                 "createOption": "str",
                                 "caching": "str",
                                 "deleteOption": "str",
-                                "diffDiskSettings": {"option": "str", "placement": "str"},
+                                "diffDiskSettings": {"enableFullCaching": bool, "option": "str", "placement": "str"},
                                 "diskSizeGB": 0,
                                 "encryptionSettings": {
                                     "diskEncryptionKey": {"secretUrl": "str", "sourceVault": {"id": "str"}},
@@ -420,12 +422,14 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                                 },
                                 "name": "str",
                                 "osType": "str",
+                                "storageFaultDomainAlignment": "str",
                                 "vhd": {"uri": "str"},
                                 "writeAcceleratorEnabled": bool,
                             },
                         },
                         "timeCreated": "2020-02-20 00:00:00",
                         "userData": "str",
+                        "virtualMachineResourceId": "str",
                         "vmId": "str",
                     },
                     "resources": [
@@ -495,7 +499,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                     "type": "str",
                     "zones": ["str"],
                 },
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -510,7 +514,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 instance_id="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -523,7 +527,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
         response = self.client.virtual_machine_scale_set_vms.list(
             resource_group_name=resource_group.name,
             virtual_machine_scale_set_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -537,7 +541,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 instance_id="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -552,7 +556,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 instance_id="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -566,7 +570,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -580,7 +584,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 instance_id="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -595,7 +599,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 instance_id="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -609,7 +613,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -636,7 +640,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                     ],
                     "dataDisksToDetach": [{"diskId": "str", "detachOption": "str"}],
                 },
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -651,7 +655,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 instance_id="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -666,7 +670,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 instance_id="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -681,7 +685,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 instance_id="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -696,7 +700,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 instance_id="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -710,7 +714,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -724,7 +728,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 instance_id="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -740,7 +744,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                 vm_scale_set_name="str",
                 instance_id="str",
                 parameters={"commandId": "str", "parameters": [{"name": "str", "value": "str"}], "script": ["str"]},
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

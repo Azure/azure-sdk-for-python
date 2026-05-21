@@ -561,6 +561,12 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Listing all entities held within a table
         """
+        if "query_filter" in kwargs or "parameters" in kwargs:
+            raise ValueError(
+                "'query_filter' and 'parameters' are not supported for 'list_entities'. "
+                "Use 'query_entities' for server-side filtering."
+            )
+
         if select and not isinstance(select, str):
             select = ",".join(select)
 

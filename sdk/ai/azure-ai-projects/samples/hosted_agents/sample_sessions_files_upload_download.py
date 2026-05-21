@@ -85,7 +85,7 @@ with (
         print("Listing session files for the session at path '.'...")
         files = project_client.beta.agents.get_session_files(
             agent_name=agent_name,
-            session_id=session.agent_session_id,
+            agent_session_id=session.agent_session_id,
             path="/remote",
         )
         for entry in files.entries:
@@ -95,7 +95,7 @@ with (
         content_bytes = b"".join(
             project_client.beta.agents.download_session_file(
                 agent_name=agent_name,
-                session_id=session.agent_session_id,
+                agent_session_id=session.agent_session_id,
                 path=remote_file_path1,
             )
         )
@@ -105,13 +105,13 @@ with (
         print(f"Deleting session file at path: {remote_file_path1}...")
         project_client.beta.agents.delete_session_file(
             agent_name=agent_name,
-            session_id=session.agent_session_id,
+            agent_session_id=session.agent_session_id,
             path=remote_file_path1,
         )
 
         print(f"Deleting session file at path: {remote_file_path2}...")
         project_client.beta.agents.delete_session_file(
             agent_name=agent_name,
-            session_id=session.agent_session_id,
+            agent_session_id=session.agent_session_id,
             path=remote_file_path2,
         )

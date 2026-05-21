@@ -42,6 +42,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-04-01/availabilitySetExamples/AvailabilitySet_ValidateMigrationToVirtualMachineScaleSet.json
+# x-ms-original-file: 2025-11-01/availabilitySetExamples/AvailabilitySet_ValidateMigrationToVirtualMachineScaleSet.json
 if __name__ == "__main__":
     main()

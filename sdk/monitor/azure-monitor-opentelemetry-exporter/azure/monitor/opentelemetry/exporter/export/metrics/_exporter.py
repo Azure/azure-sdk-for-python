@@ -304,7 +304,7 @@ def _handle_std_metric_envelope(
         properties["_MS.MetricId"] = "dependencies/duration"
         properties["_MS.IsAutocollected"] = "True"
         properties["Dependency.Type"] = "http"
-        properties["Dependency.Success"] = str(_is_status_code_success(status_code))  # type: ignore
+        properties["Dependency.Success"] = str(_utils._is_status_code_success(status_code))  # type: ignore
         target, _ = trace_utils._get_target_and_path_for_http_dependency(attributes)
         properties["dependency/target"] = target  # type: ignore
         properties["dependency/resultCode"] = str(status_code)
@@ -319,7 +319,7 @@ def _handle_std_metric_envelope(
             properties["operation/synthetic"] = "True"
         properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]  # type: ignore
         properties["cloud/roleName"] = tags["ai.cloud.role"]  # type: ignore
-        properties["Request.Success"] = str(_is_status_code_success(status_code))  # type: ignore
+        properties["Request.Success"] = str(_utils._is_status_code_success(status_code))  # type: ignore
     else:
         # Any other autocollected metrics are not supported yet for standard metrics
         # We ignore these envelopes in these cases
@@ -330,17 +330,6 @@ def _handle_std_metric_envelope(
     envelope.data.base_data.properties = properties  # type: ignore
 
     return envelope
-
-
-def _is_status_code_success(status_code: Optional[str]) -> bool:
-    if status_code is None or status_code == 0:
-        return False
-    try:
-        # Success criteria based solely off status code is True only if status_code < 400
-        # for both client and server spans
-        return int(status_code) < 400
-    except ValueError:
-        return False
 
 
 def _is_metric_namespace_opted_in() -> bool:

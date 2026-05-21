@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM mcr.microsoft.com/mirror/docker/library/python:3.12-slim
 
 WORKDIR /app
 

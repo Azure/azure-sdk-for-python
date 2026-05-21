@@ -485,6 +485,7 @@ from azure.core.pipeline.policies import (
 | HttpLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | logger | x | x | If specified, it will be used to log information |
 |  |  | http_logging_level | x | x | The logging level to use for HTTP request and response logs. Defaults to `logging.INFO`. |
+|  |  | allowed_query_params | x |  | Additional URL query parameters to allow in logs. These are additive to the default allowlist (which includes `api-version`). Applies to `DistributedTracingPolicy` as well. |
 | ContentDecodePolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | response_encoding | x | x | The encoding to use if known for this service (will disable auto-detection). |
 | ProxyPolicy | SansIOHTTPPolicy |  |  |  |  |
@@ -495,6 +496,7 @@ from azure.core.pipeline.policies import (
 | DistributedTracingPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | network_span_namer | x | x | A callable to customize the span name. |
 |  |  | tracing_attributes | x | x | Attributes to set on all created spans. |
+|  |  | allowed_query_params | x | | Additional URL query parameters to allow in span attributes. These are additive to the default allowlist (which includes `api-version`). Applies to `HttpLoggingPolicy` as well. |
 | --- | --- | --- | --- | --- | --- |
 | RedirectPolicy | HTTPPolicy |  |  |  |  |
 |  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to `True`. |
@@ -757,9 +759,9 @@ The following environment variables are recognized by `azure-core`. They are res
 
 | Variable | Description | Accepted Values | Default |
 | --- | --- | --- | --- |
-| `AZURE_LOG_LEVEL` | Logging level for all Azure SDK clients. | `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG` (case-insensitive) | `INFO` |
-| `AZURE_TRACING_ENABLED` | Enable/disable distributed tracing. | `true`/`false`, `yes`/`no`, `1`/`0`, `on`/`off` (case-insensitive) | Auto-detected based on `AZURE_SDK_TRACING_IMPLEMENTATION` |
-| `AZURE_SDK_TRACING_IMPLEMENTATION` | Tracing implementation to use. Requires the corresponding plugin package (`azure-core-tracing-opentelemetry`). | `opentelemetry` | None |
+| `AZURE_LOG_LEVEL` | Logging level for all Azure SDK clients. Invalid values fall back to `INFO` with a warning. | `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`, `VERBOSE` (case-insensitive; `VERBOSE` treated as `DEBUG`) | `INFO` |
+| `AZURE_TRACING_ENABLED` | Enable/disable distributed tracing. Invalid values fall back to the default with a warning. | `true`/`false`, `yes`/`no`, `1`/`0`, `on`/`off` (case-insensitive) | Auto-detected based on `AZURE_SDK_TRACING_IMPLEMENTATION` |
+| `AZURE_SDK_TRACING_IMPLEMENTATION` | Tracing implementation to use. Requires the corresponding plugin package (`azure-core-tracing-opentelemetry`). Invalid values fall back to the default with a warning. | `opentelemetry` | None |
 | `AZURE_SDK_CLOUD_CONF` | Azure cloud environment. | `AZURE_PUBLIC_CLOUD`, `AZURE_CHINA_CLOUD`, `AZURE_US_GOVERNMENT` | `AZURE_PUBLIC_CLOUD` |
 
 These settings can also be read or set programmatically:

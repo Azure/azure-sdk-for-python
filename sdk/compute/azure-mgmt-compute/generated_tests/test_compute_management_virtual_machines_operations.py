@@ -25,7 +25,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.get(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -112,6 +112,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                                         "time": "2020-02-20 00:00:00",
                                     }
                                 ],
+                                "storageAlignmentStatus": "str",
                             }
                         ],
                         "extensions": [
@@ -350,6 +351,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                     "priority": "str",
                     "provisioningState": "str",
                     "proximityPlacementGroup": {"id": "str"},
+                    "resiliencyProfile": {"zoneMovement": {"isEnabled": bool}},
                     "scheduledEventsPolicy": {
                         "allInstancesDown": {"automaticallyApprove": bool},
                         "scheduledEventsAdditionalPublishingTargets": {
@@ -400,6 +402,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                                 },
                                 "name": "str",
                                 "sourceResource": {"id": "str"},
+                                "storageFaultDomainAlignment": "str",
                                 "toBeDetached": bool,
                                 "vhd": {"uri": "str"},
                                 "writeAcceleratorEnabled": bool,
@@ -420,7 +423,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                             "createOption": "str",
                             "caching": "str",
                             "deleteOption": "str",
-                            "diffDiskSettings": {"option": "str", "placement": "str"},
+                            "diffDiskSettings": {"enableFullCaching": bool, "option": "str", "placement": "str"},
                             "diskSizeGB": 0,
                             "encryptionSettings": {
                                 "diskEncryptionKey": {"secretUrl": "str", "sourceVault": {"id": "str"}},
@@ -439,6 +442,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                             },
                             "name": "str",
                             "osType": "str",
+                            "storageFaultDomainAlignment": "str",
                             "vhd": {"uri": "str"},
                             "writeAcceleratorEnabled": bool,
                         },
@@ -514,7 +518,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -594,6 +598,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                                         "time": "2020-02-20 00:00:00",
                                     }
                                 ],
+                                "storageAlignmentStatus": "str",
                             }
                         ],
                         "extensions": [
@@ -832,6 +837,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                     "priority": "str",
                     "provisioningState": "str",
                     "proximityPlacementGroup": {"id": "str"},
+                    "resiliencyProfile": {"zoneMovement": {"isEnabled": bool}},
                     "scheduledEventsPolicy": {
                         "allInstancesDown": {"automaticallyApprove": bool},
                         "scheduledEventsAdditionalPublishingTargets": {
@@ -882,6 +888,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                                 },
                                 "name": "str",
                                 "sourceResource": {"id": "str"},
+                                "storageFaultDomainAlignment": "str",
                                 "toBeDetached": bool,
                                 "vhd": {"uri": "str"},
                                 "writeAcceleratorEnabled": bool,
@@ -902,7 +909,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                             "createOption": "str",
                             "caching": "str",
                             "deleteOption": "str",
-                            "diffDiskSettings": {"option": "str", "placement": "str"},
+                            "diffDiskSettings": {"enableFullCaching": bool, "option": "str", "placement": "str"},
                             "diskSizeGB": 0,
                             "encryptionSettings": {
                                 "diskEncryptionKey": {"secretUrl": "str", "sourceVault": {"id": "str"}},
@@ -921,6 +928,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                             },
                             "name": "str",
                             "osType": "str",
+                            "storageFaultDomainAlignment": "str",
                             "vhd": {"uri": "str"},
                             "writeAcceleratorEnabled": bool,
                         },
@@ -933,7 +941,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "zones": ["str"],
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -945,7 +953,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_delete(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -956,7 +964,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     def test_virtual_machines_list(self, resource_group):
         response = self.client.virtual_machines.list(
             resource_group_name=resource_group.name,
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -966,7 +974,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_virtual_machines_list_all(self, resource_group):
         response = self.client.virtual_machines.list_all(
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -978,7 +986,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_assess_patches(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1003,7 +1011,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                 ],
                 "dataDisksToDetach": [{"diskId": "str", "detachOption": "str"}],
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1016,7 +1024,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vm_name="str",
             parameters={"destinationContainerName": "str", "overwriteVhds": bool, "vhdPrefix": "str"},
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1028,7 +1036,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_convert_to_managed_disks(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1040,7 +1048,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_deallocate(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1052,7 +1060,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.generalize(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -1083,7 +1091,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                     "patchNameMasksToInclude": ["str"],
                 },
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1095,7 +1103,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.instance_view(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -1107,7 +1115,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_perform_maintenance(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1119,7 +1127,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_power_off(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1131,7 +1139,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_reapply(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1143,7 +1151,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_redeploy(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1155,7 +1163,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_reimage(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1167,7 +1175,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_restart(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1179,7 +1187,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.retrieve_boot_diagnostics_data(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -1191,7 +1199,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.simulate_eviction(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -1203,7 +1211,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_start(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1215,7 +1223,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.list_available_sizes(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -1228,7 +1236,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vm_name="str",
             parameters={"commandId": "str", "parameters": [{"name": "str", "value": "str"}], "script": ["str"]},
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1240,7 +1248,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_migrate_to_vm_scale_set(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1251,7 +1259,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     def test_virtual_machines_list_by_location(self, resource_group):
         response = self.client.virtual_machines.list_by_location(
             location="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

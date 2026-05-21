@@ -3678,15 +3678,15 @@ class BetaAgentsOperations:
 
     @distributed_trace_async
     async def _upload_session_file(
-        self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
+        self, agent_name: str, agent_session_id: str, content: bytes, *, path: str, **kwargs: Any
     ) -> _models.SessionFileWriteResponse:
         """Upload a file to the session sandbox via binary stream. Maximum file size is 50 MB. Uploads
         exceeding this limit return 413 Payload Too Large.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
+        :param agent_session_id: The session ID. Required.
+        :type agent_session_id: str
         :param content: Required.
         :type content: bytes
         :keyword path: The destination file path within the sandbox, relative to the session home
@@ -3715,7 +3715,7 @@ class BetaAgentsOperations:
 
         _request = build_beta_agents_upload_session_file_request(
             agent_name=agent_name,
-            session_id=session_id,
+            agent_session_id=agent_session_id,
             path=path,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3761,14 +3761,14 @@ class BetaAgentsOperations:
 
     @distributed_trace_async
     async def download_session_file(
-        self, agent_name: str, session_id: str, *, path: str, **kwargs: Any
+        self, agent_name: str, agent_session_id: str, *, path: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Download a file from the session sandbox as a binary stream.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
+        :param agent_session_id: The session ID. Required.
+        :type agent_session_id: str
         :keyword path: The file path to download from the sandbox, relative to the session home
          directory. Required.
         :paramtype path: str
@@ -3791,7 +3791,7 @@ class BetaAgentsOperations:
 
         _request = build_beta_agents_download_session_file_request(
             agent_name=agent_name,
-            session_id=session_id,
+            agent_session_id=agent_session_id,
             path=path,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3832,15 +3832,15 @@ class BetaAgentsOperations:
 
     @distributed_trace_async
     async def get_session_files(
-        self, agent_name: str, session_id: str, *, path: str, **kwargs: Any
+        self, agent_name: str, agent_session_id: str, *, path: str, **kwargs: Any
     ) -> _models.SessionDirectoryListResponse:
         """List files and directories at a given path in the session sandbox. Returns only the immediate
         children of the specified directory (non-recursive).
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
+        :param agent_session_id: The session ID. Required.
+        :type agent_session_id: str
         :keyword path: The directory path to list, relative to the session home directory. Required.
         :paramtype path: str
         :return: SessionDirectoryListResponse. The SessionDirectoryListResponse is compatible with
@@ -3863,7 +3863,7 @@ class BetaAgentsOperations:
 
         _request = build_beta_agents_get_session_files_request(
             agent_name=agent_name,
-            session_id=session_id,
+            agent_session_id=agent_session_id,
             path=path,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3907,15 +3907,15 @@ class BetaAgentsOperations:
 
     @distributed_trace_async
     async def delete_session_file(
-        self, agent_name: str, session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
+        self, agent_name: str, agent_session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
     ) -> None:
         """Delete a file or directory from the session sandbox. If ``recursive`` is false (default) and
         the target is a non-empty directory, the API returns 409 Conflict.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
+        :param agent_session_id: The session ID. Required.
+        :type agent_session_id: str
         :keyword path: The file or directory path to delete, relative to the session home directory.
          Required.
         :paramtype path: str
@@ -3941,7 +3941,7 @@ class BetaAgentsOperations:
 
         _request = build_beta_agents_delete_session_file_request(
             agent_name=agent_name,
-            session_id=session_id,
+            agent_session_id=agent_session_id,
             path=path,
             recursive=recursive,
             api_version=self._config.api_version,

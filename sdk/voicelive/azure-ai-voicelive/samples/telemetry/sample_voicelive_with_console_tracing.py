@@ -26,7 +26,7 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint URL.
     2) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key.
-    3) AZURE_VOICELIVE_MODEL - The model deployment name (e.g., gpt-4o-realtime-preview).
+    3) AZURE_VOICELIVE_MODEL - The model deployment name (e.g., gpt-realtime).
     4) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to "true" to enable tracing.
     5) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to "true" to trace the content of
        messages, which may contain personal data. False by default.
@@ -74,7 +74,7 @@ scenario = os.path.basename(__file__)
 async def main() -> None:
     endpoint = os.environ["AZURE_VOICELIVE_ENDPOINT"]
     api_key = os.environ["AZURE_VOICELIVE_API_KEY"]
-    model = os.environ.get("AZURE_VOICELIVE_MODEL", "gpt-4o-realtime-preview")
+    model = os.environ.get("AZURE_VOICELIVE_MODEL", "gpt-realtime")
 
     credential = AzureKeyCredential(api_key)
 

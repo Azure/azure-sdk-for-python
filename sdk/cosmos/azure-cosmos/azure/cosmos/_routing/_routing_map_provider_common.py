@@ -34,6 +34,7 @@ from .. import _base, http_constants
 from .collection_routing_map import CollectionRoutingMap, _build_routing_map_from_ranges
 from . import routing_range
 from .routing_range import (
+    PKRange,
     PartitionKeyRange,
     _is_sorted_and_non_overlapping,
     _subtract_range,
@@ -122,9 +123,37 @@ def prepare_fetch_options_and_headers(
 
 
 
-class _NeedFullRefresh(Exception):
+
+def _resolve_endpoint(client: Any) -> str:
+    """Return a cache key for ``client``'s endpoint.
+
+    Falls back to ``__unknown_<id>__`` when ``client`` has no ``url_connection``
+    so unknown/mocked clients are isolated rather than collapsed into a single
+    shared cache entry.
+
+    Centralized here so the sync (``routing_map_provider``) and async
+    (``aio.routing_map_provider``) modules use exactly the same fallback shape
+    — a divergence here would silently fragment the per-endpoint shared cache.
+
+    :param client: The CosmosClient (or compatible) instance whose endpoint
+        will be used as the shared-cache key.
+    :type client: Any
+    :returns: The endpoint URL string, or a per-instance fallback key when the
+        client does not expose ``url_connection``.
+    :rtype: str
+    """
+    try:
+        return client.url_connection
+    except AttributeError:
+        return f"__unknown_{id(client)}__"
+
+
+class _IncrementalMergeFailed(Exception):
     """Sentinel raised by :func:`process_fetched_ranges` when the
-    incremental update cannot be completed and a full refresh is needed."""
+    incremental update cannot resolve all partition key ranges.
+
+    The caller decides how to recover: retry the incremental fetch
+    (if attempts remain) or fall back to a full routing-map refresh."""
 
 
 def process_fetched_ranges(
@@ -152,10 +181,9 @@ def process_fetched_ranges(
         initial load yields no ranges.
     :rtype: ~azure.cosmos._routing.collection_routing_map.CollectionRoutingMap
         or None
-    :raises _NeedFullRefresh: When the incremental path determines a
-        full refresh is required.  The caller should catch this and
-        re-invoke ``_fetch_routing_map`` with
-        ``previous_routing_map=None``.
+    :raises _IncrementalMergeFailed: When the incremental path cannot
+        resolve all ranges.  The caller catches this and either retries
+        the incremental fetch or falls back to a full refresh.
     """
     if not previous_routing_map:
         # Initial load -- build the complete map.
@@ -186,7 +214,7 @@ def process_fetched_ranges(
     # Incremental update -- merge deltas into the existing map.
     # Resolve parent chains transitively within this single delta so cascading
     # splits (A->B+C and B->D+E in one payload) can be merged incrementally.
-    range_tuples: List[Tuple[Dict[str, Any], Any]] = []
+    range_tuples: List[Tuple[Any, Any]] = []
     known_range_info_by_id = {
         pkr_id: pkr_tuple[1]
         for pkr_id, pkr_tuple in previous_routing_map._rangeById.items()  # pylint: disable=protected-access
@@ -209,7 +237,7 @@ def process_fetched_ranges(
                 next_unresolved.append(r)
                 continue
 
-            range_tuples.append((r, range_info))
+            range_tuples.append((PKRange.from_dict(r), range_info))
             known_range_info_by_id[r[PartitionKeyRange.Id]] = range_info
             progress_made = True
 
@@ -225,7 +253,7 @@ def process_fetched_ranges(
                 collection_link,
                 first_unresolved.get(PartitionKeyRange.Id),
             )
-            raise _NeedFullRefresh()
+            raise _IncrementalMergeFailed()
 
         unresolved = next_unresolved
 
@@ -236,7 +264,7 @@ def process_fetched_ranges(
             "collection '%s'. Falling back to full refresh.",
             collection_link,
         )
-        raise _NeedFullRefresh()
+        raise _IncrementalMergeFailed()
 
     return result
 

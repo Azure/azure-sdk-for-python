@@ -72,7 +72,7 @@ def main() -> None:
     # You can replace this URL with your own publicly accessible document URL.
     document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/mixed_financial_docs.pdf"
 
-    print(f"Analyzing document from URL with prebuilt-documentSearch...")
+    print("Analyzing document from URL with prebuilt-documentSearch...")
     print(f"  URL: {document_url}")
 
     poller = client.begin_analyze(
@@ -117,7 +117,7 @@ def main() -> None:
 
     range_doc_content = cast(DocumentContent, range_result.contents[0])
     print(
-        f"Content range analysis returned pages"
+        "Content range analysis returned pages"
         f" {range_doc_content.start_page_number} - {range_doc_content.end_page_number}"
     )
 
@@ -131,7 +131,7 @@ def main() -> None:
 
     combine_doc_content = cast(DocumentContent, combine_range_result.contents[0])
     print(
-        f"Combined content range analysis returned pages"
+        "Combined content range analysis returned pages"
         f" {combine_doc_content.start_page_number} - {combine_doc_content.end_page_number}"
     )
     # [END analyze_document_url_with_content_range]
@@ -142,7 +142,7 @@ def main() -> None:
     print("=" * 60)
     video_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/videos/sdk_samples/FlightSimulator.mp4"
 
-    print(f"Analyzing video from URL with prebuilt-videoSearch...")
+    print("Analyzing video from URL with prebuilt-videoSearch...")
     print(f"  URL: {video_url}")
 
     poller = client.begin_analyze(
@@ -193,7 +193,7 @@ def main() -> None:
     for range_media in video_range_result.contents:
         range_video_content = cast(AudioVisualContent, range_media)
         print(
-            f"Content range segment:"
+            "Content range segment:"
             f" {range_video_content.start_time_ms} ms - {range_video_content.end_time_ms} ms"
         )
     # [END analyze_video_url_with_content_range]
@@ -216,7 +216,7 @@ def main() -> None:
     for from_media in video_from_result.contents:
         from_video = cast(AudioVisualContent, from_media)
         print(
-            f"'10000-' segment:"
+            "'10000-' segment:"
             f" {from_video.start_time_ms} ms - {from_video.end_time_ms} ms"
         )
 
@@ -235,7 +235,7 @@ def main() -> None:
     for subsec_media in video_subsec_result.contents:
         subsec_video = cast(AudioVisualContent, subsec_media)
         print(
-            f"'1200-3651' segment:"
+            "'1200-3651' segment:"
             f" {subsec_video.start_time_ms} ms - {subsec_video.end_time_ms} ms"
         )
 
@@ -254,7 +254,7 @@ def main() -> None:
     for combine_media in video_combine_result.contents:
         combine_video = cast(AudioVisualContent, combine_media)
         print(
-            f"'0-3000,30000-' segment:"
+            "'0-3000,30000-' segment:"
             f" {combine_video.start_time_ms} ms - {combine_video.end_time_ms} ms"
         )
     # [END analyze_video_url_with_additional_content_ranges]
@@ -265,7 +265,7 @@ def main() -> None:
     print("=" * 60)
     audio_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/audio/callCenterRecording.mp3"
 
-    print(f"Analyzing audio from URL with prebuilt-audioSearch...")
+    print("Analyzing audio from URL with prebuilt-audioSearch...")
     print(f"  URL: {audio_url}")
 
     poller = client.begin_analyze(
@@ -309,7 +309,7 @@ def main() -> None:
 
     range_audio_content = cast(AudioVisualContent, audio_range_result.contents[0])
     print(
-        f"Content range audio segment:"
+        "Content range audio segment:"
         f" {range_audio_content.start_time_ms} ms - {range_audio_content.end_time_ms} ms"
     )
     # [END analyze_audio_url_with_content_range]
@@ -331,7 +331,7 @@ def main() -> None:
     audio_from_result = audio_from_poller.result()
     audio_from_content = cast(AudioVisualContent, audio_from_result.contents[0])
     print(
-        f"'10000-':"
+        "'10000-':"
         f" {audio_from_content.start_time_ms} ms - {audio_from_content.end_time_ms} ms"
     )
 
@@ -349,7 +349,7 @@ def main() -> None:
     audio_subsec_result = audio_subsec_poller.result()
     audio_subsec_content = cast(AudioVisualContent, audio_subsec_result.contents[0])
     print(
-        f"'1200-3651':"
+        "'1200-3651':"
         f" {audio_subsec_content.start_time_ms} ms - {audio_subsec_content.end_time_ms} ms"
     )
 
@@ -367,7 +367,7 @@ def main() -> None:
     audio_combine_result = audio_combine_poller.result()
     audio_combine_content = cast(AudioVisualContent, audio_combine_result.contents[0])
     print(
-        f"'0-3000,30000-':"
+        "'0-3000,30000-':"
         f" {audio_combine_content.start_time_ms} ms - {audio_combine_content.end_time_ms} ms"
     )
     # [END analyze_audio_url_with_additional_content_ranges]
@@ -378,7 +378,7 @@ def main() -> None:
     print("=" * 60)
     image_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/image/pieChart.jpg"
 
-    print(f"Analyzing image from URL with prebuilt-imageSearch...")
+    print("Analyzing image from URL with prebuilt-imageSearch...")
     print(f"  URL: {image_url}")
 
     poller = client.begin_analyze(

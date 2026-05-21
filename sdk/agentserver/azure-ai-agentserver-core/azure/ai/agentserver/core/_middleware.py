@@ -43,10 +43,36 @@ def _extract_header(headers: list[tuple[bytes, bytes]], name: bytes) -> str | No
     return None
 
 
-def _get_trace_id() -> str | None:
+def _parse_trace_id_from_traceparent(traceparent: str | None) -> str | None:
+    """Extract the trace-id field from a W3C ``traceparent`` header value.
+
+    The ``traceparent`` format is ``{version}-{trace-id}-{parent-id}-{flags}``.
+    Returns the 32-hex-character trace-id, or ``None`` on any failure.
+
+    :param traceparent: The raw traceparent header value.
+    :type traceparent: str | None
+    :return: The hex trace-id, or ``None``.
+    :rtype: str | None
+    """
+    if not traceparent:
+        return None
+    parts = traceparent.strip().split("-")
+    # W3C traceparent has exactly 4 fields: version-trace_id-parent_id-flags
+    if len(parts) >= 4 and len(parts[1]) == 32 and parts[1] != "0" * 32:
+        return parts[1]
+    return None
+
+
+def _get_trace_id(headers: list[tuple[bytes, bytes]] | None = None) -> str | None:
     """Return the current OTel trace ID hex string, or ``None``.
 
-    :return: Hex-encoded trace ID from the current OTel span, or ``None``.
+    First checks the active OTel span.  If no span is active (e.g. at
+    middleware level before a request span is created), falls back to
+    parsing the ``traceparent`` header from the raw ASGI headers.
+
+    :param headers: Optional raw ASGI headers to extract traceparent from.
+    :type headers: list[tuple[bytes, bytes]] | None
+    :return: Hex-encoded trace ID, or ``None``.
     :rtype: str | None
     """
     try:
@@ -58,6 +84,10 @@ def _get_trace_id() -> str | None:
             return format(ctx.trace_id, "032x")
     except Exception:  # pylint: disable=broad-exception-caught
         pass
+    # Fallback: parse traceparent from raw ASGI headers if available.
+    if headers:
+        traceparent = _extract_header(headers, b"traceparent")
+        return _parse_trace_id_from_traceparent(traceparent)
     return None
 
 
@@ -89,16 +119,16 @@ class InboundRequestLoggingMiddleware:
 
         request_id = _extract_header(raw_headers, b"x-request-id")
         client_request_id = _extract_header(raw_headers, b"x-ms-client-request-id")
-        trace_id = _get_trace_id()
+        trace_id = _get_trace_id(raw_headers)
 
         extra_parts: list[str] = []
         if request_id:
-            extra_parts.append(f"x-request-id={request_id}")
+            extra_parts.append(f"x-request-id: {request_id}")
         if client_request_id:
-            extra_parts.append(f"x-ms-client-request-id={client_request_id}")
+            extra_parts.append(f"x-ms-client-request-id: {client_request_id}")
         if trace_id:
-            extra_parts.append(f"trace_id={trace_id}")
-        extra_str = f" [{', '.join(extra_parts)}]" if extra_parts else ""
+            extra_parts.append(f"trace-id: {trace_id}")
+        extra_str = f" ({', '.join(extra_parts)})" if extra_parts else ""
 
         logger.info("Inbound %s %s started%s", method, path, extra_str)
 

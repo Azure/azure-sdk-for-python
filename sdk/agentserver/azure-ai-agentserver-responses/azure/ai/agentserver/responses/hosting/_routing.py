@@ -168,7 +168,11 @@ class ResponsesAgentServerHost(AgentServerHost):
                     )
 
         resolved_provider: ResponseProviderProtocol = store if store is not None else InMemoryResponseProvider()
-        stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) else None
+        stream_provider: ResponseStreamProviderProtocol = (
+            resolved_provider
+            if isinstance(resolved_provider, ResponseStreamProviderProtocol)
+            else InMemoryResponseProvider()
+        )
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(
             create_fn=self._dispatch_create,

@@ -5,14 +5,13 @@
 # --------------------------------------------------------------------------
 
 import base64
-import hashlib
 import logging
 import random
 import re
 import uuid
-from io import SEEK_SET, UnsupportedOperation
+from io import BytesIO, SEEK_SET, UnsupportedOperation
 from time import time
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING, Union
 from urllib.parse import (
     parse_qsl,
     urlencode,
@@ -32,8 +31,20 @@ from azure.core.pipeline.policies import (
 )
 
 from .authentication import AzureSigningError, StorageHttpChallenge
-from .constants import DEFAULT_OAUTH_SCOPE
+from .constants import DEFAULT_OAUTH_SCOPE, DATA_BLOCK_SIZE
 from .models import LocationMode, StorageErrorCode
+from .streams import (
+    StructuredMessageDecoder,
+    StructuredMessageEncodeStream,
+    StructuredMessageProperties,
+)
+from .validation import (
+    CV_TYPE_ERROR_MSG,
+    calculate_content_md5,
+    calculate_crc64_bytes,
+    is_crc64_validation,
+    is_md5_validation,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -44,9 +55,15 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
+CONTENT_LENGTH_HEADER = "Content-Length"
+MD5_HEADER = "Content-MD5"
+CRC64_HEADER = "x-ms-content-crc64"
+SM_HEADER = "x-ms-structured-body"
+SM_HEADER_V1_CRC64 = "XSM/1.0; properties=crc64"
+SM_LENGTH_HEADER = "x-ms-structured-content-length"
 
 
-def encode_base64(data):
+def encode_base64(data: Union[bytes, str]) -> str:
     if isinstance(data, str):
         data = data.encode("utf-8")
     encoded = base64.b64encode(data)
@@ -55,7 +72,12 @@ def encode_base64(data):
 
 # Are we out of retries?
 def is_exhausted(settings):
-    retry_counts = (settings["total"], settings["connect"], settings["read"], settings["status"])
+    retry_counts = (
+        settings["total"],
+        settings["connect"],
+        settings["read"],
+        settings["status"],
+    )
     retry_counts = list(filter(None, retry_counts))
     if not retry_counts:
         return False
@@ -101,11 +123,15 @@ def is_retry(response, mode):  # pylint: disable=too-many-return-statements
     return False
 
 
-def is_checksum_retry(response):
-    # retry if invalid content md5
-    if response.context.get("validate_content", False) and response.http_response.headers.get("content-md5"):
+def is_checksum_retry(response) -> bool:
+    validate_content = response.context.get("validate_content", False)
+    if not validate_content:
+        return False
+
+    # Legacy code - evaluate retry only on validate_content=True
+    if validate_content is True and response.http_response.headers.get("content-md5"):
         computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
-            StorageContentValidation.get_content_md5(response.http_response.body())
+            calculate_content_md5(response.http_response.body())
         )
         if response.http_response.headers["content-md5"] != computed_md5:
             return True
@@ -237,7 +263,16 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                         parsed_qs["sig"] = "*****"
 
                         # the SAS needs to be put back together
-                        value = urlunparse((scheme, netloc, path, params, urlencode(parsed_qs), fragment))
+                        value = urlunparse(
+                            (
+                                scheme,
+                                netloc,
+                                path,
+                                params,
+                                urlencode(parsed_qs),
+                                fragment,
+                            )
+                        )
 
                     _LOGGER.debug("    %r: %r", header, value)
                 _LOGGER.debug("Request body:")
@@ -352,64 +387,113 @@ class StorageResponseHook(HTTPPolicy):
         return response
 
 
-class StorageContentValidation(SansIOHTTPPolicy):
-    """A simple policy that sends the given headers
-    with the request.
+def _prepare_content_validation(request: "PipelineRequest") -> None:
+    validate_content = request.context.options.pop("validate_content", False)
+    if not validate_content:
+        return
 
-    This will overwrite any headers already defined in the request.
-    """
+    # Download
+    if request.http_request.method == "GET":
+        if is_crc64_validation(validate_content):
+            request.http_request.headers[SM_HEADER] = SM_HEADER_V1_CRC64
 
-    header_name = "Content-MD5"
-
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        super(StorageContentValidation, self).__init__()
-
-    @staticmethod
-    def get_content_md5(data):
+    # Upload
+    else:
         # Since HTTP does not differentiate between no content and empty content,
         # we have to perform a None check.
-        data = data or b""
-        md5 = hashlib.md5()  # nosec
-        if isinstance(data, bytes):
-            md5.update(data)
-        elif hasattr(data, "read"):
-            pos = 0
-            try:
-                pos = data.tell()
-            except:  # pylint: disable=bare-except
-                pass
-            for chunk in iter(lambda: data.read(4096), b""):
-                md5.update(chunk)
-            try:
-                data.seek(pos, SEEK_SET)
-            except (AttributeError, IOError) as exc:
-                raise ValueError("Data should be bytes or a seekable file-like object.") from exc
-        else:
-            raise ValueError("Data should be bytes or a seekable file-like object.")
+        data = request.http_request.data or b""
+        if is_md5_validation(validate_content):
+            computed_md5 = encode_base64(calculate_content_md5(data))
+            request.http_request.headers[MD5_HEADER] = computed_md5
+            request.context["validate_content_md5"] = computed_md5
 
-        return md5.digest()
+        elif is_crc64_validation(validate_content):
+            # For crc64-sm, force structured message even for bytes
+            if validate_content == "crc64-sm" and isinstance(data, bytes):
+                data = BytesIO(data)
+
+            if isinstance(data, bytes):
+                request.http_request.headers[CRC64_HEADER] = encode_base64(calculate_crc64_bytes(data))
+            elif hasattr(data, "read"):
+                content_length = int(request.http_request.headers.get(CONTENT_LENGTH_HEADER))
+                # Wrap data in structured message stream and adjust HTTP request
+                sm_stream = StructuredMessageEncodeStream(data, content_length, StructuredMessageProperties.CRC64)
+                request.http_request.data = sm_stream
+                request.http_request.headers[CONTENT_LENGTH_HEADER] = str(len(sm_stream))
+                request.http_request.headers[SM_LENGTH_HEADER] = str(content_length)
+                request.http_request.headers[SM_HEADER] = SM_HEADER_V1_CRC64
+            else:
+                raise ValueError(CV_TYPE_ERROR_MSG)
+
+    request.context["validate_content"] = validate_content
+
+
+def _validate_content_response(
+    request: "PipelineRequest",
+    response: "PipelineResponse",
+    decoder_cls: type,
+) -> None:
+    validate_content = response.context.get("validate_content", False)
+    if not validate_content:
+        return
+
+    if is_md5_validation(validate_content) and response.http_response.headers.get("content-md5"):
+        computed_md5 = request.context.get("validate_content_md5") or encode_base64(
+            calculate_content_md5(response.http_response.body())
+        )
+        if response.http_response.headers["content-md5"] != computed_md5:
+            raise AzureError(
+                (
+                    f"MD5 mismatch. Expected value is '{response.http_response.headers['content-md5']}', "
+                    f"computed value is '{computed_md5}'."
+                ),
+                response=response.http_response,
+            )
+
+    elif is_crc64_validation(validate_content):
+        # For upload and download verify structured message header present in response if provided in request.
+        sm_request = request.http_request.headers.get(SM_HEADER)
+        sm_response = response.http_response.headers.get(SM_HEADER)
+        if sm_request != sm_response:
+            raise AzureError(
+                (
+                    f"Expected structured message header in response does not match request. "
+                    f"Request: {sm_request}, Response: {sm_response}"
+                ),
+                response=response.http_response,
+            )
+
+        if response.http_request.method == "GET":
+            # Raises exception if missing
+            content_length = int(response.http_response.headers[CONTENT_LENGTH_HEADER])
+
+            # Patch response to return response iterator wrapped in structured message decoder
+            original_stream_download = response.http_response.stream_download
+
+            def wrapped_stream_download(*args, **kwargs):
+                iterator = original_stream_download(*args, **kwargs)
+                decoder = decoder_cls(iterator, content_length, block_size=DATA_BLOCK_SIZE)
+                decoder.request = iterator.request  # type: ignore
+                decoder.response = iterator.response  # type: ignore
+                return decoder
+
+            response.http_response.stream_download = wrapped_stream_download
+
+
+class StorageContentValidation(SansIOHTTPPolicy):
+    """A pipeline policy that performs content validation on uploads and downloads when enabled by the user.
+    This is enabled by setting the "validate_content" key in the request context. When enabled, this policy will
+    calculate and verify content checksums for uploads and downloads, and raise an exception if a mismatch is detected.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+        super().__init__()
 
     def on_request(self, request: "PipelineRequest") -> None:
-        validate_content = request.context.options.pop("validate_content", False)
-        if validate_content and request.http_request.method != "GET":
-            computed_md5 = encode_base64(StorageContentValidation.get_content_md5(request.http_request.data))
-            request.http_request.headers[self.header_name] = computed_md5
-            request.context["validate_content_md5"] = computed_md5
-        request.context["validate_content"] = validate_content
+        _prepare_content_validation(request)
 
     def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
-        if response.context.get("validate_content", False) and response.http_response.headers.get("content-md5"):
-            computed_md5 = request.context.get("validate_content_md5") or encode_base64(
-                StorageContentValidation.get_content_md5(response.http_response.body())
-            )
-            if response.http_response.headers["content-md5"] != computed_md5:
-                raise AzureError(
-                    (
-                        f"MD5 mismatch. Expected value is '{response.http_response.headers['content-md5']}', "
-                        f"computed value is '{computed_md5}'."
-                    ),
-                    response=response.http_response,
-                )
+        _validate_content_response(request, response, StructuredMessageDecoder)
 
 
 class StorageRetryPolicy(HTTPPolicy):
@@ -456,7 +540,7 @@ class StorageRetryPolicy(HTTPPolicy):
     def configure_retries(self, request: "PipelineRequest") -> Dict[str, Any]:
         """
         Configure the retry settings for the request.
-        
+
         :param request: A pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: A dictionary containing the retry settings.
@@ -496,7 +580,7 @@ class StorageRetryPolicy(HTTPPolicy):
 
     def sleep(self, settings, transport):
         """Sleep for the backoff time.
-        
+
         :param Dict[str, Any] settings: The configurable values pertaining to the sleep operation.
         :param transport: The transport to use for sleeping.
         :type transport:
@@ -570,7 +654,7 @@ class StorageRetryPolicy(HTTPPolicy):
 
     def send(self, request):
         """Send the request with retry logic.
-        
+
         :param request: A pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: A pipeline response object.
@@ -584,11 +668,16 @@ class StorageRetryPolicy(HTTPPolicy):
                 response = self.next.send(request)
                 if is_retry(response, retry_settings["mode"]) or is_checksum_retry(response):
                     retries_remaining = self.increment(
-                        retry_settings, request=request.http_request, response=response.http_response
+                        retry_settings,
+                        request=request.http_request,
+                        response=response.http_response,
                     )
                     if retries_remaining:
                         retry_hook(
-                            retry_settings, request=request.http_request, response=response.http_response, error=None
+                            retry_settings,
+                            request=request.http_request,
+                            response=response.http_response,
+                            error=None,
                         )
                         self.sleep(retry_settings, request.context.transport)
                         continue
@@ -598,7 +687,12 @@ class StorageRetryPolicy(HTTPPolicy):
                     raise
                 retries_remaining = self.increment(retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
-                    retry_hook(retry_settings, request=request.http_request, response=None, error=err)
+                    retry_hook(
+                        retry_settings,
+                        request=request.http_request,
+                        response=None,
+                        error=err,
+                    )
                     self.sleep(retry_settings, request.context.transport)
                     continue
                 raise err
@@ -705,7 +799,7 @@ class LinearRetry(StorageRetryPolicy):
         self.random_jitter_range = random_jitter_range
         super(LinearRetry, self).__init__(retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:  # pylint: disable=unused-argument
         """
         Calculates how long to sleep before retrying.
 
@@ -731,11 +825,11 @@ class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
 
     def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Handle the challenge from the service and authorize the request.
-        
+
         :param request: The request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: The response object.
-        :type response: ~azure.core.pipeline.PipelineResponse        
+        :type response: ~azure.core.pipeline.PipelineResponse
         :return: True if the request was authorized, False otherwise.
         :rtype: bool
         """

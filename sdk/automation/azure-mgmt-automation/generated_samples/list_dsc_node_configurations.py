@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2022-08-08/examples/listDscNodeConfigurations.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2018-01-15/examples/listDscNodeConfigurations.json
 if __name__ == "__main__":
     main()

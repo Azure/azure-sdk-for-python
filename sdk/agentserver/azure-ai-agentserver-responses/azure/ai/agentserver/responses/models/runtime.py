@@ -126,6 +126,8 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         self.chat_isolation_key = chat_isolation_key
         self.response_created_signal: asyncio.Event = asyncio.Event()
         self.response_failed_before_events: bool = False
+        self.persistence_failed: bool = False
+        self.persistence_exception: Exception | None = None
 
     def transition_to(self, next_status: ResponseStatus) -> None:
         """Transition this execution to a valid lifecycle status.
@@ -357,6 +359,7 @@ def build_failed_response(
     model: str | None,
     created_at: datetime | None = None,
     error_message: str = "An internal server error occurred.",
+    error_code: str = "server_error",
 ) -> ResponseObject:
     """Build a ResponseObject representing a failed terminal state.
 
@@ -370,6 +373,8 @@ def build_failed_response(
     :type created_at: datetime | None
     :param error_message: Human-readable error message.
     :type error_message: str
+    :param error_code: Error code string (e.g. ``"server_error"`` or ``"storage_error"``).
+    :type error_code: str
     :returns: A Response object with status ``"failed"`` and empty output.
     :rtype: ResponseObject
     """
@@ -381,7 +386,7 @@ def build_failed_response(
         "status": "failed",
         "model": model,
         "output": [],
-        "error": {"code": "server_error", "message": error_message},
+        "error": {"code": error_code, "message": error_message},
     }
     if created_at is not None:
         payload["created_at"] = created_at.isoformat()

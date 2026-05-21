@@ -14,6 +14,7 @@ from .models import CreateResponse, ResponseObject
 from .models._helpers import (
     get_conversation_id,
     get_input_expanded,
+    to_output_item,
 )
 from .store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from .store._foundry_errors import (
@@ -50,4 +51,5 @@ __all__ = [
     "ResponseObject",
     "get_conversation_id",
     "get_input_expanded",
+    "to_output_item",
 ]

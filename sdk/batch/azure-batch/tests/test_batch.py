@@ -1032,7 +1032,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Get File from Batch Node
         file_length = 0
         with io.BytesIO() as file_handle:
-            response = await wrap_file_result(client.get_node_file(batch_pool.name, node, only_files[1].name))
+            response = await wrap_file_result(client.download_node_file(batch_pool.name, node, only_files[1].name))
             for data in response:
                 file_length += len(data)
         assert file_length == props.content_length
@@ -1061,7 +1061,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Get File from Task
         file_length = 0
         with io.BytesIO() as file_handle:
-            response = await wrap_file_result(client.get_task_file(batch_job.id, task_id, only_files[0].name))
+            response = await wrap_file_result(client.download_task_file(batch_job.id, task_id, only_files[0].name))
             for data in response:
                 file_length += len(data)
         assert file_length == props.content_length
@@ -1126,7 +1126,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                         container_url=container_url, path="taskLogs/output.txt"
                     )
                 ),
-                upload_options=models.OutputFileUploadConfig(
+                upload_options=models.OutputFileUploadConfiguration(
                     upload_condition=models.OutputFileUploadCondition.TASK_COMPLETION
                 ),
             ),
@@ -1137,7 +1137,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                         container_url=container_url, path="taskLogs/error.txt"
                     )
                 ),
-                upload_options=models.OutputFileUploadConfig(
+                upload_options=models.OutputFileUploadConfiguration(
                     upload_condition=models.OutputFileUploadCondition.TASK_FAILURE
                 ),
             ),
@@ -1242,7 +1242,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Get Subtasks
         # TODO: Test with actual subtasks
-        subtasks = list(await wrap_list_result(client.list_sub_tasks(batch_job.id, task_param.id)))
+        subtasks = list(await wrap_list_result(client.list_subtasks(batch_job.id, task_param.id)))
         assert isinstance(subtasks, Iterable)
 
         # Test Delete Task

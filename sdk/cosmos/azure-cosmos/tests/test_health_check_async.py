@@ -4,6 +4,7 @@
 import asyncio
 import time
 import unittest
+import unittest.mock
 import uuid
 from typing import List
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -421,6 +422,139 @@ class TestHealthCheckAsync:
             # it fetches the database account
             assert fetch_was_called['called'], \
                 "With _aenter_used=True and database_account=None, should still fetch database account"
+
+            await client.close()
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
+
+    async def test_health_check_overwrites_stale_cache_mutations_async(self, setup):
+        """
+        Verify that the background health check task overwrites any stale direct
+        mutations to routing contexts. This documents WHY tests that manipulate
+        cache state must cancel the background task first.
+        """
+        from azure.cosmos._location_cache import RegionalRoutingContext
+
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
+            self.MockGetDatabaseAccount(REGIONS))
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            await client.__aenter__()
+            gem = client.client_connection._global_endpoint_manager
+            location_cache = gem.location_cache
+
+            # Wait for initial health check to complete
+            await asyncio.sleep(2)
+
+            # Now directly mutate the read_regional_routing_contexts (simulating what old tests did)
+            fake_contexts = [
+                RegionalRoutingContext("https://fake-region1.documents.azure.com"),
+                RegionalRoutingContext("https://fake-region2.documents.azure.com"),
+            ]
+            location_cache.read_regional_routing_contexts = fake_contexts
+
+            # Verify our mutation took effect
+            assert location_cache.read_regional_routing_contexts == fake_contexts
+
+            # Trigger a refresh that will run update_location_cache
+            gem.refresh_needed = True
+            gem.startup = False
+
+            # Do an operation to trigger the refresh cycle
+            self.original_health_check_method = _cosmos_client_connection_async.CosmosClientConnection.health_check
+            mock_probe = self.MockHealthCheckProbe()
+            _cosmos_client_connection_async.CosmosClientConnection.health_check = mock_probe
+
+            # Force a cache update (simulates what the health check does on completion)
+            location_cache.update_location_cache()
+
+            # The stale mutation should be overwritten by recalculation from account data
+            current_contexts = location_cache.read_regional_routing_contexts
+            current_endpoints = [ctx.get_primary() for ctx in current_contexts]
+            assert "https://fake-region1.documents.azure.com" not in current_endpoints, \
+                "Stale direct mutations should be overwritten by update_location_cache()"
+            assert "https://fake-region2.documents.azure.com" not in current_endpoints, \
+                "Stale direct mutations should be overwritten by update_location_cache()"
+
+            await client.close()
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+            if hasattr(self, 'original_health_check_method'):
+                _cosmos_client_connection_async.CosmosClientConnection.health_check = self.original_health_check_method
+
+    async def test_retry_policy_unaffected_by_concurrent_cache_refresh_async(self, setup):
+        """
+        Verify that the retry policy's failover_retry_count is unaffected by
+        a mid-flight update_location_cache() call. The retry counter lives on
+        the policy object, not in the location cache.
+        """
+        from azure.cosmos._service_request_retry_policy import ServiceRequestRetryPolicy
+        from azure.cosmos._location_cache import RegionalRoutingContext
+        from azure.cosmos._request_object import RequestObject
+        from azure.cosmos.documents import _OperationType
+        from azure.cosmos.http_constants import ResourceType
+
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
+            self.MockGetDatabaseAccount(REGIONS))
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            await client.__aenter__()
+            gem = client.client_connection._global_endpoint_manager
+            location_cache = gem.location_cache
+
+            # Wait for initial setup
+            await asyncio.sleep(2)
+
+            # Cancel background task to have deterministic control
+            if hasattr(gem, 'refresh_task') and gem.refresh_task and not gem.refresh_task.done():
+                gem.refresh_task.cancel()
+                try:
+                    await gem.refresh_task
+                except BaseException:
+                    pass
+
+            # Setup: ensure we have multiple read regions
+            read_contexts = location_cache.read_regional_routing_contexts
+            assert len(read_contexts) >= 2, "Need at least 2 read regions for this test"
+
+            # Create a retry policy
+            request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+            request.location_endpoint_to_route = read_contexts[0].get_primary()
+
+            mock_gem = unittest.mock.Mock()
+            mock_gem.location_cache = location_cache
+            mock_gem.resolve_service_endpoint_for_partition.return_value = read_contexts[1].get_primary()
+            mock_gem.mark_endpoint_unavailable_for_read = location_cache.mark_endpoint_unavailable_for_read
+
+            mock_connection_policy = unittest.mock.Mock()
+            mock_connection_policy.EnableEndpointDiscovery = True
+            mock_pk_range_wrapper = unittest.mock.Mock()
+
+            retry_policy = ServiceRequestRetryPolicy(
+                mock_connection_policy, mock_gem, mock_pk_range_wrapper, request)
+
+            # First retry should succeed
+            should_retry = retry_policy.ShouldRetry()
+            assert should_retry is True
+            assert retry_policy.failover_retry_count == 1
+
+            # Now simulate a concurrent cache refresh mid-flight
+            location_cache.update_location_cache()
+
+            # The retry count should be unaffected by the cache refresh
+            assert retry_policy.failover_retry_count == 1, \
+                "Retry count should not be affected by concurrent cache refresh"
+
+            # Second retry attempt — count should increment normally
+            mock_gem.resolve_service_endpoint_for_partition.return_value = read_contexts[0].get_primary()
+            should_retry_again = retry_policy.ShouldRetry()
+            assert retry_policy.failover_retry_count == 2, \
+                "Retry count should increment normally regardless of cache refresh"
 
             await client.close()
         finally:

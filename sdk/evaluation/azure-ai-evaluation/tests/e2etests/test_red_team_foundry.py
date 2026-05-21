@@ -910,11 +910,30 @@ class TestRedTeamFoundry:
         assert result.attack_details is not None
         assert len(result.attack_details) > 0
 
+        # Require that at least one multi_turn attack actually produced a result.
+        # Without this check, a silent failure during scoring/generation that drops
+        # the multi_turn attack from `attack_details` would still let the test pass
+        # (the loop below would only see baseline). Regressions in the multi-turn
+        # code path must surface as test failures.
+        multi_turn_attacks = [a for a in result.attack_details if a.get("attack_technique") == "multi_turn"]
+        assert len(multi_turn_attacks) >= 1, (
+            "Expected at least one multi_turn attack in result.attack_details, "
+            f"got attack_techniques={[a.get('attack_technique') for a in result.attack_details]}"
+        )
+
         for attack in result.attack_details:
             conversation = attack["conversation"]
             if attack["attack_technique"] == "multi_turn":
-                # Multi-turn attacks attempt multiple turns but may terminate early
-                assert len(conversation) >= 2, "Multi-turn attack should have at least 2 messages"
+                # Multi-turn attacks must execute at least 2 full turns (>= 4 messages).
+                # The previous threshold (>= 2) was satisfied by a single user/assistant
+                # exchange, so it would silently pass even when the multi-turn loop
+                # crashed after the first turn (e.g. the PyRIT 0.11
+                # `_generate_next_prompt_async` deepcopy / sqlite UNIQUE-constraint
+                # regression). Requiring >= 4 messages ensures `_generate_next_prompt_async`
+                # was invoked successfully a second time.
+                assert (
+                    len(conversation) >= 4
+                ), f"Multi-turn attack should produce at least 2 turns (>=4 messages); got {len(conversation)}"
             else:
                 assert len(conversation) >= 2
 

@@ -1,6 +1,7 @@
 import re
 import sys
 import os
+from packaging.version import Version
 import ast
 import shutil
 from importlib.util import find_spec
@@ -68,6 +69,11 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         _LOGGER.warning(f"Failed to get version info from PyPI for {package_name}: {e}")
         last_version = ""
         last_stable_release = ""
+
+    # Ignore 0.0.0 when it appears on PyPI as a placeholder or name-reservation version.
+    if last_version and Version(last_version).base_version == "0.0.0":
+        return "", ""
+
     return last_version, str(last_stable_release)
 
 

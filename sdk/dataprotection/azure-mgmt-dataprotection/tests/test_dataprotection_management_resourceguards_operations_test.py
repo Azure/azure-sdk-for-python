@@ -12,6 +12,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = "eastus"
 
+
 @pytest.mark.live_test_only
 class TestDataProtectionManagementResourceGuardsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
@@ -31,4 +32,4 @@ class TestDataProtectionManagementResourceGuardsOperations(AzureMgmtRecordedTest
     def test_list_by_subscription(self, resource_group):
         response = self.client.resource_guards.get_resources_in_subscription()
         result = [r for r in response]
-        assert response
+        assert len(result)

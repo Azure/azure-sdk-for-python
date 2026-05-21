@@ -16,6 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ConfidentialLedgerClientConfiguration
 from ._operations import _ConfidentialLedgerClientOperationsMixin
+from ._redirect_caching_policy import RedirectCachingPolicy
 from ._utils.serialization import Deserializer, Serializer
 
 
@@ -46,7 +47,7 @@ class ConfidentialLedgerClient(_ConfidentialLedgerClientOperationsMixin):
                 self._config.user_agent_policy,
                 self._config.proxy_policy,
                 policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
+                kwargs.get("redirect_policy") or RedirectCachingPolicy(**kwargs),
                 self._config.retry_policy,
                 self._config.authentication_policy,
                 self._config.custom_hook_policy,

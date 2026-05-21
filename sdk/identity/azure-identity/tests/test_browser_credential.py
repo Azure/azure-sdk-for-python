@@ -167,7 +167,40 @@ def test_redirect_server(get_token_method):
     response = urllib.request.urlopen(url)  # nosec
 
     assert response.code == 200
-    assert server.query_params[expected_param] == expected_value
+    assert server.auth_response[expected_param] == expected_value
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_redirect_server_post(get_token_method):
+    """The redirect server should handle POST requests with form-encoded bodies (form_post response mode)"""
+
+    server = None
+    hostname = "127.0.0.1"
+    for _ in range(4):
+        try:
+            port = random.randint(1024, 65535)
+            server = AuthCodeRedirectServer(hostname, port, timeout=10)
+            break
+        except socket.error:
+            continue
+
+    assert server, "failed to start redirect server"
+
+    expected_param = "code"
+    expected_value = "test-auth-code"
+
+    thread = threading.Thread(target=server.wait_for_redirect)
+    thread.daemon = True
+    thread.start()
+
+    # send a POST request with form-encoded body, simulating form_post response mode
+    url = "http://{}:{}".format(hostname, port)
+    data = urllib.parse.urlencode({expected_param: expected_value}).encode("utf-8")
+    request = urllib.request.Request(url, data=data, headers={"Content-Type": "application/x-www-form-urlencoded"})
+    response = urllib.request.urlopen(request)  # nosec
+
+    assert response.code == 200
+    assert server.auth_response[expected_param] == expected_value
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)

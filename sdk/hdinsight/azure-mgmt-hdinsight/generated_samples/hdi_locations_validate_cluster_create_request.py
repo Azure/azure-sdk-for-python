@@ -98,7 +98,6 @@ def main():
                     "storageaccounts": [
                         {
                             "container": "contianername",
-                            "enableSecureChannel": True,
                             "isDefault": True,
                             "key": "*******",
                             "name": "storagename.blob.core.windows.net",
@@ -116,6 +115,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2025-01-15-preview/examples/HDI_Locations_ValidateClusterCreateRequest.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/HDI_Locations_ValidateClusterCreateRequest.json
 if __name__ == "__main__":
     main()
