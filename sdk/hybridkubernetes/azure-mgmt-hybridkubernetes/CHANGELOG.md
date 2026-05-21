@@ -30,14 +30,12 @@
   - Added model `SecurityProfile`
   - Added model `SecurityProfileWorkloadIdentity`
   - Added model `SystemComponent`
-  - Operation group `ConnectedClusterOperations` added method `begin_create_or_replace`
-  - Operation group `ConnectedClusterOperations` added method `begin_update_async`
 
 ### Breaking Changes
 
-  - Deleted or renamed model `LastModifiedByType`
-  - Deleted or renamed method `ConnectedClusterOperations.begin_create`
-  - Deleted or renamed method `ConnectedClusterOperations.update`
+  - Model `SystemData` renamed type of property `last_modified_by_type` from `LastModifiedByType` to `CreatedByType`
+  - Operation group `ConnectedClusterOperations` renamed method `begin_create` to `begin_create_or_replace`
+  - Operation group `ConnectedClusterOperations` renamed method `update` to `begin_update_async`
 
 ### Other Changes
 
