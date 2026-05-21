@@ -23,9 +23,16 @@ keywords = ["azure", "azure sdk", "agent", "agentserver", "core"]
 dependencies = [
     "starlette>=0.45.0",
     "hypercorn>=0.17.0",
+    "httpx>=0.27.0",
+    "aiohttp>=3.9.0,<4.0.0a0",
     "opentelemetry-api>=1.40.0",
     "opentelemetry-sdk>=1.40.0",
     "microsoft-opentelemetry>=1.0.0",
+]
+
+[project.optional-dependencies]
+hosted = [
+    "azure-identity>=1.16.0",
 ]
 
 [build-system]
@@ -60,5 +67,7 @@ verifytypes = false
 latestdependency = false
 pylint = true
 type_check_samples = false
+# apistub crashes on Generic[Input, Output] classes (Python 3.10 inspect.getsource bug)
+apistub = false
 
 [tool.uv.sources]

@@ -10,10 +10,10 @@ from starlette.responses import JSONResponse, Response
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
-
 # ---------------------------------------------------------------------------
 # GET after invoke
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_get_after_invoke_returns_stored_result(async_storage_client):
@@ -31,6 +31,7 @@ async def test_get_after_invoke_returns_stored_result(async_storage_client):
 # GET unknown ID
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_get_unknown_id_returns_404(async_storage_client):
     """GET /invocations/{unknown} returns 404."""
@@ -41,6 +42,7 @@ async def test_get_unknown_id_returns_404(async_storage_client):
 # ---------------------------------------------------------------------------
 # Cancel after invoke
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_cancel_after_invoke_returns_cancelled(async_storage_client):
@@ -57,6 +59,7 @@ async def test_cancel_after_invoke_returns_cancelled(async_storage_client):
 # Cancel unknown ID
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_cancel_unknown_id_returns_404(async_storage_client):
     """POST /invocations/{unknown}/cancel returns 404."""
@@ -67,6 +70,7 @@ async def test_cancel_unknown_id_returns_404(async_storage_client):
 # ---------------------------------------------------------------------------
 # GET after cancel
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_get_after_cancel_returns_404(async_storage_client):
@@ -82,6 +86,7 @@ async def test_get_after_cancel_returns_404(async_storage_client):
 # ---------------------------------------------------------------------------
 # GET error returns 500 (inline InvocationAgentServerHost)
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_get_invocation_error_returns_500():
@@ -106,6 +111,7 @@ async def test_get_invocation_error_returns_500():
 # ---------------------------------------------------------------------------
 # Cancel error returns 500 (inline InvocationAgentServerHost)
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_cancel_invocation_error_returns_500():

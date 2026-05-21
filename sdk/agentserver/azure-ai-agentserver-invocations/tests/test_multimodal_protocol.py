@@ -12,10 +12,10 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
-
 # ---------------------------------------------------------------------------
 # Helper: content-type echo agent
 # ---------------------------------------------------------------------------
+
 
 def _make_content_type_echo_agent() -> InvocationAgentServerHost:
     """Agent that echoes body and returns the content-type it received."""
@@ -65,6 +65,7 @@ def _make_sse_agent() -> InvocationAgentServerHost:
 # ---------------------------------------------------------------------------
 # Various content types
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_png_content_type():
@@ -166,6 +167,7 @@ async def test_text_plain_content_type():
 # Custom HTTP status codes
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_custom_status_200():
     """Handler returning 200."""
@@ -200,6 +202,7 @@ async def test_custom_status_202():
 # Query strings
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_query_string_passed_to_handler():
     """Query string params are accessible in the handler."""
@@ -221,6 +224,7 @@ async def test_query_string_passed_to_handler():
 # SSE streaming
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_sse_streaming():
     """SSE-formatted streaming response works."""
@@ -237,6 +241,7 @@ async def test_sse_streaming():
 # ---------------------------------------------------------------------------
 # Large binary payloads
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_large_binary_payload():
@@ -257,6 +262,7 @@ async def test_large_binary_payload():
 # ---------------------------------------------------------------------------
 # Health endpoint (updated from /healthy to /readiness)
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_health_endpoint_returns_200():
