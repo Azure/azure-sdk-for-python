@@ -810,7 +810,7 @@ class Serializer(object):
             # If dependencies is empty, try with current data class
             # It has to be a subclass of Enum anyway
             enum_type = self.dependencies.get(data_type, data.__class__)
-            if issubclass(enum_type, Enum):
+            if enum_type is not None and issubclass(enum_type, Enum):
                 return Serializer.serialize_enum(data, enum_obj=enum_type)
 
             iter_type = data_type[0] + data_type[-1]
