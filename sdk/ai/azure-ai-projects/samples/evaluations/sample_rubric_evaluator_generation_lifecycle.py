@@ -6,7 +6,7 @@
 
 """
 DESCRIPTION:
-    End-to-end scenario showing the full lifecycle of adaptive evaluator
+    End-to-end scenario showing the full lifecycle of rubric evaluator
     generation jobs. The sample exercises:
 
       * `create_generation_job` with `operation_id` for idempotent re-submits.
@@ -24,7 +24,7 @@ DESCRIPTION:
     below.
 
 USAGE:
-    python sample_adaptive_eval_generation_lifecycle.py
+    python sample_rubric_evaluator_generation_lifecycle.py
 
     Before running the sample:
 
@@ -62,7 +62,7 @@ poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
 short = uuid.uuid4().hex[:6]
 evaluator_name = f"lifecycle-demo-{ts}-{short}"
-operation_id = f"adaptive-lifecycle-{short}"
+operation_id = f"rubric-lifecycle-{short}"
 
 TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 

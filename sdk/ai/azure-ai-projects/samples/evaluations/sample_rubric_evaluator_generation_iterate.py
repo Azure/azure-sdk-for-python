@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     End-to-end scenario showing the human-in-the-loop iteration workflow for
-    adaptive evaluators. This is the typical pattern when the first generated
+    rubric evaluators. This is the typical pattern when the first generated
     rubric is a good starting point but a domain expert wants to tune the
     weighting or add custom dimensions. The sample:
 
@@ -22,7 +22,7 @@ DESCRIPTION:
       6. Cleans up by deleting both versions.
 
 USAGE:
-    python sample_adaptive_eval_generation_iterate.py
+    python sample_rubric_evaluator_generation_iterate.py
 
     Before running the sample:
 
@@ -98,7 +98,7 @@ with (
                 }
             ],
         },
-        operation_id=f"adaptive-iterate-{short}",
+        operation_id=f"rubric-iterate-{short}",
     )
     print(f"Created generation job `{job.id}` (status: `{cast(JobStatus, job.status).value}`).")
 

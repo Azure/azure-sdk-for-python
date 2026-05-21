@@ -6,30 +6,27 @@
 
 """
 DESCRIPTION:
-    End-to-end scenario showing how to manually author a rubric-based
-    evaluator and use it as a testing criterion of an OpenAI evaluation run.
-    The sample:
+    End-to-end scenario showing rubric evaluator generation from a single
+    `Prompt` source, followed by an OpenAI evaluation run that uses the
+    generated evaluator. The sample:
 
-      1. Creates a rubric evaluator with `project_client.beta.evaluators.create_version`,
-         supplying scoring dimensions (each with an id, description, and integer
-         weight from 1-10) and an optional pass threshold.
-      2. Creates an OpenAI evaluation (`client.evals.create`) referencing the
-         custom evaluator as a testing criterion.
-      3. Runs the evaluation against inline JSONL sample data.
-      4. Polls the evaluation run to completion and prints per-item results.
-      5. Cleans up the evaluation and the evaluator version.
+      1. Creates an `EvaluatorGenerationJob` whose only source is an inline
+         natural-language description of the application's purpose, capabilities,
+         and tools. The service synthesizes a rubric tailored to that application.
+      2. Polls the generation job to completion and resolves the generated
+         `EvaluatorVersion`.
+      3. Creates an OpenAI evaluation (`client.evals.create`) referencing the
+         generated evaluator as a testing criterion.
+      4. Runs the evaluation against inline JSONL sample data.
+      5. Cleans up the evaluation and the evaluator version. Deleting the
+         evaluator version cascades to delete the generation job record.
 
-    A rubric evaluator is a collection of independent scoring dimensions. At
-    evaluation time, an LLM judge scores each applicable dimension on a 1-5
-    scale and the runtime emits a normalized aggregate score. Dimensions can
-    opt in to `always_applicable` to skip the applicability assessment.
-
-    See `sample_adaptive_eval_generation_basic.py` for the generation-based
-    workflow that produces the same rubric structure automatically from a
-    description of the application.
+    Other source types - `Agent`, `Dataset`, and `traces` - can be used in
+    place of (or alongside) the prompt source. See
+    `sample_rubric_evaluator_generation_all_sources.py` for examples of each.
 
 USAGE:
-    python sample_evaluator_rubric_manual.py
+    python sample_rubric_evaluator_generation_basic.py
 
     Before running the sample:
 
@@ -39,15 +36,16 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry project.
     2) FOUNDRY_MODEL_NAME - Required. The name of the LLM model deployment that
-       the rubric evaluator's judge will use at evaluation time (e.g. `gpt-4o`, `gpt-4.1`).
+       the generation job will use (e.g. `gpt-4o`, `gpt-4.1`).
     3) POLL_INTERVAL_SECONDS - Optional. Number of seconds to sleep between status
-       polls for the evaluation run. Defaults to 10.
+       polls for both the generation job and the evaluation run. Defaults to 10.
 """
 
 import os
 import time
 import uuid
 from datetime import datetime, timezone
+from typing import cast
 
 from dotenv import load_dotenv
 from openai.types.eval_create_params import DataSourceConfigCustom
@@ -59,11 +57,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    EvaluatorCategory,
-    EvaluatorDefinitionType,
-    TestingCriterionAzureAIEvaluator,
-)
+from azure.ai.projects.models import JobStatus, TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -74,77 +68,97 @@ poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 # Unique per-run name so repeated runs do not collide.
 ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
 short = uuid.uuid4().hex[:6]
-evaluator_name = f"reservation-quality-manual-{ts}-{short}"
+evaluator_name = f"reservation-quality-generated-{ts}-{short}"
 
+TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 TERMINAL_RUN_STATUSES = {"completed", "failed", "canceled"}
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    # `allow_preview` and `api_version` are required for the evaluator
+    # generation endpoints in this preview.
+    AIProjectClient(
+        endpoint=endpoint,
+        credential=credential,
+        allow_preview=True,
+        api_version="2025-11-15-preview",
+    ) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
 
     # ------------------------------------------------------------------
-    # 1. Author the rubric evaluator.
+    # 1. Generate an evaluator from a single `Prompt` source.
     # ------------------------------------------------------------------
-    # Each dimension is scored independently on a 1-5 scale at evaluation
-    # time. `weight` (1-10) controls how strongly each dimension contributes
-    # to the normalized aggregate score.
-    print(f"Create rubric evaluator `{evaluator_name}`.")
-    evaluator = project_client.beta.evaluators.create_version(
-        name=evaluator_name,
-        evaluator_version={
-            "name": evaluator_name,
-            "categories": [EvaluatorCategory.QUALITY],
-            "display_name": "Reservation Quality (Manual)",
-            "description": (
-                "Hand-authored rubric evaluating a reservation assistant on intent "
-                "resolution, completeness, and tone."
+    # The body is sent as a plain dict to match the wire shape expected by
+    # the 2025-11-15-preview API.
+    print(f"Create generation job for evaluator `{evaluator_name}`.")
+    job = project_client.beta.evaluators.create_generation_job(
+        job={
+            "model": model_name,
+            "name": "Reservation Quality (Generated)",
+            "evaluator_name": evaluator_name,
+            "evaluator_display_name": "Reservation Quality (Generated)",
+            "evaluator_description": (
+                "Quality evaluator generated from a prompt describing a "
+                "restaurant reservation assistant."
             ),
-            "definition": {
-                "type": EvaluatorDefinitionType.RUBRIC,
-                "dimensions": [
-                    {
-                        "id": "correct_intent_resolution",
-                        "description": (
-                            "Correctly identifies the user's reservation intent (new booking, "
-                            "modification, or cancellation) and pursues the right workflow."
-                        ),
-                        "weight": 9,
-                    },
-                    {
-                        "id": "completeness",
-                        "description": (
-                            "Captures or confirms every reservation detail the user needs "
-                            "(party size, date, time, contact info) before completing the task."
-                        ),
-                        "weight": 6,
-                    },
-                    {
-                        "id": "professional_tone",
-                        "description": "Maintains a polite, professional, restaurant-host tone throughout.",
-                        "weight": 3,
-                    },
-                ],
-                # `pass_threshold` sets the normalized 0.0-1.0 pass/fail threshold
-                # (default 0.5). The "any dimension scored 1 -> fail" rule applies
-                # regardless of this threshold.
-                "pass_threshold": 0.6,
-            },
+            "sources": [
+                {
+                    "type": "Prompt",
+                    "description": "Application overview - purpose, capabilities, and tools.",
+                    "prompt": (
+                        "You are evaluating a restaurant reservation assistant. The assistant helps "
+                        "users create, modify, and cancel reservations at participating restaurants. "
+                        "It can:\n"
+                        "  - Search for restaurants by name, cuisine, or neighborhood.\n"
+                        "  - Check table availability for a requested date, time, and party size.\n"
+                        "  - Create, update, and cancel reservations on behalf of the user.\n"
+                        "  - Send SMS or email confirmations through a notifications tool.\n"
+                        "It must always confirm the user's intent before committing changes, "
+                        "ask follow-up questions when details are missing, and maintain a polite "
+                        "restaurant-host tone."
+                    ),
+                }
+            ],
         },
+        # `operation_id` makes the call idempotent - re-submitting the same id
+        # returns the existing job instead of creating a duplicate.
+        operation_id=f"rubric-eval-basic-{short}",
     )
-    print(f"Created evaluator `{evaluator.name}` version `{evaluator.version}`.")
+    print(f"Created generation job `{job.id}` (status: `{cast(JobStatus, job.status).value}`).")
+
+    print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
+    while job.status not in TERMINAL_STATUSES:
+        time.sleep(poll_interval_seconds)
+        job = project_client.beta.evaluators.get_generation_job(job.id)
+        print(".", end="", flush=True)
+    print()
+    print(f"Final job status: `{cast(JobStatus, job.status).value}`.")
+
+    if job.status != JobStatus.SUCCEEDED:
+        message = job.error.message if job.error is not None else "<no error message>"
+        raise RuntimeError(
+            f"Generation job `{job.id}` ended with status `{cast(JobStatus, job.status).value}`: {message}"
+        )
+
+    if job.usage is not None:
+        print(f"Token usage: {job.usage}")
+
+    # On success, the evaluator is automatically saved as version 1.
+    evaluator = job.result
+    print(f"Generated evaluator: name=`{evaluator.name}` version=`{evaluator.version}`.")
     print(f"Categories: {[c.value for c in evaluator.categories]}")
+    print(f"Pass threshold: {evaluator.definition.pass_threshold}")
     print(f"Dimensions ({len(evaluator.definition.dimensions)}):")
     for dim in evaluator.definition.dimensions:
+        # Quality evaluators always include a non-editable `general_quality`
+        # residual dimension with always_applicable=True.
         marker = " [ALWAYS-ON]" if dim.always_applicable else ""
-        print(f"  - {dim.id} (weight={dim.weight}){marker}")
+        print(f"  - {dim.id} (weight={dim.weight}){marker}: {dim.description[:120]}")
 
     # ------------------------------------------------------------------
-    # 2. Create an OpenAI evaluation that uses the rubric as a criterion.
+    # 2. Create an OpenAI evaluation that uses the generated evaluator.
     # ------------------------------------------------------------------
-    # The eval object describes the shape of the dataset items and the
-    # criteria to score against. The run below supplies inline sample data.
     data_source_config = DataSourceConfigCustom(
         type="custom",
         item_schema={
@@ -161,9 +175,8 @@ with (
     testing_criteria = [
         TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
-            name=evaluator_name,
-            evaluator_name=evaluator_name,
-            # The LLM judge for the rubric uses the deployment supplied here.
+            name=evaluator.name,
+            evaluator_name=evaluator.name,
             initialization_parameters={"deployment_name": model_name},
             data_mapping={
                 "query": "{{item.query}}",
@@ -174,7 +187,7 @@ with (
 
     print("Create the evaluation.")
     eval_object = openai_client.evals.create(
-        name=f"{evaluator_name}-eval",
+        name=f"{evaluator.name}-eval",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,
     )
@@ -186,8 +199,8 @@ with (
     print(f"Create an evaluation run for eval `{eval_object.id}`.")
     eval_run = openai_client.evals.runs.create(
         eval_id=eval_object.id,
-        name=f"{evaluator_name}-run",
-        metadata={"sample": "evaluator_rubric_manual"},
+        name=f"{evaluator.name}-run",
+        metadata={"sample": "rubric_evaluator_generation_basic"},
         data_source=CreateEvalJSONLRunDataSourceParam(
             type="jsonl",
             source=SourceFileContent(
@@ -195,26 +208,17 @@ with (
                 content=[
                     SourceFileContentContent(
                         item={
-                            "query": "Can I book a table for 4 tomorrow at 7 PM?",
+                            "query": "Book a table for 4 tomorrow at 7 PM.",
                             "response": (
-                                "Absolutely - I have you down for a table for 4 tomorrow at 7:00 PM. "
-                                "Could you share a contact number in case anything changes?"
+                                "Booked - table for 4 tomorrow at 7:00 PM. A confirmation "
+                                "SMS is on its way."
                             ),
                         }
                     ),
                     SourceFileContentContent(
                         item={
-                            "query": "I need to cancel my reservation for Friday.",
-                            "response": "ok",
-                        }
-                    ),
-                    SourceFileContentContent(
-                        item={
-                            "query": "Can you move my Saturday 8 PM reservation to 8:30?",
-                            "response": (
-                                "Of course. I've updated your Saturday reservation from 8:00 PM to 8:30 PM. "
-                                "Anything else I can help with?"
-                            ),
+                            "query": "Cancel my reservation for Friday night.",
+                            "response": "Sure.",
                         }
                     ),
                 ],
@@ -262,5 +266,6 @@ with (
     print(f"Delete evaluation `{eval_object.id}`.")
     openai_client.evals.delete(eval_id=eval_object.id)
 
-    print(f"Delete evaluator `{evaluator_name}` version `{evaluator.version}`.")
-    project_client.beta.evaluators.delete_version(name=evaluator_name, version=evaluator.version)
+    print(f"Delete evaluator `{evaluator.name}` version `{evaluator.version}`.")
+    # `delete_version` cascades to delete the generation job record as well.
+    project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)

@@ -6,7 +6,7 @@
 
 """
 DESCRIPTION:
-    End-to-end scenario showing every adaptive evaluator generation source type
+    End-to-end scenario showing every rubric evaluator generation source type
     in a single sample file. There are four source types:
 
       1. `Prompt`  - an inline natural-language description of the application.
@@ -24,7 +24,7 @@ DESCRIPTION:
     a suitable agent, dataset, or recent traces in the target Foundry project.
 
 USAGE:
-    python sample_adaptive_eval_generation_all_sources.py
+    python sample_rubric_evaluator_generation_all_sources.py
 
     Before running the sample:
 
@@ -144,7 +144,7 @@ with (
             "evaluator_description": "Generated from prompt, agent, and dataset signals.",
             "sources": multi_sources,
         },
-        operation_id=f"adaptive-multi-{short}",
+        operation_id=f"rubric-multi-{short}",
     )
     print(f"Created generation job `{multi_job.id}` (status: `{cast(JobStatus, multi_job.status).value}`).")
 
@@ -209,7 +209,7 @@ with (
                     },
                 ],
             },
-            operation_id=f"adaptive-traces-{short}",
+            operation_id=f"rubric-traces-{short}",
         )
         print(f"Created generation job `{traces_job.id}` (status: `{cast(JobStatus, traces_job.status).value}`).")
 
