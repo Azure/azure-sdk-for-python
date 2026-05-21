@@ -993,6 +993,191 @@ def test_return_type_paged_iterable_equivalence_is_not_breaking():
         )
 
 
+def test_changed_class_property_type():
+    """Model property type change should be reported as a breaking change."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Operation": {
+                    "type": "Model",
+                    "methods": {},
+                    "properties": {
+                        "display": {
+                            "attr_type": "OperationInfo",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Operation": {
+                    "type": "Model",
+                    "methods": {},
+                    "properties": {
+                        "display": {
+                            "attr_type": "OperationDisplay",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    EXPECTED = [
+        "(ChangedClassPropertyType): Model `Operation` changed type of property `display` from `OperationInfo` to `OperationDisplay`",
+    ]
+
+    from breaking_changes_checker.checkers.changed_class_property_type_checker import ChangedClassPropertyTypeChecker
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedClassPropertyTypeChecker()],
+    )
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
+def test_changed_class_property_type_not_reported_when_property_added():
+    """Property added only (not in stable) should not trigger property type change detection."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Operation": {
+                    "type": "Model",
+                    "methods": {},
+                    "properties": {}
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Operation": {
+                    "type": "Model",
+                    "methods": {},
+                    "properties": {
+                        "display": {
+                            "attr_type": "OperationDisplay",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    from breaking_changes_checker.checkers.changed_class_property_type_checker import ChangedClassPropertyTypeChecker
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedClassPropertyTypeChecker()],
+    )
+    bc.run_checks()
+
+    # No breaking changes expected for property that only exists in current
+    assert len(bc.breaking_changes) == 0
+
+
+def test_changed_class_property_type_not_reported_when_property_removed():
+    """Property removed only (not in current) should not trigger property type change detection."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Operation": {
+                    "type": "Model",
+                    "methods": {},
+                    "properties": {
+                        "display": {
+                            "attr_type": "OperationInfo",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Operation": {
+                    "type": "Model",
+                    "methods": {},
+                    "properties": {}
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    from breaking_changes_checker.checkers.changed_class_property_type_checker import ChangedClassPropertyTypeChecker
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedClassPropertyTypeChecker()],
+    )
+    bc.run_checks()
+
+    # No breaking changes expected from the property type change checker for property that only exists in stable
+    # Filter to only look at ChangedClassPropertyType changes
+    property_type_changes = [bc for bc in bc.breaking_changes if bc[1] == BreakingChangeType.CHANGED_CLASS_PROPERTY_TYPE]
+    assert len(property_type_changes) == 0
+
+
+def test_changed_class_property_type_not_reported_when_unchanged():
+    """Property type unchanged should not be reported."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Operation": {
+                    "type": "Model",
+                    "methods": {},
+                    "properties": {
+                        "display": {
+                            "attr_type": "OperationInfo",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Operation": {
+                    "type": "Model",
+                    "methods": {},
+                    "properties": {
+                        "display": {
+                            "attr_type": "OperationInfo",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    from breaking_changes_checker.checkers.changed_class_property_type_checker import ChangedClassPropertyTypeChecker
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedClassPropertyTypeChecker()],
+    )
+    bc.run_checks()
+
+    # No breaking changes expected for unchanged property
+    assert len(bc.breaking_changes) == 0
+
+
+
 def test_create_function_report_scopes_return_type_to_owner_class():
     """End-to-end check that `create_function_report` captures the right return
     annotation when multiple functions/methods in the same module share a name.

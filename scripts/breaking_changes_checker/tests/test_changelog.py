@@ -940,3 +940,60 @@ def test_added_keyword_only_param_to_model_method_still_reported_as_class():
     assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
     assert args == ["azure.contoso", "ContosoModel", "extra", "do_something"]
 
+
+def test_changelog_class_property_type_changed():
+    """Verify that class property type changes are reported in changelog output."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Operation": {
+                    "type": "Model",
+                    "methods": {},
+                    "properties": {
+                        "display": {
+                            "attr_type": "OperationInfo",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Operation": {
+                    "type": "Model",
+                    "methods": {},
+                    "properties": {
+                        "display": {
+                            "attr_type": "OperationDisplay",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    from breaking_changes_checker.checkers.changed_class_property_type_checker import ChangedClassPropertyTypeChecker
+    bc = ChangelogTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedClassPropertyTypeChecker()],
+    )
+    bc.run_checks()
+
+    # Should have one breaking change for property type change
+    assert len(bc.breaking_changes) == 1
+    msg, change_type, *args = bc.breaking_changes[0]
+    assert change_type == "ChangedClassPropertyType"
+    assert args == ["azure.contoso", "Operation", "display", "OperationInfo", "OperationDisplay"]
+    
+    # Verify it appears in the report with proper formatting
+    report = bc.report_changes()
+    assert "Model `Operation` changed type of property `display`" in report
+    assert "OperationInfo" in report
+    assert "OperationDisplay" in report
+
+
+

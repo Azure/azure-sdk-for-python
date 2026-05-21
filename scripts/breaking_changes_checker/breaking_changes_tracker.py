@@ -28,6 +28,7 @@ class BreakingChangeType(str, Enum):
     CHANGED_PARAMETER_KIND = "ChangedParameterKind"
     CHANGED_PARAMETER_TYPE = "ChangedParameterType"
     CHANGED_FUNCTION_KIND = "ChangedFunctionKind"
+    CHANGED_CLASS_PROPERTY_TYPE = "ChangedClassPropertyType"
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
     REMOVED_OR_RENAMED_OPERATION_GROUP = "RemovedOrRenamedOperationGroup"
