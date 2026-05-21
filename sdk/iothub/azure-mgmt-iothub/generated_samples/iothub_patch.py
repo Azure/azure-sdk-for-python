@@ -15,7 +15,7 @@ from azure.mgmt.iothub import IotHubClient
     pip install azure-identity
     pip install azure-mgmt-iothub
 # USAGE
-    python iothub_listjobs.py
+    python iothub_patch.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.iot_hub_resource.list_jobs(
+    response = client.iot_hub_resource.begin_update(
         resource_group_name="myResourceGroup",
-        resource_name="testHub",
-    )
-    for item in response:
-        print(item)
+        resource_name="myHub",
+        iot_hub_tags={"tags": {"foo": "bar"}},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/iothub_listjobs.json
+# x-ms-original-file: 2026-03-01-preview/iothub_patch.json
 if __name__ == "__main__":
     main()

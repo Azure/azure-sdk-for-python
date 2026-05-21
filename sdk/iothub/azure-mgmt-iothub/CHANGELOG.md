@@ -1,5 +1,35 @@
 # Release History
 
+## 5.0.0b3 (2026-05-20)
+
+### Features Added
+
+  - Client `IotHubClient` added method `send_request`
+  - Model `CertificateDescription` added property `system_data`
+  - Model `EventHubConsumerGroupInfo` added property `system_data`
+  - Model `IotHubProperties` added property `device_host_name`
+  - Model `IotHubProperties` added property `service_host_name`
+  - Model `IotHubProperties` added property `iot_hub_details`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Added enum `GatewayVersion`
+  - Added model `IotHubDetails`
+  - Added model `ProxyResource`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `CertificateBodyDescription`
+  - Method `CertificatesOperations.create_or_update` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `CertificatesOperations.delete` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `CertificatesOperations.generate_verification_code` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `CertificatesOperations.verify` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `IotHubResourceOperations.begin_create_or_update` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+
 ## 5.0.0b2 (2025-10-20)
 
 ### Features Added
