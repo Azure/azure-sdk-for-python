@@ -17,14 +17,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._models import QueuePropertiesPaged
 from ._queue_client_async import QueueClient
 from .._encryption import StorageEncryptionMixin
-from .._generated.aio import AzureQueueStorage
-from .._generated.models import KeyInfo, StorageServiceProperties
-from .._models import (
-    CorsRule,
-    QueueProperties,
-    service_properties_deserialize,
-    service_stats_deserialize,
-)
+from .._generated.aio import QueuesClient as AzureQueueStorage
+from .._generated.models import KeyInfo, QueueServiceProperties as StorageServiceProperties
+from .._models import CorsRule, QueueProperties, service_properties_deserialize, service_stats_deserialize
 from .._queue_service_client_helpers import _parse_url
 from .._serialize import get_api_version
 from .._shared.base_client import StorageAccountHostsMixin
@@ -133,13 +128,7 @@ class QueueServiceClient(  # type: ignore [misc]
             audience=audience,
             **kwargs,
         )
-        self._client = AzureQueueStorage(
-            self.url,
-            get_api_version(api_version),
-            base_url=self.url,
-            pipeline=self._pipeline,
-            loop=loop,
-        )
+        self._client = AzureQueueStorage(self.url, version=get_api_version(api_version), pipeline=self._pipeline)
         self._loop = loop
         self._configure_encryption(kwargs)
 
@@ -441,7 +430,7 @@ class QueueServiceClient(  # type: ignore [misc]
         """
         include = ["metadata"] if include_metadata else None
         command = functools.partial(
-            self._client.service.list_queues_segment,
+            self._client.service.get_queues,
             prefix=name_starts_with,
             include=include,
             timeout=timeout,

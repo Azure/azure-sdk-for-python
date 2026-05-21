@@ -77,7 +77,8 @@ class MessageDecodePolicy(object):
         self.resolver = None
 
     def __call__(self, response: "PipelineResponse", obj: Iterable, headers: Dict[str, Any]) -> object:
-        for message in obj:
+        messages = obj.items_property if hasattr(obj, "items_property") else obj
+        for message in messages or []:
             if message.message_text in [None, "", b""]:
                 continue
             content = message.message_text
@@ -89,7 +90,10 @@ class MessageDecodePolicy(object):
                     self.key_encryption_key,
                     self.resolver,
                 )
-            message.message_text = self.decode(content, response)
+            decoded = self.decode(content, response)
+            # Store decoded content on a side attribute to bypass the _RestField
+            # descriptor which would re-serialize bytes back to base64.
+            message._decoded_content = decoded
         return obj
 
     def configure(

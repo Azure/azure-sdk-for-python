@@ -17,11 +17,7 @@ from typing import (
 )
 from urllib.parse import parse_qs, quote
 
-from azure.core.credentials import (
-    AzureSasCredential,
-    AzureNamedKeyCredential,
-    TokenCredential,
-)
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
@@ -68,10 +64,7 @@ from .._shared_access_signature import _is_credential_sastoken
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline.transport import (  # pylint: disable=C4756
-        HttpRequest,
-        HttpResponse,
-    )
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=C4756
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -174,12 +167,7 @@ class StorageAccountHostsMixin(object):
         if not self._hosts:
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
-            if not primary_hostname:
-                primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
-            self._hosts = {
-                LocationMode.PRIMARY: primary_hostname,
-                LocationMode.SECONDARY: secondary_hostname,
-            }
+            self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"
         self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)
@@ -273,27 +261,12 @@ class StorageAccountHostsMixin(object):
         self,
         sas_token: Optional[str],
         credential: Optional[
-            Union[
-                str,
-                Dict[str, str],
-                "AzureNamedKeyCredential",
-                "AzureSasCredential",
-                TokenCredential,
-            ]
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]
         ],
         snapshot: Optional[str] = None,
         share_snapshot: Optional[str] = None,
     ) -> Tuple[
-        str,
-        Optional[
-            Union[
-                str,
-                Dict[str, str],
-                "AzureNamedKeyCredential",
-                "AzureSasCredential",
-                TokenCredential,
-            ]
-        ],
+        str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]]
     ]:
         query_str = "?"
         if snapshot:
@@ -315,13 +288,7 @@ class StorageAccountHostsMixin(object):
     def _create_pipeline(
         self,
         credential: Optional[
-            Union[
-                str,
-                Dict[str, str],
-                AzureNamedKeyCredential,
-                AzureSasCredential,
-                TokenCredential,
-            ]
+            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
         ] = None,
         **kwargs: Any,
     ) -> Tuple[StorageConfiguration, Pipeline]:
@@ -417,9 +384,7 @@ class StorageAccountHostsMixin(object):
                 parts = list(response.parts())
                 if any(p for p in parts if not 200 <= p.status_code < 300):
                     error = PartialBatchErrorException(
-                        message="There is a partial failure in the batch operation.",
-                        response=response,
-                        parts=parts,
+                        message="There is a partial failure in the batch operation.", response=response, parts=parts
                     )
                     raise error
                 return iter(parts)
@@ -456,14 +421,7 @@ class TransportWrapper(HttpTransport):
 def _format_shared_key_credential(
     account_name: Optional[str],
     credential: Optional[
-        Union[
-            str,
-            Dict[str, str],
-            AzureNamedKeyCredential,
-            AzureSasCredential,
-            "AsyncTokenCredential",
-            TokenCredential,
-        ]
+        Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]
     ] = None,
 ) -> Any:
     if isinstance(credential, str):
@@ -483,28 +441,12 @@ def _format_shared_key_credential(
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[
-        Union[
-            str,
-            Dict[str, str],
-            AzureNamedKeyCredential,
-            AzureSasCredential,
-            TokenCredential,
-        ]
-    ],
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
     service: str,
 ) -> Tuple[
     str,
     Optional[str],
-    Optional[
-        Union[
-            str,
-            Dict[str, str],
-            AzureNamedKeyCredential,
-            AzureSasCredential,
-            TokenCredential,
-        ]
-    ],
+    Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
 ]:
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
@@ -518,10 +460,7 @@ def parse_connection_str(
     secondary = None
     if not credential:
         try:
-            credential = {
-                "account_name": conn_settings["ACCOUNTNAME"],
-                "account_key": conn_settings["ACCOUNTKEY"],
-            }
+            credential = {"account_name": conn_settings["ACCOUNTNAME"], "account_key": conn_settings["ACCOUNTKEY"]}
         except KeyError:
             credential = conn_settings.get("SHAREDACCESSSIGNATURE")
     if endpoints["primary"] in conn_settings:

@@ -3,9 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-few-public-methods, super-init-not-called
+# pylint: disable=too-few-public-methods
 
 import sys
+import xml.etree.ElementTree as ET
 from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
@@ -14,6 +15,7 @@ from ._shared.response_handlers import (
     return_context_and_deserialized,
 )
 from ._shared.models import DictMixin
+from ._generated.models._patch import _ModelBackCompatMixin, as_dict as _backcompat_as_dict
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
@@ -29,7 +31,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class RetentionPolicy(GeneratedRetentionPolicy):
+class RetentionPolicy(GeneratedRetentionPolicy, _ModelBackCompatMixin):
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -47,23 +49,47 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     days: Optional[int] = None
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
 
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
+        **kwargs: Any,
+    ) -> Dict[str, Any]:
+        """Return a dict representation of the model.
+
+        :param bool keep_readonly: Whether to include readonly fields.
+        :param key_transformer: A callable to transform each key serialized
+         from the model.
+        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
+        :return: A dictionary representation of this model.
+        :rtype: Dict[str, Any]
+        """
+        return _backcompat_as_dict(
+            self,
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )  # type: ignore[return-value]
+
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        self.enabled = enabled
-        self.days = days
-        if self.enabled and (self.days is None):
+        if enabled and (days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
+        super().__init__(enabled=enabled, days=days)
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
+        # Handle XML Element by converting to generated model first
+        if isinstance(generated, ET.Element):
+            generated = GeneratedRetentionPolicy(generated)  # type: ignore[assignment,call-overload]
         return cls(
             enabled=generated.enabled,
             days=generated.days,
         )
 
 
-class QueueAnalyticsLogging(GeneratedLogging):
+class QueueAnalyticsLogging(GeneratedLogging, _ModelBackCompatMixin):
     """Azure Analytics Logging settings.
 
     All required parameters must be populated in order to send to Azure.
@@ -86,17 +112,44 @@ class QueueAnalyticsLogging(GeneratedLogging):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
 
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
+        **kwargs: Any,
+    ) -> Dict[str, Any]:
+        """Return a dict representation of the model.
+
+        :param bool keep_readonly: Whether to include readonly fields.
+        :param key_transformer: A callable to transform each key serialized
+         from the model.
+        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
+        :return: A dictionary representation of this model.
+        :rtype: Dict[str, Any]
+        """
+        return _backcompat_as_dict(
+            self,
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )  # type: ignore[return-value]
+
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get("version", "1.0")
-        self.delete = kwargs.get("delete", False)
-        self.read = kwargs.get("read", False)
-        self.write = kwargs.get("write", False)
-        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
+        super().__init__(
+            version=kwargs.get("version", "1.0"),
+            delete=kwargs.get("delete", False),
+            read=kwargs.get("read", False),
+            write=kwargs.get("write", False),
+            retention_policy=kwargs.get("retention_policy") or RetentionPolicy(),
+        )
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
+        # Handle XML Element by converting to generated model first
+        if isinstance(generated, ET.Element):
+            generated = GeneratedLogging(generated)  # type: ignore[assignment,call-overload]
         return cls(
             version=generated.version,
             delete=generated.delete,
@@ -108,7 +161,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
         )
 
 
-class Metrics(GeneratedMetrics):
+class Metrics(GeneratedMetrics, _ModelBackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates.
 
     All required parameters must be populated in order to send to Azure.
@@ -129,16 +182,43 @@ class Metrics(GeneratedMetrics):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
 
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
+        **kwargs: Any,
+    ) -> Dict[str, Any]:
+        """Return a dict representation of the model.
+
+        :param bool keep_readonly: Whether to include readonly fields.
+        :param key_transformer: A callable to transform each key serialized
+         from the model.
+        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
+        :return: A dictionary representation of this model.
+        :rtype: Dict[str, Any]
+        """
+        return _backcompat_as_dict(
+            self,
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )  # type: ignore[return-value]
+
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get("version", "1.0")
-        self.enabled = kwargs.get("enabled", False)
-        self.include_apis = kwargs.get("include_apis")
-        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
+        super().__init__(
+            version=kwargs.get("version", "1.0"),
+            enabled=kwargs.get("enabled", False),
+            include_apis=kwargs.get("include_apis"),
+            retention_policy=kwargs.get("retention_policy") or RetentionPolicy(),
+        )
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
+        # Handle XML Element by converting to generated model first
+        if isinstance(generated, ET.Element):
+            generated = GeneratedMetrics(generated)  # type: ignore[assignment,call-overload]
         return cls(
             version=generated.version,
             enabled=generated.enabled,
@@ -149,7 +229,7 @@ class Metrics(GeneratedMetrics):
         )
 
 
-class CorsRule(GeneratedCorsRule):
+class CorsRule(GeneratedCorsRule, _ModelBackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -181,7 +261,7 @@ class CorsRule(GeneratedCorsRule):
 
     allowed_origins: str
     """The comma-delimited string representation of the list of origin domains that will be allowed via
-        CORS, or "*" to allow all domains."""
+        CORS, or \"*\" to allow all domains."""
     allowed_methods: str
     """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
         by the origin."""
@@ -190,15 +270,39 @@ class CorsRule(GeneratedCorsRule):
     exposed_headers: str
     """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
     allowed_headers: str
-    """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin
-        request."""
+    """The comma-delimited string representation of the list of headers allowed to be part of
+        the cross-origin request."""
+
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
+        **kwargs: Any,
+    ) -> Dict[str, Any]:
+        """Return a dict representation of the model.
+
+        :param bool keep_readonly: Whether to include readonly fields.
+        :param key_transformer: A callable to transform each key serialized
+         from the model.
+        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
+        :return: A dictionary representation of this model.
+        :rtype: Dict[str, Any]
+        """
+        return _backcompat_as_dict(
+            self,
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )  # type: ignore[return-value]
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        self.allowed_origins = ",".join(allowed_origins)
-        self.allowed_methods = ",".join(allowed_methods)
-        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
-        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
-        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
+        super().__init__(
+            allowed_origins=",".join(allowed_origins),
+            allowed_methods=",".join(allowed_methods),
+            allowed_headers=",".join(kwargs.get("allowed_headers", [])),
+            exposed_headers=",".join(kwargs.get("exposed_headers", [])),
+            max_age_in_seconds=kwargs.get("max_age_in_seconds", 0),
+        )
 
     @staticmethod
     def _to_generated(
@@ -222,6 +326,9 @@ class CorsRule(GeneratedCorsRule):
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
+        # Handle XML Element by converting to generated model first
+        if isinstance(generated, ET.Element):
+            generated = GeneratedCorsRule(generated)  # type: ignore[assignment,call-overload]
         return cls(
             [generated.allowed_origins],
             [generated.allowed_methods],
@@ -274,7 +381,7 @@ class QueueSasPermissions(object):
             + ("p" if self.process else "")
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._str
 
     @classmethod
@@ -300,7 +407,7 @@ class QueueSasPermissions(object):
         return parsed
 
 
-class AccessPolicy(GenAccessPolicy):
+class AccessPolicy(GenAccessPolicy, _ModelBackCompatMixin):
     """Access Policy class used by the set and get access policy methods.
 
     A stored access policy can specify the start time, expiry time, and
@@ -348,15 +455,39 @@ class AccessPolicy(GenAccessPolicy):
     start: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
 
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
+        **kwargs: Any,
+    ) -> Dict[str, Any]:
+        """Return a dict representation of the model.
+
+        :param bool keep_readonly: Whether to include readonly fields.
+        :param key_transformer: A callable to transform each key serialized
+         from the model.
+        :type key_transformer: Optional[Callable[[str, Dict[str, Any], Any], Any]]
+        :return: A dictionary representation of this model.
+        :rtype: Dict[str, Any]
+        """
+        return _backcompat_as_dict(
+            self,
+            keep_readonly=keep_readonly,
+            key_transformer=key_transformer,
+            **kwargs,
+        )  # type: ignore[return-value]
+
     def __init__(
         self,
         permission: Optional[Union[QueueSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
     ) -> None:
-        self.start = start
-        self.expiry = expiry
-        self.permission = permission
+        # TODO: here AccessPolicy never took in a datetime
+        # but we supported datetime and serialized it when passing the model through. (see set access policy)
+        if isinstance(permission, QueueSasPermissions):
+            permission = str(permission)
+        super().__init__(start=start, expiry=expiry, permission=permission)  # type: ignore [arg-type]
 
 
 class QueueMessage(DictMixin):
@@ -397,7 +528,13 @@ class QueueMessage(DictMixin):
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
-        message = cls(content=generated.message_text)
+        # Prefer _decoded_content if set by MessageDecodePolicy (handles base64 decoding and decryption).
+        # The decode policy stores results in _decoded_content because the generated model's message_text
+        # RestField descriptor may re-serialize bytes back to base64 if set directly.
+        content = getattr(generated, "_decoded_content", None)
+        if content is None:
+            content = generated.message_text
+        message = cls(content=content)
         message.id = generated.message_id
         message.inserted_on = generated.insertion_time
         message.expires_on = generated.expiration_time
@@ -457,11 +594,13 @@ class MessagesPaged(PageIterator):
 
     def _extract_data_cb(self, messages: Any) -> Tuple[str, List[QueueMessage]]:
         # There is no concept of continuation token, so raising on my own condition
-        if not messages:
+        if not messages or not messages.items_property:
             raise StopIteration("End of paging")
         if self._max_messages is not None:
-            self._max_messages = self._max_messages - len(messages)
-        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
+            self._max_messages = self._max_messages - len(messages.items_property)
+        return "TOKEN_IGNORED", [
+            QueueMessage._from_generated(q) for q in messages.items_property  # pylint: disable=protected-access
+        ]
 
 
 class QueueProperties(DictMixin):

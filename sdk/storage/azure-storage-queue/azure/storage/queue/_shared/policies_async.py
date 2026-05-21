@@ -11,10 +11,7 @@ import random
 from typing import Any, Dict, TYPE_CHECKING
 
 from azure.core.exceptions import AzureError, StreamClosedError, StreamConsumedError
-from azure.core.pipeline.policies import (
-    AsyncBearerTokenCredentialPolicy,
-    AsyncHTTPPolicy,
-)
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
 
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
@@ -170,16 +167,11 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
                 response = await self.next.send(request)
                 if is_retry(response, retry_settings["mode"]) or await is_checksum_retry(response):
                     retries_remaining = self.increment(
-                        retry_settings,
-                        request=request.http_request,
-                        response=response.http_response,
+                        retry_settings, request=request.http_request, response=response.http_response
                     )
                     if retries_remaining:
                         await retry_hook(
-                            retry_settings,
-                            request=request.http_request,
-                            response=response.http_response,
-                            error=None,
+                            retry_settings, request=request.http_request, response=response.http_response, error=None
                         )
                         await self.sleep(retry_settings, request.context.transport)
                         continue
@@ -189,12 +181,7 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
                     raise
                 retries_remaining = self.increment(retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
-                    await retry_hook(
-                        retry_settings,
-                        request=request.http_request,
-                        response=None,
-                        error=err,
-                    )
+                    await retry_hook(retry_settings, request=request.http_request, response=None, error=err)
                     await self.sleep(retry_settings, request.context.transport)
                     continue
                 raise err

@@ -12,6 +12,7 @@ from typing import Dict, Optional
 
 import isodate
 
+
 _LOGGER = logging.getLogger(__name__)
 
 _REQUEST_DELIMITER_PREFIX = "batch_"

@@ -189,10 +189,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             # Buffer until we either reach the end of the stream or get a whole chunk.
             while True:
                 if self.total_size:
-                    read_size = min(
-                        self.chunk_size - len(data),
-                        self.total_size - (index + len(data)),
-                    )
+                    read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
                 temp = self.stream.read(read_size)
                 if inspect.isawaitable(temp):
                     temp = await temp
@@ -290,8 +287,8 @@ class BlockBlobChunkUploader(_ChunkUploader):
         index = f"{chunk_offset:032d}"
         block_id = encode_base64(url_quote(encode_base64(index)))
         await self.service.stage_block(
-            block_id,
-            len(chunk_data),
+            block_id=block_id,
+            content_length=len(chunk_data),
             body=chunk_data,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
@@ -303,9 +300,9 @@ class BlockBlobChunkUploader(_ChunkUploader):
         try:
             block_id = f"BlockId{(index//self.chunk_size):05}"
             await self.service.stage_block(
-                block_id,
-                len(block_stream),
-                block_stream,
+                block_id=block_id,
+                content_length=len(block_stream),
+                body=block_stream,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
                 **self.request_options,
@@ -342,8 +339,8 @@ class PageBlobChunkUploader(_ChunkUploader):
                 **self.request_options,
             )
 
-            if not self.parallel and self.request_options.get("modified_access_conditions"):
-                self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+            if not self.parallel and self.request_options.get("etag"):
+                self.request_options["etag"] = self.response_headers["etag"]
 
     async def _upload_substream_block(self, index, block_stream):
         pass
@@ -367,9 +364,7 @@ class AppendBlobChunkUploader(_ChunkUploader):
             )
             self.current_length = int(self.response_headers["blob_append_offset"])
         else:
-            self.request_options["append_position_access_conditions"].append_position = (
-                self.current_length + chunk_offset
-            )
+            self.request_options["append_position"] = self.current_length + chunk_offset
             self.response_headers = await self.service.append_block(
                 body=chunk_data,
                 content_length=len(chunk_data),
@@ -440,11 +435,7 @@ class AsyncIterStreamer:
     File-like streaming object for AsyncGenerators.
     """
 
-    def __init__(
-        self,
-        generator: AsyncGenerator[Union[bytes, str], None],
-        encoding: str = "UTF-8",
-    ):
+    def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
         self.iterator = generator.__aiter__()
         self.leftover = b""
         self.encoding = encoding
