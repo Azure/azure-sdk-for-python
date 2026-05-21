@@ -979,16 +979,16 @@ class PolicySettingsDefaultCustomBlockResponseStatusCode(  # pylint: disable=nam
     status code.
     """
 
-    ENUM_200 = 200
-    """200."""
-    ENUM_403 = 403
-    """403."""
-    ENUM_405 = 405
-    """405."""
-    ENUM_406 = 406
-    """406."""
-    ENUM_429 = 429
-    """429."""
+    TWO_HUNDRED = 200
+    """TWO_HUNDRED."""
+    FOUR_HUNDRED_THREE = 403
+    """FOUR_HUNDRED_THREE."""
+    FOUR_HUNDRED_FIVE = 405
+    """FOUR_HUNDRED_FIVE."""
+    FOUR_HUNDRED_SIX = 406
+    """FOUR_HUNDRED_SIX."""
+    FOUR_HUNDRED_TWENTY_NINE = 429
+    """FOUR_HUNDRED_TWENTY_NINE."""
 
 
 class PostArgsOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):

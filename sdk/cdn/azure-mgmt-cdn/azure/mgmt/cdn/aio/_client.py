@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import CdnClientConfiguration
+from ._configuration import CdnManagementClientConfiguration
 from .operations import (
     AFDCustomDomainsOperations,
     AFDEndpointsOperations,
@@ -41,7 +41,7 @@ from .operations import (
     RulesOperations,
     SecretsOperations,
     SecurityPoliciesOperations,
-    _CdnClientOperationsMixin,
+    _CdnManagementClientOperationsMixin,
 )
 
 if sys.version_info >= (3, 11):
@@ -54,7 +54,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class CdnClient(_CdnClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class CdnManagementClient(_CdnManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """Use these APIs to manage Azure Front Door and CDN resources through the Azure Resource Manager.
     You must make sure that requests made to these resources are secure.
 
@@ -132,7 +132,7 @@ class CdnClient(_CdnClientOperationsMixin):  # pylint: disable=too-many-instance
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = CdnClientConfiguration(
+        self._config = CdnManagementClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

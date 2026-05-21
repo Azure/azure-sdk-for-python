@@ -1,7 +1,7 @@
 {
   "azure.mgmt.cdn": {
     "class_nodes": {
-      "CdnClient": {
+      "CdnManagementClient": {
         "type": null,
         "methods": {
           "__init__": {
@@ -495,7 +495,7 @@
   },
   "azure.mgmt.cdn.aio": {
     "class_nodes": {
-      "CdnClient": {
+      "CdnManagementClient": {
         "type": null,
         "methods": {
           "__init__": {
@@ -66421,11 +66421,11 @@
         "type": "Enum",
         "methods": {},
         "properties": {
-          "ENUM_200": "ENUM_200",
-          "ENUM_403": "ENUM_403",
-          "ENUM_405": "ENUM_405",
-          "ENUM_406": "ENUM_406",
-          "ENUM_429": "ENUM_429",
+          "FOUR_HUNDRED_FIVE": "FOUR_HUNDRED_FIVE",
+          "FOUR_HUNDRED_SIX": "FOUR_HUNDRED_SIX",
+          "FOUR_HUNDRED_THREE": "FOUR_HUNDRED_THREE",
+          "FOUR_HUNDRED_TWENTY_NINE": "FOUR_HUNDRED_TWENTY_NINE",
+          "TWO_HUNDRED": "TWO_HUNDRED",
           "as_integer_ratio": "as_integer_ratio",
           "bit_count": "bit_count",
           "bit_length": "bit_length",

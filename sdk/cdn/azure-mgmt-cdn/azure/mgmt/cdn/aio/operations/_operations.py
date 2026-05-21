@@ -69,10 +69,10 @@ from ...operations._operations import (
     build_afd_profiles_list_resource_usage_request,
     build_afd_profiles_upgrade_request,
     build_afd_profiles_validate_secret_request,
-    build_cdn_check_endpoint_name_availability_request,
-    build_cdn_check_name_availability_request,
-    build_cdn_check_name_availability_with_subscription_request,
-    build_cdn_validate_probe_request,
+    build_cdn_management_check_endpoint_name_availability_request,
+    build_cdn_management_check_name_availability_request,
+    build_cdn_management_check_name_availability_with_subscription_request,
+    build_cdn_management_validate_probe_request,
     build_custom_domains_create_request,
     build_custom_domains_delete_request,
     build_custom_domains_disable_custom_https_request,
@@ -155,7 +155,7 @@ from ...operations._operations import (
     build_security_policies_list_by_profile_request,
     build_security_policies_patch_request,
 )
-from .._configuration import CdnClientConfiguration
+from .._configuration import CdnManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -169,14 +169,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -279,14 +279,14 @@ class ProfilesOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`profiles` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2479,14 +2479,14 @@ class AFDEndpointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`afd_endpoints` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3915,14 +3915,14 @@ class AFDOriginGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`afd_origin_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4871,14 +4871,14 @@ class AFDOriginsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`afd_origins` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5758,14 +5758,14 @@ class RoutesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`routes` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6658,14 +6658,14 @@ class RuleSetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`rule_sets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7175,14 +7175,14 @@ class RulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`rules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8064,14 +8064,14 @@ class SecurityPoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`security_policies` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8903,14 +8903,14 @@ class SecretsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`secrets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9484,14 +9484,14 @@ class EndpointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`endpoints` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11420,14 +11420,14 @@ class OriginsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`origins` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12301,14 +12301,14 @@ class OriginGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`origin_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -13192,14 +13192,14 @@ class CustomDomainsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`custom_domains` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -14228,14 +14228,14 @@ class AFDCustomDomainsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`afd_custom_domains` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -15209,14 +15209,14 @@ class AFDProfilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`afd_profiles` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -16109,14 +16109,14 @@ class LogAnalyticsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`log_analytics` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -16697,14 +16697,14 @@ class PoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`policies` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17438,14 +17438,14 @@ class ResourceUsageOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`resource_usage` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17549,14 +17549,14 @@ class EdgeNodesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`edge_nodes` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17660,14 +17660,14 @@ class ManagedRuleSetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cdn.aio.CdnClient`'s
+        :class:`~azure.mgmt.cdn.aio.CdnManagementClient`'s
         :attr:`managed_rule_sets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CdnClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CdnManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -17766,8 +17766,8 @@ class ManagedRuleSetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class _CdnClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], CdnClientConfiguration]
+class _CdnManagementClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], CdnManagementClientConfiguration]
 ):
 
     @overload
@@ -17892,7 +17892,7 @@ class _CdnClientOperationsMixin(
         else:
             _content = json.dumps(check_endpoint_name_availability_input, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_cdn_check_endpoint_name_availability_request(
+        _request = build_cdn_management_check_endpoint_name_availability_request(
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
@@ -18032,7 +18032,7 @@ class _CdnClientOperationsMixin(
         else:
             _content = json.dumps(check_name_availability_input, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_cdn_check_name_availability_request(
+        _request = build_cdn_management_check_name_availability_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -18170,7 +18170,7 @@ class _CdnClientOperationsMixin(
         else:
             _content = json.dumps(check_name_availability_input, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_cdn_check_name_availability_with_subscription_request(
+        _request = build_cdn_management_check_name_availability_with_subscription_request(
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -18304,7 +18304,7 @@ class _CdnClientOperationsMixin(
         else:
             _content = json.dumps(validate_probe_input, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_cdn_validate_probe_request(
+        _request = build_cdn_management_validate_probe_request(
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,

@@ -595,14 +595,14 @@
         "azure.mgmt.cdn.aio.operations.EdgeNodesOperations.list": "Microsoft.Cdn.EdgeNodesOperationGroup.list",
         "azure.mgmt.cdn.operations.ManagedRuleSetsOperations.list": "Microsoft.Cdn.ManagedRuleSetsOperationGroup.list",
         "azure.mgmt.cdn.aio.operations.ManagedRuleSetsOperations.list": "Microsoft.Cdn.ManagedRuleSetsOperationGroup.list",
-        "azure.mgmt.cdn.CdnClient.check_endpoint_name_availability": "Microsoft.Cdn.checkEndpointNameAvailability",
-        "azure.mgmt.cdn.aio.CdnClient.check_endpoint_name_availability": "Microsoft.Cdn.checkEndpointNameAvailability",
-        "azure.mgmt.cdn.CdnClient.check_name_availability": "Microsoft.Cdn.checkNameAvailability",
-        "azure.mgmt.cdn.aio.CdnClient.check_name_availability": "Microsoft.Cdn.checkNameAvailability",
-        "azure.mgmt.cdn.CdnClient.check_name_availability_with_subscription": "Microsoft.Cdn.checkNameAvailabilityWithSubscription",
-        "azure.mgmt.cdn.aio.CdnClient.check_name_availability_with_subscription": "Microsoft.Cdn.checkNameAvailabilityWithSubscription",
-        "azure.mgmt.cdn.CdnClient.validate_probe": "Microsoft.Cdn.validateProbe",
-        "azure.mgmt.cdn.aio.CdnClient.validate_probe": "Microsoft.Cdn.validateProbe"
+        "azure.mgmt.cdn.CdnManagementClient.check_endpoint_name_availability": "Microsoft.Cdn.checkEndpointNameAvailability",
+        "azure.mgmt.cdn.aio.CdnManagementClient.check_endpoint_name_availability": "Microsoft.Cdn.checkEndpointNameAvailability",
+        "azure.mgmt.cdn.CdnManagementClient.check_name_availability": "Microsoft.Cdn.checkNameAvailability",
+        "azure.mgmt.cdn.aio.CdnManagementClient.check_name_availability": "Microsoft.Cdn.checkNameAvailability",
+        "azure.mgmt.cdn.CdnManagementClient.check_name_availability_with_subscription": "Microsoft.Cdn.checkNameAvailabilityWithSubscription",
+        "azure.mgmt.cdn.aio.CdnManagementClient.check_name_availability_with_subscription": "Microsoft.Cdn.checkNameAvailabilityWithSubscription",
+        "azure.mgmt.cdn.CdnManagementClient.validate_probe": "Microsoft.Cdn.validateProbe",
+        "azure.mgmt.cdn.aio.CdnManagementClient.validate_probe": "Microsoft.Cdn.validateProbe"
     },
-    "CrossLanguageVersion": "e6aecd637d4d"
+    "CrossLanguageVersion": "42158dc71d23"
 }

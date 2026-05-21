@@ -33,7 +33,7 @@ from ._operations import PoliciesOperations  # type: ignore
 from ._operations import ResourceUsageOperations  # type: ignore
 from ._operations import EdgeNodesOperations  # type: ignore
 from ._operations import ManagedRuleSetsOperations  # type: ignore
-from ._operations import _CdnClientOperationsMixin  # type: ignore # pylint: disable=unused-import
+from ._operations import _CdnManagementClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *

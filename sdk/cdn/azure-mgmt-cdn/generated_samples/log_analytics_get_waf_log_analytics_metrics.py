@@ -10,7 +10,7 @@ import isodate
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.cdn import CdnClient
+from azure.mgmt.cdn import CdnManagementClient
 
 """
 # PREREQUISITES
@@ -27,7 +27,7 @@ from azure.mgmt.cdn import CdnClient
 
 
 def main():
-    client = CdnClient(
+    client = CdnManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
