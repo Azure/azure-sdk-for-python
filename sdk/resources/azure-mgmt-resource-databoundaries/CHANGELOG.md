@@ -10,7 +10,7 @@
   - Added model `Operation`
   - Added model `OperationDisplay`
   - Added enum `Origin`
-  - Added model `Operations`
+  - Added operation group `Operations`
 
 ## 1.0.0b1 (2026-02-04)
 
