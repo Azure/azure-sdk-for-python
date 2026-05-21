@@ -11,5 +11,3 @@ from typing import TYPE_CHECKING, Union
 if TYPE_CHECKING:
     from . import models as _models
 Filters = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
-EvalItemContentItem = Union[str, "_models.EvalItemContentItemObject"]
-EvalItemContent = Union["_types.EvalItemContentItem", list["_types.EvalItemContentItem"]]

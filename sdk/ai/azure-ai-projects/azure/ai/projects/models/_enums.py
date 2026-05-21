@@ -354,6 +354,52 @@ class CustomToolParamFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GRAMMAR."""
 
 
+class DataGenerationJobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported output file types for a data generation job."""
+
+    FILE = "file"
+    """The generated data is an Azure OpenAI File."""
+    DATASET = "dataset"
+    """The generated data is a Dataset."""
+
+
+class DataGenerationJobScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported scenarios for a data generation job."""
+
+    SUPERVISED_FINETUNING = "supervised_finetuning"
+    """Supervised Fine-tuning scenario."""
+    REINFORCEMENT_FINETUNING = "reinforcement_finetuning"
+    """Reinforcement Fine-tuning scenario."""
+    EVALUATION = "evaluation"
+    """Evaluation scenario."""
+
+
+class DataGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported source types for data generation jobs."""
+
+    PROMPT = "prompt"
+    """Prompt source — inline text provided by the user."""
+    AGENT = "agent"
+    """Agent source — references an agent."""
+    TRACES = "traces"
+    """Traces source — conversation traces from Application Insights."""
+    DATASET = "dataset"
+    """Dataset source — reference to a dataset."""
+    FILE = "file"
+    """File source — Azure OpenAI file."""
+
+
+class DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported data generation job types."""
+
+    SIMPLE_QNA = "simple_qna"
+    """Simple question and answers between user and agent."""
+    TRACES = "traces"
+    """Single turn query and response from agent traces."""
+    TOOL_USE = "tool_use"
+    """Tool calling conversation between user and agent."""
+
+
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the type of data."""
 
@@ -416,15 +462,6 @@ class EvaluationRuleEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Response completed."""
     MANUAL = "manual"
     """Manual trigger."""
-
-
-class EvaluationSuiteSubtype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The subtype of an evaluation suite."""
-
-    DEFAULT = "default"
-    """Default suite type."""
-    BENCHMARK = "benchmark"
-    """Benchmark suite."""
 
 
 class EvaluationTaxonomyInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -936,6 +973,15 @@ class SessionLogEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     LOG = "log"
     """A log line from the agent session container."""
+
+
+class SimpleQnAFineTuningQuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported question types for SimpleQnA data generation jobs used for fine-tuning scenarios."""
+
+    SHORT_ANSWER = "short_answer"
+    """Short answer question type."""
+    LONG_ANSWER = "long_answer"
+    """Long answer question type."""
 
 
 class TelemetryDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
