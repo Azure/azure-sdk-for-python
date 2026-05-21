@@ -3,6 +3,8 @@
 ## 1.0.0b53 (Unreleased)
 
 ### Features Added
+- Use `APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE` environment variable in `_is_attach_enabled` to
+  reliably detect successful auto-instrumentation attach, with fallback to legacy path-based detection
 
 ### Breaking Changes
 

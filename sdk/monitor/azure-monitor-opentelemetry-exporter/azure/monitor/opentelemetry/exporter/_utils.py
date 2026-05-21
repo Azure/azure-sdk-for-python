@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
+    _APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE,
     _AZURE_MONITOR_DISTRO_VERSION,
     _DEFAULT_AAD_SCOPE,
     _FUNCTIONS_WORKER_RUNTIME,
@@ -68,6 +69,14 @@ def _is_on_aks():
 
 
 def _is_attach_enabled():
+    attach_type = environ.get(_APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE)
+    if attach_type is not None:
+        # If the env var is set, attach is only enabled if the value is
+        # "IntegratedAuto" AND the existing per-RP logic is satisfied.
+        if attach_type == "IntegratedAuto":
+            return True
+        return False
+    # Fallback to legacy logic when the env var is not set
     if _is_on_functions():
         return environ.get(_PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY) == "true"
     if _is_on_app_service():
