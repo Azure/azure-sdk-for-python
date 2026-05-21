@@ -1,5 +1,140 @@
 # Release History
 
+## 25.0.0 (2026-05-19)
+
+### Features Added
+
+  - Client `StorageManagementClient` added method `send_request`
+  - Client `StorageManagementClient` added operation group `connectors`
+  - Client `StorageManagementClient` added operation group `data_shares`
+  - Enum `AccessTier` added member `SMART`
+  - Enum `AllowedCopyScope` added member `ALL`
+  - Enum `TriggerType` added member `MOCK_RUN`
+  - Model `AzureEntityResource` added property `system_data`
+  - Model `BlobContainer` added property `system_data`
+  - Model `BlobServiceProperties` added property `system_data`
+  - Model `DeletedAccount` added property `system_data`
+  - Model `EncryptionScope` added property `system_data`
+  - Model `FileServiceProperties` added property `system_data`
+  - Model `FileServiceUsage` added property `system_data`
+  - Model `FileShare` added property `system_data`
+  - Model `FileShareItem` added property `system_data`
+  - Model `ImmutabilityPolicy` added property `system_data`
+  - Model `ListContainerItem` added property `system_data`
+  - Model `ListQueue` added property `system_data`
+  - Model `ManagementPolicy` added property `system_data`
+  - Model `ObjectReplicationPolicy` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `QueueServiceProperties` added property `system_data`
+  - Model `StorageAccount` added property `system_data`
+  - Model `StorageAccountCheckNameAvailabilityParameters` added property `type`
+  - Model `StorageAccountMigration` added property `system_data`
+  - Model `StorageQueue` added property `system_data`
+  - Model `StorageTaskAssignment` added property `system_data`
+  - Model `StorageTaskReportInstance` added property `system_data`
+  - Model `Table` added property `system_data`
+  - Model `TableServiceProperties` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `CloudError`
+  - Added model `Connector`
+  - Added model `ConnectorUpdate`
+  - Added model `DataShare`
+  - Added model `DataShareConnection`
+  - Added model `DataShareSource`
+  - Added model `DataShareSourceUpdate`
+  - Added model `DataShareUpdate`
+  - Added model `ManagedIdentityAuthProperties`
+  - Added model `ManagedIdentityAuthPropertiesUpdate`
+  - Added enum `NativeDataSharingProvisioningState`
+  - Added model `ObjectReplicationPolicyPropertiesTagsReplication`
+  - Added model `ServiceSharedKeyAccessProperties`
+  - Added model `StaticWebsite`
+  - Added model `StorageAccountSharedKeyAccessProperties`
+  - Added model `StorageConnectorAuthProperties`
+  - Added model `StorageConnectorAuthPropertiesUpdate`
+  - Added enum `StorageConnectorAuthType`
+  - Added model `StorageConnectorConnection`
+  - Added enum `StorageConnectorConnectionType`
+  - Added enum `StorageConnectorDataSourceType`
+  - Added model `StorageConnectorProperties`
+  - Added model `StorageConnectorPropertiesUpdate`
+  - Added model `StorageConnectorSource`
+  - Added enum `StorageConnectorSourceType`
+  - Added model `StorageConnectorSourceUpdate`
+  - Added enum `StorageConnectorState`
+  - Added model `StorageDataCollaborationPolicyProperties`
+  - Added model `StorageDataShareAccessPolicy`
+  - Added enum `StorageDataShareAccessPolicyPermission`
+  - Added model `StorageDataShareAsset`
+  - Added model `StorageDataShareProperties`
+  - Added model `StorageDataSharePropertiesUpdate`
+  - Added enum `StorageTaskAssignmentProvisioningState`
+  - Added model `TestConnectionResponse`
+  - Added model `TestExistingConnectionRequest`
+  - Added model `TrackedResourceUpdate`
+  - Operation group `StorageTaskAssignmentsOperations` added method `begin_stop_assignment`
+  - Added operation group `ConnectorsOperations`
+  - Added operation group `DataSharesOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Restriction` renamed its instance variable `values` to `values_property`
+  - Model `UpdateHistoryProperty` renamed its instance variable `update` to `update_property`
+  - Model `BlobContainer` moved instance variable `version`, `deleted`, `deleted_time`, `remaining_retention_days`, `default_encryption_scope`, `deny_encryption_scope_override`, `public_access`, `last_modified_time`, `lease_status`, `lease_state`, `lease_duration`, `metadata`, `immutability_policy`, `legal_hold`, `has_legal_hold`, `has_immutability_policy`, `immutable_storage_with_versioning`, `enable_nfs_v3_root_squash` and `enable_nfs_v3_all_squash` under property `container_properties` whose type is `ContainerProperties`
+  - Model `BlobServiceProperties` moved instance variable `cors`, `default_service_version`, `delete_retention_policy`, `is_versioning_enabled`, `automatic_snapshot_policy_enabled`, `change_feed`, `restore_policy`, `container_delete_retention_policy` and `last_access_time_tracking_policy` under property `blob_service_properties` whose type is `BlobServicePropertiesProperties`
+  - Model `EncryptionScope` moved instance variable `source`, `state`, `creation_time`, `last_modified_time`, `key_vault_properties` and `require_infrastructure_encryption` under property `encryption_scope_properties` whose type is `EncryptionScopeProperties`
+  - Model `FileServiceProperties` moved instance variable `cors`, `share_delete_retention_policy` and `protocol_settings` under property `file_service_properties` whose type is `FileServicePropertiesProperties`
+  - Model `FileShare` moved instance variable `last_modified_time`, `metadata`, `share_quota`, `provisioned_iops`, `provisioned_bandwidth_mibps`, `included_burst_iops`, `max_burst_credits_for_iops`, `next_allowed_quota_downgrade_time`, `next_allowed_provisioned_iops_downgrade_time`, `next_allowed_provisioned_bandwidth_downgrade_time`, `enabled_protocols`, `root_squash`, `version`, `deleted`, `deleted_time`, `remaining_retention_days`, `access_tier`, `access_tier_change_time`, `access_tier_status`, `share_usage_bytes`, `lease_status`, `lease_state`, `lease_duration`, `signed_identifiers`, `snapshot_time` and `file_share_paid_bursting` under property `file_share_properties` whose type is `FileShareProperties`
+  - Model `FileShareItem` moved instance variable `last_modified_time`, `metadata`, `share_quota`, `provisioned_iops`, `provisioned_bandwidth_mibps`, `included_burst_iops`, `max_burst_credits_for_iops`, `next_allowed_quota_downgrade_time`, `next_allowed_provisioned_iops_downgrade_time`, `next_allowed_provisioned_bandwidth_downgrade_time`, `enabled_protocols`, `root_squash`, `version`, `deleted`, `deleted_time`, `remaining_retention_days`, `access_tier`, `access_tier_change_time`, `access_tier_status`, `share_usage_bytes`, `lease_status`, `lease_state`, `lease_duration`, `signed_identifiers`, `snapshot_time` and `file_share_paid_bursting` under property `properties` whose type is `FileShareProperties`
+  - Model `ImmutabilityPolicy` moved instance variable `immutability_period_since_creation_in_days`, `state`, `allow_protected_append_writes` and `allow_protected_append_writes_all` under property `properties` whose type is `ImmutabilityPolicyProperty`
+  - Model `ImmutabilityPolicyProperties` moved instance variable `immutability_period_since_creation_in_days`, `state`, `allow_protected_append_writes` and `allow_protected_append_writes_all` under property `properties` whose type is `ImmutabilityPolicyProperty`
+  - Model `ListContainerItem` moved instance variable `version`, `deleted`, `deleted_time`, `remaining_retention_days`, `default_encryption_scope`, `deny_encryption_scope_override`, `public_access`, `last_modified_time`, `lease_status`, `lease_state`, `lease_duration`, `metadata`, `immutability_policy`, `legal_hold`, `has_legal_hold`, `has_immutability_policy`, `immutable_storage_with_versioning`, `enable_nfs_v3_root_squash` and `enable_nfs_v3_all_squash` under property `properties` whose type is `ContainerProperties`
+  - Model `ListQueue` moved instance variable `metadata` under property `queue_properties` whose type is `ListQueueProperties`
+  - Model `Operation` moved instance variable `service_specification` under property `operation_properties` whose type is `OperationProperties`
+  - Model `QueueServiceProperties` moved instance variable `cors` under property `queue_service_properties` whose type is `QueueServicePropertiesProperties`
+  - Model `StorageAccountCreateParameters` moved instance variable `allowed_copy_scope`, `public_network_access`, `sas_policy`, `key_policy`, `custom_domain`, `encryption`, `network_rule_set`, `access_tier`, `azure_files_identity_based_authentication`, `enable_https_traffic_only`, `is_sftp_enabled`, `is_local_user_enabled`, `enable_extended_groups`, `is_hns_enabled`, `large_file_shares_state`, `routing_preference`, `dual_stack_endpoint_preference`, `allow_blob_public_access`, `minimum_tls_version`, `allow_shared_key_access`, `enable_nfs_v3`, `allow_cross_tenant_replication`, `default_to_o_auth_authentication`, `immutable_storage_with_versioning`, `dns_endpoint_type` and `geo_priority_replication_status` under property `properties` whose type is `StorageAccountPropertiesCreateParameters`
+  - Model `StorageAccountListKeysResult` deleted or renamed its instance variable `keys`
+  - Model `StorageAccountMigration` moved instance variable `target_sku_name`, `migration_status`, `migration_failed_reason` and `migration_failed_detailed_reason` under property `storage_account_migration_details` whose type is `StorageAccountMigrationProperties`
+  - Model `StorageAccountUpdateParameters` moved instance variable `custom_domain`, `encryption`, `sas_policy`, `key_policy`, `access_tier`, `azure_files_identity_based_authentication`, `enable_https_traffic_only`, `is_sftp_enabled`, `is_local_user_enabled`, `enable_extended_groups`, `network_rule_set`, `large_file_shares_state`, `routing_preference`, `dual_stack_endpoint_preference`, `allow_blob_public_access`, `minimum_tls_version`, `allow_shared_key_access`, `allow_cross_tenant_replication`, `default_to_o_auth_authentication`, `public_network_access`, `immutable_storage_with_versioning`, `allowed_copy_scope`, `dns_endpoint_type` and `geo_priority_replication_status` under property `properties` whose type is `StorageAccountPropertiesUpdateParameters`
+  - Model `StorageQueue` moved instance variable `metadata` and `approximate_message_count` under property `queue_properties` whose type is `QueueProperties`
+  - Model `Table` moved instance variable `table_name` and `signed_identifiers` under property `table_properties` whose type is `TableProperties`
+  - Model `TableServiceProperties` moved instance variable `cors` under property `table_service_properties` whose type is `TableServicePropertiesProperties`
+  - Deleted or renamed enum value `ProvisioningState.ACCEPTED`
+  - Deleted or renamed enum value `ProvisioningState.CANCELED`
+  - Deleted or renamed enum value `ProvisioningState.DELETING`
+  - Deleted or renamed enum value `ProvisioningState.FAILED`
+  - Deleted or renamed enum value `ProvisioningState.VALIDATE_SUBSCRIPTION_QUOTA_BEGIN`
+  - Deleted or renamed enum value `ProvisioningState.VALIDATE_SUBSCRIPTION_QUOTA_END`
+  - Renamed enum `LeaseContainerRequestEnum` to `LeaseContainerRequestAction`
+  - Deleted or renamed model `ProxyResourceAutoGenerated`
+  - Deleted or renamed model `Resource`
+  - Method `BlobContainersOperations.create_or_update_immutability_policy` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `BlobContainersOperations.delete_immutability_policy` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `BlobContainersOperations.extend_immutability_policy` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `BlobContainersOperations.get_immutability_policy` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `BlobContainersOperations.lock_immutability_policy` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `BlobContainersOperations.list` changed its parameter `include` from `positional_or_keyword` to `keyword_only`
+  - Method `EncryptionScopesOperations.list` changed its parameter `include` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.create` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.delete` changed its parameter `x_ms_snapshot`/`include` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.get` changed its parameter `expand`/`x_ms_snapshot` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.lease` changed its parameter `x_ms_snapshot` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `LocalUsersOperations.list` changed its parameter `include` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAccountsOperations.begin_failover` changed its parameter `failover_type` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAccountsOperations.begin_hierarchical_namespace_migration` changed its parameter `request_type` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAccountsOperations.get_properties` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAccountsOperations.list_keys` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.lease` re-ordered its parameters from `['self', 'resource_group_name', 'account_name', 'share_name', 'x_ms_snapshot', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'share_name', 'parameters', 'x_ms_snapshot', 'kwargs']`
+
+### Other Changes
+
+  - Deleted model `BlobServiceItems`/`FileServiceUsages`/`FileShareItems`/`ListBlobInventoryPolicy`/`ListContainerItems`/`ListQueueResource`/`ListTableResource`/`LocalUsers`/`NetworkSecurityPerimeterConfigurationList`/`ObjectReplicationPolicies`/`StorageTaskAssignmentsList`/`StorageTaskReportSummary` which actually were not used by SDK users
+
 ## 24.0.1 (2026-03-24)
 
 ### Other Changes

@@ -65,13 +65,6 @@
 # PRLabel: %Attestation
 /sdk/attestation/azure-security-attestation/    @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
-# PRLabel: %Azure Projects
-/sdk/projects/    @annatisch
-
-# AzureSdkOwners: @annatisch
-# ServiceLabel: %Azure Projects
-# ServiceOwners: @annatisch
-
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
