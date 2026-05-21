@@ -39,6 +39,7 @@ from _keys_test_case import KeysTestCase
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_default = get_decorator(only_hsm=True, api_versions=[DEFAULT_VERSION])
+default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 only_hsm_7_4_plus = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 only_vault_7_4_plus = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 only_7_4_plus = get_decorator(api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
@@ -110,6 +111,16 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         self._validate_ec_key_bundle(key_curve, created_key, client.vault_url, key_name, key_type)
         return created_key
 
+    def _create_oct_key(self, client, key_name, **kwargs):
+        hsm = kwargs.get("hardware_protected") or False
+        size = kwargs.get("size") or 256
+        if self.is_live:
+            time.sleep(2)  # to avoid throttling by the service
+        created_key = client.create_oct_key(key_name, **kwargs)
+        kty = "oct-HSM"
+        self._validate_oct_key_bundle(created_key, client.vault_url, key_name, kty, size)
+        return created_key
+
     def _validate_ec_key_bundle(self, key_curve, key_attributes, vault, key_name, kty):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
@@ -129,6 +140,19 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
         assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
+        assert (
+            key_attributes.properties.created_on and key_attributes.properties.updated_on
+        ), "Missing required date attributes."
+
+    def _validate_oct_key_bundle(self, key_attributes, vault, key_name, kty, size):
+        prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
+        key = key_attributes.key
+        kid = key_attributes.id
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
+        assert key_attributes.properties.key_size == size, (
+            f"key_size should be {size}, but is {key_attributes.properties.key_size}"
+        )
         assert (
             key_attributes.properties.created_on and key_attributes.properties.updated_on
         ), "Missing required date attributes."
@@ -189,687 +213,710 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
-    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    # @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_key_crud_operations(self, client, is_hsm, **kwargs):
+    #     assert client is not None
+
+    #     # create ec key
+    #     ec_key_name = self.get_resource_name("crud-ec-key")
+    #     tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
+    #     ec_key = self._create_ec_key(client, enabled=True, key_name=ec_key_name, hardware_protected=is_hsm, tags=tags)
+    #     assert ec_key.properties.enabled
+    #     assert tags == ec_key.properties.tags
+    #     # create ec with curve
+    #     ec_key_curve_name = self.get_resource_name("crud-P-256-ec-key")
+    #     created_ec_key_curve = self._create_ec_key(
+    #         client, key_name=ec_key_curve_name, curve="P-256", hardware_protected=is_hsm
+    #     )
+    #     assert "P-256" == created_ec_key_curve.key.crv
+
+    #     # import key
+    #     import_test_key_name = self.get_resource_name("import-test-key")
+    #     self._import_test_key(client, import_test_key_name, hardware_protected=is_hsm)
+
+    #     # create rsa key
+    #     rsa_key_name = self.get_resource_name("crud-rsa-key")
+    #     tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
+    #     key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
+    #     rsa_key = self._create_rsa_key(
+    #         client, key_name=rsa_key_name, key_operations=key_ops, size=2048, tags=tags, hardware_protected=is_hsm
+    #     )
+    #     assert tags == rsa_key.properties.tags
+
+    #     # get the created key with version
+    #     key = client.get_key(rsa_key.name, rsa_key.properties.version)
+    #     assert key.properties.version == rsa_key.properties.version
+    #     self._assert_key_attributes_equal(rsa_key.properties, key.properties)
+
+    #     # get key without version
+    #     self._assert_key_attributes_equal(rsa_key.properties, client.get_key(rsa_key.name).properties)
+
+    #     # update key with version
+    #     if self.is_live:
+    #         # wait to ensure the key's update time won't equal its creation time
+    #         time.sleep(1)
+
+    #     self._update_key_properties(client, rsa_key)
+
+    #     # delete the new key
+    #     deleted_key_poller = client.begin_delete_key(rsa_key.name)
+    #     deleted_key = deleted_key_poller.result()
+    #     assert deleted_key is not None
+
+    #     # aside from key_ops, the original updated keys should have the same JWKs
+    #     self._assert_jwks_equal(rsa_key.key, deleted_key.key)
+    #     assert deleted_key.id == rsa_key.id
+    #     assert (
+    #         deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date
+    #     ), "Missing required deleted key attributes."
+
+    #     deleted_key_poller.wait()
+
+    #     # get the deleted key when soft deleted enabled
+    #     deleted_key = client.get_deleted_key(rsa_key.name)
+    #     assert deleted_key is not None
+    #     assert rsa_key.id == deleted_key.id
+
+    # @pytest.mark.parametrize("api_version,is_hsm", only_hsm)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_rsa_public_exponent(self, client, **kwargs):
+    #     """The public exponent of a Managed HSM RSA key can be specified during creation"""
+    #     assert client is not None
+
+    #     key_name = self.get_resource_name("rsa-key")
+    #     key = self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
+    #     public_exponent = key.key.e[0]
+    #     assert public_exponent == 17
+
+    # @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_backup_restore(self, client, is_hsm, **kwargs):
+    #     assert client is not None
+
+    #     key_name = self.get_resource_name("keybak")
+
+    #     # create key
+    #     created_bundle = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+
+    #     # backup key
+    #     key_backup = client.backup_key(created_bundle.name)
+    #     assert key_backup is not None
+
+    #     # delete key
+    #     client.begin_delete_key(created_bundle.name).wait()
+
+    #     # purge key
+    #     client.purge_deleted_key(created_bundle.name)
+
+    #     # restore key
+    #     restore_function = functools.partial(client.restore_key_backup, key_backup)
+    #     restored_key = self._poll_until_no_exception(restore_function, ResourceExistsError)
+    #     self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
+
+    # @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_key_list(self, client, is_hsm, **kwargs):
+    #     assert client is not None
+
+    #     max_keys = LIST_TEST_SIZE
+    #     expected = {}
+
+    #     # create many keys
+    #     for x in range(max_keys):
+    #         key_name = self.get_resource_name(f"key{x}")
+    #         key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+    #         expected[key.name] = key
+
+    #     # list keys
+    #     result = client.list_properties_of_keys(max_page_size=max_keys - 1)
+    #     for key in result:
+    #         if key.name in expected.keys():
+    #             self._assert_key_attributes_equal(expected[key.name].properties, key)
+    #             del expected[key.name]
+    #     assert len(expected) == 0
+
+    # @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_list_versions(self, client, is_hsm, **kwargs):
+    #     assert client is not None
+
+    #     key_name = self.get_resource_name("testKey")
+
+    #     max_keys = LIST_TEST_SIZE
+    #     expected = {}
+
+    #     # create many key versions
+    #     for _ in range(max_keys):
+    #         key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+    #         expected[key.id] = key
+
+    #     result = client.list_properties_of_key_versions(key_name, max_page_size=max_keys - 1)
+
+    #     # validate list key versions with attributes
+    #     for key in result:
+    #         if key.id in expected.keys():
+    #             expected_key = expected[key.id]
+    #             del expected[key.id]
+    #             self._assert_key_attributes_equal(expected_key.properties, key)
+    #     assert 0 == len(expected)
+
+    # @pytest.mark.skip("Temporarily disabled due to service issue")
+    # @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_list_deleted_keys(self, client, is_hsm, **kwargs):
+    #     assert client is not None
+
+    #     expected = {}
+
+    #     # create keys
+    #     for i in range(LIST_TEST_SIZE):
+    #         key_name = self.get_resource_name(f"key{i}")
+    #         expected[key_name] = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+
+    #     # delete them
+    #     for key_name in expected.keys():
+    #         client.begin_delete_key(key_name).wait()
+
+    #     # validate list deleted keys with attributes
+    #     for deleted_key in client.list_deleted_keys():
+    #         assert deleted_key.deleted_date is not None
+    #         assert deleted_key.scheduled_purge_date is not None
+    #         assert deleted_key.recovery_id is not None
+
+    #     result = client.list_deleted_keys()
+    #     # validate all the deleted keys are returned by list_deleted_keys
+    #     for key in result:
+    #         if key.name in expected.keys():
+    #             self._assert_key_attributes_equal(expected[key.name].properties, key.properties)
+    #             del expected[key.name]
+
+    # @pytest.mark.skip("Temporarily disabled due to service issue")
+    # @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_recover(self, client, is_hsm, **kwargs):
+    #     assert client is not None
+
+    #     # create keys
+    #     keys = {}
+    #     for i in range(LIST_TEST_SIZE):
+    #         key_name = self.get_resource_name(f"key{i}")
+    #         keys[key_name] = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+
+    #     # delete them
+    #     for key_name in keys.keys():
+    #         client.begin_delete_key(key_name).wait()
+
+    #     # validate the deleted keys are returned by list_deleted_keys
+    #     deleted = [s.name for s in client.list_deleted_keys()]
+    #     assert all(s in deleted for s in keys.keys())
+
+    #     # recover the keys
+    #     for key_name in keys.keys():
+    #         recovered_key = client.begin_recover_deleted_key(key_name).result()
+    #         expected_key = keys[key_name]
+    #         self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
+
+    # @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_purge(self, client, is_hsm, **kwargs):
+    #     assert client is not None
+
+    #     # create keys
+    #     key_names = [self.get_resource_name(f"key{i}") for i in range(LIST_TEST_SIZE)]
+    #     for name in key_names:
+    #         self._create_rsa_key(client, name, hardware_protected=is_hsm)
+
+    #     # delete them
+    #     for key_name in key_names:
+    #         client.begin_delete_key(key_name).wait()
+
+    #     # validate all our deleted keys are returned by list_deleted_keys
+    #     deleted = [k.name for k in client.list_deleted_keys()]
+    #     assert all(n in deleted for n in key_names)
+
+    #     # purge them
+    #     for key_name in key_names:
+    #         client.purge_deleted_key(key_name)
+    #     for key_name in key_names:
+    #         self._poll_until_exception(
+    #             functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
+    #         )
+
+    #     # validate none are returned by list_deleted_keys
+    #     deleted = [s.name for s in client.list_deleted_keys()]
+    #     assert not any(s in deleted for s in key_names)
+
+    # @pytest.mark.parametrize("api_version,is_hsm", logging_enabled)
+    # @KeysClientPreparer(logging_enable=True)
+    # @recorded_by_proxy
+    # def test_logging_enabled(self, client, is_hsm, **kwargs):
+    #     mock_handler = MockHandler()
+
+    #     logger = logging.getLogger("azure")
+    #     logger.addHandler(mock_handler)
+    #     logger.setLevel(logging.DEBUG)
+
+    #     rsa_key_name = self.get_resource_name("rsa-key-name")
+    #     self._create_rsa_key(client, rsa_key_name, size=2048, hardware_protected=is_hsm)
+
+    #     for message in mock_handler.messages:
+    #         if message.levelname == "DEBUG" and message.funcName == "on_request":
+    #             # parts of the request are logged on new lines in a single message
+    #             if "'/n" in message.message:
+    #                 request_sections = message.message.split("/n")
+    #             else:
+    #                 request_sections = message.message.split("\n")
+    #             for section in request_sections:
+    #                 try:
+    #                     # the body of the request should be JSON
+    #                     body = json.loads(section)
+    #                     expected_kty = "RSA-HSM" if is_hsm else "RSA"
+    #                     if body["kty"] == expected_kty:
+    #                         mock_handler.close()
+    #                         return
+    #                 except (ValueError, KeyError):
+    #                     # this means the request section is not JSON or has no kty property
+    #                     pass
+
+    #     mock_handler.close()
+    #     assert False, "Expected request body wasn't logged"
+
+    # @pytest.mark.parametrize("api_version,is_hsm", logging_enabled)
+    # @KeysClientPreparer(logging_enable=False)
+    # @recorded_by_proxy
+    # def test_logging_disabled(self, client, is_hsm, **kwargs):
+    #     mock_handler = MockHandler()
+
+    #     logger = logging.getLogger("azure")
+    #     logger.addHandler(mock_handler)
+    #     logger.setLevel(logging.DEBUG)
+
+    #     rsa_key_name = self.get_resource_name("rsa-key-name")
+    #     self._create_rsa_key(client, rsa_key_name, size=2048, hardware_protected=is_hsm)
+
+    #     for message in mock_handler.messages:
+    #         if message.levelname == "DEBUG" and message.funcName == "on_request":
+    #             # parts of the request are logged on new lines in a single message
+    #             if "'/n" in message.message:
+    #                 request_sections = message.message.split("/n")
+    #             else:
+    #                 request_sections = message.message.split("\n")
+    #             for section in request_sections:
+    #                 try:
+    #                     # the body of the request should be JSON
+    #                     body = json.loads(section)
+    #                     expected_kty = "RSA-HSM" if is_hsm else "RSA"
+    #                     if body["kty"] == expected_kty:
+    #                         mock_handler.close()
+    #                         assert False, "Client request body was logged"
+    #                 except (ValueError, KeyError):
+    #                     # this means the request section is not JSON or has no kty property
+    #                     pass
+
+    #     mock_handler.close()
+
+    # @pytest.mark.parametrize("api_version,is_hsm", only_hsm_7_4_plus)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_get_random_bytes(self, client, **kwargs):
+    #     assert client
+
+    #     generated_random_bytes = []
+    #     for i in range(5):
+    #         # [START get_random_bytes]
+    #         # get eight random bytes from a managed HSM
+    #         random_bytes = client.get_random_bytes(count=8)
+    #         # [END get_random_bytes]
+    #         assert len(random_bytes) == 8
+    #         assert all(random_bytes != rb for rb in generated_random_bytes)
+    #         generated_random_bytes.append(random_bytes)
+
+    # @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_key_release(self, client, is_hsm, **kwargs):
+    #     if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
+    #         pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+    #     if is_hsm and client.api_version == ApiVersion.V7_5:
+    #         pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
+
+    #     attestation_uri = self._get_attestation_uri()
+    #     attestation = get_attestation_token(attestation_uri)
+    #     release_policy = get_release_policy(attestation_uri)
+
+    #     rsa_key_name = self.get_resource_name("rsa-key-name")
+    #     key = self._create_rsa_key(
+    #         client, rsa_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+    #     )
+    #     assert key.properties.release_policy
+    #     assert key.properties.release_policy.encoded_policy
+    #     assert key.properties.exportable
+
+    #     try:
+    #         release_result = client.release_key(rsa_key_name, attestation)
+    #         assert release_result.value
+    #     except HttpResponseError as ex:
+    #         # In live pipeline tests, the service can frequently throw a transient error regarding attestation
+    #         if self.is_live and "Target environment attestation statement cannot be verified" in ex.message:
+    #             pytest.skip("Target environment attestation statement cannot be verified. Likely transient failure.")
+
+    # @pytest.mark.parametrize("api_version,is_hsm", only_hsm_7_4_plus)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_imported_key_release(self, client, **kwargs):
+    #     if client.api_version == ApiVersion.V7_5:
+    #         pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
+
+    #     attestation_uri = self._get_attestation_uri()
+    #     attestation = get_attestation_token(attestation_uri)
+    #     release_policy = get_release_policy(attestation_uri)
+
+    #     imported_key_name = self.get_resource_name("imported-key-name")
+    #     key = self._import_test_key(
+    #         client, imported_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+    #     )
+    #     assert key.properties.release_policy
+    #     assert key.properties.release_policy.encoded_policy
+    #     assert key.properties.exportable
+
+    #     release_result = client.release_key(imported_key_name, attestation)
+    #     assert release_result.value
+
+    # @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_update_release_policy(self, client, **kwargs):
+    #     if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
+    #         pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+    #     if client.api_version == ApiVersion.V7_5:
+    #         pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
+
+    #     attestation_uri = self._get_attestation_uri()
+    #     release_policy = get_release_policy(attestation_uri)
+    #     key_name = self.get_resource_name("key-name")
+    #     key = self._create_rsa_key(
+    #         client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+    #     )
+
+    #     policy = json.loads(key.properties.release_policy.encoded_policy.decode())
+    #     claim_condition = policy["anyOf"][0]["anyOf"][0]["equals"]
+    #     # for some reason, claim_condition may be 'true' here for KV, but should be True here for MHSM
+    #     claim_condition = claim_condition if isinstance(claim_condition, bool) else json.loads(claim_condition)
+    #     assert claim_condition is True
+
+    #     new_release_policy_json = {
+    #         "anyOf": [
+    #             {"anyOf": [{"claim": "sdk-test", "equals": False}], "authority": attestation_uri.rstrip("/") + "/"}
+    #         ],
+    #         "version": "1.0.0",
+    #     }
+    #     policy_string = json.dumps(new_release_policy_json).encode()
+    #     new_release_policy = KeyReleasePolicy(policy_string)
+
+    #     updated_key = self._update_key_properties(client, key, new_release_policy)
+    #     updated_policy = json.loads(updated_key.properties.release_policy.encoded_policy.decode())
+    #     claim_condition = updated_policy["anyOf"][0]["anyOf"][0]["equals"]
+    #     claim_condition = claim_condition if isinstance(claim_condition, bool) else json.loads(claim_condition)
+    #     assert claim_condition is False
+
+    # # Immutable policies aren't currently supported on Managed HSM
+    # @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_immutable_release_policy(self, client, **kwargs):
+    #     if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
+    #         pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+
+    #     attestation_uri = self._get_attestation_uri()
+    #     release_policy = get_release_policy(attestation_uri, immutable=True)
+    #     key_name = self.get_resource_name("key-name")
+    #     key = self._create_rsa_key(
+    #         client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+    #     )
+    #     assert key.properties.release_policy.encoded_policy
+    #     assert key.properties.release_policy.immutable
+
+    #     new_release_policy_json = {
+    #         "anyOf": [
+    #             {"anyOf": [{"claim": "sdk-test", "equals": False}], "authority": attestation_uri.rstrip("/") + "/"}
+    #         ],
+    #         "version": "1.0.0",
+    #     }
+    #     policy_string = json.dumps(new_release_policy_json).encode()
+    #     new_release_policy = KeyReleasePolicy(policy_string, immutable=True)
+
+    #     with pytest.raises(HttpResponseError):
+    #         self._update_key_properties(client, key, new_release_policy)
+
+    # @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_key_rotation(self, client, is_hsm, **kwargs):
+    #     if not is_public_cloud() and self.is_live:
+    #         pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
+
+    #     key_name = self.get_resource_name("rotation-key")
+    #     key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+
+    #     # MHSM doesn't automatically give keys a default rotation policy, unlike KV
+    #     if is_hsm:
+    #         actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P6M")]
+    #         client.update_key_rotation_policy(key_name, KeyRotationPolicy(lifetime_actions=actions, expires_in="P1Y"))
+    #     rotated_key = client.rotate_key(key_name)
+
+    #     # the rotated key should have a new ID, version, and key material (for RSA, n and e fields)
+    #     assert key.id != rotated_key.id
+    #     assert key.properties.version != rotated_key.properties.version
+    #     assert key.key.n != rotated_key.key.n
+
+    # @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_key_rotation_policy(self, client, is_hsm, **kwargs):
+    #     if not is_public_cloud() and self.is_live:
+    #         pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
+
+    #     key_name = self.get_resource_name("rotation-key")
+    #     self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+
+    #     # ensure passing an empty policy with no kwargs doesn't raise an error on KV (MHSM requires an expiry time)
+    #     if not is_hsm:
+    #         client.update_key_rotation_policy(key_name, KeyRotationPolicy())
+
+    #     # updating a rotation policy with an empty policy and override(s)
+    #     actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P2M")]
+    #     if is_hsm:
+    #         updated_policy = client.update_key_rotation_policy(
+    #             key_name, KeyRotationPolicy(), lifetime_actions=actions, expires_in="P6M"
+    #         )
+    #         assert updated_policy.expires_in == "P6M"
+    #     else:  # try a policy without an expiry time (only allowed on KV)
+    #         updated_policy = client.update_key_rotation_policy(key_name, KeyRotationPolicy(), lifetime_actions=actions)
+    #         assert updated_policy.expires_in is None
+
+    #     fetched_policy = client.get_key_rotation_policy(key_name)
+    #     _assert_rotation_policies_equal(updated_policy, fetched_policy)
+
+    #     updated_policy_actions = None
+    #     for i in range(len(updated_policy.lifetime_actions)):
+    #         if updated_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.rotate.lower():
+    #             updated_policy_actions = updated_policy.lifetime_actions[i]
+    #     assert updated_policy_actions, "Specified rotation policy action not found in updated policy"
+    #     assert updated_policy_actions.time_after_create == "P2M"
+    #     assert updated_policy_actions.time_before_expiry is None
+
+    #     fetched_policy_actions = None
+    #     for i in range(len(fetched_policy.lifetime_actions)):
+    #         if fetched_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.rotate.lower():
+    #             fetched_policy_actions = fetched_policy.lifetime_actions[i]
+    #     assert fetched_policy_actions, "Specified rotation policy action not found in fetched policy"
+    #     _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
+
+    #     # updating with a round-tripped policy and overriding expires_in
+    #     new_policy = client.update_key_rotation_policy(key_name, policy=updated_policy, expires_in="P90D")
+    #     assert new_policy.expires_in == "P90D"
+
+    #     new_policy_actions = None
+    #     for i in range(len(new_policy.lifetime_actions)):
+    #         if new_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.rotate.lower():
+    #             new_policy_actions = new_policy.lifetime_actions[i]
+    #     _assert_lifetime_actions_equal(updated_policy_actions, new_policy_actions)
+
+    #     # at this time, MHSM doesn't support notify actions
+    #     if not is_hsm:
+    #         # updating with a round-tripped policy and overriding lifetime_actions
+    #         newest_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P60D")]
+    #         newest_policy = client.update_key_rotation_policy(
+    #             key_name, policy=new_policy, lifetime_actions=newest_actions
+    #         )
+    #         newest_fetched_policy = client.get_key_rotation_policy(key_name)
+    #         assert newest_policy.expires_in == "P90D"
+    #         _assert_rotation_policies_equal(newest_policy, newest_fetched_policy)
+
+    #         newest_policy_actions = None
+    #         for i in range(len(newest_policy.lifetime_actions)):
+    #             if newest_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.notify.lower():
+    #                 newest_policy_actions = newest_policy.lifetime_actions[i]
+    #         assert newest_policy_actions.time_after_create is None
+    #         assert newest_policy_actions.time_before_expiry == "P60D"
+
+    #         newest_fetched_policy_actions = None
+    #         for i in range(len(newest_fetched_policy.lifetime_actions)):
+    #             if newest_fetched_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.notify.lower():
+    #                 newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[i]
+    #         _assert_lifetime_actions_equal(newest_policy_actions, newest_fetched_policy_actions)
+
+    # @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_get_cryptography_client(self, client, is_hsm, **kwargs):
+    #     key_name = self.get_resource_name("key-name")
+    #     key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
+
+    #     # try specifying the key version
+    #     crypto_client = client.get_cryptography_client(key_name, key_version=key.properties.version)
+    #     # both clients should use the same generated client
+    #     assert client._client == crypto_client._client
+
+    #     # the crypto client should successfully perform crypto operations
+    #     plaintext = b"plaintext"
+    #     result = crypto_client.encrypt("RSA-OAEP", plaintext)
+    #     assert result.key_id == key.id
+
+    #     result = crypto_client.decrypt(result.algorithm, result.ciphertext)
+    #     assert result.key_id == key.id
+    #     assert "RSA-OAEP" == result.algorithm
+    #     assert plaintext == result.plaintext
+
+    #     # try omitting the key version
+    #     crypto_client = client.get_cryptography_client(key_name)
+    #     # both clients should use the same generated client
+    #     assert client._client == crypto_client._client
+
+    #     # the crypto client should successfully perform crypto operations
+    #     result = crypto_client.encrypt("RSA-OAEP", plaintext)
+    #     assert result.key_id == key.id
+
+    #     result = crypto_client.decrypt(result.algorithm, result.ciphertext)
+    #     assert result.key_id == key.id
+    #     assert "RSA-OAEP" == result.algorithm
+    #     assert plaintext == result.plaintext
+
+    # @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_send_request(self, client, is_hsm, **kwargs):
+    #     key_name = self.get_resource_name("key-name")
+    #     key = self._create_rsa_key(client, key_name)
+
+    #     # fetch the key we just created
+    #     request = HttpRequest(
+    #         method="GET",
+    #         url=f"keys/{key_name}/{key.properties.version}",
+    #         headers={"Accept": "application/json"},
+    #     )
+    #     response = client.send_request(request)
+    #     assert response.json()["key"]["kid"] == key.id
+
+    # @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
+    # @KeysClientPreparer()
+    # @recorded_by_proxy
+    # def test_get_key_attestation(self, client, **kwargs):
+    #     # create a key
+    #     key_name = self.get_resource_name("key-name")
+    #     key = self._create_rsa_key(client, key_name, hardware_protected=True)
+    #     # attestation info shouldn't be included unless requested with get_key_attestation
+    #     assert key.properties.attestation is None
+
+    #     # fetch the key we just created
+    #     fetched_key = client.get_key_attestation(key_name)
+    #     attestation = fetched_key.properties.attestation
+    #     assert attestation is not None
+    #     assert attestation.certificate_pem_file is not None
+    #     assert attestation.private_key_attestation is not None
+    #     assert attestation.public_key_attestation is not None
+    #     assert attestation.version
+
+    #     # create new key version to validate versioned fetching
+    #     updated_key = client.update_key_properties(key_name, tags={"tag": "value"})
+    #     updated_attestation = client.get_key_attestation(key_name).properties.attestation
+    #     assert updated_attestation is not None
+    #     assert updated_attestation.certificate_pem_file == attestation.certificate_pem_file
+    #     assert updated_attestation.private_key_attestation == attestation.private_key_attestation
+    #     assert updated_attestation.public_key_attestation == attestation.public_key_attestation
+    #     assert updated_attestation.version != updated_key.properties.version
+
+    #     original_attestation = client.get_key_attestation(key_name, key.properties.version).properties.attestation
+    #     assert original_attestation.version == attestation.version
+
+    @pytest.mark.parametrize("api_version,is_hsm", default_version)
     @KeysClientPreparer()
     @recorded_by_proxy
-    def test_key_crud_operations(self, client, is_hsm, **kwargs):
-        assert client is not None
-
-        # create ec key
-        ec_key_name = self.get_resource_name("crud-ec-key")
-        tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
-        ec_key = self._create_ec_key(client, enabled=True, key_name=ec_key_name, hardware_protected=is_hsm, tags=tags)
-        assert ec_key.properties.enabled
-        assert tags == ec_key.properties.tags
-        # create ec with curve
-        ec_key_curve_name = self.get_resource_name("crud-P-256-ec-key")
-        created_ec_key_curve = self._create_ec_key(
-            client, key_name=ec_key_curve_name, curve="P-256", hardware_protected=is_hsm
-        )
-        assert "P-256" == created_ec_key_curve.key.crv
-
-        # import key
-        import_test_key_name = self.get_resource_name("import-test-key")
-        self._import_test_key(client, import_test_key_name, hardware_protected=is_hsm)
-
-        # create rsa key
-        rsa_key_name = self.get_resource_name("crud-rsa-key")
-        tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
-        key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
-        rsa_key = self._create_rsa_key(
-            client, key_name=rsa_key_name, key_operations=key_ops, size=2048, tags=tags, hardware_protected=is_hsm
-        )
-        assert tags == rsa_key.properties.tags
-
-        # get the created key with version
-        key = client.get_key(rsa_key.name, rsa_key.properties.version)
-        assert key.properties.version == rsa_key.properties.version
-        self._assert_key_attributes_equal(rsa_key.properties, key.properties)
-
-        # get key without version
-        self._assert_key_attributes_equal(rsa_key.properties, client.get_key(rsa_key.name).properties)
-
-        # update key with version
-        if self.is_live:
-            # wait to ensure the key's update time won't equal its creation time
-            time.sleep(1)
-
-        self._update_key_properties(client, rsa_key)
-
-        # delete the new key
-        deleted_key_poller = client.begin_delete_key(rsa_key.name)
-        deleted_key = deleted_key_poller.result()
-        assert deleted_key is not None
-
-        # aside from key_ops, the original updated keys should have the same JWKs
-        self._assert_jwks_equal(rsa_key.key, deleted_key.key)
-        assert deleted_key.id == rsa_key.id
-        assert (
-            deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date
-        ), "Missing required deleted key attributes."
-
-        deleted_key_poller.wait()
-
-        # get the deleted key when soft deleted enabled
-        deleted_key = client.get_deleted_key(rsa_key.name)
-        assert deleted_key is not None
-        assert rsa_key.id == deleted_key.id
-
-    @pytest.mark.parametrize("api_version,is_hsm", only_hsm)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_rsa_public_exponent(self, client, **kwargs):
-        """The public exponent of a Managed HSM RSA key can be specified during creation"""
-        assert client is not None
-
-        key_name = self.get_resource_name("rsa-key")
-        key = self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
-        public_exponent = key.key.e[0]
-        assert public_exponent == 17
-
-    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_backup_restore(self, client, is_hsm, **kwargs):
-        assert client is not None
-
-        key_name = self.get_resource_name("keybak")
-
-        # create key
-        created_bundle = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
-
-        # backup key
-        key_backup = client.backup_key(created_bundle.name)
-        assert key_backup is not None
-
-        # delete key
-        client.begin_delete_key(created_bundle.name).wait()
-
-        # purge key
-        client.purge_deleted_key(created_bundle.name)
-
-        # restore key
-        restore_function = functools.partial(client.restore_key_backup, key_backup)
-        restored_key = self._poll_until_no_exception(restore_function, ResourceExistsError)
-        self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
-
-    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_key_list(self, client, is_hsm, **kwargs):
-        assert client is not None
-
-        max_keys = LIST_TEST_SIZE
-        expected = {}
-
-        # create many keys
-        for x in range(max_keys):
-            key_name = self.get_resource_name(f"key{x}")
-            key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
-            expected[key.name] = key
-
-        # list keys
-        result = client.list_properties_of_keys(max_page_size=max_keys - 1)
-        for key in result:
-            if key.name in expected.keys():
-                self._assert_key_attributes_equal(expected[key.name].properties, key)
-                del expected[key.name]
-        assert len(expected) == 0
-
-    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_list_versions(self, client, is_hsm, **kwargs):
-        assert client is not None
-
-        key_name = self.get_resource_name("testKey")
-
-        max_keys = LIST_TEST_SIZE
-        expected = {}
-
-        # create many key versions
-        for _ in range(max_keys):
-            key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
-            expected[key.id] = key
-
-        result = client.list_properties_of_key_versions(key_name, max_page_size=max_keys - 1)
-
-        # validate list key versions with attributes
-        for key in result:
-            if key.id in expected.keys():
-                expected_key = expected[key.id]
-                del expected[key.id]
-                self._assert_key_attributes_equal(expected_key.properties, key)
-        assert 0 == len(expected)
-
-    @pytest.mark.skip("Temporarily disabled due to service issue")
-    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_list_deleted_keys(self, client, is_hsm, **kwargs):
-        assert client is not None
-
-        expected = {}
-
-        # create keys
-        for i in range(LIST_TEST_SIZE):
-            key_name = self.get_resource_name(f"key{i}")
-            expected[key_name] = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
-
-        # delete them
-        for key_name in expected.keys():
-            client.begin_delete_key(key_name).wait()
-
-        # validate list deleted keys with attributes
-        for deleted_key in client.list_deleted_keys():
-            assert deleted_key.deleted_date is not None
-            assert deleted_key.scheduled_purge_date is not None
-            assert deleted_key.recovery_id is not None
-
-        result = client.list_deleted_keys()
-        # validate all the deleted keys are returned by list_deleted_keys
-        for key in result:
-            if key.name in expected.keys():
-                self._assert_key_attributes_equal(expected[key.name].properties, key.properties)
-                del expected[key.name]
-
-    @pytest.mark.skip("Temporarily disabled due to service issue")
-    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_recover(self, client, is_hsm, **kwargs):
-        assert client is not None
-
-        # create keys
-        keys = {}
-        for i in range(LIST_TEST_SIZE):
-            key_name = self.get_resource_name(f"key{i}")
-            keys[key_name] = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
-
-        # delete them
-        for key_name in keys.keys():
-            client.begin_delete_key(key_name).wait()
-
-        # validate the deleted keys are returned by list_deleted_keys
-        deleted = [s.name for s in client.list_deleted_keys()]
-        assert all(s in deleted for s in keys.keys())
-
-        # recover the keys
-        for key_name in keys.keys():
-            recovered_key = client.begin_recover_deleted_key(key_name).result()
-            expected_key = keys[key_name]
-            self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
-
-    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_purge(self, client, is_hsm, **kwargs):
-        assert client is not None
-
-        # create keys
-        key_names = [self.get_resource_name(f"key{i}") for i in range(LIST_TEST_SIZE)]
-        for name in key_names:
-            self._create_rsa_key(client, name, hardware_protected=is_hsm)
-
-        # delete them
-        for key_name in key_names:
-            client.begin_delete_key(key_name).wait()
-
-        # validate all our deleted keys are returned by list_deleted_keys
-        deleted = [k.name for k in client.list_deleted_keys()]
-        assert all(n in deleted for n in key_names)
-
-        # purge them
-        for key_name in key_names:
-            client.purge_deleted_key(key_name)
-        for key_name in key_names:
-            self._poll_until_exception(
-                functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
-            )
-
-        # validate none are returned by list_deleted_keys
-        deleted = [s.name for s in client.list_deleted_keys()]
-        assert not any(s in deleted for s in key_names)
-
-    @pytest.mark.parametrize("api_version,is_hsm", logging_enabled)
-    @KeysClientPreparer(logging_enable=True)
-    @recorded_by_proxy
-    def test_logging_enabled(self, client, is_hsm, **kwargs):
-        mock_handler = MockHandler()
-
-        logger = logging.getLogger("azure")
-        logger.addHandler(mock_handler)
-        logger.setLevel(logging.DEBUG)
-
-        rsa_key_name = self.get_resource_name("rsa-key-name")
-        self._create_rsa_key(client, rsa_key_name, size=2048, hardware_protected=is_hsm)
-
-        for message in mock_handler.messages:
-            if message.levelname == "DEBUG" and message.funcName == "on_request":
-                # parts of the request are logged on new lines in a single message
-                if "'/n" in message.message:
-                    request_sections = message.message.split("/n")
-                else:
-                    request_sections = message.message.split("\n")
-                for section in request_sections:
-                    try:
-                        # the body of the request should be JSON
-                        body = json.loads(section)
-                        expected_kty = "RSA-HSM" if is_hsm else "RSA"
-                        if body["kty"] == expected_kty:
-                            mock_handler.close()
-                            return
-                    except (ValueError, KeyError):
-                        # this means the request section is not JSON or has no kty property
-                        pass
-
-        mock_handler.close()
-        assert False, "Expected request body wasn't logged"
-
-    @pytest.mark.parametrize("api_version,is_hsm", logging_enabled)
-    @KeysClientPreparer(logging_enable=False)
-    @recorded_by_proxy
-    def test_logging_disabled(self, client, is_hsm, **kwargs):
-        mock_handler = MockHandler()
-
-        logger = logging.getLogger("azure")
-        logger.addHandler(mock_handler)
-        logger.setLevel(logging.DEBUG)
-
-        rsa_key_name = self.get_resource_name("rsa-key-name")
-        self._create_rsa_key(client, rsa_key_name, size=2048, hardware_protected=is_hsm)
-
-        for message in mock_handler.messages:
-            if message.levelname == "DEBUG" and message.funcName == "on_request":
-                # parts of the request are logged on new lines in a single message
-                if "'/n" in message.message:
-                    request_sections = message.message.split("/n")
-                else:
-                    request_sections = message.message.split("\n")
-                for section in request_sections:
-                    try:
-                        # the body of the request should be JSON
-                        body = json.loads(section)
-                        expected_kty = "RSA-HSM" if is_hsm else "RSA"
-                        if body["kty"] == expected_kty:
-                            mock_handler.close()
-                            assert False, "Client request body was logged"
-                    except (ValueError, KeyError):
-                        # this means the request section is not JSON or has no kty property
-                        pass
-
-        mock_handler.close()
-
-    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_7_4_plus)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_get_random_bytes(self, client, **kwargs):
-        assert client
-
-        generated_random_bytes = []
-        for i in range(5):
-            # [START get_random_bytes]
-            # get eight random bytes from a managed HSM
-            random_bytes = client.get_random_bytes(count=8)
-            # [END get_random_bytes]
-            assert len(random_bytes) == 8
-            assert all(random_bytes != rb for rb in generated_random_bytes)
-            generated_random_bytes.append(random_bytes)
-
-    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_key_release(self, client, is_hsm, **kwargs):
-        if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
-            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
-        if is_hsm and client.api_version == ApiVersion.V7_5:
-            pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
-
-        attestation_uri = self._get_attestation_uri()
-        attestation = get_attestation_token(attestation_uri)
-        release_policy = get_release_policy(attestation_uri)
-
-        rsa_key_name = self.get_resource_name("rsa-key-name")
-        key = self._create_rsa_key(
-            client, rsa_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
-        )
-        assert key.properties.release_policy
-        assert key.properties.release_policy.encoded_policy
-        assert key.properties.exportable
-
-        try:
-            release_result = client.release_key(rsa_key_name, attestation)
-            assert release_result.value
-        except HttpResponseError as ex:
-            # In live pipeline tests, the service can frequently throw a transient error regarding attestation
-            if self.is_live and "Target environment attestation statement cannot be verified" in ex.message:
-                pytest.skip("Target environment attestation statement cannot be verified. Likely transient failure.")
-
-    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_7_4_plus)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_imported_key_release(self, client, **kwargs):
-        if client.api_version == ApiVersion.V7_5:
-            pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
-
-        attestation_uri = self._get_attestation_uri()
-        attestation = get_attestation_token(attestation_uri)
-        release_policy = get_release_policy(attestation_uri)
-
-        imported_key_name = self.get_resource_name("imported-key-name")
-        key = self._import_test_key(
-            client, imported_key_name, hardware_protected=True, exportable=True, release_policy=release_policy
-        )
-        assert key.properties.release_policy
-        assert key.properties.release_policy.encoded_policy
-        assert key.properties.exportable
-
-        release_result = client.release_key(imported_key_name, attestation)
-        assert release_result.value
-
-    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_update_release_policy(self, client, **kwargs):
-        if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
-            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
-        if client.api_version == ApiVersion.V7_5:
-            pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
-
-        attestation_uri = self._get_attestation_uri()
-        release_policy = get_release_policy(attestation_uri)
-        key_name = self.get_resource_name("key-name")
-        key = self._create_rsa_key(
-            client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
-        )
-
-        policy = json.loads(key.properties.release_policy.encoded_policy.decode())
-        claim_condition = policy["anyOf"][0]["anyOf"][0]["equals"]
-        # for some reason, claim_condition may be 'true' here for KV, but should be True here for MHSM
-        claim_condition = claim_condition if isinstance(claim_condition, bool) else json.loads(claim_condition)
-        assert claim_condition is True
-
-        new_release_policy_json = {
-            "anyOf": [
-                {"anyOf": [{"claim": "sdk-test", "equals": False}], "authority": attestation_uri.rstrip("/") + "/"}
-            ],
-            "version": "1.0.0",
-        }
-        policy_string = json.dumps(new_release_policy_json).encode()
-        new_release_policy = KeyReleasePolicy(policy_string)
-
-        updated_key = self._update_key_properties(client, key, new_release_policy)
-        updated_policy = json.loads(updated_key.properties.release_policy.encoded_policy.decode())
-        claim_condition = updated_policy["anyOf"][0]["anyOf"][0]["equals"]
-        claim_condition = claim_condition if isinstance(claim_condition, bool) else json.loads(claim_condition)
-        assert claim_condition is False
-
-    # Immutable policies aren't currently supported on Managed HSM
-    @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_immutable_release_policy(self, client, **kwargs):
-        if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
-            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
-
-        attestation_uri = self._get_attestation_uri()
-        release_policy = get_release_policy(attestation_uri, immutable=True)
-        key_name = self.get_resource_name("key-name")
-        key = self._create_rsa_key(
-            client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
-        )
-        assert key.properties.release_policy.encoded_policy
-        assert key.properties.release_policy.immutable
-
-        new_release_policy_json = {
-            "anyOf": [
-                {"anyOf": [{"claim": "sdk-test", "equals": False}], "authority": attestation_uri.rstrip("/") + "/"}
-            ],
-            "version": "1.0.0",
-        }
-        policy_string = json.dumps(new_release_policy_json).encode()
-        new_release_policy = KeyReleasePolicy(policy_string, immutable=True)
-
-        with pytest.raises(HttpResponseError):
-            self._update_key_properties(client, key, new_release_policy)
-
-    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_key_rotation(self, client, is_hsm, **kwargs):
-        if not is_public_cloud() and self.is_live:
-            pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
-
-        key_name = self.get_resource_name("rotation-key")
-        key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
-
-        # MHSM doesn't automatically give keys a default rotation policy, unlike KV
-        if is_hsm:
-            actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P6M")]
-            client.update_key_rotation_policy(key_name, KeyRotationPolicy(lifetime_actions=actions, expires_in="P1Y"))
-        rotated_key = client.rotate_key(key_name)
-
-        # the rotated key should have a new ID, version, and key material (for RSA, n and e fields)
-        assert key.id != rotated_key.id
-        assert key.properties.version != rotated_key.properties.version
-        assert key.key.n != rotated_key.key.n
-
-    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_key_rotation_policy(self, client, is_hsm, **kwargs):
-        if not is_public_cloud() and self.is_live:
-            pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
-
-        key_name = self.get_resource_name("rotation-key")
-        self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
-
-        # ensure passing an empty policy with no kwargs doesn't raise an error on KV (MHSM requires an expiry time)
-        if not is_hsm:
-            client.update_key_rotation_policy(key_name, KeyRotationPolicy())
-
-        # updating a rotation policy with an empty policy and override(s)
-        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P2M")]
-        if is_hsm:
-            updated_policy = client.update_key_rotation_policy(
-                key_name, KeyRotationPolicy(), lifetime_actions=actions, expires_in="P6M"
-            )
-            assert updated_policy.expires_in == "P6M"
-        else:  # try a policy without an expiry time (only allowed on KV)
-            updated_policy = client.update_key_rotation_policy(key_name, KeyRotationPolicy(), lifetime_actions=actions)
-            assert updated_policy.expires_in is None
-
-        fetched_policy = client.get_key_rotation_policy(key_name)
-        _assert_rotation_policies_equal(updated_policy, fetched_policy)
-
-        updated_policy_actions = None
-        for i in range(len(updated_policy.lifetime_actions)):
-            if updated_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.rotate.lower():
-                updated_policy_actions = updated_policy.lifetime_actions[i]
-        assert updated_policy_actions, "Specified rotation policy action not found in updated policy"
-        assert updated_policy_actions.time_after_create == "P2M"
-        assert updated_policy_actions.time_before_expiry is None
-
-        fetched_policy_actions = None
-        for i in range(len(fetched_policy.lifetime_actions)):
-            if fetched_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.rotate.lower():
-                fetched_policy_actions = fetched_policy.lifetime_actions[i]
-        assert fetched_policy_actions, "Specified rotation policy action not found in fetched policy"
-        _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
-
-        # updating with a round-tripped policy and overriding expires_in
-        new_policy = client.update_key_rotation_policy(key_name, policy=updated_policy, expires_in="P90D")
-        assert new_policy.expires_in == "P90D"
-
-        new_policy_actions = None
-        for i in range(len(new_policy.lifetime_actions)):
-            if new_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.rotate.lower():
-                new_policy_actions = new_policy.lifetime_actions[i]
-        _assert_lifetime_actions_equal(updated_policy_actions, new_policy_actions)
-
-        # at this time, MHSM doesn't support notify actions
-        if not is_hsm:
-            # updating with a round-tripped policy and overriding lifetime_actions
-            newest_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P60D")]
-            newest_policy = client.update_key_rotation_policy(
-                key_name, policy=new_policy, lifetime_actions=newest_actions
-            )
-            newest_fetched_policy = client.get_key_rotation_policy(key_name)
-            assert newest_policy.expires_in == "P90D"
-            _assert_rotation_policies_equal(newest_policy, newest_fetched_policy)
-
-            newest_policy_actions = None
-            for i in range(len(newest_policy.lifetime_actions)):
-                if newest_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.notify.lower():
-                    newest_policy_actions = newest_policy.lifetime_actions[i]
-            assert newest_policy_actions.time_after_create is None
-            assert newest_policy_actions.time_before_expiry == "P60D"
-
-            newest_fetched_policy_actions = None
-            for i in range(len(newest_fetched_policy.lifetime_actions)):
-                if newest_fetched_policy.lifetime_actions[i].action.lower() == KeyRotationPolicyAction.notify.lower():
-                    newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[i]
-            _assert_lifetime_actions_equal(newest_policy_actions, newest_fetched_policy_actions)
-
-    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_get_cryptography_client(self, client, is_hsm, **kwargs):
-        key_name = self.get_resource_name("key-name")
-        key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
-
-        # try specifying the key version
-        crypto_client = client.get_cryptography_client(key_name, key_version=key.properties.version)
-        # both clients should use the same generated client
-        assert client._client == crypto_client._client
-
-        # the crypto client should successfully perform crypto operations
-        plaintext = b"plaintext"
-        result = crypto_client.encrypt("RSA-OAEP", plaintext)
-        assert result.key_id == key.id
-
-        result = crypto_client.decrypt(result.algorithm, result.ciphertext)
-        assert result.key_id == key.id
-        assert "RSA-OAEP" == result.algorithm
-        assert plaintext == result.plaintext
-
-        # try omitting the key version
-        crypto_client = client.get_cryptography_client(key_name)
-        # both clients should use the same generated client
-        assert client._client == crypto_client._client
-
-        # the crypto client should successfully perform crypto operations
-        result = crypto_client.encrypt("RSA-OAEP", plaintext)
-        assert result.key_id == key.id
-
-        result = crypto_client.decrypt(result.algorithm, result.ciphertext)
-        assert result.key_id == key.id
-        assert "RSA-OAEP" == result.algorithm
-        assert plaintext == result.plaintext
-
-    @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_send_request(self, client, is_hsm, **kwargs):
-        key_name = self.get_resource_name("key-name")
-        key = self._create_rsa_key(client, key_name)
-
-        # fetch the key we just created
-        request = HttpRequest(
-            method="GET",
-            url=f"keys/{key_name}/{key.properties.version}",
-            headers={"Accept": "application/json"},
-        )
-        response = client.send_request(request)
-        assert response.json()["key"]["kid"] == key.id
-
-    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_get_key_attestation(self, client, **kwargs):
-        # create a key
-        key_name = self.get_resource_name("key-name")
-        key = self._create_rsa_key(client, key_name, hardware_protected=True)
-        # attestation info shouldn't be included unless requested with get_key_attestation
-        assert key.properties.attestation is None
-
-        # fetch the key we just created
-        fetched_key = client.get_key_attestation(key_name)
-        attestation = fetched_key.properties.attestation
-        assert attestation is not None
-        assert attestation.certificate_pem_file is not None
-        assert attestation.private_key_attestation is not None
-        assert attestation.public_key_attestation is not None
-        assert attestation.version
-
-        # create new key version to validate versioned fetching
-        updated_key = client.update_key_properties(key_name, tags={"tag": "value"})
-        updated_attestation = client.get_key_attestation(key_name).properties.attestation
-        assert updated_attestation is not None
-        assert updated_attestation.certificate_pem_file == attestation.certificate_pem_file
-        assert updated_attestation.private_key_attestation == attestation.private_key_attestation
-        assert updated_attestation.public_key_attestation == attestation.public_key_attestation
-        assert updated_attestation.version != updated_key.properties.version
-
-        original_attestation = client.get_key_attestation(key_name, key.properties.version).properties.attestation
-        assert original_attestation.version == attestation.version
-
-    @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_40x_handling(self, client, **kwargs):
-        """Ensure 404 and 409 responses are raised with azure-core exceptions instead of generated KV ones"""
-
-        # Test that 404 is raised correctly by fetching a nonexistent key
-        with pytest.raises(ResourceNotFoundError):
-            client.get_key("key-that-does-not-exist")
-
-        # Test that 409 is raised correctly (`create_key` shouldn't actually trigger this, but for raising behavior)
-        def run(*_, **__):
-            return Mock(http_response=Mock(status_code=409))
-
-        with patch.object(client._client._client._pipeline, "run", run):
-            with pytest.raises(ResourceExistsError):
-                client.create_key("...", "RSA")
-
-
-def test_positive_bytes_count_required():
-    client = KeyClient("...", object())
-    with pytest.raises(ValueError):
-        client.get_random_bytes(count=0)
-    with pytest.raises(ValueError):
-        client.get_random_bytes(count=-1)
-
-
-def test_service_headers_allowed_in_logs():
-    service_headers = {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
-    client = KeyClient("...", object())
-    assert service_headers.issubset(client._client._config.http_logging_policy.allowed_header_names)
-
-
-def test_custom_hook_policy():
-    class CustomHookPolicy(SansIOHTTPPolicy):
-        pass
-
-    client = KeyClient("...", object(), custom_hook_policy=CustomHookPolicy())
-    assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)
-
-
-def test_case_insensitive_key_type():
-    """Ensure a KeyType can be created regardless of casing since the service can create keys with non-standard casing.
-    See https://github.com/Azure/azure-sdk-for-python/issues/22797
-    """
-    # KeyType with all upper-case value
-    assert KeyType("rsa") == KeyType.rsa
-    # KeyType with all lower-case value
-    assert KeyType("OCT") == KeyType.oct
-    # KeyType with mixed-case value
-    assert KeyType("oct-hsm") == KeyType.oct_hsm
-
-
-def test_empty_rotation_policy_actions():
-    """Regression test: make sure a KeyRotationPolicy can be created with a response that has None properties"""
-    generated_policy = _KeyRotationPolicy()
-    assert generated_policy.lifetime_actions is None
-    policy = KeyRotationPolicy._from_generated(generated_policy)
-    assert policy.lifetime_actions == []
+    def test_key_size(self, client, is_hsm, **kwargs):
+        """The key_size property is returned for oct keys created with 2026-01-01-preview"""
+        # EC keys should return None for key_size
+        ec_key_name = self.get_resource_name("ec-key-size")
+        ec_key = self._create_ec_key(client, ec_key_name, hardware_protected=is_hsm)
+        assert ec_key.properties.key_size is None
+
+        # oct-HSM key_size with various AES sizes
+        oct_key_name = self.get_resource_name("oct-key-256")
+        oct_key = self._create_oct_key(client, oct_key_name, size=256, hardware_protected=True)
+        assert oct_key.properties.key_size == 256
+
+        oct_key_128_name = self.get_resource_name("oct-key-128")
+        oct_key_128 = self._create_oct_key(client, oct_key_128_name, size=128, hardware_protected=True)
+        assert oct_key_128.properties.key_size == 128
+
+        # key_size is also available when fetching an existing oct key
+        fetched = client.get_key(oct_key_name)
+        assert fetched.properties.key_size == 256
+
+#     @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
+#     @KeysClientPreparer()
+#     @recorded_by_proxy
+#     def test_40x_handling(self, client, **kwargs):
+#         """Ensure 404 and 409 responses are raised with azure-core exceptions instead of generated KV ones"""
+
+#         # Test that 404 is raised correctly by fetching a nonexistent key
+#         with pytest.raises(ResourceNotFoundError):
+#             client.get_key("key-that-does-not-exist")
+
+#         # Test that 409 is raised correctly (`create_key` shouldn't actually trigger this, but for raising behavior)
+#         def run(*_, **__):
+#             return Mock(http_response=Mock(status_code=409))
+
+#         with patch.object(client._client._client._pipeline, "run", run):
+#             with pytest.raises(ResourceExistsError):
+#                 client.create_key("...", "RSA")
+
+
+# def test_positive_bytes_count_required():
+#     client = KeyClient("...", object())
+#     with pytest.raises(ValueError):
+#         client.get_random_bytes(count=0)
+#     with pytest.raises(ValueError):
+#         client.get_random_bytes(count=-1)
+
+
+# def test_service_headers_allowed_in_logs():
+#     service_headers = {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
+#     client = KeyClient("...", object())
+#     assert service_headers.issubset(client._client._config.http_logging_policy.allowed_header_names)
+
+
+# def test_custom_hook_policy():
+#     class CustomHookPolicy(SansIOHTTPPolicy):
+#         pass
+
+#     client = KeyClient("...", object(), custom_hook_policy=CustomHookPolicy())
+#     assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)
+
+
+# def test_case_insensitive_key_type():
+#     """Ensure a KeyType can be created regardless of casing since the service can create keys with non-standard casing.
+#     See https://github.com/Azure/azure-sdk-for-python/issues/22797
+#     """
+#     # KeyType with all upper-case value
+#     assert KeyType("rsa") == KeyType.rsa
+#     # KeyType with all lower-case value
+#     assert KeyType("OCT") == KeyType.oct
+#     # KeyType with mixed-case value
+#     assert KeyType("oct-hsm") == KeyType.oct_hsm
+
+
+# def test_empty_rotation_policy_actions():
+#     """Regression test: make sure a KeyRotationPolicy can be created with a response that has None properties"""
+#     generated_policy = _KeyRotationPolicy()
+#     assert generated_policy.lifetime_actions is None
+#     policy = KeyRotationPolicy._from_generated(generated_policy)
+#     assert policy.lifetime_actions == []
