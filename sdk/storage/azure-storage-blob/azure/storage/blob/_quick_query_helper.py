@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import (
-    Any, Dict, Generator, IO, Iterable, Optional, Type,
-    TYPE_CHECKING
-)
+from typing import Any, Dict, Generator, IO, Iterable, Optional, Type, TYPE_CHECKING
 
 from ._shared.avro.avro_io import DatumReader
 from ._shared.avro.datafile import DataFileReader
@@ -31,10 +28,11 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
     method will return these lines via a generator."""
 
     def __init__(
-        self, name: str = None,  # type: ignore [assignment]
+        self,
+        name: str = None,  # type: ignore [assignment]
         container: str = None,  # type: ignore [assignment]
         errors: Any = None,
-        record_delimiter: str = '\n',
+        record_delimiter: str = "\n",
         encoding: Optional[str] = None,
         headers: Dict[str, Any] = None,  # type: ignore [assignment]
         response: Any = None,
@@ -56,16 +54,16 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         return self._size
 
     def _process_record(self, result: Dict[str, Any]) -> Optional[bytes]:
-        self._size = result.get('totalBytes', self._size)
-        self._bytes_processed = result.get('bytesScanned', self._bytes_processed)
-        if 'data' in result:
-            return result.get('data')
-        if 'fatal' in result:
+        self._size = result.get("totalBytes", self._size)
+        self._bytes_processed = result.get("bytesScanned", self._bytes_processed)
+        if "data" in result:
+            return result.get("data")
+        if "fatal" in result:
             error = self._error_cls(
-                error=result['name'],
-                is_fatal=result['fatal'],
-                description=result['description'],
-                position=result['position']
+                error=result["name"],
+                is_fatal=result["fatal"],
+                description=result["description"],
+                position=result["position"],
             )
             if self._errors:
                 self._errors(error)
@@ -113,7 +111,7 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         :return: A record generator for the query result.
         :rtype: Iterable[bytes]
         """
-        delimiter = self.record_delimiter.encode('utf-8')
+        delimiter = self.record_delimiter.encode("utf-8")
         for record_chunk in self._iter_stream():
             for record in record_chunk.split(delimiter):
                 if self._encoding:
@@ -159,7 +157,7 @@ class QuickQueryStreamer:
             self._point += offset
         else:
             raise ValueError("whence must be 0, or 1")
-        if self._point < 0:    # pylint: disable=consider-using-max-builtin
+        if self._point < 0:  # pylint: disable=consider-using-max-builtin
             self._point = 0  # XXX is this right?
 
     def read(self, size):

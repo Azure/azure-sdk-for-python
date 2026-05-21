@@ -28,6 +28,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import PageList
 
+
 # Parse a generated PageList into a single list of PageRange sorted by start.
 def parse_page_list(page_list: "PageList") -> List["PageRange"]:
 
@@ -47,14 +48,10 @@ def parse_page_list(page_list: "PageList") -> List["PageRange"]:
         p, c = page_ranges[p_i], clear_ranges[c_i]
 
         if p.start < c.start:
-            ranges.append(
-                PageRange(start=p.start, end=p.end, cleared=False)
-            )
+            ranges.append(PageRange(start=p.start, end=p.end, cleared=False))
             p_i += 1
         else:
-            ranges.append(
-                PageRange(start=c.start, end=c.end, cleared=True)
-            )
+            ranges.append(PageRange(start=c.start, end=c.end, cleared=True))
             c_i += 1
 
     # Grab remaining elements in either list
@@ -74,9 +71,9 @@ class BlobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class BlockState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Block blob block types."""
 
-    COMMITTED = 'Committed'  #: Committed blocks.
-    LATEST = 'Latest'  #: Latest blocks.
-    UNCOMMITTED = 'Uncommitted'  #: Uncommitted blocks.
+    COMMITTED = "Committed"  #: Committed blocks.
+    LATEST = "Latest"  #: Latest blocks.
+    UNCOMMITTED = "Uncommitted"  #: Uncommitted blocks.
 
 
 class StandardBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -85,11 +82,11 @@ class StandardBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     block blobs on standard storage accounts.
     """
 
-    ARCHIVE = 'Archive'  #: Archive
-    COOL = 'Cool'  #: Cool
-    COLD = 'Cold'  #: Cold
-    HOT = 'Hot'  #: Hot
-    SMART = 'Smart'  #: Smart
+    ARCHIVE = "Archive"  #: Archive
+    COOL = "Cool"  #: Cool
+    COLD = "Cold"  #: Cold
+    HOT = "Hot"  #: Hot
+    SMART = "Smart"  #: Smart
 
 
 class PremiumPageBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -100,41 +97,41 @@ class PremiumPageBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     for detailed information on the corresponding IOPS and throughput per PageBlobTier.
     """
 
-    P4 = 'P4'  #: P4 Tier
-    P6 = 'P6'  #: P6 Tier
-    P10 = 'P10'  #: P10 Tier
-    P15 = 'P15'  #: P15 Tier
-    P20 = 'P20'  #: P20 Tier
-    P30 = 'P30'  #: P30 Tier
-    P40 = 'P40'  #: P40 Tier
-    P50 = 'P50'  #: P50 Tier
-    P60 = 'P60'  #: P60 Tier
+    P4 = "P4"  #: P4 Tier
+    P6 = "P6"  #: P6 Tier
+    P10 = "P10"  #: P10 Tier
+    P15 = "P15"  #: P15 Tier
+    P20 = "P20"  #: P20 Tier
+    P30 = "P30"  #: P30 Tier
+    P40 = "P40"  #: P40 Tier
+    P50 = "P50"  #: P50 Tier
+    P60 = "P60"  #: P60 Tier
 
 
 class QuickQueryDialect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the quick query input/output dialect."""
 
-    DELIMITEDTEXT = 'DelimitedTextDialect'
-    DELIMITEDJSON = 'DelimitedJsonDialect'
-    PARQUET = 'ParquetDialect'
+    DELIMITEDTEXT = "DelimitedTextDialect"
+    DELIMITEDJSON = "DelimitedJsonDialect"
+    PARQUET = "ParquetDialect"
 
 
 class SequenceNumberAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sequence number actions."""
 
-    INCREMENT = 'increment'
+    INCREMENT = "increment"
     """
     Increments the value of the sequence number by 1. If specifying this option,
     do not include the x-ms-blob-sequence-number header.
     """
 
-    MAX = 'max'
+    MAX = "max"
     """
     Sets the sequence number to be the higher of the value included with the
     request and the value currently stored for the blob.
     """
 
-    UPDATE = 'update'
+    UPDATE = "update"
     """Sets the sequence number to the value included with the request."""
 
 
@@ -143,20 +140,20 @@ class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Specifies whether data in the container may be accessed publicly and the level of access.
     """
 
-    OFF = 'off'
+    OFF = "off"
     """
     Specifies that there is no public read access for both the container and blobs within the container.
     Clients cannot enumerate the containers within the storage account as well as the blobs within the container.
     """
 
-    BLOB = 'blob'
+    BLOB = "blob"
     """
     Specifies public read access for blobs. Blob data within this container can be read
     via anonymous request, but container data is not available. Clients cannot enumerate
     blobs within the container via anonymous request.
     """
 
-    CONTAINER = 'container'
+    CONTAINER = "container"
     """
     Specifies full public read access for container and blob data. Clients can enumerate
     blobs within the container via anonymous request, but cannot enumerate containers
@@ -222,7 +219,7 @@ class BlobAnalyticsLogging(GeneratedLogging):
         policy will be disabled by default.
     """
 
-    version: str = '1.0'
+    version: str = "1.0"
     """The version of Storage Analytics to configure."""
     delete: bool = False
     """Indicates whether all delete requests should be logged."""
@@ -234,11 +231,11 @@ class BlobAnalyticsLogging(GeneratedLogging):
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get('version', '1.0')
-        self.delete = kwargs.get('delete', False)
-        self.read = kwargs.get('read', False)
-        self.write = kwargs.get('write', False)
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+        self.version = kwargs.get("version", "1.0")
+        self.delete = kwargs.get("delete", False)
+        self.read = kwargs.get("read", False)
+        self.write = kwargs.get("write", False)
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -249,7 +246,9 @@ class BlobAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(
+                generated.retention_policy
+            ),  # pylint: disable=protected-access
         )
 
 
@@ -269,7 +268,7 @@ class Metrics(GeneratedMetrics):
         policy will be disabled by default.
     """
 
-    version: str = '1.0'
+    version: str = "1.0"
     """The version of Storage Analytics to configure."""
     enabled: bool = False
     """Indicates whether metrics are enabled for the Blob service."""
@@ -279,10 +278,10 @@ class Metrics(GeneratedMetrics):
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get('version', '1.0')
-        self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis')
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+        self.version = kwargs.get("version", "1.0")
+        self.enabled = kwargs.get("enabled", False)
+        self.include_apis = kwargs.get("include_apis")
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -292,7 +291,9 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(
+                generated.retention_policy
+            ),  # pylint: disable=protected-access
         )
 
 
@@ -320,11 +321,11 @@ class StaticWebsite(GeneratedStaticWebsite):
     """Absolute path of the default index page."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.enabled = kwargs.get('enabled', False)
+        self.enabled = kwargs.get("enabled", False)
         if self.enabled:
-            self.index_document = kwargs.get('index_document')
-            self.error_document404_path = kwargs.get('error_document404_path')
-            self.default_index_document_path = kwargs.get('default_index_document_path')
+            self.index_document = kwargs.get("index_document")
+            self.error_document404_path = kwargs.get("error_document404_path")
+            self.default_index_document_path = kwargs.get("default_index_document_path")
         else:
             self.index_document = None
             self.error_document404_path = None
@@ -338,7 +339,7 @@ class StaticWebsite(GeneratedStaticWebsite):
             enabled=generated.enabled,
             index_document=generated.index_document,
             error_document404_path=generated.error_document404_path,
-            default_index_document_path=generated.default_index_document_path
+            default_index_document_path=generated.default_index_document_path,
         )
 
 
@@ -385,11 +386,11 @@ class CorsRule(GeneratedCorsRule):
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        self.allowed_origins = ','.join(allowed_origins)
-        self.allowed_methods = ','.join(allowed_methods)
-        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
-        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
-        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+        self.allowed_origins = ",".join(allowed_origins)
+        self.allowed_methods = ",".join(allowed_methods)
+        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
+        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
+        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
@@ -403,7 +404,7 @@ class CorsRule(GeneratedCorsRule):
                 allowed_methods=cors_rule.allowed_methods,
                 allowed_headers=cors_rule.allowed_headers,
                 exposed_headers=cors_rule.exposed_headers,
-                max_age_in_seconds=cors_rule.max_age_in_seconds
+                max_age_in_seconds=cors_rule.max_age_in_seconds,
             )
             generated_cors_list.append(generated_cors)
 
@@ -454,22 +455,22 @@ class ContainerProperties(DictMixin):
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None  # type: ignore [assignment]
-        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
-        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
+        self.last_modified = kwargs.get("Last-Modified")  # type: ignore [assignment]
+        self.etag = kwargs.get("ETag")  # type: ignore [assignment]
         self.lease = LeaseProperties(**kwargs)
-        self.public_access = kwargs.get('x-ms-blob-public-access')
-        self.has_immutability_policy = kwargs.get('x-ms-has-immutability-policy')  # type: ignore [assignment]
+        self.public_access = kwargs.get("x-ms-blob-public-access")
+        self.has_immutability_policy = kwargs.get("x-ms-has-immutability-policy")  # type: ignore [assignment]
         self.deleted = None
         self.version = None
-        self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')  # type: ignore [assignment]
-        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
+        self.has_legal_hold = kwargs.get("x-ms-has-legal-hold")  # type: ignore [assignment]
+        self.metadata = kwargs.get("metadata")  # type: ignore [assignment]
         self.encryption_scope = None
-        self.immutable_storage_with_versioning_enabled = kwargs.get('x-ms-immutable-storage-with-versioning-enabled')  # type: ignore [assignment]  # pylint: disable=name-too-long
-        default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
+        self.immutable_storage_with_versioning_enabled = kwargs.get("x-ms-immutable-storage-with-versioning-enabled")  # type: ignore [assignment]  # pylint: disable=name-too-long
+        default_encryption_scope = kwargs.get("x-ms-default-encryption-scope")
         if default_encryption_scope:
             self.encryption_scope = ContainerEncryptionScope(
                 default_encryption_scope=default_encryption_scope,
-                prevent_encryption_scope_override=kwargs.get('x-ms-deny-encryption-scope-override', False)
+                prevent_encryption_scope_override=kwargs.get("x-ms-deny-encryption-scope-override", False),
             )
 
     @classmethod
@@ -481,12 +482,14 @@ class ContainerProperties(DictMixin):
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
-        props.immutable_storage_with_versioning_enabled = generated.properties.is_immutable_storage_with_versioning_enabled  # pylint: disable=line-too-long, name-too-long
+        props.immutable_storage_with_versioning_enabled = (
+            generated.properties.is_immutable_storage_with_versioning_enabled
+        )  # pylint: disable=line-too-long, name-too-long
         props.deleted = generated.deleted
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
-        props.encryption_scope = ContainerEncryptionScope._from_generated(generated)  #pylint: disable=protected-access
+        props.encryption_scope = ContainerEncryptionScope._from_generated(generated)  # pylint: disable=protected-access
         return props
 
 
@@ -516,15 +519,14 @@ class ContainerPropertiesPaged(PageIterator):
     """The current page of listed results."""
 
     def __init__(
-        self, command: Callable,
+        self,
+        command: Callable,
         prefix: Optional[str] = None,
         results_per_page: Optional[int] = None,
-        continuation_token: Optional[str] = None
+        continuation_token: Optional[str] = None,
     ) -> None:
         super(ContainerPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.service_endpoint = None
@@ -540,7 +542,8 @@ class ContainerPropertiesPaged(PageIterator):
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -579,8 +582,8 @@ class ImmutabilityPolicy(DictMixin):
     """Specifies the immutability policy mode to set on the blob."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.expiry_time = kwargs.pop('expiry_time', None)
-        self.policy_mode = kwargs.pop('policy_mode', None)
+        self.expiry_time = kwargs.pop("expiry_time", None)
+        self.policy_mode = kwargs.pop("policy_mode", None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -601,9 +604,9 @@ class FilteredBlob(DictMixin):
     """Key value pairs of blob tags."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get('name', None)  # type: ignore [assignment]
-        self.container_name = kwargs.get('container_name', None)
-        self.tags = kwargs.get('tags', None)
+        self.name = kwargs.get("name", None)  # type: ignore [assignment]
+        self.container_name = kwargs.get("container_name", None)
+        self.tags = kwargs.get("tags", None)
 
 
 class LeaseProperties(DictMixin):
@@ -617,9 +620,9 @@ class LeaseProperties(DictMixin):
     """When a blob is leased, specifies whether the lease is of infinite or fixed duration."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.status = get_enum_value(kwargs.get('x-ms-lease-status'))
-        self.state = get_enum_value(kwargs.get('x-ms-lease-state'))
-        self.duration = get_enum_value(kwargs.get('x-ms-lease-duration'))
+        self.status = get_enum_value(kwargs.get("x-ms-lease-status"))
+        self.state = get_enum_value(kwargs.get("x-ms-lease-state"))
+        self.duration = get_enum_value(kwargs.get("x-ms-lease-duration"))
 
     @classmethod
     def _from_generated(cls, generated):
@@ -670,7 +673,8 @@ class ContentSettings(DictMixin):
     """The content md5 specified for the blob."""
 
     def __init__(
-        self, content_type: Optional[str] = None,
+        self,
+        content_type: Optional[str] = None,
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_disposition: Optional[str] = None,
@@ -679,12 +683,12 @@ class ContentSettings(DictMixin):
         **kwargs: Any
     ) -> None:
 
-        self.content_type = content_type or kwargs.get('Content-Type')
-        self.content_encoding = content_encoding or kwargs.get('Content-Encoding')
-        self.content_language = content_language or kwargs.get('Content-Language')
-        self.content_md5 = content_md5 or kwargs.get('Content-MD5')
-        self.content_disposition = content_disposition or kwargs.get('Content-Disposition')
-        self.cache_control = cache_control or kwargs.get('Cache-Control')
+        self.content_type = content_type or kwargs.get("Content-Type")
+        self.content_encoding = content_encoding or kwargs.get("Content-Encoding")
+        self.content_language = content_language or kwargs.get("Content-Language")
+        self.content_md5 = content_md5 or kwargs.get("Content-MD5")
+        self.content_disposition = content_disposition or kwargs.get("Content-Disposition")
+        self.cache_control = cache_control or kwargs.get("Cache-Control")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -740,14 +744,14 @@ class CopyProperties(DictMixin):
         incremental copy snapshot for this blob."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.id = kwargs.get('x-ms-copy-id')
-        self.source = kwargs.get('x-ms-copy-source')
-        self.status = get_enum_value(kwargs.get('x-ms-copy-status'))
-        self.progress = kwargs.get('x-ms-copy-progress')
-        self.completion_time = kwargs.get('x-ms-copy-completion-time')
-        self.status_description = kwargs.get('x-ms-copy-status-description')
-        self.incremental_copy = kwargs.get('x-ms-incremental-copy')
-        self.destination_snapshot = kwargs.get('x-ms-copy-destination-snapshot')
+        self.id = kwargs.get("x-ms-copy-id")
+        self.source = kwargs.get("x-ms-copy-source")
+        self.status = get_enum_value(kwargs.get("x-ms-copy-status"))
+        self.progress = kwargs.get("x-ms-copy-progress")
+        self.completion_time = kwargs.get("x-ms-copy-completion-time")
+        self.status_description = kwargs.get("x-ms-copy-status-description")
+        self.incremental_copy = kwargs.get("x-ms-incremental-copy")
+        self.destination_snapshot = kwargs.get("x-ms-copy-destination-snapshot")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -788,7 +792,7 @@ class BlobBlock(DictMixin):
     def _from_generated(cls, generated):
         try:
             decoded_bytes = decode_base64_to_bytes(generated.name)
-            block_id = decoded_bytes.decode('utf-8')
+            block_id = decoded_bytes.decode("utf-8")
         # this is to fix a bug. When large blocks are uploaded through upload_blob the block id isn't base64 encoded
         # while service expected block id is base64 encoded, so when we get block_id if we cannot base64 decode, it
         # means we didn't base64 encode it when stage the block, we want to use the returned block_id directly.
@@ -824,9 +828,7 @@ class PageRange(DictMixin):
 class PageRangePaged(PageIterator):
     def __init__(self, command, results_per_page=None, continuation_token=None):
         super(PageRangePaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
         )
         self._command = command
         self.results_per_page = results_per_page
@@ -839,7 +841,8 @@ class PageRangePaged(PageIterator):
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
-                use_location=self.location_mode)
+                use_location=self.location_mode,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -928,7 +931,8 @@ class ContainerSasPermissions(object):
     """To get immutability policy, you just need read permission."""
 
     def __init__(
-        self, read: bool = False,
+        self,
+        read: bool = False,
         write: bool = False,
         delete: bool = False,
         list: bool = False,
@@ -937,31 +941,33 @@ class ContainerSasPermissions(object):
         **kwargs: Any
     ) -> None:
         self.read = read
-        self.add = kwargs.pop('add', False)
-        self.create = kwargs.pop('create', False)
+        self.add = kwargs.pop("add", False)
+        self.create = kwargs.pop("create", False)
         self.write = write
         self.delete = delete
         self.delete_previous_version = delete_previous_version
-        self.permanent_delete = kwargs.pop('permanent_delete', False)
+        self.permanent_delete = kwargs.pop("permanent_delete", False)
         self.list = list
         self.tag = tag
-        self.filter_by_tags = kwargs.pop('filter_by_tags', False)
-        self.move = kwargs.pop('move', False)
-        self.execute = kwargs.pop('execute', False)
-        self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
-        self._str = (('r' if self.read else '') +
-                     ('a' if self.add else '') +
-                     ('c' if self.create else '') +
-                     ('w' if self.write else '') +
-                     ('d' if self.delete else '') +
-                     ('x' if self.delete_previous_version else '') +
-                     ('y' if self.permanent_delete else '') +
-                     ('l' if self.list else '') +
-                     ('t' if self.tag else '') +
-                     ('f' if self.filter_by_tags else '') +
-                     ('m' if self.move else '') +
-                     ('e' if self.execute else '') +
-                     ('i' if self.set_immutability_policy else ''))
+        self.filter_by_tags = kwargs.pop("filter_by_tags", False)
+        self.move = kwargs.pop("move", False)
+        self.execute = kwargs.pop("execute", False)
+        self.set_immutability_policy = kwargs.pop("set_immutability_policy", False)
+        self._str = (
+            ("r" if self.read else "")
+            + ("a" if self.add else "")
+            + ("c" if self.create else "")
+            + ("w" if self.write else "")
+            + ("d" if self.delete else "")
+            + ("x" if self.delete_previous_version else "")
+            + ("y" if self.permanent_delete else "")
+            + ("l" if self.list else "")
+            + ("t" if self.tag else "")
+            + ("f" if self.filter_by_tags else "")
+            + ("m" if self.move else "")
+            + ("e" if self.execute else "")
+            + ("i" if self.set_immutability_policy else "")
+        )
 
     def __str__(self):
         return self._str
@@ -979,23 +985,34 @@ class ContainerSasPermissions(object):
         :return: A ContainerSasPermissions object
         :rtype: ~azure.storage.blob.ContainerSasPermissions
         """
-        p_read = 'r' in permission
-        p_add = 'a' in permission
-        p_create = 'c' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
-        p_delete_previous_version = 'x' in permission
-        p_permanent_delete = 'y' in permission
-        p_list = 'l' in permission
-        p_tag = 't' in permission
-        p_filter_by_tags = 'f' in permission
-        p_move = 'm' in permission
-        p_execute = 'e' in permission
-        p_set_immutability_policy = 'i' in permission
-        parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag, add=p_add,
-                     create=p_create, permanent_delete=p_permanent_delete, filter_by_tags=p_filter_by_tags,
-                     move=p_move, execute=p_execute, set_immutability_policy=p_set_immutability_policy)
+        p_read = "r" in permission
+        p_add = "a" in permission
+        p_create = "c" in permission
+        p_write = "w" in permission
+        p_delete = "d" in permission
+        p_delete_previous_version = "x" in permission
+        p_permanent_delete = "y" in permission
+        p_list = "l" in permission
+        p_tag = "t" in permission
+        p_filter_by_tags = "f" in permission
+        p_move = "m" in permission
+        p_execute = "e" in permission
+        p_set_immutability_policy = "i" in permission
+        parsed = cls(
+            read=p_read,
+            write=p_write,
+            delete=p_delete,
+            list=p_list,
+            delete_previous_version=p_delete_previous_version,
+            tag=p_tag,
+            add=p_add,
+            create=p_create,
+            permanent_delete=p_permanent_delete,
+            filter_by_tags=p_filter_by_tags,
+            move=p_move,
+            execute=p_execute,
+            set_immutability_policy=p_set_immutability_policy,
+        )
 
         return parsed
 
@@ -1053,9 +1070,10 @@ class AccessPolicy(GenAccessPolicy):
     """The time at which the shared access signature becomes valid."""
 
     def __init__(
-        self, permission: Optional[Union["ContainerSasPermissions", str]] = None,
+        self,
+        permission: Optional[Union["ContainerSasPermissions", str]] = None,
         expiry: Optional[Union[str, "datetime"]] = None,
-        start: Optional[Union[str, "datetime"]] = None
+        start: Optional[Union[str, "datetime"]] = None,
     ) -> None:
         self.start = start
         self.expiry = expiry
@@ -1121,7 +1139,8 @@ class BlobSasPermissions(object):
     """To get immutability policy, you just need read permission."""
 
     def __init__(
-        self, read: bool = False,
+        self,
+        read: bool = False,
         add: bool = False,
         create: bool = False,
         write: bool = False,
@@ -1136,22 +1155,24 @@ class BlobSasPermissions(object):
         self.write = write
         self.delete = delete
         self.delete_previous_version = delete_previous_version
-        self.permanent_delete = kwargs.pop('permanent_delete', False)
+        self.permanent_delete = kwargs.pop("permanent_delete", False)
         self.tag = tag
-        self.move = kwargs.pop('move', False)
-        self.execute = kwargs.pop('execute', False)
-        self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
-        self._str = (('r' if self.read else '') +
-                     ('a' if self.add else '') +
-                     ('c' if self.create else '') +
-                     ('w' if self.write else '') +
-                     ('d' if self.delete else '') +
-                     ('x' if self.delete_previous_version else '') +
-                     ('y' if self.permanent_delete else '') +
-                     ('t' if self.tag else '') +
-                     ('m' if self.move else '') +
-                     ('e' if self.execute else '') +
-                     ('i' if self.set_immutability_policy else ''))
+        self.move = kwargs.pop("move", False)
+        self.execute = kwargs.pop("execute", False)
+        self.set_immutability_policy = kwargs.pop("set_immutability_policy", False)
+        self._str = (
+            ("r" if self.read else "")
+            + ("a" if self.add else "")
+            + ("c" if self.create else "")
+            + ("w" if self.write else "")
+            + ("d" if self.delete else "")
+            + ("x" if self.delete_previous_version else "")
+            + ("y" if self.permanent_delete else "")
+            + ("t" if self.tag else "")
+            + ("m" if self.move else "")
+            + ("e" if self.execute else "")
+            + ("i" if self.set_immutability_policy else "")
+        )
 
     def __str__(self):
         return self._str
@@ -1169,21 +1190,31 @@ class BlobSasPermissions(object):
         :return: A BlobSasPermissions object
         :rtype: ~azure.storage.blob.BlobSasPermissions
         """
-        p_read = 'r' in permission
-        p_add = 'a' in permission
-        p_create = 'c' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
-        p_delete_previous_version = 'x' in permission
-        p_permanent_delete = 'y' in permission
-        p_tag = 't' in permission
-        p_move = 'm' in permission
-        p_execute = 'e' in permission
-        p_set_immutability_policy = 'i' in permission
+        p_read = "r" in permission
+        p_add = "a" in permission
+        p_create = "c" in permission
+        p_write = "w" in permission
+        p_delete = "d" in permission
+        p_delete_previous_version = "x" in permission
+        p_permanent_delete = "y" in permission
+        p_tag = "t" in permission
+        p_move = "m" in permission
+        p_execute = "e" in permission
+        p_set_immutability_policy = "i" in permission
 
-        parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag, permanent_delete=p_permanent_delete,
-                     move=p_move, execute=p_execute, set_immutability_policy=p_set_immutability_policy)
+        parsed = cls(
+            read=p_read,
+            add=p_add,
+            create=p_create,
+            write=p_write,
+            delete=p_delete,
+            delete_previous_version=p_delete_previous_version,
+            tag=p_tag,
+            permanent_delete=p_permanent_delete,
+            move=p_move,
+            execute=p_execute,
+            set_immutability_policy=p_set_immutability_policy,
+        )
 
         return parsed
 
@@ -1219,7 +1250,7 @@ class CustomerProvidedEncryptionKey(object):
     def __init__(self, key_value: str, key_hash: str) -> None:
         self.key_value = key_value
         self.key_hash = key_hash
-        self.algorithm = 'AES256'
+        self.algorithm = "AES256"
 
 
 class ContainerEncryptionScope(object):
@@ -1247,14 +1278,14 @@ class ContainerEncryptionScope(object):
 
     def __init__(self, default_encryption_scope: str, **kwargs: Any) -> None:
         self.default_encryption_scope = default_encryption_scope
-        self.prevent_encryption_scope_override = kwargs.get('prevent_encryption_scope_override', False)
+        self.prevent_encryption_scope_override = kwargs.get("prevent_encryption_scope_override", False)
 
     @classmethod
     def _from_generated(cls, generated):
         if generated.properties.default_encryption_scope:
             scope = cls(
                 generated.properties.default_encryption_scope,
-                prevent_encryption_scope_override=generated.properties.prevent_encryption_scope_override or False
+                prevent_encryption_scope_override=generated.properties.prevent_encryption_scope_override or False,
             )
             return scope
         return None
@@ -1267,7 +1298,7 @@ class DelimitedJsonDialect(DictMixin):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.delimiter = kwargs.pop('delimiter', '\n')
+        self.delimiter = kwargs.pop("delimiter", "\n")
 
 
 class DelimitedTextDialect(DictMixin):
@@ -1288,11 +1319,11 @@ class DelimitedTextDialect(DictMixin):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.delimiter = kwargs.pop('delimiter', ',')
-        self.quotechar = kwargs.pop('quotechar', '"')
-        self.lineterminator = kwargs.pop('lineterminator', '\n')
-        self.escapechar = kwargs.pop('escapechar', "")
-        self.has_header = kwargs.pop('has_header', False)
+        self.delimiter = kwargs.pop("delimiter", ",")
+        self.quotechar = kwargs.pop("quotechar", '"')
+        self.lineterminator = kwargs.pop("lineterminator", "\n")
+        self.escapechar = kwargs.pop("escapechar", "")
+        self.has_header = kwargs.pop("has_header", False)
 
 
 class ArrowDialect(ArrowField):
@@ -1306,7 +1337,7 @@ class ArrowDialect(ArrowField):
     :keyword int scale: The scale of the field.
     """
 
-    def __init__(self, type, **kwargs: Any) -> None:   # pylint: disable=redefined-builtin
+    def __init__(self, type, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         super(ArrowDialect, self).__init__(type=type, **kwargs)
 
 
@@ -1317,7 +1348,7 @@ class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TIMESTAMP_MS = "timestamp[ms]"
     STRING = "string"
     DOUBLE = "double"
-    DECIMAL = 'decimal'
+    DECIMAL = "decimal"
 
 
 class ObjectReplicationRule(DictMixin):
@@ -1329,8 +1360,8 @@ class ObjectReplicationRule(DictMixin):
     """The status of the rule. It could be "Complete" or "Failed" """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.rule_id = kwargs.pop('rule_id', None)  # type: ignore [assignment]
-        self.status = kwargs.pop('status', None)  # type: ignore [assignment]
+        self.rule_id = kwargs.pop("rule_id", None)  # type: ignore [assignment]
+        self.status = kwargs.pop("status", None)  # type: ignore [assignment]
 
 
 class ObjectReplicationPolicy(DictMixin):
@@ -1343,8 +1374,8 @@ class ObjectReplicationPolicy(DictMixin):
         e.g. rule 1= src/container/.pdf to dst/container2/; rule2 = src/container1/.jpg to dst/container3"""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.policy_id = kwargs.pop('policy_id', None)  # type: ignore [assignment]
-        self.rules = kwargs.pop('rules', [])
+        self.policy_id = kwargs.pop("policy_id", None)  # type: ignore [assignment]
+        self.rules = kwargs.pop("rules", [])
 
 
 class BlobProperties(DictMixin):
@@ -1443,47 +1474,50 @@ class BlobProperties(DictMixin):
         Currently this parameter of upload_blob() API is for BlockBlob only."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get('name')  # type: ignore [assignment]
+        self.name = kwargs.get("name")  # type: ignore [assignment]
         self.container = None  # type: ignore [assignment]
-        self.snapshot = kwargs.get('x-ms-snapshot')
-        self.version_id = kwargs.get('x-ms-version-id')
-        self.is_current_version = kwargs.get('x-ms-is-current-version')
-        self.blob_type = BlobType(kwargs['x-ms-blob-type']) if (
-            kwargs.get('x-ms-blob-type')) else None  # type: ignore [assignment]
-        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
-        self.encrypted_metadata = kwargs.get('encrypted_metadata')
-        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
-        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
-        self.size = kwargs.get('Content-Length')  # type: ignore [assignment]
-        self.content_range = kwargs.get('Content-Range')
-        self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
-        self.is_append_blob_sealed = kwargs.get('x-ms-blob-sealed')
-        self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
-        self.server_encrypted = kwargs.get('x-ms-server-encrypted')  # type: ignore [assignment]
+        self.snapshot = kwargs.get("x-ms-snapshot")
+        self.version_id = kwargs.get("x-ms-version-id")
+        self.is_current_version = kwargs.get("x-ms-is-current-version")
+        self.blob_type = (
+            BlobType(kwargs["x-ms-blob-type"]) if (kwargs.get("x-ms-blob-type")) else None
+        )  # type: ignore [assignment]
+        self.metadata = kwargs.get("metadata")  # type: ignore [assignment]
+        self.encrypted_metadata = kwargs.get("encrypted_metadata")
+        self.last_modified = kwargs.get("Last-Modified")  # type: ignore [assignment]
+        self.etag = kwargs.get("ETag")  # type: ignore [assignment]
+        self.size = kwargs.get("Content-Length")  # type: ignore [assignment]
+        self.content_range = kwargs.get("Content-Range")
+        self.append_blob_committed_block_count = kwargs.get("x-ms-blob-committed-block-count")
+        self.is_append_blob_sealed = kwargs.get("x-ms-blob-sealed")
+        self.page_blob_sequence_number = kwargs.get("x-ms-blob-sequence-number")
+        self.server_encrypted = kwargs.get("x-ms-server-encrypted")  # type: ignore [assignment]
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
-        self.blob_tier = kwargs.get('x-ms-access-tier')
-        self.smart_access_tier = kwargs.get('x-ms-smart-access-tier')
-        self.rehydrate_priority = kwargs.get('x-ms-rehydrate-priority')
-        self.blob_tier_change_time = kwargs.get('x-ms-access-tier-change-time')
-        self.blob_tier_inferred = kwargs.get('x-ms-access-tier-inferred')
+        self.blob_tier = kwargs.get("x-ms-access-tier")
+        self.smart_access_tier = kwargs.get("x-ms-smart-access-tier")
+        self.rehydrate_priority = kwargs.get("x-ms-rehydrate-priority")
+        self.blob_tier_change_time = kwargs.get("x-ms-access-tier-change-time")
+        self.blob_tier_inferred = kwargs.get("x-ms-access-tier-inferred")
         self.deleted = False
         self.deleted_time = None
         self.remaining_retention_days = None
-        self.creation_time = kwargs.get('x-ms-creation-time')  # type: ignore [assignment]
-        self.archive_status = kwargs.get('x-ms-archive-status')
-        self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
-        self.encryption_scope = kwargs.get('x-ms-encryption-scope')
-        self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
-        self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
-        self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
-        self.last_accessed_on = kwargs.get('x-ms-last-access-time')
-        self.tag_count = kwargs.get('x-ms-tag-count')
+        self.creation_time = kwargs.get("x-ms-creation-time")  # type: ignore [assignment]
+        self.archive_status = kwargs.get("x-ms-archive-status")
+        self.encryption_key_sha256 = kwargs.get("x-ms-encryption-key-sha256")
+        self.encryption_scope = kwargs.get("x-ms-encryption-scope")
+        self.request_server_encrypted = kwargs.get("x-ms-server-encrypted")
+        self.object_replication_source_properties = kwargs.get("object_replication_source_properties")
+        self.object_replication_destination_policy = kwargs.get("x-ms-or-policy-id")
+        self.last_accessed_on = kwargs.get("x-ms-last-access-time")
+        self.tag_count = kwargs.get("x-ms-tag-count")
         self.tags = None
-        self.immutability_policy = ImmutabilityPolicy(expiry_time=kwargs.get('x-ms-immutability-policy-until-date'),
-                                                      policy_mode=kwargs.get('x-ms-immutability-policy-mode'))
-        self.has_legal_hold = kwargs.get('x-ms-legal-hold')
+        self.immutability_policy = ImmutabilityPolicy(
+            expiry_time=kwargs.get("x-ms-immutability-policy-until-date"),
+            policy_mode=kwargs.get("x-ms-immutability-policy-mode"),
+        )
+        self.has_legal_hold = kwargs.get("x-ms-legal-hold")
         self.has_versions_only = None
 
 
@@ -1502,10 +1536,11 @@ class BlobQueryError(object):
     """The blob offset at which the error occurred."""
 
     def __init__(
-        self, error: Optional[str] = None,
+        self,
+        error: Optional[str] = None,
         is_fatal: bool = False,
         description: Optional[str] = None,
-        position: Optional[int] = None
+        position: Optional[int] = None,
     ) -> None:
         self.error = error
         self.is_fatal = is_fatal
