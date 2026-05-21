@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added support for service API version `2026-03-01-preview`
+- Added `PlatformManaged` property to `CertificatePolicy`
+
 ### Breaking Changes
 
 ### Bugs Fixed
