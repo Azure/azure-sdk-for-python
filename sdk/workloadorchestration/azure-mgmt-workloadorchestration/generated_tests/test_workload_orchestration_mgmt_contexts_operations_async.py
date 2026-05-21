@@ -71,24 +71,11 @@ class TestWorkloadOrchestrationMgmtContextsOperationsAsync(AzureMgmtRecordedTest
                 resource_group_name=resource_group.name,
                 context_name="str",
                 properties={
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
                     "properties": {
                         "capabilities": [{"description": "str", "name": "str", "state": "str"}],
                         "hierarchies": [{"description": "str", "name": "str"}],
-                        "provisioningState": "str",
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
                     },
                     "tags": {"str": "str"},
-                    "type": "str",
                 },
             )
         ).result()  # call '.result()' to poll until service return final result

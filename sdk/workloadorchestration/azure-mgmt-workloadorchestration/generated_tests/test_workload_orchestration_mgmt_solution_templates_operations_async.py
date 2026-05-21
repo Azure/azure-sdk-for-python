@@ -49,6 +49,7 @@ class TestWorkloadOrchestrationMgmtSolutionTemplatesOperationsAsync(AzureMgmtRec
                         "latestVersion": "str",
                         "provisioningState": "str",
                         "state": "str",
+                        "uniqueIdentifier": "str",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -74,28 +75,13 @@ class TestWorkloadOrchestrationMgmtSolutionTemplatesOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             solution_template_name="str",
             properties={
-                "location": "str",
-                "eTag": "str",
-                "id": "str",
-                "name": "str",
                 "properties": {
                     "capabilities": ["str"],
                     "description": "str",
                     "enableExternalValidation": bool,
-                    "latestVersion": "str",
-                    "provisioningState": "str",
                     "state": "str",
                 },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
                 "tags": {"str": "str"},
-                "type": "str",
             },
         )
 

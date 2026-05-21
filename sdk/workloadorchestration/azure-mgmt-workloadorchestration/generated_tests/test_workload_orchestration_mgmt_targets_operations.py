@@ -87,44 +87,17 @@ class TestWorkloadOrchestrationMgmtTargetsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             target_name="str",
             properties={
-                "location": "str",
-                "eTag": "str",
-                "extendedLocation": {"name": "str", "type": "str"},
-                "id": "str",
-                "name": "str",
                 "properties": {
                     "capabilities": ["str"],
                     "contextId": "str",
                     "description": "str",
                     "displayName": "str",
                     "hierarchyLevel": "str",
-                    "targetSpecification": {"str": {}},
-                    "provisioningState": "str",
                     "solutionScope": "str",
                     "state": "str",
-                    "status": {
-                        "deployed": 0,
-                        "expectedRunningJobId": 0,
-                        "generation": 0,
-                        "lastModified": "2020-02-20 00:00:00",
-                        "runningJobId": 0,
-                        "status": "str",
-                        "statusDetails": "str",
-                        "targetStatuses": [
-                            {"componentStatuses": [{"name": "str", "status": "str"}], "name": "str", "status": "str"}
-                        ],
-                    },
-                },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
+                    "targetSpecification": {"str": {}},
                 },
                 "tags": {"str": "str"},
-                "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
 

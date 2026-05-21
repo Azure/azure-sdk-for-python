@@ -63,23 +63,7 @@ class TestWorkloadOrchestrationMgmtSchemasOperations(AzureMgmtRecordedTestCase):
         response = self.client.schemas.update(
             resource_group_name=resource_group.name,
             schema_name="str",
-            properties={
-                "location": "str",
-                "eTag": "str",
-                "id": "str",
-                "name": "str",
-                "properties": {"currentVersion": "str", "provisioningState": "str"},
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "tags": {"str": "str"},
-                "type": "str",
-            },
+            properties={"properties": {}, "tags": {"str": "str"}},
         )
 
         # please add some check logic here by yourself
