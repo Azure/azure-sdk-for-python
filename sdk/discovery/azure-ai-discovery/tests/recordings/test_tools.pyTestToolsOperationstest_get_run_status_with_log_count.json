@@ -1,0 +1,199 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/tools/projects/test-project:run?api-version=2026-02-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "Content-Length": "371",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": {
+        "command": "echo \"log count test\"",
+        "nodePoolIds": [
+          "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1"
+        ],
+        "toolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/tools/testtool"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 16 May 2026 00:01:21 GMT",
+        "Location": "",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "operation-location": "https://test-workspace.workspace.discovery.azure.com/tools/projects/test-project/operations/9f058980420448d78fc3d3f996d13ecb",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "NotStarted",
+        "error": null,
+        "result": null
+      }
+    },
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/tools/projects/test-project/operations/9f058980420448d78fc3d3f996d13ecb",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 16 May 2026 00:01:23 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "NotStarted",
+        "error": null,
+        "result": {
+          "status": "TaskAccepted",
+          "runtimeDetails": "Tool run has been requested",
+          "createdAt": "2026-05-16T00:01:21.6105544Z",
+          "completedAt": null,
+          "toolReport": {
+            "percentageComplete": 0,
+            "logs": "<no logs found>",
+            "statusInformation": null
+          },
+          "outputData": [],
+          "debugInfo": ""
+        }
+      }
+    },
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/tools/projects/test-project/operations/9f058980420448d78fc3d3f996d13ecb",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 16 May 2026 00:01:54 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Succeeded",
+        "error": null,
+        "result": {
+          "status": "TaskAccepted",
+          "runtimeDetails": "Tool has completed successfully",
+          "createdAt": "2026-05-16T00:01:21.6105544Z",
+          "completedAt": "2026-05-16T00:01:49.2952991Z",
+          "toolReport": {
+            "percentageComplete": 0,
+            "logs": "worker:\nlog count test\n",
+            "statusInformation": null
+          },
+          "outputData": [],
+          "debugInfo": ""
+        }
+      }
+    },
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/tools/projects/test-project/operations/9f058980420448d78fc3d3f996d13ecb",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 16 May 2026 00:01:56 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Succeeded",
+        "error": null,
+        "result": {
+          "status": "TaskAccepted",
+          "runtimeDetails": "Tool has completed successfully",
+          "createdAt": "2026-05-16T00:01:21.6105544Z",
+          "completedAt": "2026-05-16T00:01:49.2952991Z",
+          "toolReport": {
+            "percentageComplete": 0,
+            "logs": "worker:\nlog count test\n",
+            "statusInformation": null
+          },
+          "outputData": [],
+          "debugInfo": ""
+        }
+      }
+    },
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/tools/projects/test-project/operations/9f058980420448d78fc3d3f996d13ecb?api-version=2026-02-01-preview&logCount=10",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 16 May 2026 00:01:58 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Succeeded",
+        "error": null,
+        "result": {
+          "status": "TaskAccepted",
+          "runtimeDetails": "Tool has completed successfully",
+          "createdAt": "2026-05-16T00:01:21.6105544Z",
+          "completedAt": "2026-05-16T00:01:49.2952991Z",
+          "createdBy": null,
+          "toolReport": {
+            "percentageComplete": 0,
+            "logs": "worker:\nlog count test\n",
+            "statusInformation": null
+          },
+          "outputData": [],
+          "debugInfo": ""
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

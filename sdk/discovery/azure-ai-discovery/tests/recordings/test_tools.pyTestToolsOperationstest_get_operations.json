@@ -1,0 +1,688 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://test-workspace.workspace.discovery.azure.com/tools/projects/test-project/operations?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 16 May 2026 00:02:07 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Canceled",
+            "runtimeDetails": "Tool has been cancelled",
+            "createdAt": "2026-05-02T22:00:53.2622931Z",
+            "completedAt": "2026-05-02T22:01:07.0717576Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-02T22:00:59.1242916Z",
+            "completedAt": "2026-05-02T22:03:18.644044Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Canceled",
+            "runtimeDetails": "Tool has been cancelled",
+            "createdAt": "2026-05-02T22:01:02.4644463Z",
+            "completedAt": "2026-05-02T22:01:06.9867081Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-02T22:01:08.2095532Z",
+            "completedAt": "2026-05-02T22:03:24.0901194Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T03:06:30.0710615Z",
+            "completedAt": "2026-05-03T03:08:59.1951807Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T03:06:32.1647543Z",
+            "completedAt": "2026-05-03T03:09:04.7010371Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T03:06:32.9684144Z",
+            "completedAt": "2026-05-03T03:09:12.450529Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T03:06:36.9150228Z",
+            "completedAt": "2026-05-03T03:09:04.6739501Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:26:52.3462766Z",
+            "completedAt": "2026-05-03T04:29:21.5049591Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:26:52.7196423Z",
+            "completedAt": "2026-05-03T04:29:23.8678699Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:26:55.2699636Z",
+            "completedAt": "2026-05-03T04:29:22.0303755Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:26:58.9883031Z",
+            "completedAt": "2026-05-03T04:29:21.53672Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:42:40.2814506Z",
+            "completedAt": "2026-05-03T04:42:52.6116499Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:42:41.4020928Z",
+            "completedAt": "2026-05-03T04:43:04.6386303Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:42:43.4693781Z",
+            "completedAt": "2026-05-03T04:43:04.5784206Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:42:45.5390494Z",
+            "completedAt": "2026-05-03T04:42:52.6059639Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:54:06.7749879Z",
+            "completedAt": "2026-05-03T04:56:40.5304853Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:54:09.5530909Z",
+            "completedAt": "2026-05-03T04:56:40.2436027Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:54:09.7802256Z",
+            "completedAt": "2026-05-03T04:56:40.532075Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T04:54:13.5496637Z",
+            "completedAt": "2026-05-03T04:56:47.836046Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T20:04:02.8800306Z",
+            "completedAt": "2026-05-03T20:04:19.6995105Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T20:04:07.0267098Z",
+            "completedAt": "2026-05-03T20:04:19.7122902Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T20:04:11.3523197Z",
+            "completedAt": "2026-05-03T20:04:31.5338918Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T20:04:12.1844484Z",
+            "completedAt": "2026-05-03T20:04:19.8168414Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T23:09:24.6426229Z",
+            "completedAt": "2026-05-03T23:09:43.5404439Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T23:09:26.1670139Z",
+            "completedAt": "2026-05-03T23:09:42.4193064Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T23:09:27.9890273Z",
+            "completedAt": "2026-05-03T23:10:03.7515017Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T23:09:31.3042001Z",
+            "completedAt": "2026-05-03T23:09:48.8352436Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T23:10:11.1186417Z",
+            "completedAt": "2026-05-03T23:10:20.9010913Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T23:10:13.4188277Z",
+            "completedAt": "2026-05-03T23:10:24.4665679Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T23:10:14.9465882Z",
+            "completedAt": "2026-05-03T23:10:22.9372429Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-03T23:10:19.2264216Z",
+            "completedAt": "2026-05-03T23:10:25.3620365Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-04T00:30:08.0995441Z",
+            "completedAt": "2026-05-04T00:30:32.0663762Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-04T00:33:03.0814634Z",
+            "completedAt": "2026-05-04T00:33:38.8125463Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-04T00:35:00.3515041Z",
+            "completedAt": "2026-05-04T00:35:12.5846217Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-04T00:38:20.8389985Z",
+            "completedAt": "2026-05-04T00:38:40.7994568Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-04T00:46:58.4894007Z",
+            "completedAt": "2026-05-04T00:47:11.8175525Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-09T06:02:12.0657334Z",
+            "completedAt": "2026-05-09T06:02:26.0311951Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Canceled",
+            "runtimeDetails": "Tool has been cancelled",
+            "createdAt": "2026-05-09T06:03:16.6948297Z",
+            "completedAt": "2026-05-09T06:03:31.0015262Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-09T06:07:15.3140877Z",
+            "completedAt": "2026-05-09T06:07:24.1165252Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Canceled",
+            "runtimeDetails": "Tool has been cancelled",
+            "createdAt": "2026-05-09T06:08:04.5768427Z",
+            "completedAt": "2026-05-09T06:08:07.959556Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-09T20:43:56.9589268Z",
+            "completedAt": "2026-05-09T20:44:32.0079126Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-09T20:44:41.6537166Z",
+            "completedAt": "2026-05-09T20:44:53.8345219Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-09T20:45:26.223824Z",
+            "completedAt": "2026-05-09T20:45:52.1507257Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Canceled",
+            "runtimeDetails": "Tool has been cancelled",
+            "createdAt": "2026-05-09T20:46:08.8548549Z",
+            "completedAt": "2026-05-09T20:46:14.3143804Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Canceled",
+            "runtimeDetails": "Tool has been cancelled",
+            "createdAt": "2026-05-12T01:02:57.6181697Z",
+            "completedAt": "2026-05-12T01:03:09.1129164Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-12T01:03:14.0345128Z",
+            "completedAt": "2026-05-12T01:03:30.2765544Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-12T01:03:37.8913789Z",
+            "completedAt": "2026-05-12T01:04:09.3058988Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-12T01:04:18.3619174Z",
+            "completedAt": "2026-05-12T01:04:38.7500103Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Canceled",
+            "runtimeDetails": "Tool has been cancelled",
+            "createdAt": "2026-05-12T01:04:22.97746Z",
+            "completedAt": "2026-05-12T01:04:53.3418186Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-12T01:04:35.7447959Z",
+            "completedAt": "2026-05-12T01:04:41.4068895Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-12T01:04:48.5292835Z",
+            "completedAt": "2026-05-12T01:04:58.5238477Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-12T01:05:07.4563203Z",
+            "completedAt": "2026-05-12T01:05:41.1855385Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-13T23:26:15.7573036Z",
+            "completedAt": "2026-05-13T23:26:28.9088223Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-13T23:26:20.2860148Z",
+            "completedAt": "2026-05-13T23:26:28.7781216Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-13T23:26:32.3507012Z",
+            "completedAt": "2026-05-13T23:26:38.0793556Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-13T23:26:40.0909628Z",
+            "completedAt": "2026-05-13T23:27:02.0811856Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-14T22:17:47.5462244Z",
+            "completedAt": "2026-05-14T22:17:57.2410628Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-14T22:17:51.8309597Z",
+            "completedAt": "2026-05-14T22:17:57.7490648Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-14T22:18:03.4910458Z",
+            "completedAt": "2026-05-14T22:18:10.1651858Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-14T22:18:12.46316Z",
+            "completedAt": "2026-05-14T22:18:34.5651653Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-15T00:25:03.1396426Z",
+            "completedAt": "2026-05-15T00:25:21.3700099Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-15T00:25:08.0626368Z",
+            "completedAt": "2026-05-15T00:25:21.4188945Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-15T00:25:21.3519939Z",
+            "completedAt": "2026-05-15T00:25:25.4855292Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-15T00:25:29.0592847Z",
+            "completedAt": "2026-05-15T00:25:35.0163688Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-15T01:15:20.9364085Z",
+            "completedAt": "2026-05-15T01:15:45.8047816Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-15T01:15:25.9555074Z",
+            "completedAt": "2026-05-15T01:15:34.7330832Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-15T01:15:38.9774843Z",
+            "completedAt": "2026-05-15T01:15:47.215454Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-15T01:15:46.9166383Z",
+            "completedAt": "2026-05-15T01:16:09.0228Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-15T23:59:55.5889526Z",
+            "completedAt": "2026-05-16T00:00:08.2547848Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-16T00:00:38.9681505Z",
+            "completedAt": "2026-05-16T00:01:06.8839235Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "runtimeDetails": "Tool has completed successfully",
+            "createdAt": "2026-05-16T00:01:21.6105544Z",
+            "completedAt": "2026-05-16T00:01:49.2952991Z",
+            "createdBy": null
+          },
+          {
+            "nodepoolId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Discovery/supercomputers/test-sc/nodePools/nodepool1",
+            "id": "Sanitized",
+            "status": "NotStarted",
+            "runtimeDetails": "Tool run has been requested",
+            "createdAt": "2026-05-16T00:02:02.2970928Z",
+            "completedAt": null,
+            "createdBy": "Sanitized"
+          }
+        ],
+        "nextLink": null
+      }
+    }
+  ],
+  "Variables": {}
+}
