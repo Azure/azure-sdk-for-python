@@ -103,9 +103,7 @@ class TestSearchIndexingBufferedSender(AzureRecordedTestCase):
             index_name,
             auto_flush=False,
         ) as (search_client, buffered_sender):
-            buffered_sender.merge_documents(
-                [{"HotelId": "5", "Rating": 1}, {"HotelId": MISSING_HOTEL_ID, "Rating": 2}]
-            )
+            buffered_sender.merge_documents([{"HotelId": "5", "Rating": 1}, {"HotelId": MISSING_HOTEL_ID, "Rating": 2}])
 
             has_error = buffered_sender.flush()
             if self.is_live:

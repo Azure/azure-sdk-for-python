@@ -14,19 +14,15 @@ from copy import deepcopy
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from typing import Any, Callable, Iterator, Optional
+from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import IndexDocumentsBatch, SearchClient, SearchIndexingBufferedSender
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 from azure.search.documents.indexes.models import (
-    KnowledgeBase,
-    KnowledgeSourceReference,
     SearchField,
     SearchFieldDataType,
     SearchIndex,
-    SearchIndexKnowledgeSource,
-    SearchIndexKnowledgeSourceParameters,
     SearchSuggester,
     SemanticConfiguration,
     SemanticField,
@@ -36,6 +32,9 @@ from azure.search.documents.indexes.models import (
 from devtools_testutils import get_credential, recorded_by_proxy
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
+
+if TYPE_CHECKING:
+    from azure.search.documents.indexes.models import KnowledgeBase, SearchIndexKnowledgeSource
 
 
 KNOWLEDGE_BASE_DESCRIPTION = "Search knowledge base description"
@@ -81,8 +80,7 @@ _HOTEL_DOCUMENTS = [
         "HotelId": "2",
         "HotelName": "Old Century Hotel",
         "Description": (
-            "The hotel is situated in a nineteenth century plaza renovated to the highest architectural "
-            "standards."
+            "The hotel is situated in a nineteenth century plaza renovated to the highest architectural " "standards."
         ),
         "Description_fr": "Hotel situe dans une place du dix-neuvieme siecle.",
         "Category": "Boutique",
@@ -240,9 +238,7 @@ def poll_until(
         if attempt < attempts - 1:
             time.sleep(interval)
     last_snapshot = snapshots[-1] if snapshots else None
-    raise AssertionError(
-        f"Polling timed out after {attempts} attempts; last snapshot: {last_snapshot!r}"
-    )
+    raise AssertionError(f"Polling timed out after {attempts} attempts; last snapshot: {last_snapshot!r}")
 
 
 # ---------------------------------------------------------------------------
@@ -280,9 +276,7 @@ def build_index(index_name: str, *, semantic: bool = False) -> SearchIndex:
             configurations=[
                 SemanticConfiguration(
                     name=SEMANTIC_CONFIGURATION_NAME,
-                    prioritized_fields=SemanticPrioritizedFields(
-                        content_fields=[SemanticField(field_name="content")]
-                    ),
+                    prioritized_fields=SemanticPrioritizedFields(content_fields=[SemanticField(field_name="content")]),
                 )
             ],
         )
@@ -298,6 +292,8 @@ def build_knowledge_source(
     *,
     description: str = KNOWLEDGE_SOURCE_DESCRIPTION,
 ) -> SearchIndexKnowledgeSource:
+    from azure.search.documents.indexes.models import SearchIndexKnowledgeSource, SearchIndexKnowledgeSourceParameters
+
     return SearchIndexKnowledgeSource(
         name=knowledge_source_name,
         description=description,
@@ -311,6 +307,8 @@ def build_knowledge_base(
     *,
     description: str = KNOWLEDGE_BASE_DESCRIPTION,
 ) -> KnowledgeBase:
+    from azure.search.documents.indexes.models import KnowledgeBase, KnowledgeSourceReference
+
     return KnowledgeBase(
         name=knowledge_base_name,
         description=description,
@@ -543,9 +541,7 @@ def hotel_index(
     index_client = make_index_client(endpoint)
     search_client = make_search_client(endpoint, index_name)
     index_documents = (
-        documents
-        if documents is not None
-        else build_hotel_documents(document_count or HOTEL_DOCUMENT_COUNT)
+        documents if documents is not None else build_hotel_documents(document_count or HOTEL_DOCUMENT_COUNT)
     )
     try:
         index_client.create_index(build_hotel_index(index_name))

@@ -11,9 +11,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Dict, List, Tuple, Union, cast, Optional
 from azure.core.exceptions import HttpResponseError
 
-from ._models import IndexDocumentsBatch as IndexDocumentsBatchGenerated
-from ._models import IndexAction
 from ._enums import IndexActionType
+from ._models import IndexAction
+from ._models import IndexDocumentsBatch as IndexDocumentsBatchGenerated
 
 
 def _flatten_args(args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]) -> List[Dict]:

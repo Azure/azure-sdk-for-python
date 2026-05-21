@@ -152,7 +152,10 @@ class TestSearchIndexerClientDataSourceConnection(AzureRecordedTestCase):
             assert isinstance(result, SearchIndexerDataSourceConnection)
             assert result.name == data_source_connection_name
             assert result.description == REPLACEMENT_DATA_SOURCE_DESCRIPTION
-            assert client.get_data_source_connection(data_source_connection_name).description == REPLACEMENT_DATA_SOURCE_DESCRIPTION
+            assert (
+                client.get_data_source_connection(data_source_connection_name).description
+                == REPLACEMENT_DATA_SOURCE_DESCRIPTION
+            )
         finally:
             safe_delete(client.delete_data_source_connection, data_source_connection_name)
             client.close()

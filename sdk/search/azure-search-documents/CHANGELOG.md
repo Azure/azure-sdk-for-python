@@ -1,16 +1,41 @@
 # Release History
 
-## 12.0.1 (Unreleased)
+## 12.1.0b1 (2026-05-28)
 
 ### Features Added
 
-### Breaking Changes
+- Below enum members are added for API version support
+  - `azure.search.documents.ApiVersion.V2026_05_01_PREVIEW`
 
-### Bugs Fixed
+- Below properties are added for service counters
+  - `azure.search.documents.indexes.models.SearchServiceCounters.knowledge_base_counter`
+  - `azure.search.documents.indexes.models.SearchServiceCounters.knowledge_source_counter`
+
+- Below operations are added for File knowledge source file management
+  - `azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source_file`
+  - `azure.search.documents.indexes.SearchIndexClient.list_knowledge_source_files`
+  - `azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file`
+
+- Below models are added for File, indexed SQL, and MCP server knowledge source support
+  - `azure.search.documents.indexes.models.FileKnowledgeSource`
+  - `azure.search.documents.indexes.models.FileKnowledgeSourceParameters`
+  - `azure.search.documents.indexes.models.IndexedSqlKnowledgeSource`
+  - `azure.search.documents.indexes.models.IndexedSqlKnowledgeSourceParameters`
+  - `azure.search.documents.indexes.models.KnowledgeSourceFile`
+  - `azure.search.documents.indexes.models.McpServerKnowledgeSource`
+  - `azure.search.documents.indexes.models.McpServerKnowledgeSourceParameters`
+  - `azure.search.documents.knowledgebases.models.FileKnowledgeSourceParams`
+  - `azure.search.documents.knowledgebases.models.IndexedSqlKnowledgeSourceParams`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseFileReference`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSqlReference`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseMcpServerReference`
+  - `azure.search.documents.knowledgebases.models.McpServerKnowledgeSourceParams`
 
 ### Other Changes
 
-## 12.0.0 (2026-04-01)
+- Updated default API version to `2026-05-01-preview`.
+
+## 12.0.0 (2026-05-01)
 
 ### Features Added
 
