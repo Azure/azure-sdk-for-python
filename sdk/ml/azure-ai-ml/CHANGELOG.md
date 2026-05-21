@@ -14,6 +14,11 @@
 
 ### Bugs Fixed
 
+- Removing deployment templates experimental warning while initializing.
+- Resolving next-pylint 4.0.5 issues for azure-ai-ml sdk and updating. 
+- Update Major Version Checker due to setup removal. 
+- Path traversal protection in unzip to temp file.
+
 ### Other Changes
 
 ## 1.32.0 (2026-03-17)
