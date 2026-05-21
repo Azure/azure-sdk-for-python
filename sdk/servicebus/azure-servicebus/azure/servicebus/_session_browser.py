@@ -15,12 +15,13 @@ from ._common.constants import (
 from ._common import mgmt_handlers
 from ._pyamqp.types import AMQPTypes, TYPE, VALUE
 
-# The service checks for DateTime.MaxValue (C# 9999-12-31T23:59:59.9999999) to switch
-# between "active messages" mode and "updated since" mode. On the AMQP wire, timestamps
-# have millisecond precision, so DateTime.MaxValue becomes 253402300799999 ms from epoch.
-# Python's datetime.timestamp() float math rounds this up by 1ms, so we use the
-# pre-computed constant directly for the sentinel.
-_MAX_DATETIME_MS = 253402300799999
+# The service checks `lastUpdatedTime != DateTime.MaxValue` (exact equality) to switch
+# between "active messages" mode and "updated since" mode. The .NET AMQP library encodes
+# DateTime.MaxValue as 253402300800000 ms (10000-01-01T00:00:00Z) due to double-to-long
+# rounding in TimeSpan.TotalMilliseconds, and its decoder clamps values beyond
+# DateTime.MaxValue.Ticks back to DateTime.MaxValue. This matches Track 1 Java's
+# SessionBrowser.MAXDATE = new Date(253402300800000L).
+_MAX_DATETIME_MS = 253402300800000
 _PAGE_SIZE = 100
 
 
