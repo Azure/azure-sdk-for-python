@@ -42,52 +42,49 @@ from ._models import (
     ShareProtocolSettings,
     ShareProtocols,
 )
-from ._generated.models import (
-    ShareAccessTier,
-    ShareRootSquash
-)
+from ._generated.models import ShareAccessTier, ShareRootSquash
 
 __version__ = VERSION
 
 
 __all__ = [
-    'AccessPolicy',
-    'AccountSasPermissions',
-    'ContentSettings',
-    'CorsRule',
-    'DirectoryProperties',
-    'ExponentialRetry',
-    'FileProperties',
-    'FileSasPermissions',
-    'generate_account_sas',
-    'generate_file_sas',
-    'generate_share_sas',
-    'Handle',
-    'LinearRetry',
-    'LocationMode',
-    'Metrics',
-    'NfsEncryptionInTransit',
-    'NTFSAttributes',
-    'ResourceTypes',
-    'RetentionPolicy',
-    'Services',
-    'ShareAccessTier',
-    'ShareClient',
-    'ShareDirectoryClient',
-    'ShareFileClient',
-    'ShareLeaseClient',
-    'ShareNfsSettings',
-    'ShareProperties',
-    'ShareProtocolSettings',
-    'ShareProtocols',
-    'ShareRootSquash',
-    'ShareSasPermissions',
-    'ShareServiceClient',
-    'ShareSmbSettings',
-    'SmbEncryptionInTransit',
-    'SmbMultichannel',
-    'StorageErrorCode',
-    'UserDelegationKey'
+    "AccessPolicy",
+    "AccountSasPermissions",
+    "ContentSettings",
+    "CorsRule",
+    "DirectoryProperties",
+    "ExponentialRetry",
+    "FileProperties",
+    "FileSasPermissions",
+    "generate_account_sas",
+    "generate_file_sas",
+    "generate_share_sas",
+    "Handle",
+    "LinearRetry",
+    "LocationMode",
+    "Metrics",
+    "NfsEncryptionInTransit",
+    "NTFSAttributes",
+    "ResourceTypes",
+    "RetentionPolicy",
+    "Services",
+    "ShareAccessTier",
+    "ShareClient",
+    "ShareDirectoryClient",
+    "ShareFileClient",
+    "ShareLeaseClient",
+    "ShareNfsSettings",
+    "ShareProperties",
+    "ShareProtocolSettings",
+    "ShareProtocols",
+    "ShareRootSquash",
+    "ShareSasPermissions",
+    "ShareServiceClient",
+    "ShareSmbSettings",
+    "SmbEncryptionInTransit",
+    "SmbMultichannel",
+    "StorageErrorCode",
+    "UserDelegationKey",
 ]
 
 
@@ -96,12 +93,10 @@ __all__ = [
 # to prevent it from showing in intellisense/docs but we handle it here to prevent
 # breaking any existing code which may have imported it.
 def __getattr__(name):
-    if name == 'HandleItem':
+    if name == "HandleItem":
         from ._generated.models import HandleItem
-        warnings.warn(
-            "HandleItem is deprecated and should not be used. Use Handle instead.",
-            DeprecationWarning
-        )
+
+        warnings.warn("HandleItem is deprecated and should not be used. Use Handle instead.", DeprecationWarning)
         return HandleItem
 
     raise AttributeError(f"module 'azure.storage.fileshare' has no attribute {name}")
