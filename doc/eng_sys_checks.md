@@ -597,6 +597,16 @@ The weekly pipeline also runs "next" variants of mypy, pylint, pyright, and sphi
 
 Results are posted as GitHub issues in the repository. These checks run with `continueOnError: true` and do not block PRs.
 
+#### Copilot auto-fix
+
+For `pylint`, `mypy`, `sphinx`, and `pyright` failures, the weekly pipeline automatically assigns the Copilot coding agent to open a fix PR.
+
+- **Review the PR**: review and merge it like any other PR.
+- **To opt out**, set `vnext_copilot_fix = false` under `[tool.azure-sdk-build]` in the package's `pyproject.toml`.
+- **If Copilot fails** to be assigned, the pipeline logs a warning and retries automatically on the next run.
+- **Version bumps**: when the checker version changes, Copilot is unassigned and reassigned to trigger a fresh fix attempt with the updated errors.
+- **Duplicate detection**: if an open PR already references the issue or mentions the package and check type, Copilot is not reassigned.
+
 To test a "next" check locally, use `--next`:
 
 ```bash
