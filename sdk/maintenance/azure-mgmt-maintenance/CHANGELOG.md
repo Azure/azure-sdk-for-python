@@ -14,11 +14,12 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `Operation` deleted or renamed its instance variable `properties`
-  - Deleted or renamed model `ListApplyUpdate`
-  - Deleted or renamed model `ListConfigurationAssignmentsResult`
-  - Deleted or renamed model `ListMaintenanceConfigurationsResult`
-  - Deleted or renamed model `ListUpdatesResult`
+
+### Other Changes
+
+  - Deleted model `ListApplyUpdate`/`ListConfigurationAssignmentsResult`/`ListMaintenanceConfigurationsResult`/`ListUpdatesResult` which actually were not used by SDK users
 
 ## 2.2.0b2 (2024-05-20)
 
