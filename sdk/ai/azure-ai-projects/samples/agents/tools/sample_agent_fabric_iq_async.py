@@ -52,11 +52,7 @@ async def main():
             agent_name="MyAgent",
             definition=PromptAgentDefinition(
                 model=os.environ["FOUNDRY_MODEL_NAME"],
-                instructions=(
-                    "You are a helpful agent that can use Fabric IQ tools to query data and "
-                    "assist users. Use the available Fabric IQ tools to answer questions and "
-                    "perform tasks."
-                ),
+                instructions="Use the available Fabric IQ tools to answer questions and perform tasks.",
                 tools=[tool_payload],
             ),
         )
