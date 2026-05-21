@@ -4,6 +4,9 @@
 
 ### Features Added
 
+### Other Changes
+- Legacy transports will not be supported moving forward
+
 ## 12.25.0 (2026-05-14)
 
 ### Features Added

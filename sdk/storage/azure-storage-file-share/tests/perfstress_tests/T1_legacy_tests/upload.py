@@ -24,8 +24,7 @@ class LegacyUploadTest(_LegacyShareTest):
             file_name=self.file_name,
             stream=self.upload_stream,
             count=self.args.size,
-            max_connections=self.args.max_concurrency,
-        )
+            max_connections=self.args.max_concurrency)
 
     async def run_async(self):
         raise NotImplementedError("Async not supported for legacy T1 tests.")

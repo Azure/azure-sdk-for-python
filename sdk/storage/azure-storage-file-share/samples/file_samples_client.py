@@ -36,16 +36,12 @@ class FileSamples(object):
 
     def simple_file_operations(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: simple_file_operations"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: simple_file_operations")
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
-
         share = ShareClient.from_connection_string(self.connection_string, "filesamples1")
 
         # Create the share
@@ -86,14 +82,12 @@ class FileSamples(object):
 
     def copy_file_from_url(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: copy_file_from_url"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: copy_file_from_url")
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
-
         share = ShareClient.from_connection_string(self.connection_string, "filesamples2")
 
         # Create the share
@@ -110,7 +104,9 @@ class FileSamples(object):
 
             # Build the url from which to copy the file
             source_url = "https://{}.file.core.windows.net/{}/{}".format(
-                self.account_name, "filesamples2", "sourcefile"
+                self.account_name,
+                "filesamples2",
+                "sourcefile"
             )
 
             # Copy the sample source file from the url to the destination file
@@ -123,14 +119,12 @@ class FileSamples(object):
 
     def acquire_file_lease(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: acquire_file_lease"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: acquire_file_lease")
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
-
         share = ShareClient.from_connection_string(self.connection_string, "filesamples3")
 
         # Create the share
@@ -143,7 +137,7 @@ class FileSamples(object):
             # [START acquire_and_release_lease_on_file]
             source_file.create_file(1024)
             lease = source_file.acquire_lease()
-            source_file.upload_file(b"hello world", lease=lease)
+            source_file.upload_file(b'hello world', lease=lease)
 
             lease.release()
             # [END acquire_and_release_lease_on_file]
@@ -153,7 +147,7 @@ class FileSamples(object):
             share.delete_share()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sample = FileSamples()
     sample.simple_file_operations()
     sample.copy_file_from_url()
