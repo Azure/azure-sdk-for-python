@@ -1,6 +1,6 @@
 # Release History
 
-## 1.33.0 (unreleased)
+## 1.34.0 (unreleased)
 
 ### Features Added
 
@@ -8,7 +8,20 @@
 
 ### Other Changes
 
-## 1.32.0 (unreleased)
+## 1.33.0 (2026-05-11)
+
+### Features Added
+
+### Bugs Fixed
+
+- Removing deployment templates experimental warning while initializing.
+- Resolving next-pylint 4.0.5 issues for azure-ai-ml sdk and updating. 
+- Update Major Version Checker due to setup removal. 
+- Path traversal protection in unzip to temp file.
+
+### Other Changes
+
+## 1.32.0 (2026-03-17)
 
 ### Features Added
 
