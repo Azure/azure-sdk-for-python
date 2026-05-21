@@ -6,18 +6,20 @@
 import os
 import time
 import random
-from sample_utilities import get_client_modifications
+from sample_utilities import get_authority, get_credential, get_client_modifications
 from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
 from azure.appconfiguration.provider import load, WatchKey
 
+endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
+authority = get_authority(endpoint)
+credential = get_credential(authority)
 kwargs = get_client_modifications()
-connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
 
 # Setting up a configuration setting with a known value
-client = AzureAppConfigurationClient.from_connection_string(connection_string)
+client = AzureAppConfigurationClient(endpoint, credential)
 
 configuration_setting = ConfigurationSetting(key="message", value="Hello World!")
 
@@ -31,10 +33,11 @@ def my_callback_on_fail(_):
 rand = random.random()
 watch_key = WatchKey("message" + str(rand))
 
-# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
+# Connecting to Azure App Configuration using AAD, and refreshing when the configuration setting message
 # changes
 config = load(
-    connection_string=connection_string,
+    endpoint=endpoint,
+    credential=credential,
     refresh_on=[watch_key],
     refresh_interval=1,
     on_refresh_error=my_callback_on_fail,
