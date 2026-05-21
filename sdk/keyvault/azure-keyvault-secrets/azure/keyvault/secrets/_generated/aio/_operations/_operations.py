@@ -482,7 +482,15 @@ class _KeyVaultClientOperationsMixin(
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2025-06-01-preview": ["out_content_type"]},
-        api_versions_list=["7.5", "7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01"],
+        api_versions_list=[
+            "7.5",
+            "7.6-preview.2",
+            "7.6",
+            "2025-06-01-preview",
+            "2025-07-01",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def get_secret(
         self,
@@ -627,7 +635,10 @@ class _KeyVaultClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -729,7 +740,10 @@ class _KeyVaultClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -828,7 +842,10 @@ class _KeyVaultClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(

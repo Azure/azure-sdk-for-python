@@ -49,7 +49,7 @@ def build_key_vault_set_secret_request(secret_name: str, **kwargs: Any) -> HttpR
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -75,7 +75,7 @@ def build_key_vault_delete_secret_request(secret_name: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_key_vault_update_secret_request(secret_name: str, secret_version: str,
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +133,7 @@ def build_key_vault_get_secret_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_key_vault_get_secrets_request(*, maxresults: Optional[int] = None, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -183,7 +183,7 @@ def build_key_vault_get_secret_versions_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -211,7 +211,7 @@ def build_key_vault_get_deleted_secrets_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -234,7 +234,7 @@ def build_key_vault_get_deleted_secret_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -259,7 +259,7 @@ def build_key_vault_purge_deleted_secret_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     # Construct URL
     _url = "/deletedsecrets/{secret-name}"
     path_format_arguments = {
@@ -280,7 +280,7 @@ def build_key_vault_recover_deleted_secret_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -304,7 +304,7 @@ def build_key_vault_backup_secret_request(secret_name: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -329,7 +329,7 @@ def build_key_vault_restore_secret_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -773,7 +773,15 @@ class _KeyVaultClientOperationsMixin(
     @distributed_trace
     @api_version_validation(
         params_added_on={"2025-06-01-preview": ["out_content_type"]},
-        api_versions_list=["7.5", "7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01"],
+        api_versions_list=[
+            "7.5",
+            "7.6-preview.2",
+            "7.6",
+            "2025-06-01-preview",
+            "2025-07-01",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     def get_secret(
         self,
@@ -917,7 +925,10 @@ class _KeyVaultClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -1018,7 +1029,10 @@ class _KeyVaultClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -1117,7 +1131,10 @@ class _KeyVaultClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(

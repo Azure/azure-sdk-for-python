@@ -1,5 +1,15 @@
 # Release History
 
+## 4.12.0b1 (Unreleased)
+
+### Features Added
+
+- Added support for service API version `2026-03-01-preview`
+
+### Other Changes
+
+- Key Vault API version `2026-03-01-preview` is now the default
+
 ## 4.11.0 (2026-03-26)
 
 ### Features Added

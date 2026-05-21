@@ -38,5 +38,6 @@
         "azure.keyvault.secrets._generated.aio.KeyVaultClient.backup_secret": "KeyVault.backupSecret",
         "azure.keyvault.secrets._generated.KeyVaultClient.restore_secret": "KeyVault.restoreSecret",
         "azure.keyvault.secrets._generated.aio.KeyVaultClient.restore_secret": "KeyVault.restoreSecret"
-    }
+    },
+    "CrossLanguageVersion": "d8667fe0d2e2"
 }
