@@ -1,5 +1,40 @@
 # Release History
 
+## 14.6.0 (2026-05-21)
+
+### Features Added
+
+  - Client `RedisManagementClient` added method `send_request`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `RedisCacheAccessPolicy` added property `system_data`
+  - Model `RedisCacheAccessPolicyAssignment` added property `system_data`
+  - Model `RedisFirewallRule` added property `system_data`
+  - Model `RedisLinkedServerWithProperties` added property `system_data`
+  - Model `RedisPatchSchedule` added property `system_data`
+  - Model `RedisResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added enum `CreatedByType`
+  - Added model `SystemData`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `RedisCreateParameters` moved instance variable `redis_configuration`, `redis_version`, `enable_non_ssl_port`, `replicas_per_master`, `replicas_per_primary`, `tenant_settings`, `shard_count`, `minimum_tls_version`, `public_network_access`, `update_channel`, `disable_access_key_authentication`, `zonal_allocation_policy`, `sku`, `subnet_id` and `static_ip` under property `properties` whose type is `RedisCreateProperties`
+  - Model `RedisLinkedServerCreateParameters` moved instance variable `linked_redis_cache_id`, `linked_redis_cache_location`, `server_role`, `geo_replicated_primary_host_name` and `primary_host_name` under property `properties` whose type is `RedisLinkedServerCreateProperties`
+  - Model `RedisLinkedServerWithProperties` moved instance variable `linked_redis_cache_id`, `linked_redis_cache_location`, `server_role`, `geo_replicated_primary_host_name`, `primary_host_name` and `provisioning_state` under property `properties` whose type is `RedisLinkedServerProperties`
+  - Model `RedisPatchSchedule` moved instance variable `schedule_entries` under property `properties` whose type is `ScheduleEntries`
+  - Model `RedisResource` moved instance variable `redis_configuration`, `redis_version`, `enable_non_ssl_port`, `replicas_per_master`, `replicas_per_primary`, `tenant_settings`, `shard_count`, `minimum_tls_version`, `public_network_access`, `update_channel`, `disable_access_key_authentication`, `zonal_allocation_policy`, `sku`, `subnet_id`, `static_ip`, `provisioning_state`, `host_name`, `port`, `ssl_port`, `access_keys`, `linked_servers`, `instances` and `private_endpoint_connections` under property `properties` whose type is `RedisProperties`
+  - Model `RedisUpdateParameters` moved instance variable `redis_configuration`, `redis_version`, `enable_non_ssl_port`, `replicas_per_master`, `replicas_per_primary`, `tenant_settings`, `shard_count`, `minimum_tls_version`, `public_network_access`, `update_channel`, `disable_access_key_authentication`, `zonal_allocation_policy` and `sku` under property `properties` whose type is `RedisUpdateProperties`
+  - Deleted or renamed model `RedisFirewallRuleCreateParameters`
+  - Method `RedisOperations.list_upgrade_notifications` changed its parameter `history` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `NotificationListResponse`/`RedisCacheAccessPolicyAssignmentList`/`RedisCacheAccessPolicyList`/`RedisLinkedServerWithPropertiesList` which actually were not used by SDK users
+
 ## 14.5.0 (2025-01-20)
 
 ### Features Added

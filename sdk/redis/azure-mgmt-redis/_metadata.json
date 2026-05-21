@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-11-01",
+  "apiVersions": {
+    "Microsoft.Cache": "2024-11-01"
+  },
+  "commit": "7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/redis/resource-manager/Microsoft.Cache/Redis",
+  "emitterVersion": "0.62.1"
+}
