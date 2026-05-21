@@ -236,9 +236,23 @@ class _InferenceService:
 
             data = response.body()
             if data:
-                data = decode_response_body_for_status(
-                    data, response.status_code, "inference_request"
-                )
+                try:
+                    data = decode_response_body_for_status(
+                        data, response.status_code, "inference_request"
+                    )
+                except UnicodeDecodeError as decode_err:
+                    # Only reachable when status is < 400 and strict decode
+                    # is still in effect. ``decode_response_body_for_status``
+                    # never lets malformed UTF-8 escape on status >= 400, and
+                    # it honors REPLACE/IGNORE env fallback before this point.
+                    # Surface as a typed SDK decode exception so wire status
+                    # (e.g. 200) and response metadata are preserved verbatim;
+                    # the decoder error remains available via __cause__.
+                    raise DecodeError(
+                        message="Failed to decode response body as UTF-8: {0}".format(decode_err.reason),
+                        response=response,
+                        error=decode_err,
+                    ) from decode_err
 
             if response.status_code >= 400:
                 raise exceptions.CosmosHttpResponseError(message=data, response=response)
@@ -262,7 +276,15 @@ class _InferenceService:
                 response=None
             ) from e
         except Exception as e:
-            if isinstance(e, (exceptions.CosmosHttpResponseError, exceptions.CosmosResourceNotFoundError)):
+            # ``DecodeError`` is a typed SDK exception (raised by the
+            # decode wrap a few lines up, or by ``json.loads`` failures
+            # below it) that already carries the original response and
+            # the underlying decoder error via ``__cause__``. Treat it
+            # the same as the Cosmos-typed exceptions and let it pass
+            # through unchanged so its diagnostic context is preserved.
+            if isinstance(e, (exceptions.CosmosHttpResponseError,
+                              exceptions.CosmosResourceNotFoundError,
+                              DecodeError)):
                 raise
             raise exceptions.CosmosHttpResponseError(
                 message=f"Semantic reranking failed: {str(e)}",

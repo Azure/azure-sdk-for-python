@@ -178,9 +178,23 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
 
     data = response.body()
     if data:
-        data = decode_response_body_for_status(
-            data, response.status_code, request_params.operation_type
-        )
+        try:
+            data = decode_response_body_for_status(
+                data, response.status_code, request_params.operation_type
+            )
+        except UnicodeDecodeError as decode_err:
+            # Only reachable when status is < 400 and strict decode is
+            # still in effect. ``decode_response_body_for_status`` never
+            # lets malformed UTF-8 escape on status >= 400, and it honors
+            # REPLACE/IGNORE env fallback before this point. Surface as a
+            # typed SDK decode exception so wire status (e.g. 200) and
+            # response metadata are preserved verbatim; the decoder error
+            # remains available via __cause__.
+            raise DecodeError(
+                message="Failed to decode response body as UTF-8: {0}".format(decode_err.reason),
+                response=response,
+                error=decode_err,
+            ) from decode_err
 
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)

@@ -31,6 +31,8 @@ import asyncio
 import unittest
 from unittest.mock import MagicMock, patch, AsyncMock
 
+from azure.core.exceptions import DecodeError
+
 from azure.cosmos import _synchronized_request, exceptions
 from azure.cosmos.aio import _asynchronous_request
 from azure.cosmos.http_constants import ResourceType
@@ -180,6 +182,53 @@ class TestAsyncRequestUsesSharedDecoder(unittest.TestCase):
                 with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
                     await _asynchronous_request._Request(*args)
                 self.assertEqual(ctx.exception.status_code, 503)
+
+        asyncio.run(run_test())
+
+
+class TestRequestWrapsResidualUnicodeDecodeErrorAsDecodeError(unittest.TestCase):
+    """For a successful (2xx) response carrying invalid UTF-8 in default
+    strict mode, ``_Request`` must surface the failure as
+    ``azure.core.exceptions.DecodeError`` — not as a stdlib
+    ``UnicodeDecodeError``. This contract matches the existing JSON-parse
+    failure path (which also raises ``DecodeError``) and keeps the wire
+    truth intact:
+
+    * ``e.response.status_code`` is the real wire status (e.g. 200) —
+      no synthetic 400, no faked sub-status.
+    * ``e.__cause__`` is the original ``UnicodeDecodeError`` so
+      operators can still see the byte offset and the env-var hint.
+
+    Customer middleware keyed on ``HttpResponseError`` /
+    ``CosmosHttpResponseError`` continues to work because ``DecodeError``
+    is a subclass of ``HttpResponseError``."""
+
+    def test_sync_2xx_with_invalid_utf8_raises_decode_error(self):
+        args, mock_response = _build_request_args(status_code=200, body=_INVALID_UTF8)
+
+        with patch(
+            "azure.cosmos._synchronized_request._PipelineRunFunction",
+            return_value=mock_response,
+        ):
+            with self.assertRaises(DecodeError) as ctx:
+                _synchronized_request._Request(*args)
+
+        self.assertEqual(ctx.exception.response.status_code, 200)
+        self.assertIsInstance(ctx.exception.__cause__, UnicodeDecodeError)
+
+    def test_async_2xx_with_invalid_utf8_raises_decode_error(self):
+        async def run_test():
+            args, mock_response = _build_request_args(status_code=200, body=_INVALID_UTF8)
+
+            with patch(
+                "azure.cosmos.aio._asynchronous_request._PipelineRunFunction",
+                new=AsyncMock(return_value=mock_response),
+            ):
+                with self.assertRaises(DecodeError) as ctx:
+                    await _asynchronous_request._Request(*args)
+
+            self.assertEqual(ctx.exception.response.status_code, 200)
+            self.assertIsInstance(ctx.exception.__cause__, UnicodeDecodeError)
 
         asyncio.run(run_test())
 
