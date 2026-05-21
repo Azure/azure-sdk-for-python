@@ -1,5 +1,36 @@
 # Release History
 
+## 3.1.0b1 (2026-05-19)
+
+### Features Added
+
+  - Model `NodeTypeProperties` added property `scale_in_policy`
+  - Model `NodeTypeProperties` added property `proxy_agent_settings`
+  - Added model `ApplyMaintenanceWindowRequest`
+  - Added enum `FaultKind`
+  - Added model `FaultSimulation`
+  - Added model `FaultSimulationConstraints`
+  - Added model `FaultSimulationContent`
+  - Added model `FaultSimulationContentWrapper`
+  - Added model `FaultSimulationDetails`
+  - Added model `FaultSimulationIdContent`
+  - Added enum `FaultSimulationStatus`
+  - Added model `HostEndpointSettings`
+  - Added model `NodeTypeFaultSimulation`
+  - Added model `ProxyAgentSettings`
+  - Added model `ScaleInPolicy`
+  - Added enum `ScaleInPolicyMode`
+  - Added enum `SfmcOperationStatus`
+  - Added model `ZoneFaultSimulationContent`
+  - Operation group `ManagedClustersOperations` added method `begin_start_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `begin_stop_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `get_fault_simulation`
+  - Operation group `ManagedClustersOperations` added method `list_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `begin_start_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `begin_stop_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `get_fault_simulation`
+  - Operation group `NodeTypesOperations` added method `list_fault_simulation`
+
 ## 3.0.0 (2026-02-28)
 
 ### Features Added

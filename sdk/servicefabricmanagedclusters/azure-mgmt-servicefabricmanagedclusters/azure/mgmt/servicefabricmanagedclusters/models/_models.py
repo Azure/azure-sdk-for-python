@@ -13,6 +13,7 @@ from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overlo
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
+    FaultKind,
     PartitionScheme,
     ServiceKind,
     ServicePlacementPolicyType,
@@ -965,6 +966,56 @@ class ApplicationUserAssignedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ApplyMaintenanceWindowRequest(_Model):
+    """Describes the request to apply a maintenance window on a Service Fabric Managed Cluster.
+
+    :ivar start_date_time: Effective start date of the maintenance window in yyyy-MM-dd HH:mm
+     format. If not provided, defaults to the current time.
+    :vartype start_date_time: str
+    :ivar duration: Duration of the maintenance window in hh:mm format. If not provided, defaults
+     to 5 hours. Example: 08:30 for 8 and a half hours.
+    :vartype duration: str
+    :ivar time_zone: Name of the timezone. List of timezones can be obtained by executing
+     [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell. If not provided, defaults to UTC.
+     Example: Pacific Standard Time, UTC, W. Europe Standard Time, Korea Standard Time, Central
+     Australia Standard Time.
+    :vartype time_zone: str
+    """
+
+    start_date_time: Optional[str] = rest_field(
+        name="startDateTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Effective start date of the maintenance window in yyyy-MM-dd HH:mm format. If not provided,
+     defaults to the current time."""
+    duration: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Duration of the maintenance window in hh:mm format. If not provided, defaults to 5 hours.
+     Example: 08:30 for 8 and a half hours."""
+    time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the timezone. List of timezones can be obtained by executing
+     [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell. If not provided, defaults to UTC.
+     Example: Pacific Standard Time, UTC, W. Europe Standard Time, Korea Standard Time, Central
+     Australia Standard Time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_date_time: Optional[str] = None,
+        duration: Optional[str] = None,
+        time_zone: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AvailableOperationDisplay(_Model):
     """Operation supported by the Service Fabric resource provider.
 
@@ -1711,6 +1762,252 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
+class FaultSimulation(_Model):
+    """Fault simulation object with status.
+
+    :ivar simulation_id: unique identifier for the fault simulation.
+    :vartype simulation_id: str
+    :ivar status: Fault simulation status. Known values are: "Starting", "Active", "Stopping",
+     "Done", "StartFailed", and "StopFailed".
+    :vartype status: str or ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationStatus
+    :ivar start_time: The start time of the fault simulation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the fault simulation.
+    :vartype end_time: ~datetime.datetime
+    :ivar details: Fault simulation details.
+    :vartype details: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationDetails
+    """
+
+    simulation_id: Optional[str] = rest_field(
+        name="simulationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """unique identifier for the fault simulation."""
+    status: Optional[Union[str, "_models.FaultSimulationStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fault simulation status. Known values are: \"Starting\", \"Active\", \"Stopping\", \"Done\",
+     \"StartFailed\", and \"StopFailed\"."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the fault simulation."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the fault simulation."""
+    details: Optional["_models.FaultSimulationDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fault simulation details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        simulation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.FaultSimulationStatus"]] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        details: Optional["_models.FaultSimulationDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FaultSimulationConstraints(_Model):
+    """Constraints for Fault Simulation action.
+
+    :ivar expiration_time: The absolute expiration timestamp (UTC) after which this fault
+     simulation should be stopped if it's still active.
+    :vartype expiration_time: ~datetime.datetime
+    """
+
+    expiration_time: Optional[datetime.datetime] = rest_field(
+        name="expirationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The absolute expiration timestamp (UTC) after which this fault simulation should be stopped if
+     it's still active."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expiration_time: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FaultSimulationContent(_Model):
+    """Parameters for Fault Simulation action.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ZoneFaultSimulationContent
+
+    :ivar fault_kind: The kind of fault to be simulated. Required. "Zone"
+    :vartype fault_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.FaultKind
+    :ivar force: Force the action to go through without any check on the cluster.
+    :vartype force: bool
+    :ivar constraints: Constraints for Fault Simulation action.
+    :vartype constraints:
+     ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationConstraints
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    fault_kind: str = rest_discriminator(name="faultKind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of fault to be simulated. Required. \"Zone\""""
+    force: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Force the action to go through without any check on the cluster."""
+    constraints: Optional["_models.FaultSimulationConstraints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Constraints for Fault Simulation action."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        fault_kind: str,
+        force: Optional[bool] = None,
+        constraints: Optional["_models.FaultSimulationConstraints"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FaultSimulationContentWrapper(_Model):
+    """Fault Simulation Request for Start action.
+
+    :ivar parameters: Parameters for Fault Simulation start action. Required.
+    :vartype parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContent
+    """
+
+    parameters: "_models.FaultSimulationContent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parameters for Fault Simulation start action. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.FaultSimulationContent",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FaultSimulationDetails(_Model):
+    """Details for Fault Simulation.
+
+    :ivar cluster_id: unique identifier for the cluster resource.
+    :vartype cluster_id: str
+    :ivar operation_id: unique identifier for the operation associated with the fault simulation.
+    :vartype operation_id: str
+    :ivar node_type_fault_simulation: List of node type simulations associated with the cluster
+     fault simulation.
+    :vartype node_type_fault_simulation:
+     list[~azure.mgmt.servicefabricmanagedclusters.models.NodeTypeFaultSimulation]
+    :ivar parameters: Fault simulation parameters.
+    :vartype parameters: ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationContent
+    """
+
+    cluster_id: Optional[str] = rest_field(name="clusterId", visibility=["read", "create", "update", "delete", "query"])
+    """unique identifier for the cluster resource."""
+    operation_id: Optional[str] = rest_field(
+        name="operationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """unique identifier for the operation associated with the fault simulation."""
+    node_type_fault_simulation: Optional[list["_models.NodeTypeFaultSimulation"]] = rest_field(
+        name="nodeTypeFaultSimulation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of node type simulations associated with the cluster fault simulation."""
+    parameters: Optional["_models.FaultSimulationContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fault simulation parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_id: Optional[str] = None,
+        operation_id: Optional[str] = None,
+        node_type_fault_simulation: Optional[list["_models.NodeTypeFaultSimulation"]] = None,
+        parameters: Optional["_models.FaultSimulationContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FaultSimulationIdContent(_Model):
+    """Parameters for Fault Simulation id.
+
+    :ivar simulation_id: unique identifier for the fault simulation. Required.
+    :vartype simulation_id: str
+    """
+
+    simulation_id: str = rest_field(name="simulationId", visibility=["read", "create", "update", "delete", "query"])
+    """unique identifier for the fault simulation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        simulation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FrontendConfiguration(_Model):
     """Describes the frontend configurations for the node type.
 
@@ -1763,6 +2060,50 @@ class FrontendConfiguration(_Model):
         load_balancer_backend_address_pool_id: Optional[str] = None,
         load_balancer_inbound_nat_pool_id: Optional[str] = None,
         application_gateway_backend_address_pool_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HostEndpointSettings(_Model):
+    """Specifies particular host endpoint settings.
+
+    :ivar mode: Specifies the execution mode. In Audit mode, the system acts as if it is enforcing
+     the access control policy, including emitting access denial entries in the logs but it does not
+     actually deny any requests to host endpoints. In Enforce mode, the system will enforce the
+     access control and it is the recommended mode of operation.
+    :vartype mode: str
+    :ivar in_vm_access_control_profile_reference_id: Specifies the InVMAccessControlProfileVersion
+     resource id in the format of
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}.
+    :vartype in_vm_access_control_profile_reference_id: str
+    """
+
+    mode: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies the execution mode. In Audit mode, the system acts as if it is enforcing the access
+     control policy, including emitting access denial entries in the logs but it does not actually
+     deny any requests to host endpoints. In Enforce mode, the system will enforce the access
+     control and it is the recommended mode of operation."""
+    in_vm_access_control_profile_reference_id: Optional[str] = rest_field(
+        name="inVMAccessControlProfileReferenceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the InVMAccessControlProfileVersion resource id in the format of
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{profile}/versions/{version}."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[str] = None,
+        in_vm_access_control_profile_reference_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3230,6 +3571,8 @@ class NodeType(ProxyResource):
         "zone_balance",
         "is_outbound_only",
         "enable_resilient_ephemeral_os_disk",
+        "scale_in_policy",
+        "proxy_agent_settings",
     ]
 
     @overload
@@ -3332,6 +3675,62 @@ class NodeTypeAvailableSku(_Model):
     """The supported SKU for a for node type."""
     capacity: Optional["_models.NodeTypeSkuCapacity"] = rest_field(visibility=["read"])
     """Provides information about how the node count can be scaled."""
+
+
+class NodeTypeFaultSimulation(_Model):
+    """Node type fault simulation object with status.
+
+    :ivar node_type_name: Node type name.
+    :vartype node_type_name: str
+    :ivar status: Fault simulation status. Known values are: "Starting", "Active", "Stopping",
+     "Done", "StartFailed", and "StopFailed".
+    :vartype status: str or ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationStatus
+    :ivar operation_id: Current or latest asynchronous operation identifier on the node type.
+    :vartype operation_id: str
+    :ivar operation_status: Current or latest asynchronous operation status on the node type. Known
+     values are: "Created", "Started", "Succeeded", "Failed", "Aborted", and "Canceled".
+    :vartype operation_status: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.SfmcOperationStatus
+    """
+
+    node_type_name: Optional[str] = rest_field(
+        name="nodeTypeName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Node type name."""
+    status: Optional[Union[str, "_models.FaultSimulationStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Fault simulation status. Known values are: \"Starting\", \"Active\", \"Stopping\", \"Done\",
+     \"StartFailed\", and \"StopFailed\"."""
+    operation_id: Optional[str] = rest_field(
+        name="operationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current or latest asynchronous operation identifier on the node type."""
+    operation_status: Optional[Union[str, "_models.SfmcOperationStatus"]] = rest_field(
+        name="operationStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current or latest asynchronous operation status on the node type. Known values are:
+     \"Created\", \"Started\", \"Succeeded\", \"Failed\", \"Aborted\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        node_type_name: Optional[str] = None,
+        status: Optional[Union[str, "_models.FaultSimulationStatus"]] = None,
+        operation_id: Optional[str] = None,
+        operation_status: Optional[Union[str, "_models.SfmcOperationStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class NodeTypeNatConfig(_Model):
@@ -3571,6 +3970,13 @@ class NodeTypeProperties(_Model):
      resilient ephemeral OS disk when using a supported SKU size. A resilient ephemeral OS disk
      provides improved reliability for ephemeral OS disks by enabling full caching.
     :vartype enable_resilient_ephemeral_os_disk: bool
+    :ivar scale_in_policy: Specifies the scale in policy for the node type, which will be used when
+     scale in happens on the cluster. If not specified, the default is Default which means the
+     platform will decide which nodes to remove during scale in.
+    :vartype scale_in_policy: ~azure.mgmt.servicefabricmanagedclusters.models.ScaleInPolicy
+    :ivar proxy_agent_settings: Specifies the settings for the proxy agent on the node type.
+    :vartype proxy_agent_settings:
+     ~azure.mgmt.servicefabricmanagedclusters.models.ProxyAgentSettings
     """
 
     is_primary: bool = rest_field(name="isPrimary", visibility=["read", "create", "update", "delete", "query"])
@@ -3835,6 +4241,16 @@ class NodeTypeProperties(_Model):
     """Specifies whether the node type should use a resilient ephemeral OS disk when using a supported
      SKU size. A resilient ephemeral OS disk provides improved reliability for ephemeral OS disks by
      enabling full caching."""
+    scale_in_policy: Optional["_models.ScaleInPolicy"] = rest_field(
+        name="scaleInPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the scale in policy for the node type, which will be used when scale in happens on
+     the cluster. If not specified, the default is Default which means the platform will decide
+     which nodes to remove during scale in."""
+    proxy_agent_settings: Optional["_models.ProxyAgentSettings"] = rest_field(
+        name="proxyAgentSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the settings for the proxy agent on the node type."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -3895,6 +4311,8 @@ class NodeTypeProperties(_Model):
         zone_balance: Optional[bool] = None,
         is_outbound_only: Optional[bool] = None,
         enable_resilient_ephemeral_os_disk: Optional[bool] = None,
+        scale_in_policy: Optional["_models.ScaleInPolicy"] = None,
+        proxy_agent_settings: Optional["_models.ProxyAgentSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -4127,6 +4545,72 @@ class PartitionInstanceCountScaleMechanism(ScalingMechanism, discriminator="Scal
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = ServiceScalingMechanismKind.SCALE_PARTITION_INSTANCE_COUNT  # type: ignore
+
+
+class ProxyAgentSettings(_Model):
+    """Specifies ProxyAgent settings for the virtual machine or virtual machine scale set.
+
+    :ivar enabled: Specifies whether ProxyAgent feature should be enabled on the virtual machine or
+     virtual machine scale set.
+    :vartype enabled: bool
+    :ivar key_incarnation_id: Increasing the value of this property allows users to reset the key
+     used for securing communication channel between guest and host.
+    :vartype key_incarnation_id: int
+    :ivar wire_server: Specifies the Wire Server endpoint settings while creating the virtual
+     machine or virtual machine scale set.
+    :vartype wire_server: ~azure.mgmt.servicefabricmanagedclusters.models.HostEndpointSettings
+    :ivar imds: Specifies the IMDS endpoint settings while creating the virtual machine or virtual
+     machine scale set.
+    :vartype imds: ~azure.mgmt.servicefabricmanagedclusters.models.HostEndpointSettings
+    :ivar add_proxy_agent_extension: Specify whether to implicitly install the ProxyAgent
+     Extension. This option is currently applicable only for Linux Os.
+    :vartype add_proxy_agent_extension: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies whether ProxyAgent feature should be enabled on the virtual machine or virtual
+     machine scale set."""
+    key_incarnation_id: Optional[int] = rest_field(
+        name="keyIncarnationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Increasing the value of this property allows users to reset the key used for securing
+     communication channel between guest and host."""
+    wire_server: Optional["_models.HostEndpointSettings"] = rest_field(
+        name="wireServer", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Wire Server endpoint settings while creating the virtual machine or virtual
+     machine scale set."""
+    imds: Optional["_models.HostEndpointSettings"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the IMDS endpoint settings while creating the virtual machine or virtual machine
+     scale set."""
+    add_proxy_agent_extension: Optional[bool] = rest_field(
+        name="addProxyAgentExtension", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify whether to implicitly install the ProxyAgent Extension. This option is currently
+     applicable only for Linux Os."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        key_incarnation_id: Optional[int] = None,
+        wire_server: Optional["_models.HostEndpointSettings"] = None,
+        imds: Optional["_models.HostEndpointSettings"] = None,
+        add_proxy_agent_extension: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ResourceAzStatus(_Model):
@@ -4766,6 +5250,39 @@ class RuntimeUpdateApplicationUpgradeParameters(_Model):  # pylint: disable=name
         upgrade_kind: Union[str, "_models.RuntimeUpgradeKind"],
         application_health_policy: Optional["_models.RuntimeApplicationHealthPolicy"] = None,
         update_description: Optional["_models.RuntimeRollingUpgradeUpdateMonitoringPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScaleInPolicy(_Model):
+    """Scale in policy for a node type. This is used to specify the mode for scale in operations on a
+    node type.
+
+    :ivar mode: The scale in policy mode for a node type. Known values are: "Default",
+     "OldestNodeFirst", and "NewestNodeFirst".
+    :vartype mode: str or ~azure.mgmt.servicefabricmanagedclusters.models.ScaleInPolicyMode
+    """
+
+    mode: Optional[Union[str, "_models.ScaleInPolicyMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The scale in policy mode for a node type. Known values are: \"Default\", \"OldestNodeFirst\",
+     and \"NewestNodeFirst\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.ScaleInPolicyMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -6684,3 +7201,43 @@ class VMSSExtensionProperties(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ZoneFaultSimulationContent(FaultSimulationContent, discriminator="Zone"):
+    """Parameters for Zone Fault Simulation action.
+
+    :ivar force: Force the action to go through without any check on the cluster.
+    :vartype force: bool
+    :ivar constraints: Constraints for Fault Simulation action.
+    :vartype constraints:
+     ~azure.mgmt.servicefabricmanagedclusters.models.FaultSimulationConstraints
+    :ivar zones: Indicates the zones of the fault simulation.
+    :vartype zones: list[str]
+    :ivar fault_kind: The kind of fault simulation. Required. Simulates an availability zone down.
+    :vartype fault_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.ZONE
+    """
+
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates the zones of the fault simulation."""
+    fault_kind: Literal[FaultKind.ZONE] = rest_discriminator(name="faultKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The kind of fault simulation. Required. Simulates an availability zone down."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        force: Optional[bool] = None,
+        constraints: Optional["_models.FaultSimulationConstraints"] = None,
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.fault_kind = FaultKind.ZONE  # type: ignore

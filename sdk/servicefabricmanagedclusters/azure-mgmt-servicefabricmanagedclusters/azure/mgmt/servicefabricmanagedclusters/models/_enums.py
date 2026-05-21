@@ -160,6 +160,36 @@ class FailureAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     fails. Service Fabric will not proceed to the next upgrade domain automatically."""
 
 
+class FaultKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of fault simulation."""
+
+    ZONE = "Zone"
+    """Simulates an availability zone down."""
+
+
+class FaultSimulationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Fault simulation status."""
+
+    STARTING = "Starting"
+    """Indicates the fault simulation is starting. The simulation will have this status while the
+    start operation is in progress."""
+    ACTIVE = "Active"
+    """Indicates the fault simulation is active. The simulation will have this status after the start
+    operation has completed successfully."""
+    STOPPING = "Stopping"
+    """Indicates the fault simulation is stopping. The simulation will have this status while the stop
+    operation is in progress."""
+    DONE = "Done"
+    """Indicates the fault simulation is done. The simulation will have this status after the stop
+    operation has completed successfully."""
+    START_FAILED = "StartFailed"
+    """Indicates the fault simulation has failed on start. The simulation will have this status after
+    the start operation fails."""
+    STOP_FAILED = "StopFailed"
+    """Indicates the fault simulation has failed on stop. The simulation will have this status after
+    the stop operation fails."""
+
+
 class HealthFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for filtering health events."""
 
@@ -416,6 +446,20 @@ class RuntimeUpgradeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The upgrade progresses one upgrade domain at a time."""
 
 
+class ScaleInPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the scale in policy mode for a node type."""
+
+    DEFAULT = "Default"
+    """Default scale in policy mode where the system will choose which nodes to remove when scaling
+    in."""
+    OLDEST_NODE_FIRST = "OldestNodeFirst"
+    """OldestNodeFirst scale in policy mode where the oldest node in the node type will be removed
+    first when scaling in."""
+    NEWEST_NODE_FIRST = "NewestNodeFirst"
+    """NewestNodeFirst scale in policy mode where the newest node in the node type will be removed
+    first when scaling in."""
+
+
 class SecurityEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the securityEncryptionType type of the nodeType. Only DiskWithVMGuestState and
     VMGuestStateOnly are currently supported.
@@ -536,6 +580,23 @@ class ServiceScalingTriggerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AVERAGE_SERVICE_LOAD_TRIGGER = "AverageServiceLoadTrigger"
     """Represents a scaling policy related to an average load of a metric/resource of a service. The
     value is 1."""
+
+
+class SfmcOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sfmc operation status."""
+
+    CREATED = "Created"
+    """Operation created."""
+    STARTED = "Started"
+    """Operation started."""
+    SUCCEEDED = "Succeeded"
+    """Operation succeeded."""
+    FAILED = "Failed"
+    """Operation failed."""
+    ABORTED = "Aborted"
+    """Operation aborted."""
+    CANCELED = "Canceled"
+    """Operation canceled."""
 
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

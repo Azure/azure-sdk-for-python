@@ -15,7 +15,7 @@ from azure.mgmt.servicefabricmanagedclusters import ServiceFabricManagedClusters
     pip install azure-identity
     pip install azure-mgmt-servicefabricmanagedclusters
 # USAGE
-    python node_type_put_operation_vm_image_plan_example.py
+    python node_type_list_fault_simulation_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,31 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.node_types.begin_create_or_update(
+    response = client.node_types.list_fault_simulation(
         resource_group_name="resRg",
         cluster_name="myCluster",
         node_type_name="BE",
-        parameters={
-            "properties": {
-                "dataDiskSizeGB": 200,
-                "isPrimary": False,
-                "vmImageOffer": "windows_2022_test",
-                "vmImagePlan": {
-                    "name": "win_2022_test_20_10_gen2",
-                    "product": "windows_2022_test",
-                    "publisher": "testpublisher",
-                },
-                "vmImagePublisher": "testpublisher",
-                "vmImageSku": "win_2022_test_20_10_gen2",
-                "vmImageVersion": "latest",
-                "vmInstanceCount": 10,
-                "vmSize": "Standard_D3",
-            }
-        },
-    ).result()
-    print(response)
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-05-01-preview/NodeTypePutOperationVmImagePlan_example.json
+# x-ms-original-file: 2026-05-01-preview/faultSimulation/NodeTypeListFaultSimulation_example.json
 if __name__ == "__main__":
     main()
