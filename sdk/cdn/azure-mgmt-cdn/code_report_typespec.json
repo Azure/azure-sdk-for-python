@@ -32993,7 +32993,7 @@
           "name": null
         }
       },
-      "DeliveryRuleActionName": {
+      "DeliveryRuleActionEnum": {
         "type": "Enum",
         "methods": {},
         "properties": {

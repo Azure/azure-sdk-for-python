@@ -15,7 +15,7 @@ from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
     CertificateSource,
     CertificateSourceParametersType,
-    DeliveryRuleActionName,
+    DeliveryRuleActionEnum,
     DeliveryRuleActionParametersType,
     DeliveryRuleConditionParametersType,
     MatchVariable,
@@ -3901,7 +3901,7 @@ class DeliveryRuleAction(_Model):
      "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
      "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
-    :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionName
+    :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -3941,7 +3941,7 @@ class DeliveryRuleCacheExpirationAction(DeliveryRuleAction, discriminator="Cache
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the parameters for the action. Required."""
-    name: Literal[DeliveryRuleActionName.CACHE_EXPIRATION] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    name: Literal[DeliveryRuleActionEnum.CACHE_EXPIRATION] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the action for the delivery rule. Required. CACHE_EXPIRATION."""
 
     @overload
@@ -3960,7 +3960,7 @@ class DeliveryRuleCacheExpirationAction(DeliveryRuleAction, discriminator="Cache
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.name = DeliveryRuleActionName.CACHE_EXPIRATION  # type: ignore
+        self.name = DeliveryRuleActionEnum.CACHE_EXPIRATION  # type: ignore
 
 
 class DeliveryRuleCacheKeyQueryStringAction(DeliveryRuleAction, discriminator="CacheKeyQueryString"):
@@ -3976,7 +3976,7 @@ class DeliveryRuleCacheKeyQueryStringAction(DeliveryRuleAction, discriminator="C
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the parameters for the action. Required."""
-    name: Literal[DeliveryRuleActionName.CACHE_KEY_QUERY_STRING] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    name: Literal[DeliveryRuleActionEnum.CACHE_KEY_QUERY_STRING] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the action for the delivery rule. Required. CACHE_KEY_QUERY_STRING."""
 
     @overload
@@ -3995,7 +3995,7 @@ class DeliveryRuleCacheKeyQueryStringAction(DeliveryRuleAction, discriminator="C
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.name = DeliveryRuleActionName.CACHE_KEY_QUERY_STRING  # type: ignore
+        self.name = DeliveryRuleActionEnum.CACHE_KEY_QUERY_STRING  # type: ignore
 
 
 class DeliveryRuleCondition(_Model):
@@ -4373,7 +4373,7 @@ class DeliveryRuleRequestHeaderAction(DeliveryRuleAction, discriminator="ModifyR
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the parameters for the action. Required."""
-    name: Literal[DeliveryRuleActionName.MODIFY_REQUEST_HEADER] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    name: Literal[DeliveryRuleActionEnum.MODIFY_REQUEST_HEADER] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the action for the delivery rule. Required. MODIFY_REQUEST_HEADER."""
 
     @overload
@@ -4392,7 +4392,7 @@ class DeliveryRuleRequestHeaderAction(DeliveryRuleAction, discriminator="ModifyR
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.name = DeliveryRuleActionName.MODIFY_REQUEST_HEADER  # type: ignore
+        self.name = DeliveryRuleActionEnum.MODIFY_REQUEST_HEADER  # type: ignore
 
 
 class DeliveryRuleRequestHeaderCondition(DeliveryRuleCondition, discriminator="RequestHeader"):
@@ -4548,7 +4548,7 @@ class DeliveryRuleResponseHeaderAction(DeliveryRuleAction, discriminator="Modify
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the parameters for the action. Required."""
-    name: Literal[DeliveryRuleActionName.MODIFY_RESPONSE_HEADER] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    name: Literal[DeliveryRuleActionEnum.MODIFY_RESPONSE_HEADER] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the action for the delivery rule. Required. MODIFY_RESPONSE_HEADER."""
 
     @overload
@@ -4567,7 +4567,7 @@ class DeliveryRuleResponseHeaderAction(DeliveryRuleAction, discriminator="Modify
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.name = DeliveryRuleActionName.MODIFY_RESPONSE_HEADER  # type: ignore
+        self.name = DeliveryRuleActionEnum.MODIFY_RESPONSE_HEADER  # type: ignore
 
 
 class DeliveryRuleRouteConfigurationOverrideAction(
@@ -4587,7 +4587,7 @@ class DeliveryRuleRouteConfigurationOverrideAction(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the parameters for the action. Required."""
-    name: Literal[DeliveryRuleActionName.ROUTE_CONFIGURATION_OVERRIDE] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    name: Literal[DeliveryRuleActionEnum.ROUTE_CONFIGURATION_OVERRIDE] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the action for the delivery rule. Required. ROUTE_CONFIGURATION_OVERRIDE."""
 
     @overload
@@ -4606,7 +4606,7 @@ class DeliveryRuleRouteConfigurationOverrideAction(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.name = DeliveryRuleActionName.ROUTE_CONFIGURATION_OVERRIDE  # type: ignore
+        self.name = DeliveryRuleActionEnum.ROUTE_CONFIGURATION_OVERRIDE  # type: ignore
 
 
 class DeliveryRuleServerPortCondition(DeliveryRuleCondition, discriminator="ServerPort"):
@@ -7528,7 +7528,7 @@ class OriginGroupOverrideAction(DeliveryRuleAction, discriminator="OriginGroupOv
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the parameters for the action. Required."""
-    name: Literal[DeliveryRuleActionName.ORIGIN_GROUP_OVERRIDE] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    name: Literal[DeliveryRuleActionEnum.ORIGIN_GROUP_OVERRIDE] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the action for the delivery rule. Required. ORIGIN_GROUP_OVERRIDE."""
 
     @overload
@@ -7547,7 +7547,7 @@ class OriginGroupOverrideAction(DeliveryRuleAction, discriminator="OriginGroupOv
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.name = DeliveryRuleActionName.ORIGIN_GROUP_OVERRIDE  # type: ignore
+        self.name = DeliveryRuleActionEnum.ORIGIN_GROUP_OVERRIDE  # type: ignore
 
 
 class OriginGroupOverrideActionParameters(
@@ -11359,7 +11359,7 @@ class UrlRedirectAction(DeliveryRuleAction, discriminator="UrlRedirect"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the parameters for the action. Required."""
-    name: Literal[DeliveryRuleActionName.URL_REDIRECT] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    name: Literal[DeliveryRuleActionEnum.URL_REDIRECT] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the action for the delivery rule. Required. URL_REDIRECT."""
 
     @overload
@@ -11378,7 +11378,7 @@ class UrlRedirectAction(DeliveryRuleAction, discriminator="UrlRedirect"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.name = DeliveryRuleActionName.URL_REDIRECT  # type: ignore
+        self.name = DeliveryRuleActionEnum.URL_REDIRECT  # type: ignore
 
 
 class UrlRedirectActionParameters(
@@ -11480,7 +11480,7 @@ class UrlRewriteAction(DeliveryRuleAction, discriminator="UrlRewrite"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the parameters for the action. Required."""
-    name: Literal[DeliveryRuleActionName.URL_REWRITE] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    name: Literal[DeliveryRuleActionEnum.URL_REWRITE] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the action for the delivery rule. Required. URL_REWRITE."""
 
     @overload
@@ -11499,7 +11499,7 @@ class UrlRewriteAction(DeliveryRuleAction, discriminator="UrlRewrite"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.name = DeliveryRuleActionName.URL_REWRITE  # type: ignore
+        self.name = DeliveryRuleActionEnum.URL_REWRITE  # type: ignore
 
 
 class UrlRewriteActionParameters(DeliveryRuleActionParameters, discriminator="DeliveryRuleUrlRewriteActionParameters"):
@@ -11563,7 +11563,7 @@ class UrlSigningAction(DeliveryRuleAction, discriminator="UrlSigning"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines the parameters for the action. Required."""
-    name: Literal[DeliveryRuleActionName.URL_SIGNING] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    name: Literal[DeliveryRuleActionEnum.URL_SIGNING] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the action for the delivery rule. Required. URL_SIGNING."""
 
     @overload
@@ -11582,7 +11582,7 @@ class UrlSigningAction(DeliveryRuleAction, discriminator="UrlSigning"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.name = DeliveryRuleActionName.URL_SIGNING  # type: ignore
+        self.name = DeliveryRuleActionEnum.URL_SIGNING  # type: ignore
 
 
 class UrlSigningActionParameters(DeliveryRuleActionParameters, discriminator="DeliveryRuleUrlSigningActionParameters"):

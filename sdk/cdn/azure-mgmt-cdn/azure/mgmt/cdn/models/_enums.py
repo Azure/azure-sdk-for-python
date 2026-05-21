@@ -333,7 +333,7 @@ class DeleteRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NO_ACTION."""
 
 
-class DeliveryRuleActionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DeliveryRuleActionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the action for the delivery rule."""
 
     CACHE_EXPIRATION = "CacheExpiration"

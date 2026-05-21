@@ -302,7 +302,7 @@
         "azure.mgmt.cdn.models.UrlFileNameOperator": "Microsoft.Cdn.UrlFileNameOperator",
         "azure.mgmt.cdn.models.UrlPathOperator": "Microsoft.Cdn.UrlPathOperator",
         "azure.mgmt.cdn.models.ClientPortOperator": "Microsoft.Cdn.ClientPortOperator",
-        "azure.mgmt.cdn.models.DeliveryRuleActionName": "Microsoft.Cdn.DeliveryRuleActionName",
+        "azure.mgmt.cdn.models.DeliveryRuleActionEnum": "Microsoft.Cdn.DeliveryRuleActionName",
         "azure.mgmt.cdn.models.DeliveryRuleActionParametersType": "Microsoft.Cdn.DeliveryRuleActionParametersType",
         "azure.mgmt.cdn.models.QueryStringBehavior": "Microsoft.Cdn.QueryStringBehavior",
         "azure.mgmt.cdn.models.HeaderAction": "Microsoft.Cdn.HeaderAction",
@@ -604,5 +604,5 @@
         "azure.mgmt.cdn.CdnManagementClient.validate_probe": "Microsoft.Cdn.validateProbe",
         "azure.mgmt.cdn.aio.CdnManagementClient.validate_probe": "Microsoft.Cdn.validateProbe"
     },
-    "CrossLanguageVersion": "42158dc71d23"
+    "CrossLanguageVersion": "b523fd384dcf"
 }
