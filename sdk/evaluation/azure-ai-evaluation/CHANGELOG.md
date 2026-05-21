@@ -1,6 +1,22 @@
 # Release History
 
-## 1.16.7 (Unreleased)
+## 1.16.9 (Unreleased)
+
+### Breaking Changes
+
+- Updated `EVALUATOR_NAME_METRICS_MAPPINGS` so `document_retrieval` and `rouge_score` report single primary metrics (`document_retrieval`, `rouge`), with previous sub-metrics now represented in each evaluator's `*_properties` payload.
+
+### Bugs Fixed
+
+- Fixed `format_llm_response` raising `UnboundLocalError` when `inputs` was not provided by ensuring `sample_input` is always initialized.
+
+## 1.16.8 (2026-05-19)
+
+### Features Added
+
+- App Insights logging now forwards arbitrary evaluator-specific keys from each event's `properties` payload as a single `gen_ai.evaluation.properties` JSON attribute (carried inside `internal_properties`). Previously only the four red-team keys (`attack_success`, `attack_technique`, `attack_complexity`, `attack_success_threshold`) were forwarded; structured outputs such as rubric `dimension_scores` were silently dropped. Payloads larger than 7500 characters are replaced with a valid JSON marker (`{"truncated": true, "original_size_bytes": <n>}`) so consumers can always `json.loads` the value. Non-dict `properties` payloads are now safely ignored instead of raising in the red-team forwarder.
+
+## 1.16.7 (2026-05-07)
 
 ### Features Added
 
@@ -10,10 +26,9 @@
 - Added `skipped` and `errored` counts to `result_counts` and `per_testing_criteria_results` in AOAI evaluation summaries.
 - Added `skipped` to `ResultCount` and `skipped`/`errored` to `PerTestingCriteriaResult` typed contracts.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
+- `_TaskNavigationEfficiencyEvaluator` now accepts JSON-stringified `response` and `ground_truth` inputs (e.g., from data pipelines that serialize list/tuple inputs to strings). String inputs are parsed as JSON; on parse failure the original value is preserved so downstream validation surfaces the error as before.
 - Fixed error blame attribution in `_get_single_run_results` to perform a case-insensitive comparison when checking the AOAI error code for `UserError`, ensuring failed evaluation runs are correctly classified as user errors regardless of server-side casing.
 - Fixed `deflection_rate` evaluator showing incorrect pass/fail labels where all results were labeled "pass" regardless of the actual score. The inverse metric adjustment was overriding the evaluator's correct string labels, remapping every result to "pass".
 - Fixed `evaluate()` raising `EvaluationException: (InternalError) unhashable type: 'list'` when an evaluator emitted a list value under a `_result`-suffixed column. Binary aggregation now skips such columns with a warning instead of aborting the entire run.
@@ -22,6 +37,7 @@
 - Fixed row classification where rows with empty or missing results lists were incorrectly counted as "passed" (the condition `passed_count == len(results) - error_count` evaluated `0 == 0` as True).
 - Fixed `_get_metric_result` prefix matching where shorter metric names (e.g., `xpia`) could match before longer, more-specific ones (e.g., `xpia_manipulated_content`). Now sorts by length descending for correct longest-prefix matching.
 - Fixed non-dict `_properties` values from evaluators causing downstream issues. Values that are not dicts are now logged and dropped gracefully.
+- Fixed filename length error in `_inline_image` by catching OSError/ValueError during local path resolution and fall back to returning a text chunk instead of throwing.
 
 ### Other Changes
 

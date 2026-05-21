@@ -2,7 +2,8 @@
 
 This module centralizes all venv creation, pip install/uninstall, and
 related utilities.  The backend (``uv`` vs stdlib ``pip``) is chosen
-via the ``TOX_PIP_IMPL`` environment variable:
+via the ``AZPYSDK_PIP_IMPL`` environment variable (falls back to the
+legacy ``TOX_PIP_IMPL`` for backward compatibility):
 
 * ``"uv"``  → uses ``uv venv`` / ``uv pip``
 * anything else (default ``"pip"``) → uses ``python -m venv`` / ``python -m pip``
@@ -24,10 +25,10 @@ def get_venv_call(python_exe: Optional[str] = None, python_version: Optional[str
     :return: List of command arguments for venv.
     :rtype: List[str]
     """
-    pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
+    pip_impl = os.environ.get("AZPYSDK_PIP_IMPL", os.environ.get("TOX_PIP_IMPL", "pip")).lower()
 
     if python_version and pip_impl != "uv":
-        raise ValueError("--python requires uv as the backend. Install uv or set TOX_PIP_IMPL=uv.")
+        raise ValueError("--python requires uv as the backend. Install uv or set AZPYSDK_PIP_IMPL=uv.")
 
     # soon we will change this to default to uv
     if pip_impl == "uv":
@@ -46,8 +47,8 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
     :return: List of command arguments for pip.
     :rtype: List[str]
     """
-    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
+    # Check AZPYSDK_PIP_IMPL environment variable (falls back to legacy TOX_PIP_IMPL)
+    pip_impl = os.environ.get("AZPYSDK_PIP_IMPL", os.environ.get("TOX_PIP_IMPL", "pip")).lower()
 
     # soon we will change this to default to uv
     if pip_impl == "uv":

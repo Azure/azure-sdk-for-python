@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_common_async.py
@@ -30,7 +29,7 @@ class CommonBlobSamplesAsync(object):
 
     connection_string = os.getenv("STORAGE_CONNECTION_STRING_SOFT")
 
-    #--Begin Blob Samples-----------------------------------------------------------------
+    # --Begin Blob Samples-----------------------------------------------------------------
 
     async def blob_snapshots_async(self):
         if self.connection_string is None:
@@ -150,7 +149,8 @@ class CommonBlobSamplesAsync(object):
 
             # Delete multiple blobs by properties iterator
             my_blobs = container_client.list_blobs(name_starts_with="my_blob")
-            await container_client.delete_blobs(*[b async for b in my_blobs])  # async for in list comprehension after 3.6 only
+            # async for in list comprehension after 3.6 only
+            await container_client.delete_blobs(*[b async for b in my_blobs])
             # [END delete_multiple_blobs]
 
             # Delete container
@@ -193,7 +193,7 @@ class CommonBlobSamplesAsync(object):
             # Delete container
             await blob_service_client.delete_container("leasemyblobscontainerasync")
 
-    async def start_copy_blob_from_url_and_abort_copy_async(self):
+    async def start_copy_from_url_abort_copy_async(self):
         if self.connection_string is None:
             print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: start_copy_blob_from_url_and_abort_copy_async")
@@ -241,13 +241,14 @@ class CommonBlobSamplesAsync(object):
             finally:
                 await blob_service_client.delete_container("copyblobcontainerasync")
 
+
 async def main():
     sample = CommonBlobSamplesAsync()
     await sample.blob_snapshots_async()
     await sample.soft_delete_and_undelete_blob_async()
     await sample.delete_multiple_blobs_async()
     await sample.acquire_lease_on_blob_async()
-    await sample.start_copy_blob_from_url_and_abort_copy_async()
+    await sample.start_copy_from_url_abort_copy_async()
 
 if __name__ == '__main__':
     asyncio.run(main())

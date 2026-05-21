@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -43,10 +43,12 @@ from .._configuration import SecurityDomainClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, SecurityDomainClientConfiguration]):
+class _SecurityDomainClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], SecurityDomainClientConfiguration]
+):
 
     @distributed_trace_async
     async def get_download_status(self, **kwargs: Any) -> _models.SecurityDomainOperationStatus:
@@ -82,6 +84,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -96,11 +99,14 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SecurityDomainOperationStatus, response.json())
 
@@ -147,6 +153,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -160,7 +167,10 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -169,7 +179,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
         )
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -287,6 +297,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -301,11 +312,14 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SecurityDomainOperationStatus, response.json())
 
@@ -352,6 +366,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -365,7 +380,10 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -375,7 +393,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -503,6 +521,7 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -517,11 +536,14 @@ class SecurityDomainClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Se
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TransferKey, response.json())
 

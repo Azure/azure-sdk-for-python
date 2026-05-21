@@ -11,8 +11,14 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 import requests
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import FileSharePreparer
+from test_helpers_async import AsyncStream, MockStorageTransport, ProgressTracker
+
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.fileshare import (
     AccessPolicy,
@@ -25,14 +31,10 @@ from azure.storage.fileshare import (
     NTFSAttributes,
     ResourceTypes,
     ShareSasPermissions,
-    StorageErrorCode
+    StorageErrorCode,
 )
 from azure.storage.fileshare.aio import ShareFileClient, ShareServiceClient
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import FileSharePreparer
-from test_helpers_async import AsyncStream, MockStorageTransport, ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
@@ -230,7 +232,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         # cspell:disable-next-line
-        sas = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
+        sas = ('?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&'
+               'sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D')
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name="vhds",
@@ -485,46 +488,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_create_file_semantics(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        await self._setup_share(storage_account_name, storage_account_key)
-        file_name = self._get_file_reference()
-
-        file1 = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path=file_name + "file1",
-            credential=storage_account_key.secret
-        )
-        await file1.create_file(1024, file_property_semantics=None)
-        props = await file1.get_file_properties()
-        assert props is not None
-
-        file2 = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path=file_name + "file2",
-            credential=storage_account_key.secret
-        )
-        await file2.create_file(1024, file_property_semantics="New")
-        props = await file2.get_file_properties()
-        assert props is not None
-
-        file3 = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path=file_name + "file2",
-            credential=storage_account_key.secret
-        )
-        await file3.create_file(1024, file_property_semantics="Restore", file_permission=TEST_FILE_PERMISSIONS)
-        props = await file3.get_file_properties()
-        assert props is not None
-
-    @FileSharePreparer()
-    @recorded_by_proxy_async
     async def test_create_file_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -696,7 +659,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_client = await self._get_file_client(storage_account_name, storage_account_key)
 
         file_attributes = NTFSAttributes(read_only=True, archive=True)
-        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000, tzinfo=timezone.utc)
+        file_creation_time = file_last_write_time = file_change_time = datetime(
+            2022, 3, 10, 10, 14, 30, 500000, tzinfo=timezone.utc)
 
         # Act
         await file_client.create_file(
@@ -1553,10 +1517,18 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         source_file_name = 'testfile1'
-        source_file_client = await self._create_file(storage_account_name, storage_account_key, file_name=source_file_name)
+        source_file_client = await self._create_file(
+            storage_account_name,
+            storage_account_key,
+            file_name=source_file_name
+        )
 
         destination_file_name = 'filetoupdate'
-        destination_file_client = await self._create_file(storage_account_name, storage_account_key, file_name=destination_file_name)
+        destination_file_client = await self._create_file(
+            storage_account_name,
+            storage_account_key,
+            file_name=destination_file_name
+        )
 
         # generate SAS for the source file
         sas_token_for_source_file = self.generate_sas(
@@ -1584,12 +1556,20 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         source_file_name = 'testfile'
-        source_file_client = await self._create_file(storage_account_name, storage_account_key, file_name=source_file_name)
+        source_file_client = await self._create_file(
+            storage_account_name,
+            storage_account_key,
+            file_name=source_file_name
+        )
         data = b'abcdefghijklmnop' * 32
         await source_file_client.upload_range(data, offset=0, length=512)
 
         destination_file_name = 'filetoupdate'
-        destination_file_client = await self._create_empty_file(storage_account_name, storage_account_key, file_name=destination_file_name)
+        destination_file_client = await self._create_empty_file(
+            storage_account_name,
+            storage_account_key,
+            file_name=destination_file_name
+        )
 
         # generate SAS for the source file
         sas_token_for_source_file = self.generate_sas(
@@ -1623,7 +1603,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         source_blob_client = await self._create_source_blob()
-        access_token = await self.get_credential(ShareServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
+        access_token = await self.get_credential(ShareServiceClient, is_async=True).get_token(
+            "https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
 
         destination_file_name = 'filetoupdate'
@@ -1644,12 +1625,20 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         source_file_name = 'testfile'
-        source_file_client = await self._create_file(storage_account_name, storage_account_key, file_name=source_file_name)
+        source_file_client = await self._create_file(
+            storage_account_name,
+            storage_account_key,
+            file_name=source_file_name
+        )
         data = b'abcdefghijklmnop' * 32
         await source_file_client.upload_range(data, offset=0, length=512)
 
         destination_file_name = 'filetoupdate'
-        destination_file_client = await self._create_empty_file(storage_account_name, storage_account_key, file_name=destination_file_name)
+        destination_file_client = await self._create_empty_file(
+            storage_account_name,
+            storage_account_key,
+            file_name=destination_file_name
+        )
         lease = await destination_file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # generate SAS for the source file
@@ -1689,12 +1678,22 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         source_file_name = 'testfile1'
         end = 1048575
 
-        source_file_client = await self._create_empty_file(storage_account_name, storage_account_key, file_name=source_file_name, file_size=1024 * 1024)
+        source_file_client = await self._create_empty_file(
+            storage_account_name,
+            storage_account_key,
+            file_name=source_file_name,
+            file_size=1024 * 1024
+        )
         data = b'abcdefghijklmnop' * 65536
         await source_file_client.upload_range(data, offset=0, length=end+1)
 
         destination_file_name = 'filetoupdate1'
-        destination_file_client = await self._create_empty_file(storage_account_name, storage_account_key, file_name=destination_file_name, file_size=1024 * 1024)
+        destination_file_client = await self._create_empty_file(
+            storage_account_name,
+            storage_account_key,
+            file_name=destination_file_name,
+            file_size=1024 * 1024
+        )
 
         # generate SAS for the source file
         sas_token_for_source_file = self.generate_sas(
@@ -1851,7 +1850,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_client = await self._create_file(storage_account_name, storage_account_key)
 
         # Act
-        data = u'abcdefghijklmnop' * 32
+        data = 'abcdefghijklmnop' * 32
         await file_client.upload_range(data, offset=0, length=512)
 
         encoded = data.encode('utf-8')
@@ -2122,7 +2121,10 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot)
         with pytest.raises(ResourceExistsError):
             await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot, include_renames=False)
-        ranges, cleared = await file_client.get_ranges_diff(previous_sharesnapshot=previous_snapshot, include_renames=True)
+        ranges, cleared = await file_client.get_ranges_diff(
+            previous_sharesnapshot=previous_snapshot,
+            include_renames=True
+        )
         assert ranges is not None
         assert isinstance(ranges, list)
         assert len(ranges) == 1
@@ -2177,7 +2179,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             file_path=file_name,
             credential=storage_account_key.secret)
         await file_client.create_file(1024)
-        
+
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = await share_client.create_snapshot()
         snapshot_client = ShareFileClient(
@@ -2251,7 +2253,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         data = b'abcdefghijklmnop' * 32
         resp1 = await file_client.upload_range(data, offset=0, length=512)
         resp2 = await file_client.upload_range(data, offset=1024, length=512)
-        
+
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = await share_client.create_snapshot()
         snapshot_client = ShareFileClient(
@@ -2507,7 +2509,12 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key.secret)
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            secondary_storage_account_name,
+            secondary_storage_account_key.secret
+        )
         await self._setup_share(storage_account_name, storage_account_key)
         await self._create_remote_share()
         source_file = await self._create_remote_file()
@@ -2534,7 +2541,12 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key.secret)
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            secondary_storage_account_name,
+            secondary_storage_account_key.secret
+        )
         data = b'12345678' * 1024
         await self._create_remote_share()
         source_file = await self._create_remote_file(file_data=data)
@@ -2561,7 +2573,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert copy_resp['copy_status'] in ['success', 'pending']
-        await self._wait_for_async_copy(self.share_name, target_file_name) 
+        await self._wait_for_async_copy(self.share_name, target_file_name)
 
         content = await file_client.download_file()
         actual_data = await content.readall()
@@ -2575,7 +2587,12 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key.secret)
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            secondary_storage_account_name,
+            secondary_storage_account_key.secret
+        )
         data = b'12345678' * 1024 * 1024
         await self._setup_share(storage_account_name, storage_account_key)
         await self._create_remote_share()
@@ -2617,7 +2634,12 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
         token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
-        self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key.secret)
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            secondary_storage_account_name,
+            secondary_storage_account_key.secret
+        )
         data = b'12345678' * 1024 * 1024
         await self._setup_share(storage_account_name, storage_account_key)
         await self._create_remote_share()
@@ -2747,7 +2769,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             credential=storage_account_key.secret)
 
         # Act
-        data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        data = 'hello world啊齄丂狛狜'.encode('utf-8')
         await file_client.upload_file(data)
 
         # Assert
@@ -2765,7 +2787,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_client = await self._get_file_client(storage_account_name, storage_account_key)
 
         # Act
-        data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        data = 'hello world啊齄丂狛狜'.encode('utf-8')
         await file_client.upload_file(data, file_attributes=NTFSAttributes(temporary=True))
 
         # Assert
@@ -2782,7 +2804,22 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        base64_data = (
+            'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0'
+            'xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYm'
+            'ZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm'
+            '5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM'
+            '0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gI'
+            'GCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNz'
+            's/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRob'
+            'HB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2h'
+            'pamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tb'
+            'a3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECA'
+            'wQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9Q'
+            'UVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2'
+            'en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6'
+            'uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        )
         binary_data = base64.b64decode(base64_data)
         await self._setup_share(storage_account_name, storage_account_key)
 
@@ -3145,7 +3182,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
         await self._setup_share(storage_account_name, storage_account_key)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-8')
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
@@ -3169,7 +3206,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
         await self._setup_share(storage_account_name, storage_account_key)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
@@ -3403,7 +3440,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             file_path=file_client.file_name,
             credential=token)
 
-        response = requests.get(file_client.url)
+        response = requests.get(file_client.url, timeout=15)
 
         # Assert
         assert response.ok
@@ -3496,7 +3533,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             credential=token)
-        response = requests.get(file_client.url)
+        response = requests.get(file_client.url, timeout=15)
 
         # Assert
         assert response.ok
@@ -3531,7 +3568,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             credential=token)
-        response = requests.get(file_client.url)
+        response = requests.get(file_client.url, timeout=15)
 
         # Assert
         assert self.short_byte_data == response.content
@@ -3567,7 +3604,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         # Act
         headers = {'x-ms-range': 'bytes=0-16', 'x-ms-write': 'update'}
-        response = requests.put(file_client.url + '&comp=range', headers=headers, data=updated_data)
+        response = requests.put(file_client.url + '&comp=range', headers=headers, data=updated_data, timeout=15)
 
         # Assert
         assert response.ok
@@ -3599,7 +3636,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             credential=token)
 
         # Act
-        response = requests.delete(file_client.url)
+        response = requests.delete(file_client.url, timeout=15)
 
         # Assert
         assert response.ok
@@ -3765,7 +3802,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         # Assert
         props = await new_file.get_file_properties()
         assert props is not None
-        assert str(file_attributes), props.file_attributes.replace(' ' == '')
+        assert str(file_attributes).replace(' ', '') == props.file_attributes.replace(' ', ''), props.file_attributes
         assert file_creation_time == props.creation_time
         assert file_last_write_time == props.last_write_time
         assert file_change_time == props.change_time
@@ -3912,7 +3949,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             file_path=file_name,
             credential=token_credential,
             token_intent=TEST_INTENT,
-            audience=f'https://badaudience.file.core.windows.net'
+            audience='https://badaudience.file.core.windows.net'
         )
 
         # Assert
@@ -4106,7 +4143,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             credential=storage_account_key.secret,
             max_range_size=4 * 1024
         )
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = (b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH'
+                           b'\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00')
         decompressed_data = b"hello from gzip"
         content_settings = ContentSettings(content_encoding='gzip')
 
@@ -4132,7 +4170,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             max_chunk_get_size=4,
             max_single_get_size=4,
         )
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = (b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH'
+                           b'\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00')
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert

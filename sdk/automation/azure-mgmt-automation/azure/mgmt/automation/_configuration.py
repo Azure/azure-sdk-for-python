@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
@@ -14,11 +14,11 @@ from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLo
 from ._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class AutomationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class AutomationClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for AutomationClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,9 +29,18 @@ class AutomationClientConfiguration:  # pylint: disable=too-many-instance-attrib
     :param subscription_id: Gets subscription credentials which uniquely identify Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
+    :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :type cloud_setting: ~azure.core.AzureClouds
     """
 
-    def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
+    ) -> None:
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -39,6 +48,7 @@ class AutomationClientConfiguration:  # pylint: disable=too-many-instance-attrib
 
         self.credential = credential
         self.subscription_id = subscription_id
+        self.cloud_setting = cloud_setting
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-automation/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

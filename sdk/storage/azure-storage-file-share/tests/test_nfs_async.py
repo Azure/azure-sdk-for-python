@@ -3,28 +3,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
+
 from typing import Any, Dict, Optional, Union
 from urllib.parse import unquote
 
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError
-)
-from azure.storage.fileshare import (
-    ContentSettings,
-    DirectoryProperties,
-    FileProperties,
-    ShareServiceClient
-)
-from azure.storage.fileshare.aio import ShareServiceClient as AsyncShareServiceClient
-from azure.storage.fileshare.aio import ShareFileClient, ShareDirectoryClient
+import pytest
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
+
+from azure.core.exceptions import ResourceNotFoundError
+from azure.storage.fileshare import (
+    ContentSettings,
+    DirectoryProperties,
+    FileProperties,
+    ShareServiceClient,
+)
+from azure.storage.fileshare.aio import ShareDirectoryClient, ShareFileClient
+from azure.storage.fileshare.aio import ShareServiceClient as AsyncShareServiceClient
 
 
 TEST_INTENT = 'backup'

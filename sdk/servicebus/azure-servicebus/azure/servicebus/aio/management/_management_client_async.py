@@ -130,7 +130,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self._config = ServiceBusManagementClientConfiguration(
             self._endpoint, credential=self._credential, api_version=api_version, **kwargs
         )
-        self._pipeline = self._build_pipeline()
+        self._pipeline = self._build_pipeline(**kwargs)
         self._impl = ServiceBusManagementClientImpl(
             endpoint=fully_qualified_namespace,
             credential=self._credential,

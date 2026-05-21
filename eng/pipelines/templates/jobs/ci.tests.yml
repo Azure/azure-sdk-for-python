@@ -20,10 +20,7 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
-  - name: ToxEnvParallel
-    type: string
-    default: 'all'
-  - name: UnsupportedToxEnvironments
+  - name: UnsupportedChecks
     type: string
     default: ''
   - name: InjectedPackages
@@ -115,7 +112,6 @@ jobs:
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         CheckEnv: $(checks)
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
         TestPipeline: ${{ parameters.TestPipeline }}

@@ -3,18 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
+
 import asyncio
 from datetime import datetime, timedelta
 
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobSasPermissions, StandardBlobTier, StorageErrorCode, generate_blob_sas
-from azure.storage.blob.aio import BlobClient, BlobServiceClient
-from azure.storage.blob._shared.policies import StorageContentValidation
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.blob import BlobSasPermissions, StandardBlobTier, StorageErrorCode, generate_blob_sas
+from azure.storage.blob.aio import BlobClient, BlobServiceClient
+from azure.storage.blob._shared.validation import calculate_content_md5
+
 
 # ------------------------------------------------------------------------------
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -33,7 +37,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
-            )
+        )
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
@@ -46,7 +50,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             await blob.upload_blob(self.source_blob_data, overwrite=True)
 
@@ -75,7 +79,8 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         split = 4 * 1024
         destination_blob_name = self.get_resource_name('destblob')
         destination_blob_client = self.bsc.get_blob_client(self.container_name, destination_blob_name)
-        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
+        access_token = await self.get_credential(
+            BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
 
         # Assert this operation fails without a credential
@@ -87,11 +92,11 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
                 source_length=split)
         # Assert it passes after passing an oauth credential
         await destination_blob_client.stage_block_from_url(
-                block_id=1,
-                source_url=self.source_blob_url_without_sas,
-                source_offset=0,
-                source_length=split,
-                source_authorization=token)
+            block_id=1,
+            source_url=self.source_blob_url_without_sas,
+            source_offset=0,
+            source_length=split,
+            source_authorization=token)
         await destination_blob_client.stage_block_from_url(
             block_id=2,
             source_url=self.source_blob_url_without_sas,
@@ -162,7 +167,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
-        src_md5 = StorageContentValidation.get_content_md5(self.source_blob_data)
+        src_md5 = calculate_content_md5(self.source_blob_data)
 
         # Act part 1: put block from url with md5 validation
         await dest_blob.stage_block_from_url(
@@ -178,7 +183,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         assert len(committed) == 0
 
         # Act part 2: put block from url with wrong md5
-        fake_md5 = StorageContentValidation.get_content_md5(b"POTATO")
+        fake_md5 = calculate_content_md5(b"POTATO")
         with pytest.raises(HttpResponseError) as error:
             await dest_blob.stage_block_from_url(
                 block_id=2,
