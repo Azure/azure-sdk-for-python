@@ -373,11 +373,12 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         if not allowed_instance_types:
             additional_props = get_value(obj, "additional_properties", {})
             if isinstance(additional_props, dict):
-                allowed_instance_types = additional_props.get("allowedInstanceType") or additional_props.get("allowedInstanceTypes")
-        allowed_environment_variable_overrides = (
-            get_value(properties, "allowedEnvironmentVariableOverrides")
-            or get_value(obj, "allowed_environment_variable_overrides")
-        )
+                allowed_instance_types = additional_props.get("allowedInstanceType") or additional_props.get(
+                    "allowedInstanceTypes"
+                )
+        allowed_environment_variable_overrides = get_value(
+            properties, "allowedEnvironmentVariableOverrides"
+        ) or get_value(obj, "allowed_environment_variable_overrides")
         scoring_port = get_value(properties, "scoringPort") or get_value(obj, "scoring_port")
         scoring_path = get_value(properties, "scoringPath") or get_value(obj, "scoring_path")
         model_mount_path = get_value(properties, "modelMountPath") or get_value(obj, "model_mount_path")

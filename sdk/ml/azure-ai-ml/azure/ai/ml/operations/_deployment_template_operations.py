@@ -71,13 +71,9 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             if credential and self._operation_scope.registry_name:
                 # Use registry discovery API to get the primary region
                 discovery_base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
-                discovery_client = ServiceClientRegistryDiscovery(
-                    credential=credential, base_url=discovery_base_url
-                )
-                response = (
-                    discovery_client.registry_management_non_workspace.get_registry_management_non_workspace(
-                        self._operation_scope.registry_name
-                    )
+                discovery_client = ServiceClientRegistryDiscovery(credential=credential, base_url=discovery_base_url)
+                response = discovery_client.registry_management_non_workspace.get_registry_management_non_workspace(
+                    self._operation_scope.registry_name
                 )
 
                 if response.primary_region:
