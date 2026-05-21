@@ -129,11 +129,13 @@ with (
 
     # Upload the simulation scenarios dataset
     try:
-        scenarios_id = project_client.datasets.upload_file(
+        dataset = project_client.datasets.upload_file(
             name="simulation-scenarios",
             version="1",
             file_path=scenarios_file,
-        ).id
+        )
+        assert dataset.id is not None, "Dataset upload returned no ID"
+        scenarios_id: str = dataset.id
         print(f"Scenarios dataset uploaded (id: {scenarios_id})")
     except Exception:
         # Dataset already exists — use the existing URI

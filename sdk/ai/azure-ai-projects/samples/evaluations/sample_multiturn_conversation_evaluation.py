@@ -120,11 +120,13 @@ with (
 
     # Upload the conversation dataset
     try:
-        data_id = project_client.datasets.upload_file(
+        dataset = project_client.datasets.upload_file(
             name="multiturn-conversation-data",
             version="1",
             file_path=data_file,
-        ).id
+        )
+        assert dataset.id is not None, "Dataset upload returned no ID"
+        data_id: str = dataset.id
         print(f"Dataset uploaded (id: {data_id})")
     except Exception:
         # Dataset already exists — use the existing URI
