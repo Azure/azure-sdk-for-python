@@ -204,6 +204,12 @@ class TestBase(AzureRecordedTestCase):
         "connection_name": "balapvbyostoragecanary",
     }
 
+    test_models_params = {
+        "model_name_1": f"test-model-name-{random.randint(0, 99999):05d}",
+        "model_name_2": f"test-model-name-{random.randint(0, 99999):05d}",
+        "model_version": "1",
+    }
+
     test_files_params = {
         "test_file_name": "test_file.jsonl",
         "file_purpose": "fine-tune",

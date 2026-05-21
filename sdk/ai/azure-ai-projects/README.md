@@ -35,6 +35,7 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Enumerate AI Models** deployed to your Foundry Project using `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using `.connections` operations.
 * **Upload documents and create Datasets** to reference them using `.datasets` operations.
+* **Register and manage local model weights** as Foundry `ModelVersion` resources using `.beta.models` operations, including the `models_create` end-to-end helper.
 * **Create and enumerate Search Indexes** using `.indexes` operations.
 
 The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
@@ -166,6 +167,7 @@ Full descriptions and working code for all of the above are available in:
 | Deployments | [Deployment types](https://learn.microsoft.com/azure/foundry/foundry-models/concepts/deployment-types) | `samples/deployments/` |
 | Connections | [Connections operations](https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme?view=azure-python#connections-operations) | `samples/connections/` |
 | Datasets | [Dataset operations](https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme?view=azure-python#dataset-operations) | `samples/datasets/` |
+| Models (preview) | Register local model weights as Foundry `ModelVersion` resources via `.beta.models` (`models_create`, `list`, `list_versions`, `get`, `update`, `delete`, `pending_upload`, `create_async`, `get_credentials`). | `samples/models/` |
 | Indexes | [Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search) | `samples/indexes/` |
 | Files (upload, retrieve, list, delete) | [OpenAI Files API](https://platform.openai.com/docs/api-reference/files) | `samples/files/` |
 | Fine-tuning | [Fine-Tuning in AI Foundry](https://github.com/microsoft-foundry/fine-tuning) | `samples/finetuning/` |

@@ -18,13 +18,13 @@ from ._patch_evaluation_rules import EvaluationRulesOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
+from ._patch_models import BetaModelsOperations
 from ._patch_sessions import BetaAgentsOperations
 from ._operations import (
     BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
-    BetaModelsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
     BetaRoutinesOperations,
@@ -130,6 +130,8 @@ class BetaOperations(GeneratedBetaOperations):
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that includes models_create (3-step upload helper)
+        self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
