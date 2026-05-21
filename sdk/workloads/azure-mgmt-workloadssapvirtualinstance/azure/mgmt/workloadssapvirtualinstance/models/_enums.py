@@ -154,7 +154,7 @@ class SAPDatabaseScaleMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The database scale method."""
 
     SCALE_UP = "ScaleUp"
-    """ScaleUp Hana Database deployment type"""
+    """ScaleUp Hana Database deployment type."""
 
 
 class SAPDatabaseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -211,7 +211,7 @@ class SAPProductType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ECC = "ECC"
     """SAP Product ECC."""
-    S4HANA = "S4HANA"
+    S4_HANA = "S4HANA"
     """SAP Product S4HANA."""
     OTHER = "Other"
     """SAP Products other than the ones listed."""

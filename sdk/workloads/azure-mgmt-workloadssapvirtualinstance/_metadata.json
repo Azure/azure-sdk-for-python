@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-09-01",
+  "apiVersions": {
+    "Microsoft.Workloads": "2024-09-01"
+  },
+  "commit": "b373ded4a6c77a9f541ca8f020fd2072db632751",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/workloads/Workloads.SAPVirtualInstance.Management",
+  "emitterVersion": "0.62.1"
+}
