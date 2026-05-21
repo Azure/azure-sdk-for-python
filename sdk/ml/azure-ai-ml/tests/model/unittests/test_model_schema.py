@@ -116,10 +116,10 @@ default_deployment_template:
 
     def test_model_with_default_deployment_template_to_rest_object(self) -> None:
         """Test Model._to_rest_object() with default_deployment_template."""
-        from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
         from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData
+        from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
-        template = DefaultDeploymentTemplate(
+        template = DeploymentTemplateReference(
             asset_id="azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
         )
 
@@ -153,7 +153,7 @@ default_deployment_template:
                 "flavors": {},
                 "modelType": "custom_model",
                 "modelUri": "azureml://datastore/fake_datastore/paths/fake_model_uri",
-                "defaultDeploymentTemplate": {
+                "DeploymentTemplateReference": {
                     "assetId": "azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
                 },
             },
@@ -169,9 +169,9 @@ default_deployment_template:
 
     def test_model_with_default_deployment_template_to_dict(self) -> None:
         """Test Model._to_dict() with default_deployment_template."""
-        from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
+        from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
-        template = DefaultDeploymentTemplate(
+        template = DeploymentTemplateReference(
             asset_id="azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
         )
 

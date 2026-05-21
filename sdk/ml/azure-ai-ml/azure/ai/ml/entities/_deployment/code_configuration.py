@@ -7,7 +7,7 @@ import os
 from typing import Optional, Union
 
 from azure.ai.ml._restclient.arm_ml_service.models import CodeConfiguration as RestCodeConfiguration
-from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 

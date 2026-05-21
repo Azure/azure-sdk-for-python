@@ -10,10 +10,10 @@ from ._artifacts.code import Code
 from ._artifacts.data import Data
 from ._artifacts.index import Index
 from ._artifacts.model import Model
+from .default_deployment_template import DeploymentTemplateReference as DefaultDeploymentTemplate
 from .environment import Environment
-from ._artifacts._package.model_package import ModelPackage
 from .workspace_asset_reference import WorkspaceAssetReference
-from .default_deployment_template import DefaultDeploymentTemplate
+from ._artifacts._package.model_package import ModelPackage
 
 __all__ = [
     "Artifact",

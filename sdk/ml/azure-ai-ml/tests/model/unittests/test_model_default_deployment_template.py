@@ -8,25 +8,22 @@ import pytest
 from azure.ai.ml import load_model
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     ModelVersionData,
+    ModelVersionDeploymentTemplateReference,
     ModelVersionDetails,
-    ModelVersionDefaultDeploymentTemplate,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    ModelVersion,
-    ModelVersionProperties,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelVersion, ModelVersionProperties
 from azure.ai.ml.entities import Model
-from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
+from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
 
 @pytest.mark.unittest
 @pytest.mark.production_experiences_test
-class TestModelDefaultDeploymentTemplate:
+class TestModelDeploymentTemplateReference:
     """Test cases for Model entity with default_deployment_template."""
 
     def test_model_init_with_default_deployment_template_object(self) -> None:
-        """Test creating a Model with DefaultDeploymentTemplate object."""
-        template = DefaultDeploymentTemplate(
+        """Test creating a Model with DeploymentTemplateReference object."""
+        template = DeploymentTemplateReference(
             asset_id="azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
         )
         model = Model(
@@ -50,7 +47,7 @@ class TestModelDefaultDeploymentTemplate:
         )
 
         assert model.default_deployment_template is not None
-        assert isinstance(model.default_deployment_template, DefaultDeploymentTemplate)
+        assert isinstance(model.default_deployment_template, DeploymentTemplateReference)
         assert model.default_deployment_template.asset_id == template_dict["asset_id"]
 
     def test_model_init_without_default_deployment_template(self) -> None:
@@ -65,7 +62,7 @@ class TestModelDefaultDeploymentTemplate:
 
     def test_model_to_rest_object_with_default_deployment_template(self) -> None:
         """Test Model._to_rest_object() with default_deployment_template."""
-        template = DefaultDeploymentTemplate(
+        template = DeploymentTemplateReference(
             asset_id="azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
         )
         model = Model(
@@ -82,7 +79,7 @@ class TestModelDefaultDeploymentTemplate:
         assert isinstance(rest_object, ModelVersionData)
         assert isinstance(rest_object.properties, ModelVersionDetails)
         assert rest_object.properties.default_deployment_template is not None
-        assert isinstance(rest_object.properties.default_deployment_template, ModelVersionDefaultDeploymentTemplate)
+        assert isinstance(rest_object.properties.default_deployment_template, ModelVersionDeploymentTemplateReference)
         assert rest_object.properties.default_deployment_template.asset_id == template.asset_id
 
     def test_model_to_rest_object_without_default_deployment_template(self) -> None:
@@ -135,7 +132,7 @@ class TestModelDefaultDeploymentTemplate:
         model = Model._from_rest_object(rest_object)
 
         assert model.default_deployment_template is not None
-        assert isinstance(model.default_deployment_template, DefaultDeploymentTemplate)
+        assert isinstance(model.default_deployment_template, DeploymentTemplateReference)
         assert model.default_deployment_template.asset_id == template_asset_id
 
     def test_model_from_rest_object_with_default_deployment_template_object(self) -> None:
@@ -175,7 +172,7 @@ class TestModelDefaultDeploymentTemplate:
         model = Model._from_rest_object(rest_object)
 
         assert model.default_deployment_template is not None
-        assert isinstance(model.default_deployment_template, DefaultDeploymentTemplate)
+        assert isinstance(model.default_deployment_template, DeploymentTemplateReference)
         assert model.default_deployment_template.asset_id == template_asset_id
 
     def test_model_from_rest_object_without_default_deployment_template(self) -> None:
@@ -211,7 +208,7 @@ class TestModelDefaultDeploymentTemplate:
 
     def test_model_with_stage_and_default_deployment_template(self) -> None:
         """Test that stage is preserved when default_deployment_template is present."""
-        template = DefaultDeploymentTemplate(
+        template = DeploymentTemplateReference(
             asset_id="azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
         )
         model = Model(
@@ -255,6 +252,6 @@ default_deployment_template:
         assert model.name == "test-model"
         assert model.version == "1"
         assert model.default_deployment_template is not None
-        assert isinstance(model.default_deployment_template, DefaultDeploymentTemplate)
+        assert isinstance(model.default_deployment_template, DeploymentTemplateReference)
         assert model.default_deployment_template.asset_id is not None
         assert "test-registry" in model.default_deployment_template.asset_id

@@ -98,6 +98,7 @@ try:
     from ._models_py3 import ModelContainerDetails
     from ._models_py3 import ModelContainerResourceArmPaginatedResult
     from ._models_py3 import ModelPackageInput
+    from ._models_py3 import ModelVersionAllowedDeploymentTemplatesItem
     from ._models_py3 import ModelVersionData
     from ._models_py3 import ModelVersionDefaultDeploymentTemplate
     from ._models_py3 import ModelVersionDetails
@@ -230,6 +231,7 @@ except (SyntaxError, ImportError):
     from ._models import ModelContainerDetails  # type: ignore
     from ._models import ModelContainerResourceArmPaginatedResult  # type: ignore
     from ._models import ModelPackageInput  # type: ignore
+    from ._models import ModelVersionAllowedDeploymentTemplatesItem  # type: ignore
     from ._models import ModelVersionData  # type: ignore
     from ._models import ModelVersionDefaultDeploymentTemplate  # type: ignore
     from ._models import ModelVersionDetails  # type: ignore
@@ -397,6 +399,7 @@ __all__ = [
     'ModelContainerDetails',
     'ModelContainerResourceArmPaginatedResult',
     'ModelPackageInput',
+    'ModelVersionAllowedDeploymentTemplatesItem',
     'ModelVersionData',
     'ModelVersionDefaultDeploymentTemplate',
     'ModelVersionDetails',

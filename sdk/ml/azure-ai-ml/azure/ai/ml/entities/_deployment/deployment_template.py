@@ -13,6 +13,7 @@ from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml.entities._deployment.accelerator_map import AcceleratorMap
 from azure.ai.ml.entities._deployment.deployment_template_settings import OnlineRequestSettings, ProbeSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
@@ -50,6 +51,9 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
     :type app_insights_enabled: bool
     :param stage: Stage of the deployment template. Can be "Active" or "Archived".
     :type stage: str
+    :param accelerator_maps: List of accelerator maps describing the accelerator types
+        and their configurations for this deployment template.
+    :type accelerator_maps: list[~azure.ai.ml.entities.AcceleratorMap]
     """
 
     def __init__(  # pylint: disable=too-many-locals
@@ -76,6 +80,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         type: Optional[str] = None,
         deployment_template_type: Optional[str] = None,
         stage: Optional[str] = None,
+        accelerator_maps: Optional[List[AcceleratorMap]] = None,
         **kwargs,
     ):
         # Extract kwargs that should be passed to parent
@@ -110,6 +115,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         self.type = type
         self.deployment_template_type = deployment_template_type
         self.stage = stage
+        self.accelerator_maps = accelerator_maps
 
         # Private flag to track if this template came from the service (and thus should exclude
         # immutable fields on update)
@@ -309,6 +315,15 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             result["environment_variables"] = self.environment_variables  # type: ignore[assignment]
         if self.app_insights_enabled is not None:
             result["app_insights_enabled"] = self.app_insights_enabled  # type: ignore[assignment]
+        if self.accelerator_maps:
+            result["accelerator_maps"] = [
+                {
+                    "accelerator_type": am.accelerator_type,
+                    "number_of_accelerators_per_model_instance": am.number_of_accelerators_per_model_instance,
+                    **({"default": am.default} if am.default is not None else {}),
+                }
+                for am in self.accelerator_maps
+            ]
 
         return result
 
@@ -326,8 +341,26 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         # Get the properties dictionary where the actual data is stored
         properties = get_value(obj, "properties", {})
 
-        # Extract name and version from properties first, then fallback to top-level
+        # Extract name and version from properties first, then fallback to top-level, then parse from id
         name = get_value(properties, "name") or get_value(obj, "name")
+        version = get_value(properties, "version") or get_value(obj, "version")
+
+        # Parse name/version from id field if not found directly
+        # id format: azureml://registries/{reg}/deploymenttemplates/{name}/versions/{version}
+        if not name or not version:
+            obj_id = get_value(obj, "id") or ""
+            if "deploymenttemplates/" in obj_id:
+                parts = obj_id.split("/")
+                try:
+                    dt_idx = parts.index("deploymenttemplates")
+                    if not name and dt_idx + 1 < len(parts):
+                        name = parts[dt_idx + 1]
+                    ver_idx = parts.index("versions") if "versions" in parts else -1
+                    if not version and ver_idx >= 0 and ver_idx + 1 < len(parts):
+                        version = parts[ver_idx + 1]
+                except (ValueError, IndexError):
+                    pass
+
         if not name:
             additional_props = get_value(obj, "additional_properties", {})
             if isinstance(additional_props, dict):
@@ -335,7 +368,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             else:
                 name = "unknown"
 
-        version = get_value(properties, "version") or get_value(obj, "version")
         if not version:
             additional_props = get_value(obj, "additional_properties", {})
             if isinstance(additional_props, dict):
@@ -365,14 +397,22 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         )
 
         # Extract additional fields
-        allowed_instance_types = get_value(properties, "allowedInstanceTypes") or get_value(
-            obj, "allowed_instance_types"
+        allowed_instance_types = (
+            get_value(properties, "allowedInstanceTypes")
+            or get_value(properties, "allowedInstanceType")
+            or get_value(obj, "allowed_instance_types")
+            or get_value(obj, "allowed_instance_type")
         )
         scoring_port = get_value(properties, "scoringPort") or get_value(obj, "scoring_port")
         scoring_path = get_value(properties, "scoringPath") or get_value(obj, "scoring_path")
         model_mount_path = get_value(properties, "modelMountPath") or get_value(obj, "model_mount_path")
         stage = get_value(properties, "stage") or get_value(obj, "stage")
         type_field = get_value(properties, "type") or get_value(obj, "type")
+
+        accelerator_maps_data = get_value(properties, "acceleratorMaps") or get_value(obj, "accelerator_maps")
+        accelerator_maps_list = None
+        if accelerator_maps_data and isinstance(accelerator_maps_data, list):
+            accelerator_maps_list = [AcceleratorMap._from_rest_dict(am) for am in accelerator_maps_data]
 
         # Handle string representations from properties - they come as JSON strings
         import ast
@@ -445,6 +485,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             model_mount_path=model_mount_path,  # Include model mount path
             stage=stage,  # Include stage for archive/restore functionality
             type=type_field,  # Include type field from REST response
+            accelerator_maps=accelerator_maps_list,  # Include accelerator maps
         )
 
         # Mark this template as coming from the service so it excludes immutable fields on
@@ -570,7 +611,10 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
 
         # Handle allowed instance types
         if hasattr(self, "allowed_instance_types") and self.allowed_instance_types:
-            result["allowedInstanceTypes"] = self.allowed_instance_types  # type: ignore[assignment]
+            result["allowedInstanceType"] = self.allowed_instance_types  # type: ignore[assignment]
+
+        if self.accelerator_maps:
+            result["acceleratorMaps"] = [am._to_rest_dict() for am in self.accelerator_maps]
 
         return result
 
@@ -649,6 +693,8 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             result["scoringPath"] = self.scoring_path
         if self.scoring_port is not None:
             result["scoringPort"] = self.scoring_port  # type: ignore[assignment]
+        if self.accelerator_maps:
+            result["acceleratorMaps"] = [am._to_rest_dict() for am in self.accelerator_maps]
 
         return result
 
