@@ -107,7 +107,9 @@ class BaseExporter:
         :keyword int max_envelopes_per_second: Maximum number of telemetry envelopes sent per second. Acts as a client-side safety cap to prevent overloading shared ingestion infrastructure during telemetry bursts. Defaults to 10000. Set to 0 to disable rate limiting.
         :rtype: None
         """
-        parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
+        parsed_connection_string = ConnectionStringParser(
+            kwargs.get("connection_string")
+        )
 
         # TODO: Uncomment configuration changes once testing is completed
         # Get the configuration manager
@@ -139,29 +141,39 @@ class BaseExporter:
         if "storage_directory" in kwargs:
             self._storage_directory = kwargs.get("storage_directory")
         elif not self._disable_offline_storage:
-            self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
+            self._storage_directory = _get_storage_directory(
+                self._instrumentation_key or ""
+            )
         else:
             self._storage_directory = None
         self._storage_retention_period = kwargs.get(
             "storage_retention_period", 48 * 60 * 60
         )  # Retention period in seconds (default 48 hrs)
         self._timeout = kwargs.get("timeout", 10.0)  # networking timeout in seconds
-        max_eps = kwargs.get("max_envelopes_per_second", _DEFAULT_MAX_ENVELOPES_PER_SECOND)
+        max_eps = kwargs.get(
+            "max_envelopes_per_second", _DEFAULT_MAX_ENVELOPES_PER_SECOND
+        )
         if max_eps is not None and max_eps < 0:
-            raise ValueError("max_envelopes_per_second must be non-negative (0 disables rate limiting)")
+            raise ValueError(
+                "max_envelopes_per_second must be non-negative (0 disables rate limiting)"
+            )
         # Each exporter instance gets its own rate limiter. This is intentional:
         # different telemetry types (traces, logs, metrics) have different
         # ingestion characteristics and burst profiles, so per-exporter caps
         # provide more predictable behaviour than a shared process-wide bucket.
         if max_eps and max_eps > 0:
-            self._rate_limiter: Optional[_TokenBucketRateLimiter] = _TokenBucketRateLimiter(max_eps)
+            self._rate_limiter: Optional[_TokenBucketRateLimiter] = (
+                _TokenBucketRateLimiter(max_eps)
+            )
         else:
             self._rate_limiter = None
         self._distro_version = kwargs.get(
             _AZURE_MONITOR_DISTRO_VERSION_ARG, ""
         )  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
         # specifies whether current exporter is used for collection of instrumentation metrics
-        self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
+        self._instrumentation_collection = kwargs.get(
+            "instrumentation_collection", False
+        )
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
@@ -173,7 +185,9 @@ class BaseExporter:
             # Handle redirects in exporter, set new endpoint if redirected
             RedirectPolicy(permit_redirects=False),
             config.retry_policy,
-            _get_auth_policy(self._credential, config.authentication_policy, self._aad_audience),
+            _get_auth_policy(
+                self._credential, config.authentication_policy, self._aad_audience
+            ),
             config.custom_hook_policy,
             config.logging_policy,
             # Explicitly disabling to avoid infinite loop of Span creation when data is exported
@@ -254,7 +268,9 @@ class BaseExporter:
                     # If blob.get() returns None, delete the corrupted blob
                     blob.delete()
 
-    def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
+    def _handle_transmit_from_storage(
+        self, envelopes: List[TelemetryItem], result: ExportResult
+    ) -> None:
         if self.storage:
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = [x.as_dict() for x in envelopes]
@@ -273,7 +289,9 @@ class BaseExporter:
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-statements
-    def _transmit(self, envelopes: List[TelemetryItem]) -> ExportResult:
+    def _transmit(
+        self, envelopes: List[TelemetryItem], _skip_rate_limit: bool = False
+    ) -> ExportResult:
         """
         Transmit the data envelopes to the ingestion service.
 
@@ -281,13 +299,22 @@ class BaseExporter:
         throw an exception.
         :param envelopes: The list of telemetry items to transmit.
         :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.exporter.models.TelemetryItem
+        :param _skip_rate_limit: Internal flag to skip rate limiting on recursive calls (e.g. redirects).
+        :type _skip_rate_limit: bool
         :return: The result of the export.
         :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
         if len(envelopes) > 0:
             # Client-side rate limiting: cap send rate to protect shared ingestion infrastructure.
             # Stats exporters bypass rate limiting to ensure observability data is not lost.
-            if self._rate_limiter and not self._is_stats_exporter() and not self._is_customer_sdkstats_exporter():
+            # Skip rate limiting on recursive calls (e.g. 307/308 redirects) to avoid
+            # double-consuming tokens for the same batch.
+            if (
+                not _skip_rate_limit
+                and self._rate_limiter
+                and not self._is_stats_exporter()
+                and not self._is_customer_sdkstats_exporter()
+            ):
                 granted = self._rate_limiter.try_consume(len(envelopes))
                 if granted == 0:
                     logger.warning(
@@ -353,7 +380,11 @@ class BaseExporter:
                                 logger.info(
                                     "Data dropped due to ingestion sampling: %s %s.",
                                     error.message,
-                                    (envelopes[error.index] if error.index is not None else ""),
+                                    (
+                                        envelopes[error.index]
+                                        if error.index is not None
+                                        else ""
+                                    ),
                                 )
                         elif _is_retryable_code(error.status_code):
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
@@ -370,23 +401,33 @@ class BaseExporter:
                                         and error.index is not None
                                         and isinstance(error.status_code, int)
                                     ):
-                                        track_dropped_items([envelopes[error.index]], error.status_code)
+                                        track_dropped_items(
+                                            [envelopes[error.index]], error.status_code
+                                        )
                                 logger.error(
                                     "Data drop %s: %s %s.",
                                     error.status_code,
                                     error.message,
-                                    (envelopes[error.index] if error.index is not None else ""),
+                                    (
+                                        envelopes[error.index]
+                                        if error.index is not None
+                                        else ""
+                                    ),
                                 )
                     if self.storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
                         result_from_storage = self.storage.put(envelopes_to_store, 0)
                         if self._should_collect_customer_sdkstats():
-                            track_dropped_items_from_storage(result_from_storage, resend_envelopes)
+                            track_dropped_items_from_storage(
+                                result_from_storage, resend_envelopes
+                            )
                         self._consecutive_redirects = 0
                     elif resend_envelopes:
                         # Track items that would have been retried but are dropped since client has local storage disabled
                         if self._should_collect_customer_sdkstats():
-                            track_dropped_items(resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+                            track_dropped_items(
+                                resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED
+                            )
                     # Mark as not retryable because we already write to storage here
                     result = ExportResult.FAILED_NOT_RETRYABLE
             except HttpResponseError as response_error:
@@ -395,7 +436,9 @@ class BaseExporter:
                     reach_ingestion = True
                 if _is_retryable_code(response_error.status_code):
                     if self._should_collect_stats():
-                        _update_requests_map(_REQ_RETRY_NAME[1], value=response_error.status_code)
+                        _update_requests_map(
+                            _REQ_RETRY_NAME[1], value=response_error.status_code
+                        )
                     result = ExportResult.FAILED_RETRYABLE
                     # Log error for 401: Unauthorized, 403: Forbidden to assist with customer troubleshooting
                     if not self._is_stats_exporter():
@@ -419,11 +462,15 @@ class BaseExporter:
                             )
                 elif _is_throttle_code(response_error.status_code):
                     if self._should_collect_stats():
-                        _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
+                        _update_requests_map(
+                            _REQ_THROTTLE_NAME[1], value=response_error.status_code
+                        )
                     result = ExportResult.FAILED_NOT_RETRYABLE
 
                     if not self._is_stats_exporter():
-                        if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
+                        if self._should_collect_customer_sdkstats() and isinstance(
+                            response_error.status_code, int
+                        ):
                             track_dropped_items(envelopes, response_error.status_code)
                 elif _is_redirect_code(response_error.status_code):
                     self._consecutive_redirects = self._consecutive_redirects + 1
@@ -435,11 +482,15 @@ class BaseExporter:
                             url = urlparse(location)
                         else:
                             redirect_has_headers = False
-                        if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
+                        if (
+                            redirect_has_headers and url.scheme and url.netloc
+                        ):  # pylint: disable=E0606
                             # Change the host to the new redirected host
-                            self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
+                            self.client._config.host = "{}://{}".format(
+                                url.scheme, url.netloc
+                            )  # pylint: disable=W0212
                             # Attempt to export again
-                            result = self._transmit(envelopes)
+                            result = self._transmit(envelopes, _skip_rate_limit=True)
                         else:
                             if not self._is_stats_exporter():
                                 if self._should_collect_customer_sdkstats():
@@ -467,21 +518,27 @@ class BaseExporter:
                             )
                         # If redirect but did not return, exception occurred
                         if self._should_collect_stats():
-                            _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
+                            _update_requests_map(
+                                _REQ_EXCEPTION_NAME[1], value="Circular Redirect"
+                            )
                         result = ExportResult.FAILED_NOT_RETRYABLE
                 else:
                     # Any other status code counts as failure (non-retryable)
                     # 400 - Invalid - The server cannot or will not process the request due to the invalid telemetry (invalid data, iKey, etc.)
                     # 404 - Ingestion is allowed only from stamp specific endpoint - must update connection string
                     if self._should_collect_stats():
-                        _update_requests_map(_REQ_FAILURE_NAME[1], value=response_error.status_code)
+                        _update_requests_map(
+                            _REQ_FAILURE_NAME[1], value=response_error.status_code
+                        )
                     if not self._is_stats_exporter():
                         logger.error(
                             "Non-retryable server side error: %s.",
                             response_error.message,
                         )
                         # Track dropped items in customer sdkstats, non-retryable scenario
-                        if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
+                        if self._should_collect_customer_sdkstats() and isinstance(
+                            response_error.status_code, int
+                        ):
                             track_dropped_items(envelopes, response_error.status_code)
                         if _is_invalid_code(response_error.status_code):
                             # Shutdown statsbeat on invalid code from customer endpoint
@@ -501,7 +558,9 @@ class BaseExporter:
                 # Errors when we're fairly sure that the server did not receive the
                 # request, so it should be safe to retry.
                 # ServiceRequestError is raised by azure.core for these cases
-                logger.warning("Retrying due to server request error: %s.", request_error.message)
+                logger.warning(
+                    "Retrying due to server request error: %s.", request_error.message
+                )
 
                 # Track retry items in customer sdkstats for client-side exceptions
                 if self._should_collect_customer_sdkstats():
@@ -509,7 +568,9 @@ class BaseExporter:
 
                 if self._should_collect_stats():
                     exc_type = request_error.exc_type
-                    if exc_type is None or exc_type is type(None):  # pylint: disable=unidiomatic-typecheck
+                    if exc_type is None or exc_type is type(
+                        None
+                    ):  # pylint: disable=unidiomatic-typecheck
                         exc_type = request_error.__class__.__name__  # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
@@ -527,13 +588,17 @@ class BaseExporter:
                     )
 
                 if self._should_collect_stats():
-                    _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
+                    _update_requests_map(
+                        _REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__
+                    )
                 result = ExportResult.FAILED_NOT_RETRYABLE
             finally:
                 if self._should_collect_stats():
                     end_time = time.time()
                     _update_requests_map("count", 1)
-                    _update_requests_map(_REQ_DURATION_NAME[1], value=end_time - start_time)
+                    _update_requests_map(
+                        _REQ_DURATION_NAME[1], value=end_time - start_time
+                    )
                 if self._is_statsbeat_initializing_state():
                     # Update statsbeat initial success state if reached ingestion
                     if reach_ingestion:
@@ -581,7 +646,11 @@ class BaseExporter:
 
     # check to see if statsbeat is in "attempting to be initialized" state
     def _is_statsbeat_initializing_state(self):
-        return self._is_stats_exporter() and not get_statsbeat_shutdown() and not get_statsbeat_initial_success()
+        return (
+            self._is_stats_exporter()
+            and not get_statsbeat_shutdown()
+            and not get_statsbeat_initial_success()
+        )
 
     def _is_stats_exporter(self):
         return getattr(self, "_is_sdkstats", False)
@@ -668,9 +737,14 @@ def _get_authentication_credential(
             kv_pairs = auth_string.split(";")
             auth_string_d = dict(s.split("=") for s in kv_pairs)
             auth_string_d = {key.lower(): value for key, value in auth_string_d.items()}
-            if "authorization" in auth_string_d and auth_string_d["authorization"] == "AAD":
+            if (
+                "authorization" in auth_string_d
+                and auth_string_d["authorization"] == "AAD"
+            ):
                 if "clientid" in auth_string_d:
-                    credential = ManagedIdentityCredential(client_id=auth_string_d["clientid"])
+                    credential = ManagedIdentityCredential(
+                        client_id=auth_string_d["clientid"]
+                    )
                     return credential
                 credential = ManagedIdentityCredential()
                 return credential

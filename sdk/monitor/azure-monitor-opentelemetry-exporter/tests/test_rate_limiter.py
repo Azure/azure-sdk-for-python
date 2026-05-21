@@ -109,7 +109,9 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
     def setUpClass(cls):
         import os
 
-        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = (
+            "1234abcd-5678-4efa-8abc-1234567890ab"
+        )
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         os.environ["APPLICATIONINSIGHTS_SDKSTATS_DISABLED"] = "true"
 
@@ -241,6 +243,44 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
             # All 5 should be sent despite rate limiter being empty
             self.assertEqual(len(mock_track.call_args[0][0]), 5)
             self.assertEqual(result, ExportResult.SUCCESS)
+
+    def test_redirect_does_not_double_consume_rate_limiter(self):
+        """When _transmit recurses on a 307/308 redirect, rate limiting should be skipped."""
+        from unittest import mock
+        from datetime import datetime
+        from azure.core.exceptions import HttpResponseError
+        from azure.monitor.opentelemetry.exporter.export._base import (
+            BaseExporter,
+            ExportResult,
+        )
+        from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
+            TelemetryItem,
+            TrackResponse,
+        )
+
+        base = BaseExporter(disable_offline_storage=True, max_envelopes_per_second=5)
+
+        envelopes = [TelemetryItem(name="Test", time=datetime.now()) for _ in range(5)]
+
+        # First call raises a 307 redirect, second call succeeds
+        mock_response = mock.Mock()
+        mock_response.headers = {"location": "https://redirected.example.com/v2/track"}
+        redirect_error = HttpResponseError(
+            message="Temporary Redirect",
+            response=mock_response,
+        )
+        redirect_error.status_code = 307
+
+        with mock.patch.object(base.client, "track") as mock_track:
+            mock_track.side_effect = [
+                redirect_error,
+                TrackResponse(items_received=5, items_accepted=5),
+            ]
+            result = base._transmit(envelopes)
+            # Should succeed after redirect
+            self.assertEqual(result, ExportResult.SUCCESS)
+            # track should have been called twice (original + redirect)
+            self.assertEqual(mock_track.call_count, 2)
 
 
 if __name__ == "__main__":
