@@ -25,8 +25,10 @@ if TYPE_CHECKING:
 async def upload_blob_to_url(
     blob_url: str,
     data: Union[Iterable[AnyStr], IO[AnyStr]],
-    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-    **kwargs: Any
+    credential: Optional[
+        Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+    ] = None,  # pylint: disable=line-too-long
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     """Upload data to a given URL
 
@@ -76,7 +78,9 @@ async def upload_blob_to_url(
     :return: Blob-updated property dict (Etag and last modified)
     :rtype: dict[str, Any]
     """
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-async-context-manager
+    async with BlobClient.from_blob_url(
+        blob_url, credential=credential
+    ) as client:  # pylint: disable=not-async-context-manager
         return await client.upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
 
 
@@ -89,8 +93,10 @@ async def _download_to_stream(client, handle, **kwargs):
 async def download_blob_from_url(
     blob_url: str,
     output: str,
-    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-    **kwargs: Any
+    credential: Optional[
+        Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+    ] = None,  # pylint: disable=line-too-long
+    **kwargs: Any,
 ) -> None:
     """Download the contents of a blob to a local file or stream.
 
@@ -139,26 +145,28 @@ async def download_blob_from_url(
     :return: None
     :rtype: None
     """
-    overwrite = kwargs.pop('overwrite', False)
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-async-context-manager
-        if hasattr(output, 'write'):
+    overwrite = kwargs.pop("overwrite", False)
+    async with BlobClient.from_blob_url(
+        blob_url, credential=credential
+    ) as client:  # pylint: disable=not-async-context-manager
+        if hasattr(output, "write"):
             await _download_to_stream(client, output, **kwargs)
         else:
             if not overwrite and os.path.isfile(output):
                 raise ValueError(f"The file '{output}' already exists.")
-            with open(output, 'wb') as file_handle:
+            with open(output, "wb") as file_handle:
                 await _download_to_stream(client, file_handle, **kwargs)
 
 
 __all__ = [
-    'upload_blob_to_url',
-    'download_blob_from_url',
-    'BlobServiceClient',
-    'BlobPrefix',
-    'ContainerClient',
-    'BlobClient',
-    'BlobLeaseClient',
-    'ExponentialRetry',
-    'LinearRetry',
-    'StorageStreamDownloader'
+    "upload_blob_to_url",
+    "download_blob_from_url",
+    "BlobServiceClient",
+    "BlobPrefix",
+    "ContainerClient",
+    "BlobClient",
+    "BlobLeaseClient",
+    "ExponentialRetry",
+    "LinearRetry",
+    "StorageStreamDownloader",
 ]
