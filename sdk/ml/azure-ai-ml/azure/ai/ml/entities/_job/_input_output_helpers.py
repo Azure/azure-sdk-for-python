@@ -69,6 +69,8 @@ INPUT_MOUNT_MAPPING_FROM_REST = {
     InputDeliveryMode.DIRECT: InputOutputModes.DIRECT,
     InputDeliveryMode.EVAL_MOUNT: InputOutputModes.EVAL_MOUNT,
     InputDeliveryMode.EVAL_DOWNLOAD: InputOutputModes.EVAL_DOWNLOAD,
+    "Hdfs": InputOutputModes.HDFS,
+    "hdfs": InputOutputModes.HDFS,
 }
 
 INPUT_MOUNT_MAPPING_TO_REST = {
@@ -79,6 +81,7 @@ INPUT_MOUNT_MAPPING_TO_REST = {
     InputOutputModes.EVAL_MOUNT: InputDeliveryMode.EVAL_MOUNT,
     InputOutputModes.EVAL_DOWNLOAD: InputDeliveryMode.EVAL_DOWNLOAD,
     InputOutputModes.DIRECT: InputDeliveryMode.DIRECT,
+    InputOutputModes.HDFS: "Hdfs",
 }
 
 
@@ -249,7 +252,7 @@ def to_rest_dataset_literal_inputs(
                     input_data = LiteralJobInput(value=input_value.path)
                     # set mode attribute manually for binding job input
                     if input_value.mode:
-                        input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
+                        input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()]
                     if getattr(input_value, "path_on_compute", None) is not None:
                         input_data.pathOnCompute = input_value.path_on_compute
                     input_data.job_input_type = JobInputType.LITERAL

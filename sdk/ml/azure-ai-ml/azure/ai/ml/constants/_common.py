@@ -836,6 +836,8 @@ class InputOutputModes:
     """Evaluation download asset type."""
     DIRECT = "direct"
     """Direct asset type."""
+    HDFS = "hdfs"
+    """HDFS asset type."""
 
 
 class ConnectionTypes:
