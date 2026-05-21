@@ -32,37 +32,37 @@ def main():
 
     response = client.scheduled_actions.begin_create_or_update(
         resource_group_name="rgcomputeschedule",
-        scheduled_action_name="myScheduledAction",
+        scheduled_action_name="scheduled-action-01",
         resource={
-            "location": "vmuhgdgipeypkcv",
+            "location": "eastus2",
             "properties": {
                 "actionType": "Start",
                 "disabled": True,
-                "endTime": "2025-04-17T00:23:55.286Z",
+                "endTime": "2026-03-12T02:39:45.062Z",
                 "notificationSettings": [
-                    {"destination": "wbhryycyolvnypjxzlawwvb", "disabled": True, "language": "en-us", "type": "Email"}
+                    {"destination": "admin@contoso.com", "disabled": True, "language": "en-us", "type": "Email"}
                 ],
                 "resourceType": "VirtualMachine",
                 "schedule": {
                     "deadlineType": "Unknown",
                     "executionParameters": {
                         "optimizationPreference": "Cost",
-                        "retryPolicy": {"retryCount": 17, "retryWindowInMinutes": 29},
+                        "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 3, "retryWindowInMinutes": 30},
                     },
-                    "requestedDaysOfTheMonth": [15],
+                    "requestedDaysOfTheMonth": [1],
                     "requestedMonths": ["January"],
                     "requestedWeekDays": ["Monday"],
-                    "scheduledTime": "19:00:00",
-                    "timeZone": "g",
+                    "scheduledTime": "12:00:00",
+                    "timeZone": "America/Los_Angeles",
                 },
-                "startTime": "2025-04-17T00:23:55.281Z",
+                "startTime": "2026-03-12T02:39:45.061Z",
             },
-            "tags": {"key2102": "obwsqwdydpkscnzceopxgkrhrxtdhv"},
+            "tags": {"environment": "production"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-04-15-preview/ScheduledActions_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

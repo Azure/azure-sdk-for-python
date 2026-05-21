@@ -1,5 +1,173 @@
 # Release History
 
+## 1.2.0b2 (2026-05-06)
+
+### Features Added
+
+  - Model `ComputeScheduleMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Enum `ActionType` added member `INTERNAL`
+  - Model `ResourceOperationDetails` added property `fallback_operation_info`
+  - Enum `ResourceOperationType` added member `CREATE`
+  - Enum `ResourceOperationType` added member `DELETE`
+  - Model `ResourceProvisionPayload` added property `virtual_machine_base_profile`
+  - Model `ResourceProvisionPayload` added property `virtual_machine_overrides`
+  - Model `RetryPolicy` added property `on_failure_action`
+  - Added model `AdditionalCapabilities`
+  - Added model `AdditionalUnattendContent`
+  - Added model `AllInstancesDown`
+  - Added enum `AllocationStrategy`
+  - Added model `ApiEntityReference`
+  - Added model `ApplicationProfile`
+  - Added model `BootDiagnostics`
+  - Added model `BulkActionVMExtension`
+  - Added model `BulkActionVMProperties`
+  - Added model `BulkActionVmExtensionProperties`
+  - Added model `BulkVMConfiguration`
+  - Added enum `CachingTypes`
+  - Added model `CancelOperationsContent`
+  - Added model `CapacityReservationProfile`
+  - Added model `CreateFlexResourceOperationResponse`
+  - Added model `DataDisk`
+  - Added enum `DeleteOptions`
+  - Added model `DiagnosticsProfile`
+  - Added enum `DiffDiskOptions`
+  - Added enum `DiffDiskPlacement`
+  - Added model `DiffDiskSettings`
+  - Added enum `DiskControllerTypes`
+  - Added enum `DiskCreateOptionTypes`
+  - Added enum `DiskDeleteOptionTypes`
+  - Added enum `DiskDetachOptionTypes`
+  - Added model `DiskEncryptionSetParameters`
+  - Added model `DiskEncryptionSettings`
+  - Added enum `DistributionStrategy`
+  - Added enum `DomainNameLabelScopeTypes`
+  - Added model `EncryptionIdentity`
+  - Added model `EventGridAndResourceGraph`
+  - Added model `ExecuteCreateContent`
+  - Added model `ExecuteCreateFlexContent`
+  - Added model `ExecuteDeallocateContent`
+  - Added model `ExecuteDeleteContent`
+  - Added model `ExecuteHibernateContent`
+  - Added model `ExecuteStartContent`
+  - Added model `ExtendedLocation`
+  - Added enum `ExtendedLocationType`
+  - Added model `FallbackOperationInfo`
+  - Added model `FlexProperties`
+  - Added model `GetOperationErrorsContent`
+  - Added model `GetOperationStatusContent`
+  - Added model `HardwareProfile`
+  - Added model `HostEndpointSettings`
+  - Added enum `IPVersions`
+  - Added model `ImageReference`
+  - Added model `KeyVaultKeyReference`
+  - Added model `KeyVaultSecretReference`
+  - Added model `LinuxConfiguration`
+  - Added enum `LinuxPatchAssessmentMode`
+  - Added model `LinuxPatchSettings`
+  - Added enum `LinuxVMGuestPatchAutomaticByPlatformRebootSetting`
+  - Added model `LinuxVMGuestPatchAutomaticByPlatformSettings`
+  - Added enum `LinuxVMGuestPatchMode`
+  - Added model `ManagedDiskParameters`
+  - Added enum `Mode`
+  - Added enum `Modes`
+  - Added enum `NetworkApiVersion`
+  - Added enum `NetworkInterfaceAuxiliaryMode`
+  - Added enum `NetworkInterfaceAuxiliarySku`
+  - Added model `NetworkInterfaceReference`
+  - Added model `NetworkInterfaceReferenceProperties`
+  - Added model `NetworkProfile`
+  - Added model `OSDisk`
+  - Added model `OSImageNotificationProfile`
+  - Added model `OSProfile`
+  - Added enum `OperatingSystemTypes`
+  - Added enum `OsType`
+  - Added model `PatchSettings`
+  - Added model `Placement`
+  - Added model `Plan`
+  - Added model `PriorityProfile`
+  - Added enum `PriorityType`
+  - Added enum `ProtocolTypes`
+  - Added model `ProxyAgentSettings`
+  - Added model `PublicIPAddressSku`
+  - Added enum `PublicIPAddressSkuName`
+  - Added enum `PublicIPAddressSkuTier`
+  - Added enum `PublicIPAllocationMethod`
+  - Added model `RecurringActionsResourceOperationResult`
+  - Added enum `ResourceIdentityType`
+  - Added model `ResourceProvisionFlexPayload`
+  - Added enum `ScheduledActionType`
+  - Added model `ScheduledActionUpdate`
+  - Added model `ScheduledActionUpdateProperties`
+  - Added model `ScheduledActionsExtensionProperties`
+  - Added model `ScheduledEventsAdditionalPublishingTargets`
+  - Added model `ScheduledEventsPolicy`
+  - Added model `ScheduledEventsProfile`
+  - Added enum `SecurityEncryptionTypes`
+  - Added model `SecurityProfile`
+  - Added enum `SecurityTypes`
+  - Added enum `SettingNames`
+  - Added model `SshConfiguration`
+  - Added model `SshPublicKey`
+  - Added enum `StorageAccountTypes`
+  - Added model `StorageProfile`
+  - Added model `SubResource`
+  - Added model `SubmitDeallocateContent`
+  - Added model `SubmitHibernateContent`
+  - Added model `SubmitStartContent`
+  - Added model `TerminateNotificationProfile`
+  - Added model `UefiSettings`
+  - Added model `UserAssignedIdentitiesValue`
+  - Added model `UserInitiatedReboot`
+  - Added model `UserInitiatedRedeploy`
+  - Added model `VMDiskSecurityProfile`
+  - Added model `VMGalleryApplication`
+  - Added model `VaultCertificate`
+  - Added model `VaultSecretGroup`
+  - Added model `VirtualHardDisk`
+  - Added model `VirtualMachineIdentity`
+  - Added model `VirtualMachineIpTag`
+  - Added model `VirtualMachineNetworkInterfaceConfiguration`
+  - Added model `VirtualMachineNetworkInterfaceConfigurationProperties`
+  - Added model `VirtualMachineNetworkInterfaceDnsSettingsConfiguration`
+  - Added model `VirtualMachineNetworkInterfaceIPConfiguration`
+  - Added model `VirtualMachineNetworkInterfaceIPConfigurationProperties`
+  - Added model `VirtualMachinePublicIPAddressConfiguration`
+  - Added model `VirtualMachinePublicIPAddressConfigurationProperties`
+  - Added model `VirtualMachinePublicIPAddressDnsSettingsConfiguration`
+  - Added model `VmSizeProfile`
+  - Added model `VmSizeProperties`
+  - Added model `WinRMConfiguration`
+  - Added model `WinRMListener`
+  - Added model `WindowsConfiguration`
+  - Added enum `WindowsPatchAssessmentMode`
+  - Added enum `WindowsVMGuestPatchAutomaticByPlatformRebootSetting`
+  - Added model `WindowsVMGuestPatchAutomaticByPlatformSettings`
+  - Added enum `WindowsVMGuestPatchMode`
+  - Added model `ZoneAllocationPolicy`
+  - Added enum `ZonePlacementPolicyType`
+  - Added model `ZonePreference`
+  - Model `ScheduledActionsOperations` added method `virtual_machines_execute_create_flex`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `ActionType.DEALLOCATE`
+  - Deleted or renamed enum value `ActionType.HIBERNATE`
+  - Deleted or renamed enum value `ActionType.START`
+  - Model `ResourceProvisionPayload` deleted or renamed its instance variable `base_profile`
+  - Model `ResourceProvisionPayload` deleted or renamed its instance variable `resource_overrides`
+  - Deleted or renamed model `CancelOperationsRequest`
+  - Deleted or renamed model `ExecuteCreateRequest`
+  - Deleted or renamed model `ExecuteDeallocateRequest`
+  - Deleted or renamed model `ExecuteDeleteRequest`
+  - Deleted or renamed model `ExecuteHibernateRequest`
+  - Deleted or renamed model `ExecuteStartRequest`
+  - Deleted or renamed model `GetOperationErrorsRequest`
+  - Deleted or renamed model `GetOperationStatusRequest`
+  - Deleted or renamed model `ResourceOperationResponse`
+  - Deleted or renamed model `SubmitDeallocateRequest`
+  - Deleted or renamed model `SubmitHibernateRequest`
+  - Deleted or renamed model `SubmitStartRequest`
+
 ## 1.2.0b1 (2025-07-24)
 
 ### Features Added

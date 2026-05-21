@@ -16,7 +16,7 @@ from azure.mgmt.computeschedule import ComputeScheduleMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computeschedule
 # USAGE
-    python scheduled_actions_virtual_machines_execute_create_maximum_set_gen.py
+    python scheduled_actions_virtual_machines_execute_create_flex_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,21 +31,33 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.scheduled_actions.virtual_machines_execute_create(
+    response = client.scheduled_actions.virtual_machines_execute_create_flex(
         locationparameter="eastus2",
-        request_body={
-            "correlationid": "01234567-89ab-cdef-0123-456789abcdef",
+        body={
+            "correlationid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
             "executionParameters": {
                 "optimizationPreference": "Cost",
                 "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 3, "retryWindowInMinutes": 30},
             },
             "resourceConfigParameters": {
-                "resourceCount": 3,
-                "resourcePrefix": "myBulkVm",
+                "flexProperties": {
+                    "osType": "Windows",
+                    "priorityProfile": {"allocationStrategy": "LowestPrice", "type": "Regular"},
+                    "vmSizeProfiles": [
+                        {"name": "Standard_D2s_v3", "rank": 24},
+                        {"name": "Standard_D2s_v3", "rank": 24},
+                    ],
+                    "zoneAllocationPolicy": {
+                        "distributionStrategy": "BestEffortSingleZone",
+                        "zonePreferences": [{"rank": 21, "zone": "1"}],
+                    },
+                },
+                "resourceCount": 24,
+                "resourcePrefix": "myFlexVm",
                 "virtualMachineBaseProfile": {
                     "computeApiVersion": "2024-07-01",
                     "identity": {"type": "SystemAssigned"},
-                    "name": "baseVmConfig",
+                    "name": "baseFlexVmConfig",
                     "properties": {
                         "additionalCapabilities": {"hibernationEnabled": False, "ultraSSDEnabled": False},
                         "diagnosticsProfile": {"bootDiagnostics": {"enabled": True}},
@@ -60,7 +72,7 @@ def main():
                         "osProfile": {
                             "adminUsername": "azureuser",
                             "allowExtensionOperations": True,
-                            "computerName": "myVM",
+                            "computerName": "myFlexVM",
                             "linuxConfiguration": {
                                 "disablePasswordAuthentication": True,
                                 "patchSettings": {
@@ -133,7 +145,7 @@ def main():
                 "virtualMachineOverrides": [
                     {
                         "computeApiVersion": "2024-07-01",
-                        "name": "overrideVmConfig-0",
+                        "name": "overrideFlexVmConfig-0",
                         "properties": {
                             "networkProfile": {
                                 "networkInterfaces": [
@@ -165,6 +177,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-15-preview/ScheduledActions_VirtualMachinesExecuteCreate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-04-15-preview/ScheduledActions_VirtualMachinesExecuteCreateFlex_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
