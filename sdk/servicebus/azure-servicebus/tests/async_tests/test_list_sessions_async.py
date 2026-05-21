@@ -53,7 +53,7 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
                     await sender.send_messages(ServiceBusMessage(
                         f"test message for {sid}", session_id=sid))
 
-            result = await sb_client.list_queue_sessions(servicebus_queue.name)
+            result = [sid async for sid in sb_client.list_queue_sessions(servicebus_queue.name)]
 
             assert isinstance(result, list)
             for sid in session_ids:
@@ -78,8 +78,8 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
             logging_enable=False,
             uamqp_transport=uamqp_transport,
         ) as sb_client:
-            # No messages sent; should return empty list
-            result = await sb_client.list_queue_sessions(servicebus_queue.name)
+            # No messages sent; should return empty
+            result = [sid async for sid in sb_client.list_queue_sessions(servicebus_queue.name)]
 
             assert isinstance(result, list)
             assert len(result) == 0
@@ -112,8 +112,8 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
                     "test updated_after", session_id=session_id))
 
             # updated_after mode: sessions whose state was updated after before_send
-            result = await sb_client.list_queue_sessions(
-                servicebus_queue.name, updated_after=before_send)
+            result = [sid async for sid in sb_client.list_queue_sessions(
+                servicebus_queue.name, updated_after=before_send)]
 
             assert isinstance(result, list)
             assert session_id in result
@@ -145,8 +145,8 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
                     await sender.send_messages(ServiceBusMessage(
                         f"test message for {sid}", session_id=sid))
 
-            result = await sb_client.list_subscription_sessions(
-                servicebus_topic.name, servicebus_subscription.name)
+            result = [sid async for sid in sb_client.list_subscription_sessions(
+                servicebus_topic.name, servicebus_subscription.name)]
 
             assert isinstance(result, list)
             for sid in session_ids:
@@ -173,9 +173,9 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
             logging_enable=False,
             uamqp_transport=uamqp_transport,
         ) as sb_client:
-            # No messages sent; should return empty list
-            result = await sb_client.list_subscription_sessions(
-                servicebus_topic.name, servicebus_subscription.name)
+            # No messages sent; should return empty
+            result = [sid async for sid in sb_client.list_subscription_sessions(
+                servicebus_topic.name, servicebus_subscription.name)]
 
             assert isinstance(result, list)
             assert len(result) == 0
@@ -210,9 +210,9 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
                     "test updated_after", session_id=session_id))
 
             # updated_after mode: sessions whose state was updated after before_send
-            result = await sb_client.list_subscription_sessions(
+            result = [sid async for sid in sb_client.list_subscription_sessions(
                 servicebus_topic.name, servicebus_subscription.name,
-                updated_after=before_send)
+                updated_after=before_send)]
 
             assert isinstance(result, list)
             assert session_id in result

@@ -55,8 +55,8 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
                     sender.send_messages(ServiceBusMessage(
                         f"test message for {sid}", session_id=sid))
 
-            # List sessions
-            result = sb_client.list_queue_sessions(servicebus_queue.name)
+            # List sessions — materialize the iterator for assertions
+            result = list(sb_client.list_queue_sessions(servicebus_queue.name))
 
             assert isinstance(result, list)
             for sid in session_ids:
@@ -80,8 +80,8 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
             logging_enable=False,
             uamqp_transport=uamqp_transport,
         ) as sb_client:
-            # No messages sent; should return empty list
-            result = sb_client.list_queue_sessions(servicebus_queue.name)
+            # No messages sent; should return empty
+            result = list(sb_client.list_queue_sessions(servicebus_queue.name))
 
             assert isinstance(result, list)
             assert len(result) == 0
@@ -112,8 +112,8 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
                     sender.send_messages(ServiceBusMessage(
                         f"test message for {sid}", session_id=sid))
 
-            result = sb_client.list_subscription_sessions(
-                servicebus_topic.name, servicebus_subscription.name)
+            result = list(sb_client.list_subscription_sessions(
+                servicebus_topic.name, servicebus_subscription.name))
 
             assert isinstance(result, list)
             for sid in session_ids:
@@ -146,8 +146,8 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
                     "test updated_after", session_id=session_id))
 
             # updated_after mode: sessions whose state was updated after before_send
-            result = sb_client.list_queue_sessions(
-                servicebus_queue.name, updated_after=before_send)
+            result = list(sb_client.list_queue_sessions(
+                servicebus_queue.name, updated_after=before_send))
 
             assert isinstance(result, list)
             assert session_id in result
@@ -172,9 +172,9 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
             logging_enable=False,
             uamqp_transport=uamqp_transport,
         ) as sb_client:
-            # No messages sent; should return empty list
-            result = sb_client.list_subscription_sessions(
-                servicebus_topic.name, servicebus_subscription.name)
+            # No messages sent; should return empty
+            result = list(sb_client.list_subscription_sessions(
+                servicebus_topic.name, servicebus_subscription.name))
 
             assert isinstance(result, list)
             assert len(result) == 0
@@ -208,9 +208,9 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
                     "test updated_after", session_id=session_id))
 
             # updated_after mode: sessions whose state was updated after before_send
-            result = sb_client.list_subscription_sessions(
+            result = list(sb_client.list_subscription_sessions(
                 servicebus_topic.name, servicebus_subscription.name,
-                updated_after=before_send)
+                updated_after=before_send))
 
             assert isinstance(result, list)
             assert session_id in result
