@@ -32,7 +32,7 @@ def main():
 
     client.storage_pools.begin_finalize_avs_connection(
         resource_group_name="rgpurestorage",
-        storage_pool_name="storagePoolname",
+        storage_pool_name="storagepool-01",
         properties={
             "serviceInitializationData": {
                 "serviceAccountPassword": "i",
@@ -45,6 +45,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2024-11-01/StoragePools_FinalizeAvsConnection_MaximumSet_Gen.json
+# x-ms-original-file: 2026-01-01-preview/StoragePools_FinalizeAvsConnection_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

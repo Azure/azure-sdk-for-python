@@ -32,13 +32,13 @@ def main():
 
     response = client.avs_storage_container_volumes.get(
         resource_group_name="rgpurestorage",
-        storage_pool_name="storagePoolname",
-        storage_container_name="name",
-        volume_id="cbdec-ddbb",
+        storage_pool_name="storagepool-01",
+        storage_container_name="container-01",
+        volume_id="a1b2c3d4-e5f6",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/AvsStorageContainerVolumes_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-01-01-preview/AvsStorageContainerVolumes_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

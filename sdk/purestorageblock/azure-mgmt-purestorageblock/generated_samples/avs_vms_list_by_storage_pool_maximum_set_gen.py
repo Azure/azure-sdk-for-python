@@ -32,12 +32,12 @@ def main():
 
     response = client.avs_vms.list_by_storage_pool(
         resource_group_name="rgpurestorage",
-        storage_pool_name="storagePoolname",
+        storage_pool_name="storagepool-01",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2024-11-01/AvsVms_ListByStoragePool_MaximumSet_Gen.json
+# x-ms-original-file: 2026-01-01-preview/AvsVms_ListByStoragePool_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -32,10 +32,10 @@ def main():
 
     client.storage_pools.begin_repair_avs_connection(
         resource_group_name="rgpurestorage",
-        storage_pool_name="storagePoolname",
+        storage_pool_name="storagepool-01",
     ).result()
 
 
-# x-ms-original-file: 2024-11-01/StoragePools_RepairAvsConnection_MaximumSet_Gen.json
+# x-ms-original-file: 2026-01-01-preview/StoragePools_RepairAvsConnection_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

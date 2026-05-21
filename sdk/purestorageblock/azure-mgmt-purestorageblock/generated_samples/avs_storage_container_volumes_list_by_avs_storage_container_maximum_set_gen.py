@@ -32,13 +32,13 @@ def main():
 
     response = client.avs_storage_container_volumes.list_by_avs_storage_container(
         resource_group_name="rgpurestorage",
-        storage_pool_name="storagePoolname",
-        storage_container_name="name",
+        storage_pool_name="storagepool-01",
+        storage_container_name="container-01",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2024-11-01/AvsStorageContainerVolumes_ListByAvsStorageContainer_MaximumSet_Gen.json
+# x-ms-original-file: 2026-01-01-preview/AvsStorageContainerVolumes_ListByAvsStorageContainer_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

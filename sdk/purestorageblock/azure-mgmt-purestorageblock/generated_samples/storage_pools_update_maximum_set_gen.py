@@ -32,16 +32,16 @@ def main():
 
     response = client.storage_pools.begin_update(
         resource_group_name="rgpurestorage",
-        storage_pool_name="storagePoolname",
+        storage_pool_name="storagepool-01",
         properties={
-            "identity": {"type": "None", "userAssignedIdentities": {"key4211": {}}},
+            "identity": {"type": "None", "userAssignedIdentities": {"identity-01": {}}},
             "properties": {"provisionedBandwidthMbPerSec": 23},
-            "tags": {"key9065": "ebgmkwxqewe"},
+            "tags": {"key9065": "ebgRead Storage Poolswxqewe"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/StoragePools_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-01-01-preview/StoragePools_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
