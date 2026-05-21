@@ -15,6 +15,8 @@ from azure.cosmos import CosmosClient, PartitionKey
 @pytest.mark.cosmosSearchQuery
 class TestFullTextPolicy(unittest.TestCase):
     client: CosmosClient = None
+    key_client: CosmosClient = None
+    data_client: CosmosClient = None
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
@@ -58,8 +60,28 @@ class TestFullTextPolicy(unittest.TestCase):
                 "tests.")
 
         cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.key_client = cls.client  # alias  -  control-plane operations stay on key-auth (Batch 16 prep)
+        # AAD data client added for parity with the key/data client setup. Not exercised
+        # here because every runnable test in this file is control-plane (full-text policy
+        # validation via create_container / replace_container / read). The 4 data-plane
+        # tests in this file are all @pytest.mark.skip until the multi-language test
+        # pipeline is set up  -  when those are unblocked, route the create_item / query_items
+        # calls through cls.data_client.get_database_client(...).get_container_client(...).
+        cls.data_client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.test_db = cls.client.create_database(str(uuid.uuid4()))
+
+    @classmethod
+    def tearDownClass(cls):
+        # Guard against setUpClass failures that occur before cls.test_db is assigned;
+        # we don't want a teardown AttributeError to mask the real setUp exception.
+        test_db = getattr(cls, "test_db", None)
+        if test_db is None or cls.client is None:
+            return
+        try:
+            cls.client.delete_database(test_db.id)
+        except exceptions.CosmosResourceNotFoundError:
+            pass
 
     def test_create_full_text_container(self):
         # Create a container with a valid full text policy and full text indexing policy

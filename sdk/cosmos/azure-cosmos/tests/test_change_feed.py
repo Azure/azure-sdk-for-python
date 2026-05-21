@@ -26,10 +26,13 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(config.host, config.masterKey,
-                                             multiple_write_locations=use_multiple_write_locations),
+    key_client = cosmos_client.CosmosClient(config.host, config.masterKey,
+                                              multiple_write_locations=use_multiple_write_locations)
+    data_client = test_config.TestConfig.create_data_client()
+    key_db = key_client.get_database_client(config.TEST_DATABASE_ID)
     return {
-        "created_db": test_client[0].get_database_client(config.TEST_DATABASE_ID),
+        "key_db": key_db,
+        "data_db": data_client.get_database_client(config.TEST_DATABASE_ID),
         "is_emulator": config.is_emulator
     }
 
@@ -39,21 +42,28 @@ def round_time():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADCircuitBreaker
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestChangeFeed:
     """Test to ensure escaping of non-ascii characters from partition key"""
 
     def test_get_feed_ranges(self, setup):
-        created_collection = setup["created_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/pk"))
-        result = list(created_collection.read_feed_ranges())
-        assert len(result) == 1
+        created_collection_ref = setup["key_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
+                                                                      PartitionKey(path="/pk"))
+        created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
+        try:
+            result = list(created_collection.read_feed_ranges())
+            assert len(result) == 1
+        finally:
+            setup["key_db"].delete_container(created_collection_ref.id)
 
     @pytest.mark.parametrize("change_feed_filter_param", ["partitionKey", "partitionKeyRangeId", "feedRange"])
     def test_query_change_feed_with_different_filter(self, change_feed_filter_param, setup):
-        created_collection = setup["created_db"].create_container(f"change_feed_test_{change_feed_filter_param}_{str(uuid.uuid4())}",
-                                                              PartitionKey(path="/pk"))
+        created_collection_ref = setup["key_db"].create_container(
+            f"change_feed_test_{change_feed_filter_param}_{str(uuid.uuid4())}",
+            PartitionKey(path="/pk"))
+        created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
         iter_list = list(query_iterable)
@@ -173,14 +183,17 @@ class TestChangeFeed:
         )
         iter_list = list(query_iterable)
         assert len(iter_list) == 0
-        setup["created_db"].delete_container(created_collection.id)
+        setup["key_db"].delete_container(created_collection.id)
 
     def test_query_change_feed_with_start_time(self, setup):
-        created_collection = setup["created_db"].create_container_if_not_exists("query_change_feed_start_time_test",
-                                                                            PartitionKey(path="/pk"))
+        created_collection_ref = setup["key_db"].create_container_if_not_exists(
+            "query_change_feed_start_time_test",
+            PartitionKey(path="/pk"))
+        created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
         batchSize = 50
 
         def create_random_items(container, batch_size):
+            created_ids = set()
             for _ in range(batch_size):
                 # Generate a Random partition key
                 partition_key = 'pk' + str(uuid.uuid4())
@@ -188,73 +201,83 @@ class TestChangeFeed:
                 # Generate a random item
                 item = {
                     'id': 'item' + str(uuid.uuid4()),
-                    'partitionKey': partition_key,
+                    'pk': partition_key,
                     'content': 'This is some random content',
                 }
 
                 try:
                     # Create the item in the container
                     container.upsert_item(item)
+                    created_ids.add(item['id'])
                 except exceptions.CosmosHttpResponseError as e:
-                    fail(e)
+                    fail(str(e))
+            return created_ids
 
         # Create first batch of random items
-        create_random_items(created_collection, batchSize)
+        first_batch_ids = create_random_items(created_collection, batchSize)
 
         # wait for 1 second and record the time, then wait another second
         sleep(1)
         start_time = round_time()
-        not_utc_time = datetime.now()
+        # Use an equivalent instant in a non-UTC timezone to validate SDK timezone normalization.
+        not_utc_time = start_time.astimezone(timezone(timedelta(hours=5, minutes=30)))
         sleep(1)
 
         # now create another batch of items
-        create_random_items(created_collection, batchSize)
+        second_batch_ids = create_random_items(created_collection, batchSize)
 
         # now query change feed based on start time
         change_feed_iter = list(created_collection.query_items_change_feed(start_time=start_time))
-        totalCount = len(change_feed_iter)
+        change_feed_ids = {item['id'] for item in change_feed_iter}
 
-        # now check if the number of items that were changed match the batch size
-        assert totalCount == batchSize
+        # start_time is second-granular; boundary writes from the first batch can be included.
+        assert second_batch_ids.issubset(change_feed_ids)
+        assert change_feed_ids.issubset(first_batch_ids.union(second_batch_ids))
 
         # negative test: pass in a valid time in the future
         future_time = start_time + timedelta(hours=1)
         change_feed_iter = list(created_collection.query_items_change_feed(start_time=future_time))
-        totalCount = len(change_feed_iter)
         # A future time should return 0
-        assert totalCount == 0
+        assert len(change_feed_iter) == 0
 
         # test a date that is not utc, will be converted to utc by sdk
         change_feed_iter = list(created_collection.query_items_change_feed(start_time=not_utc_time))
-        totalCount = len(change_feed_iter)
-        # Should equal batch size
-        assert totalCount == batchSize
+        change_feed_non_utc_ids = {item['id'] for item in change_feed_iter}
+        assert change_feed_non_utc_ids == change_feed_ids
 
-        setup["created_db"].delete_container(created_collection.id)
+        setup["key_db"].delete_container(created_collection.id)
 
+    # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason="post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
+    )
     def test_query_change_feed_with_multi_partition(self, setup):
-        created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/pk"),
-                                                              offer_throughput=11000)
+        created_collection = setup["key_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
+                                                               PartitionKey(path="/pk"),
+                                                               offer_throughput=11000)
+        try:
+            # create one doc and make sure change feed query can return the document
+            new_documents = [
+                {'pk': 'pk', 'id': 'doc1'},
+                {'pk': 'pk2', 'id': 'doc2'},
+                {'pk': 'pk3', 'id': 'doc3'},
+                {'pk': 'pk4', 'id': 'doc4'}]
+            expected_ids = ['doc1', 'doc2', 'doc3', 'doc4']
 
-        # create one doc and make sure change feed query can return the document
-        new_documents = [
-            {'pk': 'pk', 'id': 'doc1'},
-            {'pk': 'pk2', 'id': 'doc2'},
-            {'pk': 'pk3', 'id': 'doc3'},
-            {'pk': 'pk4', 'id': 'doc4'}]
-        expected_ids = ['doc1', 'doc2', 'doc3', 'doc4']
+            for document in new_documents:
+                created_collection.create_item(body=document)
 
-        for document in new_documents:
-            created_collection.create_item(body=document)
+            query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
+            it = query_iterable.__iter__()
+            actual_ids = []
+            for item in it:
+                actual_ids.append(item['id'])
 
-        query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
-        it = query_iterable.__iter__()
-        actual_ids = []
-        for item in it:
-            actual_ids.append(item['id'])
-
-        assert actual_ids == expected_ids
+            assert actual_ids == expected_ids
+        finally:
+            setup["key_db"].delete_container(created_collection.id)
 
 if __name__ == "__main__":
     unittest.main()
+

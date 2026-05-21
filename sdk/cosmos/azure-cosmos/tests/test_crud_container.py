@@ -59,6 +59,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
     connectionPolicy = configs.connectionPolicy
     last_headers = []
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -81,8 +82,21 @@ class TestCRUDContainerOperations(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        # Key/data client migration scaffolding:
+        # - `key_client` / `key_databaseForTest` (key-auth) handles control-plane-heavy tests.
+        # - `client` / `data_databaseForTest` (AAD-or-key, based on test config) is initialized
+        #   for incremental per-test data-plane migration.
+        # Current default keeps `databaseForTest = key_databaseForTest` for stability.
+        cls.key_client, cls.key_databaseForTest, cls.client, cls.data_databaseForTest = (
+            test_config.TestConfig.create_test_clients(cls.configs.TEST_DATABASE_ID))
+        cls.databaseForTest = cls.key_databaseForTest
+
+    def _create_container_for_test(self, *args, **kwargs):
+        container_ref = self.key_databaseForTest.create_container(*args, **kwargs)
+        return self.databaseForTest.get_container_client(container_ref.id)
+
+    def _delete_container_for_test(self, *args, **kwargs):
+        return self.key_databaseForTest.delete_container(*args, **kwargs)
 
     def test_collection_crud(self):
         created_db = self.databaseForTest
@@ -158,14 +172,17 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
         created_db.delete_container(created_collection.id)
 
+    @pytest.mark.cosmosAADLong
     def test_partitioned_collection_partition_key_extraction(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
+        data_db = self.data_databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
-        created_collection = created_db.create_container(
+        created_collection_ref = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash)
         )
+        created_collection = data_db.get_container_client(created_collection_ref.id)
 
         document_definition = {'id': 'document1',
                                'address': {'street': '1 Microsoft Way',
@@ -187,10 +204,11 @@ class TestCRUDContainerOperations(unittest.TestCase):
         self.assertEqual(created_document.get('address').get('state'), document_definition.get('address').get('state'))
 
         collection_id = 'test_partitioned_collection_partition_key_extraction1 ' + str(uuid.uuid4())
-        created_collection1 = created_db.create_container(
+        created_collection1_ref = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/address', kind=documents.PartitionKind.Hash)
         )
+        created_collection1 = data_db.get_container_client(created_collection1_ref.id)
 
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
@@ -203,10 +221,11 @@ class TestCRUDContainerOperations(unittest.TestCase):
         # self.assertEqual(options['partitionKey'], documents.Undefined)
 
         collection_id = 'test_partitioned_collection_partition_key_extraction2 ' + str(uuid.uuid4())
-        created_collection2 = created_db.create_container(
+        created_collection2_ref = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/address/state/city', kind=documents.PartitionKind.Hash)
         )
+        created_collection2 = data_db.get_container_client(created_collection2_ref.id)
 
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
@@ -222,15 +241,18 @@ class TestCRUDContainerOperations(unittest.TestCase):
         created_db.delete_container(created_collection1.id)
         created_db.delete_container(created_collection2.id)
 
+    @pytest.mark.cosmosAADLong
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
+        data_db = self.data_databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
 
-        created_collection1 = created_db.create_container(
+        created_collection1_ref = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/\"level\' 1*()\"/\"le/vel2\"', kind=documents.PartitionKind.Hash)
         )
+        created_collection1 = data_db.get_container_client(created_collection1_ref.id)
         document_definition = {'id': 'document1',
                                "level' 1*()": {"le/vel2": 'val1'}
                                }
@@ -253,10 +275,11 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4())
 
-        created_collection2 = created_db.create_container(
+        created_collection2_ref = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/\'level\" 1*()\'/\'le/vel2\'', kind=documents.PartitionKind.Hash)
         )
+        created_collection2 = data_db.get_container_client(created_collection2_ref.id)
 
         document_definition = {'id': 'document2',
                                'level\" 1*()': {'le/vel2': 'val2'}

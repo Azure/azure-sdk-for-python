@@ -30,7 +30,9 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
     created_collection = None
     document_definitions = None
     created_db = None
+    key_db = None
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -46,12 +48,16 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        cls.created_collection = cls.created_db.create_container(
-            id='query_execution_context_tests_' + str(uuid.uuid4()),
+        # Key/data client setup: key-auth for control-plane, AAD for data-plane.
+        cls.key_client, cls.key_db, cls.client, cls.created_db = (
+            test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID))
+        # container create/delete via key-auth key_db until control-plane AAD is available.
+        container_id = 'query_execution_context_tests_' + str(uuid.uuid4())
+        cls.key_db.create_container(
+            id=container_id,
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
+        cls.created_collection = cls.created_db.get_container_client(container_id)
         cls.document_definitions = []
 
         # create a document using the document definition
@@ -66,7 +72,7 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         try:
-            cls.created_db.delete_container(cls.created_collection.id)
+            cls.key_db.delete_container(cls.created_collection.id)
         except CosmosHttpResponseError:
             pass
 

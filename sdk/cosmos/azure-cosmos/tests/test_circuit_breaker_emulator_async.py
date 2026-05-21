@@ -23,7 +23,7 @@ from test_per_partition_circuit_breaker_sm_mrr import \
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 
 COLLECTION = "created_collection"
-@pytest_asyncio.fixture(scope="class", autouse=True)
+@pytest_asyncio.fixture(scope="class", loop_scope="class", autouse=True)
 async def setup_teardown():
     os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
     yield
@@ -44,7 +44,7 @@ async def create_custom_transport_mm():
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="class")
 @pytest.mark.usefixtures("setup_teardown")
 class TestCircuitBreakerEmulatorAsync:
     host = test_config.TestConfig.host

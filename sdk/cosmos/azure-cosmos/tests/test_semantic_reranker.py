@@ -6,8 +6,8 @@ import unittest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
+from azure.cosmos.partition_key import PartitionKey
 import pytest
-from azure.identity import DefaultAzureCredential
 
 import test_config
 
@@ -16,6 +16,7 @@ import test_config
 class TestSemanticReranker(unittest.TestCase):
     """Test to check semantic reranker behavior."""
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
@@ -24,32 +25,38 @@ class TestSemanticReranker(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        if cls.host == '[YOUR_ENDPOINT_HERE]':
+        if cls.host == '[YOUR_ENDPOINT_HERE]' or cls.config.masterKey == '[YOUR_KEY_HERE]':
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
-                "'host' at the top of this class to run the "
+                "'host' and 'masterKey' at the top of this class to run the "
                 "tests.")
 
-        credential = DefaultAzureCredential()
-        cls.client = cosmos_client.CosmosClient(cls.host, credential=credential)
-        cls.test_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-        cls.test_container = cls.test_db.create_container_if_not_exists(cls.TEST_CONTAINER_ID,
-                                                                        cls.TEST_CONTAINER_PARTITION_KEY)
+        cls.key_client, cls.key_db, cls.client, cls.created_db = test_config.TestConfig.create_test_clients(
+            cls.TEST_DATABASE_ID
+        )
+        # Ensure the test database exists; TEST_DATABASE_ID defaults to a per-process UUID
+        # and is not guaranteed to be pre-provisioned by a shared fixture.
+        cls.key_client.create_database_if_not_exists(id=cls.TEST_DATABASE_ID)
+        cls.key_db.create_container_if_not_exists(
+            id=cls.TEST_CONTAINER_ID,
+            partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash')
+        )
+        cls.test_container = cls.created_db.get_container_client(cls.TEST_CONTAINER_ID)
 
     @classmethod
     def tearDownClass(cls):
         try:
-            cls.test_db.delete_container(cls.TEST_CONTAINER_ID)
-            cls.client.delete_database(cls.TEST_DATABASE_ID)
+            cls.key_db.delete_container(cls.TEST_CONTAINER_ID)
         except exceptions.CosmosHttpResponseError:
             pass
+        test_config.TestConfig.try_delete_database(cls.key_client)
 
     def test_semantic_reranker(self):
         documents = self._get_documents(document_type="string")
         results = self.test_container.semantic_rerank(
-            reranking_context="What is the capital of France?",
+            context="What is the capital of France?",
             documents=documents,
-            semantic_reranking_options={
+            options={
                 "return_documents": True,
                 "top_k": 10,
                 "batch_size": 32,
@@ -63,9 +70,9 @@ class TestSemanticReranker(unittest.TestCase):
     def test_semantic_reranker_json_documents(self):
         documents = self._get_documents(document_type="json")
         results = self.test_container.semantic_rerank(
-            reranking_context="What is the capital of France?",
+            context="What is the capital of France?",
             documents=[json.dumps(item) for item in documents],
-            semantic_reranking_options={
+            options={
                 "return_documents": True,
                 "top_k": 10,
                 "batch_size": 32,
@@ -82,9 +89,9 @@ class TestSemanticReranker(unittest.TestCase):
     def test_semantic_reranker_nested_json_documents(self):
         documents = self._get_documents(document_type="nested_json")
         results = self.test_container.semantic_rerank(
-            reranking_context="What is the capital of France?",
+            context="What is the capital of France?",
             documents=[json.dumps(item) for item in documents],
-            semantic_reranking_options={
+            options={
                 "return_documents": True,
                 "top_k": 10,
                 "batch_size": 32,

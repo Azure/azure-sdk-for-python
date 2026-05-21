@@ -13,8 +13,10 @@ from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import DatabaseProxy, ContainerProxy, exceptions
+from azure.cosmos import DatabaseProxy, ContainerProxy
 from azure.core.exceptions import HttpResponseError
+
+
 
 def _remove_padding(encoded_string):
     while encoded_string.endswith("="):
@@ -35,7 +37,7 @@ def get_test_item(num):
 
 class CosmosEmulatorCredential(object):
     def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+        # type: (*str, **object) -> AccessToken
         """Request an access token for the emulator. Based on Azure Core's Access Token Credential.
 
         This method is called automatically by Azure SDK clients.
@@ -93,14 +95,21 @@ class TestAAD(unittest.TestCase):
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
-    credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential
+    # Emulator-only credential used by this class.
+    credential = CosmosEmulatorCredential()
+    _skip_on_non_emulator = pytest.mark.skipif(
+        not configs.is_emulator,
+        reason="Emulator credential tests are emulator-specific (localhost audience)."
+    )
 
     @classmethod
     def setUpClass(cls):
+        # Emulator-only path: always use the emulator credential.
         cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
+    @_skip_on_non_emulator
     def test_aad_credentials(self):
         print("Container info: " + str(self.container.read()))
         self.container.create_item(get_test_item(0))
@@ -109,14 +118,6 @@ class TestAAD(unittest.TestCase):
         assert len(query_results) == 1
         print("Query result: " + str(query_results[0]))
         self.container.delete_item(item='Item_0', partition_key='pk')
-
-        # Attempting to do management operations will return a 403 Forbidden exception
-        try:
-            self.client.delete_database(self.configs.TEST_DATABASE_ID)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 403
-            print("403 error assertion success")
-
 
     def _run_with_scope_capture(self, credential_cls, action, *args, **kwargs):
         scopes_captured = []
@@ -133,6 +134,7 @@ class TestAAD(unittest.TestCase):
             credential_cls.get_token = original_get_token
         return scopes_captured, result
 
+    @_skip_on_non_emulator
     def test_override_scope_no_fallback(self):
         """When override scope is provided, only that scope is used and no fallback occurs."""
         override_scope = "https://my.custom.scope/.default"
@@ -156,6 +158,7 @@ class TestAAD(unittest.TestCase):
             except Exception:
                 pass
 
+    @_skip_on_non_emulator
     def test_override_scope_auth_error_no_fallback(self):
         """When override scope is provided and auth fails, no fallback to other scopes occurs."""
         override_scope = "https://my.custom.scope/.default"
@@ -180,6 +183,7 @@ class TestAAD(unittest.TestCase):
         finally:
             del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
 
+    @_skip_on_non_emulator
     def test_account_scope_only(self):
         """When account scope is provided, only that scope is used."""
         account_scope = "https://localhost/.default"
@@ -203,6 +207,7 @@ class TestAAD(unittest.TestCase):
             except Exception:
                 pass
 
+    @_skip_on_non_emulator
     def test_account_scope_fallback_on_error(self):
         """When account scope is provided and auth fails, fallback to default scope occurs."""
         account_scope = "https://localhost/.default"

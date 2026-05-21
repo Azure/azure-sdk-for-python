@@ -15,14 +15,16 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 class _config:
+    is_aad_mode = test_config.TestConfig.data_auth_mode == "aad"
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
     connection_policy = test_config.TestConfig.connectionPolicy
     PARTITION_KEY = 'key'
     UNIQUE_PARTITION_KEY = 'uniquePartitionKey'
     FIELD = 'field'
-    DOCUMENTS_COUNT = 400
-    DOCS_WITH_SAME_PARTITION_KEY = 200
+    # Keep key-auth query coverage unchanged; trim only AAD runs to stay under CI timeout.
+    DOCUMENTS_COUNT = 120 if is_aad_mode else 400
+    DOCS_WITH_SAME_PARTITION_KEY = 60 if is_aad_mode else 200
     docs_with_numeric_id = 0
     sum = 0
 
@@ -30,6 +32,7 @@ class _config:
 @pytest.mark.cosmosQuery
 class TestAggregateQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
 
     @classmethod
     def setUpClass(cls):
@@ -40,7 +43,7 @@ class TestAggregateQuery(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         try:
-            cls.created_db.delete_container(cls.created_collection.id)
+            cls.key_db.delete_container(cls.created_collection.id)
         except CosmosHttpResponseError:
             pass
 
@@ -52,9 +55,10 @@ class TestAggregateQuery(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(_config.host, _config.master_key)
-        cls.created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-        cls.created_collection = cls._create_collection(cls.created_db)
+        cls.key_client, cls.key_db, cls.client, cls.created_db = (
+            test_config.TestConfig.create_test_clients(test_config.TestConfig.TEST_DATABASE_ID))
+        created_collection_ref = cls._create_collection(cls.key_db)
+        cls.created_collection = cls.created_db.get_container_client(created_collection_ref.id)
 
         # test documents
         document_definitions = []
@@ -136,6 +140,62 @@ class TestAggregateQuery(unittest.TestCase):
                 print(test_name + ': ' + query + " PASSED")
             except Exception as e:
                 print(test_name + ': ' + query + " FAILED")
+                raise e
+
+    # AAD-only smoke subset.
+    #
+    # Why this exists: the CI AAD lane runs on Linux and the shared
+    # ``azpysdk.main whl --isolate`` bootstrap on that pool already eats
+    # ~90 minutes of the 120-minute job ceiling. Running the full
+    # ``test_run_all`` matrix (24 aggregate variants) under AAD on top of
+    # that bootstrap pushes the lane over the ceiling. The full matrix
+    # still runs under the ``cosmosQuery`` lane (key auth) -- this method
+    # is *additional* AAD-only coverage focused on Contoso's exact bug
+    # shape: cross-partition aggregate query under bearer auth, including
+    # the ORDER BY pagination case where token refresh mid-stream is most
+    # likely to surface.
+    #
+    # Three queries: cross-partition COUNT (fan-out), cross-partition SUM
+    # with ORDER BY (fan-out + paginated reduce -> token-refresh window),
+    # single-partition AVG (pinned-PK path).
+    @pytest.mark.cosmosAADLong
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode != "aad",
+        reason="AAD-only smoke subset; full coverage runs under cosmosQuery (key auth).",
+    )
+    def test_aad_aggregate_subset(self):
+        same_partition_avg = (
+            _config.DOCS_WITH_SAME_PARTITION_KEY * (_config.DOCS_WITH_SAME_PARTITION_KEY + 1) / 2.0
+        ) / _config.DOCS_WITH_SAME_PARTITION_KEY
+        subset = [
+            (
+                "test_aad_xp_count",
+                "SELECT VALUE COUNT(r.{}) FROM r WHERE true".format(_config.PARTITION_KEY),
+                _config.DOCUMENTS_COUNT,
+            ),
+            (
+                "test_aad_xp_sum_orderby",
+                "SELECT VALUE SUM(r.{f}) FROM r WHERE IS_NUMBER(r.{pk}) ORDER BY r.{pk}".format(
+                    f=_config.PARTITION_KEY, pk=_config.PARTITION_KEY
+                ),
+                _config.sum,
+            ),
+            (
+                "test_aad_sp_avg",
+                "SELECT VALUE AVG(r.{f}) FROM r WHERE r.{pk} = '{val}'".format(
+                    f=_config.FIELD,
+                    pk=_config.PARTITION_KEY,
+                    val=_config.UNIQUE_PARTITION_KEY,
+                ),
+                same_partition_avg,
+            ),
+        ]
+        for test_name, query, expected in subset:
+            try:
+                self._run_one(query, expected)
+                print(test_name + ': ' + query + " PASSED", flush=True)
+            except Exception as e:
+                print(test_name + ': ' + query + " FAILED", flush=True)
                 raise e
 
     def _run_one(self, query, expected_result):
