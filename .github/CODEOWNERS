@@ -10,9 +10,9 @@
 
 # Core
 # PRLabel: %Core.Http
-/sdk/core/corehttp/                                                  @pvaneck @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
+/sdk/core/corehttp/                                                  @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
 
-# AzureSdkOwners: @xiangyan99 @kashifkhan @pvaneck
+# AzureSdkOwners: @xiangyan99 @kashifkhan
 # ServiceLabel: %Core.Http
 
 # AzureSdkOwners: @xiangyan99 @kashifkhan
@@ -20,10 +20,8 @@
 
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
-/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan @pvaneck
+/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
-/sdk/core/azure-core-tracing-opencensus/                             @pvaneck
-/sdk/core/azure-core-tracing-opentelemetry/                          @pvaneck
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @mccoyp @shurd @southpolesteve
@@ -68,7 +66,7 @@
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
-/sdk/identity/    @Azure/azure-sdk-write-identity @pvaneck @xiangyan99
+/sdk/identity/    @Azure/azure-sdk-write-identity @xiangyan99
 
 # ServiceLabel: %Batch
 # PRLabel: %Batch
@@ -182,7 +180,7 @@
 # PRLabel: %Container Instances
 /sdk/containerinstance/    @samkreter @xizhamsft
 
-# AzureSdkOwners: @kashifkhan 
+# AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Container Registry
 # PRLabel: %Container Registry
 /sdk/containerregistry/    @kashifkhan
@@ -321,13 +319,12 @@
 # PRLabel: %Monitor
 /sdk/monitor/azure-mgmt-monitor    @lirenhe @msyyc
 
-# AzureSdkOwners: @pvaneck
 # ServiceLabel: %Monitor
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-ingestion/    @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Cognitive - Content Understanding
-/sdk/contentunderstanding/                                           @bojunehsu @changjian-wang @chienyuanchang @yungshinlintw 
+/sdk/contentunderstanding/                                           @bojunehsu @changjian-wang @chienyuanchang @yungshinlintw
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-query/    @Azure/azure-sdk-write-monitor-query-logs
 
@@ -840,7 +837,7 @@
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @pvaneck
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
 /eng/pipelines/docindex.yml                                          @danieljurek @scbedd @weshaggard @benbp
 
