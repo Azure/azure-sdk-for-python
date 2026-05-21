@@ -12,6 +12,7 @@ import os
 from websocket import WebSocketApp
 from typing import List, Optional
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from azure.identity import DefaultAzureCredential
 
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
@@ -62,10 +63,10 @@ class WebsocketClientsManager:
         return len(self.clients)
 
 
-def test_overall_integration(webpubsub_connection_string: str):
-    # build a service client from the connection string.
-    service = WebPubSubServiceClient.from_connection_string(
-        webpubsub_connection_string, hub="hub", logging_enable=False
+def test_overall_integration(endpoint: str):
+    # build a service client through AAD.
+    service = WebPubSubServiceClient(
+        endpoint=endpoint, hub="hub", credential=DefaultAzureCredential(), logging_enable=False
     )
 
     # build multiple websocket clients connected to the Web PubSub service
@@ -114,11 +115,11 @@ def test_overall_integration(webpubsub_connection_string: str):
 
 if __name__ == "__main__":
     try:
-        connection_string = os.environ["WEBPUBSUB_CONNECTION_STRING"]
+        endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'WEBPUBSUB_CONNECTION_STRING' - please set if before running the example"
+            "Missing environment variable 'WEBPUBSUB_ENDPOINT' - please set it before running the example"
         )
         exit()
 
-    test_overall_integration(connection_string)
+    test_overall_integration(endpoint)

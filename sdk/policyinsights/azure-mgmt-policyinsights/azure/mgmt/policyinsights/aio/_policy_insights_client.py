@@ -21,8 +21,6 @@ from .. import models as _models
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import PolicyInsightsClientConfiguration
 from .operations import (
-    AttestationsOperations,
-    ComponentPolicyStatesOperations,
     Operations,
     PolicyEventsOperations,
     PolicyMetadataOperations,
@@ -33,11 +31,12 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
 class PolicyInsightsClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """Query component policy states at varying resource scopes for Resource Provider mode policies.
+    """PolicyInsightsClient.
 
     :ivar policy_tracked_resources: PolicyTrackedResourcesOperations operations
     :vartype policy_tracked_resources:
@@ -48,38 +47,46 @@ class PolicyInsightsClient:  # pylint: disable=client-accepts-api-version-keywor
     :vartype policy_events: azure.mgmt.policyinsights.aio.operations.PolicyEventsOperations
     :ivar policy_states: PolicyStatesOperations operations
     :vartype policy_states: azure.mgmt.policyinsights.aio.operations.PolicyStatesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.policyinsights.aio.operations.Operations
     :ivar policy_metadata: PolicyMetadataOperations operations
     :vartype policy_metadata: azure.mgmt.policyinsights.aio.operations.PolicyMetadataOperations
     :ivar policy_restrictions: PolicyRestrictionsOperations operations
     :vartype policy_restrictions:
      azure.mgmt.policyinsights.aio.operations.PolicyRestrictionsOperations
-    :ivar component_policy_states: ComponentPolicyStatesOperations operations
-    :vartype component_policy_states:
-     azure.mgmt.policyinsights.aio.operations.ComponentPolicyStatesOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.policyinsights.aio.operations.Operations
-    :ivar attestations: AttestationsOperations operations
-    :vartype attestations: azure.mgmt.policyinsights.aio.operations.AttestationsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Microsoft Azure subscription ID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = PolicyInsightsClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -114,15 +121,11 @@ class PolicyInsightsClient:  # pylint: disable=client-accepts-api-version-keywor
         self.remediations = RemediationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.policy_events = PolicyEventsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.policy_states = PolicyStatesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.policy_metadata = PolicyMetadataOperations(self._client, self._config, self._serialize, self._deserialize)
         self.policy_restrictions = PolicyRestrictionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.component_policy_states = ComponentPolicyStatesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.attestations = AttestationsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

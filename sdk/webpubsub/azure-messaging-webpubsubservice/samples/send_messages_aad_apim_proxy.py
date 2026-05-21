@@ -43,7 +43,7 @@ try:
     reverse_proxy_endpoint = os.environ["WEBPUBSUB_REVERSE_PROXY_ENDPOINT"]
 except KeyError:
     LOG.error(
-        "Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_REVERSE_PROXY_ENDPOINT' - please set if before running the example"
+        "Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_REVERSE_PROXY_ENDPOINT' - please set it before running the example"
     )
     exit()
 
