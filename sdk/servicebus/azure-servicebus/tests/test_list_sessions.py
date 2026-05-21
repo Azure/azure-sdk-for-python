@@ -137,17 +137,28 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
             logging_enable=False,
             uamqp_transport=uamqp_transport,
         ) as sb_client:
-            # Use a 1-minute buffer to absorb client/server clock skew.
-            before_send = datetime.now(timezone.utc) - timedelta(minutes=1)
+            # Capture the filter timestamp slightly in the past so the
+            # service-side "updated after" filter is safely earlier than
+            # the session state update, even with coarse resolution.
+            before_update = datetime.now(timezone.utc) - timedelta(minutes=1)
 
             session_id = str(uuid.uuid4())
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage(
                     "test updated_after", session_id=session_id))
 
-            # updated_after mode: sessions whose state was updated after before_send
+            # The service-side filter is "session state updated after
+            # <timestamp>", so explicitly update the session state.
+            # Sending a message alone does not necessarily register as
+            # a session state update on every entity.
+            with sb_client.get_queue_receiver(
+                servicebus_queue.name, session_id=session_id,
+                max_wait_time=5,
+            ) as receiver:
+                receiver.session.set_state("updated-state")
+
             result = list(sb_client.list_queue_sessions(
-                servicebus_queue.name, updated_after=before_send))
+                servicebus_queue.name, updated_after=before_update))
 
             assert isinstance(result, list)
             assert session_id in result
@@ -199,18 +210,27 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
             logging_enable=False,
             uamqp_transport=uamqp_transport,
         ) as sb_client:
-            # Use a 1-minute buffer to absorb client/server clock skew.
-            before_send = datetime.now(timezone.utc) - timedelta(minutes=1)
+            # Capture the filter timestamp slightly in the past so the
+            # service-side "updated after" filter is safely earlier than
+            # the session state update, even with coarse resolution.
+            before_update = datetime.now(timezone.utc) - timedelta(minutes=1)
 
             session_id = str(uuid.uuid4())
             with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                 sender.send_messages(ServiceBusMessage(
                     "test updated_after", session_id=session_id))
 
-            # updated_after mode: sessions whose state was updated after before_send
+            # The service-side filter is "session state updated after
+            # <timestamp>", so explicitly update the session state.
+            with sb_client.get_subscription_receiver(
+                servicebus_topic.name, servicebus_subscription.name,
+                session_id=session_id, max_wait_time=5,
+            ) as receiver:
+                receiver.session.set_state("updated-state")
+
             result = list(sb_client.list_subscription_sessions(
                 servicebus_topic.name, servicebus_subscription.name,
-                updated_after=before_send))
+                updated_after=before_update))
 
             assert isinstance(result, list)
             assert session_id in result
