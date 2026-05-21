@@ -71,6 +71,9 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         # This is a workaround before we have a better solution to determine the version for changelog generation.
         sdks_with_changelog_issue = {"azure-mgmt-sql": "3.0.1"}
         if package_name in sdks_with_changelog_issue and last_version == sdks_with_changelog_issue[package_name]:
+            _LOGGER.info(
+                f"Package {package_name} has changelog generation issue with version {last_version}, fallback to get latest version from pypi"
+            )
             last_version = str(last_release)
 
     except Exception as e:
