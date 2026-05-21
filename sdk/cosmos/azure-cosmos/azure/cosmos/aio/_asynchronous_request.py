@@ -35,6 +35,7 @@ from .. import http_constants
 from .._availability_strategy_config import CrossRegionHedgingStrategy
 from .._constants import _Constants
 from .._request_object import RequestObject
+from .._response_decoding import decode_response_body_for_status
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 from ..documents import _OperationType
 
@@ -141,7 +142,23 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
 
     data = response.body()
     if data:
-        data = data.decode("utf-8")
+        try:
+            data = decode_response_body_for_status(
+                data, response.status_code, request_params.operation_type
+            )
+        except UnicodeDecodeError as decode_err:
+            # Only reachable when status is < 400 and strict decode is
+            # still in effect. ``decode_response_body_for_status`` never
+            # lets malformed UTF-8 escape on status >= 400, and it honors
+            # REPLACE/IGNORE env fallback before this point. Surface as a
+            # typed SDK decode exception so wire status (e.g. 200) and
+            # response metadata are preserved verbatim; the decoder error
+            # remains available via __cause__.
+            raise DecodeError(
+                message="Failed to decode response body as UTF-8: {0}".format(decode_err.reason),
+                response=response,
+                error=decode_err,
+            ) from decode_err
 
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
@@ -210,7 +227,10 @@ async def AsynchronousRequest(
     """
     request.data = _request_body_from_data(request_data)
     if request.data and isinstance(request.data, str):
-        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
+        # Use UTF-8 byte length, not str length (code-point count), so the
+        # header matches the bytes the transport actually writes for any
+        # non-ASCII payload.
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data.encode("utf-8"))
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
