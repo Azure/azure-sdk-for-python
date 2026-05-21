@@ -60,6 +60,7 @@
 - **Audio Format Values**: Changed `OutputAudioFormat` enum values to use underscore format
   (`pcm16_8000hz`, `pcm16_16000hz`) instead of the previous hyphenated values.
   This is a breaking change for code that compares, persists, or serializes the raw enum values.
+  Legacy hyphenated values continue to deserialize for backward compatibility.
 - Renamed `AvatarConfig.type` field to `avatar_type` to avoid conflict with Python's built-in `type`
 
 ### Other Changes

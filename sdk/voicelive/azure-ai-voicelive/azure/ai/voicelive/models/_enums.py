@@ -245,6 +245,12 @@ class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cedar voice."""
 
 
+_LEGACY_OUTPUT_AUDIO_FORMAT_VALUES = {
+    "pcm16-8000hz": "pcm16_8000hz",
+    "pcm16-16000hz": "pcm16_16000hz",
+}
+
+
 class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Output audio format types supported."""
 
@@ -258,6 +264,14 @@ class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """G.711 μ-law (mu-law) audio format at 8kHz sampling rate."""
     G711_ALAW = "g711_alaw"
     """G.711 A-law audio format at 8kHz sampling rate."""
+
+    @classmethod
+    def _missing_(cls, value):
+        if isinstance(value, str):
+            current_value = _LEGACY_OUTPUT_AUDIO_FORMAT_VALUES.get(value.lower())
+            if current_value is not None:
+                return cls(current_value)
+        return None
 
 
 class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
