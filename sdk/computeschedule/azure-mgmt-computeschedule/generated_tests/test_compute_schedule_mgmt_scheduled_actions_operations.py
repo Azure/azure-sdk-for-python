@@ -27,7 +27,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 "correlationid": "str",
                 "executionParameters": {
                     "optimizationPreference": "str",
-                    "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resources": {"ids": ["str"]},
                 "schedule": {
@@ -52,7 +52,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 "correlationid": "str",
                 "executionParameters": {
                     "optimizationPreference": "str",
-                    "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resources": {"ids": ["str"]},
                 "schedule": {
@@ -77,7 +77,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 "correlationid": "str",
                 "executionParameters": {
                     "optimizationPreference": "str",
-                    "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resources": {"ids": ["str"]},
                 "schedule": {
@@ -102,7 +102,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 "correlationid": "str",
                 "executionParameters": {
                     "optimizationPreference": "str",
-                    "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resources": {"ids": ["str"]},
             },
@@ -120,7 +120,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 "correlationid": "str",
                 "executionParameters": {
                     "optimizationPreference": "str",
-                    "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resources": {"ids": ["str"]},
             },
@@ -138,9 +138,41 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 "correlationid": "str",
                 "executionParameters": {
                     "optimizationPreference": "str",
-                    "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resources": {"ids": ["str"]},
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_scheduled_actions_virtual_machines_execute_create_flex(self, resource_group):
+        response = self.client.scheduled_actions.virtual_machines_execute_create_flex(
+            locationparameter="str",
+            body={
+                "executionParameters": {
+                    "optimizationPreference": "str",
+                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
+                },
+                "resourceConfigParameters": {
+                    "flexProperties": {
+                        "osType": "str",
+                        "priorityProfile": {"allocationStrategy": "str", "type": "str"},
+                        "vmSizeProfiles": [{"name": "str", "rank": 0}],
+                        "zoneAllocationPolicy": {
+                            "distributionStrategy": "str",
+                            "zonePreferences": [{"rank": 0, "zone": "str"}],
+                        },
+                    },
+                    "resourceCount": 0,
+                    "baseProfile": {"str": {}},
+                    "resourceOverrides": [{"str": {}}],
+                    "resourcePrefix": "str",
+                },
+                "correlationid": "str",
             },
         )
 
@@ -155,7 +187,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
             request_body={
                 "executionParameters": {
                     "optimizationPreference": "str",
-                    "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resourceConfigParameters": {
                     "resourceCount": 0,
@@ -178,7 +210,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
             request_body={
                 "executionParameters": {
                     "optimizationPreference": "str",
-                    "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resources": {"ids": ["str"]},
                 "correlationid": "str",
@@ -258,7 +290,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                         "deadlineType": "str",
                         "executionParameters": {
                             "optimizationPreference": "str",
-                            "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                            "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                         },
                     },
                     "startTime": "2020-02-20 00:00:00",
@@ -306,7 +338,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                         "deadlineType": "str",
                         "executionParameters": {
                             "optimizationPreference": "str",
-                            "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                            "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                         },
                     },
                     "startTime": "2020-02-20 00:00:00",

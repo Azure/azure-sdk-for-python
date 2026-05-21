@@ -32,37 +32,42 @@ def main():
 
     response = client.scheduled_actions.begin_create_or_update(
         resource_group_name="rgcomputeschedule",
-        scheduled_action_name="myScheduledAction",
+        scheduled_action_name="scheduled-action-01",
         resource={
-            "location": "vmuhgdgipeypkcv",
+            "location": "hwhsvnvuwsjwu",
             "properties": {
                 "actionType": "Start",
                 "disabled": True,
-                "endTime": "2025-04-17T00:23:55.286Z",
+                "endTime": "2026-03-12T02:39:45.062Z",
                 "notificationSettings": [
-                    {"destination": "wbhryycyolvnypjxzlawwvb", "disabled": True, "language": "en-us", "type": "Email"}
+                    {
+                        "destination": "zaaoabozbhyuhejwsrennfsxowp",
+                        "disabled": True,
+                        "language": "en-us",
+                        "type": "Email",
+                    }
                 ],
                 "resourceType": "VirtualMachine",
                 "schedule": {
                     "deadlineType": "Unknown",
                     "executionParameters": {
                         "optimizationPreference": "Cost",
-                        "retryPolicy": {"retryCount": 17, "retryWindowInMinutes": 29},
+                        "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 19, "retryWindowInMinutes": 3},
                     },
-                    "requestedDaysOfTheMonth": [15],
+                    "requestedDaysOfTheMonth": [18],
                     "requestedMonths": ["January"],
                     "requestedWeekDays": ["Monday"],
-                    "scheduledTime": "19:00:00",
-                    "timeZone": "g",
+                    "scheduledTime": "12:00:00",
+                    "timeZone": "ywgarwvwqegtdsdvv",
                 },
-                "startTime": "2025-04-17T00:23:55.281Z",
+                "startTime": "2026-03-12T02:39:45.061Z",
             },
-            "tags": {"key2102": "obwsqwdydpkscnzceopxgkrhrxtdhv"},
+            "tags": {"key1458": "ahuv"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-03-01-preview/ScheduledActions_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

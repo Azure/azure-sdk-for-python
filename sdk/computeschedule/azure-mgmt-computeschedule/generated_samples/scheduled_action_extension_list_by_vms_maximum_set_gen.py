@@ -31,12 +31,12 @@ def main():
     )
 
     response = client.scheduled_action_extension.list_by_vms(
-        resource_uri="sazvpabfud",
+        resource_uri="rgdhjh",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActionExtension_ListByVms_MaximumSet_Gen.json
+# x-ms-original-file: 2026-03-01-preview/ScheduledActionExtension_ListByVms_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

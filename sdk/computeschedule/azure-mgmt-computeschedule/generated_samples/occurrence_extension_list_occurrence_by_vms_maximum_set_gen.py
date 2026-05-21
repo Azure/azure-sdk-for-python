@@ -31,12 +31,12 @@ def main():
     )
 
     response = client.occurrence_extension.list_occurrence_by_vms(
-        resource_uri="sazvpabfud",
+        resource_uri="rgdhjh",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-04-15-preview/OccurrenceExtension_ListOccurrenceByVms_MaximumSet_Gen.json
+# x-ms-original-file: 2026-03-01-preview/OccurrenceExtension_ListOccurrenceByVms_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

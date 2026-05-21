@@ -15,7 +15,7 @@ from azure.mgmt.computeschedule import ComputeScheduleMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computeschedule
 # USAGE
-    python scheduled_actions_virtual_machines_execute_create_maximum_set_gen.py
+    python scheduled_actions_virtual_machines_execute_create_flex_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,25 +30,34 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.scheduled_actions.virtual_machines_execute_create(
-        locationparameter="tcvpodlxbyg",
-        request_body={
-            "correlationid": "pkm",
+    response = client.scheduled_actions.virtual_machines_execute_create_flex(
+        locationparameter="bnadpwmpjyfduxue",
+        body={
+            "correlationid": "dnncbbqrhnrwcfqrathnexdpcryo",
             "executionParameters": {
                 "optimizationPreference": "Cost",
                 "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 19, "retryWindowInMinutes": 3},
             },
             "resourceConfigParameters": {
                 "baseProfile": {},
-                "resourceCount": 19,
+                "flexProperties": {
+                    "osType": "Windows",
+                    "priorityProfile": {"allocationStrategy": "LowestPrice", "type": "Regular"},
+                    "vmSizeProfiles": [{"name": "bmzylbvz", "rank": 24}, {"name": "bmzylbvz", "rank": 24}],
+                    "zoneAllocationPolicy": {
+                        "distributionStrategy": "BestEffortSingleZone",
+                        "zonePreferences": [{"rank": 21, "zone": "kmcvkimwmqwrhfznrqs"}],
+                    },
+                },
+                "resourceCount": 24,
                 "resourceOverrides": [{}],
-                "resourcePrefix": "ilgcqhoqrpwfkprxok",
+                "resourcePrefix": "irskthgchddyuddpqaxlw",
             },
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/ScheduledActions_VirtualMachinesExecuteCreate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-03-01-preview/ScheduledActions_VirtualMachinesExecuteCreateFlex_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

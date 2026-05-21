@@ -1,5 +1,55 @@
 # Release History
 
+## 1.2.0b2 (2026-04-03)
+
+### Features Added
+
+  - Model `ComputeScheduleMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ResourceOperationDetails` added property `fallback_operation_info`
+  - Enum `ResourceOperationType` added member `CREATE`
+  - Enum `ResourceOperationType` added member `DELETE`
+  - Model `RetryPolicy` added property `on_failure_action`
+  - Added enum `AllocationStrategy`
+  - Added model `CancelOperationsContent`
+  - Added model `CreateFlexResourceOperationResponse`
+  - Added enum `DistributionStrategy`
+  - Added model `ExecuteCreateContent`
+  - Added model `ExecuteCreateFlexContent`
+  - Added model `ExecuteDeallocateContent`
+  - Added model `ExecuteDeleteContent`
+  - Added model `ExecuteHibernateContent`
+  - Added model `ExecuteStartContent`
+  - Added model `FallbackOperationInfo`
+  - Added model `FlexProperties`
+  - Added model `GetOperationErrorsContent`
+  - Added model `GetOperationStatusContent`
+  - Added enum `OsType`
+  - Added model `PriorityProfile`
+  - Added enum `PriorityType`
+  - Added model `ResourceProvisionFlexPayload`
+  - Added model `ScheduledActionsExtensionProperties`
+  - Added model `SubmitDeallocateContent`
+  - Added model `SubmitHibernateContent`
+  - Added model `SubmitStartContent`
+  - Added model `VmSizeProfile`
+  - Added model `ZoneAllocationPolicy`
+  - Added model `ZonePreference`
+  - Model `ScheduledActionsOperations` added method `virtual_machines_execute_create_flex`
+
+### Breaking Changes
+
+  - Deleted or renamed model `CancelOperationsRequest`
+  - Deleted or renamed model `ExecuteCreateRequest`
+  - Deleted or renamed model `ExecuteDeallocateRequest`
+  - Deleted or renamed model `ExecuteDeleteRequest`
+  - Deleted or renamed model `ExecuteHibernateRequest`
+  - Deleted or renamed model `ExecuteStartRequest`
+  - Deleted or renamed model `GetOperationErrorsRequest`
+  - Deleted or renamed model `GetOperationStatusRequest`
+  - Deleted or renamed model `SubmitDeallocateRequest`
+  - Deleted or renamed model `SubmitHibernateRequest`
+  - Deleted or renamed model `SubmitStartRequest`
+
 ## 1.2.0b1 (2025-07-24)
 
 ### Features Added

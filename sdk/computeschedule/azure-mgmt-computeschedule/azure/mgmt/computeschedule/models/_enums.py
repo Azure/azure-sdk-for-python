@@ -19,6 +19,17 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The allocation strategy for VM size selection."""
+
+    LOWEST_PRICE = "LowestPrice"
+    """Platform prioritizes VM sizes with the lowest hourly cost."""
+    PRIORITIZED = "Prioritized"
+    """Customer specifies a rank for each VM size, platform uses VM sizes in rank order."""
+    CAPACITY_OPTIMIZED = "CapacityOptimized"
+    """Platform prioritizes VM sizes with the highest available capacity first."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -43,11 +54,26 @@ class DeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Complete the operation by the given deadline."""
 
 
+class DistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The distribution strategy for zone allocation."""
+
+    BEST_EFFORT_SINGLE_ZONE = "BestEffortSingleZone"
+    """Platform attempts to place as many VMs as possible in a single zone, falls back to multiple
+    zones if needed."""
+    PRIORITIZED = "Prioritized"
+    """Platform uses customer-provided zone rankings to allocate VMs."""
+    BEST_EFFORT_BALANCED = "BestEffortBalanced"
+    """Platform attempts to evenly distribute VMs across all available zones with best effort."""
+    STRICT_BALANCED = "StrictBalanced"
+    """Platform must evenly distribute VMs across zones, request is rejected if exact balance cannot
+    be achieved."""
+
+
 class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The notification languages currently supported."""
 
     EN_US = "en-us"
-    """American english language"""
+    """American english language."""
 
 
 class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -78,67 +104,67 @@ class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DECEMBER = "December"
     """The December month."""
     ALL = "All"
-    """All months"""
+    """All months."""
 
 
 class NotificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of notification supported."""
 
     EMAIL = "Email"
-    """Notify through e-mail"""
+    """Notify through e-mail."""
 
 
 class OccurrenceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state the occurrence is at a given time."""
 
     CREATED = "Created"
-    """The occurrence was created"""
+    """The occurrence was created."""
     RESCHEDULING = "Rescheduling"
-    """The occurrence is being rescheduled"""
+    """The occurrence is being rescheduled."""
     SCHEDULED = "Scheduled"
-    """The occurrence has been scheduled"""
+    """The occurrence has been scheduled."""
     SUCCEEDED = "Succeeded"
-    """The occurrence has successfully ran"""
+    """The occurrence has successfully ran."""
     FAILED = "Failed"
-    """The occurrence has failed during its scheduling"""
+    """The occurrence has failed during its scheduling."""
     CANCELLING = "Cancelling"
-    """The occurrence is going through cancellation"""
+    """The occurrence is going through cancellation."""
     CANCELED = "Canceled"
-    """The occurrence has been canceled"""
+    """The occurrence has been canceled."""
 
 
 class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Values that define the states of operations in Scheduled Actions."""
 
     UNKNOWN = "Unknown"
-    """The default value for the operation state enum"""
+    """The default value for the operation state enum."""
     PENDING_SCHEDULING = "PendingScheduling"
-    """Operations that are pending scheduling"""
+    """Operations that are pending scheduling."""
     SCHEDULED = "Scheduled"
-    """Operations that have been scheduled"""
+    """Operations that have been scheduled."""
     PENDING_EXECUTION = "PendingExecution"
-    """Operations that are waiting to be executed"""
+    """Operations that are waiting to be executed."""
     EXECUTING = "Executing"
-    """Operations that are in the process of being executed"""
+    """Operations that are in the process of being executed."""
     SUCCEEDED = "Succeeded"
-    """Operations that suceeded"""
+    """Operations that suceeded."""
     FAILED = "Failed"
-    """Operations that have failed"""
+    """Operations that have failed."""
     CANCELLED = "Cancelled"
-    """Operations that have been Cancelled by the user"""
+    """Operations that have been Cancelled by the user."""
     BLOCKED = "Blocked"
-    """Operations that are blocked"""
+    """Operations that are blocked."""
 
 
 class OptimizationPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The preferences customers can select to optimize their requests to ScheduledActions."""
 
     COST = "Cost"
-    """Optimize while considering cost savings"""
+    """Optimize while considering cost savings."""
     AVAILABILITY = "Availability"
-    """Optimize while considering availability of resources"""
+    """Optimize while considering availability of resources."""
     COST_AVAILABILITY_BALANCED = "CostAvailabilityBalanced"
-    """Optimize while considering a balance of cost and availability"""
+    """Optimize while considering a balance of cost and availability."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -152,6 +178,24 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
+
+
+class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported operating system types for flex VM creation."""
+
+    WINDOWS = "Windows"
+    """Windows operating system."""
+    LINUX = "Linux"
+    """Linux operating system."""
+
+
+class PriorityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The priority type for VM allocation."""
+
+    REGULAR = "Regular"
+    """Regular priority VMs."""
+    SPOT = "Spot"
+    """Spot priority VMs."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -171,7 +215,7 @@ class ResourceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state the resource is on after the resource operation is applied."""
 
     SUCCEEDED = "Succeeded"
-    """The resource operation was successful"""
+    """The resource operation was successful."""
     FAILED = "Failed"
     """The resource operation has failed."""
 
@@ -180,13 +224,17 @@ class ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of operation types that can be performed on resources using ScheduledActions."""
 
     UNKNOWN = "Unknown"
-    """The default value for this enum type"""
+    """The default value for this enum type."""
     START = "Start"
-    """Start operations on the resources"""
+    """Start operations on the resources."""
     DEALLOCATE = "Deallocate"
-    """Deallocate operations on the resources"""
+    """Deallocate operations on the resources."""
     HIBERNATE = "Hibernate"
-    """Hibernate operations on the resources"""
+    """Hibernate operations on the resources."""
+    CREATE = "Create"
+    """Create operations on the resources."""
+    DELETE = "Delete"
+    """Delete operations on the resources."""
 
 
 class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -204,20 +252,20 @@ class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of resource being targeted."""
 
     VIRTUAL_MACHINE = "VirtualMachine"
-    """Resources defined are Virtual Machines"""
+    """Resources defined are Virtual Machines."""
     VIRTUAL_MACHINE_SCALE_SET = "VirtualMachineScaleSet"
-    """Resources defined are Virtual Machines Scale Sets"""
+    """Resources defined are Virtual Machines Scale Sets."""
 
 
 class ScheduledActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify which action user wants to be performed on the resources."""
 
     START = "Start"
-    """Perform a start action on the specified resources"""
+    """Perform a start action on the specified resources."""
     DEALLOCATE = "Deallocate"
-    """Perform a deallocate action on the specified resources"""
+    """Perform a deallocate action on the specified resources."""
     HIBERNATE = "Hibernate"
-    """Perform hibernate and deallocate on the specified resources"""
+    """Perform hibernate and deallocate on the specified resources."""
 
 
 class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -238,4 +286,4 @@ class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUNDAY = "Sunday"
     """Sunday weekday."""
     ALL = "All"
-    """All week days"""
+    """All week days."""
