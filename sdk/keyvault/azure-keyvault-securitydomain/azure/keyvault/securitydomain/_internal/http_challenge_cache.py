@@ -8,7 +8,6 @@ from urllib import parse
 
 from .http_challenge import HttpChallenge
 
-
 _cache: "Dict[str, HttpChallenge]" = {}
 _lock = threading.Lock()
 
@@ -62,6 +61,7 @@ def remove_challenge_for_url(url: str) -> None:
     key = _get_cache_key(url)
     with _lock:
         del _cache[key.lower()]
+
 
 def set_challenge_for_url(url: str, challenge: "HttpChallenge") -> None:
     """Caches the challenge for the specified URL.

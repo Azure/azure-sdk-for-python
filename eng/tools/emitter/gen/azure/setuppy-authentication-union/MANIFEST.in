@@ -1,7 +1,0 @@
-include *.md
-include LICENSE
-include setuppy/authentication/union/py.typed
-recursive-include tests *.py
-recursive-include samples *.py *.md
-include setuppy/__init__.py
-include setuppy/authentication/__init__.py
