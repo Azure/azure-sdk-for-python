@@ -35,6 +35,7 @@ from azure.ai.evaluation._constants import (
 )
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
+    _aggregation_binary_output,
     _apply_target_to_data,
     _rename_columns_conditionally,
     _convert_results_to_aoai_evaluation_results,
@@ -796,6 +797,45 @@ class TestEvaluate:
         assert "evaluator.protected_material_details.detail2_defect_rate" in defect_rates
         assert defect_rates["evaluator.protected_material_details.detail1_defect_rate"] == 0.5
         assert defect_rates["evaluator.protected_material_details.detail2_defect_rate"] == 0.5
+
+    def test_aggregation_binary_output_skips_evaluation_per_turn_columns(self):
+        """Test that _aggregation_binary_output does not fail on evaluation_per_turn columns.
+
+        Multi-turn conversations produce 'evaluation_per_turn' columns with list values
+        (one list of per-turn results per row). These lists are not hashable and calling
+        value_counts() on them raises TypeError: unhashable type: 'list'.
+        The function must skip such columns and only aggregate top-level scalar result columns.
+        """
+        data = {
+            # Top-level result column with scalar values (should be aggregated)
+            "outputs.coherence.coherence_result": ["pass", "pass", "fail", "pass"],
+            # Per-turn result column with list values from multi-turn conversations
+            # (should be skipped to avoid TypeError: unhashable type: 'list')
+            "outputs.coherence.evaluation_per_turn.coherence_result": [
+                ["pass"],  # single-turn: list with one element
+                ["pass", "fail"],  # multi-turn: list with two elements
+                ["fail", "fail"],  # multi-turn: list with two elements
+                ["pass"],  # single-turn: list with one element
+            ],
+            # Other per-turn numeric column (not a _result column, included for completeness)
+            "outputs.coherence.evaluation_per_turn.coherence": [
+                [4.0],
+                [3.0, 5.0],
+                [2.0, 3.0],
+                [4.5],
+            ],
+        }
+        df = pd.DataFrame(data)
+
+        # This should not raise TypeError: unhashable type: 'list'
+        results = _aggregation_binary_output(df)
+
+        # Top-level result column should be aggregated (3 passes out of 4 rows)
+        assert "coherence.binary_aggregate" in results
+        assert results["coherence.binary_aggregate"] == 0.75
+
+        # Per-turn result column should NOT appear in the aggregation
+        assert "evaluation_per_turn" not in " ".join(results.keys())
 
     def test_quotation_fix_test_data(self, quotation_fix_test_data):
         from test_evaluators.test_inputs_evaluators import QuotationFixEval

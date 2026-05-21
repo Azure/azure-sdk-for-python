@@ -278,8 +278,13 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     """
     results = {}
 
-    # Find all columns that end with "_result"
-    result_columns = [col for col in df.columns if col.startswith("outputs.") and col.endswith("_result")]
+    # Find all columns that end with "_result", excluding per-turn columns which contain list values
+    # and cannot be aggregated as scalar pass/fail counts.
+    result_columns = [
+        col
+        for col in df.columns
+        if col.startswith("outputs.") and col.endswith("_result") and "evaluation_per_turn" not in col
+    ]
 
     for col in result_columns:
         # Extract the evaluator name from the column name
