@@ -265,7 +265,6 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
                 self._set_socket_options(sock, self.socket_settings)
 
         except (OSError, IOError, SSLError) as e:
-            _LOGGER.info("Transport connect failed: %r", e, extra=self.network_trace_params)
             # if not fully connected, close socket, and reraise error
             if self.writer and not self.connected:
                 self.writer.close()
@@ -476,7 +475,6 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
                 heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
             )
         except ClientConnectorError as exc:
-            _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
             if self._custom_endpoint:
                 raise AuthenticationException(
                     ErrorCondition.ClientError,
