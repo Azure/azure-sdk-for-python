@@ -4037,6 +4037,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         await new_file.delete_file()
         await file_client.delete_file()
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @FileSharePreparer()
     async def test_legacy_transport(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -4068,6 +4069,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_data = await (await file_client.download_file()).readall()
         assert file_data == b"Hello Async World!"  # data is fixed by mock transport
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @FileSharePreparer()
     async def test_legacy_transport_with_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
