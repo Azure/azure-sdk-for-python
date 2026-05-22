@@ -5,7 +5,7 @@ import math
 import os
 import pathlib
 import numpy as np
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
@@ -3183,9 +3183,9 @@ class TestGetMetricFromCriteria:
 class TestEmitEvalResultShutdown:
     """Tests that emit_eval_result_events_to_app_insights shuts down the LoggerProvider."""
 
-    @patch("azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter")
+    @patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": MagicMock()})
     @patch("opentelemetry.sdk._logs.LoggerProvider")
-    def test_shutdown_called_on_success(self, mock_lp_cls, mock_exporter_cls):
+    def test_shutdown_called_on_success(self, mock_lp_cls):
         """logger_provider.shutdown() must be called after successful export."""
         mock_lp = mock_lp_cls.return_value
         mock_lp.force_flush.return_value = True
@@ -3200,9 +3200,9 @@ class TestEmitEvalResultShutdown:
         emit_eval_result_events_to_app_insights(config, results)
         mock_lp.shutdown.assert_called_once()
 
-    @patch("azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter")
+    @patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": MagicMock()})
     @patch("opentelemetry.sdk._logs.LoggerProvider")
-    def test_shutdown_called_on_exception(self, mock_lp_cls, mock_exporter_cls):
+    def test_shutdown_called_on_exception(self, mock_lp_cls):
         """logger_provider.shutdown() must be called even when an exception occurs."""
         mock_lp = mock_lp_cls.return_value
         mock_lp.force_flush.side_effect = RuntimeError("boom")
@@ -3218,9 +3218,9 @@ class TestEmitEvalResultShutdown:
         emit_eval_result_events_to_app_insights(config, results)
         mock_lp.shutdown.assert_called_once()
 
-    @patch("azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter")
+    @patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": MagicMock()})
     @patch("opentelemetry.sdk._logs.LoggerProvider")
-    def test_shutdown_called_on_flush_timeout(self, mock_lp_cls, mock_exporter_cls):
+    def test_shutdown_called_on_flush_timeout(self, mock_lp_cls):
         """logger_provider.shutdown() must be called even when flush times out."""
         mock_lp = mock_lp_cls.return_value
         mock_lp.force_flush.return_value = False  # Simulates timeout
@@ -3235,9 +3235,9 @@ class TestEmitEvalResultShutdown:
         emit_eval_result_events_to_app_insights(config, results)
         mock_lp.shutdown.assert_called_once()
 
-    @patch("azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter")
+    @patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": MagicMock()})
     @patch("opentelemetry.sdk._logs.LoggerProvider")
-    def test_no_shutdown_when_results_empty(self, mock_lp_cls, mock_exporter_cls):
+    def test_no_shutdown_when_results_empty(self, mock_lp_cls):
         """When results list is empty, no LoggerProvider is created so no shutdown."""
         config = {"connection_string": "InstrumentationKey=fake-key"}
 
