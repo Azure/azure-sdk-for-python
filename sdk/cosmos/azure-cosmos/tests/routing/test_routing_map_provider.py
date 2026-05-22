@@ -1,19 +1,19 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import threading
+import time
 import unittest
+from typing import Optional, Mapping, Any
+from unittest.mock import MagicMock
 
 import pytest
 
+from azure.cosmos import _base, http_constants
 from azure.cosmos._routing import routing_range as routing_range
 from azure.cosmos._routing.routing_map_provider import CollectionRoutingMap
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
-from azure.cosmos import http_constants
-
-from typing import Optional, Mapping, Any
-from unittest.mock import MagicMock
-import threading
 
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProvider(unittest.TestCase):
@@ -214,7 +214,6 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertIsNotNone(result)
         self.assertEqual(len(list(result._orderedPartitionKeyRanges)), 5)
         # Verify it's cached
-        from azure.cosmos import _base
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         self.assertIn(collection_id, provider._collection_routing_map_by_item)
 
@@ -245,6 +244,55 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result.change_feed_etag, expected_internal_etag)
         self.assertEqual(hook_calls, ['"user-hook-etag"'])
+
+    def test_get_routing_map_tight_timeout_kwarg_still_populates_cache(self):
+        """Sync path forwards timeout kwarg and populates cache on successful fetch."""
+        # The sync side of the PK-range cache work is much narrower than the
+        # async side: sync has no asyncio cancellation channel, so the
+        # "wait_for kills the fetch mid-flight" failure mode doesn't apply.
+        # What CAN reach the cache on sync is the `timeout=` kwarg
+        #
+        # This test covers the happy path of that flow:
+        #   1. Customer calls `get_routing_map(..., timeout=0.001)`.
+        #   2. The cache layer forwards the kwarg to the underlying read
+        #      (verified by inspecting what the mock saw).
+        #   3. The fetch completes successfully (the mock returns instantly
+        #      without honouring the tiny timeout).
+        #   4. The result lands in the cache as normal.
+        #   5. A second call hits the cache fast-path with no new fetch.
+        call_count = {'count': 0}
+        # We record the timeout the mock saw, to prove the kwargs path is
+        # intact end-to-end (cache layer didn't silently drop it).
+        seen_timeout = {'value': None}
+        original_ranges = self.partition_key_ranges
+
+        class TimeoutAwareClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                seen_timeout['value'] = kwargs.get('timeout')
+                TestRoutingMapProvider._capture_internal_headers(kwargs, '"timeout-etag"')
+                return original_ranges
+
+        provider = PartitionKeyRangeCache(TimeoutAwareClient())
+        collection_link = "dbs/db/colls/container"
+
+        # === Step 1: first call with a tight timeout kwarg. The mock returns
+        # instantly so the timeout doesn't actually fire; the fetch succeeds.
+        result1 = provider.get_routing_map(collection_link, feed_options={}, timeout=0.001)
+        self.assertIsNotNone(result1)
+        # === Step 2: verify the cache layer forwarded the timeout kwarg
+        # down to the mock. If this is None, the kwargs path is broken.
+        self.assertEqual(seen_timeout['value'], 0.001)
+        self.assertEqual(call_count['count'], 1)
+
+        # === Step 3: confirm the routing map landed in the cache as normal.
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        self.assertIn(collection_id, provider._collection_routing_map_by_item)
+
+        # === Step 4: second call (no timeout). Cache hit, no extra fetch.
+        result2 = provider.get_routing_map(collection_link, feed_options={})
+        self.assertIs(result2, result1)
+        self.assertEqual(call_count['count'], 1)
 
     def test_get_routing_map_returns_cached_on_second_call(self):
         """Second call returns the same cached object without re-fetching."""
@@ -313,7 +361,6 @@ class TestRoutingMapProvider(unittest.TestCase):
             TestRoutingMapProvider.MockedCosmosClientConnection(self.partition_key_ranges)
         )
         collection_link = "dbs/db/colls/container"
-        from azure.cosmos import _base
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
         # Populate cache
@@ -348,7 +395,6 @@ class TestRoutingMapProvider(unittest.TestCase):
                 return incomplete_ranges
 
         provider = PartitionKeyRangeCache(IncompleteClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -385,7 +431,6 @@ class TestRoutingMapProvider(unittest.TestCase):
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(DeltaClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -433,7 +478,6 @@ class TestRoutingMapProvider(unittest.TestCase):
                 return full_ranges
 
         provider = PartitionKeyRangeCache(HeaderCapturingClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -491,7 +535,6 @@ class TestRoutingMapProvider(unittest.TestCase):
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -538,7 +581,6 @@ class TestRoutingMapProvider(unittest.TestCase):
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -610,7 +652,6 @@ class TestRoutingMapProvider(unittest.TestCase):
                 return full_ranges
 
         provider = PartitionKeyRangeCache(RapidSplitClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -666,7 +707,6 @@ class TestRoutingMapProvider(unittest.TestCase):
                 return delta_ranges
 
         provider = PartitionKeyRangeCache(MergeClient())
-        from azure.cosmos import _base
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
@@ -724,8 +764,26 @@ class TestRoutingMapProvider(unittest.TestCase):
         With `and`, only the first thread that finds the cache stale actually fetches.
         Subsequent threads see the updated ETag and skip the redundant fetch.
         """
+
+        # Sync mirror of the async concurrent-refresh test. On sync, the
+        # cache uses a `threading.Lock` (not an asyncio Lock) to serialise
+        # concurrent refreshes — this is the same lock that prevents the
+        # gateway-side stampede where every cold-cache caller would fire
+        # its own concurrent fetch.
+        #
+        # Even if 5 threads all decide to `force_refresh` at the same moment,
+        # the lock makes sure they take turns, and the double-checked ETag
+        # logic short-circuits the second-through-fifth threads once the
+        # first one has already done the refresh.
+        #
+        # The test forces all this contention by gating the mock client with
+        # a `threading.Event`, then releases the gate and verifies that
+        # every thread came out the other side with a valid result and no
+        # exceptions.
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
+        # A threading.Event so we can pin the mock client mid-fetch while
+        # the contention builds up, then release them all at once.
         fetch_event = threading.Event()
 
         class SlowCountingClient:
@@ -739,10 +797,14 @@ class TestRoutingMapProvider(unittest.TestCase):
         provider = PartitionKeyRangeCache(SlowCountingClient())
         collection_link = "dbs/db/colls/container"
 
-        # Populate cache with initial map
+        # === Step 1: populate the cache with an initial map. Open the gate
+        # so this first load isn't slow.
         fetch_event.set()  # Let the initial load go fast
         initial_map = provider.get_routing_map(collection_link, feed_options={})
         self.assertEqual(call_count['count'], 1)
+        # === Step 2: close the gate. Subsequent fetches will park inside
+        # the mock until we open it again — guaranteeing the contention
+        # window stays open while threads pile up.
         fetch_event.clear()  # Now make subsequent fetches slow
 
         results = [None] * 5
@@ -757,21 +819,22 @@ class TestRoutingMapProvider(unittest.TestCase):
             except Exception as e:
                 errors.append(e)
 
+        # === Step 3: launch 5 OS threads all calling force_refresh at once.
         threads = [threading.Thread(target=thread_fn, args=(i,)) for i in range(5)]
         for t in threads:
             t.start()
 
-        # Give threads time to all start and contend on the lock
-        import time
+        # === Step 4: give them time to all start and stack up on the lock.
         time.sleep(0.2)
-        # Release the slow fetch
+        # Release the slow fetch so the queued threads can drain.
         fetch_event.set()
 
         for t in threads:
             t.join(timeout=10)
 
+        # === Step 5: contract — no thread crashed, all 5 came back with a
+        # valid map.
         self.assertEqual(len(errors), 0, f"Threads raised errors: {errors}")
-        # All threads should get a non-None result
         for i, r in enumerate(results):
             self.assertIsNotNone(r, f"Thread {i} got None")
 
@@ -781,23 +844,39 @@ class TestRoutingMapProvider(unittest.TestCase):
         The cache entry is atomically replaced, never deleted. This test verifies
         that concurrent readers always see either the old valid map or the new valid map.
         """
+
+        # Sync mirror of the async "cache never None" test. Same property
+        # applies: a concurrent reader (running on its own thread, hitting
+        # the cache fast path) must never observe None while a refresher
+        # thread is replacing the map. The implementation must use atomic
+        # dict assignment (`cache[key] = new_map`), never delete-then-
+        # reinsert.
+        #
+        # If a reader ever did see None, it would conclude the cache was
+        # cold and trigger its own fetch — a needless extra HTTP request,
+        # multiplied by however many readers happened to look at the wrong
+        # microsecond. Across many readers under load this would compound
+        # into the same kind of stampede the lock was added to prevent.
         original_ranges = self.partition_key_ranges
         call_count = {'count': 0}
 
         class SlowClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                import time
+                # Artificial 100 ms delay so the refresher is provably mid-
+                # flight while the reader is polling — without it, the
+                # refresh might complete before the reader observes even
+                # one read.
                 time.sleep(0.1)  # Simulate network delay
                 TestRoutingMapProvider._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
                 return original_ranges
 
         provider = PartitionKeyRangeCache(SlowClient())
         collection_link = "dbs/db/colls/container"
-        from azure.cosmos import _base
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        # Populate cache
+        # === Step 1: populate the cache so the reader has something
+        # non-None to observe before, during, and after the refresh.
         initial_map = provider.get_routing_map(collection_link, feed_options={})
         self.assertIsNotNone(initial_map)
 
@@ -818,6 +897,9 @@ class TestRoutingMapProvider(unittest.TestCase):
                 force_refresh=True, previous_routing_map=initial_map
             )
 
+        # === Step 2: start both threads. Reader spins, refresher does its
+        # one slow refresh and exits. Once refresher is done we tell reader
+        # to stop and join it.
         reader = threading.Thread(target=reader_fn)
         refresher = threading.Thread(target=refresher_fn)
 
@@ -827,6 +909,8 @@ class TestRoutingMapProvider(unittest.TestCase):
         stop_event.set()
         reader.join(timeout=5)
 
+        # === Step 3: the assertion. Reader saw the slot transition from
+        # old map -> new map without ever observing a None intermediate.
         self.assertEqual(none_seen['count'], 0,
                          "Cache entry should never be None during a refresh — it should be atomically replaced")
 

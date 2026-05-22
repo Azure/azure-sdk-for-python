@@ -9,6 +9,7 @@ PKRange and Range data structure tests are not duplicated here since they are
 the same class in both sync and async paths.
 """
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 import unittest
 
 import pytest
@@ -31,18 +32,20 @@ class MockClient:
 class TestSharedPartitionKeyRangeCacheAsync(unittest.IsolatedAsyncioTestCase):
 
     def tearDown(self):
-        # Wipe ALL four shared-cache globals between unit tests, not just
-        # the routing-map dict, so refcount and lock state stay consistent
-        # for tests that exercise lifecycle behavior.
+        # Wipe ALL shared-cache globals between unit tests, not just
+        # the routing-map dict, so refcount, lock, and in-flight-task
+        # state stay consistent for tests that exercise lifecycle behavior.
         from azure.cosmos._routing.aio.routing_map_provider import (
             _shared_collection_locks,
             _shared_locks_locks,
+            _shared_inflight_fetches,
             _shared_cache_refcounts,
         )
         with _shared_cache_lock:
             _shared_routing_map_cache.clear()
             _shared_collection_locks.clear()
             _shared_locks_locks.clear()
+            _shared_inflight_fetches.clear()
             _shared_cache_refcounts.clear()
 
     async def test_same_endpoint_shares_cache_async(self):
@@ -113,12 +116,14 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         from azure.cosmos._routing.aio.routing_map_provider import (
             _shared_collection_locks,
             _shared_locks_locks,
+            _shared_inflight_fetches,
             _shared_cache_refcounts,
         )
         with _shared_cache_lock:
             _shared_routing_map_cache.clear()
             _shared_collection_locks.clear()
             _shared_locks_locks.clear()
+            _shared_inflight_fetches.clear()
             _shared_cache_refcounts.clear()
 
     def _refcount(self, endpoint):
@@ -140,16 +145,19 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         from azure.cosmos._routing.aio.routing_map_provider import (
             _shared_collection_locks,
             _shared_locks_locks,
+            _shared_inflight_fetches,
             _shared_cache_refcounts,
         )
         ep = "https://async-lifecycle2.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
         for d in (_shared_routing_map_cache, _shared_collection_locks,
-                  _shared_locks_locks, _shared_cache_refcounts):
+                  _shared_locks_locks, _shared_inflight_fetches,
+                  _shared_cache_refcounts):
             self.assertIn(ep, d)
         c1.release()
         for d in (_shared_routing_map_cache, _shared_collection_locks,
-                  _shared_locks_locks, _shared_cache_refcounts):
+                  _shared_locks_locks, _shared_inflight_fetches,
+                  _shared_cache_refcounts):
             self.assertNotIn(ep, d)
 
     async def test_release_is_idempotent_async(self):
@@ -171,6 +179,46 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         c1.clear_cache()
         self.assertEqual(self._refcount(ep), before)
         self.assertIn(ep, _shared_routing_map_cache)
+
+    async def test_release_while_fetch_inflight_async(self):
+        from azure.cosmos._routing.aio.routing_map_provider import (
+            _shared_inflight_fetches,
+            _shared_cache_refcounts,
+        )
+
+        ep = "https://async-lifecycle5.documents.azure.com:443/"
+        fetch_gate = asyncio.Event()
+        partition_key_ranges = [{"id": "0", "minInclusive": "", "maxExclusive": "FF"}]
+
+        class SlowReadClient(MockClient):
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                async def _gen():
+                    await fetch_gate.wait()
+                    for r in partition_key_ranges:
+                        yield r
+
+                return _gen()
+
+        c1 = PartitionKeyRangeCache(SlowReadClient(ep))
+        fetch_task = asyncio.create_task(
+            c1.get_routing_map("dbs/db/colls/container", feed_options={})
+        )
+
+        for _ in range(100):
+            if c1._inflight_fetches:  # pylint: disable=protected-access
+                break
+            await asyncio.sleep(0.01)
+
+        self.assertTrue(c1._inflight_fetches)  # pylint: disable=protected-access
+        c1.release()
+        self.assertNotIn(ep, _shared_cache_refcounts)
+        self.assertNotIn(ep, _shared_routing_map_cache)
+        self.assertNotIn(ep, _shared_inflight_fetches)
+
+        fetch_gate.set()
+        routing_map = await fetch_task
+        self.assertIsNotNone(routing_map)
+        self.assertFalse(c1._inflight_fetches)  # pylint: disable=protected-access
 
 
 if __name__ == "__main__":
