@@ -161,7 +161,8 @@ from azure.appconfiguration.provider import load, WatchKey
 connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
 config = load(
-    connection_string=connection_string,
+    endpoint=endpoint,
+    credential=credential,
     refresh_on=[WatchKey("Sentinel")],
     refresh_interval=60,
     **kwargs,
@@ -363,7 +364,8 @@ from azure.appconfiguration.provider import load, WatchKey
 connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
 config = load(
-    connection_string=connection_string,
+    endpoint=endpoint,
+    credential=credential,
     refresh_on=[WatchKey("message")],
     refresh_on_feature_flags=True,
     refresh_interval=60,
