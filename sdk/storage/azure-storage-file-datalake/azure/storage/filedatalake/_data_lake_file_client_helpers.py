@@ -66,7 +66,6 @@ def _append_data_options(
         'position': offset,
         'content_length': length,
         'validate_content': validate_content,
-        'cpk_info': cpk_info,
         'timeout': kwargs.pop('timeout', None),
         'cls': return_response_headers
     }
