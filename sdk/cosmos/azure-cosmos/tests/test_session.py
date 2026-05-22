@@ -19,8 +19,13 @@ from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 from typing import Callable
 
+AAD_MWR_SKIP_REASON = (
+    "MWR topology fault-injection test uses localhost secondary endpoint and is emulator-only."
+)
+
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 class TestSession(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -44,8 +49,9 @@ class TestSession(unittest.TestCase):
                             "'masterKey' and 'host' at the top of this class to run the "
                             "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        # key-auth client for control-plane operations
+        cls.key_client, cls.key_db, cls.client, cls.created_db = (
+            test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID))
         cls.created_collection = cls.created_db.get_container_client(cls.TEST_COLLECTION_ID)
 
     def test_manual_session_token_takes_precedence(self):
@@ -118,9 +124,10 @@ class TestSession(unittest.TestCase):
     def test_session_token_sm_for_ops(self):
 
         # Session token should not be sent for control plane operations
-        test_container = self.created_db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"), raw_response_hook=test_config.no_token_response_hook)
-        self.created_db.get_container_client(container=self.created_collection).read(raw_response_hook=test_config.no_token_response_hook)
-        self.created_db.delete_container(test_container, raw_response_hook=test_config.no_token_response_hook)
+        # control-plane container create/read/delete via key_db
+        test_container = self.key_db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"), raw_response_hook=test_config.no_token_response_hook)
+        self.key_db.get_container_client(container=self.created_collection).read(raw_response_hook=test_config.no_token_response_hook)
+        self.key_db.delete_container(test_container, raw_response_hook=test_config.no_token_response_hook)
 
         # Session token should be sent for document read/batch requests only - verify it is not sent for write requests
         up_item = self.created_collection.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
@@ -160,11 +167,14 @@ class TestSession(unittest.TestCase):
         Verify that when querying with a feed range (single physical partition),
         only that partition's session token is sent, not the entire compound token.
         """
-        test_container = self.created_db.create_container(
+        # control-plane container creation
+        test_container_ref = self.key_db.create_container(
             "Container query test" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
             offer_throughput=11000
         )
+        # Data-plane proxy for item/query operations
+        test_container = self.created_db.get_container_client(test_container_ref.id)
 
         try:
             # Create items across multiple partition keys
@@ -198,7 +208,7 @@ class TestSession(unittest.TestCase):
                              f"Expected single partition token, got compound token: {token}")
 
         finally:
-            self.created_db.delete_container(test_container)
+            self.key_db.delete_container(test_container_ref)  # control-plane
 
     def test_session_token_compound_not_sent_for_multi_partition_feed_range_query(self):
         """
@@ -206,11 +216,14 @@ class TestSession(unittest.TestCase):
         each individual request sends only the relevant partition's session token,
         not the entire compound token.
         """
-        test_container = self.created_db.create_container(
+        # control-plane container creation
+        test_container_ref = self.key_db.create_container(
             "Container multi partition test" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
             offer_throughput=11000
         )
+        # Data-plane proxy for item/query operations
+        test_container = self.created_db.get_container_client(test_container_ref.id)
 
         try:
             # Create items across multiple partition keys
@@ -251,16 +264,19 @@ class TestSession(unittest.TestCase):
                                  f"Expected single partition token per request, got compound token: {token}")
 
         finally:
-            self.created_db.delete_container(test_container)
+            self.key_db.delete_container(test_container_ref)  # control-plane
 
     def test_session_token_with_space_in_container_name(self):
 
         # Session token should not be sent for control plane operations
-        test_container = self.created_db.create_container(
+        # control-plane container creation
+        test_container_ref = self.key_db.create_container(
             "Container with space" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
             raw_response_hook=test_config.no_token_response_hook
         )
+        # Data-plane proxy for data operations
+        test_container = self.created_db.get_container_client(test_container_ref.id)
         try:
             # Session token should be sent for document read/batch requests only - verify it is not sent for write requests
             created_document = test_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
@@ -278,11 +294,18 @@ class TestSession(unittest.TestCase):
             assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
                     response_session_token)
         finally:
-            self.created_db.delete_container(test_container)
+            self.key_db.delete_container(test_container_ref)  # control-plane
 
+    # This test injects emulator-style multi-write topology with a localhost endpoint.
+    # In AAD live lanes that injected secondary endpoint is unreachable, so skip there.
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason=AAD_MWR_SKIP_REASON
+    )
     def test_session_token_mwr_for_ops(self):
         # For multiple write regions, all document requests should send out session tokens
         # We will use fault injection to simulate the regions the emulator needs
+        # NOTE: This test stays entirely on key-auth since it uses a custom FaultInjection transport
         custom_transport = FaultInjectionTransport()
 
         # Inject topology transformation that would make Emulator look like a multiple write region account
@@ -302,6 +325,7 @@ class TestSession(unittest.TestCase):
         container = db.get_container_client(self.TEST_COLLECTION_ID)
 
         # Session token should not be sent for control plane operations
+        # control-plane container create/read/delete
         test_container = db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"),
                                                                 raw_response_hook=test_config.no_token_response_hook)
         db.get_container_client(container=self.created_collection).read(
