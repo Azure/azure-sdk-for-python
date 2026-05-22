@@ -754,6 +754,11 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :returns: An iterator of session ID strings.
         :rtype: iterator[str]
         """
+        if self._entity_name and queue_name != self._entity_name:
+            raise ValueError(
+                "The queue name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
         if timeout is not None and timeout <= 0:
@@ -787,6 +792,11 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :returns: An iterator of session ID strings.
         :rtype: iterator[str]
         """
+        if self._entity_name and topic_name != self._entity_name:
+            raise ValueError(
+                "The topic name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
         if timeout is not None and timeout <= 0:
