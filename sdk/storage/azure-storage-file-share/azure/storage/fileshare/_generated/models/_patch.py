@@ -16,7 +16,6 @@ from typing import Any, Callable, Dict, List, Optional
 from .._utils.model_base import Model as _deserialize
 from azure.core.serialization import as_attribute_dict
 
-
 # ---------------------------------------------------------------------------
 # Backcompat shims for public methods that existed on the old autorest msrest models.
 # The TypeSpec-generated models inherit from ``_Model`` (a ``MutableMapping`` subclass) which does not

@@ -119,9 +119,7 @@ class _ChunkDownloader:  # pylint: disable=too-many-instance-attributes
 
     def _download_chunk(self, chunk_start: int, chunk_end: int) -> bytes:
         range_header, range_validation = validate_and_format_range_headers(
-            chunk_start,
-            chunk_end,
-            check_content_md5=is_md5_validation(self.validate_content)
+            chunk_start, chunk_end, check_content_md5=is_md5_validation(self.validate_content)
         )
 
         try:
@@ -297,7 +295,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=is_md5_validation(self._validate_content)
+            check_content_md5=is_md5_validation(self._validate_content),
         )
 
         try:

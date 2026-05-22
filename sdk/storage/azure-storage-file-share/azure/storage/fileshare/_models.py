@@ -370,7 +370,7 @@ class ShareSmbSettings(GeneratedShareSmbSettings, _ModelBackCompatMixin):
         *,
         multichannel: Optional[SmbMultichannel] = None,
         encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         super().__init__(multichannel=multichannel, encryption_in_transit=encryption_in_transit)
         if self.multichannel is None and self.encryption_in_transit is None:
@@ -756,7 +756,7 @@ class ContentSettings(DictMixin):
         content_disposition: Optional[str] = None,
         cache_control: Optional[str] = None,
         content_md5: Optional[bytearray] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.content_type = content_type or kwargs.get("Content-Type")
         self.content_encoding = content_encoding or kwargs.get("Content-Encoding")

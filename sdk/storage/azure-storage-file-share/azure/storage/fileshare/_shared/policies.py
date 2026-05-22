@@ -470,14 +470,13 @@ def _validate_content_response(
             # Patch response to return response iterator wrapped in structured message decoder
             original_iter_bytes = response.http_response.iter_bytes
 
-
             def wrapped_iter_bytes(*args, **kwargs):
                 iterator = original_iter_bytes(*args, **kwargs)
                 decoder = decoder_cls(iterator, content_length, block_size=DATA_BLOCK_SIZE)
                 # Only set request/response if present on iterator
-                if hasattr(iterator, 'request'):
+                if hasattr(iterator, "request"):
                     decoder.request = iterator.request  # type: ignore
-                if hasattr(iterator, 'response'):
+                if hasattr(iterator, "response"):
                     decoder.response = iterator.response  # type: ignore
                 return decoder
 

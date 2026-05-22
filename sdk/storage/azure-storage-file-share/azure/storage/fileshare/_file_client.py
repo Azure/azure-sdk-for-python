@@ -482,15 +482,12 @@ class ShareFileClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Create a file.
         """
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        content_settings = kwargs.pop('content_settings', None)
-        metadata = kwargs.pop('metadata', None)
-        timeout = kwargs.pop('timeout', None)
-        validate_content = parse_validation_option(
-            kwargs.pop('validate_content', None),
-            force_structured_message=True
-        )
-        headers = kwargs.pop('headers', {})
+        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        content_settings = kwargs.pop("content_settings", None)
+        metadata = kwargs.pop("metadata", None)
+        timeout = kwargs.pop("timeout", None)
+        validate_content = parse_validation_option(kwargs.pop("validate_content", None), force_structured_message=True)
+        headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         data = kwargs.pop("data", None)
         file_http_headers = {}
@@ -635,13 +632,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         max_concurrency = kwargs.pop("max_concurrency", None)
         if max_concurrency is None:
             max_concurrency = DEFAULT_MAX_CONCURRENCY
-        validate_content = parse_validation_option(
-            kwargs.pop('validate_content', None),
-            force_structured_message=True
-        )
-        progress_hook = kwargs.pop('progress_hook', None)
-        timeout = kwargs.pop('timeout', None)
-        encoding = kwargs.pop('encoding', 'UTF-8')
+        validate_content = parse_validation_option(kwargs.pop("validate_content", None), force_structured_message=True)
+        progress_hook = kwargs.pop("progress_hook", None)
+        timeout = kwargs.pop("timeout", None)
+        encoding = kwargs.pop("encoding", "UTF-8")
 
         if isinstance(data, str):
             data = data.encode(encoding)
@@ -966,7 +960,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             params = kwargs.pop("params", {}) or {}
             params["sharesnapshot"] = self.snapshot
             kwargs["params"] = params
-        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        validate_content = parse_validation_option(kwargs.pop("validate_content", None))
 
         return StorageStreamDownloader(
             client=self._client.file,
@@ -1401,13 +1395,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        validate_content = parse_validation_option(
-            kwargs.pop('validate_content', None),
-            force_structured_message=True
-        )
-        timeout = kwargs.pop('timeout', None)
-        encoding = kwargs.pop('encoding', 'UTF-8')
-        file_last_write_mode = kwargs.pop('file_last_write_mode', None)
+        validate_content = parse_validation_option(kwargs.pop("validate_content", None), force_structured_message=True)
+        timeout = kwargs.pop("timeout", None)
+        encoding = kwargs.pop("encoding", "UTF-8")
+        file_last_write_mode = kwargs.pop("file_last_write_mode", None)
         if isinstance(data, str):
             data = data.encode(encoding)
 
