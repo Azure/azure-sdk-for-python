@@ -13,6 +13,8 @@
 
 ### Other Changes
 
+- Switched feature flag refresh to use page-based etag checking instead of per-flag etag checking, reducing the number of requests needed to detect changes.
+
 ## 2.4.0 (2026-02-17)
 
 ### Features Added
