@@ -14,6 +14,7 @@ DESCRIPTION:
          existing agent within a time window and emits ready-to-use fine-tuning
          JSONL files split into training and validation partitions.
       2. Polls the job to completion and prints every generated file output.
+      3. Cleans up the generated fine-tuning files and the data generation job.
 
     Setting `train_split` triggers a split of the generated samples into two
     Azure OpenAI files — a training partition and a validation partition.
@@ -71,7 +72,7 @@ traces_window_days = int(os.environ.get("FOUNDRY_TRACES_WINDOW_DAYS", "7"))
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
 # Unique per-run output name so repeated runs do not collide.
-# The service rejects output names longer than 50 characters.
+# Output names are capped at 50 characters by the service.
 run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 output_name = f"{dataset_name}-{run_id}"
 if len(output_name) > 50:
@@ -161,5 +162,9 @@ with (
     # ------------------------------------------------------------------
     # 3. Clean up.
     # ------------------------------------------------------------------
+    for output in file_outputs:
+        print(f"Delete the generated Azure OpenAI file `{output.id}`.")
+        openai_client.files.delete(file_id=output.id)
+
     print(f"Delete the data generation job `{job.id}`.")
     project_client.beta.datasets.delete_generation_job(job_id=job.id)

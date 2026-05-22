@@ -14,7 +14,7 @@ DESCRIPTION:
          time window and synthesizes question / answer pairs into a new
          versioned Dataset.
       2. Polls the job to completion and resolves the resulting `DatasetVersion`.
-      3. Cleans up the data generation job.
+      3. Cleans up the generated dataset and the data generation job.
 
     The Traces source consumes existing telemetry, so no `model_options` are
     required — the service derives samples directly from the agent's traces.
@@ -73,7 +73,7 @@ traces_window_days = int(os.environ.get("FOUNDRY_TRACES_WINDOW_DAYS", "7"))
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
 # Unique per-run output dataset name so repeated runs do not collide.
-# The service rejects output names longer than 50 characters.
+# Output names are capped at 50 characters by the service.
 run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 output_dataset_name = f"{dataset_name}-{run_id}"
 if len(output_dataset_name) > 50:
@@ -152,5 +152,8 @@ with (
     # ------------------------------------------------------------------
     # 2. Clean up.
     # ------------------------------------------------------------------
+    print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
+    project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
+
     print(f"Delete the data generation job `{job.id}`.")
     project_client.beta.datasets.delete_generation_job(job_id=job.id)

@@ -16,7 +16,7 @@ DESCRIPTION:
          question / answer pairs from the file content and emits them as
          training and validation JSONL files.
       3. Polls the job to completion and prints every generated file output.
-      4. Cleans up the Azure OpenAI input file and the data generation job.
+      4. Cleans up the generated fine-tuning files, the Azure OpenAI input file, and the data generation job.
 
     `simple_qna` REQUIRES `model_options` — the service uses the configured LLM
     to synthesize the QnA pairs. Setting `train_split` triggers a split of
@@ -32,8 +32,9 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry project.
-    2) FOUNDRY_MODEL_NAME - Required. The name of an LLM model deployment used to
-       synthesize the QnA samples (e.g. `gpt-4o`, `gpt-5`).
+    2) FOUNDRY_MODEL_NAME - Required. The name of an Azure OpenAI model
+       deployment used to synthesize the QnA samples. For `simple_qna` fine-tuning,
+       the deployment must support the chat completions API (e.g. `gpt-4o`, `gpt-4.1`).
     3) DATASET_NAME - Optional. Name to assign to the generated output files
        (used as the file name prefix). Defaults to `simpleqna-finetuning-sample`.
        The service caps the rendered output name at 50 characters, so keep
@@ -73,7 +74,7 @@ dataset_name = os.environ.get("DATASET_NAME", "simpleqna-finetuning-sample")
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
 # Unique per-run output name so repeated runs do not collide.
-# The service rejects output names longer than 50 characters.
+# Output names are capped at 50 characters by the service.
 run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
 output_name = f"{dataset_name}-{run_id}"
 if len(output_name) > 50:
@@ -214,6 +215,10 @@ with (
     # ------------------------------------------------------------------
     # 4. Clean up.
     # ------------------------------------------------------------------
+    for output in file_outputs:
+        print(f"Delete the generated Azure OpenAI file `{output.id}`.")
+        openai_client.files.delete(file_id=output.id)
+
     print(f"Delete the Azure OpenAI input file `{seed_file.id}`.")
     openai_client.files.delete(file_id=seed_file.id)
 

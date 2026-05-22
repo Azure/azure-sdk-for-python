@@ -7,43 +7,48 @@
 """
 DESCRIPTION:
     Generates an evaluation dataset from a multi-source `simple_qna` job that
-    combines a seed Dataset with an inline Prompt. The sample:
+    combines an Azure OpenAI File with an inline Prompt. The sample:
 
-      1. Uploads a short Markdown reference document as a new versioned
-         Dataset that will act as the seed (product / operations reference).
+      1. Uploads a short Markdown reference document via the Azure OpenAI Files
+         API (`purpose=user_data`) so it can be referenced by file id.
       2. Creates a `DataGenerationJob` (scenario=EVALUATION, type=simple_qna)
-         with two sources: the seed `Dataset` and a `Prompt` that adds an
+         with two sources: the uploaded `File` and a `Prompt` that adds an
          instruction to generate expert-level, high-difficulty questions.
       3. Polls the job to completion, resolves the generated `DatasetVersion`,
          and shows that the caller-supplied output `description` and `tags` are
          propagated onto the new dataset.
-      4. Cleans up the seed dataset and the data generation job.
+      4. Cleans up the generated dataset, the Azure OpenAI input file, and the data generation job.
 
     `simple_qna` REQUIRES `model_options` — the service uses the configured LLM
     to synthesize question / answer pairs from the combined sources.
 
+    For `simple_qna` evaluation jobs the deployed model must support the
+    Azure OpenAI Responses API. See the supported-model list:
+    https://learn.microsoft.com/azure/foundry/openai/how-to/responses?tabs=python-key#model-support
+
 USAGE:
-    python sample_dataset_generation_job_simpleqna_with_dataset_source.py
+    python sample_dataset_generation_job_simpleqna_with_file_source.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.2.0" azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry project.
-    2) FOUNDRY_MODEL_NAME - Required. The name of an LLM model deployment used to
-       synthesize the QnA samples (e.g. `gpt-4o`, `gpt-5`).
+    2) FOUNDRY_MODEL_NAME - Required. The name of an Azure OpenAI model
+       deployment used to synthesize the QnA samples. For `simple_qna` evaluation,
+       choose a Responses-API capable model (see the link in the description).
     3) DATASET_NAME - Optional. Name to assign to the generated output dataset.
-       Defaults to `simpleqna-multisource-sample`. The service caps the rendered
+       Defaults to `simpleqna-file-source-sample`. The service caps the rendered
        output name at 50 characters, so keep custom values short — the sample
        appends a unique run id suffix.
     4) POLL_INTERVAL_SECONDS - Optional. Number of seconds to sleep between status
        polls for the data generation job. Defaults to 10.
 """
 
+import io
 import os
-import tempfile
 import time
 import uuid
 from datetime import datetime, timezone
@@ -59,8 +64,8 @@ from azure.ai.projects.models import (
     DataGenerationJobScenario,
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
-    DatasetDataGenerationJobSource,
     DatasetVersion,
+    FileDataGenerationJobSource,
     JobStatus,
     PromptDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
@@ -70,13 +75,12 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
-dataset_name = os.environ.get("DATASET_NAME", "simpleqna-multisource-sample")
+dataset_name = os.environ.get("DATASET_NAME", "simpleqna-file-source-sample")
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
 # Unique per-run resource names so repeated runs do not collide.
-# The service rejects output names longer than 50 characters.
+# Output names are capped at 50 characters by the service.
 run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
-seed_dataset_name = f"widgets-gizmos-seed-{run_id}"
 output_dataset_name = f"{dataset_name}-{run_id}"
 if len(output_dataset_name) > 50:
     raise ValueError(
@@ -84,8 +88,8 @@ if len(output_dataset_name) > 50:
         f"Lower DATASET_NAME (currently `{dataset_name}`) so that `<DATASET_NAME>-<run id>` fits within 50 characters."
     )
 
-# Reference document the sample uploads as the seed Dataset. Keep this >= 1 KB
-# so the service has enough material to synthesize meaningful QnA pairs.
+# Reference document the sample uploads as an Azure OpenAI file. The service
+# requires the file to contain at least 1 KB of content to generate QnA from.
 SEED_REFERENCE_DOCUMENT = """# Widgets and Gizmos Reference
 
 ## Products
@@ -113,49 +117,54 @@ SEED_REFERENCE_DOCUMENT = """# Widgets and Gizmos Reference
 """
 
 EXPECTED_OUTPUT_DESCRIPTION = "Expert-level QnA pairs generated from the Widgets & Gizmos reference."
-EXPECTED_OUTPUT_TAGS = {"sample": "dataset-generation-simpleqna-with-dataset-source", "difficulty": "expert"}
+EXPECTED_OUTPUT_TAGS = {"sample": "dataset-generation-simpleqna-with-file-source", "difficulty": "expert"}
 
 TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    project_client.get_openai_client() as openai_client,
 ):
 
     # ------------------------------------------------------------------
-    # 1. Upload the seed reference document as a versioned Dataset.
+    # 1. Upload the seed reference document as an Azure OpenAI file.
     # ------------------------------------------------------------------
-    print(f"Upload the seed reference document as dataset `{seed_dataset_name}` v1.")
-    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as tmp:
-        tmp.write(SEED_REFERENCE_DOCUMENT)
-        seed_local_path = tmp.name
-    try:
-        seed_dataset = project_client.datasets.upload_file(
-            name=seed_dataset_name,
-            version="1",
-            file_path=seed_local_path,
-        )
-    finally:
-        os.remove(seed_local_path)
-    print(f"Uploaded seed dataset (id: {seed_dataset.id}).")
+    seed_filename = f"widgets-gizmos-seed-{run_id}.md"
+    print(f"Upload the seed reference document as Azure OpenAI file `{seed_filename}`.")
+    seed_file = openai_client.files.create(
+        file=(seed_filename, io.BytesIO(SEED_REFERENCE_DOCUMENT.encode("utf-8"))),
+        purpose="user_data",
+    )
+    print(f"Uploaded Azure OpenAI file (id: {seed_file.id}).")
+
+    # Wait for the file to finish processing — the data generation service
+    # rejects references to files that are not yet in the `processed` state.
+    print("Wait for the Azure OpenAI file to be processed.", end="", flush=True)
+    while seed_file.status not in ("processed", "error"):
+        time.sleep(2)
+        seed_file = openai_client.files.retrieve(file_id=seed_file.id)
+        print(".", end="", flush=True)
+    print()
+    if seed_file.status != "processed":
+        raise RuntimeError(f"Azure OpenAI file `{seed_file.id}` failed to process: status=`{seed_file.status}`.")
 
     # ------------------------------------------------------------------
     # 2. Submit a multi-source SimpleQnA data generation job.
     # ------------------------------------------------------------------
     # Two sources are combined for a single job:
-    #   - The Dataset source contributes the source material (the reference
+    #   - The File source contributes the source material (the reference
     #     document uploaded above).
     #   - The Prompt source contributes a steering instruction (difficulty).
-    print("Create a multi-source data generation job (Dataset + Prompt).")
+    print("Create a multi-source data generation job (File + Prompt).")
     job = DataGenerationJob(
         inputs=DataGenerationJobInputs(
             name=f"simpleqna-multisource-{run_id}",
             scenario=DataGenerationJobScenario.EVALUATION,
             sources=[
-                DatasetDataGenerationJobSource(
-                    description="Widgets & Gizmos product / operations reference.",
-                    name=seed_dataset.name or "",
-                    version=seed_dataset.version or "",
+                FileDataGenerationJobSource(
+                    description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
+                    id=seed_file.id,
                 ),
                 PromptDataGenerationJobSource(
                     description="Specifies the question difficulty for SimpleQnA generation.",
@@ -219,8 +228,11 @@ with (
     # ------------------------------------------------------------------
     # 4. Clean up.
     # ------------------------------------------------------------------
-    print(f"Delete the seed dataset `{seed_dataset.name}` v{seed_dataset.version}.")
-    project_client.datasets.delete(name=seed_dataset.name or "", version=seed_dataset.version or "")
+    print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
+    project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
+
+    print(f"Delete the Azure OpenAI input file `{seed_file.id}`.")
+    openai_client.files.delete(file_id=seed_file.id)
 
     print(f"Delete the data generation job `{job.id}`.")
     project_client.beta.datasets.delete_generation_job(job_id=job.id)

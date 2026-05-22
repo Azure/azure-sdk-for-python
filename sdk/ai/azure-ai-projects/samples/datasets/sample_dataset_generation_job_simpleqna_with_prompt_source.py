@@ -17,10 +17,10 @@ DESCRIPTION:
          Azure AI evaluators.
       4. Runs the evaluation against the generated dataset by passing the
          dataset's id as the run's `file_id`.
-      5. Cleans up the evaluation and the data generation job.
+      5. Cleans up the evaluation, the generated dataset, and the data generation job.
 
 USAGE:
-    python sample_dataset_generation_job_with_evaluation.py
+    python sample_dataset_generation_job_simpleqna_with_prompt_source.py
 
     Before running the sample:
 
@@ -29,9 +29,11 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry project.
-    2) FOUNDRY_MODEL_NAME - Required. The name of an LLM model deployment used both
-       to generate the QnA samples and as the judge model for builtin evaluators
-       (e.g. `gpt-4o`, `gpt-5`).
+    2) FOUNDRY_MODEL_NAME - Required. The name of an Azure OpenAI model
+       deployment used both to generate the QnA samples and as the judge model
+       for builtin evaluators. For `simple_qna` evaluation jobs the deployed
+       model must support the Azure OpenAI Responses API. See the supported-model
+       list: https://learn.microsoft.com/azure/foundry/openai/how-to/responses?tabs=python-key#model-support
     3) DATASET_NAME - Optional. Name to assign to the generated output dataset.
        Defaults to `dataset-generation-eval-sample`.
     4) POLL_INTERVAL_SECONDS - Optional. Number of seconds to sleep between status
@@ -262,6 +264,9 @@ with (
     # ------------------------------------------------------------------
     print(f"Delete evaluation `{eval_object.id}`.")
     openai_client.evals.delete(eval_id=eval_object.id)
+
+    print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
+    project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
 
     print(f"Delete the data generation job `{job.id}`.")
     project_client.beta.datasets.delete_generation_job(job_id=job.id)
