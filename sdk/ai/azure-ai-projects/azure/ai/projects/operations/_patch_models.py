@@ -76,7 +76,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         return azcopy
 
     @staticmethod
-    def _validate_create_version_inputs(
+    def _validate_create_inputs(
         *,
         name: str,
         version: str,
@@ -86,7 +86,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         polling_timeout: float,
         polling_interval: float,
     ) -> Path:
-        """Validate ``create_version`` inputs up-front, before any service call.
+        """Validate ``create`` inputs up-front, before any service call.
 
         Returns the resolved ``Path`` for ``source``. Raises ``ValueError`` for
         bad inputs and ``RuntimeError`` if ``azcopy`` cannot be located.
@@ -139,13 +139,13 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         # Don't log the SAS query string — it's a credential.
         redacted = cmd.copy()
         redacted[3] = sas_uri.split("?", 1)[0] + "?<sas-redacted>"
-        logger.info("[create_version] running: %s", " ".join(redacted))
+        logger.info("[create] running: %s", " ".join(redacted))
 
         completed = subprocess.run(cmd, check=False, capture_output=True, text=True)
         if completed.stdout:
-            logger.debug("[create_version] azcopy stdout:\n%s", completed.stdout)
+            logger.debug("[create] azcopy stdout:\n%s", completed.stdout)
         if completed.stderr:
-            logger.debug("[create_version] azcopy stderr:\n%s", completed.stderr)
+            logger.debug("[create] azcopy stderr:\n%s", completed.stderr)
         if completed.returncode != 0:
             raise RuntimeError(
                 f"azcopy exited with code {completed.returncode}.\n"
@@ -153,7 +153,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             )
 
     @distributed_trace
-    def create_version(
+    def create(
         self,
         *,
         name: str,
@@ -223,7 +223,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         # --- Step 0: validate inputs up-front --------------------------------
         # Cheap local checks so we don't provision a SAS container or run
         # azcopy when something obviously wrong was passed in.
-        source_path = self._validate_create_version_inputs(
+        source_path = self._validate_create_inputs(
             name=name,
             version=version,
             source=source,
@@ -235,7 +235,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
 
         # --- Step 1: StartPendingUpload --------------------------------------
         logger.info(
-            "[create_version] step 1/3 pending_upload(name=%r, version=%r)",
+            "[create] step 1/3 pending_upload(name=%r, version=%r)",
             name,
             version,
         )
@@ -249,13 +249,13 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         )
         sas_uri, container_blob_uri, pending_upload_id = self._extract_pending_upload_targets(pending)
         logger.info(
-            "[create_version] pending_upload_id=%s blob_uri=%s",
+            "[create] pending_upload_id=%s blob_uri=%s",
             pending_upload_id,
             container_blob_uri,
         )
 
         # --- Step 2: Upload via azcopy ---------------------------------------
-        logger.info("[create_version] step 2/3 azcopy upload from %s", source_path)
+        logger.info("[create] step 2/3 azcopy upload from %s", source_path)
         self._run_azcopy(source_path, sas_uri, azcopy_path=azcopy_path)
 
         # --- Step 3: Commit registration -------------------------------------
@@ -267,7 +267,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             tags=tags or {},
         )
         logger.info(
-            "[create_version] step 3/3 pending_create_version(name=%r, version=%r)",
+            "[create] step 3/3 pending_create_version(name=%r, version=%r)",
             name,
             version,
         )

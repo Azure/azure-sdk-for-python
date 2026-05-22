@@ -11,7 +11,7 @@ DESCRIPTION:
     asynchronous `.beta.models` operations: `pending_upload`, `pending_create_version`,
     `get`, `list_versions`, `list`, `get_credentials`, `update`, and `delete`.
 
-    The async client does not expose the `create_version` convenience helper
+    The async client does not expose the `create` convenience helper
     (which shells out to the synchronous `azcopy` CLI). This sample instead
     drives the spec's three-step upload-first sequence directly:
 

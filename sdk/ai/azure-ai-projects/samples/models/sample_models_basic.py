@@ -12,7 +12,7 @@ DESCRIPTION:
     update version metadata, and delete a model version.
 
     The recommended entry point is the patched helper
-    `project_client.beta.models.create_version(...)`, which packs the spec's
+    `project_client.beta.models.create(...)`, which packs the spec's
     three required steps (`pending_upload` -> `azcopy copy` -> `pending_create_version`)
     into a single call and polls until the new ModelVersion is observable.
 
@@ -23,7 +23,7 @@ USAGE:
 
     pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
 
-    AzCopy must also be installed and on PATH (used by `create_version` to
+    AzCopy must also be installed and on PATH (used by `create` to
     upload weight files):
 
         winget install --id Microsoft.Azure.AZCopy.10 -e
@@ -76,9 +76,9 @@ with (
 
     print(
         f"Register a local model named `{model_name}` version `{model_version}` "
-        f"by uploading the contents of `{data_folder}` via `create_version`."
+        f"by uploading the contents of `{data_folder}` via `create`."
     )
-    model = project_client.beta.models.create_version(
+    model = project_client.beta.models.create(
         name=model_name,
         version=model_version,
         source=data_folder,
@@ -88,7 +88,7 @@ with (
     )
     if model is None:
         raise RuntimeError(
-            f"`create_version` returned None for `{model_name}`@`{model_version}` "
+            f"`create` returned None for `{model_name}`@`{model_version}` "
             "(use `wait_for_commit=True` to receive the committed ModelVersion)."
         )
     print(f"Created (name: {model.name}, version: {model.version}, blob_uri: {model.blob_uri})")

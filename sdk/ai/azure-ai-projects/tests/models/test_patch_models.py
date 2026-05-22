@@ -7,7 +7,7 @@
 
 These tests do not contact the Foundry service. They cover the patch helpers
 ``_extract_pending_upload_targets`` and ``_run_azcopy``, and the orchestration
-performed by ``create_version`` (mocking ``pending_upload``, ``pending_create_version``
+performed by ``create`` (mocking ``pending_upload``, ``pending_create_version``
 and ``get`` on the base class).
 """
 
@@ -169,7 +169,7 @@ class TestRunAzcopy:
 
 
 # ---------------------------------------------------------------------------
-# create_version orchestration
+# create orchestration
 # ---------------------------------------------------------------------------
 
 
@@ -244,7 +244,7 @@ class TestCreateVersionOrchestration:
         ), mock.patch.object(ops, "pending_create_version", side_effect=fake_create_async), mock.patch.object(
             ops, "get", side_effect=fake_get
         ):
-            result = ops.create_version(
+            result = ops.create(
                 name="my-model",
                 version="1",
                 source=tmp_path,
@@ -265,7 +265,7 @@ class TestCreateVersionOrchestration:
         with mock.patch.object(ops, "pending_upload", return_value=_pending_payload()), mock.patch.object(
             BetaModelsOperations, "_run_azcopy", staticmethod(lambda *a, **kw: None)
         ), mock.patch.object(ops, "pending_create_version", return_value=None), mock.patch.object(ops, "get", get_mock):
-            result = ops.create_version(
+            result = ops.create(
                 name="m",
                 version="1",
                 source=tmp_path,
@@ -295,7 +295,7 @@ class TestCreateVersionOrchestration:
         ), mock.patch(
             "azure.ai.projects.operations._patch_models.time.sleep"
         ) as sleep:
-            result = ops.create_version(
+            result = ops.create(
                 name="m",
                 version="1",
                 source=tmp_path,
@@ -323,7 +323,7 @@ class TestCreateVersionOrchestration:
             "azure.ai.projects.operations._patch_models.time.sleep"
         ):
             with pytest.raises(RuntimeError, match="did not appear within"):
-                ops.create_version(
+                ops.create(
                     name="m",
                     version="1",
                     source=tmp_path,
@@ -336,12 +336,12 @@ class TestCreateVersionOrchestration:
         pending = mock.Mock()
         with mock.patch.object(ops, "pending_upload", pending):
             with pytest.raises(ValueError, match="does not exist"):
-                ops.create_version(name="m", version="1", source=ghost)
+                ops.create(name="m", version="1", source=ghost)
         pending.assert_not_called()
 
 
 # ---------------------------------------------------------------------------
-# _validate_create_version_inputs
+# _validate_create_inputs
 # ---------------------------------------------------------------------------
 
 
@@ -369,36 +369,36 @@ class TestValidateCreateVersionInputs:
 
     def test_valid_directory_source_returns_path(self, tmp_path):
         (tmp_path / "weights.bin").write_bytes(b"x")
-        result = BetaModelsOperations._validate_create_version_inputs(**self._kwargs(source=tmp_path))
+        result = BetaModelsOperations._validate_create_inputs(**self._kwargs(source=tmp_path))
         assert result == tmp_path
 
     @pytest.mark.parametrize("bad_name", ["", "   ", None, 123])
     def test_empty_or_non_string_name_raises(self, tmp_path, bad_name):
         (tmp_path / "weights.bin").write_bytes(b"x")
         with pytest.raises(ValueError, match="`name`"):
-            BetaModelsOperations._validate_create_version_inputs(**self._kwargs(name=bad_name, source=tmp_path))
+            BetaModelsOperations._validate_create_inputs(**self._kwargs(name=bad_name, source=tmp_path))
 
     @pytest.mark.parametrize("bad_version", ["", "   ", None, 1])
     def test_empty_or_non_string_version_raises(self, tmp_path, bad_version):
         (tmp_path / "weights.bin").write_bytes(b"x")
         with pytest.raises(ValueError, match="`version`"):
-            BetaModelsOperations._validate_create_version_inputs(**self._kwargs(version=bad_version, source=tmp_path))
+            BetaModelsOperations._validate_create_inputs(**self._kwargs(version=bad_version, source=tmp_path))
 
     def test_empty_directory_raises(self, tmp_path):
         with pytest.raises(ValueError, match="directory is empty"):
-            BetaModelsOperations._validate_create_version_inputs(**self._kwargs(source=tmp_path))
+            BetaModelsOperations._validate_create_inputs(**self._kwargs(source=tmp_path))
 
     def test_empty_file_raises(self, tmp_path):
         empty = tmp_path / "weights.bin"
         empty.write_bytes(b"")
         with pytest.raises(ValueError, match="file is empty"):
-            BetaModelsOperations._validate_create_version_inputs(**self._kwargs(source=empty))
+            BetaModelsOperations._validate_create_inputs(**self._kwargs(source=empty))
 
     @pytest.mark.parametrize("bad_timeout", [0, -1.0])
     def test_non_positive_polling_timeout_raises(self, tmp_path, bad_timeout):
         (tmp_path / "weights.bin").write_bytes(b"x")
         with pytest.raises(ValueError, match="polling_timeout"):
-            BetaModelsOperations._validate_create_version_inputs(
+            BetaModelsOperations._validate_create_inputs(
                 **self._kwargs(source=tmp_path, polling_timeout=bad_timeout)
             )
 
@@ -406,14 +406,14 @@ class TestValidateCreateVersionInputs:
     def test_non_positive_polling_interval_raises(self, tmp_path, bad_interval):
         (tmp_path / "weights.bin").write_bytes(b"x")
         with pytest.raises(ValueError, match="polling_interval"):
-            BetaModelsOperations._validate_create_version_inputs(
+            BetaModelsOperations._validate_create_inputs(
                 **self._kwargs(source=tmp_path, polling_interval=bad_interval)
             )
 
     def test_polling_params_skipped_when_wait_for_commit_false(self, tmp_path):
         (tmp_path / "weights.bin").write_bytes(b"x")
         # Negative polling values are tolerated when not waiting for commit.
-        result = BetaModelsOperations._validate_create_version_inputs(
+        result = BetaModelsOperations._validate_create_inputs(
             **self._kwargs(source=tmp_path, wait_for_commit=False, polling_timeout=-1, polling_interval=-1)
         )
         assert result == tmp_path
@@ -425,7 +425,7 @@ class TestValidateCreateVersionInputs:
             return_value=None,
         ):
             with pytest.raises(RuntimeError, match="azcopy"):
-                BetaModelsOperations._validate_create_version_inputs(**self._kwargs(source=tmp_path))
+                BetaModelsOperations._validate_create_inputs(**self._kwargs(source=tmp_path))
 
     def test_models_create_validates_before_calling_pending_upload(self, tmp_path):
         """Validation runs before any service operation."""
@@ -436,5 +436,5 @@ class TestValidateCreateVersionInputs:
             "azure.ai.projects.operations._patch_models.shutil.which", return_value=None
         ):
             with pytest.raises(RuntimeError, match="azcopy"):
-                ops.create_version(name="m", version="1", source=tmp_path)
+                ops.create(name="m", version="1", source=tmp_path)
         pending.assert_not_called()

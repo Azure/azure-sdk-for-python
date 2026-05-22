@@ -8,7 +8,7 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to register a local
     model with a Microsoft Foundry project WITHOUT relying on the
-    `create_version` helper or the `azcopy` CLI. It hand-rolls the spec's
+    `create` helper or the `azcopy` CLI. It hand-rolls the spec's
     three-step upload-first sequence using only the generated `.beta.models`
     operations and `azure-storage-blob`:
 

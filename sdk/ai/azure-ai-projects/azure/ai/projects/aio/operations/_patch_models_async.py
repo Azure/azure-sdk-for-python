@@ -62,7 +62,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         return sas_uri, container_blob_uri, pending_upload_id
 
     @staticmethod
-    def _validate_create_version_inputs(
+    def _validate_create_inputs(
         *,
         name: str,
         version: str,
@@ -71,7 +71,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         polling_timeout: float,
         polling_interval: float,
     ) -> Path:
-        """Validate ``create_version`` inputs up-front, before any service call.
+        """Validate ``create`` inputs up-front, before any service call.
 
         Returns the resolved ``Path`` for ``source``. Raises ``ValueError`` for
         bad inputs.
@@ -107,7 +107,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             from azure.storage.blob.aio import ContainerClient  # pylint: disable=import-outside-toplevel
         except ImportError as ex:
             raise RuntimeError(
-                "`azure-storage-blob` is required for the async `create_version` helper. "
+                "`azure-storage-blob` is required for the async `create` helper. "
                 "Install it with `pip install azure-storage-blob aiohttp`."
             ) from ex
 
@@ -122,17 +122,17 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
 
         # Don't log the SAS query string — it's a credential.
         redacted = sas_uri.split("?", 1)[0] + "?<sas-redacted>"
-        logger.info("[create_version] uploading %d file(s) to %s", len(files), redacted)
+        logger.info("[create] uploading %d file(s) to %s", len(files), redacted)
 
         async with ContainerClient.from_container_url(sas_uri) as container_client:
             for f in files:
                 rel = f.relative_to(source).as_posix() if source.is_dir() else f.name
                 with f.open("rb") as fp:
                     await container_client.upload_blob(name=rel, data=fp, overwrite=True)
-                logger.debug("[create_version] uploaded %s (%d bytes)", rel, f.stat().st_size)
+                logger.debug("[create] uploaded %s (%d bytes)", rel, f.stat().st_size)
 
     @distributed_trace_async
-    async def create_version(
+    async def create(
         self,
         *,
         name: str,
@@ -198,7 +198,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             the registration does not commit before ``polling_timeout`` elapses.
         """
         # --- Step 0: validate inputs up-front --------------------------------
-        source_path = self._validate_create_version_inputs(
+        source_path = self._validate_create_inputs(
             name=name,
             version=version,
             source=source,
@@ -209,7 +209,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
 
         # --- Step 1: StartPendingUpload --------------------------------------
         logger.info(
-            "[create_version] step 1/3 pending_upload(name=%r, version=%r)",
+            "[create] step 1/3 pending_upload(name=%r, version=%r)",
             name,
             version,
         )
@@ -223,13 +223,13 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         )
         sas_uri, container_blob_uri, pending_upload_id = self._extract_pending_upload_targets(pending)
         logger.info(
-            "[create_version] pending_upload_id=%s blob_uri=%s",
+            "[create] pending_upload_id=%s blob_uri=%s",
             pending_upload_id,
             container_blob_uri,
         )
 
         # --- Step 2: Upload via async ContainerClient ------------------------
-        logger.info("[create_version] step 2/3 async upload from %s", source_path)
+        logger.info("[create] step 2/3 async upload from %s", source_path)
         await self._upload_with_container_client(source_path, sas_uri)
 
         # --- Step 3: Commit registration -------------------------------------
@@ -241,7 +241,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             tags=tags or {},
         )
         logger.info(
-            "[create_version] step 3/3 pending_create_version(name=%r, version=%r)",
+            "[create] step 3/3 pending_create_version(name=%r, version=%r)",
             name,
             version,
         )
