@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.msi import ManagedServiceIdentityClient
+from azure.mgmt.msi import ManagedIdentityClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = ManagedServiceIdentityClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = ManagedIdentityClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
