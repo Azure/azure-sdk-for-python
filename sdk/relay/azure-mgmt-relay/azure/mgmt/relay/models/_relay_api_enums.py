@@ -18,33 +18,6 @@ class AccessRights(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LISTEN = "Listen"
 
 
-class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource."""
-
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-
-class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Default Action for Network Rule Set."""
-
-    ALLOW = "Allow"
-    DENY = "Deny"
-
-
-class EndPointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the Private Endpoint Connection."""
-
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-
-
 class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The access key to regenerate."""
 
@@ -52,27 +25,15 @@ class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECONDARY_KEY = "SecondaryKey"
 
 
-class NetworkRuleIPAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The IP Filter Action."""
+class ProvisioningStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ProvisioningStateEnum."""
 
-    ALLOW = "Allow"
-
-
-class PrivateLinkConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the connection."""
-
-    PENDING = "Pending"
-    APPROVED = "Approved"
-    REJECTED = "Rejected"
-    DISCONNECTED = "Disconnected"
-
-
-class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This determines if traffic is allowed over public network. By default it is enabled."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-    SECURED_BY_PERIMETER = "SecuredByPerimeter"
+    CREATED = "Created"
+    SUCCEEDED = "Succeeded"
+    DELETED = "Deleted"
+    FAILED = "Failed"
+    UPDATING = "Updating"
+    UNKNOWN = "Unknown"
 
 
 class Relaytype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -80,18 +41,6 @@ class Relaytype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NET_TCP = "NetTcp"
     HTTP = "Http"
-
-
-class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of this SKU."""
-
-    STANDARD = "Standard"
-
-
-class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The tier of this SKU."""
-
-    STANDARD = "Standard"
 
 
 class UnavailableReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

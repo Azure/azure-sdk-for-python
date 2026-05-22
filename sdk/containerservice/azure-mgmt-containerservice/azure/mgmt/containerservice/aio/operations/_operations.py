@@ -750,7 +750,10 @@ class AgentPoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -924,9 +927,9 @@ class AgentPoolsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -934,7 +937,7 @@ class AgentPoolsOperations:
                 "agent_pool_name",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def _complete_upgrade_initial(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
@@ -1003,9 +1006,9 @@ class AgentPoolsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -1013,7 +1016,7 @@ class AgentPoolsOperations:
                 "agent_pool_name",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def begin_complete_upgrade(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
@@ -2251,8 +2254,8 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
 
     @api_version_validation(
-        params_added_on={"2026-02-02-preview": ["ignore_pod_disruption_budget"]},
-        api_versions_list=["2025-10-01", "2026-01-01", "2026-02-01", "2026-02-02-preview"],
+        params_added_on={"2026-03-02-preview": ["ignore_pod_disruption_budget"]},
+        api_versions_list=["2025-10-01", "2026-01-01", "2026-02-01", "2026-03-01", "2026-03-02-preview"],
     )
     async def _delete_initial(
         self,
@@ -2336,8 +2339,8 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     @api_version_validation(
-        params_added_on={"2026-02-02-preview": ["ignore_pod_disruption_budget"]},
-        api_versions_list=["2025-10-01", "2026-01-01", "2026-02-01", "2026-02-02-preview"],
+        params_added_on={"2026-03-02-preview": ["ignore_pod_disruption_budget"]},
+        api_versions_list=["2025-10-01", "2026-01-01", "2026-02-01", "2026-03-01", "2026-03-02-preview"],
     )
     async def begin_delete(
         self,
@@ -2470,7 +2473,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2561,7 +2567,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4234,14 +4243,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.RunCommandResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -4410,7 +4415,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4453,9 +4461,9 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -4463,7 +4471,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 "content_type",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def _rebalance_load_balancers_initial(
         self,
@@ -4629,9 +4637,9 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -4639,7 +4647,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 "content_type",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def begin_rebalance_load_balancers(
         self,
@@ -4915,7 +4923,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5088,7 +5099,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5259,7 +5273,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5434,7 +5451,10 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5952,7 +5972,10 @@ class MaintenanceConfigurationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6721,7 +6744,10 @@ class ManagedNamespacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6935,9 +6961,9 @@ class MachinesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -6950,7 +6976,7 @@ class MachinesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -7169,9 +7195,9 @@ class MachinesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -7184,7 +7210,7 @@ class MachinesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -7338,7 +7364,10 @@ class MachinesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8406,7 +8435,10 @@ class SnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8496,7 +8528,10 @@ class SnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8558,11 +8593,11 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def get(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.ManagedClusterSnapshot:
         """Gets a managed cluster snapshot.
@@ -8716,9 +8751,9 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -8727,7 +8762,7 @@ class ManagedClusterSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def create_or_update(
         self,
@@ -8904,9 +8939,9 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -8915,7 +8950,7 @@ class ManagedClusterSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def update_tags(
         self,
@@ -9007,11 +9042,11 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name"]
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name"]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def delete(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> None:
         """Deletes a managed cluster snapshot.
@@ -9071,9 +9106,9 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
-        params_added_on={"2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-02-02-preview"],
+        method_added_on="2026-03-02-preview",
+        params_added_on={"2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-03-02-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
@@ -9129,7 +9164,10 @@ class ManagedClusterSnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9173,9 +9211,9 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
-        params_added_on={"2026-02-02-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-02-02-preview"],
+        method_added_on="2026-03-02-preview",
+        params_added_on={"2026-03-02-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-03-02-preview"],
     )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ManagedClusterSnapshot"]:
         """Gets a list of managed cluster snapshots in the specified subscription.
@@ -9225,7 +9263,10 @@ class ManagedClusterSnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9802,7 +9843,10 @@ class TrustedAccessRoleBindingsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9864,9 +9908,9 @@ class LoadBalancersOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9875,7 +9919,7 @@ class LoadBalancersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, load_balancer_name: str, **kwargs: Any
@@ -10043,9 +10087,9 @@ class LoadBalancersOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10055,7 +10099,7 @@ class LoadBalancersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def create_or_update(
         self,
@@ -10150,9 +10194,9 @@ class LoadBalancersOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10160,7 +10204,7 @@ class LoadBalancersOperations:
                 "load_balancer_name",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, load_balancer_name: str, **kwargs: Any
@@ -10229,9 +10273,9 @@ class LoadBalancersOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10239,7 +10283,7 @@ class LoadBalancersOperations:
                 "load_balancer_name",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, load_balancer_name: str, **kwargs: Any
@@ -10304,11 +10348,11 @@ class LoadBalancersOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -10367,7 +10411,10 @@ class LoadBalancersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10429,9 +10476,9 @@ class IdentityBindingsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10440,7 +10487,7 @@ class IdentityBindingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -10517,9 +10564,9 @@ class IdentityBindingsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10529,7 +10576,7 @@ class IdentityBindingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -10706,9 +10753,9 @@ class IdentityBindingsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10718,7 +10765,7 @@ class IdentityBindingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -10799,9 +10846,9 @@ class IdentityBindingsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10809,7 +10856,7 @@ class IdentityBindingsOperations:
                 "identity_binding_name",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -10878,9 +10925,9 @@ class IdentityBindingsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10888,7 +10935,7 @@ class IdentityBindingsOperations:
                 "identity_binding_name",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -10953,11 +11000,11 @@ class IdentityBindingsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -11016,7 +11063,10 @@ class IdentityBindingsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11078,9 +11128,9 @@ class JWTAuthenticatorsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11089,7 +11139,7 @@ class JWTAuthenticatorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, jwt_authenticator_name: str, **kwargs: Any
@@ -11166,9 +11216,9 @@ class JWTAuthenticatorsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11178,7 +11228,7 @@ class JWTAuthenticatorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -11358,9 +11408,9 @@ class JWTAuthenticatorsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11370,7 +11420,7 @@ class JWTAuthenticatorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -11453,9 +11503,9 @@ class JWTAuthenticatorsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11463,7 +11513,7 @@ class JWTAuthenticatorsOperations:
                 "jwt_authenticator_name",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, jwt_authenticator_name: str, **kwargs: Any
@@ -11532,9 +11582,9 @@ class JWTAuthenticatorsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11542,7 +11592,7 @@ class JWTAuthenticatorsOperations:
                 "jwt_authenticator_name",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, jwt_authenticator_name: str, **kwargs: Any
@@ -11607,11 +11657,11 @@ class JWTAuthenticatorsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -11670,7 +11720,10 @@ class JWTAuthenticatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11732,9 +11785,9 @@ class MeshMembershipsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11743,7 +11796,7 @@ class MeshMembershipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, mesh_membership_name: str, **kwargs: Any
@@ -11820,9 +11873,9 @@ class MeshMembershipsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11832,7 +11885,7 @@ class MeshMembershipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -12008,9 +12061,9 @@ class MeshMembershipsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12020,7 +12073,7 @@ class MeshMembershipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -12101,9 +12154,9 @@ class MeshMembershipsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12111,7 +12164,7 @@ class MeshMembershipsOperations:
                 "mesh_membership_name",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, mesh_membership_name: str, **kwargs: Any
@@ -12180,9 +12233,9 @@ class MeshMembershipsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12190,7 +12243,7 @@ class MeshMembershipsOperations:
                 "mesh_membership_name",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, mesh_membership_name: str, **kwargs: Any
@@ -12255,11 +12308,11 @@ class MeshMembershipsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -12318,7 +12371,10 @@ class MeshMembershipsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12426,7 +12482,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12488,9 +12547,9 @@ class OperationStatusResultOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12500,7 +12559,7 @@ class OperationStatusResultOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def get_by_agent_pool(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, operation_id: str, **kwargs: Any
@@ -12581,11 +12640,11 @@ class OperationStatusResultOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     def list(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -12644,7 +12703,10 @@ class OperationStatusResultOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12688,9 +12750,9 @@ class OperationStatusResultOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-02-02-preview",
+        method_added_on="2026-03-02-preview",
         params_added_on={
-            "2026-02-02-preview": [
+            "2026-03-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12699,7 +12761,7 @@ class OperationStatusResultOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-02-preview"],
+        api_versions_list=["2026-03-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, operation_id: str, **kwargs: Any
@@ -13128,7 +13190,10 @@ class TrustedAccessRolesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13244,7 +13309,10 @@ class ContainerServiceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13366,7 +13434,10 @@ class VmSkusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

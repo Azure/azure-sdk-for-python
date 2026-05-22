@@ -420,17 +420,27 @@ def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str,
     else:
         # assume it's a file path
         local_file = (match.group("link") or "").strip()
-        path = Path(local_file)
-        if not path.is_absolute():
-            path = working_dir / local_file
-        if not path.exists():
-            # The link could not be resolved to an existing local file. This can happen when markdown
-            # image syntax (e.g. ![alt](figures/1.1)) originates from Document Intelligence or similar
-            # services where the paths are relative references that are not actual files on disk.
-            # Treat the original markdown as plain text instead of crashing.
+        try:
+            path = Path(local_file)
+            if not path.is_absolute():
+                path = working_dir / local_file
+            if not path.exists():
+                # The link could not be resolved to an existing local file. This can happen when markdown
+                # image syntax (e.g. ![alt](figures/1.1)) originates from Document Intelligence or similar
+                # services where the paths are relative references that are not actual files on disk.
+                # Treat the original markdown as plain text instead of crashing.
+                logger.debug(
+                    "Image reference '%s' could not be resolved to an existing file. Treating as plain text.",
+                    image,
+                )
+                return {"type": "text", "text": image}
+        except (OSError, ValueError) as e:
+            # Path operations can fail when the filename exceeds OS limits (e.g., Linux 255-char name limit)
+            # or contains invalid characters. Treat as plain text rather than crashing.
             logger.debug(
-                "Image reference '%s' could not be resolved to an existing file. Treating as plain text.",
+                "Image reference '%s' could not be resolved to a valid path (%s). Treating as plain text.",
                 image,
+                e,
             )
             return {"type": "text", "text": image}
         inlined_uri = local_to_base64(local_file, mime_type)

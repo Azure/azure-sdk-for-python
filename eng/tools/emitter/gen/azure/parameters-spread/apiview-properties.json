@@ -22,5 +22,6 @@
         "parameters.spread.aio.operations.AliasOperations.spread_with_multiple_parameters": "Parameters.Spread.Alias.spreadWithMultipleParameters",
         "parameters.spread.operations.AliasOperations.spread_parameter_with_inner_alias": "Parameters.Spread.Alias.spreadParameterWithInnerAlias",
         "parameters.spread.aio.operations.AliasOperations.spread_parameter_with_inner_alias": "Parameters.Spread.Alias.spreadParameterWithInnerAlias"
-    }
+    },
+    "CrossLanguageVersion": "bd6e83d62e0a"
 }

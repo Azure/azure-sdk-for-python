@@ -7,77 +7,112 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, cast
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.settings import settings
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from . import models as _models
 from ._configuration import AlertsManagementClientConfiguration
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 from .operations import (
-    AlertProcessingRulesOperations,
+    ActionRulesOperations,
     AlertsOperations,
     Operations,
-    PrometheusRuleGroupsOperations,
+    SmartDetectorAlertRulesOperations,
     SmartGroupsOperations,
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
 class AlertsManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     """AlertsManagement Client.
 
-    :ivar alert_processing_rules: AlertProcessingRulesOperations operations
-    :vartype alert_processing_rules:
-     azure.mgmt.alertsmanagement.operations.AlertProcessingRulesOperations
-    :ivar prometheus_rule_groups: PrometheusRuleGroupsOperations operations
-    :vartype prometheus_rule_groups:
-     azure.mgmt.alertsmanagement.operations.PrometheusRuleGroupsOperations
+    :ivar action_rules: ActionRulesOperations operations
+    :vartype action_rules: azure.mgmt.alertsmanagement.operations.ActionRulesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.alertsmanagement.operations.Operations
     :ivar alerts: AlertsOperations operations
     :vartype alerts: azure.mgmt.alertsmanagement.operations.AlertsOperations
     :ivar smart_groups: SmartGroupsOperations operations
     :vartype smart_groups: azure.mgmt.alertsmanagement.operations.SmartGroupsOperations
+    :ivar smart_detector_alert_rules: SmartDetectorAlertRulesOperations operations
+    :vartype smart_detector_alert_rules:
+     azure.mgmt.alertsmanagement.operations.SmartDetectorAlertRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     """
 
     def __init__(
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = AlertsManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.alert_processing_rules = AlertProcessingRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.prometheus_rule_groups = PrometheusRuleGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.action_rules = ActionRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.alerts = AlertsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.smart_groups = SmartGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.smart_detector_alert_rules = SmartDetectorAlertRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -97,14 +132,14 @@ class AlertsManagementClient:  # pylint: disable=client-accepts-api-version-keyw
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "AlertsManagementClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

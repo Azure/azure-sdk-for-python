@@ -14,5 +14,6 @@
         "specs.azure.clientgenerator.core.usage.aio.operations.ModelInOperationOperations.model_in_read_only_property": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.modelInReadOnlyProperty",
         "specs.azure.clientgenerator.core.usage.operations.ModelInOperationOperations.orphan_model_serializable": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.orphanModelSerializable",
         "specs.azure.clientgenerator.core.usage.aio.operations.ModelInOperationOperations.orphan_model_serializable": "_Specs_.Azure.ClientGenerator.Core.Usage.ModelInOperation.orphanModelSerializable"
-    }
+    },
+    "CrossLanguageVersion": "fa69fb13e4f3"
 }

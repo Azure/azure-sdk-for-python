@@ -10,5 +10,6 @@
         "parameters.bodyoptionality.aio.BodyOptionalityClient.required_explicit": "Parameters.BodyOptionality.requiredExplicit",
         "parameters.bodyoptionality.BodyOptionalityClient.required_implicit": "Parameters.BodyOptionality.requiredImplicit",
         "parameters.bodyoptionality.aio.BodyOptionalityClient.required_implicit": "Parameters.BodyOptionality.requiredImplicit"
-    }
+    },
+    "CrossLanguageVersion": "7a9815cc1115"
 }

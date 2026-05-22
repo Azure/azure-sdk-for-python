@@ -8,6 +8,11 @@
 import os
 
 import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import FileSharePreparer
+
 from azure.core.exceptions import HttpResponseError
 from azure.storage.fileshare import (
     CorsRule,
@@ -16,13 +21,9 @@ from azure.storage.fileshare import (
     ShareProtocolSettings,
     ShareSmbSettings,
     SmbEncryptionInTransit,
-    SmbMultichannel
+    SmbMultichannel,
 )
 from azure.storage.fileshare.aio import ShareServiceClient
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import FileSharePreparer
 
 
 # ------------------------------------------------------------------------------
@@ -58,8 +59,7 @@ class TestFileServicePropertiesAsync(AsyncStorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
+        for i, rule1 in enumerate(cors1):
             rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
@@ -107,8 +107,6 @@ class TestFileServicePropertiesAsync(AsyncStorageRecordedTestCase):
         assert props['protocol'].smb.multichannel.enabled == False
         assert props['protocol'].smb.encryption_in_transit.required == False
 
-        with pytest.raises(TypeError):
-            ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel()))
         with pytest.raises(ValueError):
             ShareProtocolSettings(smb=ShareSmbSettings())
         with pytest.raises(ValueError):

@@ -246,5 +246,6 @@
         "specialwords.aio.operations.ParametersOperations.with_yield": "SpecialWords.Parameters.withYield",
         "specialwords.operations.ParametersOperations.with_cancellation_token": "SpecialWords.Parameters.withCancellationToken",
         "specialwords.aio.operations.ParametersOperations.with_cancellation_token": "SpecialWords.Parameters.withCancellationToken"
-    }
+    },
+    "CrossLanguageVersion": "c1e750721e35"
 }

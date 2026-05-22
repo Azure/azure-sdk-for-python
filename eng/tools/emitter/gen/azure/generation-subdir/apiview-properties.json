@@ -7,5 +7,6 @@
         "generation.subdir.aio.RecursiveClient.put": "Type.Model.Inheritance.Recursive.put",
         "generation.subdir.RecursiveClient.get": "Type.Model.Inheritance.Recursive.get",
         "generation.subdir.aio.RecursiveClient.get": "Type.Model.Inheritance.Recursive.get"
-    }
+    },
+    "CrossLanguageVersion": "68dd4f8a1a9e"
 }

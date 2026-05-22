@@ -555,5 +555,120 @@ class TestLocationCache:
         assert write_contexts[1].get_primary() == location1_endpoint
         assert write_contexts[2].get_primary() == location2_endpoint
 
+    def test_update_location_cache_recalculates_from_account_data(self):
+        """
+        Verify that update_location_cache() recalculates routing contexts from the
+        underlying account data (account_*_regional_routing_contexts_by_location),
+        not from stale direct mutations to read/write_regional_routing_contexts.
+
+        This documents the invariant that caused the retry test CI failures:
+        if you mutate read_regional_routing_contexts directly without updating
+        the source-of-truth attributes, a subsequent update_location_cache() call
+        will overwrite your mutations.
+        """
+        preferred_locations = [location1_name, location2_name, location4_name]
+        lc = refresh_location_cache(preferred_locations, use_multiple_write_locations=False)
+        db_acc = create_database_account(enable_multiple_writable_locations=False)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Capture the correctly-derived state
+        original_read_contexts = list(lc.read_regional_routing_contexts)
+        assert len(original_read_contexts) == 3  # location1, location2, location4
+
+        # Simulate what the old tests did: directly mutate the derived list
+        from azure.cosmos._location_cache import RegionalRoutingContext
+        lc.read_regional_routing_contexts = [
+            RegionalRoutingContext("https://fake1.documents.azure.com"),
+            RegionalRoutingContext("https://fake2.documents.azure.com"),
+            RegionalRoutingContext("https://fake3.documents.azure.com"),
+        ]
+
+        # Now call update_location_cache() with no new data (simulates health check completion)
+        lc.update_location_cache()
+
+        # The direct mutation should be overwritten — routing contexts recalculated from account data
+        recalculated = lc.read_regional_routing_contexts
+        assert len(recalculated) == len(original_read_contexts)
+        for orig, context in zip(original_read_contexts, recalculated):
+            assert orig.get_primary() == context.get_primary(), \
+                "update_location_cache() should recalculate from account data, overwriting direct mutations"
+
+    def test_update_location_cache_preserves_unavailability_marks(self):
+        """
+        Verify that mark_endpoint_unavailable() state survives subsequent
+        update_location_cache() calls. Unavailable endpoints should be moved
+        to the end of the routing list, not removed.
+        """
+        preferred_locations = [location1_name, location2_name, location3_name]
+        lc = refresh_location_cache(preferred_locations, use_multiple_write_locations=True)
+        db_acc = create_database_account(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Mark location1 as unavailable for reads
+        lc.mark_endpoint_unavailable_for_read(location1_endpoint, refresh_cache=False)
+
+        # Verify the unavailability is recorded
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Read")
+
+        # Call update_location_cache() — simulates background health check completing
+        lc.update_location_cache()
+
+        # Unavailability info should persist (it lives in location_unavailability_info_by_endpoint)
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Read"), \
+            "Unavailability marks should survive update_location_cache() calls"
+
+        # The unavailable endpoint should be moved to the end of the read routing list
+        read_contexts = lc.get_read_regional_routing_contexts()
+        read_endpoints = [ctx.get_primary() for ctx in read_contexts]
+        assert location1_endpoint in read_endpoints, "Unavailable endpoint should still be in routing list"
+        assert read_endpoints[-1] == location1_endpoint, \
+            "Unavailable endpoint should be at the end of routing list"
+        assert read_endpoints[0] == location2_endpoint, \
+            "First healthy preferred endpoint should be first"
+
+    def test_location_cache_derived_state_consistency(self):
+        """
+        Verify that update_location_cache() is idempotent and that the derived
+        state (read/write_regional_routing_contexts) matches what
+        get_preferred_regional_routing_contexts() would return independently.
+        """
+        preferred_locations = [location1_name, location2_name, location4_name]
+        lc = refresh_location_cache(preferred_locations, use_multiple_write_locations=True)
+        db_acc = create_database_account(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Snapshot after first update
+        read_after_first = [ctx.get_primary() for ctx in lc.read_regional_routing_contexts]
+        write_after_first = [ctx.get_primary() for ctx in lc.write_regional_routing_contexts]
+
+        # Call update_location_cache() again with no new data — should be idempotent
+        lc.update_location_cache()
+
+        read_after_second = [ctx.get_primary() for ctx in lc.read_regional_routing_contexts]
+        write_after_second = [ctx.get_primary() for ctx in lc.write_regional_routing_contexts]
+
+        assert read_after_first == read_after_second, \
+            "update_location_cache() should be idempotent for read routing contexts"
+        assert write_after_first == write_after_second, \
+            "update_location_cache() should be idempotent for write routing contexts"
+
+        # Verify derived state matches what get_preferred_regional_routing_contexts returns directly
+        from azure.cosmos._location_cache import EndpointOperationType
+        expected_read = lc.get_preferred_regional_routing_contexts(
+            lc.account_read_regional_routing_contexts_by_location,
+            lc.account_read_locations,
+            EndpointOperationType.ReadType,
+            lc.write_regional_routing_contexts[0]
+        )
+        expected_write = lc.get_preferred_regional_routing_contexts(
+            lc.account_write_regional_routing_contexts_by_location,
+            lc.account_write_locations,
+            EndpointOperationType.WriteType,
+            lc.default_regional_routing_context
+        )
+
+        assert read_after_second == [ctx.get_primary() for ctx in expected_read]
+        assert write_after_second == [ctx.get_primary() for ctx in expected_write]
+
 if __name__ == "__main__":
     unittest.main()

@@ -18,5 +18,6 @@
         "typetest.model.nesteddiscriminator.aio.NestedDiscriminatorClient.get_missing_discriminator": "Type.Model.Inheritance.NestedDiscriminator.getMissingDiscriminator",
         "typetest.model.nesteddiscriminator.NestedDiscriminatorClient.get_wrong_discriminator": "Type.Model.Inheritance.NestedDiscriminator.getWrongDiscriminator",
         "typetest.model.nesteddiscriminator.aio.NestedDiscriminatorClient.get_wrong_discriminator": "Type.Model.Inheritance.NestedDiscriminator.getWrongDiscriminator"
-    }
+    },
+    "CrossLanguageVersion": "9a2c5c91ceee"
 }

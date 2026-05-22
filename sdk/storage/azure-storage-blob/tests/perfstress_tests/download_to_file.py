@@ -5,11 +5,11 @@
 
 import os
 import tempfile
-from typing import Optional
 
 from devtools_testutils.perfstress_tests import RandomStream
 
 from ._test_base import _BlobTest
+
 
 class DownloadToFileTest(_BlobTest):
     _temp_file: str = ""

@@ -12,5 +12,6 @@
         "specs.azure.core.scalar.aio.operations.AzureLocationScalarOperations.header": "_Specs_.Azure.Core.Scalar.AzureLocationScalar.header",
         "specs.azure.core.scalar.operations.AzureLocationScalarOperations.query": "_Specs_.Azure.Core.Scalar.AzureLocationScalar.query",
         "specs.azure.core.scalar.aio.operations.AzureLocationScalarOperations.query": "_Specs_.Azure.Core.Scalar.AzureLocationScalar.query"
-    }
+    },
+    "CrossLanguageVersion": "753c2b54fe00"
 }

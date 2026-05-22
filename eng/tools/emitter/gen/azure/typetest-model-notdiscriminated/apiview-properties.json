@@ -10,5 +10,6 @@
         "typetest.model.notdiscriminated.aio.NotDiscriminatedClient.get_valid": "Type.Model.Inheritance.NotDiscriminated.getValid",
         "typetest.model.notdiscriminated.NotDiscriminatedClient.put_valid": "Type.Model.Inheritance.NotDiscriminated.putValid",
         "typetest.model.notdiscriminated.aio.NotDiscriminatedClient.put_valid": "Type.Model.Inheritance.NotDiscriminated.putValid"
-    }
+    },
+    "CrossLanguageVersion": "94c71641655e"
 }

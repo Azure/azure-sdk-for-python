@@ -10,5 +10,6 @@
         "payload.jsonmergepatch.aio.JsonMergePatchClient.update_resource": "Payload.JsonMergePatch.updateResource",
         "payload.jsonmergepatch.JsonMergePatchClient.update_optional_resource": "Payload.JsonMergePatch.updateOptionalResource",
         "payload.jsonmergepatch.aio.JsonMergePatchClient.update_optional_resource": "Payload.JsonMergePatch.updateOptionalResource"
-    }
+    },
+    "CrossLanguageVersion": "4a6419e93bab"
 }

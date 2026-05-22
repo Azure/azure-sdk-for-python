@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any
-from typing_extensions import Self
 
 from corehttp.rest import HttpRequest, HttpResponse
 from corehttp.runtime import PipelineClient, policies
@@ -13,6 +13,11 @@ from .header.operations import HeaderOperations
 from .property.operations import PropertyOperations
 from .query.operations import QueryOperations
 from .responseheader.operations import ResponseHeaderOperations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class DatetimeClient:  # pylint: disable=client-accepts-api-version-keyword

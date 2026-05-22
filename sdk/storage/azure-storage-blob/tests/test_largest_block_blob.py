@@ -3,20 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 import platform
 import tempfile
 import uuid
-from os import path, remove, urandom
+from os import urandom
 
 import pytest
+
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.storage.blob import BlobBlock, BlobServiceClient
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.blob._shared.uploads import SubStream
 
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'largestblob'
@@ -215,7 +218,6 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
             temp_file.seek(0)
             blob.upload_blob(temp_file, max_concurrency=2)
 
-
     def test_substream_for_single_thread_upload_large_block(self):
         with tempfile.TemporaryFile() as temp_file:
             largeStream = LargeStream(LARGE_BLOCK_SIZE, 4 * 1024 * 1024)
@@ -367,9 +369,11 @@ def _is_put_block_request(request):
     query = request.http_request.query
     return query and "comp" in query and query["comp"] == "block"
 
+
 def _is_put_blob_request(request):
     query = request.http_request.query
     return request.http_request.method == "PUT" and not query
+
 
 def _get_body_length(request):
     body = request.http_request.body

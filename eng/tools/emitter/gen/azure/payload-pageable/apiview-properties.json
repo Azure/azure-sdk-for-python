@@ -24,5 +24,6 @@
         "payload.pageable.aio.operations.XmlPaginationOperations.list_with_continuation": "Payload.Pageable.XmlPagination.listWithContinuation",
         "payload.pageable.operations.XmlPaginationOperations.list_with_next_link": "Payload.Pageable.XmlPagination.listWithNextLink",
         "payload.pageable.aio.operations.XmlPaginationOperations.list_with_next_link": "Payload.Pageable.XmlPagination.listWithNextLink"
-    }
+    },
+    "CrossLanguageVersion": "5bc41881d9e9"
 }

@@ -3,5 +3,6 @@
     "CrossLanguageDefinitionId": {
         "server.path.single.SingleClient.my_op": "Server.Path.Single.myOp",
         "server.path.single.aio.SingleClient.my_op": "Server.Path.Single.myOp"
-    }
+    },
+    "CrossLanguageVersion": "3b85478a1eb6"
 }

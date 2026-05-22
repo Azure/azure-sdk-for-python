@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, TYPE_CHECKING
-from typing_extensions import Self
 
 from corehttp.rest import AsyncHttpResponse, HttpRequest
 from corehttp.runtime import AsyncPipelineClient, policies
@@ -10,6 +10,11 @@ from corehttp.runtime import AsyncPipelineClient, policies
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import OAuth2ClientConfiguration
 from ._operations import _OAuth2ClientOperationsMixin
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from corehttp.credentials import AsyncTokenCredential

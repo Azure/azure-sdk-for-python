@@ -14,5 +14,6 @@
         "client.structure.twooperationgroup.aio.operations.Group2Operations.five": "Client.Structure.TwoOperationGroup.Group2.five",
         "client.structure.twooperationgroup.operations.Group2Operations.six": "Client.Structure.TwoOperationGroup.Group2.six",
         "client.structure.twooperationgroup.aio.operations.Group2Operations.six": "Client.Structure.TwoOperationGroup.Group2.six"
-    }
+    },
+    "CrossLanguageVersion": "d1c68d76adfc"
 }

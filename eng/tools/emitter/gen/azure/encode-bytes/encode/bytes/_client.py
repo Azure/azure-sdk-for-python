@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -21,6 +21,11 @@ from .property.operations import PropertyOperations
 from .query.operations import QueryOperations
 from .requestbody.operations import RequestBodyOperations
 from .responsebody.operations import ResponseBodyOperations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class BytesClient:  # pylint: disable=client-accepts-api-version-keyword

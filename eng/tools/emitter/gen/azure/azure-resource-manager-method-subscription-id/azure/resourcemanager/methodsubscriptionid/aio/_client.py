@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -20,6 +20,11 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import MethodSubscriptionIdClientConfiguration
 from .operations import MixedSubscriptionPlacementOperations, Operations, TwoSubscriptionResourcesMethodLevelOperations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds

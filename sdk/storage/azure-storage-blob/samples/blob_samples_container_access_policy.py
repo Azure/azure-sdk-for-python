@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -22,7 +20,8 @@ USAGE: python blob_samples_container_access_policy.py
 EXAMPLE OUTPUT:
 
 ..Creating container
-Created container has identifier 'read' with permissions 'rw', start date '2019-10-18T22:14:36Z', and expiry date '2019-10-18T23:15:36Z'.
+Created container has identifier 'read' with permissions 'rw',
+start date '2019-10-18T22:14:36Z', and expiry date '2019-10-18T23:15:36Z'.
 
 ..Getting container access policy
 Blob Access Type: container
@@ -33,6 +32,7 @@ import os
 import sys
 from datetime import datetime, timedelta
 
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import AccessPolicy, BlobServiceClient, ContainerSasPermissions, PublicAccess
 
 try:
@@ -40,6 +40,7 @@ try:
 except KeyError:
     print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
+
 
 def get_and_set_container_access_policy():
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
@@ -50,8 +51,8 @@ def get_and_set_container_access_policy():
 
     # Create access policy
     access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True, write=True),
-                                    expiry=datetime.utcnow() + timedelta(hours=1),
-                                    start=datetime.utcnow() - timedelta(minutes=1))
+                                 expiry=datetime.utcnow() + timedelta(hours=1),
+                                 start=datetime.utcnow() - timedelta(minutes=1))
     identifiers = {'read': access_policy}
 
     # Specifies full public read access for container and blob data.
@@ -62,9 +63,9 @@ def get_and_set_container_access_policy():
 
     for identifier_name, access_policy in identifiers.items():
         print(
-            "Created container has identifier '{}' with permissions '{}', start date '{}', and expiry date '{}'.".format(
-                identifier_name, access_policy.permission, access_policy.start, access_policy.expiry
-            )
+            f"Created container has identifier {identifier_name} "
+            f"with permissions {access_policy.permission}, "
+            f"start date {access_policy.start}, and expiry date {access_policy.expiry}"
         )
 
     # Get the access policy on the container
@@ -77,6 +78,6 @@ def get_and_set_container_access_policy():
 
 try:
     get_and_set_container_access_policy()
-except Exception as error:
+except HttpResponseError as error:
     print(error)
     sys.exit(1)

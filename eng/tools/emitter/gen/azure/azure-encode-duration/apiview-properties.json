@@ -4,5 +4,6 @@
         "specs.azure.encode.duration.models.DurationModel": "_Specs_.Azure.Encode.Duration.DurationModel",
         "specs.azure.encode.duration.DurationClient.duration_constant": "_Specs_.Azure.Encode.Duration.durationConstant",
         "specs.azure.encode.duration.aio.DurationClient.duration_constant": "_Specs_.Azure.Encode.Duration.durationConstant"
-    }
+    },
+    "CrossLanguageVersion": "193465bd9560"
 }

@@ -16,5 +16,6 @@
         "specs.azure.clientgenerator.core.flattenproperty.aio.FlattenPropertyClient.put_flatten_unknown_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putFlattenUnknownModel",
         "specs.azure.clientgenerator.core.flattenproperty.FlattenPropertyClient.put_flatten_read_only_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putFlattenReadOnlyModel",
         "specs.azure.clientgenerator.core.flattenproperty.aio.FlattenPropertyClient.put_flatten_read_only_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putFlattenReadOnlyModel"
-    }
+    },
+    "CrossLanguageVersion": "c58d6bbc75df"
 }

@@ -39,5 +39,6 @@
         "encode.array.aio.operations.PropertyOperations.extensible_enum_pipe_delimited": "Encode.Array.Property.extensibleEnumPipeDelimited",
         "encode.array.operations.PropertyOperations.extensible_enum_newline_delimited": "Encode.Array.Property.extensibleEnumNewlineDelimited",
         "encode.array.aio.operations.PropertyOperations.extensible_enum_newline_delimited": "Encode.Array.Property.extensibleEnumNewlineDelimited"
-    }
+    },
+    "CrossLanguageVersion": "a865d79aecde"
 }

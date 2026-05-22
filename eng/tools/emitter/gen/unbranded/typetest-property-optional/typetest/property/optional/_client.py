@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any
-from typing_extensions import Self
 
 from corehttp.rest import HttpRequest, HttpResponse
 from corehttp.runtime import PipelineClient, policies
@@ -27,6 +27,11 @@ from .operations import (
     UnionIntLiteralOperations,
     UnionStringLiteralOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class OptionalClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes

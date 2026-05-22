@@ -18,7 +18,7 @@ class TestDefaultValueAsync(ClientDefaultValueClientTestBaseAsync):
     async def test_put_model_property(self, defaultvalue_endpoint):
         client = self.create_async_client(endpoint=defaultvalue_endpoint)
         response = await client.put_model_property(
-            body={"name": "str", "retry": bool, "tier": "str", "timeout": 0},
+            body={"name": "str", "retry": True, "tier": "standard", "timeout": 30},
         )
 
         # please add some check logic here by yourself

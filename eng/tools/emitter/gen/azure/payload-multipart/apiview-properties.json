@@ -36,5 +36,6 @@
         "payload.multipart.aio.operations.FormDataOperations.check_file_name_and_content_type": "Payload.MultiPart.FormData.checkFileNameAndContentType",
         "payload.multipart.operations.FormDataOperations.anonymous_model": "Payload.MultiPart.FormData.anonymousModel",
         "payload.multipart.aio.operations.FormDataOperations.anonymous_model": "Payload.MultiPart.FormData.anonymousModel"
-    }
+    },
+    "CrossLanguageVersion": "57c247160f15"
 }

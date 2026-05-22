@@ -8,5 +8,6 @@
         "client.clientnamespace.aio.ClientNamespaceFirstClient.get_first": "ClientNameSpaceClient.ClientNamespaceFirstClient.getFirst",
         "client.clientnamespace.ClientNamespaceSecondClient.get_second": "ClientNameSpaceClient.ClientNamespaceSecondClient.getSecond",
         "client.clientnamespace.aio.ClientNamespaceSecondClient.get_second": "ClientNameSpaceClient.ClientNamespaceSecondClient.getSecond"
-    }
+    },
+    "CrossLanguageVersion": "e5b24bdde4d5"
 }

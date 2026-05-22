@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,12 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -45,9 +43,9 @@ class CloudErrorBody(_serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        details: Optional[list["_models.CloudErrorBody"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -79,7 +77,7 @@ class DisableSerialConsoleResult(_serialization.Model):
         "disabled": {"key": "disabled", "type": "bool"},
     }
 
-    def __init__(self, *, disabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, disabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword disabled: Whether or not Serial Console is disabled.
         :paramtype disabled: bool
@@ -99,7 +97,7 @@ class EnableSerialConsoleResult(_serialization.Model):
         "disabled": {"key": "disabled", "type": "bool"},
     }
 
-    def __init__(self, *, disabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, disabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword disabled: Whether or not Serial Console is disabled (enabled).
         :paramtype disabled: bool
@@ -122,7 +120,7 @@ class GetSerialConsoleSubscriptionNotFound(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -159,16 +157,17 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+    """The resource model definition for a ARM proxy resource. It will have everything other than
+    required location and tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -179,22 +178,6 @@ class ProxyResource(Resource):
     :ivar type: Resource type.
     :vartype type: str
     """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
 
 
 class SerialConsoleOperations(_serialization.Model):
@@ -208,7 +191,9 @@ class SerialConsoleOperations(_serialization.Model):
         "value": {"key": "value", "type": "[SerialConsoleOperationsValueItem]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SerialConsoleOperationsValueItem"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[list["_models.SerialConsoleOperationsValueItem"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of Serial Console operations.
         :paramtype value: list[~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItem]
@@ -240,8 +225,8 @@ class SerialConsoleOperationsValueItem(_serialization.Model):
         name: Optional[str] = None,
         is_data_action: Optional[str] = None,
         display: Optional["_models.SerialConsoleOperationsValueItemDisplay"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -283,8 +268,8 @@ class SerialConsoleOperationsValueItemDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider:
         :paramtype provider: str
@@ -313,7 +298,7 @@ class SerialConsoleStatus(_serialization.Model):
         "disabled": {"key": "disabled", "type": "bool"},
     }
 
-    def __init__(self, *, disabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, disabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword disabled: Whether or not Serial Console is disabled.
         :paramtype disabled: bool
@@ -351,7 +336,7 @@ class SerialPort(ProxyResource):
         "state": {"key": "properties.state", "type": "str"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.SerialPortState"]] = None, **kwargs):
+    def __init__(self, *, state: Optional[Union[str, "_models.SerialPortState"]] = None, **kwargs: Any) -> None:
         """
         :keyword state: Specifies whether the port is enabled for a serial console connection. Known
          values are: "enabled" and "disabled".
@@ -372,7 +357,7 @@ class SerialPortConnectResult(_serialization.Model):
         "connection_string": {"key": "connectionString", "type": "str"},
     }
 
-    def __init__(self, *, connection_string: Optional[str] = None, **kwargs):
+    def __init__(self, *, connection_string: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword connection_string: Connection string to the serial port of the resource.
         :paramtype connection_string: str
@@ -392,7 +377,7 @@ class SerialPortListResult(_serialization.Model):
         "value": {"key": "value", "type": "[SerialPort]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SerialPort"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[list["_models.SerialPort"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of serial ports.
         :paramtype value: list[~azure.mgmt.serialconsole.models.SerialPort]

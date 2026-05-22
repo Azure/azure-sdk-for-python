@@ -12,5 +12,6 @@
         "generation.subdir2.aio.AddedClient.v1": "Versioning.Added.v1",
         "generation.subdir2.AddedClient.v2": "Versioning.Added.v2",
         "generation.subdir2.aio.AddedClient.v2": "Versioning.Added.v2"
-    }
+    },
+    "CrossLanguageVersion": "effaedc31171"
 }

@@ -10,5 +10,6 @@
         "typetest.model.empty.aio.EmptyClient.get_empty": "Type.Model.Empty.getEmpty",
         "typetest.model.empty.EmptyClient.post_round_trip_empty": "Type.Model.Empty.postRoundTripEmpty",
         "typetest.model.empty.aio.EmptyClient.post_round_trip_empty": "Type.Model.Empty.postRoundTripEmpty"
-    }
+    },
+    "CrossLanguageVersion": "f108e382e6e2"
 }

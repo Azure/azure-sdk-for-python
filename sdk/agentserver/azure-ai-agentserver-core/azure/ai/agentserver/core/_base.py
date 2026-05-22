@@ -219,13 +219,14 @@ class AgentServerHost(Starlette):
             cfg = self.config
             logger.info(
                 "Platform environment: is_hosted=%s, agent_name=%s, agent_version=%s, "
-                "port=%s, session_id=%s, sse_keepalive_interval=%s",
+                "port=%s, session_id=%s, sse_keepalive_interval=%s, ws_ping_interval=%s",
                 cfg.is_hosted,
                 cfg.agent_name or _NOT_SET,
                 cfg.agent_version or _NOT_SET,
                 cfg.port,
                 cfg.session_id or _NOT_SET,
                 cfg.sse_keepalive_interval if cfg.sse_keepalive_interval > 0 else "disabled",
+                f"{cfg.ws_ping_interval}s" if cfg.ws_ping_interval > 0 else "disabled",
             )
             logger.info(
                 "Connectivity: project_endpoint=%s, otlp_endpoint=%s, appinsights_configured=%s",
@@ -417,6 +418,11 @@ class AgentServerHost(Starlette):
         config.graceful_timeout = float(self._graceful_shutdown_timeout)
         # Spec requires HTTP/1.1 only — disable HTTP/2
         config.h2_max_concurrent_streams = 0
+        # WebSocket Ping/Pong keep-alive (RFC 6455 opcodes 0x9/0xA).
+        # ``0`` (disabled) maps to Hypercorn's ``None`` sentinel; any
+        # positive value is sent verbatim to Hypercorn.
+        ws_ping = self.config.ws_ping_interval
+        config.websocket_ping_interval = ws_ping if ws_ping > 0 else None  # type: ignore[attr-defined]
         # Access logging
         if self._access_log is not None:
             config.accesslog = self._access_log  # type: ignore[assignment]

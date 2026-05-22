@@ -3,33 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
-import os
 import tempfile
-import uuid
 from datetime import datetime, timedelta
 
 import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import BlobPreparer
+from test_helpers_async import NonSeekableStream, ProgressTracker
+
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
 from azure.mgmt.storage.aio import StorageManagementClient
 from azure.storage.blob import (
-    BlobImmutabilityPolicyMode,
-    BlobProperties,
-    BlobSasPermissions,
-    BlobType,
-    ImmutabilityPolicy,
-    PremiumPageBlobTier,
-    SequenceNumberAction,
-    generate_blob_sas
+    BlobImmutabilityPolicyMode, BlobProperties, BlobSasPermissions, BlobType, generate_blob_sas, ImmutabilityPolicy,
+    PremiumPageBlobTier, SequenceNumberAction,
 )
-from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from azure.storage.blob._shared.policies import StorageContentValidation
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from test_helpers_async import NonSeekableStream, ProgressTracker
-from settings.testcase import BlobPreparer
+from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
 
 # ------------------------------------------------------------------------------
@@ -50,11 +44,11 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             try:
                 await bsc.create_container(self.source_container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_blob_reference(self, bsc) -> BlobClient:
@@ -69,7 +63,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
     async def _create_source_blob(self, bs, data, offset, length) -> BlobClient:
         blob_client = bs.get_blob_client(self.source_container_name,
-                                              self.get_resource_name(TEST_BLOB_PREFIX))
+                                         self.get_resource_name(TEST_BLOB_PREFIX))
         await blob_client.create_page_blob(size=length)
         await blob_client.upload_page(data, offset=offset, length=length)
         return blob_client
@@ -124,7 +118,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             storage_account_key = storage_account_key.encode('utf-8')
         bsc = BlobServiceClient(account_url, credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
-        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
+        access_token = await self.get_credential(
+            BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -148,7 +143,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -169,7 +165,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_resource_group_name = kwargs.pop("storage_resource_group_name")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), credential=versioned_storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                credential=versioned_storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
 
         container_name = self.get_resource_name('vlwcontainer')
@@ -179,7 +176,12 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
+            await mgmt_client.blob_containers.create(
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property
+            )
 
         blob_name = self.get_resource_name("vlwblob")
         blob = bsc.get_blob_client(container_name, blob_name)
@@ -204,7 +206,11 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            await mgmt_client.blob_containers.delete(
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name
+            )
 
         return variables
 
@@ -214,7 +220,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), credential=versioned_storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                credential=versioned_storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -233,14 +240,15 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         # Arrange
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
-        resp = await blob.create_page_blob(512, metadata=metadata)
+        await blob.create_page_blob(512, metadata=metadata)
 
         # Assert
         md = await blob.get_blob_properties()
@@ -252,7 +260,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
@@ -272,21 +281,40 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob = await self._create_blob(bsc, tags=tags)
         with pytest.raises(ResourceModifiedError):
-            await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', if_tags_match_condition="\"tag1\"='first tag'")
-        lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await blob.acquire_lease(
+                lease_id='00000000-1111-2222-3333-444444444444',
+                if_tags_match_condition="\"tag1\"='first tag'"
+            )
+        lease = await blob.acquire_lease(
+            lease_id='00000000-1111-2222-3333-444444444444',
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+        )
 
         # Act
         data = self.get_random_bytes(512)
         with pytest.raises(ResourceModifiedError):
-            await blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1\"='first tag'")
-        await blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await blob.upload_page(
+                data,
+                offset=0,
+                length=512,
+                lease=lease,
+                if_tags_match_condition="\"tag1\"='first tag'"
+            )
+        await blob.upload_page(
+            data,
+            offset=0,
+            length=512,
+            lease=lease,
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+        )
 
-        page_ranges, cleared = await blob.get_page_ranges()
+        page_ranges, _ = await blob.get_page_ranges()
 
         # Assert
         content = await (await blob.download_blob(lease=lease)).readall()
@@ -299,7 +327,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -319,14 +348,15 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
         # Act
         resp = await blob.create_page_blob(EIGHT_TB)
         props = await blob.get_blob_properties()
-        page_ranges, cleared = await blob.get_page_ranges()
+        page_ranges, _ = await blob.get_page_ranges()
 
         # Assert
         assert resp.get('etag') is not None
@@ -341,7 +371,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -355,7 +386,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         await blob.create_page_blob(EIGHT_TB)
@@ -366,7 +398,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         length = 512
         resp = await blob.upload_page(data, offset=start_offset, length=length)
         props = await blob.get_blob_properties()
-        page_ranges, cleared = await blob.get_page_ranges()
+        page_ranges, _ = await blob.get_page_ranges()
 
         # Assert
         assert resp.get('etag') is not None
@@ -384,13 +416,14 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
         # Act
         data = self.get_random_bytes(512)
-        resp = await blob.upload_page(data, offset=0, length=512, validate_content=True)
+        await blob.upload_page(data, offset=0, length=512, validate_content=True)
         # Assert
 
     @BlobPreparer()
@@ -399,7 +432,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -417,7 +451,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -437,7 +472,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -456,7 +492,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -475,7 +512,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -494,7 +532,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -513,7 +552,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -533,7 +573,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -573,7 +614,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -607,11 +649,13 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act part 2: put block from url with wrong md5
         with pytest.raises(HttpResponseError):
-            await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE,
-                                                                0,
-                                                                source_content_md5=StorageContentValidation.get_content_md5(
-                                                                    b"POTATO"))
+            await destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas,
+                0,
+                SOURCE_BLOB_SIZE,
+                0,
+                source_content_md5=StorageContentValidation.get_content_md5(b"POTATO")
+            )
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -620,7 +664,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -669,7 +714,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -718,7 +764,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -763,7 +810,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -806,7 +854,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -855,7 +904,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -904,7 +954,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -949,7 +1000,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -996,7 +1048,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -1042,7 +1095,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -1088,7 +1142,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -1133,12 +1188,13 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
         # Act
-        data = u'abcdefghijklmnop' * 32
+        data = 'abcdefghijklmnop' * 32
         resp = await blob.upload_page(data, offset=0, length=512)
 
         # Assert
@@ -1332,12 +1388,13 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
         # Act
-        ranges, cleared = await blob.get_page_ranges()
+        ranges, _ = await blob.get_page_ranges()
 
         # Assert
         assert ranges is not None
@@ -1350,15 +1407,16 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc, 2048)
         data = self.get_random_bytes(512)
-        resp1 = await blob.upload_page(data, offset=0, length=512)
-        resp2 = await blob.upload_page(data, offset=1024, length=512)
+        await blob.upload_page(data, offset=0, length=512)
+        await blob.upload_page(data, offset=1024, length=512)
 
         # Act
-        ranges, cleared = await blob.get_page_ranges()
+        ranges, _ = await blob.get_page_ranges()
 
         # Assert
         assert ranges is not None
@@ -1375,7 +1433,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc, 2048)
         data = self.get_random_bytes(1536)
@@ -1485,11 +1544,12 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc, 2048)
         data = self.get_random_bytes(512)
-        resp1 = await blob.upload_page(data, offset=0, length=512)
+        await blob.upload_page(data, offset=0, length=512)
         # Act
         try:
             await blob.upload_page(data, offset=1024, length=513)
@@ -1498,7 +1558,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             return
 
         # Assert
-        raise Exception('Page range validation failed to throw on failure case')
+        raise AssertionError('Page range validation failed to throw on failure case')
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1506,7 +1566,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc, 1024)
 
@@ -1527,14 +1588,15 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
         # Act
         resp = await blob.set_sequence_number(SequenceNumberAction.Update, 6)
 
-        #Assert
+        # Assert
         assert resp.get('etag') is not None
         assert resp.get('last_modified') is not None
         assert resp.get('blob_sequence_number') is not None
@@ -1548,7 +1610,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1584,23 +1647,26 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
 
         # Act
-        create_resp = await blob.upload_blob(
+        await blob.upload_blob(
             data1,
             overwrite=True,
             blob_type=BlobType.PageBlob,
-            metadata={'blobdata': 'data1'})
+            metadata={'blobdata': 'data1'}
+        )
         update_resp = await blob.upload_blob(
             data2,
             overwrite=True,
             blob_type=BlobType.PageBlob,
-            metadata={'blobdata': 'data2'})
+            metadata={'blobdata': 'data2'}
+        )
 
         props = await blob.get_blob_properties()
 
@@ -1618,7 +1684,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1638,7 +1705,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(0)
@@ -1658,13 +1726,15 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1687,7 +1757,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1705,7 +1776,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1727,7 +1799,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1750,13 +1823,15 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1778,7 +1853,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1802,7 +1878,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         # data is almost all empty (0s) except two ranges
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
@@ -1821,8 +1898,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         # the uploader should have skipped the empty ranges
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
-        ranges = await blob.get_page_ranges()
-        page_ranges, cleared = list(ranges)
+        page_ranges, _ = await blob.get_page_ranges()
         assert len(page_ranges) == 2
         assert page_ranges[0]['start'] == 0
         assert page_ranges[0]['end'] == 4095
@@ -1837,7 +1913,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1859,13 +1936,15 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1888,7 +1967,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1909,13 +1989,15 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1938,7 +2020,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -1954,10 +2037,12 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
@@ -1972,14 +2057,15 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
 
         try:
             source_blob = await self._create_blob(bsc, 2048)
             data = self.get_random_bytes(512)
-            resp1 = await source_blob.upload_page(data, offset=0, length=512)
-            resp2 = await source_blob.upload_page(data, offset=1024, length=512)
+            await source_blob.upload_page(data, offset=0, length=512)
+            await source_blob.upload_page(data, offset=1024, length=512)
             source_snapshot_blob = await source_blob.create_snapshot()
 
             snapshot_blob = BlobClient.from_blob_url(
@@ -1995,7 +2081,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
                 expiry=datetime.utcnow() + timedelta(hours=1),
             )
             sas_blob = BlobClient.from_blob_url(snapshot_blob.url, credential=sas_token)
-
 
             # Act
             dest_blob = bsc.get_blob_client(self.container_name, 'dest_blob')
@@ -2019,7 +2104,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         premium_storage_account_name = kwargs.pop("premium_storage_account_name")
         premium_storage_account_key = kwargs.pop("premium_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"), credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"),
+                                credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         url = self.account_url(premium_storage_account_name, "blob")
         pbs = BlobServiceClient(url, credential=premium_storage_account_key.secret)
@@ -2060,7 +2146,12 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             with tempfile.TemporaryFile() as temp_file:
                 temp_file.write(byte_data)
                 temp_file.seek(0)
-                await pblob3.upload_blob(temp_file, blob_type=BlobType.PageBlob, premium_page_blob_tier=PremiumPageBlobTier.P10, overwrite=True)
+                await pblob3.upload_blob(
+                    temp_file,
+                    blob_type=BlobType.PageBlob,
+                    premium_page_blob_tier=PremiumPageBlobTier.P10,
+                    overwrite=True
+                )
 
             props3 = await pblob3.get_blob_properties()
             assert props3.blob_tier == PremiumPageBlobTier.P10
@@ -2075,7 +2166,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         premium_storage_account_name = kwargs.pop("premium_storage_account_name")
         premium_storage_account_key = kwargs.pop("premium_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"), credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"),
+                                credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         url = self.account_url(premium_storage_account_name, "blob")
         pbs = BlobServiceClient(url, credential=premium_storage_account_key.secret)
@@ -2135,7 +2227,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         premium_storage_account_name = kwargs.pop("premium_storage_account_name")
         premium_storage_account_key = kwargs.pop("premium_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"), credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"),
+                                credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         url = self.account_url(premium_storage_account_name, "blob")
         pbs = BlobServiceClient(url, credential=premium_storage_account_key.secret)
@@ -2150,7 +2243,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
                 except ResourceExistsError:
                     pass
 
-            bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"), credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
+            bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"),
+                                    credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
             source_blob = pbs.get_blob_client(
                 container_name,
                 self.get_resource_name(TEST_BLOB_PREFIX))
@@ -2172,15 +2266,21 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             assert copy_ref.blob_tier == PremiumPageBlobTier.P30
 
             source_blob2 = pbs.get_blob_client(
-               container_name,
-               self.get_resource_name(TEST_BLOB_PREFIX))
+                container_name,
+                self.get_resource_name(TEST_BLOB_PREFIX))
 
             await source_blob2.create_page_blob(1024)
             source_blob2_url = '{0}/{1}/{2}'.format(
-                self.account_url(premium_storage_account_name, "blob"), source_blob2.container_name, source_blob2.blob_name)
+                self.account_url(premium_storage_account_name, "blob"),
+                source_blob2.container_name,
+                source_blob2.blob_name
+            )
 
             copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
-            copy2 = await copy_blob2.start_copy_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
+            copy2 = await copy_blob2.start_copy_from_url(
+                source_blob2_url,
+                premium_page_blob_tier=PremiumPageBlobTier.P60
+            )
             assert copy2 is not None
             assert copy2['copy_status'] == 'success'
             assert copy2['copy_id'] is not None
@@ -2208,7 +2308,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
         self.config.max_single_get_size = 4*1024
         self.config.max_chunk_get_size = 1024
@@ -2218,7 +2319,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         blob_client = await self._create_sparse_page_blob(bsc, size=sparse_page_blob_size, data=data)
 
         # Act
-        page_ranges, cleared = await blob_client.get_page_ranges()
+        page_ranges, _ = await blob_client.get_page_ranges()
         start = page_ranges[0]['start']
         end = page_ranges[0]['end']
 
@@ -2233,12 +2334,12 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         for byte in content[:start-1]:
             try:
                 assert byte == '\x00'
-            except:
+            except AssertionError:
                 assert byte == 0
         for byte in content[end+1:]:
             try:
                 assert byte == '\x00'
-            except:
+            except AssertionError:
                 assert byte == 0
 
     @BlobPreparer()
@@ -2343,4 +2444,4 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         progress.assert_complete()
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
