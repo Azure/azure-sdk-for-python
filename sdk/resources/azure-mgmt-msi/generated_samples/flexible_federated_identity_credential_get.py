@@ -15,7 +15,7 @@ from azure.mgmt.msi import ManagedIdentityClient
     pip install azure-identity
     pip install azure-mgmt-msi
 # USAGE
-    python msi_operations_list.py
+    python flexible_federated_identity_credential_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.federated_identity_credentials.get(
+        resource_group_name="rgName",
+        resource_name="resourceName",
+        federated_identity_credential_resource_name="ficResourceName",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2025-05-31-preview/MsiOperationsList.json
+# x-ms-original-file: 2025-05-31-preview/FlexibleFederatedIdentityCredentialGet.json
 if __name__ == "__main__":
     main()
