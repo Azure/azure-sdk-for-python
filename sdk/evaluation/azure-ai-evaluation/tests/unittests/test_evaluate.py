@@ -2498,6 +2498,194 @@ class TestLogEventsTokenUsage:
         assert "gen_ai.evaluation.usage.output_tokens" not in internal_props
 
 
+@pytest.mark.unittest
+@pytest.mark.skipif(MISSING_OPENTELEMETRY, reason="This test requires the opentelemetry package")
+class TestLogEventsProperties:
+    """Tests for evaluator ``properties`` forwarding in _log_events_to_app_insights."""
+
+    def _make_mock_event_logger(self):
+        emitted = []
+
+        class FakeEventLogger:
+            def emit(self, event):
+                emitted.append(event)
+
+        return FakeEventLogger(), emitted
+
+    def test_rubric_dimension_scores_forwarded_as_json(self):
+        """Rubric ``dimension_scores`` should be forwarded as a JSON attribute."""
+        event_logger, emitted = self._make_mock_event_logger()
+        dimension_scores = [
+            {"id": "resolution_progress", "score": 0.8, "applicable": True, "weight": 10, "reason": "ok"},
+            {"id": "general_quality", "score": 0.5, "applicable": True, "weight": 5, "reason": "fine"},
+        ]
+        events = [
+            {
+                "metric": "custom-rubric",
+                "score": 0.7,
+                "properties": {"dimension_scores": dimension_scores},
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        internal_props = json.loads(attrs["internal_properties"])
+        assert "gen_ai.evaluation.properties" in internal_props
+        payload = json.loads(internal_props["gen_ai.evaluation.properties"])
+        assert payload == {"dimension_scores": dimension_scores}
+
+    def test_redteam_keys_excluded_from_generic_properties(self):
+        """Dedicated red-team keys should keep their own attributes and NOT appear in the JSON blob."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "redteam",
+                "properties": {
+                    "attack_success": True,
+                    "attack_technique": "jailbreak",
+                    "attack_complexity": "easy",
+                    "attack_success_threshold": 0.5,
+                    "extra_metric": 42,
+                },
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        internal_props = json.loads(emitted[0].attributes["internal_properties"])
+        # Dedicated red-team attributes stay as before
+        assert internal_props["gen_ai.redteam.attack.success"] == "True"
+        assert internal_props["gen_ai.redteam.attack.technique"] == "jailbreak"
+        assert internal_props["gen_ai.redteam.attack.complexity"] == "easy"
+        assert internal_props["gen_ai.redteam.attack.success_threshold"] == "0.5"
+        # Generic forwarder carries only the non-dedicated keys
+        payload = json.loads(internal_props["gen_ai.evaluation.properties"])
+        assert payload == {"extra_metric": 42}
+
+    def test_no_generic_attribute_when_only_redteam_keys_present(self):
+        """When properties contains only dedicated red-team keys, no generic JSON attribute is emitted."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "redteam",
+                "properties": {
+                    "attack_success": True,
+                    "attack_technique": "jailbreak",
+                },
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        internal_props = json.loads(emitted[0].attributes["internal_properties"])
+        assert "gen_ai.evaluation.properties" not in internal_props
+
+    def test_no_generic_attribute_when_properties_absent(self):
+        """No ``gen_ai.evaluation.properties`` attribute when event has no ``properties`` key."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [{"metric": "coherence", "score": 4.5}]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        internal_props = json.loads(emitted[0].attributes["internal_properties"])
+        assert "gen_ai.evaluation.properties" not in internal_props
+
+    def test_non_dict_properties_does_not_emit_generic_attribute(self):
+        """Non-dict ``properties`` (e.g. a string) should be skipped without raising."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [{"metric": "coherence", "score": 4.5, "properties": "not a dict"}]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        internal_props = json.loads(emitted[0].attributes["internal_properties"])
+        assert "gen_ai.evaluation.properties" not in internal_props
+
+    @pytest.mark.parametrize("bad_properties", [None, 42, "not a dict", ["attack_success"], ("attack_success",)])
+    def test_unexpected_properties_shape_does_not_crash(self, bad_properties):
+        """Non-dict ``properties`` shapes must not crash the red-team or generic forwarders."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [{"metric": "redteam", "properties": bad_properties}]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        internal_props = json.loads(emitted[0].attributes["internal_properties"])
+        # No red-team or generic attributes should be derived from a non-dict payload.
+        assert "gen_ai.evaluation.properties" not in internal_props
+        assert not any(k.startswith("gen_ai.redteam.") for k in internal_props)
+
+    def test_oversized_properties_payload_emits_valid_json_truncation_marker(self):
+        """Oversized properties payloads are replaced with a valid JSON truncation marker."""
+        event_logger, emitted = self._make_mock_event_logger()
+        big_value = "x" * 20000  # well over the 7500 char cap
+        events = [
+            {
+                "metric": "rubric",
+                "properties": {"big": big_value},
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        internal_props = json.loads(emitted[0].attributes["internal_properties"])
+        assert "gen_ai.evaluation.properties" in internal_props
+        # The emitted value must remain valid, parseable JSON.
+        marker = json.loads(internal_props["gen_ai.evaluation.properties"])
+        assert marker["truncated"] is True
+        assert marker["original_size_bytes"] > 7500
+        # Marker itself must be well under the cap.
+        assert len(internal_props["gen_ai.evaluation.properties"]) <= 7500
+
+
 class TestAdjustForInverseMetric:
     """Tests for _adjust_for_inverse_metric handling of boolean labels."""
 

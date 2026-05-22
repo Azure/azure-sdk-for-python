@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,12 +8,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -46,13 +45,13 @@ class ProxyDto(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.system_data = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.type: Optional[str] = None
 
 
 class DefaultDto(ProxyDto):
@@ -90,7 +89,7 @@ class DefaultDto(ProxyDto):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location of the azure resource.
         :paramtype location: str
@@ -102,12 +101,12 @@ class DefaultDto(ProxyDto):
         self.tags = tags
 
 
-class Account(DefaultDto):  # pylint: disable=too-many-instance-attributes
+class Account(DefaultDto):
     """An account data transfer object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -165,9 +164,9 @@ class Account(DefaultDto):  # pylint: disable=too-many-instance-attributes
         *,
         identity: "_models.Identity",
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        tags: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the azure resource.
         :paramtype location: str
@@ -178,16 +177,16 @@ class Account(DefaultDto):  # pylint: disable=too-many-instance-attributes
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
-        self.created_at = None
-        self.provisioning_state = None
-        self.user_email = None
-        self.user_name = None
+        self.created_at: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.user_email: Optional[str] = None
+        self.user_name: Optional[str] = None
 
 
 class AccountList(_serialization.Model):
     """List response for get Accounts.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -204,7 +203,7 @@ class AccountList(_serialization.Model):
         "value": {"key": "value", "type": "[Account]"},
     }
 
-    def __init__(self, *, value: List["_models.Account"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: list["_models.Account"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -227,7 +226,7 @@ class AccountUpdateParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Tags on the azure resource.
         :paramtype tags: dict[str, str]
@@ -247,7 +246,7 @@ class DataSet(ProxyDto):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -298,18 +297,18 @@ class DataSet(ProxyDto):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
-class ADLSGen1FileDataSet(DataSet):  # pylint: disable=too-many-instance-attributes
+class ADLSGen1FileDataSet(DataSet):
     """An ADLS Gen 1 file data set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -374,8 +373,8 @@ class ADLSGen1FileDataSet(DataSet):  # pylint: disable=too-many-instance-attribu
         folder_path: str,
         resource_group: str,
         subscription_id: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: The ADLS account name. Required.
         :paramtype account_name: str
@@ -389,9 +388,9 @@ class ADLSGen1FileDataSet(DataSet):  # pylint: disable=too-many-instance-attribu
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "AdlsGen1File"  # type: str
+        self.kind: str = "AdlsGen1File"
         self.account_name = account_name
-        self.data_set_id = None
+        self.data_set_id: Optional[str] = None
         self.file_name = file_name
         self.folder_path = folder_path
         self.resource_group = resource_group
@@ -403,7 +402,7 @@ class ADLSGen1FolderDataSet(DataSet):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -456,7 +455,9 @@ class ADLSGen1FolderDataSet(DataSet):
         "subscription_id": {"key": "properties.subscriptionId", "type": "str"},
     }
 
-    def __init__(self, *, account_name: str, folder_path: str, resource_group: str, subscription_id: str, **kwargs):
+    def __init__(
+        self, *, account_name: str, folder_path: str, resource_group: str, subscription_id: str, **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: The ADLS account name. Required.
         :paramtype account_name: str
@@ -468,20 +469,20 @@ class ADLSGen1FolderDataSet(DataSet):
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "AdlsGen1Folder"  # type: str
+        self.kind: str = "AdlsGen1Folder"
         self.account_name = account_name
-        self.data_set_id = None
+        self.data_set_id: Optional[str] = None
         self.folder_path = folder_path
         self.resource_group = resource_group
         self.subscription_id = subscription_id
 
 
-class ADLSGen2FileDataSet(DataSet):  # pylint: disable=too-many-instance-attributes
+class ADLSGen2FileDataSet(DataSet):
     """An ADLS Gen 2 file data set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -546,8 +547,8 @@ class ADLSGen2FileDataSet(DataSet):  # pylint: disable=too-many-instance-attribu
         resource_group: str,
         storage_account_name: str,
         subscription_id: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword file_path: File path within the file system. Required.
         :paramtype file_path: str
@@ -561,8 +562,8 @@ class ADLSGen2FileDataSet(DataSet):  # pylint: disable=too-many-instance-attribu
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "AdlsGen2File"  # type: str
-        self.data_set_id = None
+        self.kind: str = "AdlsGen2File"
+        self.data_set_id: Optional[str] = None
         self.file_path = file_path
         self.file_system = file_system
         self.resource_group = resource_group
@@ -581,7 +582,7 @@ class DataSetMapping(ProxyDto):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -629,18 +630,18 @@ class DataSetMapping(ProxyDto):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
-class ADLSGen2FileDataSetMapping(DataSetMapping):  # pylint: disable=too-many-instance-attributes
+class ADLSGen2FileDataSetMapping(DataSetMapping):
     """An ADLS Gen2 file data set mapping.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -719,8 +720,8 @@ class ADLSGen2FileDataSetMapping(DataSetMapping):  # pylint: disable=too-many-in
         storage_account_name: str,
         subscription_id: str,
         output_type: Optional[Union[str, "_models.OutputType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_set_id: The id of the source data set. Required.
         :paramtype data_set_id: str
@@ -738,13 +739,13 @@ class ADLSGen2FileDataSetMapping(DataSetMapping):  # pylint: disable=too-many-in
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "AdlsGen2File"  # type: str
+        self.kind: str = "AdlsGen2File"
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
         self.file_path = file_path
         self.file_system = file_system
         self.output_type = output_type
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
@@ -755,7 +756,7 @@ class ADLSGen2FileSystemDataSet(DataSet):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -809,8 +810,8 @@ class ADLSGen2FileSystemDataSet(DataSet):
     }
 
     def __init__(
-        self, *, file_system: str, resource_group: str, storage_account_name: str, subscription_id: str, **kwargs
-    ):
+        self, *, file_system: str, resource_group: str, storage_account_name: str, subscription_id: str, **kwargs: Any
+    ) -> None:
         """
         :keyword file_system: The file system name. Required.
         :paramtype file_system: str
@@ -822,20 +823,20 @@ class ADLSGen2FileSystemDataSet(DataSet):
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "AdlsGen2FileSystem"  # type: str
-        self.data_set_id = None
+        self.kind: str = "AdlsGen2FileSystem"
+        self.data_set_id: Optional[str] = None
         self.file_system = file_system
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
 
 
-class ADLSGen2FileSystemDataSetMapping(DataSetMapping):  # pylint: disable=too-many-instance-attributes
+class ADLSGen2FileSystemDataSetMapping(DataSetMapping):
     """An ADLS Gen2 file system data set mapping.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -905,8 +906,8 @@ class ADLSGen2FileSystemDataSetMapping(DataSetMapping):  # pylint: disable=too-m
         resource_group: str,
         storage_account_name: str,
         subscription_id: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_set_id: The id of the source data set. Required.
         :paramtype data_set_id: str
@@ -920,22 +921,22 @@ class ADLSGen2FileSystemDataSetMapping(DataSetMapping):  # pylint: disable=too-m
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "AdlsGen2FileSystem"  # type: str
+        self.kind: str = "AdlsGen2FileSystem"
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
         self.file_system = file_system
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
 
 
-class ADLSGen2FolderDataSet(DataSet):  # pylint: disable=too-many-instance-attributes
+class ADLSGen2FolderDataSet(DataSet):
     """An ADLS Gen 2 folder data set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -1000,8 +1001,8 @@ class ADLSGen2FolderDataSet(DataSet):  # pylint: disable=too-many-instance-attri
         resource_group: str,
         storage_account_name: str,
         subscription_id: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword file_system: File system to which the folder belongs. Required.
         :paramtype file_system: str
@@ -1015,8 +1016,8 @@ class ADLSGen2FolderDataSet(DataSet):  # pylint: disable=too-many-instance-attri
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "AdlsGen2Folder"  # type: str
-        self.data_set_id = None
+        self.kind: str = "AdlsGen2Folder"
+        self.data_set_id: Optional[str] = None
         self.file_system = file_system
         self.folder_path = folder_path
         self.resource_group = resource_group
@@ -1024,12 +1025,12 @@ class ADLSGen2FolderDataSet(DataSet):  # pylint: disable=too-many-instance-attri
         self.subscription_id = subscription_id
 
 
-class ADLSGen2FolderDataSetMapping(DataSetMapping):  # pylint: disable=too-many-instance-attributes
+class ADLSGen2FolderDataSetMapping(DataSetMapping):
     """An ADLS Gen2 folder data set mapping.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -1104,8 +1105,8 @@ class ADLSGen2FolderDataSetMapping(DataSetMapping):  # pylint: disable=too-many-
         resource_group: str,
         storage_account_name: str,
         subscription_id: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_set_id: The id of the source data set. Required.
         :paramtype data_set_id: str
@@ -1121,12 +1122,12 @@ class ADLSGen2FolderDataSetMapping(DataSetMapping):  # pylint: disable=too-many-
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "AdlsGen2Folder"  # type: str
+        self.kind: str = "AdlsGen2Folder"
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
         self.file_system = file_system
         self.folder_path = folder_path
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
@@ -1137,7 +1138,7 @@ class BlobContainerDataSet(DataSet):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -1191,8 +1192,14 @@ class BlobContainerDataSet(DataSet):
     }
 
     def __init__(
-        self, *, container_name: str, resource_group: str, storage_account_name: str, subscription_id: str, **kwargs
-    ):
+        self,
+        *,
+        container_name: str,
+        resource_group: str,
+        storage_account_name: str,
+        subscription_id: str,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: BLOB Container name. Required.
         :paramtype container_name: str
@@ -1204,20 +1211,20 @@ class BlobContainerDataSet(DataSet):
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "Container"  # type: str
+        self.kind: str = "Container"
         self.container_name = container_name
-        self.data_set_id = None
+        self.data_set_id: Optional[str] = None
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
 
 
-class BlobContainerDataSetMapping(DataSetMapping):  # pylint: disable=too-many-instance-attributes
+class BlobContainerDataSetMapping(DataSetMapping):
     """A Blob container data set mapping.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -1287,8 +1294,8 @@ class BlobContainerDataSetMapping(DataSetMapping):  # pylint: disable=too-many-i
         resource_group: str,
         storage_account_name: str,
         subscription_id: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: BLOB Container name. Required.
         :paramtype container_name: str
@@ -1302,22 +1309,22 @@ class BlobContainerDataSetMapping(DataSetMapping):  # pylint: disable=too-many-i
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "Container"  # type: str
+        self.kind: str = "Container"
         self.container_name = container_name
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
-        self.provisioning_state = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
 
 
-class BlobDataSet(DataSet):  # pylint: disable=too-many-instance-attributes
+class BlobDataSet(DataSet):
     """An Azure storage blob data set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -1382,8 +1389,8 @@ class BlobDataSet(DataSet):  # pylint: disable=too-many-instance-attributes
         resource_group: str,
         storage_account_name: str,
         subscription_id: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: Container that has the file path. Required.
         :paramtype container_name: str
@@ -1397,21 +1404,21 @@ class BlobDataSet(DataSet):  # pylint: disable=too-many-instance-attributes
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "Blob"  # type: str
+        self.kind: str = "Blob"
         self.container_name = container_name
-        self.data_set_id = None
+        self.data_set_id: Optional[str] = None
         self.file_path = file_path
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
 
 
-class BlobDataSetMapping(DataSetMapping):  # pylint: disable=too-many-instance-attributes
+class BlobDataSetMapping(DataSetMapping):
     """A Blob data set mapping.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -1490,8 +1497,8 @@ class BlobDataSetMapping(DataSetMapping):  # pylint: disable=too-many-instance-a
         storage_account_name: str,
         subscription_id: str,
         output_type: Optional[Union[str, "_models.OutputType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: Container that has the file path. Required.
         :paramtype container_name: str
@@ -1509,24 +1516,24 @@ class BlobDataSetMapping(DataSetMapping):  # pylint: disable=too-many-instance-a
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "Blob"  # type: str
+        self.kind: str = "Blob"
         self.container_name = container_name
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
         self.file_path = file_path
         self.output_type = output_type
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
 
 
-class BlobFolderDataSet(DataSet):  # pylint: disable=too-many-instance-attributes
+class BlobFolderDataSet(DataSet):
     """An Azure storage blob folder data set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -1591,8 +1598,8 @@ class BlobFolderDataSet(DataSet):  # pylint: disable=too-many-instance-attribute
         resource_group: str,
         storage_account_name: str,
         subscription_id: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: Container that has the file path. Required.
         :paramtype container_name: str
@@ -1606,21 +1613,21 @@ class BlobFolderDataSet(DataSet):  # pylint: disable=too-many-instance-attribute
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "BlobFolder"  # type: str
+        self.kind: str = "BlobFolder"
         self.container_name = container_name
-        self.data_set_id = None
+        self.data_set_id: Optional[str] = None
         self.prefix = prefix
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
 
 
-class BlobFolderDataSetMapping(DataSetMapping):  # pylint: disable=too-many-instance-attributes
+class BlobFolderDataSetMapping(DataSetMapping):
     """A Blob folder data set mapping.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -1695,8 +1702,8 @@ class BlobFolderDataSetMapping(DataSetMapping):  # pylint: disable=too-many-inst
         resource_group: str,
         storage_account_name: str,
         subscription_id: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: Container that has the file path. Required.
         :paramtype container_name: str
@@ -1712,23 +1719,23 @@ class BlobFolderDataSetMapping(DataSetMapping):  # pylint: disable=too-many-inst
         :paramtype subscription_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "BlobFolder"  # type: str
+        self.kind: str = "BlobFolder"
         self.container_name = container_name
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
         self.prefix = prefix
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
 
 
-class ConsumerInvitation(ProxyDto):  # pylint: disable=too-many-instance-attributes
+class ConsumerInvitation(ProxyDto):
     """A consumer Invitation data transfer object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -1816,33 +1823,33 @@ class ConsumerInvitation(ProxyDto):  # pylint: disable=too-many-instance-attribu
         "user_name": {"key": "properties.userName", "type": "str"},
     }
 
-    def __init__(self, *, invitation_id: str, **kwargs):
+    def __init__(self, *, invitation_id: str, **kwargs: Any) -> None:
         """
         :keyword invitation_id: Unique id of the invitation. Required.
         :paramtype invitation_id: str
         """
         super().__init__(**kwargs)
-        self.data_set_count = None
-        self.description = None
-        self.expiration_date = None
+        self.data_set_count: Optional[int] = None
+        self.description: Optional[str] = None
+        self.expiration_date: Optional[datetime.datetime] = None
         self.invitation_id = invitation_id
-        self.invitation_status = None
-        self.location = None
-        self.provider_email = None
-        self.provider_name = None
-        self.provider_tenant_name = None
-        self.responded_at = None
-        self.sent_at = None
-        self.share_name = None
-        self.terms_of_use = None
-        self.user_email = None
-        self.user_name = None
+        self.invitation_status: Optional[Union[str, "_models.InvitationStatus"]] = None
+        self.location: Optional[str] = None
+        self.provider_email: Optional[str] = None
+        self.provider_name: Optional[str] = None
+        self.provider_tenant_name: Optional[str] = None
+        self.responded_at: Optional[datetime.datetime] = None
+        self.sent_at: Optional[datetime.datetime] = None
+        self.share_name: Optional[str] = None
+        self.terms_of_use: Optional[str] = None
+        self.user_email: Optional[str] = None
+        self.user_name: Optional[str] = None
 
 
 class ConsumerInvitationList(_serialization.Model):
     """List response for get InvitationList.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -1859,7 +1866,9 @@ class ConsumerInvitationList(_serialization.Model):
         "value": {"key": "value", "type": "[ConsumerInvitation]"},
     }
 
-    def __init__(self, *, value: List["_models.ConsumerInvitation"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: list["_models.ConsumerInvitation"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -1923,20 +1932,20 @@ class ConsumerSourceDataSet(ProxyDto):
         "data_set_type": {"key": "properties.dataSetType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.data_set_id = None
-        self.data_set_location = None
-        self.data_set_name = None
-        self.data_set_path = None
-        self.data_set_type = None
+        self.data_set_id: Optional[str] = None
+        self.data_set_location: Optional[str] = None
+        self.data_set_name: Optional[str] = None
+        self.data_set_path: Optional[str] = None
+        self.data_set_type: Optional[Union[str, "_models.DataSetType"]] = None
 
 
 class ConsumerSourceDataSetList(_serialization.Model):
     """A consumer side list of source dataSets.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -1953,7 +1962,9 @@ class ConsumerSourceDataSetList(_serialization.Model):
         "value": {"key": "value", "type": "[ConsumerSourceDataSet]"},
     }
 
-    def __init__(self, *, value: List["_models.ConsumerSourceDataSet"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: list["_models.ConsumerSourceDataSet"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -1968,7 +1979,7 @@ class ConsumerSourceDataSetList(_serialization.Model):
 class DataSetList(_serialization.Model):
     """List response for get DataSets.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -1985,7 +1996,7 @@ class DataSetList(_serialization.Model):
         "value": {"key": "value", "type": "[DataSet]"},
     }
 
-    def __init__(self, *, value: List["_models.DataSet"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: list["_models.DataSet"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -2000,7 +2011,7 @@ class DataSetList(_serialization.Model):
 class DataSetMappingList(_serialization.Model):
     """List response for get DataSetMappings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -2017,7 +2028,9 @@ class DataSetMappingList(_serialization.Model):
         "value": {"key": "value", "type": "[DataSetMapping]"},
     }
 
-    def __init__(self, *, value: List["_models.DataSetMapping"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: list["_models.DataSetMapping"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -2032,7 +2045,7 @@ class DataSetMappingList(_serialization.Model):
 class DataShareError(_serialization.Model):
     """The data share error model.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar error: The data share error body. Required.
     :vartype error: ~azure.mgmt.datashare.models.DataShareErrorInfo
@@ -2046,7 +2059,7 @@ class DataShareError(_serialization.Model):
         "error": {"key": "error", "type": "DataShareErrorInfo"},
     }
 
-    def __init__(self, *, error: "_models.DataShareErrorInfo", **kwargs):
+    def __init__(self, *, error: "_models.DataShareErrorInfo", **kwargs: Any) -> None:
         """
         :keyword error: The data share error body. Required.
         :paramtype error: ~azure.mgmt.datashare.models.DataShareErrorInfo
@@ -2058,7 +2071,7 @@ class DataShareError(_serialization.Model):
 class DataShareErrorInfo(_serialization.Model):
     """The data share error body model.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: Code of the error. Required.
     :vartype code: str
@@ -2087,10 +2100,10 @@ class DataShareErrorInfo(_serialization.Model):
         *,
         code: str,
         message: str,
-        details: Optional[List["_models.DataShareErrorInfo"]] = None,
+        details: Optional[list["_models.DataShareErrorInfo"]] = None,
         target: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Code of the error. Required.
         :paramtype code: str
@@ -2122,7 +2135,7 @@ class DimensionProperties(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, display_name: Optional[str] = None, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, display_name: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword display_name: localized display name of the dimension to customer.
         :paramtype display_name: str
@@ -2167,17 +2180,17 @@ class EmailRegistration(_serialization.Model):
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(self, *, activation_code: Optional[str] = None, **kwargs):
+    def __init__(self, *, activation_code: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword activation_code: Activation code for the registration.
         :paramtype activation_code: str
         """
         super().__init__(**kwargs)
         self.activation_code = activation_code
-        self.activation_expiration_date = None
-        self.email = None
-        self.registration_status = None
-        self.tenant_id = None
+        self.activation_expiration_date: Optional[datetime.datetime] = None
+        self.email: Optional[str] = None
+        self.registration_status: Optional[Union[str, "_models.RegistrationStatus"]] = None
+        self.tenant_id: Optional[str] = None
 
 
 class Identity(_serialization.Model):
@@ -2204,18 +2217,18 @@ class Identity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.Type"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.Type"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: Identity Type. "SystemAssigned"
         :paramtype type: str or ~azure.mgmt.datashare.models.Type
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
 
 
-class Invitation(ProxyDto):  # pylint: disable=too-many-instance-attributes
+class Invitation(ProxyDto):
     """A Invitation data transfer object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2244,8 +2257,8 @@ class Invitation(ProxyDto):  # pylint: disable=too-many-instance-attributes
     :ivar target_email: The email the invitation is directed to.
     :vartype target_email: str
     :ivar target_object_id: The target user or application Id that invitation is being sent to.
-     Must be specified along TargetActiveDirectoryId. This enables sending
-     invitations to specific users or applications in an AD tenant.
+     Must be specified along TargetActiveDirectoryId. This enables sending invitations to specific
+     users or applications in an AD tenant.
     :vartype target_object_id: str
     :ivar user_email: Email of the user who created the resource.
     :vartype user_email: str
@@ -2290,8 +2303,8 @@ class Invitation(ProxyDto):  # pylint: disable=too-many-instance-attributes
         target_active_directory_id: Optional[str] = None,
         target_email: Optional[str] = None,
         target_object_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword expiration_date: The expiration date for the invitation and share subscription.
         :paramtype expiration_date: ~datetime.datetime
@@ -2300,27 +2313,27 @@ class Invitation(ProxyDto):  # pylint: disable=too-many-instance-attributes
         :keyword target_email: The email the invitation is directed to.
         :paramtype target_email: str
         :keyword target_object_id: The target user or application Id that invitation is being sent to.
-         Must be specified along TargetActiveDirectoryId. This enables sending
-         invitations to specific users or applications in an AD tenant.
+         Must be specified along TargetActiveDirectoryId. This enables sending invitations to specific
+         users or applications in an AD tenant.
         :paramtype target_object_id: str
         """
         super().__init__(**kwargs)
         self.expiration_date = expiration_date
-        self.invitation_id = None
-        self.invitation_status = None
-        self.responded_at = None
-        self.sent_at = None
+        self.invitation_id: Optional[str] = None
+        self.invitation_status: Optional[Union[str, "_models.InvitationStatus"]] = None
+        self.responded_at: Optional[datetime.datetime] = None
+        self.sent_at: Optional[datetime.datetime] = None
         self.target_active_directory_id = target_active_directory_id
         self.target_email = target_email
         self.target_object_id = target_object_id
-        self.user_email = None
-        self.user_name = None
+        self.user_email: Optional[str] = None
+        self.user_name: Optional[str] = None
 
 
 class InvitationList(_serialization.Model):
     """List response for get InvitationList.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -2337,7 +2350,7 @@ class InvitationList(_serialization.Model):
         "value": {"key": "value", "type": "[Invitation]"},
     }
 
-    def __init__(self, *, value: List["_models.Invitation"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: list["_models.Invitation"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -2354,7 +2367,7 @@ class KustoClusterDataSet(DataSet):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -2404,17 +2417,17 @@ class KustoClusterDataSet(DataSet):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, kusto_cluster_resource_id: str, **kwargs):
+    def __init__(self, *, kusto_cluster_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword kusto_cluster_resource_id: Resource id of the kusto cluster. Required.
         :paramtype kusto_cluster_resource_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "KustoCluster"  # type: str
-        self.data_set_id = None
+        self.kind: str = "KustoCluster"
+        self.data_set_id: Optional[str] = None
         self.kusto_cluster_resource_id = kusto_cluster_resource_id
-        self.location = None
-        self.provisioning_state = None
+        self.location: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class KustoClusterDataSetMapping(DataSetMapping):
@@ -2422,7 +2435,7 @@ class KustoClusterDataSetMapping(DataSetMapping):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -2476,7 +2489,7 @@ class KustoClusterDataSetMapping(DataSetMapping):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, data_set_id: str, kusto_cluster_resource_id: str, **kwargs):
+    def __init__(self, *, data_set_id: str, kusto_cluster_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword data_set_id: The id of the source data set. Required.
         :paramtype data_set_id: str
@@ -2484,12 +2497,12 @@ class KustoClusterDataSetMapping(DataSetMapping):
         :paramtype kusto_cluster_resource_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "KustoCluster"  # type: str
+        self.kind: str = "KustoCluster"
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
         self.kusto_cluster_resource_id = kusto_cluster_resource_id
-        self.location = None
-        self.provisioning_state = None
+        self.location: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class KustoDatabaseDataSet(DataSet):
@@ -2497,7 +2510,7 @@ class KustoDatabaseDataSet(DataSet):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -2547,17 +2560,17 @@ class KustoDatabaseDataSet(DataSet):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, kusto_database_resource_id: str, **kwargs):
+    def __init__(self, *, kusto_database_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword kusto_database_resource_id: Resource id of the kusto database. Required.
         :paramtype kusto_database_resource_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "KustoDatabase"  # type: str
-        self.data_set_id = None
+        self.kind: str = "KustoDatabase"
+        self.data_set_id: Optional[str] = None
         self.kusto_database_resource_id = kusto_database_resource_id
-        self.location = None
-        self.provisioning_state = None
+        self.location: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class KustoDatabaseDataSetMapping(DataSetMapping):
@@ -2565,7 +2578,7 @@ class KustoDatabaseDataSetMapping(DataSetMapping):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -2619,7 +2632,7 @@ class KustoDatabaseDataSetMapping(DataSetMapping):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, data_set_id: str, kusto_cluster_resource_id: str, **kwargs):
+    def __init__(self, *, data_set_id: str, kusto_cluster_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword data_set_id: The id of the source data set. Required.
         :paramtype data_set_id: str
@@ -2627,18 +2640,18 @@ class KustoDatabaseDataSetMapping(DataSetMapping):
         :paramtype kusto_cluster_resource_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "KustoDatabase"  # type: str
+        self.kind: str = "KustoDatabase"
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
         self.kusto_cluster_resource_id = kusto_cluster_resource_id
-        self.location = None
-        self.provisioning_state = None
+        self.location: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class OperationList(_serialization.Model):
     """List response for get operations.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -2655,7 +2668,9 @@ class OperationList(_serialization.Model):
         "value": {"key": "value", "type": "[OperationModel]"},
     }
 
-    def __init__(self, *, value: List["_models.OperationModel"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: list["_models.OperationModel"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -2690,8 +2705,8 @@ class OperationMetaLogSpecification(_serialization.Model):
         blob_duration: Optional[str] = None,
         display_name: Optional[str] = None,
         name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob_duration: blob duration of the log.
         :paramtype blob_duration: str
@@ -2706,7 +2721,7 @@ class OperationMetaLogSpecification(_serialization.Model):
         self.name = name
 
 
-class OperationMetaMetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class OperationMetaMetricSpecification(_serialization.Model):
     """metric specifications for the operation.
 
     :ivar aggregation_type: aggregation type of metric.
@@ -2755,7 +2770,7 @@ class OperationMetaMetricSpecification(_serialization.Model):  # pylint: disable
         self,
         *,
         aggregation_type: Optional[str] = None,
-        dimensions: Optional[List["_models.DimensionProperties"]] = None,
+        dimensions: Optional[list["_models.DimensionProperties"]] = None,
         display_description: Optional[str] = None,
         display_name: Optional[str] = None,
         enable_regional_mdm_account: Optional[str] = None,
@@ -2763,11 +2778,11 @@ class OperationMetaMetricSpecification(_serialization.Model):  # pylint: disable
         internal_metric_name: Optional[str] = None,
         name: Optional[str] = None,
         resource_id_dimension_name_override: Optional[str] = None,
-        supported_aggregation_types: Optional[List[str]] = None,
-        supported_time_grain_types: Optional[List[str]] = None,
+        supported_aggregation_types: Optional[list[str]] = None,
+        supported_time_grain_types: Optional[list[str]] = None,
         unit: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword aggregation_type: aggregation type of metric.
         :paramtype aggregation_type: str
@@ -2828,10 +2843,10 @@ class OperationMetaServiceSpecification(_serialization.Model):
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["_models.OperationMetaLogSpecification"]] = None,
-        metric_specifications: Optional[List["_models.OperationMetaMetricSpecification"]] = None,
-        **kwargs
-    ):
+        log_specifications: Optional[list["_models.OperationMetaLogSpecification"]] = None,
+        metric_specifications: Optional[list["_models.OperationMetaMetricSpecification"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_specifications: log specifications for the operation.
         :paramtype log_specifications: list[~azure.mgmt.datashare.models.OperationMetaLogSpecification]
@@ -2874,8 +2889,8 @@ class OperationModel(_serialization.Model):
         name: Optional[str] = None,
         origin: Optional[str] = None,
         service_specification: Optional["_models.OperationMetaServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display: Properties on the operation.
         :paramtype display: ~azure.mgmt.datashare.models.OperationModelProperties
@@ -2921,8 +2936,8 @@ class OperationModelProperties(_serialization.Model):
         operation: Optional[str] = None,
         provider: Optional[str] = None,
         resource: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of the operation for display purposes.
         :paramtype description: str
@@ -2943,7 +2958,7 @@ class OperationModelProperties(_serialization.Model):
 class OperationResponse(_serialization.Model):
     """Response for long running operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar end_time: start time.
     :vartype end_time: ~datetime.datetime
@@ -2974,8 +2989,8 @@ class OperationResponse(_serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         error: Optional["_models.DataShareErrorInfo"] = None,
         start_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword end_time: start time.
         :paramtype end_time: ~datetime.datetime
@@ -2994,7 +3009,7 @@ class OperationResponse(_serialization.Model):
         self.status = status
 
 
-class ProviderShareSubscription(ProxyDto):  # pylint: disable=too-many-instance-attributes
+class ProviderShareSubscription(ProxyDto):
     """A provider side share subscription data transfer object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3063,28 +3078,28 @@ class ProviderShareSubscription(ProxyDto):  # pylint: disable=too-many-instance-
         "share_subscription_status": {"key": "properties.shareSubscriptionStatus", "type": "str"},
     }
 
-    def __init__(self, *, expiration_date: Optional[datetime.datetime] = None, **kwargs):
+    def __init__(self, *, expiration_date: Optional[datetime.datetime] = None, **kwargs: Any) -> None:
         """
         :keyword expiration_date: Expiration date of the share subscription in UTC format.
         :paramtype expiration_date: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.consumer_email = None
-        self.consumer_name = None
-        self.consumer_tenant_name = None
-        self.created_at = None
+        self.consumer_email: Optional[str] = None
+        self.consumer_name: Optional[str] = None
+        self.consumer_tenant_name: Optional[str] = None
+        self.created_at: Optional[datetime.datetime] = None
         self.expiration_date = expiration_date
-        self.provider_email = None
-        self.provider_name = None
-        self.shared_at = None
-        self.share_subscription_object_id = None
-        self.share_subscription_status = None
+        self.provider_email: Optional[str] = None
+        self.provider_name: Optional[str] = None
+        self.shared_at: Optional[datetime.datetime] = None
+        self.share_subscription_object_id: Optional[str] = None
+        self.share_subscription_status: Optional[Union[str, "_models.ShareSubscriptionStatus"]] = None
 
 
 class ProviderShareSubscriptionList(_serialization.Model):
     """List response for get ShareSubscription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -3101,7 +3116,9 @@ class ProviderShareSubscriptionList(_serialization.Model):
         "value": {"key": "value", "type": "[ProviderShareSubscription]"},
     }
 
-    def __init__(self, *, value: List["_models.ProviderShareSubscription"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: list["_models.ProviderShareSubscription"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -3119,7 +3136,7 @@ class SourceShareSynchronizationSetting(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ScheduledSourceSynchronizationSetting
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Kind of synchronization setting on share. Required. "ScheduleBased"
     :vartype kind: str or ~azure.mgmt.datashare.models.SourceShareSynchronizationSettingKind
@@ -3135,16 +3152,16 @@ class SourceShareSynchronizationSetting(_serialization.Model):
 
     _subtype_map = {"kind": {"ScheduleBased": "ScheduledSourceSynchronizationSetting"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ScheduledSourceSynchronizationSetting(SourceShareSynchronizationSetting):
     """A type of synchronization setting based on schedule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Kind of synchronization setting on share. Required. "ScheduleBased"
     :vartype kind: str or ~azure.mgmt.datashare.models.SourceShareSynchronizationSettingKind
@@ -3169,8 +3186,8 @@ class ScheduledSourceSynchronizationSetting(SourceShareSynchronizationSetting):
         *,
         recurrence_interval: Optional[Union[str, "_models.RecurrenceInterval"]] = None,
         synchronization_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recurrence_interval: Recurrence Interval. Known values are: "Hour" and "Day".
         :paramtype recurrence_interval: str or ~azure.mgmt.datashare.models.RecurrenceInterval
@@ -3178,7 +3195,7 @@ class ScheduledSourceSynchronizationSetting(SourceShareSynchronizationSetting):
         :paramtype synchronization_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.kind = "ScheduleBased"  # type: str
+        self.kind: str = "ScheduleBased"
         self.recurrence_interval = recurrence_interval
         self.synchronization_time = synchronization_time
 
@@ -3191,7 +3208,7 @@ class SynchronizationSetting(ProxyDto):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -3223,10 +3240,10 @@ class SynchronizationSetting(ProxyDto):
 
     _subtype_map = {"kind": {"ScheduleBased": "ScheduledSynchronizationSetting"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ScheduledSynchronizationSetting(SynchronizationSetting):
@@ -3234,7 +3251,7 @@ class ScheduledSynchronizationSetting(SynchronizationSetting):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -3290,8 +3307,8 @@ class ScheduledSynchronizationSetting(SynchronizationSetting):
         *,
         recurrence_interval: Union[str, "_models.RecurrenceInterval"],
         synchronization_time: datetime.datetime,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recurrence_interval: Recurrence Interval. Required. Known values are: "Hour" and
          "Day".
@@ -3300,12 +3317,12 @@ class ScheduledSynchronizationSetting(SynchronizationSetting):
         :paramtype synchronization_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.kind = "ScheduleBased"  # type: str
-        self.created_at = None
-        self.provisioning_state = None
+        self.kind: str = "ScheduleBased"
+        self.created_at: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.recurrence_interval = recurrence_interval
         self.synchronization_time = synchronization_time
-        self.user_name = None
+        self.user_name: Optional[str] = None
 
 
 class Trigger(ProxyDto):
@@ -3316,7 +3333,7 @@ class Trigger(ProxyDto):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -3348,18 +3365,18 @@ class Trigger(ProxyDto):
 
     _subtype_map = {"kind": {"ScheduleBased": "ScheduledTrigger"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
-class ScheduledTrigger(Trigger):  # pylint: disable=too-many-instance-attributes
+class ScheduledTrigger(Trigger):
     """A type of trigger based on schedule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -3425,8 +3442,8 @@ class ScheduledTrigger(Trigger):  # pylint: disable=too-many-instance-attributes
         recurrence_interval: Union[str, "_models.RecurrenceInterval"],
         synchronization_time: datetime.datetime,
         synchronization_mode: Optional[Union[str, "_models.SynchronizationMode"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recurrence_interval: Recurrence Interval. Required. Known values are: "Hour" and
          "Day".
@@ -3438,17 +3455,17 @@ class ScheduledTrigger(Trigger):  # pylint: disable=too-many-instance-attributes
         :paramtype synchronization_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.kind = "ScheduleBased"  # type: str
-        self.created_at = None
-        self.provisioning_state = None
+        self.kind: str = "ScheduleBased"
+        self.created_at: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.recurrence_interval = recurrence_interval
         self.synchronization_mode = synchronization_mode
         self.synchronization_time = synchronization_time
-        self.trigger_status = None
-        self.user_name = None
+        self.trigger_status: Optional[Union[str, "_models.TriggerStatus"]] = None
+        self.user_name: Optional[str] = None
 
 
-class Share(ProxyDto):  # pylint: disable=too-many-instance-attributes
+class Share(ProxyDto):
     """A share data transfer object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3509,8 +3526,8 @@ class Share(ProxyDto):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         share_kind: Optional[Union[str, "_models.ShareKind"]] = None,
         terms: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: Share description.
         :paramtype description: str
@@ -3520,19 +3537,19 @@ class Share(ProxyDto):  # pylint: disable=too-many-instance-attributes
         :paramtype terms: str
         """
         super().__init__(**kwargs)
-        self.created_at = None
+        self.created_at: Optional[datetime.datetime] = None
         self.description = description
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.share_kind = share_kind
         self.terms = terms
-        self.user_email = None
-        self.user_name = None
+        self.user_email: Optional[str] = None
+        self.user_name: Optional[str] = None
 
 
 class ShareList(_serialization.Model):
     """List response for get Shares.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -3549,7 +3566,7 @@ class ShareList(_serialization.Model):
         "value": {"key": "value", "type": "[Share]"},
     }
 
-    def __init__(self, *, value: List["_models.Share"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: list["_models.Share"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -3561,12 +3578,12 @@ class ShareList(_serialization.Model):
         self.value = value
 
 
-class ShareSubscription(ProxyDto):  # pylint: disable=too-many-instance-attributes
+class ShareSubscription(ProxyDto):
     """A share subscription data transfer object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -3659,8 +3676,8 @@ class ShareSubscription(ProxyDto):  # pylint: disable=too-many-instance-attribut
         invitation_id: str,
         source_share_location: str,
         expiration_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword expiration_date: The expiration date of the share subscription.
         :paramtype expiration_date: ~datetime.datetime
@@ -3670,27 +3687,27 @@ class ShareSubscription(ProxyDto):  # pylint: disable=too-many-instance-attribut
         :paramtype source_share_location: str
         """
         super().__init__(**kwargs)
-        self.created_at = None
+        self.created_at: Optional[datetime.datetime] = None
         self.expiration_date = expiration_date
         self.invitation_id = invitation_id
-        self.provider_email = None
-        self.provider_name = None
-        self.provider_tenant_name = None
-        self.provisioning_state = None
-        self.share_description = None
-        self.share_kind = None
-        self.share_name = None
-        self.share_subscription_status = None
-        self.share_terms = None
+        self.provider_email: Optional[str] = None
+        self.provider_name: Optional[str] = None
+        self.provider_tenant_name: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.share_description: Optional[str] = None
+        self.share_kind: Optional[Union[str, "_models.ShareKind"]] = None
+        self.share_name: Optional[str] = None
+        self.share_subscription_status: Optional[Union[str, "_models.ShareSubscriptionStatus"]] = None
+        self.share_terms: Optional[str] = None
         self.source_share_location = source_share_location
-        self.user_email = None
-        self.user_name = None
+        self.user_email: Optional[str] = None
+        self.user_name: Optional[str] = None
 
 
 class ShareSubscriptionList(_serialization.Model):
     """List response for get ShareSubscription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -3707,7 +3724,9 @@ class ShareSubscriptionList(_serialization.Model):
         "value": {"key": "value", "type": "[ShareSubscription]"},
     }
 
-    def __init__(self, *, value: List["_models.ShareSubscription"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: list["_models.ShareSubscription"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -3724,7 +3743,7 @@ class ShareSubscriptionSynchronization(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar duration_ms: Synchronization duration.
     :vartype duration_ms: int
@@ -3763,25 +3782,25 @@ class ShareSubscriptionSynchronization(_serialization.Model):
         "synchronization_mode": {"key": "synchronizationMode", "type": "str"},
     }
 
-    def __init__(self, *, synchronization_id: str, **kwargs):
+    def __init__(self, *, synchronization_id: str, **kwargs: Any) -> None:
         """
         :keyword synchronization_id: Synchronization id. Required.
         :paramtype synchronization_id: str
         """
         super().__init__(**kwargs)
-        self.duration_ms = None
-        self.end_time = None
-        self.message = None
-        self.start_time = None
-        self.status = None
+        self.duration_ms: Optional[int] = None
+        self.end_time: Optional[datetime.datetime] = None
+        self.message: Optional[str] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.status: Optional[str] = None
         self.synchronization_id = synchronization_id
-        self.synchronization_mode = None
+        self.synchronization_mode: Optional[Union[str, "_models.SynchronizationMode"]] = None
 
 
 class ShareSubscriptionSynchronizationList(_serialization.Model):
     """A consumer side list of share subscription synchronizations.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -3799,8 +3818,8 @@ class ShareSubscriptionSynchronizationList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.ShareSubscriptionSynchronization"], next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: list["_models.ShareSubscriptionSynchronization"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -3869,8 +3888,8 @@ class ShareSynchronization(_serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         status: Optional[str] = None,
         synchronization_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword consumer_email: Email of the user who created the synchronization.
         :paramtype consumer_email: str
@@ -3901,13 +3920,13 @@ class ShareSynchronization(_serialization.Model):
         self.start_time = start_time
         self.status = status
         self.synchronization_id = synchronization_id
-        self.synchronization_mode = None
+        self.synchronization_mode: Optional[Union[str, "_models.SynchronizationMode"]] = None
 
 
 class ShareSynchronizationList(_serialization.Model):
     """List response for get ShareSynchronization.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -3924,7 +3943,9 @@ class ShareSynchronizationList(_serialization.Model):
         "value": {"key": "value", "type": "[ShareSynchronization]"},
     }
 
-    def __init__(self, *, value: List["_models.ShareSynchronization"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: list["_models.ShareSynchronization"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -3939,7 +3960,7 @@ class ShareSynchronizationList(_serialization.Model):
 class SourceShareSynchronizationSettingList(_serialization.Model):
     """List response for get source share Synchronization settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -3957,8 +3978,12 @@ class SourceShareSynchronizationSettingList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.SourceShareSynchronizationSetting"], next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: list["_models.SourceShareSynchronizationSetting"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -3975,7 +4000,7 @@ class SqlDBTableDataSet(DataSet):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -4031,8 +4056,8 @@ class SqlDBTableDataSet(DataSet):
         schema_name: Optional[str] = None,
         sql_server_resource_id: Optional[str] = None,
         table_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword database_name: Database name of the source data set.
         :paramtype database_name: str
@@ -4044,20 +4069,20 @@ class SqlDBTableDataSet(DataSet):
         :paramtype table_name: str
         """
         super().__init__(**kwargs)
-        self.kind = "SqlDBTable"  # type: str
+        self.kind: str = "SqlDBTable"
         self.database_name = database_name
-        self.data_set_id = None
+        self.data_set_id: Optional[str] = None
         self.schema_name = schema_name
         self.sql_server_resource_id = sql_server_resource_id
         self.table_name = table_name
 
 
-class SqlDBTableDataSetMapping(DataSetMapping):  # pylint: disable=too-many-instance-attributes
+class SqlDBTableDataSetMapping(DataSetMapping):
     """A SQL DB Table data set mapping.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -4127,8 +4152,8 @@ class SqlDBTableDataSetMapping(DataSetMapping):  # pylint: disable=too-many-inst
         schema_name: str,
         sql_server_resource_id: str,
         table_name: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword database_name: DatabaseName name of the sink data set. Required.
         :paramtype database_name: str
@@ -4142,11 +4167,11 @@ class SqlDBTableDataSetMapping(DataSetMapping):  # pylint: disable=too-many-inst
         :paramtype table_name: str
         """
         super().__init__(**kwargs)
-        self.kind = "SqlDBTable"  # type: str
+        self.kind: str = "SqlDBTable"
         self.database_name = database_name
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
-        self.provisioning_state = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.schema_name = schema_name
         self.sql_server_resource_id = sql_server_resource_id
         self.table_name = table_name
@@ -4157,7 +4182,7 @@ class SqlDWTableDataSet(DataSet):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -4213,8 +4238,8 @@ class SqlDWTableDataSet(DataSet):
         schema_name: Optional[str] = None,
         sql_server_resource_id: Optional[str] = None,
         table_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_warehouse_name: DataWarehouse name of the source data set.
         :paramtype data_warehouse_name: str
@@ -4226,20 +4251,20 @@ class SqlDWTableDataSet(DataSet):
         :paramtype table_name: str
         """
         super().__init__(**kwargs)
-        self.kind = "SqlDWTable"  # type: str
-        self.data_set_id = None
+        self.kind: str = "SqlDWTable"
+        self.data_set_id: Optional[str] = None
         self.data_warehouse_name = data_warehouse_name
         self.schema_name = schema_name
         self.sql_server_resource_id = sql_server_resource_id
         self.table_name = table_name
 
 
-class SqlDWTableDataSetMapping(DataSetMapping):  # pylint: disable=too-many-instance-attributes
+class SqlDWTableDataSetMapping(DataSetMapping):
     """A SQL DW Table data set mapping.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -4309,8 +4334,8 @@ class SqlDWTableDataSetMapping(DataSetMapping):  # pylint: disable=too-many-inst
         schema_name: str,
         sql_server_resource_id: str,
         table_name: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_set_id: The id of the source data set. Required.
         :paramtype data_set_id: str
@@ -4324,11 +4349,11 @@ class SqlDWTableDataSetMapping(DataSetMapping):  # pylint: disable=too-many-inst
         :paramtype table_name: str
         """
         super().__init__(**kwargs)
-        self.kind = "SqlDWTable"  # type: str
+        self.kind: str = "SqlDWTable"
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
         self.data_warehouse_name = data_warehouse_name
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.schema_name = schema_name
         self.sql_server_resource_id = sql_server_resource_id
         self.table_name = table_name
@@ -4339,7 +4364,7 @@ class SynapseWorkspaceSqlPoolTableDataSet(DataSet):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -4384,24 +4409,24 @@ class SynapseWorkspaceSqlPoolTableDataSet(DataSet):
         },
     }
 
-    def __init__(self, *, synapse_workspace_sql_pool_table_resource_id: str, **kwargs):
+    def __init__(self, *, synapse_workspace_sql_pool_table_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword synapse_workspace_sql_pool_table_resource_id: Resource id of the Synapse Workspace SQL
          Pool Table. Required.
         :paramtype synapse_workspace_sql_pool_table_resource_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "SynapseWorkspaceSqlPoolTable"  # type: str
-        self.data_set_id = None
+        self.kind: str = "SynapseWorkspaceSqlPoolTable"
+        self.data_set_id: Optional[str] = None
         self.synapse_workspace_sql_pool_table_resource_id = synapse_workspace_sql_pool_table_resource_id
 
 
-class SynapseWorkspaceSqlPoolTableDataSetMapping(DataSetMapping):
+class SynapseWorkspaceSqlPoolTableDataSetMapping(DataSetMapping):  # pylint: disable=name-too-long
     """A Synapse Workspace Sql Pool Table data set mapping.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource id of the azure resource.
     :vartype id: str
@@ -4455,7 +4480,7 @@ class SynapseWorkspaceSqlPoolTableDataSetMapping(DataSetMapping):
         },
     }
 
-    def __init__(self, *, data_set_id: str, synapse_workspace_sql_pool_table_resource_id: str, **kwargs):
+    def __init__(self, *, data_set_id: str, synapse_workspace_sql_pool_table_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword data_set_id: The id of the source data set. Required.
         :paramtype data_set_id: str
@@ -4464,14 +4489,14 @@ class SynapseWorkspaceSqlPoolTableDataSetMapping(DataSetMapping):
         :paramtype synapse_workspace_sql_pool_table_resource_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "SynapseWorkspaceSqlPoolTable"  # type: str
+        self.kind: str = "SynapseWorkspaceSqlPoolTable"
         self.data_set_id = data_set_id
-        self.data_set_mapping_status = None
-        self.provisioning_state = None
+        self.data_set_mapping_status: Optional[Union[str, "_models.DataSetMappingStatus"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.synapse_workspace_sql_pool_table_resource_id = synapse_workspace_sql_pool_table_resource_id
 
 
-class SynchronizationDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SynchronizationDetails(_serialization.Model):
     """Synchronization details at data set level.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4547,30 +4572,30 @@ class SynchronizationDetails(_serialization.Model):  # pylint: disable=too-many-
         "v_core": {"key": "vCore", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.data_set_id = None
-        self.data_set_type = None
-        self.duration_ms = None
-        self.end_time = None
-        self.files_read = None
-        self.files_written = None
-        self.message = None
-        self.name = None
-        self.rows_copied = None
-        self.rows_read = None
-        self.size_read = None
-        self.size_written = None
-        self.start_time = None
-        self.status = None
-        self.v_core = None
+        self.data_set_id: Optional[str] = None
+        self.data_set_type: Optional[Union[str, "_models.DataSetType"]] = None
+        self.duration_ms: Optional[int] = None
+        self.end_time: Optional[datetime.datetime] = None
+        self.files_read: Optional[int] = None
+        self.files_written: Optional[int] = None
+        self.message: Optional[str] = None
+        self.name: Optional[str] = None
+        self.rows_copied: Optional[int] = None
+        self.rows_read: Optional[int] = None
+        self.size_read: Optional[int] = None
+        self.size_written: Optional[int] = None
+        self.start_time: Optional[datetime.datetime] = None
+        self.status: Optional[str] = None
+        self.v_core: Optional[int] = None
 
 
 class SynchronizationDetailsList(_serialization.Model):
     """details of synchronization.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -4587,7 +4612,9 @@ class SynchronizationDetailsList(_serialization.Model):
         "value": {"key": "value", "type": "[SynchronizationDetails]"},
     }
 
-    def __init__(self, *, value: List["_models.SynchronizationDetails"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: list["_models.SynchronizationDetails"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -4602,7 +4629,7 @@ class SynchronizationDetailsList(_serialization.Model):
 class SynchronizationSettingList(_serialization.Model):
     """List response for get Synchronization settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -4619,7 +4646,9 @@ class SynchronizationSettingList(_serialization.Model):
         "value": {"key": "value", "type": "[SynchronizationSetting]"},
     }
 
-    def __init__(self, *, value: List["_models.SynchronizationSetting"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: list["_models.SynchronizationSetting"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str
@@ -4643,7 +4672,9 @@ class Synchronize(_serialization.Model):
         "synchronization_mode": {"key": "synchronizationMode", "type": "str"},
     }
 
-    def __init__(self, *, synchronization_mode: Optional[Union[str, "_models.SynchronizationMode"]] = None, **kwargs):
+    def __init__(
+        self, *, synchronization_mode: Optional[Union[str, "_models.SynchronizationMode"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword synchronization_mode: Mode of synchronization used in triggers and snapshot sync.
          Incremental by default. Known values are: "Incremental" and "FullSync".
@@ -4690,8 +4721,8 @@ class SystemData(_serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.LastModifiedByType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
@@ -4720,7 +4751,7 @@ class SystemData(_serialization.Model):
 class TriggerList(_serialization.Model):
     """List response for get triggers.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar next_link: The Url of next result page.
     :vartype next_link: str
@@ -4737,7 +4768,7 @@ class TriggerList(_serialization.Model):
         "value": {"key": "value", "type": "[Trigger]"},
     }
 
-    def __init__(self, *, value: List["_models.Trigger"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: list["_models.Trigger"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The Url of next result page.
         :paramtype next_link: str

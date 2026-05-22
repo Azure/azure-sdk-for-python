@@ -32,6 +32,7 @@ from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
+from ._shared.validation import parse_validation_option
 
 if TYPE_CHECKING:
     from ._generated.operations import PathOperations
@@ -55,16 +56,19 @@ def _append_data_options(
     if isinstance(data, bytes):
         data = data[:length]
 
+    validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+
     cpk_info = get_cpk_info(scheme, kwargs)
     kwargs.update(get_lease_action_properties(kwargs))
 
     options = {
-        "body": data,
-        "position": offset,
-        "content_length": length,
-        "validate_content": kwargs.pop("validate_content", False),
-        "timeout": kwargs.pop("timeout", None),
-        "cls": return_response_headers,
+        'body': data,
+        'position': offset,
+        'content_length': length,
+        'validate_content': validate_content,
+        'cpk_info': cpk_info,
+        'timeout': kwargs.pop('timeout', None),
+        'cls': return_response_headers
     }
     if cpk_info:
         options.update(cpk_info)
@@ -132,10 +136,10 @@ def _upload_options(
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
 
-    validate_content = kwargs.pop("validate_content", False)
-    content_settings = kwargs.pop("content_settings", None)
-    metadata = kwargs.pop("metadata", None)
-    max_concurrency = kwargs.pop("max_concurrency", None)
+    validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+    content_settings = kwargs.pop('content_settings', None)
+    metadata = kwargs.pop('metadata', None)
+    max_concurrency = kwargs.pop('max_concurrency', None)
     if max_concurrency is None:
         max_concurrency = DEFAULT_MAX_CONCURRENCY
 
