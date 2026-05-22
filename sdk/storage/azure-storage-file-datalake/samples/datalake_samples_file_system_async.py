@@ -27,16 +27,15 @@ SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 class FileSystemSamplesAsync(object):
 
-    connection_string = os.environ["DATALAKE_STORAGE_CONNECTION_STRING"]
+    connection_string = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
 
-    # --Begin File System Samples-----------------------------------------------------------------
+    #--Begin File System Samples-----------------------------------------------------------------
 
     async def file_system_sample(self):
 
         # [START create_file_system_client_from_service]
         # Instantiate a DataLakeServiceClient using a connection string
         from azure.storage.filedatalake.aio import DataLakeServiceClient
-
         datalake_service_client = DataLakeServiceClient.from_connection_string(self.connection_string)
 
         async with datalake_service_client:
@@ -63,7 +62,6 @@ class FileSystemSamplesAsync(object):
         # Instantiate a DataLakeServiceClient using a connection string
         # [START create_data_lake_service_client_from_conn_str]
         from azure.storage.filedatalake.aio import DataLakeServiceClient
-
         datalake_service_client = DataLakeServiceClient.from_connection_string(self.connection_string)
         # [END create_data_lake_service_client_from_conn_str]
 
@@ -89,7 +87,6 @@ class FileSystemSamplesAsync(object):
 
         # Instantiate a DataLakeServiceClient using a connection string
         from azure.storage.filedatalake.aio import DataLakeServiceClient
-
         datalake_service_client = DataLakeServiceClient.from_connection_string(self.connection_string)
 
         async with datalake_service_client:
@@ -102,7 +99,7 @@ class FileSystemSamplesAsync(object):
 
                 # [START set_file_system_metadata]
                 # Create key, value pairs for metadata
-                metadata = {"type": "test"}
+                metadata = {'type': 'test'}
 
                 # Set metadata on the file system
                 await file_system_client.set_file_system_metadata(metadata=metadata)
@@ -119,7 +116,6 @@ class FileSystemSamplesAsync(object):
 
         # Instantiate a DataLakeServiceClient using a connection string
         from azure.storage.filedatalake.aio import DataLakeServiceClient
-
         datalake_service_client = DataLakeServiceClient.from_connection_string(self.connection_string)
 
         async with datalake_service_client:
@@ -141,7 +137,7 @@ class FileSystemSamplesAsync(object):
             # [START get_paths_in_file_system]
             path_list = file_system_client.get_paths()
             async for path in path_list:
-                print(path.name + "\n")
+                print(path.name + '\n')
             # [END get_paths_in_file_system]
 
             # Delete file system
@@ -151,7 +147,6 @@ class FileSystemSamplesAsync(object):
 
         # Instantiate a DataLakeServiceClient using a connection string
         from azure.storage.filedatalake.aio import DataLakeServiceClient
-
         datalake_service_client = DataLakeServiceClient.from_connection_string(self.connection_string)
 
         async with datalake_service_client:
@@ -176,7 +171,6 @@ class FileSystemSamplesAsync(object):
 
         # Instantiate a DataLakeServiceClient using a connection string
         from azure.storage.filedatalake.aio import DataLakeServiceClient
-
         datalake_service_client = DataLakeServiceClient.from_connection_string(self.connection_string)
 
         async with datalake_service_client:
@@ -200,7 +194,6 @@ class FileSystemSamplesAsync(object):
     async def create_file_from_file_system(self):
         # [START create_file_system_client_from_connection_string]
         from azure.storage.filedatalake.aio import FileSystemClient
-
         file_system_client = FileSystemClient.from_connection_string(self.connection_string, "filesystemforcreateasync")
         # [END create_file_system_client_from_connection_string]
 
@@ -225,7 +218,6 @@ class FileSystemSamplesAsync(object):
 
             await file_system_client.delete_file_system()
 
-
 async def main():
     sample = FileSystemSamplesAsync()
     await sample.file_system_sample()
@@ -235,6 +227,5 @@ async def main():
     await sample.get_file_client_from_file_system()
     await sample.create_file_from_file_system()
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     asyncio.run(main())
