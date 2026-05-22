@@ -3541,6 +3541,7 @@ class TestUpdateMetricValuePreservesExplicitPassed:
         assert results[0]["passed"] is True
         assert results[0]["label"] == "Pass"
 
+
 @pytest.mark.skipif(MISSING_OPENTELEMETRY, reason="This test requires the opentelemetry package")
 class TestEmitEvalResultShutdown:
     """Tests that emit_eval_result_events_to_app_insights shuts down the LoggerProvider."""
