@@ -319,7 +319,17 @@ class PartitionKeyRangeCache(object):
             # cache write inside the task body still happens. Other waiters
             # (and any subsequent caller hitting the now-populated cache) are
             # unaffected by our cancellation.
-            await asyncio.shield(fetch_task)
+            fetched_map = await asyncio.shield(fetch_task)
+            # Return the task's result directly instead of re-reading from
+            # the cache dict. Between the task completing and this line
+            # running, any other ready coroutine can execute — including
+            # ``clear_cache()`` from a concurrent retry path — which would
+            # empty the dict and leave us returning ``None`` despite the
+            # fetch having just succeeded. Using the task's return value
+            # sidesteps that window entirely. Matches the
+            # ``AsyncCacheNonBlocking`` pattern in the Java/.NET SDKs.
+            if fetched_map is not None:
+                return fetched_map
 
         return self._collection_routing_map_by_item.get(collection_id)
 
@@ -357,7 +367,16 @@ class PartitionKeyRangeCache(object):
         async with collection_lock:
             existing_task = self._inflight_fetches.get(inflight_key)
             if existing_task is not None:
-                return existing_task
+                if not existing_task.done():
+                    return existing_task
+                # Stale completed task. Under normal scheduling this never
+                # happens because ``_fetch_and_publish``'s ``finally`` pops
+                # the entry before the task transitions to ``done``. The one
+                # realistic way an orphan can sit here is a previous event
+                # loop being closed mid-fetch whose ``id()`` was then reused
+                # by the current loop . Drop the orphan and fall through to start a
+                # fresh fetch on the live loop.
+                self._inflight_fetches.pop(inflight_key, None)
 
             should_fetch, base_routing_map = determine_refresh_action(
                 self._collection_routing_map_by_item,
@@ -422,12 +441,13 @@ class PartitionKeyRangeCache(object):
 
             return new_routing_map
         finally:
-            # Atomic single-key removal; no lock needed. Runs on success,
-            # on fetch error, and on cancellation alike, so the next caller
-            # can register a fresh fetch immediately.
-            inflight_fetches = self._inflight_fetches
-            if inflight_key in inflight_fetches:
-                del inflight_fetches[inflight_key]
+            # ``dict.pop(key, default)`` is a single C-level operation under
+            # the GIL, so this cleanup is atomic and needs no explicit lock.
+            # The ``None`` default makes it tolerant of the key already being
+            # gone. Runs on success, on fetch error, and on cancellation
+            # alike, so the next caller can register a fresh fetch
+            # immediately.
+            self._inflight_fetches.pop(inflight_key, None)
 
 
     async def _fetch_routing_map(

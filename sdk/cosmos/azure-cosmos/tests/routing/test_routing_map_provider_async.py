@@ -1149,12 +1149,26 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         originator = asyncio.create_task(
             provider.get_routing_map(collection_link, feed_options={})
         )
-        # Yield twice — once for the originator to be scheduled, once for
-        # it to enter the slow path and register the in-flight task in the
-        # dict. If we cancel before that registration happens, the waiter
-        # below won't find anything to join and will start its own fetch.
-        await asyncio.sleep(0)
-        await asyncio.sleep(0)
+        # Poll for the originator to enter the slow path and register the
+        # in-flight task. Polling is more robust than ``sleep(0) × N``
+        # because it captures the actual condition we care about, not a
+        # guess at how many event-loop ticks the registration path happens
+        # to need today. Without this, a future ``await`` added anywhere
+        # on the registration path could leave the originator un-registered
+        # when ``cancel()`` fires below — the waiter would then start its
+        # own fresh fetch and ``call_count`` would still end at 1, making
+        # this test silently pass for the wrong reason.
+        for _ in range(100):
+            if provider._inflight_fetches:  # pylint: disable=protected-access
+                break
+            await asyncio.sleep(0.01)
+        # Loud failure if registration never happened — otherwise the
+        # test would silently pass without ever exercising the join path
+        # it is trying to validate.
+        self.assertTrue(
+            provider._inflight_fetches,  # pylint: disable=protected-access
+            "Originator should have registered an in-flight task before cancellation",
+        )
 
         # === Step 2: cancel the originator. The shared task it created
         # should keep running on the event loop (still parked on the gate).

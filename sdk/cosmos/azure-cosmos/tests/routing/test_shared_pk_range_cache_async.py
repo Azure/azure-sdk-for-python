@@ -216,8 +216,80 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         self.assertNotIn(ep, _shared_inflight_fetches)
 
         fetch_gate.set()
-        routing_map = await fetch_task
+        routing_map = await asyncio.wait_for(fetch_task, timeout=5)
         self.assertIsNotNone(routing_map)
+        self.assertFalse(c1._inflight_fetches)  # pylint: disable=protected-access
+
+    async def test_clear_cache_while_fetch_inflight_async(self):
+        """An in-flight fetch survives clear_cache() and repopulates the dict.
+
+        clear_cache() empties the routing-map dict in place — it does not
+        drop the in-flight fetch task. So a fetch that was already running
+        when the cache was cleared keeps going on the event loop, finishes,
+        and publishes its result into the (now-empty) dict, leaving the
+        cache populated for the next caller.
+
+        This pins the invariant documented on clear_cache(): a future
+        refactor that reassigns the dict (``= {}``) instead of clearing it
+        in place would break dict identity. The in-flight task would then
+        publish into the now-orphan old dict, leaving the cache empty for
+        new arrivals — and this test would fail loudly on step 4.
+        """
+        from azure.cosmos._routing.aio.routing_map_provider import (
+            _shared_inflight_fetches,
+        )
+
+        ep = "https://async-lifecycle6.documents.azure.com:443/"
+        fetch_gate = asyncio.Event()
+        partition_key_ranges = [{"id": "0", "minInclusive": "", "maxExclusive": "FF"}]
+
+        class SlowReadClient(MockClient):
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                async def _gen():
+                    await fetch_gate.wait()
+                    for r in partition_key_ranges:
+                        yield r
+
+                return _gen()
+
+        c1 = PartitionKeyRangeCache(SlowReadClient(ep))
+
+        # === Step 1: start a gated fetch and wait for it to register.
+        fetch_task = asyncio.create_task(
+            c1.get_routing_map("dbs/db/colls/container", feed_options={})
+        )
+        for _ in range(100):
+            if c1._inflight_fetches:  # pylint: disable=protected-access
+                break
+            await asyncio.sleep(0.01)
+        self.assertTrue(
+            c1._inflight_fetches,  # pylint: disable=protected-access
+            "Fetch task should be registered before we clear the cache",
+        )
+
+        # === Step 2: clear the cache while the fetch is parked on the gate.
+        c1.clear_cache()
+        # Cache dict is empty — the fetch hasn't completed yet.
+        self.assertEqual(len(c1._collection_routing_map_by_item), 0)
+        # Critically: clear_cache() must not have dropped the in-flight task
+        # entry — that's what lets the survivor repopulate the cache below.
+        self.assertIn(ep, _shared_inflight_fetches)
+        self.assertTrue(_shared_inflight_fetches[ep])
+
+        # === Step 3: open the gate. The surviving task completes and
+        # publishes its result.
+        fetch_gate.set()
+        routing_map = await asyncio.wait_for(fetch_task, timeout=5)
+        self.assertIsNotNone(routing_map)
+
+        # === Step 4: the cache is now repopulated by the in-flight task —
+        # proving clear_cache preserved dict identity (in-place .clear())
+        # rather than replacing the dict with a fresh one. A regression
+        # that swapped ``.clear()`` for ``= {}`` would leave the cache
+        # empty here because the in-flight task would have written into
+        # the now-orphan old dict.
+        self.assertEqual(len(c1._collection_routing_map_by_item), 1)
+        # And the in-flight slot was freed by the task's ``finally`` block.
         self.assertFalse(c1._inflight_fetches)  # pylint: disable=protected-access
 
 
