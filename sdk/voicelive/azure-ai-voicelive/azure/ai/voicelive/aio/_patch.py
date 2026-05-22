@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -115,7 +115,9 @@ def _build_foundry_agent_config(
         return None
 
     if agent_name is None or project_name is None:
-        raise ValueError("Both 'agent_name' and 'project_name' are required when connecting to an Azure AI Foundry agent.")
+        raise ValueError(
+            "Both 'agent_name' and 'project_name' are required when connecting to an Azure AI Foundry agent."
+        )
 
     return {key: value for key, value in agent_config.items() if value is not None}
 
@@ -877,8 +879,7 @@ def connect(
     headers: Optional[Mapping[str, Any]] = None,
     connection_options: Optional[WebsocketConnectionOptions] = None,
     credential_scopes: Optional[Union[str, Sequence[str]]] = None,
-) -> AbstractAsyncContextManager["VoiceLiveConnection"]:
-    ...
+) -> AbstractAsyncContextManager["VoiceLiveConnection"]: ...
 
 
 @overload
@@ -898,8 +899,7 @@ def connect(
     headers: Optional[Mapping[str, Any]] = None,
     connection_options: Optional[WebsocketConnectionOptions] = None,
     credential_scopes: Optional[Union[str, Sequence[str]]] = None,
-) -> AbstractAsyncContextManager["VoiceLiveConnection"]:
-    ...
+) -> AbstractAsyncContextManager["VoiceLiveConnection"]: ...
 
 
 def connect(

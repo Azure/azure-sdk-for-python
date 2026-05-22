@@ -671,7 +671,7 @@ class TestAgentConfigUrlPreparation:
         manager = _VoiceLiveConnectionManager(
             credential=self.credential,
             endpoint="https://test.azure.com",
-            api_version="2026-01-01-preview",
+            api_version="2026-04-10",
             agent_config=agent_config,
             extra_query={},
             extra_headers={},
@@ -679,4 +679,4 @@ class TestAgentConfigUrlPreparation:
 
         url = manager._prepare_url()
 
-        assert "api-version=2026-01-01-preview" in url
+        assert "api-version=2026-04-10" in url

@@ -9,12 +9,16 @@ from azure.ai.voicelive.models import (
     ActionOpenPage,
     ActionSearch,
     ActionSearchSource,
+    AudioEchoCancellation,
     AssistantMessageItem,
     AzureAvatarVoiceSyncVoice,
     AzureCustomVoice,
     AzurePersonalVoice,
+    AzureRealtimeNativeVoice,
+    AzureRealtimeNativeVoiceName,
     AzureStandardVoice,
     AzureVoiceType,
+    EchoCancellationReferenceSource,
     FileSearchResult,
     InputAudioContentPart,
     InputTextContentPart,
@@ -39,11 +43,17 @@ from azure.ai.voicelive.models import (
     ResponseMCPListToolItem,
     ResponseSession,
     ResponseWebSearchCallItem,
+    RtcCallErrorDetails,
     ServerEventMcpListToolsCompleted,
     ServerEventMcpListToolsFailed,
     ServerEventMcpListToolsInProgress,
+    ServerEventOutputAudioBufferStarted,
+    ServerEventOutputAudioBufferStopped,
+    ServerEventResponseInvocationDelta,
     ServerEventResponseMcpCallArgumentsDelta,
     ServerEventResponseMcpCallArgumentsDone,
+    ServerEventRtcCallError,
+    ServerEventRtcCallSdpCreated,
     ServerEventType,
     SystemMessageItem,
     ToolType,
@@ -100,6 +110,13 @@ class TestAzureVoiceModels:
 
         assert voice.temperature == 0.5
         assert voice.model == PersonalVoiceModels.DRAGON_LATEST_NEURAL
+
+    def test_azure_realtime_native_voice(self):
+        """Test AzureRealtimeNativeVoice model."""
+        voice = AzureRealtimeNativeVoice(name=AzureRealtimeNativeVoiceName.AVA)
+
+        assert voice.type == "azure-realtime-native"
+        assert voice.name == AzureRealtimeNativeVoiceName.AVA
 
 
 class TestOpenAIVoice:
@@ -261,6 +278,14 @@ class TestRequestSession:
         assert session.temperature == 0.7
         assert session.max_response_output_tokens == 1000
 
+    def test_request_session_with_azure_realtime_native_voice(self):
+        """Test request session with Azure realtime native voice configuration."""
+        voice = AzureRealtimeNativeVoice(name=AzureRealtimeNativeVoiceName.XIAOXIAO)
+        session = RequestSession(model="azure-realtime", voice=voice)
+
+        assert session.voice == voice
+        assert session.voice.type == "azure-realtime-native"
+
 
 class TestResponseSession:
     """Test ResponseSession model."""
@@ -317,6 +342,17 @@ class TestModelSerialization:
         # Verify the nested structure
         assert session.voice.name == "personal-voice"
         assert session.voice.model == PersonalVoiceModels.PHOENIX_LATEST_NEURAL
+
+
+class TestAudioEchoCancellationModel:
+    """Test enhanced audio echo cancellation configuration."""
+
+    def test_audio_echo_cancellation_with_client_reference(self):
+        """Test AudioEchoCancellation with client-provided stereo reference."""
+        config = AudioEchoCancellation(reference_source=EchoCancellationReferenceSource.CLIENT, channels=2)
+
+        assert config.reference_source == EchoCancellationReferenceSource.CLIENT
+        assert config.channels == 2
 
 
 class TestMCPModels:
@@ -756,6 +792,63 @@ class TestMCPServerEvents:
         )
 
         assert event.arguments == full_args
+
+
+class TestRealtimeAndRtcServerEvents:
+    """Test realtime playback and RTC server event models."""
+
+    def test_server_event_output_audio_buffer_started(self):
+        """Test output audio buffer started event."""
+        event = ServerEventOutputAudioBufferStarted(event_id="evt-1", response_id="resp-123")
+
+        assert event.type == ServerEventType.OUTPUT_AUDIO_BUFFER_STARTED
+        assert event.event_id == "evt-1"
+        assert event.response_id == "resp-123"
+
+    def test_server_event_output_audio_buffer_stopped(self):
+        """Test output audio buffer stopped event."""
+        event = ServerEventOutputAudioBufferStopped(event_id="evt-2", response_id="resp-456")
+
+        assert event.type == ServerEventType.OUTPUT_AUDIO_BUFFER_STOPPED
+        assert event.event_id == "evt-2"
+        assert event.response_id == "resp-456"
+
+    def test_server_event_response_invocation_delta(self):
+        """Test hosted agent invocation delta event."""
+        delta = {"type": "trace", "message": "partial hosted agent event"}
+        event = ServerEventResponseInvocationDelta(delta=delta, event_id="evt-3")
+
+        assert event.type == ServerEventType.RESPONSE_INVOCATION_DELTA
+        assert event.event_id == "evt-3"
+        assert event.delta == delta
+
+    def test_server_event_rtc_call_sdp_created(self):
+        """Test RTC SDP created event."""
+        event = ServerEventRtcCallSdpCreated(
+            event_id="evt-4",
+            rtc_call_id="rtc-123",
+            sdp_answer="v=0\r\no=- 1 2 IN IP4 127.0.0.1",
+        )
+
+        assert event.type == ServerEventType.RTC_CALL_SDP_CREATED
+        assert event.rtc_call_id == "rtc-123"
+        assert event.sdp_answer.startswith("v=0")
+
+    def test_server_event_rtc_call_error(self):
+        """Test RTC call error event."""
+        error = RtcCallErrorDetails(type="server_error", message="RTC negotiation failed", code="rtc_failed")
+        event = ServerEventRtcCallError(
+            error=error,
+            operation="rtc.call.sdp.create",
+            rtc_call_id="rtc-123",
+            event_id="evt-5",
+        )
+
+        assert event.type == ServerEventType.RTC_CALL_ERROR
+        assert event.error.code == "rtc_failed"
+        assert event.error.message == "RTC negotiation failed"
+        assert event.operation == "rtc.call.sdp.create"
+        assert event.rtc_call_id == "rtc-123"
 
 
 class TestMCPApprovalType:

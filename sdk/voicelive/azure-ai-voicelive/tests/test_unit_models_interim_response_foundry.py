@@ -21,6 +21,7 @@ from azure.ai.voicelive.models import (
     Response,
     ResponseCreateParams,
     ResponseSession,
+    ServerEventResponseInvocationDelta,
     ServerEventType,
     ServerEventWarning,
     ServerEventWarningDetails,
@@ -196,6 +197,26 @@ class TestResponseMetadata:
         params = ResponseCreateParams(metadata=metadata)
 
         assert params.metadata == metadata
+
+
+class TestHostedAgentInvocation:
+    """Test hosted agent invocation models."""
+
+    def test_response_create_params_with_invoke_input(self):
+        """Test ResponseCreateParams with invoke_input."""
+        invoke_input = {"thread_id": "thread-123", "input": "hello"}
+        params = ResponseCreateParams(invoke_input=invoke_input)
+
+        assert params.invoke_input == invoke_input
+
+    def test_response_invocation_delta_event(self):
+        """Test ServerEventResponseInvocationDelta model."""
+        delta = {"type": "status", "message": "agent invoked"}
+        event = ServerEventResponseInvocationDelta(delta=delta, event_id="evt-invoke")
+
+        assert event.type == ServerEventType.RESPONSE_INVOCATION_DELTA
+        assert event.event_id == "evt-invoke"
+        assert event.delta == delta
 
 
 class TestSessionWithInterimResponse:

@@ -1,5 +1,20 @@
 # Release History
 
+## 1.3.0b1 (2026-05-22)
+
+### Features Added
+
+- **Azure Realtime Native Voice Support**: Added `AzureRealtimeNativeVoice` and
+  `AzureRealtimeNativeVoiceName`, and expanded `voice` fields to accept Azure realtime native voices.
+- **WebRTC Call Negotiation Support**: Added `ClientEventRtcCallSdpCreate`, `ServerEventRtcCallSdpCreated`,
+  `ServerEventRtcCallError`, and `RtcCallErrorDetails` for SDP-based WebRTC call setup.
+- **Hosted Agent Invocation Input**: Added `invoke_input` to `ResponseCreateParams` and
+  `ServerEventResponseInvocationDelta` for hosted agent invocation passthrough data.
+- **Audio Playback Lifecycle Events**: Added `ServerEventOutputAudioBufferStarted` and
+  `ServerEventOutputAudioBufferStopped` to track model audio playback start and stop.
+- **Echo Cancellation Configuration**: Added `EchoCancellationReferenceSource` and new
+  `reference_source` / `channels` options on `AudioEchoCancellation` for client-provided stereo echo reference input.
+
 ## 1.2.0 (2026-05-22)
 
 ### Features Added
