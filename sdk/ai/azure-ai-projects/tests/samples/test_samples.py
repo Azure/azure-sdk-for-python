@@ -85,6 +85,7 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents",
             samples_to_skip=[
+                "sample_external_agents_crud.py",  # Skipped until recordings are available.
                 "sample_workflow_multi_agent.py",  # No issue to run.  Just postpone recording.
                 "sample_workflow_multi_agent_with_mcp_approval.py",  # No issue to run.  Just postpone recording.
             ],
