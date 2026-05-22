@@ -87,7 +87,7 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.agents.delete_optimization_job
 .beta.agents.delete_session
 .beta.agents.delete_session_file
-.beta.agents.download_agent_code
+.beta.agents.download_code
 .beta.agents.download_session_file
 .beta.agents.get_optimization_candidate
 .beta.agents.get_optimization_candidate_config
@@ -146,7 +146,7 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.memory_stores.update
 .beta.memory_stores.update_memory
 
-.beta.models.create_async
+.beta.models.pending_create_version
 .beta.models.delete
 .beta.models.get
 .beta.models.get_credentials
@@ -162,7 +162,7 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.routines.create_or_update
 .beta.routines.delete
 .beta.routines.disable
-.beta.routines.dispatch_async
+.beta.routines.dispatch
 .beta.routines.enable
 .beta.routines.get
 .beta.routines.list

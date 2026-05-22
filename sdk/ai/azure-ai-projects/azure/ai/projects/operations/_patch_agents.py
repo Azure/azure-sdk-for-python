@@ -21,6 +21,7 @@ from ..models._patch import (
     _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE,
 )
 
+
 class AgentsOperations(GeneratedAgentsOperations):
     """
     .. warning::
@@ -68,7 +69,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
-        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference        
+        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -186,7 +187,7 @@ class AgentsOperations(GeneratedAgentsOperations):
             )
         except HttpResponseError as exc:
             """
-            Example service response payload when the caller is trying to use a feature preview without opt-in flag (service error 403 (Forbidden)): 
+            Example service response payload when the caller is trying to use a feature preview without opt-in flag (service error 403 (Forbidden)):
 
             "error": {
                 "code": "preview_feature_required",

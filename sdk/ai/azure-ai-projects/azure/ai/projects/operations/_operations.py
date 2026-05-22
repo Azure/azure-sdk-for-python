@@ -860,7 +860,7 @@ def build_beta_agents_create_version_from_code_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_agents_download_agent_code_request(  # pylint: disable=name-too-long
+def build_beta_agents_download_code_request(
     agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2506,7 +2506,9 @@ def build_beta_models_update_request(name: str, version: str, **kwargs: Any) -> 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_models_create_async_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_beta_models_pending_create_version_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2853,9 +2855,7 @@ def build_beta_routines_list_runs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_routines_dispatch_async_request(  # pylint: disable=name-too-long
-    routine_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_beta_routines_dispatch_request(routine_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -3693,8 +3693,8 @@ class AgentsOperations:
         :param agent_name: The name of the agent to delete. Required.
         :type agent_name: str
         :keyword force: For Hosted Agents, if true, force-deletes the agent even if its versions have
-         active sessions, cascading deletion to all associated sessions. This value is not relevant for
-         other Agent types. Defaults to false. Default value is None.
+         active sessions, cascading deletion to all associated sessions. Defaults to ``false``. This
+         value is not relevant for other Agent types. Default value is None.
         :paramtype force: bool
         :return: DeleteAgentResponse. The DeleteAgentResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DeleteAgentResponse
@@ -4344,8 +4344,8 @@ class AgentsOperations:
         :param agent_version: The version of the agent to delete. Required.
         :type agent_version: str
         :keyword force: For Hosted Agents, if true, force-deletes the version even if it has active
-         sessions, cascading deletion to all associated sessions. This value is not relevant for other
-         Agent types. Defaults to false. Default value is None.
+         sessions, cascading deletion to all associated sessions. Defaults to ``false``. This value is
+         not relevant for other Agent types. Default value is None.
         :paramtype force: bool
         :return: DeleteAgentVersionResponse. The DeleteAgentVersionResponse is compatible with
          MutableMapping
@@ -5586,7 +5586,7 @@ class DatasetsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
@@ -5598,8 +5598,8 @@ class DatasetsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5612,7 +5612,7 @@ class DatasetsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
@@ -5624,8 +5624,8 @@ class DatasetsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5638,7 +5638,7 @@ class DatasetsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
@@ -5650,8 +5650,8 @@ class DatasetsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5662,7 +5662,7 @@ class DatasetsOperations:
         version: str,
         pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
@@ -5673,8 +5673,8 @@ class DatasetsOperations:
          types: PendingUploadRequest, JSON, IO[bytes] Required.
         :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
          IO[bytes]
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5689,7 +5689,7 @@ class DatasetsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PendingUploadResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -5732,7 +5732,7 @@ class DatasetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.PendingUploadResult, response.json())
+            deserialized = _deserialize(_models.PendingUploadResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6762,9 +6762,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def download_agent_code(
-        self, agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def download_code(self, agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any) -> Iterator[bytes]:
         """Download the code zip for a code-based hosted agent.
         Returns the previously-uploaded zip (``application/zip``).
 
@@ -6796,7 +6794,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_beta_agents_download_agent_code_request(
+        _request = build_beta_agents_download_code_request(
             agent_name=agent_name,
             agent_version=agent_version,
             api_version=self._config.api_version,
@@ -9611,7 +9609,7 @@ class BetaEvaluatorsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of an evaluator for a specific version.
 
         :param name: Required.
@@ -9623,8 +9621,8 @@ class BetaEvaluatorsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -9637,7 +9635,7 @@ class BetaEvaluatorsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of an evaluator for a specific version.
 
         :param name: Required.
@@ -9649,8 +9647,8 @@ class BetaEvaluatorsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -9663,7 +9661,7 @@ class BetaEvaluatorsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of an evaluator for a specific version.
 
         :param name: Required.
@@ -9675,8 +9673,8 @@ class BetaEvaluatorsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -9687,7 +9685,7 @@ class BetaEvaluatorsOperations:
         version: str,
         pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of an evaluator for a specific version.
 
         :param name: Required.
@@ -9698,8 +9696,8 @@ class BetaEvaluatorsOperations:
          types: PendingUploadRequest, JSON, IO[bytes] Required.
         :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
          IO[bytes]
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -9714,7 +9712,7 @@ class BetaEvaluatorsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PendingUploadResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -9761,7 +9759,7 @@ class BetaEvaluatorsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.PendingUploadResult, response.json())
+            deserialized = _deserialize(_models.PendingUploadResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12329,7 +12327,7 @@ class BetaMemoryStoresOperations:
                 raise TypeError("missing required argument: scope")
             body = {"scope": scope}
             body = {k: v for k, v in body.items() if v is not None}
-
+        
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -12338,6 +12336,7 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
+
             _request = build_beta_memory_stores_list_memories_request(
                 name=name,
                 kind=kind,
@@ -12389,15 +12388,15 @@ class BetaMemoryStoresOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_memory(self, name: str, memory_id: str, **kwargs: Any) -> _models.DeleteMemoryResponse:
+    def delete_memory(self, name: str, memory_id: str, **kwargs: Any) -> _models.DeleteMemoryResult:
         """Delete a memory item from a memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
         :param memory_id: The ID of the memory item to delete. Required.
         :type memory_id: str
-        :return: DeleteMemoryResponse. The DeleteMemoryResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteMemoryResponse
+        :return: DeleteMemoryResult. The DeleteMemoryResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DeleteMemoryResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -12411,7 +12410,7 @@ class BetaMemoryStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteMemoryResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeleteMemoryResult] = kwargs.pop("cls", None)
 
         _request = build_beta_memory_stores_delete_memory_request(
             name=name,
@@ -12449,7 +12448,7 @@ class BetaMemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteMemoryResponse, response.json())
+            deserialized = _deserialize(_models.DeleteMemoryResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12926,11 +12925,11 @@ class BetaModelsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def create_async(
+    def pending_create_version(
         self,
         name: str,
         version: str,
-        body: _models.ModelVersion,
+        model_version: _models.ModelVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12942,8 +12941,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Model version to create. Required.
-        :type body: ~azure.ai.projects.models.ModelVersion
+        :param model_version: Model version to create. Required.
+        :type model_version: ~azure.ai.projects.models.ModelVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12953,8 +12952,8 @@ class BetaModelsOperations:
         """
 
     @overload
-    def create_async(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    def pending_create_version(
+        self, name: str, version: str, model_version: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CreateAsyncResponse:
         """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
         a Location header for polling.
@@ -12963,8 +12962,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Model version to create. Required.
-        :type body: JSON
+        :param model_version: Model version to create. Required.
+        :type model_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12974,8 +12973,14 @@ class BetaModelsOperations:
         """
 
     @overload
-    def create_async(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    def pending_create_version(
+        self,
+        name: str,
+        version: str,
+        model_version: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CreateAsyncResponse:
         """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
         a Location header for polling.
@@ -12984,8 +12989,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Model version to create. Required.
-        :type body: IO[bytes]
+        :param model_version: Model version to create. Required.
+        :type model_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12995,8 +13000,8 @@ class BetaModelsOperations:
         """
 
     @distributed_trace
-    def create_async(
-        self, name: str, version: str, body: Union[_models.ModelVersion, JSON, IO[bytes]], **kwargs: Any
+    def pending_create_version(
+        self, name: str, version: str, model_version: Union[_models.ModelVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CreateAsyncResponse:
         """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
         a Location header for polling.
@@ -13005,9 +13010,9 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Model version to create. Is one of the following types: ModelVersion, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.ModelVersion or JSON or IO[bytes]
+        :param model_version: Model version to create. Is one of the following types: ModelVersion,
+         JSON, IO[bytes] Required.
+        :type model_version: ~azure.ai.projects.models.ModelVersion or JSON or IO[bytes]
         :return: CreateAsyncResponse. The CreateAsyncResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.CreateAsyncResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13028,12 +13033,12 @@ class BetaModelsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(model_version, (IOBase, bytes)):
+            _content = model_version
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(model_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_models_create_async_request(
+        _request = build_beta_models_pending_create_version_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -13082,7 +13087,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        body: _models.ModelPendingUploadRequest,
+        pending_upload_request: _models.ModelPendingUploadRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13093,8 +13098,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Required.
-        :type body: ~azure.ai.projects.models.ModelPendingUploadRequest
+        :param pending_upload_request: Required.
+        :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13106,7 +13111,13 @@ class BetaModelsOperations:
 
     @overload
     def pending_upload(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ModelPendingUploadResponse:
         """Start or retrieve a pending upload for a model version.
 
@@ -13114,8 +13125,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Required.
-        :type body: JSON
+        :param pending_upload_request: Required.
+        :type pending_upload_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13127,7 +13138,13 @@ class BetaModelsOperations:
 
     @overload
     def pending_upload(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ModelPendingUploadResponse:
         """Start or retrieve a pending upload for a model version.
 
@@ -13135,8 +13152,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Required.
-        :type body: IO[bytes]
+        :param pending_upload_request: Required.
+        :type pending_upload_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13148,7 +13165,11 @@ class BetaModelsOperations:
 
     @distributed_trace
     def pending_upload(
-        self, name: str, version: str, body: Union[_models.ModelPendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: Union[_models.ModelPendingUploadRequest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ModelPendingUploadResponse:
         """Start or retrieve a pending upload for a model version.
 
@@ -13156,9 +13177,10 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Is one of the following types: ModelPendingUploadRequest, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.ai.projects.models.ModelPendingUploadRequest or JSON or IO[bytes]
+        :param pending_upload_request: Is one of the following types: ModelPendingUploadRequest, JSON,
+         IO[bytes] Required.
+        :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest or JSON or
+         IO[bytes]
         :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
          MutableMapping
         :rtype: ~azure.ai.projects.models.ModelPendingUploadResponse
@@ -13180,10 +13202,10 @@ class BetaModelsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(pending_upload_request, (IOBase, bytes)):
+            _content = pending_upload_request
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_models_pending_upload_request(
             name=name,
@@ -13231,7 +13253,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        body: _models.ModelCredentialRequest,
+        credential_request: _models.ModelCredentialRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13242,8 +13264,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Required.
-        :type body: ~azure.ai.projects.models.ModelCredentialRequest
+        :param credential_request: Required.
+        :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13254,7 +13276,13 @@ class BetaModelsOperations:
 
     @overload
     def get_credentials(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        credential_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DatasetCredential:
         """Get credentials for a model version asset.
 
@@ -13262,8 +13290,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Required.
-        :type body: JSON
+        :param credential_request: Required.
+        :type credential_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13274,7 +13302,13 @@ class BetaModelsOperations:
 
     @overload
     def get_credentials(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        credential_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DatasetCredential:
         """Get credentials for a model version asset.
 
@@ -13282,8 +13316,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Required.
-        :type body: IO[bytes]
+        :param credential_request: Required.
+        :type credential_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13294,7 +13328,11 @@ class BetaModelsOperations:
 
     @distributed_trace
     def get_credentials(
-        self, name: str, version: str, body: Union[_models.ModelCredentialRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        credential_request: Union[_models.ModelCredentialRequest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.DatasetCredential:
         """Get credentials for a model version asset.
 
@@ -13302,8 +13340,9 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param body: Is one of the following types: ModelCredentialRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.ModelCredentialRequest or JSON or IO[bytes]
+        :param credential_request: Is one of the following types: ModelCredentialRequest, JSON,
+         IO[bytes] Required.
+        :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest or JSON or IO[bytes]
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13324,10 +13363,10 @@ class BetaModelsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(credential_request, (IOBase, bytes)):
+            _content = credential_request
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(credential_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_models_get_credentials_request(
             name=name,
@@ -14283,14 +14322,14 @@ class BetaRoutinesOperations:
         return ItemPaged(get_next, extract_data)
 
     @overload
-    def dispatch_async(
+    def dispatch(
         self,
         routine_name: str,
         *,
         content_type: str = "application/json",
         payload: Optional[_models.RoutineDispatchPayload] = None,
         **kwargs: Any
-    ) -> _models.DispatchRoutineResponse:
+    ) -> _models.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
         :param routine_name: The unique name of the routine. Required.
@@ -14301,15 +14340,15 @@ class BetaRoutinesOperations:
         :keyword payload: A direct action-input override sent downstream when testing a routine.
          Default value is None.
         :paramtype payload: ~azure.ai.projects.models.RoutineDispatchPayload
-        :return: DispatchRoutineResponse. The DispatchRoutineResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DispatchRoutineResponse
+        :return: DispatchRoutineResult. The DispatchRoutineResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DispatchRoutineResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def dispatch_async(
+    def dispatch(
         self, routine_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.DispatchRoutineResponse:
+    ) -> _models.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
         :param routine_name: The unique name of the routine. Required.
@@ -14319,15 +14358,15 @@ class BetaRoutinesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: DispatchRoutineResponse. The DispatchRoutineResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DispatchRoutineResponse
+        :return: DispatchRoutineResult. The DispatchRoutineResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DispatchRoutineResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def dispatch_async(
+    def dispatch(
         self, routine_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.DispatchRoutineResponse:
+    ) -> _models.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
         :param routine_name: The unique name of the routine. Required.
@@ -14337,20 +14376,20 @@ class BetaRoutinesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: DispatchRoutineResponse. The DispatchRoutineResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DispatchRoutineResponse
+        :return: DispatchRoutineResult. The DispatchRoutineResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DispatchRoutineResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def dispatch_async(
+    def dispatch(
         self,
         routine_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         payload: Optional[_models.RoutineDispatchPayload] = None,
         **kwargs: Any
-    ) -> _models.DispatchRoutineResponse:
+    ) -> _models.DispatchRoutineResult:
         """Queue an asynchronous routine dispatch.
 
         :param routine_name: The unique name of the routine. Required.
@@ -14360,8 +14399,8 @@ class BetaRoutinesOperations:
         :keyword payload: A direct action-input override sent downstream when testing a routine.
          Default value is None.
         :paramtype payload: ~azure.ai.projects.models.RoutineDispatchPayload
-        :return: DispatchRoutineResponse. The DispatchRoutineResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DispatchRoutineResponse
+        :return: DispatchRoutineResult. The DispatchRoutineResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DispatchRoutineResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14376,7 +14415,7 @@ class BetaRoutinesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DispatchRoutineResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DispatchRoutineResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"payload": payload}
@@ -14388,7 +14427,7 @@ class BetaRoutinesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_routines_dispatch_async_request(
+        _request = build_beta_routines_dispatch_request(
             routine_name=routine_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -14425,7 +14464,7 @@ class BetaRoutinesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DispatchRoutineResponse, response.json())
+            deserialized = _deserialize(_models.DispatchRoutineResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
