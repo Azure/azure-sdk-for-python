@@ -23,7 +23,7 @@ class ProfanityAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Translator profanity actions."""
 
     NO_ACTION = "NoAction"
-    """No Action is taken on profanity"""
+    """No Action is taken on profanity."""
     MARKED = "Marked"
     """Profanity is marked."""
     DELETED = "Deleted"
@@ -46,3 +46,25 @@ class TextType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Plain text."""
     HTML = "Html"
     """HTML-encoded text."""
+
+
+class TranslationGender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Desired gender for the translated text."""
+
+    NEUTRAL = "neutral"
+    """Neutral gender."""
+    MALE = "male"
+    """Male gender."""
+    FEMALE = "female"
+    """Female gender."""
+
+
+class TranslationTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Desired tone for the translated text."""
+
+    NEUTRAL = "neutral"
+    """Neutral tone."""
+    FORMAL = "formal"
+    """Formal tone."""
+    INFORMAL = "informal"
+    """Informal tone."""
