@@ -109,7 +109,7 @@ with (
     creds = project_client.beta.models.get_credentials(
         name=model_name,
         version=model_version,
-        body=ModelCredentialRequest(blob_uri=model.blob_uri),
+        credential_request=ModelCredentialRequest(blob_uri=model.blob_uri),
     )
     print(f"Credentials (type: {type(creds).__name__})")
 

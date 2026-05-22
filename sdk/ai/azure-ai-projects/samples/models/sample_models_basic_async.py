@@ -89,7 +89,7 @@ async def main() -> None:
         pending = await project_client.beta.models.pending_upload(
             name=model_name,
             version=model_version,
-            body=ModelPendingUploadRequest(
+            pending_upload_request=ModelPendingUploadRequest(
                 pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE,
             ),
         )
@@ -117,7 +117,7 @@ async def main() -> None:
         await project_client.beta.models.pending_create_version(
             name=model_name,
             version=model_version,
-            body=ModelVersion(
+            model_version=ModelVersion(
                 blob_uri=container_blob_uri,
                 weight_type=FoundryModelWeightType.FULL_WEIGHT,
                 description="Sample model registered from sample_models_basic_async.py",
@@ -154,7 +154,7 @@ async def main() -> None:
         creds = await project_client.beta.models.get_credentials(
             name=model_name,
             version=model_version,
-            body=ModelCredentialRequest(blob_uri=model.blob_uri),
+            credential_request=ModelCredentialRequest(blob_uri=model.blob_uri),
         )
         print(f"Credentials (type: {type(creds).__name__})")
 

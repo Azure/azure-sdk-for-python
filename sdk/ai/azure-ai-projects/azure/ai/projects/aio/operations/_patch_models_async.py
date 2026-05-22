@@ -216,7 +216,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         pending = await self.pending_upload(
             name=name,
             version=version,
-            body=ModelPendingUploadRequest(
+            pending_upload_request=ModelPendingUploadRequest(
                 pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE,
             ),
             **kwargs,
@@ -233,7 +233,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         await self._upload_with_container_client(source_path, sas_uri)
 
         # --- Step 3: Commit registration -------------------------------------
-        body = ModelVersion(
+        model_version_body = ModelVersion(
             blob_uri=container_blob_uri,
             weight_type=weight_type,
             base_model=base_model,
@@ -245,7 +245,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             name,
             version,
         )
-        await self.pending_create_version(name=name, version=version, body=body, **kwargs)
+        await self.pending_create_version(name=name, version=version, model_version=model_version_body, **kwargs)
 
         if not wait_for_commit:
             return None

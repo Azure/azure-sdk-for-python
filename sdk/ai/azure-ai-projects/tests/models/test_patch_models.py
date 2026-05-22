@@ -226,7 +226,7 @@ class TestCreateVersionOrchestration:
             calls.append("pending_create_version")
             assert kwargs["name"] == "my-model"
             assert kwargs["version"] == "1"
-            body = kwargs["body"]
+            body = kwargs["model_version"]
             # The blob_uri from the pending response is plumbed into the commit body.
             assert body.blob_uri == "https://acct.blob.core.windows.net/c/path"
             assert body.weight_type == "FullWeight"

@@ -6,7 +6,7 @@
 import pytest, os
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, RecordedTransport
-from test_base import servicePreparer
+from test_base import servicePreparer, modelsServicePreparer
 from sample_executor import (
     AdditionalSampleTestDetail,
     AsyncSampleExecutor,
@@ -134,6 +134,33 @@ class TestSamplesAsync(AzureRecordedTestCase):
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "models",
+            samples_to_test=[
+                "sample_models_basic_async.py",
+            ],
+        ),
+    )
+    @modelsServicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_models_samples(self, sample_path: str, **kwargs) -> None:
+        import secrets  # local import to avoid module-level dep
+
+        env_vars = get_sample_env_vars(kwargs)
+        # Foundry permanently reserves a `<name>/<version>` asset namespace even
+        # after `models.delete`, so every live re-recording needs a unique name.
+        # Sanitize back to a stable value in conftest so playback URLs match.
+        suffix = secrets.token_hex(4) if self.is_live else "00000000"
+        env_vars["MODEL_NAME"] = f"recsmplmdl{suffix}"
+        env_vars["MODEL_VERSION"] = "1"
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        await executor.execute_async()
+        # `validate_print_calls_by_llm_async` is intentionally not called: see
+        # the comment on the synchronous `test_models_samples` for details.
 
     @pytest.mark.parametrize(
         "sample_path",

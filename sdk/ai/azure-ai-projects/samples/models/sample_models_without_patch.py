@@ -83,7 +83,7 @@ with (
     pending = project_client.beta.models.pending_upload(
         name=model_name,
         version=model_version,
-        body=ModelPendingUploadRequest(
+        pending_upload_request=ModelPendingUploadRequest(
             pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE,
         ),
     )
@@ -112,7 +112,7 @@ with (
     project_client.beta.models.pending_create_version(
         name=model_name,
         version=model_version,
-        body=ModelVersion(
+        model_version=ModelVersion(
             blob_uri=container_blob_uri,
             weight_type=FoundryModelWeightType.FULL_WEIGHT,
             description="Sample model registered from sample_models_pending_upload.py",

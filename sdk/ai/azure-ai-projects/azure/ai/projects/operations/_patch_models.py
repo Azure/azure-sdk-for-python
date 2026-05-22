@@ -242,7 +242,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         pending = self.pending_upload(
             name=name,
             version=version,
-            body=ModelPendingUploadRequest(
+            pending_upload_request=ModelPendingUploadRequest(
                 pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE,
             ),
             **kwargs,
@@ -259,7 +259,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         self._run_azcopy(source_path, sas_uri, azcopy_path=azcopy_path)
 
         # --- Step 3: Commit registration -------------------------------------
-        body = ModelVersion(
+        model_version_body = ModelVersion(
             blob_uri=container_blob_uri,
             weight_type=weight_type,
             base_model=base_model,
@@ -271,7 +271,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             name,
             version,
         )
-        self.pending_create_version(name=name, version=version, body=body, **kwargs)
+        self.pending_create_version(name=name, version=version, model_version=model_version_body, **kwargs)
 
         if not wait_for_commit:
             return None
