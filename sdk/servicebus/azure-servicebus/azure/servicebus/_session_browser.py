@@ -91,7 +91,13 @@ class _SessionBrowser(BaseHandler):
             returns sessions with active messages in the entity.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: An iterator of session ID strings.
-        :rtype: iterator[str]
+        :rtype: Iterator[str]
+
+        .. note::
+
+            Pagination uses skip-based indexing over a server-side snapshot. If sessions
+            are added or removed between page requests, the iterator may yield duplicate
+            session IDs or skip some. Callers should not assume uniqueness.
         """
         # DateTime.MaxValue triggers "active messages" mode on the service side.
         # A real timestamp triggers "sessions updated since" mode.

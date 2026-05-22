@@ -75,7 +75,13 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             returns sessions with active messages in the entity.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: An async iterator of session ID strings.
-        :rtype: asynciterator[str]
+        :rtype: AsyncIterator[str]
+
+        .. note::
+
+            Pagination uses skip-based indexing over a server-side snapshot. If sessions
+            are added or removed between page requests, the iterator may yield duplicate
+            session IDs or skip some. Callers should not assume uniqueness.
         """
         if session_state_updated_after is None:
             last_updated_time_ms = _MAX_DATETIME_MS

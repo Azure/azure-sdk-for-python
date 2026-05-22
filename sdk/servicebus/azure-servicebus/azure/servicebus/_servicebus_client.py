@@ -752,22 +752,26 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             session state was set or updated after this time are returned.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: An iterator of session ID strings.
-        :rtype: iterator[str]
+        :rtype: Iterator[str]
         """
         if self._entity_name and queue_name != self._entity_name:
             raise ValueError(
                 "The queue name provided does not match the EntityPath in "
                 "the connection string used to construct the ServiceBusClient."
             )
-        if kwargs:
-            warnings.warn(f"Unsupported keyword args: {kwargs}")
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        browser = self._create_session_browser(queue_name)
-        try:
-            yield from browser.list_sessions(session_state_updated_after=session_state_updated_after, timeout=timeout)
-        finally:
-            browser.close()
+
+        def _iter():
+            browser = self._create_session_browser(queue_name)
+            try:
+                yield from browser.list_sessions(
+                    session_state_updated_after=session_state_updated_after, timeout=timeout
+                )
+            finally:
+                browser.close()
+
+        return _iter()
 
     def list_subscription_sessions(
         self,
@@ -790,19 +794,23 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             session state was set or updated after this time are returned.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: An iterator of session ID strings.
-        :rtype: iterator[str]
+        :rtype: Iterator[str]
         """
         if self._entity_name and topic_name != self._entity_name:
             raise ValueError(
                 "The topic name provided does not match the EntityPath in "
                 "the connection string used to construct the ServiceBusClient."
             )
-        if kwargs:
-            warnings.warn(f"Unsupported keyword args: {kwargs}")
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
-        try:
-            yield from browser.list_sessions(session_state_updated_after=session_state_updated_after, timeout=timeout)
-        finally:
-            browser.close()
+
+        def _iter():
+            browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
+            try:
+                yield from browser.list_sessions(
+                    session_state_updated_after=session_state_updated_after, timeout=timeout
+                )
+            finally:
+                browser.close()
+
+        return _iter()

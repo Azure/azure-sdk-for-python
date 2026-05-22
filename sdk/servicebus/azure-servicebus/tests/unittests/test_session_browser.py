@@ -4,13 +4,22 @@
 # license information.
 # --------------------------------------------------------------------------
 
-"""Unit tests for the _SessionBrowser sentinel value and page size.
+"""Unit tests for the _SessionBrowser sentinel value, page size, and
+management response handling.
 
 These tests verify the active-messages sentinel matches the value the service
-expects, without requiring Azure credentials or a live Service Bus namespace.
+expects, and that the list_sessions_op handler covers all response branches,
+without requiring Azure credentials or a live Service Bus namespace.
 """
 
+from unittest.mock import MagicMock
+
 from azure.servicebus._session_browser import _MAX_DATETIME_MS, _PAGE_SIZE
+from azure.servicebus._common.mgmt_handlers import list_sessions_op
+from azure.servicebus._common.constants import (
+    ERROR_CODE_MESSAGE_NOT_FOUND,
+    MGMT_RESPONSE_MESSAGE_ERROR_CONDITION,
+)
 
 
 class TestSessionBrowserSentinel:
@@ -51,3 +60,50 @@ class TestSessionBrowserSentinel:
     def test_page_size_is_100(self):
         """Default page size for get-message-sessions pagination."""
         assert _PAGE_SIZE == 100
+
+
+class TestListSessionsOpHandler:
+    """Verify the list_sessions_op management-response handler covers all branches.
+
+    The handler recognises three success-like status codes:
+      - 200: sessions found (parse and return).
+      - 202/204: no sessions match (return empty list).
+      - 404 + com.microsoft:message-not-found: cross-SDK safety net (return empty list).
+
+    The 404 branch is not currently emitted by the service for get-message-sessions,
+    but .NET carries the same guard. This test ensures the branch is exercised so
+    it doesn't silently rot.
+    """
+
+    @staticmethod
+    def _make_message(application_properties, value=None):
+        msg = MagicMock()
+        msg.application_properties = application_properties
+        msg.value = value
+        return msg
+
+    @staticmethod
+    def _make_transport():
+        transport = MagicMock()
+        transport.get_message_value = lambda m: m.value
+        transport.handle_amqp_mgmt_error = MagicMock()
+        return transport
+
+    def test_404_message_not_found_returns_empty_list(self):
+        """404 + message-not-found returns an empty list (cross-SDK safety net)."""
+        msg = self._make_message(
+            {MGMT_RESPONSE_MESSAGE_ERROR_CONDITION: ERROR_CODE_MESSAGE_NOT_FOUND}
+        )
+        transport = self._make_transport()
+        result = list_sessions_op(404, msg, "Not found", transport)
+        assert result == []
+        transport.handle_amqp_mgmt_error.assert_not_called()
+
+    def test_404_other_condition_raises(self):
+        """404 with a different condition code falls through to the error handler."""
+        msg = self._make_message(
+            {MGMT_RESPONSE_MESSAGE_ERROR_CONDITION: b"com.microsoft:other-error"}
+        )
+        transport = self._make_transport()
+        list_sessions_op(404, msg, "Not found", transport)
+        transport.handle_amqp_mgmt_error.assert_called_once()

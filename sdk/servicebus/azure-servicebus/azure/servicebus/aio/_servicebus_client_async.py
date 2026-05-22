@@ -722,7 +722,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
         return browser
 
-    async def list_queue_sessions(
+    def list_queue_sessions(
         self,
         queue_name: str,
         *,
@@ -741,27 +741,29 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             session state was set or updated after this time are returned.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: An async iterator of session ID strings.
-        :rtype: asynciterator[str]
+        :rtype: AsyncIterator[str]
         """
         if self._entity_name and queue_name != self._entity_name:
             raise ValueError(
                 "The queue name provided does not match the EntityPath in "
                 "the connection string used to construct the ServiceBusClient."
             )
-        if kwargs:
-            warnings.warn(f"Unsupported keyword args: {kwargs}")
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        browser = self._create_session_browser(queue_name)
-        try:
-            async for sid in browser.list_sessions(
-                session_state_updated_after=session_state_updated_after, timeout=timeout
-            ):
-                yield sid
-        finally:
-            await browser.close()
 
-    async def list_subscription_sessions(
+        async def _iter():
+            browser = self._create_session_browser(queue_name)
+            try:
+                async for sid in browser.list_sessions(
+                    session_state_updated_after=session_state_updated_after, timeout=timeout
+                ):
+                    yield sid
+            finally:
+                await browser.close()
+
+        return _iter()
+
+    def list_subscription_sessions(
         self,
         topic_name: str,
         subscription_name: str,
@@ -782,22 +784,24 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             session state was set or updated after this time are returned.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: An async iterator of session ID strings.
-        :rtype: asynciterator[str]
+        :rtype: AsyncIterator[str]
         """
         if self._entity_name and topic_name != self._entity_name:
             raise ValueError(
                 "The topic name provided does not match the EntityPath in "
                 "the connection string used to construct the ServiceBusClient."
             )
-        if kwargs:
-            warnings.warn(f"Unsupported keyword args: {kwargs}")
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
-        try:
-            async for sid in browser.list_sessions(
-                session_state_updated_after=session_state_updated_after, timeout=timeout
-            ):
-                yield sid
-        finally:
-            await browser.close()
+
+        async def _iter():
+            browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
+            try:
+                async for sid in browser.list_sessions(
+                    session_state_updated_after=session_state_updated_after, timeout=timeout
+                ):
+                    yield sid
+            finally:
+                await browser.close()
+
+        return _iter()

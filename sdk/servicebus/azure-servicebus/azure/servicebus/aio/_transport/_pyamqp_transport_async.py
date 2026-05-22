@@ -89,7 +89,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     def create_mgmt_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync": # pylint: disable=docstring-keyword-should-match-keyword-only
         """Creates and returns an async pyamqp AMQPClient for management-only operations.
 
-        :param Configuration config: The configuration. Required.
+        Unlike SendClient/ReceiveClient, this client does not create a sender or
+        receiver link. It only opens a connection and authenticates, suitable for
+        management requests that don't need an associated link.
+
+        :param ~azure.servicebus._common._configuration.Configuration config: The configuration. Required.
+        :keyword ~pyamqp.aio.authentication.JWTTokenAuthAsync auth: Required.
+        :keyword retry_policy: Required.
+        :keyword str client_name: Required.
+        :keyword dict properties: Required.
         :return: AMQPClientAsync
         :rtype: ~pyamqp.aio.AMQPClientAsync
         """
