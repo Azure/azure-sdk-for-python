@@ -36,12 +36,6 @@
   - Model `Secret` moved instance variables `provisioning_state`, `deployment_status`, `profile_name` and `parameters` under property `properties` whose type is `SecretProperties`
   - Model `SecurityPolicy` moved instance variables `provisioning_state`, `deployment_status`, `profile_name` and `parameters` under property `properties` whose type is `SecurityPolicyProperties`
   - Model `SecurityPolicyUpdateParameters` moved instance variable `parameters` under property `properties` whose type is `SecurityPolicyUpdateProperties`
-  - Deleted or renamed model `AzureFirstPartyManagedCertificate`
-  - Deleted or renamed model `Certificate`
-  - Deleted or renamed model `CustomerCertificate`
-  - Deleted or renamed model `EdgenodeResult`
-  - Deleted or renamed model `ManagedCertificate`
-  - Deleted or renamed model `ValidationToken`
   - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `metrics`/`date_time_begin`/`date_time_end`/`granularity`/`custom_domains`/`protocols`/`group_by`/`continents`/`country_or_regions` from `positional_or_keyword` to `keyword_only`
   - Method `LogAnalyticsOperations.get_log_analytics_rankings` changed its parameter `rankings`/`metrics`/`max_ranking`/`date_time_begin`/`date_time_end`/`custom_domains` from `positional_or_keyword` to `keyword_only`
   - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `metrics`/`date_time_begin`/`date_time_end`/`granularity`/`actions`/`group_by`/`rule_types` from `positional_or_keyword` to `keyword_only`
@@ -50,6 +44,7 @@
 ### Other Changes
 
   - Deleted model `CdnWebApplicationFirewallPolicyList`/`ManagedRuleSetDefinitionList` which actually were not used by SDK users
+  - Deleted model `AzureFirstPartyManagedCertificate`/`Certificate`/`CustomerCertificate`/`EdgenodeResult`/`ManagedCertificate`/`ValidationToken` which actually were not used by SDK users
 
 ## 13.1.1 (2024-06-12)
 
