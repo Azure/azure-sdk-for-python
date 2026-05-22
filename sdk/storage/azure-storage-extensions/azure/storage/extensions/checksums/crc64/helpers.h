@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-const uint64_t poly = 0x9A6C9329AC4BC9B5ULL;
+static const uint64_t poly = 0x9A6C9329AC4BC9B5ULL;
 
-const uint64_t m_uComplement = ~0ULL;
-const uint64_t m_u1[] =
+static const uint64_t m_uComplement = ~0ULL;
+static const uint64_t m_u1[] =
 {
     0x0000000000000000ULL, 0x7f6ef0c830358979ULL, 0xfedde190606b12f2ULL, 0x81b31158505e9b8bULL,
     0xc962e5739841b68fULL, 0xb60c15bba8743ff6ULL, 0x37bf04e3f82aa47dULL, 0x48d1f42bc81f2d04ULL,
@@ -74,7 +74,7 @@ const uint64_t m_u1[] =
     0xab69411fbfb21ca3ULL, 0xd407b1d78f8795daULL, 0x55b4a08fdfd90e51ULL, 0x2ada5047efec8728ULL,
 };
 
-const uint64_t m_u32[] =
+static const uint64_t m_u32[] =
 {
     0x0000000000000000ULL, 0xb8c533c1177eb231ULL, 0x455341d1766af709ULL, 0xfd96721061144538ULL,
     0x8aa683a2ecd5ee12ULL, 0x3263b063fbab5c23ULL, 0xcff5c2739abf191bULL, 0x7730f1b28dc1ab2aULL,
@@ -597,7 +597,7 @@ const uint64_t m_u32[] =
     0x609abef3367d2567ULL, 0xd02690aba479d067ULL, 0x353bc4114ae35c0cULL, 0x8587ea49d8e7a90cULL,
 };
 
-const uint64_t m_uX2N[] =
+static const uint64_t m_uX2N[] =
 {
     0x0080000000000000ULL, 0x0000800000000000ULL, 0x0000000080000000ULL, 0x9a6c9329ac4bc9b5ULL,
     0x10f4bb0f129310d6ULL, 0x70f05dcea2ebd226ULL, 0x311211205672822dULL, 0x2fc297db0f46c96eULL,
@@ -622,7 +622,7 @@ const uint64_t m_uX2N[] =
 // "a" and "b" are represented in "reversed" order -- LSB is x**(XX-1) coefficient, MSB is x^0 coefficient.
 // "POLY" is represented in the same manner except for omitted x**XX coefficient
 //
-uint64_t MulPolyUnrolled(uint64_t a, uint64_t b)
+static uint64_t MulPolyUnrolled(uint64_t a, uint64_t b)
 {
     const uint64_t p = poly;
     const uint64_t p2 = (p >> 1) ^ (p * (p & 1));
@@ -647,7 +647,7 @@ uint64_t MulPolyUnrolled(uint64_t a, uint64_t b)
     return vr[0] ^ vr[1];
 }
 
-uint64_t MulX_N(uint64_t a, uint64_t uSize)
+static uint64_t MulX_N(uint64_t a, uint64_t uSize)
 {
     uint64_t i = 0;
     uint64_t r = a;
