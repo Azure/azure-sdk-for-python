@@ -41,7 +41,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -50,7 +49,7 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     packages=[
         "azure.storage.extensions.checksums",
     ],
