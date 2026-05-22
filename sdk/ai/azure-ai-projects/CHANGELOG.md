@@ -20,6 +20,8 @@
 * New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
 * New sample `sample_dataset_generation_job_with_evaluation.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
+* New top-level `agent_optimization_jobs` sub-client on `AIProjectClient` with operations: `get_candidate_file`, `promote_candidate`.
+* New methods on `.beta.agents` for optimization jobs: `delete_optimization_job`, `get_optimization_candidate`, `get_optimization_candidate_config`, `get_optimization_candidate_results`.
 
 
 ### Breaking Changes
@@ -41,6 +43,7 @@ Breaking changes in beta classes:
 * Renamed class `TargetConfig` to `RedTeamTargetConfig`.
 * Removed class `FabricIQPreviewToolParameters`.
 * Removed class `WorkIQPreviewToolParameters`.
+* Renamed enum `OptimizationStrategy` to `TargetAttribute`, with a new value `TOOL` added.
 
 ### Bugs Fixed
 
