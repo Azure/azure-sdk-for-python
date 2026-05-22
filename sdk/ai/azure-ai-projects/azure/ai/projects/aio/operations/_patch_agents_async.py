@@ -69,7 +69,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
-        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference        
+        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -160,7 +160,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
-        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference        
+        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:

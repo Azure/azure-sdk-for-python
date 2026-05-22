@@ -10,10 +10,10 @@
 * New optional string properties `description` and `name` added to Agent tools classes which did not have them before.
 * New optional `tool_configs` added to Agent tool classes.
 * New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
-* New `.beta.models` sub-client to handle AI model weights: `list_versions`, `list`, `get`, `delete`, `update`, `create_async`, `pending_upload`, `get_credentials`.
-* New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `list_runs`, `dispatch_async`.
+* New `.beta.models` sub-client to handle AI model weights: `list_versions`, `list`, `get`, `delete`, `update`, `pending_create_version`, `pending_upload`, `get_credentials`.
+* New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `list_runs`, `dispatch`.
 * New methods on `.beta.evaluators` for evaluator generation jobs: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
-* New methods on `.beta.agents` for code-based hosted agents: `create_version_from_code`, `download_agent_code`.
+* New methods on `.beta.agents` for code-based hosted agents: `create_version_from_code`, `download_code`.
 * New methods on `.beta.agents` for optimization jobs: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `list_optimization_candidates`.
 * New methods on `.beta.memory_stores` to handle individual memory items:`.beta.memory_stores`: `get_memory`, `delete_memory`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
@@ -33,7 +33,6 @@ Breaking changes in beta classes:
 * Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
 * Renamed class `AgentEndpoint` to `AgentEndpointConfig`.
 * Renamed class `DeleteSkillResponse` to `DeleteSkillResult`.
-* Renamed class `PendingUploadResponse` to `PendingUploadResult`.
 * Renamed class `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
 * Renamed class `SessionFileWriteResponse` to `SessionFileWriteResult`.
 * Renamed class `SkillObject` to `SkillDetails`.
