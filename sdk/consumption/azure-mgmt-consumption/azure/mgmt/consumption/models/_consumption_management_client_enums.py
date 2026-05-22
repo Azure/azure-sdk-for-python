@@ -66,10 +66,10 @@ class CultureCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Datagrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Datagrain."""
 
-    #: Daily grain of data
     DAILY_GRAIN = "daily"
-    #: Monthly grain of data
+    """Daily grain of data"""
     MONTHLY_GRAIN = "monthly"
+    """Monthly grain of data"""
 
 
 class EventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -88,12 +88,12 @@ class EventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class LookBackPeriod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LookBackPeriod."""
 
-    #: Use 7 days of data for recommendations
     LAST07_DAYS = "Last7Days"
-    #: Use 30 days of data for recommendations
+    """Use 7 days of data for recommendations"""
     LAST30_DAYS = "Last30Days"
-    #: Use 60 days of data for recommendations
+    """Use 30 days of data for recommendations"""
     LAST60_DAYS = "Last60Days"
+    """Use 60 days of data for recommendations"""
 
 
 class LotSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -107,27 +107,44 @@ class LotSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Metrictype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Metrictype."""
 
-    #: Actual cost data.
     ACTUAL_COST_METRIC_TYPE = "actualcost"
-    #: Amortized cost data.
+    """Actual cost data."""
     AMORTIZED_COST_METRIC_TYPE = "amortizedcost"
-    #: Usage data.
+    """Amortized cost data."""
     USAGE_METRIC_TYPE = "usage"
+    """Usage data."""
+
+
+class OperationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the long running operation."""
+
+    RUNNING = "Running"
+    COMPLETED = "Completed"
+    FAILED = "Failed"
 
 
 class OperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The comparison operator."""
 
-    #: Alert will be triggered if the evaluated cost is the same as threshold value. Note: It’s not
-    #: recommended to use this OperatorType as there’s low chance of cost being exactly the same as
-    #: threshold value, leading to missing of your alert. This OperatorType will be deprecated in
-    #: future.
     EQUAL_TO = "EqualTo"
-    #: Alert will be triggered if the evaluated cost is greater than the threshold value. Note: This
-    #: is the recommended OperatorType while configuring Budget Alert.
+    """Alert will be triggered if the evaluated cost is the same as threshold value. Note: It’s not
+    recommended to use this OperatorType as there’s low chance of cost being exactly the same as
+    threshold value, leading to missing of your alert. This OperatorType will be deprecated in
+    future."""
     GREATER_THAN = "GreaterThan"
-    #: Alert will be triggered if the evaluated cost is greater than or equal to the threshold value.
+    """Alert will be triggered if the evaluated cost is greater than the threshold value. Note: This
+    is the recommended OperatorType while configuring Budget Alert."""
     GREATER_THAN_OR_EQUAL_TO = "GreaterThanOrEqualTo"
+    """Alert will be triggered if the evaluated cost is greater than or equal to the threshold value."""
+
+
+class OrganizationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The organization type of the lot."""
+
+    PRIMARY_ORGANIZATION_TYPE = "Primary"
+    """Primary organization type for Multi-Entity consumption commitment."""
+    CONTRIBUTOR_ORGANIZATION_TYPE = "Contributor"
+    """Contributor organization type for Multi-Entity consumption commitment."""
 
 
 class PricingModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -166,20 +183,22 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Term(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Term."""
 
-    #: 1 year reservation term
+    P1_M = "P1M"
+    """1 month reservation term"""
     P1_Y = "P1Y"
-    #: 3 year reservation term
+    """1 year reservation term"""
     P3_Y = "P3Y"
+    """3 year reservation term"""
 
 
 class ThresholdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of threshold."""
 
-    #: Actual costs budget alerts notify when the actual accrued cost exceeds the allocated budget .
     ACTUAL = "Actual"
-    #: Forecasted costs budget alerts provide advanced notification that your spending trends are
-    #: likely to exceed your allocated budget, as it relies on forecasted cost predictions.
+    """Actual costs budget alerts notify when the actual accrued cost exceeds the allocated budget ."""
     FORECASTED = "Forecasted"
+    """Forecasted costs budget alerts provide advanced notification that your spending trends are
+    likely to exceed your allocated budget, as it relies on forecasted cost predictions."""
 
 
 class TimeGrainType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

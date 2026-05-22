@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,14 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class Amount(_serialization.Model):
@@ -38,11 +39,11 @@ class Amount(_serialization.Model):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.currency = None
-        self.value = None
+        self.currency: Optional[str] = None
+        self.value: Optional[float] = None
 
 
 class AmountWithExchangeRate(Amount):
@@ -74,11 +75,11 @@ class AmountWithExchangeRate(Amount):
         "exchange_rate_month": {"key": "exchangeRateMonth", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.exchange_rate = None
-        self.exchange_rate_month = None
+        self.exchange_rate: Optional[float] = None
+        self.exchange_rate_month: Optional[int] = None
 
 
 class Resource(_serialization.Model):
@@ -114,17 +115,17 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.etag = None
-        self.tags = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.etag: Optional[str] = None
+        self.tags: Optional[dict[str, str]] = None
 
 
-class Balance(Resource):  # pylint: disable=too-many-instance-attributes
+class Balance(Resource):
     """A balance resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -167,6 +168,8 @@ class Balance(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype billing_frequency: str or ~azure.mgmt.consumption.models.BillingFrequency
     :ivar price_hidden: Price is hidden or not.
     :vartype price_hidden: bool
+    :ivar overage_refund: Overage Refunds.
+    :vartype overage_refund: float
     :ivar new_purchases_details: List of new purchases.
     :vartype new_purchases_details:
      list[~azure.mgmt.consumption.models.BalancePropertiesNewPurchasesDetailsItem]
@@ -193,6 +196,7 @@ class Balance(Resource):  # pylint: disable=too-many-instance-attributes
         "total_usage": {"readonly": True},
         "azure_marketplace_service_charges": {"readonly": True},
         "price_hidden": {"readonly": True},
+        "overage_refund": {"readonly": True},
         "new_purchases_details": {"readonly": True},
         "adjustment_details": {"readonly": True},
     }
@@ -216,6 +220,7 @@ class Balance(Resource):  # pylint: disable=too-many-instance-attributes
         "azure_marketplace_service_charges": {"key": "properties.azureMarketplaceServiceCharges", "type": "float"},
         "billing_frequency": {"key": "properties.billingFrequency", "type": "str"},
         "price_hidden": {"key": "properties.priceHidden", "type": "bool"},
+        "overage_refund": {"key": "properties.overageRefund", "type": "float"},
         "new_purchases_details": {
             "key": "properties.newPurchasesDetails",
             "type": "[BalancePropertiesNewPurchasesDetailsItem]",
@@ -226,28 +231,31 @@ class Balance(Resource):  # pylint: disable=too-many-instance-attributes
         },
     }
 
-    def __init__(self, *, billing_frequency: Optional[Union[str, "_models.BillingFrequency"]] = None, **kwargs):
+    def __init__(
+        self, *, billing_frequency: Optional[Union[str, "_models.BillingFrequency"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword billing_frequency: The billing frequency. Known values are: "Month", "Quarter", and
          "Year".
         :paramtype billing_frequency: str or ~azure.mgmt.consumption.models.BillingFrequency
         """
         super().__init__(**kwargs)
-        self.currency = None
-        self.beginning_balance = None
-        self.ending_balance = None
-        self.new_purchases = None
-        self.adjustments = None
-        self.utilized = None
-        self.service_overage = None
-        self.charges_billed_separately = None
-        self.total_overage = None
-        self.total_usage = None
-        self.azure_marketplace_service_charges = None
+        self.currency: Optional[str] = None
+        self.beginning_balance: Optional[float] = None
+        self.ending_balance: Optional[float] = None
+        self.new_purchases: Optional[float] = None
+        self.adjustments: Optional[float] = None
+        self.utilized: Optional[float] = None
+        self.service_overage: Optional[float] = None
+        self.charges_billed_separately: Optional[float] = None
+        self.total_overage: Optional[float] = None
+        self.total_usage: Optional[float] = None
+        self.azure_marketplace_service_charges: Optional[float] = None
         self.billing_frequency = billing_frequency
-        self.price_hidden = None
-        self.new_purchases_details = None
-        self.adjustment_details = None
+        self.price_hidden: Optional[bool] = None
+        self.overage_refund: Optional[float] = None
+        self.new_purchases_details: Optional[list["_models.BalancePropertiesNewPurchasesDetailsItem"]] = None
+        self.adjustment_details: Optional[list["_models.BalancePropertiesAdjustmentDetailsItem"]] = None
 
 
 class BalancePropertiesAdjustmentDetailsItem(_serialization.Model):
@@ -271,11 +279,11 @@ class BalancePropertiesAdjustmentDetailsItem(_serialization.Model):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.value = None
+        self.name: Optional[str] = None
+        self.value: Optional[float] = None
 
 
 class BalancePropertiesNewPurchasesDetailsItem(_serialization.Model):
@@ -299,11 +307,11 @@ class BalancePropertiesNewPurchasesDetailsItem(_serialization.Model):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.value = None
+        self.name: Optional[str] = None
+        self.value: Optional[float] = None
 
 
 class ProxyResource(_serialization.Model):
@@ -335,20 +343,20 @@ class ProxyResource(_serialization.Model):
         "e_tag": {"key": "eTag", "type": "str"},
     }
 
-    def __init__(self, *, e_tag: Optional[str] = None, **kwargs):
+    def __init__(self, *, e_tag: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
         :paramtype e_tag: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.e_tag = e_tag
 
 
-class Budget(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Budget(ProxyResource):
     """A budget resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -419,9 +427,9 @@ class Budget(ProxyResource):  # pylint: disable=too-many-instance-attributes
         time_grain: Optional[Union[str, "_models.TimeGrainType"]] = None,
         time_period: Optional["_models.BudgetTimePeriod"] = None,
         filter: Optional["_models.BudgetFilter"] = None,  # pylint: disable=redefined-builtin
-        notifications: Optional[Dict[str, "_models.Notification"]] = None,
-        **kwargs
-    ):
+        notifications: Optional[dict[str, "_models.Notification"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
@@ -452,15 +460,15 @@ class Budget(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.time_grain = time_grain
         self.time_period = time_period
         self.filter = filter
-        self.current_spend = None
+        self.current_spend: Optional["_models.CurrentSpend"] = None
         self.notifications = notifications
-        self.forecast_spend = None
+        self.forecast_spend: Optional["_models.ForecastSpend"] = None
 
 
 class BudgetComparisonExpression(_serialization.Model):
     """The comparison expression to be used in the budgets.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the column to use in comparison. Required.
     :vartype name: str
@@ -482,7 +490,9 @@ class BudgetComparisonExpression(_serialization.Model):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, name: str, operator: Union[str, "_models.BudgetOperatorType"], values: List[str], **kwargs):
+    def __init__(
+        self, *, name: str, operator: Union[str, "_models.BudgetOperatorType"], values: list[str], **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the column to use in comparison. Required.
         :paramtype name: str
@@ -517,11 +527,11 @@ class BudgetFilter(_serialization.Model):
     def __init__(
         self,
         *,
-        and_property: Optional[List["_models.BudgetFilterProperties"]] = None,
+        and_property: Optional[list["_models.BudgetFilterProperties"]] = None,
         dimensions: Optional["_models.BudgetComparisonExpression"] = None,
         tags: Optional["_models.BudgetComparisonExpression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword and_property: The logical "AND" expression. Must have at least 2 items.
         :paramtype and_property: list[~azure.mgmt.consumption.models.BudgetFilterProperties]
@@ -555,8 +565,8 @@ class BudgetFilterProperties(_serialization.Model):
         *,
         dimensions: Optional["_models.BudgetComparisonExpression"] = None,
         tags: Optional["_models.BudgetComparisonExpression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dimensions: Has comparison expression for a dimension.
         :paramtype dimensions: ~azure.mgmt.consumption.models.BudgetComparisonExpression
@@ -589,17 +599,17 @@ class BudgetsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.Budget"]] = None
+        self.next_link: Optional[str] = None
 
 
 class BudgetTimePeriod(_serialization.Model):
     """The start and end date for a budget.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar start_date: The start date for the budget. Required.
     :vartype start_date: ~datetime.datetime
@@ -617,7 +627,9 @@ class BudgetTimePeriod(_serialization.Model):
         "end_date": {"key": "endDate", "type": "iso-8601"},
     }
 
-    def __init__(self, *, start_date: datetime.datetime, end_date: Optional[datetime.datetime] = None, **kwargs):
+    def __init__(
+        self, *, start_date: datetime.datetime, end_date: Optional[datetime.datetime] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword start_date: The start date for the budget. Required.
         :paramtype start_date: ~datetime.datetime
@@ -647,13 +659,13 @@ class ChargesListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ChargeSummary]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[list["_models.ChargeSummary"]] = None
 
 
-class ChargeSummary(Resource):
+class ChargeSummary(ProxyResource):
     """A charge summary resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -661,18 +673,17 @@ class ChargeSummary(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: The full qualified ARM ID of an event.
+    :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: The ID that uniquely identifies an event.
+    :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar etag: The etag for the resource.
-    :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
+    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+     used to determine whether the user is updating the latest version or not.
+    :vartype e_tag: str
     :ivar kind: Specifies the kind of charge summary. Required. Known values are: "legacy" and
      "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ChargeSummaryKind
@@ -682,8 +693,6 @@ class ChargeSummary(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "tags": {"readonly": True},
         "kind": {"required": True},
     }
 
@@ -691,16 +700,19 @@ class ChargeSummary(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
     }
 
     _subtype_map = {"kind": {"legacy": "LegacyChargeSummary", "modern": "ModernChargeSummary"}}
 
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
+    def __init__(self, *, e_tag: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+         used to determine whether the user is updating the latest version or not.
+        :paramtype e_tag: str
+        """
+        super().__init__(e_tag=e_tag, **kwargs)
         self.kind: Optional[str] = None
 
 
@@ -733,15 +745,15 @@ class CreditBalanceSummary(_serialization.Model):
         },
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.estimated_balance = None
-        self.current_balance = None
-        self.estimated_balance_in_billing_currency = None
+        self.estimated_balance: Optional["_models.Amount"] = None
+        self.current_balance: Optional["_models.Amount"] = None
+        self.estimated_balance_in_billing_currency: Optional["_models.AmountWithExchangeRate"] = None
 
 
-class CreditSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class CreditSummary(ProxyResource):
     """A credit summary resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -769,6 +781,9 @@ class CreditSummary(ProxyResource):  # pylint: disable=too-many-instance-attribu
     :vartype billing_currency: str
     :ivar reseller: Credit's reseller.
     :vartype reseller: ~azure.mgmt.consumption.models.Reseller
+    :ivar is_estimated_balance: If true, the listed details are based on an estimation and it will
+     be subjected to change.
+    :vartype is_estimated_balance: bool
     :ivar e_tag_properties_e_tag: The eTag for the resource.
     :vartype e_tag_properties_e_tag: str
     """
@@ -784,6 +799,7 @@ class CreditSummary(ProxyResource):  # pylint: disable=too-many-instance-attribu
         "credit_currency": {"readonly": True},
         "billing_currency": {"readonly": True},
         "reseller": {"readonly": True},
+        "is_estimated_balance": {"readonly": True},
         "e_tag_properties_e_tag": {"readonly": True},
     }
 
@@ -799,24 +815,26 @@ class CreditSummary(ProxyResource):  # pylint: disable=too-many-instance-attribu
         "credit_currency": {"key": "properties.creditCurrency", "type": "str"},
         "billing_currency": {"key": "properties.billingCurrency", "type": "str"},
         "reseller": {"key": "properties.reseller", "type": "Reseller"},
+        "is_estimated_balance": {"key": "properties.isEstimatedBalance", "type": "bool"},
         "e_tag_properties_e_tag": {"key": "properties.eTag", "type": "str"},
     }
 
-    def __init__(self, *, e_tag: Optional[str] = None, **kwargs):
+    def __init__(self, *, e_tag: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
         :paramtype e_tag: str
         """
         super().__init__(e_tag=e_tag, **kwargs)
-        self.balance_summary = None
-        self.pending_credit_adjustments = None
-        self.expired_credit = None
-        self.pending_eligible_charges = None
-        self.credit_currency = None
-        self.billing_currency = None
-        self.reseller = None
-        self.e_tag_properties_e_tag = None
+        self.balance_summary: Optional["_models.CreditBalanceSummary"] = None
+        self.pending_credit_adjustments: Optional["_models.Amount"] = None
+        self.expired_credit: Optional["_models.Amount"] = None
+        self.pending_eligible_charges: Optional["_models.Amount"] = None
+        self.credit_currency: Optional[str] = None
+        self.billing_currency: Optional[str] = None
+        self.reseller: Optional["_models.Reseller"] = None
+        self.is_estimated_balance: Optional[bool] = None
+        self.e_tag_properties_e_tag: Optional[str] = None
 
 
 class CurrentSpend(_serialization.Model):
@@ -840,11 +858,11 @@ class CurrentSpend(_serialization.Model):
         "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.amount = None
-        self.unit = None
+        self.amount: Optional[float] = None
+        self.unit: Optional[str] = None
 
 
 class DownloadProperties(_serialization.Model):
@@ -868,11 +886,82 @@ class DownloadProperties(_serialization.Model):
         "valid_till": {"key": "validTill", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.download_url = None
-        self.valid_till = None
+        self.download_url: Optional[str] = None
+        self.valid_till: Optional[str] = None
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.consumption.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.consumption.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorDetails(_serialization.Model):
@@ -896,34 +985,62 @@ class ErrorDetails(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class ErrorResponse(_serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.consumption.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.consumption.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseAutoGenerated(_serialization.Model):
+    """Error response indicates that the service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     Some Error responses:
 
 
     *
-      429 TooManyRequests - Request is throttled. Retry after waiting for the time specified in the "x-ms-ratelimit-microsoft.consumption-retry-after" header.
+      429 TooManyRequests - Request is throttled. Retry after waiting for the time specified in the
+    "x-ms-ratelimit-microsoft.consumption-retry-after" header.
 
     *
-      503 ServiceUnavailable - Service is temporarily unavailable. Retry after waiting for the time specified in the "Retry-After" header.
+      503 ServiceUnavailable - Service is temporarily unavailable. Retry after waiting for the time
+    specified in the "Retry-After" header.
 
-        :ivar error: The details of the error.
-        :vartype error: ~azure.mgmt.consumption.models.ErrorDetails
+    *
+      504 Gateway Timeout - Service timed out while processing the request. Reduce the date range
+    in the request, if possible.
+
+    :ivar error: The details of the error.
+    :vartype error: ~azure.mgmt.consumption.models.ErrorDetails
     """
 
     _attribute_map = {
         "error": {"key": "error", "type": "ErrorDetails"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.consumption.models.ErrorDetails
@@ -953,14 +1070,14 @@ class Events(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.EventSummary"]] = None
+        self.next_link: Optional[str] = None
 
 
-class EventSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class EventSummary(ProxyResource):
     """An event summary resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -989,8 +1106,13 @@ class EventSummary(ProxyResource):  # pylint: disable=too-many-instance-attribut
     :ivar charges: The amount of charges for events of type SettleCharges and
      PendingEligibleCharges.
     :vartype charges: ~azure.mgmt.consumption.models.Amount
-    :ivar closed_balance: The balance after the event.
+    :ivar closed_balance: The balance after the event, Note: This will not be returned for
+     Contributor Organization Type in Multi-Entity consumption commitment.
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
+    :ivar billing_account_id: Identifier of the billing account.
+    :vartype billing_account_id: str
+    :ivar billing_account_display_name: Name of the billing account.
+    :vartype billing_account_display_name: str
     :ivar event_type: Identifies the type of the event. Known values are: "SettledCharges",
      "PendingCharges", "PendingAdjustments", "PendingNewCredit", "PendingExpiredCredit", "UnKnown",
      "NewCredit", and "CreditExpired".
@@ -1030,9 +1152,14 @@ class EventSummary(ProxyResource):  # pylint: disable=too-many-instance-attribut
     :ivar charges_in_billing_currency: The amount of charges for events of type SettleCharges and
      PendingEligibleCharges in billing currency.
     :vartype charges_in_billing_currency: ~azure.mgmt.consumption.models.AmountWithExchangeRate
-    :ivar closed_balance_in_billing_currency: The balance in billing currency after the event.
+    :ivar closed_balance_in_billing_currency: The balance in billing currency after the event,
+     Note: This will not be returned for Contributor Organization Type in Multi-Entity consumption
+     commitment.
     :vartype closed_balance_in_billing_currency:
      ~azure.mgmt.consumption.models.AmountWithExchangeRate
+    :ivar is_estimated_balance: If true, the listed details are based on an estimation and it will
+     be subjected to change.
+    :vartype is_estimated_balance: bool
     :ivar e_tag_properties_e_tag: The eTag for the resource.
     :vartype e_tag_properties_e_tag: str
     """
@@ -1048,6 +1175,8 @@ class EventSummary(ProxyResource):  # pylint: disable=too-many-instance-attribut
         "credit_expired": {"readonly": True},
         "charges": {"readonly": True},
         "closed_balance": {"readonly": True},
+        "billing_account_id": {"readonly": True},
+        "billing_account_display_name": {"readonly": True},
         "invoice_number": {"readonly": True},
         "billing_profile_id": {"readonly": True},
         "billing_profile_display_name": {"readonly": True},
@@ -1062,6 +1191,7 @@ class EventSummary(ProxyResource):  # pylint: disable=too-many-instance-attribut
         "adjustments_in_billing_currency": {"readonly": True},
         "charges_in_billing_currency": {"readonly": True},
         "closed_balance_in_billing_currency": {"readonly": True},
+        "is_estimated_balance": {"readonly": True},
         "e_tag_properties_e_tag": {"readonly": True},
     }
 
@@ -1077,6 +1207,8 @@ class EventSummary(ProxyResource):  # pylint: disable=too-many-instance-attribut
         "credit_expired": {"key": "properties.creditExpired", "type": "Amount"},
         "charges": {"key": "properties.charges", "type": "Amount"},
         "closed_balance": {"key": "properties.closedBalance", "type": "Amount"},
+        "billing_account_id": {"key": "properties.billingAccountId", "type": "str"},
+        "billing_account_display_name": {"key": "properties.billingAccountDisplayName", "type": "str"},
         "event_type": {"key": "properties.eventType", "type": "str"},
         "invoice_number": {"key": "properties.invoiceNumber", "type": "str"},
         "billing_profile_id": {"key": "properties.billingProfileId", "type": "str"},
@@ -1104,12 +1236,17 @@ class EventSummary(ProxyResource):  # pylint: disable=too-many-instance-attribut
             "key": "properties.closedBalanceInBillingCurrency",
             "type": "AmountWithExchangeRate",
         },
+        "is_estimated_balance": {"key": "properties.isEstimatedBalance", "type": "bool"},
         "e_tag_properties_e_tag": {"key": "properties.eTag", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
-        self, *, e_tag: Optional[str] = None, event_type: Optional[Union[str, "_models.EventType"]] = None, **kwargs
-    ):
+        self,
+        *,
+        e_tag: Optional[str] = None,
+        event_type: Optional[Union[str, "_models.EventType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
@@ -1120,29 +1257,32 @@ class EventSummary(ProxyResource):  # pylint: disable=too-many-instance-attribut
         :paramtype event_type: str or ~azure.mgmt.consumption.models.EventType
         """
         super().__init__(e_tag=e_tag, **kwargs)
-        self.transaction_date = None
-        self.description = None
-        self.new_credit = None
-        self.adjustments = None
-        self.credit_expired = None
-        self.charges = None
-        self.closed_balance = None
+        self.transaction_date: Optional[datetime.datetime] = None
+        self.description: Optional[str] = None
+        self.new_credit: Optional["_models.Amount"] = None
+        self.adjustments: Optional["_models.Amount"] = None
+        self.credit_expired: Optional["_models.Amount"] = None
+        self.charges: Optional["_models.Amount"] = None
+        self.closed_balance: Optional["_models.Amount"] = None
+        self.billing_account_id: Optional[str] = None
+        self.billing_account_display_name: Optional[str] = None
         self.event_type = event_type
-        self.invoice_number = None
-        self.billing_profile_id = None
-        self.billing_profile_display_name = None
-        self.lot_id = None
-        self.lot_source = None
-        self.canceled_credit = None
-        self.credit_currency = None
-        self.billing_currency = None
-        self.reseller = None
-        self.credit_expired_in_billing_currency = None
-        self.new_credit_in_billing_currency = None
-        self.adjustments_in_billing_currency = None
-        self.charges_in_billing_currency = None
-        self.closed_balance_in_billing_currency = None
-        self.e_tag_properties_e_tag = None
+        self.invoice_number: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.lot_id: Optional[str] = None
+        self.lot_source: Optional[str] = None
+        self.canceled_credit: Optional["_models.Amount"] = None
+        self.credit_currency: Optional[str] = None
+        self.billing_currency: Optional[str] = None
+        self.reseller: Optional["_models.Reseller"] = None
+        self.credit_expired_in_billing_currency: Optional["_models.AmountWithExchangeRate"] = None
+        self.new_credit_in_billing_currency: Optional["_models.AmountWithExchangeRate"] = None
+        self.adjustments_in_billing_currency: Optional["_models.AmountWithExchangeRate"] = None
+        self.charges_in_billing_currency: Optional["_models.AmountWithExchangeRate"] = None
+        self.closed_balance_in_billing_currency: Optional["_models.AmountWithExchangeRate"] = None
+        self.is_estimated_balance: Optional[bool] = None
+        self.e_tag_properties_e_tag: Optional[str] = None
 
 
 class ForecastSpend(_serialization.Model):
@@ -1167,11 +1307,11 @@ class ForecastSpend(_serialization.Model):
         "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.amount = None
-        self.unit = None
+        self.amount: Optional[float] = None
+        self.unit: Optional[str] = None
 
 
 class HighCasedErrorDetails(_serialization.Model):
@@ -1195,34 +1335,37 @@ class HighCasedErrorDetails(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class HighCasedErrorResponse(_serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates that the service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     Some Error responses:
 
 
     *
-      429 TooManyRequests - Request is throttled. Retry after waiting for the time specified in the "x-ms-ratelimit-microsoft.consumption-retry-after" header.
+      429 TooManyRequests - Request is throttled. Retry after waiting for the time specified in the
+    "x-ms-ratelimit-microsoft.consumption-retry-after" header.
 
     *
-      503 ServiceUnavailable - Service is temporarily unavailable. Retry after waiting for the time specified in the "Retry-After" header.
+      503 ServiceUnavailable - Service is temporarily unavailable. Retry after waiting for the time
+    specified in the "Retry-After" header.
 
-        :ivar error: The details of the error.
-        :vartype error: ~azure.mgmt.consumption.models.HighCasedErrorDetails
+    :ivar error: The details of the error.
+    :vartype error: ~azure.mgmt.consumption.models.HighCasedErrorDetails
     """
 
     _attribute_map = {
         "error": {"key": "error", "type": "HighCasedErrorDetails"},
     }
 
-    def __init__(self, *, error: Optional["_models.HighCasedErrorDetails"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.HighCasedErrorDetails"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.consumption.models.HighCasedErrorDetails
@@ -1231,23 +1374,22 @@ class HighCasedErrorResponse(_serialization.Model):
         self.error = error
 
 
-class LegacyChargeSummary(ChargeSummary):  # pylint: disable=too-many-instance-attributes
+class LegacyChargeSummary(ChargeSummary):
     """Legacy charge summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: The full qualified ARM ID of an event.
+    :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: The ID that uniquely identifies an event.
+    :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar etag: The etag for the resource.
-    :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
+    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+     used to determine whether the user is updating the latest version or not.
+    :vartype e_tag: str
     :ivar kind: Specifies the kind of charge summary. Required. Known values are: "legacy" and
      "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ChargeSummaryKind
@@ -1271,8 +1413,6 @@ class LegacyChargeSummary(ChargeSummary):  # pylint: disable=too-many-instance-a
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "tags": {"readonly": True},
         "kind": {"required": True},
         "billing_period_id": {"readonly": True},
         "usage_start": {"readonly": True},
@@ -1287,8 +1427,7 @@ class LegacyChargeSummary(ChargeSummary):  # pylint: disable=too-many-instance-a
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
         "billing_period_id": {"key": "properties.billingPeriodId", "type": "str"},
         "usage_start": {"key": "properties.usageStart", "type": "str"},
@@ -1299,17 +1438,21 @@ class LegacyChargeSummary(ChargeSummary):  # pylint: disable=too-many-instance-a
         "currency": {"key": "properties.currency", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
+    def __init__(self, *, e_tag: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+         used to determine whether the user is updating the latest version or not.
+        :paramtype e_tag: str
+        """
+        super().__init__(e_tag=e_tag, **kwargs)
         self.kind: str = "legacy"
-        self.billing_period_id = None
-        self.usage_start = None
-        self.usage_end = None
-        self.azure_charges = None
-        self.charges_billed_separately = None
-        self.azure_marketplace_charges = None
-        self.currency = None
+        self.billing_period_id: Optional[str] = None
+        self.usage_start: Optional[str] = None
+        self.usage_end: Optional[str] = None
+        self.azure_charges: Optional[float] = None
+        self.charges_billed_separately: Optional[float] = None
+        self.azure_marketplace_charges: Optional[float] = None
+        self.currency: Optional[str] = None
 
 
 class ResourceAttributes(_serialization.Model):
@@ -1333,11 +1476,11 @@ class ResourceAttributes(_serialization.Model):
         "sku": {"key": "sku", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.location = None
-        self.sku = None
+        self.location: Optional[str] = None
+        self.sku: Optional[str] = None
 
 
 class ReservationRecommendation(Resource, ResourceAttributes):
@@ -1348,7 +1491,7 @@ class ReservationRecommendation(Resource, ResourceAttributes):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Resource location.
     :vartype location: str
@@ -1393,25 +1536,25 @@ class ReservationRecommendation(Resource, ResourceAttributes):
 
     _subtype_map = {"kind": {"legacy": "LegacyReservationRecommendation", "modern": "ModernReservationRecommendation"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.location = None
-        self.sku = None
+        self.location: Optional[str] = None
+        self.sku: Optional[str] = None
         self.kind: Optional[str] = None
-        self.id = None
-        self.name = None
-        self.type = None
-        self.etag = None
-        self.tags = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.etag: Optional[str] = None
+        self.tags: Optional[dict[str, str]] = None
 
 
-class LegacyReservationRecommendation(ReservationRecommendation):  # pylint: disable=too-many-instance-attributes
+class LegacyReservationRecommendation(ReservationRecommendation):
     """Legacy reservation recommendation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Resource location.
     :vartype location: str
@@ -1444,7 +1587,7 @@ class LegacyReservationRecommendation(ReservationRecommendation):  # pylint: dis
     :vartype meter_id: str
     :ivar resource_type: The azure resource type.
     :vartype resource_type: str
-    :ivar term: RI recommendations in one or three year terms.
+    :ivar term: Term period of the reservation. ex: P1M, P1Y or P3Y.
     :vartype term: str
     :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
     :vartype cost_with_no_reserved_instances: float
@@ -1460,6 +1603,11 @@ class LegacyReservationRecommendation(ReservationRecommendation):  # pylint: dis
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar last_usage_date: The last usage date used for looking back for computing the
+     recommendation.
+    :vartype last_usage_date: ~datetime.datetime
+    :ivar total_hours: The total hours for which the cost is covered.
+    :vartype total_hours: int
     """
 
     _validation = {
@@ -1486,6 +1634,8 @@ class LegacyReservationRecommendation(ReservationRecommendation):  # pylint: dis
         "first_usage_date": {"readonly": True},
         "scope": {"required": True},
         "sku_properties": {"readonly": True},
+        "last_usage_date": {"readonly": True},
+        "total_hours": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1512,30 +1662,34 @@ class LegacyReservationRecommendation(ReservationRecommendation):  # pylint: dis
         "first_usage_date": {"key": "properties.firstUsageDate", "type": "iso-8601"},
         "scope": {"key": "properties.scope", "type": "str"},
         "sku_properties": {"key": "properties.skuProperties", "type": "[SkuProperty]"},
+        "last_usage_date": {"key": "properties.lastUsageDate", "type": "iso-8601"},
+        "total_hours": {"key": "properties.totalHours", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.kind: str = "legacy"
-        self.look_back_period = None
-        self.instance_flexibility_ratio = None
-        self.instance_flexibility_group = None
-        self.normalized_size = None
-        self.recommended_quantity_normalized = None
-        self.meter_id = None
-        self.resource_type = None
-        self.term = None
-        self.cost_with_no_reserved_instances = None
-        self.recommended_quantity = None
-        self.total_cost_with_reserved_instances = None
-        self.net_savings = None
-        self.first_usage_date = None
+        self.look_back_period: Optional[str] = None
+        self.instance_flexibility_ratio: Optional[float] = None
+        self.instance_flexibility_group: Optional[str] = None
+        self.normalized_size: Optional[str] = None
+        self.recommended_quantity_normalized: Optional[float] = None
+        self.meter_id: Optional[str] = None
+        self.resource_type: Optional[str] = None
+        self.term: Optional[str] = None
+        self.cost_with_no_reserved_instances: Optional[float] = None
+        self.recommended_quantity: Optional[float] = None
+        self.total_cost_with_reserved_instances: Optional[float] = None
+        self.net_savings: Optional[float] = None
+        self.first_usage_date: Optional[datetime.datetime] = None
         self.scope: str = "legacy"
-        self.sku_properties = None
+        self.sku_properties: Optional[list["_models.SkuProperty"]] = None
+        self.last_usage_date: Optional[datetime.datetime] = None
+        self.total_hours: Optional[int] = None
 
 
-class LegacyReservationRecommendationProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class LegacyReservationRecommendationProperties(_serialization.Model):  # pylint: disable=name-too-long
     """The properties of the reservation recommendation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1544,7 +1698,7 @@ class LegacyReservationRecommendationProperties(_serialization.Model):  # pylint
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar look_back_period: The number of days of usage to look back for recommendation.
     :vartype look_back_period: str
@@ -1560,7 +1714,7 @@ class LegacyReservationRecommendationProperties(_serialization.Model):  # pylint
     :vartype meter_id: str
     :ivar resource_type: The azure resource type.
     :vartype resource_type: str
-    :ivar term: RI recommendations in one or three year terms.
+    :ivar term: Term period of the reservation. ex: P1M, P1Y or P3Y.
     :vartype term: str
     :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
     :vartype cost_with_no_reserved_instances: float
@@ -1576,6 +1730,11 @@ class LegacyReservationRecommendationProperties(_serialization.Model):  # pylint
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar last_usage_date: The last usage date used for looking back for computing the
+     recommendation.
+    :vartype last_usage_date: ~datetime.datetime
+    :ivar total_hours: The total hours for which the cost is covered.
+    :vartype total_hours: int
     """
 
     _validation = {
@@ -1594,6 +1753,8 @@ class LegacyReservationRecommendationProperties(_serialization.Model):  # pylint
         "first_usage_date": {"readonly": True},
         "scope": {"required": True},
         "sku_properties": {"readonly": True},
+        "last_usage_date": {"readonly": True},
+        "total_hours": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1612,6 +1773,8 @@ class LegacyReservationRecommendationProperties(_serialization.Model):  # pylint
         "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
         "scope": {"key": "scope", "type": "str"},
         "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "last_usage_date": {"key": "lastUsageDate", "type": "iso-8601"},
+        "total_hours": {"key": "totalHours", "type": "int"},
     }
 
     _subtype_map = {
@@ -1621,24 +1784,26 @@ class LegacyReservationRecommendationProperties(_serialization.Model):  # pylint
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.look_back_period = None
-        self.instance_flexibility_ratio = None
-        self.instance_flexibility_group = None
-        self.normalized_size = None
-        self.recommended_quantity_normalized = None
-        self.meter_id = None
-        self.resource_type = None
-        self.term = None
-        self.cost_with_no_reserved_instances = None
-        self.recommended_quantity = None
-        self.total_cost_with_reserved_instances = None
-        self.net_savings = None
-        self.first_usage_date = None
+        self.look_back_period: Optional[str] = None
+        self.instance_flexibility_ratio: Optional[float] = None
+        self.instance_flexibility_group: Optional[str] = None
+        self.normalized_size: Optional[str] = None
+        self.recommended_quantity_normalized: Optional[float] = None
+        self.meter_id: Optional[str] = None
+        self.resource_type: Optional[str] = None
+        self.term: Optional[str] = None
+        self.cost_with_no_reserved_instances: Optional[float] = None
+        self.recommended_quantity: Optional[float] = None
+        self.total_cost_with_reserved_instances: Optional[float] = None
+        self.net_savings: Optional[float] = None
+        self.first_usage_date: Optional[datetime.datetime] = None
         self.scope: Optional[str] = None
-        self.sku_properties = None
+        self.sku_properties: Optional[list["_models.SkuProperty"]] = None
+        self.last_usage_date: Optional[datetime.datetime] = None
+        self.total_hours: Optional[int] = None
 
 
 class ReservationTransactionResource(_serialization.Model):
@@ -1670,16 +1835,16 @@ class ReservationTransactionResource(_serialization.Model):
         "tags": {"key": "tags", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.tags = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.tags: Optional[list[str]] = None
 
 
-class ReservationTransaction(ReservationTransactionResource):  # pylint: disable=too-many-instance-attributes
+class ReservationTransaction(ReservationTransactionResource):
     """Reservation transaction resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1805,35 +1970,35 @@ class ReservationTransaction(ReservationTransactionResource):  # pylint: disable
         "overage": {"key": "properties.overage", "type": "float"},
     }
 
-    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
         """ """
         super().__init__(**kwargs)
-        self.event_date = None
-        self.reservation_order_id = None
-        self.description = None
-        self.event_type = None
-        self.quantity = None
-        self.amount = None
-        self.currency = None
-        self.reservation_order_name = None
-        self.purchasing_enrollment = None
-        self.purchasing_subscription_guid = None
-        self.purchasing_subscription_name = None
-        self.arm_sku_name = None
-        self.term = None
-        self.region = None
-        self.account_name = None
-        self.account_owner_email = None
-        self.department_name = None
-        self.cost_center = None
-        self.current_enrollment = None
-        self.billing_frequency = None
-        self.billing_month = None
-        self.monetary_commitment = None
-        self.overage = None
+        self.event_date: Optional[datetime.datetime] = None
+        self.reservation_order_id: Optional[str] = None
+        self.description: Optional[str] = None
+        self.event_type: Optional[str] = None
+        self.quantity: Optional[float] = None
+        self.amount: Optional[float] = None
+        self.currency: Optional[str] = None
+        self.reservation_order_name: Optional[str] = None
+        self.purchasing_enrollment: Optional[str] = None
+        self.purchasing_subscription_guid: Optional[str] = None
+        self.purchasing_subscription_name: Optional[str] = None
+        self.arm_sku_name: Optional[str] = None
+        self.term: Optional[str] = None
+        self.region: Optional[str] = None
+        self.account_name: Optional[str] = None
+        self.account_owner_email: Optional[str] = None
+        self.department_name: Optional[str] = None
+        self.cost_center: Optional[str] = None
+        self.current_enrollment: Optional[str] = None
+        self.billing_frequency: Optional[str] = None
+        self.billing_month: Optional[int] = None
+        self.monetary_commitment: Optional[float] = None
+        self.overage: Optional[float] = None
 
 
-class LegacyReservationTransaction(ReservationTransaction):  # pylint: disable=too-many-instance-attributes
+class LegacyReservationTransaction(ReservationTransaction):
     """Legacy Reservation transaction resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1899,79 +2064,15 @@ class LegacyReservationTransaction(ReservationTransaction):  # pylint: disable=t
     :vartype overage: float
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "tags": {"readonly": True},
-        "event_date": {"readonly": True},
-        "reservation_order_id": {"readonly": True},
-        "description": {"readonly": True},
-        "event_type": {"readonly": True},
-        "quantity": {"readonly": True},
-        "amount": {"readonly": True},
-        "currency": {"readonly": True},
-        "reservation_order_name": {"readonly": True},
-        "purchasing_enrollment": {"readonly": True},
-        "purchasing_subscription_guid": {"readonly": True},
-        "purchasing_subscription_name": {"readonly": True},
-        "arm_sku_name": {"readonly": True},
-        "term": {"readonly": True},
-        "region": {"readonly": True},
-        "account_name": {"readonly": True},
-        "account_owner_email": {"readonly": True},
-        "department_name": {"readonly": True},
-        "cost_center": {"readonly": True},
-        "current_enrollment": {"readonly": True},
-        "billing_frequency": {"readonly": True},
-        "billing_month": {"readonly": True},
-        "monetary_commitment": {"readonly": True},
-        "overage": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "tags": {"key": "tags", "type": "[str]"},
-        "event_date": {"key": "properties.eventDate", "type": "iso-8601"},
-        "reservation_order_id": {"key": "properties.reservationOrderId", "type": "str"},
-        "description": {"key": "properties.description", "type": "str"},
-        "event_type": {"key": "properties.eventType", "type": "str"},
-        "quantity": {"key": "properties.quantity", "type": "float"},
-        "amount": {"key": "properties.amount", "type": "float"},
-        "currency": {"key": "properties.currency", "type": "str"},
-        "reservation_order_name": {"key": "properties.reservationOrderName", "type": "str"},
-        "purchasing_enrollment": {"key": "properties.purchasingEnrollment", "type": "str"},
-        "purchasing_subscription_guid": {"key": "properties.purchasingSubscriptionGuid", "type": "str"},
-        "purchasing_subscription_name": {"key": "properties.purchasingSubscriptionName", "type": "str"},
-        "arm_sku_name": {"key": "properties.armSkuName", "type": "str"},
-        "term": {"key": "properties.term", "type": "str"},
-        "region": {"key": "properties.region", "type": "str"},
-        "account_name": {"key": "properties.accountName", "type": "str"},
-        "account_owner_email": {"key": "properties.accountOwnerEmail", "type": "str"},
-        "department_name": {"key": "properties.departmentName", "type": "str"},
-        "cost_center": {"key": "properties.costCenter", "type": "str"},
-        "current_enrollment": {"key": "properties.currentEnrollment", "type": "str"},
-        "billing_frequency": {"key": "properties.billingFrequency", "type": "str"},
-        "billing_month": {"key": "properties.billingMonth", "type": "int"},
-        "monetary_commitment": {"key": "properties.monetaryCommitment", "type": "float"},
-        "overage": {"key": "properties.overage", "type": "float"},
-    }
-
-    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
-        """ """
-        super().__init__(**kwargs)
-
 
 class LegacySharedScopeReservationRecommendationProperties(
     LegacyReservationRecommendationProperties
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=name-too-long
     """The properties of the legacy reservation recommendation for shared scope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar look_back_period: The number of days of usage to look back for recommendation.
     :vartype look_back_period: str
@@ -1987,7 +2088,7 @@ class LegacySharedScopeReservationRecommendationProperties(
     :vartype meter_id: str
     :ivar resource_type: The azure resource type.
     :vartype resource_type: str
-    :ivar term: RI recommendations in one or three year terms.
+    :ivar term: Term period of the reservation. ex: P1M, P1Y or P3Y.
     :vartype term: str
     :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
     :vartype cost_with_no_reserved_instances: float
@@ -2003,6 +2104,11 @@ class LegacySharedScopeReservationRecommendationProperties(
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar last_usage_date: The last usage date used for looking back for computing the
+     recommendation.
+    :vartype last_usage_date: ~datetime.datetime
+    :ivar total_hours: The total hours for which the cost is covered.
+    :vartype total_hours: int
     """
 
     _validation = {
@@ -2021,6 +2127,8 @@ class LegacySharedScopeReservationRecommendationProperties(
         "first_usage_date": {"readonly": True},
         "scope": {"required": True},
         "sku_properties": {"readonly": True},
+        "last_usage_date": {"readonly": True},
+        "total_hours": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2039,9 +2147,11 @@ class LegacySharedScopeReservationRecommendationProperties(
         "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
         "scope": {"key": "scope", "type": "str"},
         "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "last_usage_date": {"key": "lastUsageDate", "type": "iso-8601"},
+        "total_hours": {"key": "totalHours", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.scope: str = "Shared"
@@ -2049,12 +2159,12 @@ class LegacySharedScopeReservationRecommendationProperties(
 
 class LegacySingleScopeReservationRecommendationProperties(
     LegacyReservationRecommendationProperties
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=name-too-long
     """The properties of the legacy reservation recommendation for single scope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar look_back_period: The number of days of usage to look back for recommendation.
     :vartype look_back_period: str
@@ -2070,7 +2180,7 @@ class LegacySingleScopeReservationRecommendationProperties(
     :vartype meter_id: str
     :ivar resource_type: The azure resource type.
     :vartype resource_type: str
-    :ivar term: RI recommendations in one or three year terms.
+    :ivar term: Term period of the reservation. ex: P1M, P1Y or P3Y.
     :vartype term: str
     :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
     :vartype cost_with_no_reserved_instances: float
@@ -2086,6 +2196,11 @@ class LegacySingleScopeReservationRecommendationProperties(
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar last_usage_date: The last usage date used for looking back for computing the
+     recommendation.
+    :vartype last_usage_date: ~datetime.datetime
+    :ivar total_hours: The total hours for which the cost is covered.
+    :vartype total_hours: int
     :ivar subscription_id: Subscription id associated with single scoped recommendation.
     :vartype subscription_id: str
     """
@@ -2106,6 +2221,8 @@ class LegacySingleScopeReservationRecommendationProperties(
         "first_usage_date": {"readonly": True},
         "scope": {"required": True},
         "sku_properties": {"readonly": True},
+        "last_usage_date": {"readonly": True},
+        "total_hours": {"readonly": True},
         "subscription_id": {"readonly": True},
     }
 
@@ -2125,14 +2242,16 @@ class LegacySingleScopeReservationRecommendationProperties(
         "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
         "scope": {"key": "scope", "type": "str"},
         "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "last_usage_date": {"key": "lastUsageDate", "type": "iso-8601"},
+        "total_hours": {"key": "totalHours", "type": "int"},
         "subscription_id": {"key": "subscriptionId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.scope: str = "Single"
-        self.subscription_id = None
+        self.subscription_id: Optional[str] = None
 
 
 class UsageDetail(Resource):
@@ -2143,7 +2262,7 @@ class UsageDetail(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
@@ -2180,18 +2299,18 @@ class UsageDetail(Resource):
 
     _subtype_map = {"kind": {"legacy": "LegacyUsageDetail", "modern": "ModernUsageDetail"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.kind: Optional[str] = None
 
 
-class LegacyUsageDetail(UsageDetail):  # pylint: disable=too-many-instance-attributes
+class LegacyUsageDetail(UsageDetail):
     """Legacy usage detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
@@ -2428,56 +2547,56 @@ class LegacyUsageDetail(UsageDetail):  # pylint: disable=too-many-instance-attri
         "pricing_model": {"key": "properties.pricingModel", "type": "str"},
     }
 
-    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
         """ """
         super().__init__(**kwargs)
         self.kind: str = "legacy"
-        self.billing_account_id = None
-        self.billing_account_name = None
-        self.billing_period_start_date = None
-        self.billing_period_end_date = None
-        self.billing_profile_id = None
-        self.billing_profile_name = None
-        self.account_owner_id = None
-        self.account_name = None
-        self.subscription_id = None
-        self.subscription_name = None
-        self.date = None
-        self.product = None
-        self.part_number = None
-        self.meter_id = None
-        self.meter_details = None
-        self.quantity = None
-        self.effective_price = None
-        self.cost = None
-        self.unit_price = None
-        self.billing_currency = None
-        self.resource_location = None
-        self.consumed_service = None
-        self.resource_id = None
-        self.resource_name = None
-        self.service_info1 = None
-        self.service_info2 = None
-        self.additional_info = None
-        self.invoice_section = None
-        self.cost_center = None
-        self.resource_group = None
-        self.reservation_id = None
-        self.reservation_name = None
-        self.product_order_id = None
-        self.product_order_name = None
-        self.offer_id = None
-        self.is_azure_credit_eligible = None
-        self.term = None
-        self.publisher_name = None
-        self.publisher_type = None
-        self.plan_name = None
-        self.charge_type = None
-        self.frequency = None
-        self.pay_g_price = None
-        self.benefit_id = None
-        self.benefit_name = None
-        self.pricing_model = None
+        self.billing_account_id: Optional[str] = None
+        self.billing_account_name: Optional[str] = None
+        self.billing_period_start_date: Optional[datetime.datetime] = None
+        self.billing_period_end_date: Optional[datetime.datetime] = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_name: Optional[str] = None
+        self.account_owner_id: Optional[str] = None
+        self.account_name: Optional[str] = None
+        self.subscription_id: Optional[str] = None
+        self.subscription_name: Optional[str] = None
+        self.date: Optional[datetime.datetime] = None
+        self.product: Optional[str] = None
+        self.part_number: Optional[str] = None
+        self.meter_id: Optional[str] = None
+        self.meter_details: Optional["_models.MeterDetailsResponse"] = None
+        self.quantity: Optional[float] = None
+        self.effective_price: Optional[float] = None
+        self.cost: Optional[float] = None
+        self.unit_price: Optional[float] = None
+        self.billing_currency: Optional[str] = None
+        self.resource_location: Optional[str] = None
+        self.consumed_service: Optional[str] = None
+        self.resource_id: Optional[str] = None
+        self.resource_name: Optional[str] = None
+        self.service_info1: Optional[str] = None
+        self.service_info2: Optional[str] = None
+        self.additional_info: Optional[str] = None
+        self.invoice_section: Optional[str] = None
+        self.cost_center: Optional[str] = None
+        self.resource_group: Optional[str] = None
+        self.reservation_id: Optional[str] = None
+        self.reservation_name: Optional[str] = None
+        self.product_order_id: Optional[str] = None
+        self.product_order_name: Optional[str] = None
+        self.offer_id: Optional[str] = None
+        self.is_azure_credit_eligible: Optional[bool] = None
+        self.term: Optional[str] = None
+        self.publisher_name: Optional[str] = None
+        self.publisher_type: Optional[str] = None
+        self.plan_name: Optional[str] = None
+        self.charge_type: Optional[str] = None
+        self.frequency: Optional[str] = None
+        self.pay_g_price: Optional[float] = None
+        self.benefit_id: Optional[str] = None
+        self.benefit_name: Optional[str] = None
+        self.pricing_model: Optional[Union[str, "_models.PricingModelType"]] = None
 
 
 class Lots(_serialization.Model):
@@ -2501,14 +2620,14 @@ class Lots(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.LotSummary"]] = None
+        self.next_link: Optional[str] = None
 
 
-class LotSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class LotSummary(ProxyResource):
     """A lot summary resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2522,7 +2641,8 @@ class LotSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
      used to determine whether the user is updating the latest version or not.
     :vartype e_tag: str
-    :ivar original_amount: The original amount of a lot.
+    :ivar original_amount: The original amount of a lot, Note: This will not be returned for
+     Contributor Organization Type in Multi-Entity consumption commitment.
     :vartype original_amount: ~azure.mgmt.consumption.models.Amount
     :ivar closed_balance: The balance as of the last invoice.
     :vartype closed_balance: ~azure.mgmt.consumption.models.Amount
@@ -2545,7 +2665,9 @@ class LotSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype credit_currency: str
     :ivar billing_currency: The billing currency of the lot.
     :vartype billing_currency: str
-    :ivar original_amount_in_billing_currency: The original amount of a lot in billing currency.
+    :ivar original_amount_in_billing_currency: The original amount of a lot in billing currency,
+     Note: This will not be returned for Contributor Organization Type in Multi-Entity consumption
+     commitment.
     :vartype original_amount_in_billing_currency:
      ~azure.mgmt.consumption.models.AmountWithExchangeRate
     :ivar closed_balance_in_billing_currency: The balance as of the last invoice in billing
@@ -2554,8 +2676,16 @@ class LotSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
      ~azure.mgmt.consumption.models.AmountWithExchangeRate
     :ivar reseller: The reseller of the lot.
     :vartype reseller: ~azure.mgmt.consumption.models.Reseller
+    :ivar is_estimated_balance: If true, the listed details are based on an estimation and it will
+     be subjected to change.
+    :vartype is_estimated_balance: bool
     :ivar e_tag_properties_e_tag: The eTag for the resource.
     :vartype e_tag_properties_e_tag: str
+    :ivar organization_type: The organization type of the lot. Known values are: "Primary" and
+     "Contributor".
+    :vartype organization_type: str or ~azure.mgmt.consumption.models.OrganizationType
+    :ivar used_amount: Amount consumed from the commitment.
+    :vartype used_amount: ~azure.mgmt.consumption.models.Amount
     """
 
     _validation = {
@@ -2575,7 +2705,10 @@ class LotSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "original_amount_in_billing_currency": {"readonly": True},
         "closed_balance_in_billing_currency": {"readonly": True},
         "reseller": {"readonly": True},
+        "is_estimated_balance": {"readonly": True},
         "e_tag_properties_e_tag": {"readonly": True},
+        "organization_type": {"readonly": True},
+        "used_amount": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2602,33 +2735,39 @@ class LotSummary(ProxyResource):  # pylint: disable=too-many-instance-attributes
             "type": "AmountWithExchangeRate",
         },
         "reseller": {"key": "properties.reseller", "type": "Reseller"},
+        "is_estimated_balance": {"key": "properties.isEstimatedBalance", "type": "bool"},
         "e_tag_properties_e_tag": {"key": "properties.eTag", "type": "str"},
+        "organization_type": {"key": "properties.OrganizationType", "type": "str"},
+        "used_amount": {"key": "properties.usedAmount", "type": "Amount"},
     }
 
-    def __init__(self, *, e_tag: Optional[str] = None, **kwargs):
+    def __init__(self, *, e_tag: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
         :paramtype e_tag: str
         """
         super().__init__(e_tag=e_tag, **kwargs)
-        self.original_amount = None
-        self.closed_balance = None
-        self.source = None
-        self.start_date = None
-        self.expiration_date = None
-        self.po_number = None
-        self.purchased_date = None
-        self.status = None
-        self.credit_currency = None
-        self.billing_currency = None
-        self.original_amount_in_billing_currency = None
-        self.closed_balance_in_billing_currency = None
-        self.reseller = None
-        self.e_tag_properties_e_tag = None
+        self.original_amount: Optional["_models.Amount"] = None
+        self.closed_balance: Optional["_models.Amount"] = None
+        self.source: Optional[Union[str, "_models.LotSource"]] = None
+        self.start_date: Optional[datetime.datetime] = None
+        self.expiration_date: Optional[datetime.datetime] = None
+        self.po_number: Optional[str] = None
+        self.purchased_date: Optional[datetime.datetime] = None
+        self.status: Optional[Union[str, "_models.Status"]] = None
+        self.credit_currency: Optional[str] = None
+        self.billing_currency: Optional[str] = None
+        self.original_amount_in_billing_currency: Optional["_models.AmountWithExchangeRate"] = None
+        self.closed_balance_in_billing_currency: Optional["_models.AmountWithExchangeRate"] = None
+        self.reseller: Optional["_models.Reseller"] = None
+        self.is_estimated_balance: Optional[bool] = None
+        self.e_tag_properties_e_tag: Optional[str] = None
+        self.organization_type: Optional[Union[str, "_models.OrganizationType"]] = None
+        self.used_amount: Optional["_models.Amount"] = None
 
 
-class ManagementGroupAggregatedCostResult(Resource):  # pylint: disable=too-many-instance-attributes
+class ManagementGroupAggregatedCostResult(Resource):
     """A management group aggregated cost resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2704,11 +2843,11 @@ class ManagementGroupAggregatedCostResult(Resource):  # pylint: disable=too-many
     def __init__(
         self,
         *,
-        children: Optional[List["_models.ManagementGroupAggregatedCostResult"]] = None,
-        included_subscriptions: Optional[List[str]] = None,
-        excluded_subscriptions: Optional[List[str]] = None,
-        **kwargs
-    ):
+        children: Optional[list["_models.ManagementGroupAggregatedCostResult"]] = None,
+        included_subscriptions: Optional[list[str]] = None,
+        excluded_subscriptions: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword children: Children of a management group.
         :paramtype children: list[~azure.mgmt.consumption.models.ManagementGroupAggregatedCostResult]
@@ -2720,19 +2859,19 @@ class ManagementGroupAggregatedCostResult(Resource):  # pylint: disable=too-many
         :paramtype excluded_subscriptions: list[str]
         """
         super().__init__(**kwargs)
-        self.billing_period_id = None
-        self.usage_start = None
-        self.usage_end = None
-        self.azure_charges = None
-        self.marketplace_charges = None
-        self.charges_billed_separately = None
-        self.currency = None
+        self.billing_period_id: Optional[str] = None
+        self.usage_start: Optional[datetime.datetime] = None
+        self.usage_end: Optional[datetime.datetime] = None
+        self.azure_charges: Optional[float] = None
+        self.marketplace_charges: Optional[float] = None
+        self.charges_billed_separately: Optional[float] = None
+        self.currency: Optional[str] = None
         self.children = children
         self.included_subscriptions = included_subscriptions
         self.excluded_subscriptions = excluded_subscriptions
 
 
-class Marketplace(Resource):  # pylint: disable=too-many-instance-attributes
+class Marketplace(Resource):
     """A marketplace resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2871,39 +3010,40 @@ class Marketplace(Resource):  # pylint: disable=too-many-instance-attributes
         "is_recurring_charge": {"key": "properties.isRecurringCharge", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
         """ """
         super().__init__(**kwargs)
-        self.billing_period_id = None
-        self.usage_start = None
-        self.usage_end = None
-        self.resource_rate = None
-        self.offer_name = None
-        self.resource_group = None
-        self.additional_info = None
-        self.order_number = None
-        self.instance_name = None
-        self.instance_id = None
-        self.currency = None
-        self.consumed_quantity = None
-        self.unit_of_measure = None
-        self.pretax_cost = None
-        self.is_estimated = None
-        self.meter_id = None
-        self.subscription_guid = None
-        self.subscription_name = None
-        self.account_name = None
-        self.department_name = None
-        self.consumed_service = None
-        self.cost_center = None
-        self.additional_properties = None
-        self.publisher_name = None
-        self.plan_name = None
-        self.is_recurring_charge = None
+        self.billing_period_id: Optional[str] = None
+        self.usage_start: Optional[datetime.datetime] = None
+        self.usage_end: Optional[datetime.datetime] = None
+        self.resource_rate: Optional[float] = None
+        self.offer_name: Optional[str] = None
+        self.resource_group: Optional[str] = None
+        self.additional_info: Optional[str] = None
+        self.order_number: Optional[str] = None
+        self.instance_name: Optional[str] = None
+        self.instance_id: Optional[str] = None
+        self.currency: Optional[str] = None
+        self.consumed_quantity: Optional[float] = None
+        self.unit_of_measure: Optional[str] = None
+        self.pretax_cost: Optional[float] = None
+        self.is_estimated: Optional[bool] = None
+        self.meter_id: Optional[str] = None
+        self.subscription_guid: Optional[str] = None
+        self.subscription_name: Optional[str] = None
+        self.account_name: Optional[str] = None
+        self.department_name: Optional[str] = None
+        self.consumed_service: Optional[str] = None
+        self.cost_center: Optional[str] = None
+        self.additional_properties: Optional[str] = None
+        self.publisher_name: Optional[str] = None
+        self.plan_name: Optional[str] = None
+        self.is_recurring_charge: Optional[bool] = None
 
 
 class MarketplacesListResult(_serialization.Model):
-    """Result of listing marketplaces. It contains a list of available marketplaces in reverse chronological order by billing period.
+    """Result of listing marketplaces. It contains a list of available marketplaces in reverse
+    chronological order by billing period.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2923,11 +3063,11 @@ class MarketplacesListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.Marketplace"]] = None
+        self.next_link: Optional[str] = None
 
 
 class MeterDetails(_serialization.Model):
@@ -2982,18 +3122,18 @@ class MeterDetails(_serialization.Model):
         "service_tier": {"key": "serviceTier", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.meter_name = None
-        self.meter_category = None
-        self.meter_sub_category = None
-        self.unit = None
-        self.meter_location = None
-        self.total_included_quantity = None
-        self.pretax_standard_rate = None
-        self.service_name = None
-        self.service_tier = None
+        self.meter_name: Optional[str] = None
+        self.meter_category: Optional[str] = None
+        self.meter_sub_category: Optional[str] = None
+        self.unit: Optional[str] = None
+        self.meter_location: Optional[str] = None
+        self.total_included_quantity: Optional[float] = None
+        self.pretax_standard_rate: Optional[float] = None
+        self.service_name: Optional[str] = None
+        self.service_tier: Optional[str] = None
 
 
 class MeterDetailsResponse(_serialization.Model):
@@ -3032,33 +3172,32 @@ class MeterDetailsResponse(_serialization.Model):
         "service_family": {"key": "serviceFamily", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.meter_name = None
-        self.meter_category = None
-        self.meter_sub_category = None
-        self.unit_of_measure = None
-        self.service_family = None
+        self.meter_name: Optional[str] = None
+        self.meter_category: Optional[str] = None
+        self.meter_sub_category: Optional[str] = None
+        self.unit_of_measure: Optional[str] = None
+        self.service_family: Optional[str] = None
 
 
-class ModernChargeSummary(ChargeSummary):  # pylint: disable=too-many-instance-attributes
+class ModernChargeSummary(ChargeSummary):
     """Modern charge summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: The full qualified ARM ID of an event.
+    :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: The ID that uniquely identifies an event.
+    :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar etag: The etag for the resource.
-    :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
+    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+     used to determine whether the user is updating the latest version or not.
+    :vartype e_tag: str
     :ivar kind: Specifies the kind of charge summary. Required. Known values are: "legacy" and
      "modern".
     :vartype kind: str or ~azure.mgmt.consumption.models.ChargeSummaryKind
@@ -3084,14 +3223,14 @@ class ModernChargeSummary(ChargeSummary):  # pylint: disable=too-many-instance-a
     :vartype customer_id: str
     :ivar is_invoiced: Is charge Invoiced.
     :vartype is_invoiced: bool
+    :ivar subscription_id: Subscription guid.
+    :vartype subscription_id: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "tags": {"readonly": True},
         "kind": {"required": True},
         "billing_period_id": {"readonly": True},
         "usage_start": {"readonly": True},
@@ -3104,14 +3243,14 @@ class ModernChargeSummary(ChargeSummary):  # pylint: disable=too-many-instance-a
         "invoice_section_id": {"readonly": True},
         "customer_id": {"readonly": True},
         "is_invoiced": {"readonly": True},
+        "subscription_id": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
         "billing_period_id": {"key": "properties.billingPeriodId", "type": "str"},
         "usage_start": {"key": "properties.usageStart", "type": "str"},
@@ -3124,31 +3263,37 @@ class ModernChargeSummary(ChargeSummary):  # pylint: disable=too-many-instance-a
         "invoice_section_id": {"key": "properties.invoiceSectionId", "type": "str"},
         "customer_id": {"key": "properties.customerId", "type": "str"},
         "is_invoiced": {"key": "properties.isInvoiced", "type": "bool"},
+        "subscription_id": {"key": "properties.subscriptionId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
+    def __init__(self, *, e_tag: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+         used to determine whether the user is updating the latest version or not.
+        :paramtype e_tag: str
+        """
+        super().__init__(e_tag=e_tag, **kwargs)
         self.kind: str = "modern"
-        self.billing_period_id = None
-        self.usage_start = None
-        self.usage_end = None
-        self.azure_charges = None
-        self.charges_billed_separately = None
-        self.marketplace_charges = None
-        self.billing_account_id = None
-        self.billing_profile_id = None
-        self.invoice_section_id = None
-        self.customer_id = None
-        self.is_invoiced = None
+        self.billing_period_id: Optional[str] = None
+        self.usage_start: Optional[str] = None
+        self.usage_end: Optional[str] = None
+        self.azure_charges: Optional["_models.Amount"] = None
+        self.charges_billed_separately: Optional["_models.Amount"] = None
+        self.marketplace_charges: Optional["_models.Amount"] = None
+        self.billing_account_id: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
+        self.invoice_section_id: Optional[str] = None
+        self.customer_id: Optional[str] = None
+        self.is_invoiced: Optional[bool] = None
+        self.subscription_id: Optional[str] = None
 
 
-class ModernReservationRecommendation(ReservationRecommendation):  # pylint: disable=too-many-instance-attributes
+class ModernReservationRecommendation(ReservationRecommendation):
     """Modern reservation recommendation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Resource location.
     :vartype location: str
@@ -3181,7 +3326,7 @@ class ModernReservationRecommendation(ReservationRecommendation):  # pylint: dis
     :vartype recommended_quantity_normalized: float
     :ivar meter_id: The meter id (GUID).
     :vartype meter_id: str
-    :ivar term: RI recommendations in one or three year terms.
+    :ivar term: Term period of the reservation. ex: P1M, P1Y or P3Y.
     :vartype term: str
     :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
     :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
@@ -3201,6 +3346,11 @@ class ModernReservationRecommendation(ReservationRecommendation):  # pylint: dis
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
     :ivar sku_name: This is the ARM Sku name.
     :vartype sku_name: str
+    :ivar last_usage_date: The last usage date used for looking back for computing the
+     recommendation.
+    :vartype last_usage_date: ~datetime.datetime
+    :ivar total_hours: The total hours for which the cost is covered.
+    :vartype total_hours: int
     """
 
     _validation = {
@@ -3229,6 +3379,8 @@ class ModernReservationRecommendation(ReservationRecommendation):  # pylint: dis
         "scope": {"required": True},
         "sku_properties": {"readonly": True},
         "sku_name": {"readonly": True},
+        "last_usage_date": {"readonly": True},
+        "total_hours": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3257,32 +3409,36 @@ class ModernReservationRecommendation(ReservationRecommendation):  # pylint: dis
         "scope": {"key": "properties.scope", "type": "str"},
         "sku_properties": {"key": "properties.skuProperties", "type": "[SkuProperty]"},
         "sku_name": {"key": "properties.skuName", "type": "str"},
+        "last_usage_date": {"key": "properties.lastUsageDate", "type": "iso-8601"},
+        "total_hours": {"key": "properties.totalHours", "type": "int"},
     }
 
-    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
         """ """
         super().__init__(**kwargs)
         self.kind: str = "modern"
-        self.location_properties_location = None
-        self.look_back_period = None
-        self.instance_flexibility_ratio = None
-        self.instance_flexibility_group = None
-        self.normalized_size = None
-        self.recommended_quantity_normalized = None
-        self.meter_id = None
-        self.term = None
-        self.cost_with_no_reserved_instances = None
-        self.recommended_quantity = None
-        self.resource_type = None
-        self.total_cost_with_reserved_instances = None
-        self.net_savings = None
-        self.first_usage_date = None
+        self.location_properties_location: Optional[str] = None
+        self.look_back_period: Optional[int] = None
+        self.instance_flexibility_ratio: Optional[float] = None
+        self.instance_flexibility_group: Optional[str] = None
+        self.normalized_size: Optional[str] = None
+        self.recommended_quantity_normalized: Optional[float] = None
+        self.meter_id: Optional[str] = None
+        self.term: Optional[str] = None
+        self.cost_with_no_reserved_instances: Optional["_models.Amount"] = None
+        self.recommended_quantity: Optional[float] = None
+        self.resource_type: Optional[str] = None
+        self.total_cost_with_reserved_instances: Optional["_models.Amount"] = None
+        self.net_savings: Optional["_models.Amount"] = None
+        self.first_usage_date: Optional[datetime.datetime] = None
         self.scope: str = "modern"
-        self.sku_properties = None
-        self.sku_name = None
+        self.sku_properties: Optional[list["_models.SkuProperty"]] = None
+        self.sku_name: Optional[str] = None
+        self.last_usage_date: Optional[datetime.datetime] = None
+        self.total_hours: Optional[int] = None
 
 
-class ModernReservationRecommendationProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ModernReservationRecommendationProperties(_serialization.Model):  # pylint: disable=name-too-long
     """The properties of the reservation recommendation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3291,7 +3447,7 @@ class ModernReservationRecommendationProperties(_serialization.Model):  # pylint
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Resource Location.
     :vartype location: str
@@ -3307,7 +3463,7 @@ class ModernReservationRecommendationProperties(_serialization.Model):  # pylint
     :vartype recommended_quantity_normalized: float
     :ivar meter_id: The meter id (GUID).
     :vartype meter_id: str
-    :ivar term: RI recommendations in one or three year terms.
+    :ivar term: Term period of the reservation. ex: P1M, P1Y or P3Y.
     :vartype term: str
     :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
     :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
@@ -3327,6 +3483,11 @@ class ModernReservationRecommendationProperties(_serialization.Model):  # pylint
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
     :ivar sku_name: This is the ARM Sku name.
     :vartype sku_name: str
+    :ivar last_usage_date: The last usage date used for looking back for computing the
+     recommendation.
+    :vartype last_usage_date: ~datetime.datetime
+    :ivar total_hours: The total hours for which the cost is covered.
+    :vartype total_hours: int
     """
 
     _validation = {
@@ -3347,6 +3508,8 @@ class ModernReservationRecommendationProperties(_serialization.Model):  # pylint
         "scope": {"required": True},
         "sku_properties": {"readonly": True},
         "sku_name": {"readonly": True},
+        "last_usage_date": {"readonly": True},
+        "total_hours": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3367,6 +3530,8 @@ class ModernReservationRecommendationProperties(_serialization.Model):  # pylint
         "scope": {"key": "scope", "type": "str"},
         "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
         "sku_name": {"key": "skuName", "type": "str"},
+        "last_usage_date": {"key": "lastUsageDate", "type": "iso-8601"},
+        "total_hours": {"key": "totalHours", "type": "int"},
     }
 
     _subtype_map = {
@@ -3376,29 +3541,31 @@ class ModernReservationRecommendationProperties(_serialization.Model):  # pylint
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.location = None
-        self.look_back_period = None
-        self.instance_flexibility_ratio = None
-        self.instance_flexibility_group = None
-        self.normalized_size = None
-        self.recommended_quantity_normalized = None
-        self.meter_id = None
-        self.term = None
-        self.cost_with_no_reserved_instances = None
-        self.recommended_quantity = None
-        self.resource_type = None
-        self.total_cost_with_reserved_instances = None
-        self.net_savings = None
-        self.first_usage_date = None
+        self.location: Optional[str] = None
+        self.look_back_period: Optional[int] = None
+        self.instance_flexibility_ratio: Optional[float] = None
+        self.instance_flexibility_group: Optional[str] = None
+        self.normalized_size: Optional[str] = None
+        self.recommended_quantity_normalized: Optional[float] = None
+        self.meter_id: Optional[str] = None
+        self.term: Optional[str] = None
+        self.cost_with_no_reserved_instances: Optional["_models.Amount"] = None
+        self.recommended_quantity: Optional[float] = None
+        self.resource_type: Optional[str] = None
+        self.total_cost_with_reserved_instances: Optional["_models.Amount"] = None
+        self.net_savings: Optional["_models.Amount"] = None
+        self.first_usage_date: Optional[datetime.datetime] = None
         self.scope: Optional[str] = None
-        self.sku_properties = None
-        self.sku_name = None
+        self.sku_properties: Optional[list["_models.SkuProperty"]] = None
+        self.sku_name: Optional[str] = None
+        self.last_usage_date: Optional[datetime.datetime] = None
+        self.total_hours: Optional[int] = None
 
 
-class ModernReservationTransaction(ReservationTransactionResource):  # pylint: disable=too-many-instance-attributes
+class ModernReservationTransaction(ReservationTransactionResource):
     """Modern Reservation transaction resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3511,29 +3678,29 @@ class ModernReservationTransaction(ReservationTransactionResource):  # pylint: d
         "term": {"key": "properties.term", "type": "str"},
     }
 
-    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.amount = None
-        self.arm_sku_name = None
-        self.billing_frequency = None
-        self.billing_profile_id = None
-        self.billing_profile_name = None
-        self.currency = None
-        self.description = None
-        self.event_date = None
-        self.event_type = None
-        self.invoice = None
-        self.invoice_id = None
-        self.invoice_section_id = None
-        self.invoice_section_name = None
-        self.purchasing_subscription_guid = None
-        self.purchasing_subscription_name = None
-        self.quantity = None
-        self.region = None
-        self.reservation_order_id = None
-        self.reservation_order_name = None
-        self.term = None
+        self.amount: Optional[float] = None
+        self.arm_sku_name: Optional[str] = None
+        self.billing_frequency: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_name: Optional[str] = None
+        self.currency: Optional[str] = None
+        self.description: Optional[str] = None
+        self.event_date: Optional[datetime.datetime] = None
+        self.event_type: Optional[str] = None
+        self.invoice: Optional[str] = None
+        self.invoice_id: Optional[str] = None
+        self.invoice_section_id: Optional[str] = None
+        self.invoice_section_name: Optional[str] = None
+        self.purchasing_subscription_guid: Optional[str] = None
+        self.purchasing_subscription_name: Optional[str] = None
+        self.quantity: Optional[float] = None
+        self.region: Optional[str] = None
+        self.reservation_order_id: Optional[str] = None
+        self.reservation_order_name: Optional[str] = None
+        self.term: Optional[str] = None
 
 
 class ModernReservationTransactionsListResult(_serialization.Model):
@@ -3557,21 +3724,21 @@ class ModernReservationTransactionsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.ModernReservationTransaction"]] = None
+        self.next_link: Optional[str] = None
 
 
 class ModernSharedScopeReservationRecommendationProperties(
     ModernReservationRecommendationProperties
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=name-too-long
     """The properties of the modern reservation recommendation for shared scope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Resource Location.
     :vartype location: str
@@ -3587,7 +3754,7 @@ class ModernSharedScopeReservationRecommendationProperties(
     :vartype recommended_quantity_normalized: float
     :ivar meter_id: The meter id (GUID).
     :vartype meter_id: str
-    :ivar term: RI recommendations in one or three year terms.
+    :ivar term: Term period of the reservation. ex: P1M, P1Y or P3Y.
     :vartype term: str
     :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
     :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
@@ -3607,6 +3774,11 @@ class ModernSharedScopeReservationRecommendationProperties(
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
     :ivar sku_name: This is the ARM Sku name.
     :vartype sku_name: str
+    :ivar last_usage_date: The last usage date used for looking back for computing the
+     recommendation.
+    :vartype last_usage_date: ~datetime.datetime
+    :ivar total_hours: The total hours for which the cost is covered.
+    :vartype total_hours: int
     """
 
     _validation = {
@@ -3627,6 +3799,8 @@ class ModernSharedScopeReservationRecommendationProperties(
         "scope": {"required": True},
         "sku_properties": {"readonly": True},
         "sku_name": {"readonly": True},
+        "last_usage_date": {"readonly": True},
+        "total_hours": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3647,9 +3821,11 @@ class ModernSharedScopeReservationRecommendationProperties(
         "scope": {"key": "scope", "type": "str"},
         "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
         "sku_name": {"key": "skuName", "type": "str"},
+        "last_usage_date": {"key": "lastUsageDate", "type": "iso-8601"},
+        "total_hours": {"key": "totalHours", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.scope: str = "Shared"
@@ -3657,12 +3833,12 @@ class ModernSharedScopeReservationRecommendationProperties(
 
 class ModernSingleScopeReservationRecommendationProperties(
     ModernReservationRecommendationProperties
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=name-too-long
     """The properties of the modern reservation recommendation for single scope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Resource Location.
     :vartype location: str
@@ -3678,7 +3854,7 @@ class ModernSingleScopeReservationRecommendationProperties(
     :vartype recommended_quantity_normalized: float
     :ivar meter_id: The meter id (GUID).
     :vartype meter_id: str
-    :ivar term: RI recommendations in one or three year terms.
+    :ivar term: Term period of the reservation. ex: P1M, P1Y or P3Y.
     :vartype term: str
     :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
     :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
@@ -3698,6 +3874,11 @@ class ModernSingleScopeReservationRecommendationProperties(
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
     :ivar sku_name: This is the ARM Sku name.
     :vartype sku_name: str
+    :ivar last_usage_date: The last usage date used for looking back for computing the
+     recommendation.
+    :vartype last_usage_date: ~datetime.datetime
+    :ivar total_hours: The total hours for which the cost is covered.
+    :vartype total_hours: int
     :ivar subscription_id: Subscription ID associated with single scoped recommendation.
     :vartype subscription_id: str
     """
@@ -3720,6 +3901,8 @@ class ModernSingleScopeReservationRecommendationProperties(
         "scope": {"required": True},
         "sku_properties": {"readonly": True},
         "sku_name": {"readonly": True},
+        "last_usage_date": {"readonly": True},
+        "total_hours": {"readonly": True},
         "subscription_id": {"readonly": True},
     }
 
@@ -3741,22 +3924,24 @@ class ModernSingleScopeReservationRecommendationProperties(
         "scope": {"key": "scope", "type": "str"},
         "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
         "sku_name": {"key": "skuName", "type": "str"},
+        "last_usage_date": {"key": "lastUsageDate", "type": "iso-8601"},
+        "total_hours": {"key": "totalHours", "type": "int"},
         "subscription_id": {"key": "subscriptionId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.scope: str = "Single"
-        self.subscription_id = None
+        self.subscription_id: Optional[str] = None
 
 
-class ModernUsageDetail(UsageDetail):  # pylint: disable=too-many-instance-attributes
+class ModernUsageDetail(UsageDetail):
     """Modern usage detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The full qualified ARM ID of an event.
     :vartype id: str
@@ -4126,88 +4311,88 @@ class ModernUsageDetail(UsageDetail):  # pylint: disable=too-many-instance-attri
         "cost_allocation_rule_name": {"key": "properties.costAllocationRuleName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
         """ """
         super().__init__(**kwargs)
         self.kind: str = "modern"
-        self.billing_account_id = None
-        self.effective_price = None
-        self.pricing_model = None
-        self.billing_account_name = None
-        self.billing_period_start_date = None
-        self.billing_period_end_date = None
-        self.billing_profile_id = None
-        self.billing_profile_name = None
-        self.subscription_guid = None
-        self.subscription_name = None
-        self.date = None
-        self.product = None
-        self.meter_id = None
-        self.meter_name = None
-        self.meter_region = None
-        self.meter_category = None
-        self.meter_sub_category = None
-        self.service_family = None
-        self.quantity = None
-        self.unit_of_measure = None
-        self.instance_name = None
-        self.cost_in_usd = None
-        self.unit_price = None
-        self.billing_currency_code = None
-        self.resource_location = None
-        self.consumed_service = None
-        self.service_info1 = None
-        self.service_info2 = None
-        self.additional_info = None
-        self.invoice_section_id = None
-        self.invoice_section_name = None
-        self.cost_center = None
-        self.resource_group = None
-        self.reservation_id = None
-        self.reservation_name = None
-        self.product_order_id = None
-        self.product_order_name = None
-        self.is_azure_credit_eligible = None
-        self.term = None
-        self.publisher_name = None
-        self.publisher_type = None
-        self.charge_type = None
-        self.frequency = None
-        self.cost_in_billing_currency = None
-        self.cost_in_pricing_currency = None
-        self.exchange_rate = None
-        self.exchange_rate_date = None
-        self.invoice_id = None
-        self.previous_invoice_id = None
-        self.pricing_currency_code = None
-        self.product_identifier = None
-        self.resource_location_normalized = None
-        self.service_period_start_date = None
-        self.service_period_end_date = None
-        self.customer_tenant_id = None
-        self.customer_name = None
-        self.partner_tenant_id = None
-        self.partner_name = None
-        self.reseller_mpn_id = None
-        self.reseller_name = None
-        self.publisher_id = None
-        self.market_price = None
-        self.exchange_rate_pricing_to_billing = None
-        self.payg_cost_in_billing_currency = None
-        self.payg_cost_in_usd = None
-        self.partner_earned_credit_rate = None
-        self.partner_earned_credit_applied = None
-        self.pay_g_price = None
-        self.benefit_id = None
-        self.benefit_name = None
-        self.provider = None
-        self.cost_allocation_rule_name = None
+        self.billing_account_id: Optional[str] = None
+        self.effective_price: Optional[float] = None
+        self.pricing_model: Optional[Union[str, "_models.PricingModelType"]] = None
+        self.billing_account_name: Optional[str] = None
+        self.billing_period_start_date: Optional[datetime.datetime] = None
+        self.billing_period_end_date: Optional[datetime.datetime] = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_name: Optional[str] = None
+        self.subscription_guid: Optional[str] = None
+        self.subscription_name: Optional[str] = None
+        self.date: Optional[datetime.datetime] = None
+        self.product: Optional[str] = None
+        self.meter_id: Optional[str] = None
+        self.meter_name: Optional[str] = None
+        self.meter_region: Optional[str] = None
+        self.meter_category: Optional[str] = None
+        self.meter_sub_category: Optional[str] = None
+        self.service_family: Optional[str] = None
+        self.quantity: Optional[float] = None
+        self.unit_of_measure: Optional[str] = None
+        self.instance_name: Optional[str] = None
+        self.cost_in_usd: Optional[float] = None
+        self.unit_price: Optional[float] = None
+        self.billing_currency_code: Optional[str] = None
+        self.resource_location: Optional[str] = None
+        self.consumed_service: Optional[str] = None
+        self.service_info1: Optional[str] = None
+        self.service_info2: Optional[str] = None
+        self.additional_info: Optional[str] = None
+        self.invoice_section_id: Optional[str] = None
+        self.invoice_section_name: Optional[str] = None
+        self.cost_center: Optional[str] = None
+        self.resource_group: Optional[str] = None
+        self.reservation_id: Optional[str] = None
+        self.reservation_name: Optional[str] = None
+        self.product_order_id: Optional[str] = None
+        self.product_order_name: Optional[str] = None
+        self.is_azure_credit_eligible: Optional[bool] = None
+        self.term: Optional[str] = None
+        self.publisher_name: Optional[str] = None
+        self.publisher_type: Optional[str] = None
+        self.charge_type: Optional[str] = None
+        self.frequency: Optional[str] = None
+        self.cost_in_billing_currency: Optional[float] = None
+        self.cost_in_pricing_currency: Optional[float] = None
+        self.exchange_rate: Optional[str] = None
+        self.exchange_rate_date: Optional[datetime.datetime] = None
+        self.invoice_id: Optional[str] = None
+        self.previous_invoice_id: Optional[str] = None
+        self.pricing_currency_code: Optional[str] = None
+        self.product_identifier: Optional[str] = None
+        self.resource_location_normalized: Optional[str] = None
+        self.service_period_start_date: Optional[datetime.datetime] = None
+        self.service_period_end_date: Optional[datetime.datetime] = None
+        self.customer_tenant_id: Optional[str] = None
+        self.customer_name: Optional[str] = None
+        self.partner_tenant_id: Optional[str] = None
+        self.partner_name: Optional[str] = None
+        self.reseller_mpn_id: Optional[str] = None
+        self.reseller_name: Optional[str] = None
+        self.publisher_id: Optional[str] = None
+        self.market_price: Optional[float] = None
+        self.exchange_rate_pricing_to_billing: Optional[float] = None
+        self.payg_cost_in_billing_currency: Optional[float] = None
+        self.payg_cost_in_usd: Optional[float] = None
+        self.partner_earned_credit_rate: Optional[float] = None
+        self.partner_earned_credit_applied: Optional[str] = None
+        self.pay_g_price: Optional[float] = None
+        self.benefit_id: Optional[str] = None
+        self.benefit_name: Optional[str] = None
+        self.provider: Optional[str] = None
+        self.cost_allocation_rule_name: Optional[str] = None
 
 
 class Notification(_serialization.Model):
     """The notification associated with a budget.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: The notification is enabled or not. Required.
     :vartype enabled: bool
@@ -4263,13 +4448,13 @@ class Notification(_serialization.Model):
         enabled: bool,
         operator: Union[str, "_models.OperatorType"],
         threshold: float,
-        contact_emails: List[str],
-        contact_roles: Optional[List[str]] = None,
-        contact_groups: Optional[List[str]] = None,
+        contact_emails: list[str],
+        contact_roles: Optional[list[str]] = None,
+        contact_groups: Optional[list[str]] = None,
         threshold_type: Union[str, "_models.ThresholdType"] = "Actual",
         locale: Optional[Union[str, "_models.CultureCode"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: The notification is enabled or not. Required.
         :paramtype enabled: bool
@@ -4335,14 +4520,14 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.consumption.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
         self.display = display
 
 
@@ -4375,17 +4560,18 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
-    """Result of listing consumption operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of listing consumption operations. It contains a list of operations and a URL link to
+    get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4406,11 +4592,48 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
+
+
+class OperationStatus(_serialization.Model):
+    """The status of the long running operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The status of the long running operation. Known values are: "Running",
+     "Completed", and "Failed".
+    :vartype status: str or ~azure.mgmt.consumption.models.OperationStatusType
+    :ivar download_url: The link (url) to download the pricesheet.
+    :vartype download_url: str
+    :ivar valid_till: Download link validity.
+    :vartype valid_till: ~datetime.datetime
+    """
+
+    _validation = {
+        "download_url": {"readonly": True},
+        "valid_till": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "download_url": {"key": "properties.downloadUrl", "type": "str"},
+        "valid_till": {"key": "properties.validTill", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, status: Optional[Union[str, "_models.OperationStatusType"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword status: The status of the long running operation. Known values are: "Running",
+         "Completed", and "Failed".
+        :paramtype status: str or ~azure.mgmt.consumption.models.OperationStatusType
+        """
+        super().__init__(**kwargs)
+        self.status = status
+        self.download_url: Optional[str] = None
+        self.valid_till: Optional[datetime.datetime] = None
 
 
 class PriceSheetProperties(_serialization.Model):
@@ -4437,6 +4660,8 @@ class PriceSheetProperties(_serialization.Model):
     :vartype currency_code: str
     :ivar offer_id: Offer Id.
     :vartype offer_id: str
+    :ivar savings_plan: SavingsPlan Details.
+    :vartype savings_plan: ~azure.mgmt.consumption.models.SavingsPlan
     """
 
     _validation = {
@@ -4449,6 +4674,7 @@ class PriceSheetProperties(_serialization.Model):
         "unit_price": {"readonly": True},
         "currency_code": {"readonly": True},
         "offer_id": {"readonly": True},
+        "savings_plan": {"readonly": True},
     }
 
     _attribute_map = {
@@ -4461,20 +4687,22 @@ class PriceSheetProperties(_serialization.Model):
         "unit_price": {"key": "unitPrice", "type": "float"},
         "currency_code": {"key": "currencyCode", "type": "str"},
         "offer_id": {"key": "offerId", "type": "str"},
+        "savings_plan": {"key": "savingsPlan", "type": "SavingsPlan"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.billing_period_id = None
-        self.meter_id = None
-        self.meter_details = None
-        self.unit_of_measure = None
-        self.included_quantity = None
-        self.part_number = None
-        self.unit_price = None
-        self.currency_code = None
-        self.offer_id = None
+        self.billing_period_id: Optional[str] = None
+        self.meter_id: Optional[str] = None
+        self.meter_details: Optional["_models.MeterDetails"] = None
+        self.unit_of_measure: Optional[str] = None
+        self.included_quantity: Optional[float] = None
+        self.part_number: Optional[str] = None
+        self.unit_price: Optional[float] = None
+        self.currency_code: Optional[str] = None
+        self.offer_id: Optional[str] = None
+        self.savings_plan: Optional["_models.SavingsPlan"] = None
 
 
 class PriceSheetResult(Resource):
@@ -4522,12 +4750,12 @@ class PriceSheetResult(Resource):
         "download": {"key": "properties.download", "type": "MeterDetails"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.pricesheets = None
-        self.next_link = None
-        self.download = None
+        self.pricesheets: Optional[list["_models.PriceSheetProperties"]] = None
+        self.next_link: Optional[str] = None
+        self.download: Optional["_models.MeterDetails"] = None
 
 
 class Reseller(_serialization.Model):
@@ -4551,14 +4779,14 @@ class Reseller(_serialization.Model):
         "reseller_description": {"key": "resellerDescription", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.reseller_id = None
-        self.reseller_description = None
+        self.reseller_id: Optional[str] = None
+        self.reseller_description: Optional[str] = None
 
 
-class ReservationDetail(Resource):  # pylint: disable=too-many-instance-attributes
+class ReservationDetail(Resource):
     """reservation detail resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4645,20 +4873,20 @@ class ReservationDetail(Resource):  # pylint: disable=too-many-instance-attribut
         "kind": {"key": "properties.kind", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.reservation_order_id = None
-        self.instance_flexibility_ratio = None
-        self.instance_flexibility_group = None
-        self.reservation_id = None
-        self.sku_name = None
-        self.reserved_hours = None
-        self.usage_date = None
-        self.used_hours = None
-        self.instance_id = None
-        self.total_reserved_quantity = None
-        self.kind = None
+        self.reservation_order_id: Optional[str] = None
+        self.instance_flexibility_ratio: Optional[str] = None
+        self.instance_flexibility_group: Optional[str] = None
+        self.reservation_id: Optional[str] = None
+        self.sku_name: Optional[str] = None
+        self.reserved_hours: Optional[float] = None
+        self.usage_date: Optional[datetime.datetime] = None
+        self.used_hours: Optional[float] = None
+        self.instance_id: Optional[str] = None
+        self.total_reserved_quantity: Optional[float] = None
+        self.kind: Optional[str] = None
 
 
 class ReservationDetailsListResult(_serialization.Model):
@@ -4682,21 +4910,24 @@ class ReservationDetailsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.ReservationDetail"]] = None
+        self.next_link: Optional[str] = None
 
 
-class ReservationRecommendationDetailsCalculatedSavingsProperties(_serialization.Model):
+class ReservationRecommendationDetailsCalculatedSavingsProperties(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Details of estimated savings. The costs and savings are estimated for the term.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar on_demand_cost: The cost without reservation. Includes hardware and software cost.
     :vartype on_demand_cost: float
-    :ivar overage_cost: Hardware and software cost of the resources not covered by the reservation.
+    :ivar overage_cost: The estimated cost for resource meters that are not covered by the
+     reservation and are billed at pay-as-you-go rates.
     :vartype overage_cost: float
     :ivar quantity: The quantity for calculated savings.
     :vartype quantity: float
@@ -4732,23 +4963,23 @@ class ReservationRecommendationDetailsCalculatedSavingsProperties(_serialization
         "savings": {"key": "savings", "type": "float"},
     }
 
-    def __init__(self, *, reserved_unit_count: Optional[float] = None, **kwargs):
+    def __init__(self, *, reserved_unit_count: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword reserved_unit_count: The number of reserved units used to calculate savings. Always 1
          for virtual machines.
         :paramtype reserved_unit_count: float
         """
         super().__init__(**kwargs)
-        self.on_demand_cost = None
-        self.overage_cost = None
-        self.quantity = None
-        self.reservation_cost = None
-        self.total_reservation_cost = None
+        self.on_demand_cost: Optional[float] = None
+        self.overage_cost: Optional[float] = None
+        self.quantity: Optional[float] = None
+        self.reservation_cost: Optional[float] = None
+        self.total_reservation_cost: Optional[float] = None
         self.reserved_unit_count = reserved_unit_count
-        self.savings = None
+        self.savings: Optional[float] = None
 
 
-class ReservationRecommendationDetailsModel(Resource):  # pylint: disable=too-many-instance-attributes
+class ReservationRecommendationDetailsModel(Resource):
     """Reservation recommendation details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4813,7 +5044,7 @@ class ReservationRecommendationDetailsModel(Resource):  # pylint: disable=too-ma
         "usage": {"key": "properties.usage", "type": "ReservationRecommendationDetailsUsageProperties"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, sku: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, sku: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -4823,23 +5054,25 @@ class ReservationRecommendationDetailsModel(Resource):  # pylint: disable=too-ma
         super().__init__(**kwargs)
         self.location = location
         self.sku = sku
-        self.currency = None
-        self.resource = None
-        self.resource_group = None
-        self.savings = None
-        self.scope = None
-        self.usage = None
+        self.currency: Optional[str] = None
+        self.resource: Optional["_models.ReservationRecommendationDetailsResourceProperties"] = None
+        self.resource_group: Optional[str] = None
+        self.savings: Optional["_models.ReservationRecommendationDetailsSavingsProperties"] = None
+        self.scope: Optional[str] = None
+        self.usage: Optional["_models.ReservationRecommendationDetailsUsageProperties"] = None
 
 
-class ReservationRecommendationDetailsResourceProperties(_serialization.Model):
+class ReservationRecommendationDetailsResourceProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Details of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar applied_scopes: List of subscriptions for which the reservation is applied.
     :vartype applied_scopes: list[str]
-    :ivar on_demand_rate: Hourly on-demand rate of the resource. Includes only hardware rate i.e,
-     software rate is not included.
+    :ivar on_demand_rate: On-demand rate of the resource. Most resources use hourly rates, except
+     for BlockBlob, ManagedDisk, Backup, and Azure Files, which use monthly rates. Only hardware
+     rates are included; software rates are excluded.  Note: there could be new resources that use
+     hourly rates in the future.
     :vartype on_demand_rate: float
     :ivar product: Azure product ex: Standard_E8s_v3 etc.
     :vartype product: str
@@ -4869,18 +5102,18 @@ class ReservationRecommendationDetailsResourceProperties(_serialization.Model):
         "resource_type": {"key": "resourceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.applied_scopes = None
-        self.on_demand_rate = None
-        self.product = None
-        self.region = None
-        self.reservation_rate = None
-        self.resource_type = None
+        self.applied_scopes: Optional[list[str]] = None
+        self.on_demand_rate: Optional[float] = None
+        self.product: Optional[str] = None
+        self.region: Optional[str] = None
+        self.reservation_rate: Optional[float] = None
+        self.resource_type: Optional[str] = None
 
 
-class ReservationRecommendationDetailsSavingsProperties(_serialization.Model):
+class ReservationRecommendationDetailsSavingsProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Details of the estimated savings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4893,7 +5126,7 @@ class ReservationRecommendationDetailsSavingsProperties(_serialization.Model):
     :vartype look_back_period: int
     :ivar recommended_quantity: Number of recommended units of the resource.
     :vartype recommended_quantity: float
-    :ivar reservation_order_term: Term period of the reservation, ex: P1Y or P3Y.
+    :ivar reservation_order_term: Term period of the reservation. ex: P1M, P1Y or P3Y.
     :vartype reservation_order_term: str
     :ivar savings_type: Type of savings, ex: instance.
     :vartype savings_type: str
@@ -4925,10 +5158,10 @@ class ReservationRecommendationDetailsSavingsProperties(_serialization.Model):
         self,
         *,
         calculated_savings: Optional[
-            List["_models.ReservationRecommendationDetailsCalculatedSavingsProperties"]
+            list["_models.ReservationRecommendationDetailsCalculatedSavingsProperties"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword calculated_savings: List of calculated savings.
         :paramtype calculated_savings:
@@ -4936,14 +5169,14 @@ class ReservationRecommendationDetailsSavingsProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.calculated_savings = calculated_savings
-        self.look_back_period = None
-        self.recommended_quantity = None
-        self.reservation_order_term = None
-        self.savings_type = None
-        self.unit_of_measure = None
+        self.look_back_period: Optional[int] = None
+        self.recommended_quantity: Optional[float] = None
+        self.reservation_order_term: Optional[str] = None
+        self.savings_type: Optional[str] = None
+        self.unit_of_measure: Optional[str] = None
 
 
-class ReservationRecommendationDetailsUsageProperties(_serialization.Model):
+class ReservationRecommendationDetailsUsageProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Details about historical usage data that has been used for computing the recommendation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4979,14 +5212,14 @@ class ReservationRecommendationDetailsUsageProperties(_serialization.Model):
         "usage_grain": {"key": "usageGrain", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.first_consumption_date = None
-        self.last_consumption_date = None
-        self.look_back_unit_type = None
-        self.usage_data = None
-        self.usage_grain = None
+        self.first_consumption_date: Optional[str] = None
+        self.last_consumption_date: Optional[str] = None
+        self.look_back_unit_type: Optional[str] = None
+        self.usage_data: Optional[list[float]] = None
+        self.usage_grain: Optional[str] = None
 
 
 class ReservationRecommendationsListResult(_serialization.Model):
@@ -5014,12 +5247,12 @@ class ReservationRecommendationsListResult(_serialization.Model):
         "previous_link": {"key": "previousLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-        self.previous_link = None
+        self.value: Optional[list["_models.ReservationRecommendation"]] = None
+        self.next_link: Optional[str] = None
+        self.previous_link: Optional[str] = None
 
 
 class ReservationSummariesListResult(_serialization.Model):
@@ -5043,14 +5276,14 @@ class ReservationSummariesListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.ReservationSummary"]] = None
+        self.next_link: Optional[str] = None
 
 
-class ReservationSummary(Resource):  # pylint: disable=too-many-instance-attributes
+class ReservationSummary(Resource):
     """reservation summary resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5157,24 +5390,24 @@ class ReservationSummary(Resource):  # pylint: disable=too-many-instance-attribu
         "utilized_percentage": {"key": "properties.utilizedPercentage", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.reservation_order_id = None
-        self.reservation_id = None
-        self.sku_name = None
-        self.reserved_hours = None
-        self.usage_date = None
-        self.used_hours = None
-        self.min_utilization_percentage = None
-        self.avg_utilization_percentage = None
-        self.max_utilization_percentage = None
-        self.kind = None
-        self.purchased_quantity = None
-        self.remaining_quantity = None
-        self.total_reserved_quantity = None
-        self.used_quantity = None
-        self.utilized_percentage = None
+        self.reservation_order_id: Optional[str] = None
+        self.reservation_id: Optional[str] = None
+        self.sku_name: Optional[str] = None
+        self.reserved_hours: Optional[float] = None
+        self.usage_date: Optional[datetime.datetime] = None
+        self.used_hours: Optional[float] = None
+        self.min_utilization_percentage: Optional[float] = None
+        self.avg_utilization_percentage: Optional[float] = None
+        self.max_utilization_percentage: Optional[float] = None
+        self.kind: Optional[str] = None
+        self.purchased_quantity: Optional[float] = None
+        self.remaining_quantity: Optional[float] = None
+        self.total_reserved_quantity: Optional[float] = None
+        self.used_quantity: Optional[float] = None
+        self.utilized_percentage: Optional[float] = None
 
 
 class ReservationTransactionsListResult(_serialization.Model):
@@ -5198,11 +5431,44 @@ class ReservationTransactionsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.ReservationTransaction"]] = None
+        self.next_link: Optional[str] = None
+
+
+class SavingsPlan(_serialization.Model):
+    """The properties of the SavingsPlan.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar term: SavingsPlan term.
+    :vartype term: str
+    :ivar market_price: SavingsPlan Market Price.
+    :vartype market_price: float
+    :ivar effective_price: SavingsPlan Effective Price.
+    :vartype effective_price: float
+    """
+
+    _validation = {
+        "term": {"readonly": True},
+        "market_price": {"readonly": True},
+        "effective_price": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "term": {"key": "term", "type": "str"},
+        "market_price": {"key": "marketPrice", "type": "float"},
+        "effective_price": {"key": "effectivePrice", "type": "float"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.term: Optional[str] = None
+        self.market_price: Optional[float] = None
+        self.effective_price: Optional[float] = None
 
 
 class SkuProperty(_serialization.Model):
@@ -5226,11 +5492,11 @@ class SkuProperty(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.value = None
+        self.name: Optional[str] = None
+        self.value: Optional[str] = None
 
 
 class Tag(_serialization.Model):
@@ -5247,7 +5513,7 @@ class Tag(_serialization.Model):
         "value": {"key": "value", "type": "[str]"},
     }
 
-    def __init__(self, *, key: Optional[str] = None, value: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword key: Tag key.
         :paramtype key: str
@@ -5299,7 +5565,9 @@ class TagsResult(ProxyResource):
         "previous_link": {"key": "properties.previousLink", "type": "str"},
     }
 
-    def __init__(self, *, e_tag: Optional[str] = None, tags: Optional[List["_models.Tag"]] = None, **kwargs):
+    def __init__(
+        self, *, e_tag: Optional[str] = None, tags: Optional[list["_models.Tag"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
@@ -5309,12 +5577,13 @@ class TagsResult(ProxyResource):
         """
         super().__init__(e_tag=e_tag, **kwargs)
         self.tags = tags
-        self.next_link = None
-        self.previous_link = None
+        self.next_link: Optional[str] = None
+        self.previous_link: Optional[str] = None
 
 
 class UsageDetailsListResult(_serialization.Model):
-    """Result of listing usage details. It contains a list of available usage details in reverse chronological order by billing period.
+    """Result of listing usage details. It contains a list of available usage details in reverse
+    chronological order by billing period.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5334,8 +5603,8 @@ class UsageDetailsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.UsageDetail"]] = None
+        self.next_link: Optional[str] = None

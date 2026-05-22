@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.consumption import ConsumptionManagementClient
 
 """
@@ -30,7 +32,7 @@ def main():
     )
 
     response = client.reservation_recommendation_details.get(
-        resource_scope="providers/Microsoft.Billing/billingAccounts/000000",
+        resource_scope="providers/Microsoft.Billing/billingAccounts/00000000",
         scope="Shared",
         region="eastus",
         term="P1Y",
@@ -40,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/consumption/resource-manager/Microsoft.Consumption/stable/2021-10-01/examples/ReservationRecommendationDetailsByBillingAccount.json
+# x-ms-original-file: specification/consumption/resource-manager/Microsoft.Consumption/stable/2024-08-01/examples/ReservationRecommendationDetailsByBillingAccount.json
 if __name__ == "__main__":
     main()
