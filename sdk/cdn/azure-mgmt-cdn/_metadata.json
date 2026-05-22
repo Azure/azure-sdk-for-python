@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-12-01",
+  "apiVersions": {
+    "Microsoft.Cdn": "2025-12-01"
+  },
+  "commit": "cd283345a35e238e92dcef71b350d4699b5c466c",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/cdn/resource-manager/Microsoft.Cdn/Cdn",
+  "emitterVersion": "0.62.1"
+}
