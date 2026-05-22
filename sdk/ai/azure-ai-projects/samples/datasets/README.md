@@ -34,8 +34,6 @@ Optional per-sample variables (`DATASET_NAME`, `POLL_INTERVAL_SECONDS`, `FOUNDRY
 
 ### Data Generation Jobs
 
-Data generation jobs run server-side to synthesize evaluation datasets or supervised fine-tuning files from an agent's traces, an agent's definition, an inline prompt, or an Azure OpenAI File. Each sample below submits a job, polls it to completion, locates the generated artifacts, and then deletes everything it created (job record, uploaded input files, short-lived agents, and the generated outputs) so repeated runs don't accumulate artifacts.
-
 | Sample | Source(s) | Scenario | Description |
 |--------|-----------|----------|-------------|
 | [sample_dataset_generation_job_simpleqna_with_prompt_source.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simpleqna_with_prompt_source.py) | Prompt | Evaluation | Generate a QnA dataset from an inline prompt and run an evaluation against it end-to-end |
