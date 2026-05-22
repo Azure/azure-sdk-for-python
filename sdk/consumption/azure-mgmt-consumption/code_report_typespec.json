@@ -2227,903 +2227,6 @@
           "value": "Optional"
         }
       },
-      "ArmErrorResponse": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "error": {
-                    "type": "Optional[_models.ErrorDetail]",
-                    "default": null,
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "None"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "mapping": {
-                    "type": "Mapping[str, Any]",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "None"
-              }
-            ]
-          },
-          "as_dict": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "exclude_readonly": {
-                "default": "bool",
-                "param_type": "keyword_only"
-              }
-            },
-            "is_async": false,
-            "return_type": "dict[str, Any]",
-            "overloads": []
-          },
-          "clear": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "copy": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Model",
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Any",
-            "overloads": []
-          },
-          "items": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "ItemsView[str, Any]",
-            "overloads": []
-          },
-          "keys": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "KeysView[str]",
-            "overloads": []
-          },
-          "pop": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "object",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Any",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Any"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "_T",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "_T"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "Any",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Any"
-              }
-            ]
-          },
-          "popitem": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "tuple[str, Any]",
-            "overloads": []
-          },
-          "setdefault": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "object",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Any",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "None",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "None"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "Any",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Any"
-              }
-            ]
-          },
-          "update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "values": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "ValuesView[Any]",
-            "overloads": []
-          }
-        },
-        "properties": {
-          "error": "Optional"
-        }
-      },
-      "ArmProxyResource": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "as_dict": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "exclude_readonly": {
-                "default": "bool",
-                "param_type": "keyword_only"
-              }
-            },
-            "is_async": false,
-            "return_type": "dict[str, Any]",
-            "overloads": []
-          },
-          "clear": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "copy": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Model",
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Any",
-            "overloads": []
-          },
-          "items": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "ItemsView[str, Any]",
-            "overloads": []
-          },
-          "keys": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "KeysView[str]",
-            "overloads": []
-          },
-          "pop": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "object",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Any",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Any"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "_T",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "_T"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "Any",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Any"
-              }
-            ]
-          },
-          "popitem": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "tuple[str, Any]",
-            "overloads": []
-          },
-          "setdefault": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "object",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Any",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "None",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "None"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "Any",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Any"
-              }
-            ]
-          },
-          "update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "values": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "ValuesView[Any]",
-            "overloads": []
-          }
-        },
-        "properties": {
-          "id": "Optional",
-          "name": "Optional",
-          "type": "Optional",
-          "system_data": "Optional"
-        }
-      },
-      "ArmResource": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "as_dict": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "exclude_readonly": {
-                "default": "bool",
-                "param_type": "keyword_only"
-              }
-            },
-            "is_async": false,
-            "return_type": "dict[str, Any]",
-            "overloads": []
-          },
-          "clear": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "copy": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Model",
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Any",
-            "overloads": []
-          },
-          "items": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "ItemsView[str, Any]",
-            "overloads": []
-          },
-          "keys": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "KeysView[str]",
-            "overloads": []
-          },
-          "pop": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "object",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Any",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Any"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "_T",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "_T"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "Any",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Any"
-              }
-            ]
-          },
-          "popitem": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "tuple[str, Any]",
-            "overloads": []
-          },
-          "setdefault": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "key": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "default": {
-                "default": "object",
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Any",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "None",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "None"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "key": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "default": {
-                    "type": "Any",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Any"
-              }
-            ]
-          },
-          "update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "values": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "ValuesView[Any]",
-            "overloads": []
-          }
-        },
-        "properties": {
-          "id": "Optional",
-          "name": "Optional",
-          "type": "Optional",
-          "system_data": "Optional"
-        }
-      },
       "Balance": {
         "type": null,
         "methods": {
@@ -5733,7 +4836,7 @@
         "type": "Enum",
         "methods": {},
         "properties": {
-          "IN_ENUM": "IN_ENUM",
+          "IN": "IN",
           "capitalize": "capitalize",
           "casefold": "casefold",
           "center": "center",
@@ -9148,6 +8251,325 @@
           "target": "Optional",
           "details": "Optional",
           "additional_info": "Optional"
+        }
+      },
+      "ErrorResponse": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "error": {
+                    "type": "Optional[_models.ErrorDetail]",
+                    "default": null,
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "None"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "mapping": {
+                    "type": "Mapping[str, Any]",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "None"
+              }
+            ]
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "exclude_readonly": {
+                "default": "bool",
+                "param_type": "keyword_only"
+              }
+            },
+            "is_async": false,
+            "return_type": "dict[str, Any]",
+            "overloads": []
+          },
+          "clear": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "copy": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Model",
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Any",
+            "overloads": []
+          },
+          "items": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "ItemsView[str, Any]",
+            "overloads": []
+          },
+          "keys": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "KeysView[str]",
+            "overloads": []
+          },
+          "pop": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "object",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Any",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Any"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "_T",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "_T"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "Any",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Any"
+              }
+            ]
+          },
+          "popitem": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "tuple[str, Any]",
+            "overloads": []
+          },
+          "setdefault": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "object",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Any",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "None",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "None"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "Any",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Any"
+              }
+            ]
+          },
+          "update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "values": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "ValuesView[Any]",
+            "overloads": []
+          }
+        },
+        "properties": {
+          "error": "Optional"
         }
       },
       "EventProperties": {
@@ -22967,6 +22389,295 @@
           "zfill": "zfill"
         }
       },
+      "ProxyResource": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "exclude_readonly": {
+                "default": "bool",
+                "param_type": "keyword_only"
+              }
+            },
+            "is_async": false,
+            "return_type": "dict[str, Any]",
+            "overloads": []
+          },
+          "clear": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "copy": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Model",
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Any",
+            "overloads": []
+          },
+          "items": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "ItemsView[str, Any]",
+            "overloads": []
+          },
+          "keys": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "KeysView[str]",
+            "overloads": []
+          },
+          "pop": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "object",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Any",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Any"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "_T",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "_T"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "Any",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Any"
+              }
+            ]
+          },
+          "popitem": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "tuple[str, Any]",
+            "overloads": []
+          },
+          "setdefault": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "object",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Any",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "None",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "None"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "Any",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Any"
+              }
+            ]
+          },
+          "update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "values": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "ValuesView[Any]",
+            "overloads": []
+          }
+        },
+        "properties": {
+          "id": "Optional",
+          "name": "Optional",
+          "type": "Optional",
+          "system_data": "Optional"
+        }
+      },
       "Reseller": {
         "type": null,
         "methods": {
@@ -27058,6 +26769,295 @@
         "properties": {
           "properties": "Optional",
           "tags": "Optional",
+          "id": "Optional",
+          "name": "Optional",
+          "type": "Optional",
+          "system_data": "Optional"
+        }
+      },
+      "Resource": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "as_dict": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "exclude_readonly": {
+                "default": "bool",
+                "param_type": "keyword_only"
+              }
+            },
+            "is_async": false,
+            "return_type": "dict[str, Any]",
+            "overloads": []
+          },
+          "clear": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "copy": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Model",
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Any",
+            "overloads": []
+          },
+          "items": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "ItemsView[str, Any]",
+            "overloads": []
+          },
+          "keys": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "KeysView[str]",
+            "overloads": []
+          },
+          "pop": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "object",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Any",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Any"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "_T",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "_T"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "Any",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Any"
+              }
+            ]
+          },
+          "popitem": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "tuple[str, Any]",
+            "overloads": []
+          },
+          "setdefault": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "key": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "default": {
+                "default": "object",
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Any",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "None",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "None"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "key": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "default": {
+                    "type": "Any",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Any"
+              }
+            ]
+          },
+          "update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "values": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "ValuesView[Any]",
+            "overloads": []
+          }
+        },
+        "properties": {
           "id": "Optional",
           "name": "Optional",
           "type": "Optional",

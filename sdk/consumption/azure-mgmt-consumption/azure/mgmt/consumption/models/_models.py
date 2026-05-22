@@ -53,35 +53,7 @@ class AmountWithExchangeRate(Amount):
     """The exchange rate month."""
 
 
-class ArmErrorResponse(_Model):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.consumption.models.ErrorDetail
-    """
-
-    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error object."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ArmResource(_Model):
+class Resource(_Model):
     """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -109,24 +81,7 @@ class ArmResource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class ArmProxyResource(ArmResource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.consumption.models.SystemData
-    """
-
-
-class Balance(ArmResource):
+class Balance(Resource):
     """A balance resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -344,7 +299,7 @@ class BalancePropertiesNewPurchasesDetailsItem(_Model):
     """the value of new purchase."""
 
 
-class ExtensionResource(ArmResource):
+class ExtensionResource(Resource):
     """The base extension resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -694,7 +649,24 @@ class ChargesListResult(_Model):
     """The list of charge summary."""
 
 
-class ChargeSummary(ArmProxyResource):
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.consumption.models.SystemData
+    """
+
+
+class ChargeSummary(ProxyResource):
     """A charge summary resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -767,7 +739,7 @@ class CreditBalanceSummary(_Model):
     """Estimated balance in billing currency."""
 
 
-class CreditSummary(ArmProxyResource):
+class CreditSummary(ProxyResource):
     """A credit summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -957,6 +929,34 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
+class ErrorResponse(_Model):
+    """Error response.
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.consumption.models.ErrorDetail
+    """
+
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error object."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.ErrorDetail"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class EventProperties(_Model):
     """The event properties.
 
@@ -1128,7 +1128,7 @@ class EventProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventSummary(ArmProxyResource):
+class EventSummary(ProxyResource):
     """An event summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1877,7 +1877,7 @@ class LegacySingleScopeReservationRecommendationProperties(
         self.scope = "Single"  # type: ignore
 
 
-class UsageDetail(ArmResource):
+class UsageDetail(Resource):
     """An usage detail resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2374,7 +2374,7 @@ class LotProperties(_Model):
     """Amount consumed from the commitment."""
 
 
-class LotSummary(ArmProxyResource):
+class LotSummary(ProxyResource):
     """A lot summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2537,7 +2537,7 @@ class ManagementGroupAggregatedCostProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagementGroupAggregatedCostResult(ArmResource):
+class ManagementGroupAggregatedCostResult(Resource):
     """A management group aggregated cost resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2617,7 +2617,7 @@ class ManagementGroupAggregatedCostResult(ArmResource):
             super().__setattr__(key, value)
 
 
-class Marketplace(ArmResource):
+class Marketplace(Resource):
     """A marketplace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3212,7 +3212,7 @@ class ModernReservationRecommendationProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ModernReservationTransaction(ArmResource):
+class ModernReservationTransaction(Resource):
     """Modern Reservation transaction resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4357,7 +4357,7 @@ class PriceSheetProperties(_Model):
     """SavingsPlan Details."""
 
 
-class PriceSheetResult(ArmProxyResource):
+class PriceSheetResult(ProxyResource):
     """An pricesheet resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4444,7 +4444,7 @@ class Reseller(_Model):
     """The reseller property description."""
 
 
-class ReservationDetail(ArmResource):
+class ReservationDetail(Resource):
     """reservation detail resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4652,7 +4652,7 @@ class ReservationRecommendationDetailsCalculatedSavingsProperties(_Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class ReservationRecommendationDetailsModel(ArmResource):
+class ReservationRecommendationDetailsModel(Resource):
     """Reservation recommendation details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4886,7 +4886,7 @@ class ReservationRecommendationDetailsUsageProperties(_Model):  # pylint: disabl
     """The grain of the values represented in the usage data ex: hourly."""
 
 
-class ReservationSummary(ArmResource):
+class ReservationSummary(Resource):
     """reservation summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5069,7 +5069,7 @@ class ReservationSummaryProperties(_Model):
     """This is the utilized percentage for the reservation Id."""
 
 
-class ReservationTransaction(ArmResource):
+class ReservationTransaction(Resource):
     """Reservation transaction resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5328,7 +5328,7 @@ class TagProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsResult(ArmProxyResource):
+class TagsResult(ProxyResource):
     """A resource listing all tags.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -

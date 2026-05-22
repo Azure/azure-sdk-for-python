@@ -3,9 +3,7 @@
     "CrossLanguageDefinitionId": {
         "azure.mgmt.consumption.models.Amount": "Microsoft.Consumption.Amount",
         "azure.mgmt.consumption.models.AmountWithExchangeRate": "Microsoft.Consumption.AmountWithExchangeRate",
-        "azure.mgmt.consumption.models.ArmErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
-        "azure.mgmt.consumption.models.ArmResource": "Azure.ResourceManager.CommonTypes.Resource",
-        "azure.mgmt.consumption.models.ArmProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
+        "azure.mgmt.consumption.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.consumption.models.Balance": "Microsoft.Consumption.Balance",
         "azure.mgmt.consumption.models.BalanceProperties": "Microsoft.Consumption.BalanceProperties",
         "azure.mgmt.consumption.models.BalancePropertiesAdjustmentDetailsItem": "Microsoft.Consumption.BalancePropertiesAdjustmentDetailsItem",
@@ -18,6 +16,7 @@
         "azure.mgmt.consumption.models.BudgetProperties": "Microsoft.Consumption.BudgetProperties",
         "azure.mgmt.consumption.models.BudgetTimePeriod": "Microsoft.Consumption.BudgetTimePeriod",
         "azure.mgmt.consumption.models.ChargesListResult": "Microsoft.Consumption.ChargesListResult",
+        "azure.mgmt.consumption.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
         "azure.mgmt.consumption.models.ChargeSummary": "Microsoft.Consumption.ChargeSummary",
         "azure.mgmt.consumption.models.CreditBalanceSummary": "Microsoft.Consumption.CreditBalanceSummary",
         "azure.mgmt.consumption.models.CreditSummary": "Microsoft.Consumption.CreditSummary",
@@ -25,6 +24,7 @@
         "azure.mgmt.consumption.models.CurrentSpend": "Microsoft.Consumption.CurrentSpend",
         "azure.mgmt.consumption.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
         "azure.mgmt.consumption.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.consumption.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
         "azure.mgmt.consumption.models.EventProperties": "Microsoft.Consumption.EventProperties",
         "azure.mgmt.consumption.models.EventSummary": "Microsoft.Consumption.EventSummary",
         "azure.mgmt.consumption.models.ForecastSpend": "Microsoft.Consumption.ForecastSpend",
@@ -172,5 +172,5 @@
         "azure.mgmt.consumption.operations.LotsOperations.list_by_customer": "Microsoft.Consumption.LotsOperationGroup.listByCustomer",
         "azure.mgmt.consumption.aio.operations.LotsOperations.list_by_customer": "Microsoft.Consumption.LotsOperationGroup.listByCustomer"
     },
-    "CrossLanguageVersion": "2bf9e2cc259a"
+    "CrossLanguageVersion": "4fbce2be986a"
 }

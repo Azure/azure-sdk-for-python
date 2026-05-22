@@ -1129,7 +1129,7 @@ class Operations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1232,7 +1232,7 @@ class PriceSheetOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1312,7 +1312,7 @@ class PriceSheetOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1370,7 +1370,7 @@ class PriceSheetOperations:
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1524,7 +1524,7 @@ class BudgetsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1687,7 +1687,7 @@ class BudgetsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1751,7 +1751,7 @@ class BudgetsOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1845,7 +1845,7 @@ class BudgetsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1927,7 +1927,7 @@ class CreditsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2095,7 +2095,7 @@ class UsageDetailsOperations:
             if response.status_code not in [200, 204]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2235,7 +2235,7 @@ class MarketplacesOperations:
             if response.status_code not in [200, 204]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2314,7 +2314,7 @@ class TagsOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2428,7 +2428,7 @@ class ChargesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2514,7 +2514,7 @@ class BalancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2585,7 +2585,7 @@ class BalancesOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2722,7 +2722,7 @@ class ReservationsSummariesOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2837,7 +2837,7 @@ class ReservationsSummariesOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2970,7 +2970,7 @@ class ReservationsSummariesOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3096,7 +3096,7 @@ class ReservationsDetailsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3205,7 +3205,7 @@ class ReservationsDetailsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3337,7 +3337,7 @@ class ReservationsDetailsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3464,7 +3464,7 @@ class ReservationRecommendationsOperations:
             if response.status_code not in [200, 204]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3738,7 +3738,7 @@ class ReservationTransactionsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3852,7 +3852,7 @@ class ReservationTransactionsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3939,7 +3939,7 @@ class AggregatedCostOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -4011,7 +4011,7 @@ class AggregatedCostOperations:
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
-                _models.ArmErrorResponse,
+                _models.ErrorResponse,
                 response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -4144,7 +4144,7 @@ class EventsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -4248,7 +4248,7 @@ class EventsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -4369,7 +4369,7 @@ class LotsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -4474,7 +4474,7 @@ class LotsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -4580,7 +4580,7 @@ class LotsOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _failsafe_deserialize(
-                    _models.ArmErrorResponse,
+                    _models.ErrorResponse,
                     response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)

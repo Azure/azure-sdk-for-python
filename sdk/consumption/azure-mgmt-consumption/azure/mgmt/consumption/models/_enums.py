@@ -24,8 +24,8 @@ class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class BudgetOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operator to use for comparison."""
 
-    IN_ENUM = "In"
-    """IN_ENUM."""
+    IN = "In"
+    """IN."""
 
 
 class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
