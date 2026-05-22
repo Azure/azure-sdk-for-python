@@ -1,36 +1,22 @@
-# coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=wildcard-import
+
 import functools
 import os.path
 
-try:
-    import unittest.mock as mock
-except ImportError:
-    import mock
-
-import logging
 from devtools_testutils import EnvironmentVariableLoader, EnvironmentVariableOptions
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
 
-try:
-    from cStringIO import StringIO  # Python 2
-except ImportError:
-    from io import StringIO
 try:
     # Running locally - use configuration in settings_real.py
     from .settings_real import *
 except ImportError:
     # Running on the pipeline - use fake values in order to create rg, etc.
     from .settings_fake import *
-
-try:
-    from devtools_testutils import mgmt_settings_real as settings
-except ImportError:
-    from devtools_testutils import mgmt_settings_fake as settings
 
 
 LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"

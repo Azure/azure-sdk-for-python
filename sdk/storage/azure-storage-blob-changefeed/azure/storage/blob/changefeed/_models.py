@@ -144,11 +144,11 @@ class ChangeFeedPaged(PageIterator):
 
         if dict_continuation_token and (
             container_client.primary_hostname != dict_continuation_token["UrlHost"]
-        ):  # pylint: disable=unsubscriptable-object
+        ):
             raise ValueError("The token is not for the current storage account.")
         if dict_continuation_token and (
             dict_continuation_token["CursorVersion"] != 1
-        ):  # pylint: disable=unsubscriptable-object
+        ):
             raise ValueError("The CursorVersion is not supported by the current SDK.")
         self.results_per_page = results_per_page or 5000
         self.current_page = None

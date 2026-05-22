@@ -5,10 +5,11 @@
 # --------------------------------------------------------------------------
 
 import json
-import pytest
 from datetime import datetime, timedelta
 from math import ceil
 from time import sleep
+
+import pytest
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -61,8 +62,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
 
         # Assert
         # getting two pages separately gives the same result as getting the big page at once
-        for i in range(0, len(one_page)):
-            assert merged_two_pages[i].get("id") == one_page[i].get("id")
+        for i, one_page_event in enumerate(one_page):
+            assert merged_two_pages[i].get("id") == one_page_event["id"]
 
     @ChangeFeedPreparer()
     @recorded_by_proxy

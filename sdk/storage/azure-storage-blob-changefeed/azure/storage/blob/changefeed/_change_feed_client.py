@@ -63,7 +63,7 @@ class ChangeFeedClient:
         account_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any
     ) -> None:
         self._blob_service_client = BlobServiceClient(account_url, credential, **kwargs)
@@ -74,7 +74,7 @@ class ChangeFeedClient:
         conn_str: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any
     ) -> Self:
         """Create ChangeFeedClient from a Connection String.
