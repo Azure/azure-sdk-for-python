@@ -7,15 +7,15 @@ This folder contains samples demonstrating how to work with versioned Datasets a
 Before running any sample:
 
 ```bash
-pip install "azure-ai-projects>=2.0.0" azure-identity python-dotenv
+pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
 ```
 
 To run asynchronous samples, you will also need to install `aiohttp`. The data generation samples that interact with Azure OpenAI files (any sample that emits or consumes Azure OpenAI File outputs/inputs) also require `openai`.
 
 Set these environment variables:
-- `FOUNDRY_PROJECT_ENDPOINT` - Required for all samples. Your Azure AI Project endpoint (e.g., `https://<account>.services.ai.azure.com/api/projects/<project>`).
-- `FOUNDRY_MODEL_NAME` - Required for `simple_qna` data generation samples (`sample_dataset_generation_job_simpleqna_with_prompt_source.py`, `sample_dataset_generation_job_simpleqna_with_file_source.py`, `sample_dataset_generation_job_simpleqna_with_agent_source.py`, `sample_dataset_generation_job_simpleqna_for_finetuning.py`). The name of an Azure OpenAI model **deployment** in your project (matches the `FOUNDRY_MODEL_NAME` convention used elsewhere in this samples folder). For **evaluation** jobs the deployment must support the [Responses API](https://learn.microsoft.com/azure/foundry/openai/how-to/responses?tabs=python-key#model-support); for **fine-tuning** jobs the deployment must support chat completions (e.g. `gpt-4o`, `gpt-4.1`).
-- `FOUNDRY_AGENT_NAME` - Required for the two traces samples (`sample_dataset_generation_job_traces_for_evaluation.py`, `sample_dataset_generation_job_traces_for_finetuning.py`). The name of an agent that has recent traces in Application Insights. Traces sources support both Foundry Agents and third-party (OpenTelemetry instrumented) agents. The agent-source SimpleQnA sample (`sample_dataset_generation_job_simpleqna_with_agent_source.py`) does *not* read this variable — it creates its own short-lived prompt agent at runtime and cleans it up at the end.
+- `FOUNDRY_PROJECT_ENDPOINT` - Required for all samples. Your Azure AI Project endpoint (e.g., `https://<your-account>.services.ai.azure.com/api/projects/<your-project>`).
+- `FOUNDRY_MODEL_NAME` - Required for `simple_qna` data generation samples (`sample_dataset_generation_job_simpleqna_with_prompt_source.py`, `sample_dataset_generation_job_simpleqna_with_file_source.py`, `sample_dataset_generation_job_simpleqna_with_agent_source.py`, `sample_dataset_generation_job_simpleqna_for_finetuning.py`). The name of an Azure OpenAI model **deployment** in your project. For **evaluation** jobs the deployment must support the [Responses API](https://learn.microsoft.com/azure/foundry/openai/how-to/responses?tabs=python-key#model-support); for **fine-tuning** jobs the deployment must support chat completions (e.g. `gpt-4o`, `gpt-4.1`).
+- `FOUNDRY_AGENT_NAME` - Required for the two traces samples (`sample_dataset_generation_job_traces_for_evaluation.py`, `sample_dataset_generation_job_traces_for_finetuning.py`). The name of an agent that has recent traces in Application Insights. Traces sources support both Foundry Agents and third-party (OpenTelemetry instrumented) agents. The agent-source `simple_qna` sample (`sample_dataset_generation_job_simpleqna_with_agent_source.py`) does *not* read this variable — it creates its own short-lived prompt agent at runtime and cleans it up at the end.
 
 Most samples accept additional optional environment variables (`DATASET_NAME`, `POLL_INTERVAL_SECONDS`, `FOUNDRY_TRACES_WINDOW_DAYS`, etc.) — see each sample's docstring for details.
 
@@ -24,7 +24,7 @@ Most samples accept additional optional environment variables (`DATASET_NAME`, `
 ```bash
 # Set environment variables
 export FOUNDRY_PROJECT_ENDPOINT="https://<your-account>.services.ai.azure.com/api/projects/<your-project>"
-export FOUNDRY_MODEL_NAME="gpt-4o-mini" # Replace with your model deployment
+export FOUNDRY_MODEL_NAME="<your-model-deployment-name>" # Replace with your model name
 
 # Run a sample. For example:
 python sample_datasets.py
@@ -49,8 +49,8 @@ To keep the project clean across repeated runs, each sample below also deletes e
 | Sample | Source(s) | Scenario | Description |
 |--------|-----------|----------|-------------|
 | [sample_dataset_generation_job_simpleqna_with_prompt_source.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simpleqna_with_prompt_source.py) | Prompt | Evaluation | Generate a QnA dataset from an inline prompt and run an evaluation against it end-to-end |
-| [sample_dataset_generation_job_traces_for_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_traces_for_evaluation.py) | Traces | Evaluation | Generate an evaluation dataset from an agent's recent conversation traces (traces recipe) |
-| [sample_dataset_generation_job_traces_for_finetuning.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_traces_for_finetuning.py) | Traces | Supervised fine-tuning | Generate ready-to-use training + validation JSONL files from an agent's recent traces |
-| [sample_dataset_generation_job_simpleqna_with_agent_source.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simpleqna_with_agent_source.py) | Agent definition | Evaluation | Self-contained: creates a short-lived `PromptAgentDefinition`, then generates an evaluation dataset from the agent's instructions / prompt via the `simple_qna` recipe |
-| [sample_dataset_generation_job_simpleqna_with_file_source.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simpleqna_with_file_source.py) | File (Azure OpenAI) + Prompt | Evaluation | Combine an uploaded reference document with an inline Prompt to steer multi-source SimpleQnA generation, and confirm output metadata propagation |
-| [sample_dataset_generation_job_simpleqna_for_finetuning.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simpleqna_for_finetuning.py) | File (Azure OpenAI) | Supervised fine-tuning | Upload a reference document as an Azure OpenAI File and generate short- and long-answer fine-tuning files from it |
+| [sample_dataset_generation_job_simpleqna_with_file_source.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simpleqna_with_file_source.py) | File (Azure OpenAI) + Prompt | Evaluation | Generate a QnA dataset from a multi-source job that combines an uploaded Azure OpenAI File with an inline Prompt, and verify that the caller-supplied description and tags propagate onto the dataset |
+| [sample_dataset_generation_job_simpleqna_with_agent_source.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simpleqna_with_agent_source.py) | Agent definition | Evaluation | Generate a QnA dataset by creating a short-lived `PromptAgentDefinition` and sourcing the job from the agent's instructions |
+| [sample_dataset_generation_job_traces_for_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_traces_for_evaluation.py) | Traces | Evaluation | Generate a QnA evaluation dataset from an agent's recent conversation traces |
+| [sample_dataset_generation_job_simpleqna_for_finetuning.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simpleqna_for_finetuning.py) | File (Azure OpenAI) | Supervised fine-tuning | Generate supervised fine-tuning JSONL files (training and validation partitions) from an uploaded Azure OpenAI File |
+| [sample_dataset_generation_job_traces_for_finetuning.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_traces_for_finetuning.py) | Traces | Supervised fine-tuning | Generate supervised fine-tuning JSONL files (training and validation partitions) from an agent's recent conversation traces |
