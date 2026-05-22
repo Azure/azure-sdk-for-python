@@ -8,7 +8,7 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to register a local
     model with a Microsoft Foundry project WITHOUT relying on the
-    `models_create` helper or the `azcopy` CLI. It hand-rolls the spec's
+    `create_version` helper or the `azcopy` CLI. It hand-rolls the spec's
     three-step upload-first sequence using only the generated `.beta.models`
     operations and `azure-storage-blob`:
 
@@ -16,7 +16,7 @@ DESCRIPTION:
          blob container and returns a SAS URI.
       2) Upload the local weight files directly to that SAS container using
          `azure.storage.blob.ContainerClient`.
-      3) `create_async(...)` -- commit the registration. The service returns
+      3) `pending_create_version(...)` -- commit the registration. The service returns
          202 Accepted and finalizes the ModelVersion asynchronously, so we
          poll `get(...)` until the new version is observable.
 
@@ -108,8 +108,8 @@ with (
             container_client.upload_blob(name=rel, data=fp, overwrite=True)
         print(f"  uploaded {rel} ({f.stat().st_size} bytes)")
 
-    print(f"Step 3/3: create_async(name=`{model_name}`, version=`{model_version}`)")
-    project_client.beta.models.create_async(
+    print(f"Step 3/3: pending_create_version(name=`{model_name}`, version=`{model_version}`)")
+    project_client.beta.models.pending_create_version(
         name=model_name,
         version=model_version,
         body=ModelVersion(
@@ -120,7 +120,7 @@ with (
         ),
     )
 
-    # `create_async` returns 202 Accepted; poll `get` until the committed
+    # `pending_create_version` returns 202 Accepted; poll `get` until the committed
     # ModelVersion is observable.
     print(f"Polling get(`{model_name}`, `{model_version}`) until the ModelVersion is committed...")
     deadline = time.monotonic() + 300.0
@@ -132,7 +132,7 @@ with (
         except ResourceNotFoundError:
             if time.monotonic() >= deadline:
                 raise RuntimeError(
-                    f"Model `{model_name}`@`{model_version}` did not appear within 300s after create_async."
+                    f"Model `{model_name}`@`{model_version}` did not appear within 300s after pending_create_version."
                 )
             time.sleep(2.0)
     print(model)

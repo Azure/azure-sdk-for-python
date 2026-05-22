@@ -12,18 +12,18 @@ DESCRIPTION:
     update version metadata, and delete a model version.
 
     The recommended entry point is the patched helper
-    `project_client.beta.models.models_create(...)`, which packs the spec's
-    three required steps (`pending_upload` -> `azcopy copy` -> `create_async`)
+    `project_client.beta.models.create_version(...)`, which packs the spec's
+    three required steps (`pending_upload` -> `azcopy copy` -> `pending_create_version`)
     into a single call and polls until the new ModelVersion is observable.
 
 USAGE:
-    python sample_models.py
+    python sample_models_basic.py
 
     Before running the sample:
 
     pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
 
-    AzCopy must also be installed and on PATH (used by `models_create` to
+    AzCopy must also be installed and on PATH (used by `create_version` to
     upload weight files):
 
         winget install --id Microsoft.Azure.AZCopy.10 -e
@@ -76,21 +76,26 @@ with (
 
     print(
         f"Register a local model named `{model_name}` version `{model_version}` "
-        f"by uploading the contents of `{data_folder}` via `models_create`."
+        f"by uploading the contents of `{data_folder}` via `create_version`."
     )
-    model = project_client.beta.models.models_create(
+    model = project_client.beta.models.create_version(
         name=model_name,
         version=model_version,
         source=data_folder,
         weight_type=FoundryModelWeightType.FULL_WEIGHT,
-        description="Sample model registered from sample_models.py",
-        tags={"source": "sample_models.py"},
+        description="Sample model registered from sample_models_basic.py",
+        tags={"source": "sample_models_basic.py"},
     )
-    print(model)
+    if model is None:
+        raise RuntimeError(
+            f"`create_version` returned None for `{model_name}`@`{model_version}` "
+            "(use `wait_for_commit=True` to receive the committed ModelVersion)."
+        )
+    print(f"Created (name: {model.name}, version: {model.version}, blob_uri: {model.blob_uri})")
 
     print(f"Get a specific model version `{model_name}`@`{model_version}`:")
     fetched = project_client.beta.models.get(name=model_name, version=model_version)
-    print(fetched)
+    print(f"Fetched (name: {fetched.name}, version: {fetched.version}, blob_uri: {fetched.blob_uri})")
 
     print(f"List all versions of model `{model_name}`:")
     for mv in project_client.beta.models.list_versions(name=model_name):
@@ -106,7 +111,7 @@ with (
         version=model_version,
         body=ModelCredentialRequest(blob_uri=model.blob_uri),
     )
-    print(creds)
+    print(f"Credentials (type: {type(creds).__name__})")
 
     print(f"Update description and tags on `{model_name}`@`{model_version}`:")
     updated = project_client.beta.models.update(
@@ -114,10 +119,10 @@ with (
         version=model_version,
         body=UpdateModelVersionRequest(
             description="Updated description",
-            tags={"source": "sample_models.py", "updated": "true"},
+            tags={"source": "sample_models_basic.py", "updated": "true"},
         ),
     )
-    print(updated)
+    print(f"Updated (name: {updated.name}, version: {updated.version}, description: {updated.description})")
 
     print(f"Delete the model version created above (`{model_name}`@`{model_version}`):")
     project_client.beta.models.delete(name=model_name, version=model_version)

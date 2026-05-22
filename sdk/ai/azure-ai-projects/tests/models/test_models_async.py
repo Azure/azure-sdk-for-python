@@ -5,7 +5,7 @@
 # ------------------------------------
 """Live, recorded async tests for ``project_client.beta.models``.
 
-Mirrors :mod:`tests.models.test_models` for the async client. ``models_create``
+Mirrors :mod:`tests.models.test_models` for the async client. ``create_version``
 itself is implemented only on the sync client (it shells out to ``azcopy``); the
 async surface is exercised via ``list``, ``list_versions``, ``get`` and
 ``delete`` against a model registered with the sync helper as part of the
@@ -54,7 +54,7 @@ class TestModelsAsync(TestBase):
             endpoint=endpoint,
             credential=self.get_credential(SyncAIProjectClient, is_async=False),
         ) as sync_client:
-            registered = sync_client.beta.models.models_create(
+            registered = sync_client.beta.models.create_version(
                 name=model_name,
                 version=model_version,
                 source=data_folder,

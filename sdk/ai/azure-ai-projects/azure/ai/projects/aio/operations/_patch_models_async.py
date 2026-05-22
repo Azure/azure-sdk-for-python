@@ -8,19 +8,17 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+import asyncio
 import logging
 import os
-import shutil
-import subprocess
-import time
 from pathlib import Path
 from typing import Any, Optional, Union
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._operations import BetaModelsOperations as BetaModelsOperationsGenerated
-from ..models._models import (
+from ...models._models import (
     ModelPendingUploadRequest,
     ModelPendingUploadResponse,
     ModelVersion,
@@ -36,8 +34,8 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`beta.models <azure.ai.projects.operations.BetaOperations.models>` attribute.
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`beta.models <azure.ai.projects.aio.operations.BetaOperations.models>` attribute.
     """
 
     @staticmethod
@@ -64,24 +62,11 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         return sas_uri, container_blob_uri, pending_upload_id
 
     @staticmethod
-    def _resolve_azcopy(azcopy_path: Optional[str] = None) -> str:
-        """Locate the ``azcopy`` executable or raise ``RuntimeError``."""
-        azcopy = azcopy_path or shutil.which("azcopy")
-        if not azcopy:
-            raise RuntimeError(
-                "`azcopy` was not found on PATH. Install AzCopy "
-                "(https://aka.ms/downloadazcopy) and ensure it is on PATH, or "
-                "pass `azcopy_path=` explicitly."
-            )
-        return azcopy
-
-    @staticmethod
     def _validate_create_version_inputs(
         *,
         name: str,
         version: str,
         source: Union[str, "os.PathLike[str]"],
-        azcopy_path: Optional[str],
         wait_for_commit: bool,
         polling_timeout: float,
         polling_interval: float,
@@ -89,7 +74,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         """Validate ``create_version`` inputs up-front, before any service call.
 
         Returns the resolved ``Path`` for ``source``. Raises ``ValueError`` for
-        bad inputs and ``RuntimeError`` if ``azcopy`` cannot be located.
+        bad inputs.
         """
         if not isinstance(name, str) or not name.strip():
             raise ValueError("`name` must be a non-empty string.")
@@ -110,50 +95,44 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             if polling_interval <= 0:
                 raise ValueError("`polling_interval` must be > 0 when `wait_for_commit` is True.")
 
-        # Fail fast if azcopy isn't installed, before we provision a SAS container.
-        BetaModelsOperations._resolve_azcopy(azcopy_path)
         return source_path
 
     @staticmethod
-    def _run_azcopy(source: Path, sas_uri: str, *, azcopy_path: Optional[str] = None) -> None:
-        """Shell out to ``azcopy copy`` to upload ``source`` to the SAS container."""
-        azcopy = BetaModelsOperations._resolve_azcopy(azcopy_path)
+    async def _upload_with_container_client(source: Path, sas_uri: str) -> None:
+        """Upload ``source`` to the SAS container using ``azure.storage.blob.aio.ContainerClient``.
+
+        :raises RuntimeError: If ``azure-storage-blob`` is not installed.
+        """
+        try:
+            from azure.storage.blob.aio import ContainerClient  # pylint: disable=import-outside-toplevel
+        except ImportError as ex:
+            raise RuntimeError(
+                "`azure-storage-blob` is required for the async `create_version` helper. "
+                "Install it with `pip install azure-storage-blob aiohttp`."
+            ) from ex
 
         if source.is_dir():
-            src_arg = str(source / "*")
+            files = [p for p in source.rglob("*") if p.is_file()]
+            if not files:
+                raise ValueError(f"Upload source directory is empty: {source}")
         elif source.is_file():
-            src_arg = str(source)
+            files = [source]
         else:
             raise ValueError(f"Upload source does not exist: {source}")
 
-        cmd = [
-            azcopy,
-            "copy",
-            src_arg,
-            sas_uri,
-            "--from-to",
-            "LocalBlob",
-            "--recursive",
-        ]
-
         # Don't log the SAS query string — it's a credential.
-        redacted = cmd.copy()
-        redacted[3] = sas_uri.split("?", 1)[0] + "?<sas-redacted>"
-        logger.info("[create_version] running: %s", " ".join(redacted))
+        redacted = sas_uri.split("?", 1)[0] + "?<sas-redacted>"
+        logger.info("[create_version] uploading %d file(s) to %s", len(files), redacted)
 
-        completed = subprocess.run(cmd, check=False, capture_output=True, text=True)
-        if completed.stdout:
-            logger.debug("[create_version] azcopy stdout:\n%s", completed.stdout)
-        if completed.stderr:
-            logger.debug("[create_version] azcopy stderr:\n%s", completed.stderr)
-        if completed.returncode != 0:
-            raise RuntimeError(
-                f"azcopy exited with code {completed.returncode}.\n"
-                f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}"
-            )
+        async with ContainerClient.from_container_url(sas_uri) as container_client:
+            for f in files:
+                rel = f.relative_to(source).as_posix() if source.is_dir() else f.name
+                with f.open("rb") as fp:
+                    await container_client.upload_blob(name=rel, data=fp, overwrite=True)
+                logger.debug("[create_version] uploaded %s (%d bytes)", rel, f.stat().st_size)
 
-    @distributed_trace
-    def create_version(
+    @distributed_trace_async
+    async def create_version(
         self,
         *,
         name: str,
@@ -163,24 +142,26 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         base_model: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional["dict[str, str]"] = None,
-        azcopy_path: Optional[str] = None,
         wait_for_commit: bool = True,
         polling_timeout: float = 300.0,
         polling_interval: float = 2.0,
         **kwargs: Any,
     ) -> Optional[ModelVersion]:
-        """Register a local model by running the full upload-first sequence.
+        """Register a local model by running the full upload-first sequence (async).
 
         This wraps the three mandatory steps of the model-registration spec
         into a single call:
 
         1. :meth:`pending_upload` — provision a project-managed blob container
            and obtain a SAS URI.
-        2. ``azcopy copy`` — upload the local weight files directly to the
-           SAS container.
+        2. Upload the local weight files to the SAS container using
+           :class:`azure.storage.blob.aio.ContainerClient`.
         3. :meth:`pending_create_version` — finalize registration with the
            ``ModelVersion`` body (``blob_uri``, ``weight_type``, ``base_model``,
            ``description``, ``tags``).
+
+        Requires the ``azure-storage-blob`` package (with ``aiohttp``) for the
+        upload step.
 
         :keyword name: Name of the model to register. Required.
         :paramtype name: str
@@ -199,9 +180,6 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         :paramtype description: str
         :keyword tags: Optional asset tags.
         :paramtype tags: dict[str, str]
-        :keyword azcopy_path: Optional explicit path to the azcopy executable.
-            Defaults to ``shutil.which("azcopy")``.
-        :paramtype azcopy_path: str
         :keyword wait_for_commit: When True (default) poll :meth:`get` until
             the committed ``ModelVersion`` is observable, and return it.
             When False, return ``None`` after the async commit is accepted.
@@ -216,18 +194,14 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         :raises ValueError: If ``name``/``version`` are empty, ``source`` does
             not exist or is empty, polling parameters are non-positive, or the
             pending-upload response is missing the SAS / blob URI.
-        :raises RuntimeError: If ``azcopy`` is not on PATH or exits with a
-            non-zero status, or the registration does not commit before
-            ``polling_timeout`` elapses.
+        :raises RuntimeError: If ``azure-storage-blob`` is not installed or
+            the registration does not commit before ``polling_timeout`` elapses.
         """
         # --- Step 0: validate inputs up-front --------------------------------
-        # Cheap local checks so we don't provision a SAS container or run
-        # azcopy when something obviously wrong was passed in.
         source_path = self._validate_create_version_inputs(
             name=name,
             version=version,
             source=source,
-            azcopy_path=azcopy_path,
             wait_for_commit=wait_for_commit,
             polling_timeout=polling_timeout,
             polling_interval=polling_interval,
@@ -239,7 +213,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             name,
             version,
         )
-        pending = self.pending_upload(
+        pending = await self.pending_upload(
             name=name,
             version=version,
             body=ModelPendingUploadRequest(
@@ -254,9 +228,9 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             container_blob_uri,
         )
 
-        # --- Step 2: Upload via azcopy ---------------------------------------
-        logger.info("[create_version] step 2/3 azcopy upload from %s", source_path)
-        self._run_azcopy(source_path, sas_uri, azcopy_path=azcopy_path)
+        # --- Step 2: Upload via async ContainerClient ------------------------
+        logger.info("[create_version] step 2/3 async upload from %s", source_path)
+        await self._upload_with_container_client(source_path, sas_uri)
 
         # --- Step 3: Commit registration -------------------------------------
         body = ModelVersion(
@@ -271,25 +245,27 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
             name,
             version,
         )
-        self.pending_create_version(name=name, version=version, body=body, **kwargs)
+        await self.pending_create_version(name=name, version=version, body=body, **kwargs)
 
         if not wait_for_commit:
             return None
 
         # The async op returns 202; the service materializes the ModelVersion
         # asynchronously. Poll get() until it appears or we time out.
+        import time  # pylint: disable=import-outside-toplevel
+
         deadline = time.monotonic() + polling_timeout
         last_exc: Optional[BaseException] = None
         while True:
             try:
-                return self.get(name=name, version=version, **kwargs)
+                return await self.get(name=name, version=version, **kwargs)
             except ResourceNotFoundError as ex:
                 last_exc = ex
                 if time.monotonic() >= deadline:
                     raise RuntimeError(
                         f"Model {name!r}@{version!r} did not appear within " f"{polling_timeout}s after pending_create_version."
                     ) from last_exc
-                time.sleep(polling_interval)
+                await asyncio.sleep(polling_interval)
 
 
 __all__ = ["BetaModelsOperations"]

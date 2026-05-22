@@ -8,10 +8,10 @@
 DESCRIPTION:
     Given an asynchronous AIProjectClient, this sample demonstrates how to
     register a local model with a Microsoft Foundry project and exercise the
-    asynchronous `.beta.models` operations: `pending_upload`, `create_async`,
+    asynchronous `.beta.models` operations: `pending_upload`, `pending_create_version`,
     `get`, `list_versions`, `list`, `get_credentials`, `update`, and `delete`.
 
-    The async client does not expose the `models_create` convenience helper
+    The async client does not expose the `create_version` convenience helper
     (which shells out to the synchronous `azcopy` CLI). This sample instead
     drives the spec's three-step upload-first sequence directly:
 
@@ -19,12 +19,12 @@ DESCRIPTION:
          blob container and returns a SAS URI.
       2) Upload the local weight files to that SAS container using
          `azure.storage.blob.aio.ContainerClient`.
-      3) `create_async(...)` -- commit the registration. The service returns
+      3) `pending_create_version(...)` -- commit the registration. The service returns
          202 Accepted and finalizes the ModelVersion asynchronously, so we
          poll `get(...)` until the new version is observable.
 
 USAGE:
-    python sample_models_async.py
+    python sample_models_basic_async.py
 
     Before running the sample:
 
@@ -113,19 +113,19 @@ async def main() -> None:
                     await container_client.upload_blob(name=rel, data=fp, overwrite=True)
                 print(f"  uploaded {rel} ({f.stat().st_size} bytes)")
 
-        print(f"Step 3/3: create_async(name=`{model_name}`, version=`{model_version}`)")
-        await project_client.beta.models.create_async(
+        print(f"Step 3/3: pending_create_version(name=`{model_name}`, version=`{model_version}`)")
+        await project_client.beta.models.pending_create_version(
             name=model_name,
             version=model_version,
             body=ModelVersion(
                 blob_uri=container_blob_uri,
                 weight_type=FoundryModelWeightType.FULL_WEIGHT,
-                description="Sample model registered from sample_models_async.py",
-                tags={"source": "sample_models_async.py"},
+                description="Sample model registered from sample_models_basic_async.py",
+                tags={"source": "sample_models_basic_async.py"},
             ),
         )
 
-        # `create_async` returns 202 Accepted; poll `get` until the committed
+        # `pending_create_version` returns 202 Accepted; poll `get` until the committed
         # ModelVersion is observable.
         print(f"Polling get(`{model_name}`, `{model_version}`) until the ModelVersion is committed...")
         deadline = time.monotonic() + 300.0
@@ -137,10 +137,10 @@ async def main() -> None:
             except ResourceNotFoundError:
                 if time.monotonic() >= deadline:
                     raise RuntimeError(
-                        f"Model `{model_name}`@`{model_version}` did not appear within 300s after create_async."
+                        f"Model `{model_name}`@`{model_version}` did not appear within 300s after pending_create_version."
                     )
                 await asyncio.sleep(2.0)
-        print(model)
+        print(f"Created (name: {model.name}, version: {model.version}, blob_uri: {model.blob_uri})")
 
         print(f"List all versions of model `{model_name}`:")
         async for mv in project_client.beta.models.list_versions(name=model_name):
@@ -156,7 +156,7 @@ async def main() -> None:
             version=model_version,
             body=ModelCredentialRequest(blob_uri=model.blob_uri),
         )
-        print(creds)
+        print(f"Credentials (type: {type(creds).__name__})")
 
         print(f"Update description and tags on `{model_name}`@`{model_version}`:")
         updated = await project_client.beta.models.update(
@@ -164,10 +164,10 @@ async def main() -> None:
             version=model_version,
             body=UpdateModelVersionRequest(
                 description="Updated description",
-                tags={"source": "sample_models_async.py", "updated": "true"},
+                tags={"source": "sample_models_basic_async.py", "updated": "true"},
             ),
         )
-        print(updated)
+        print(f"Updated (name: {updated.name}, version: {updated.version}, description: {updated.description})")
 
         print(f"Delete the model version created above (`{model_name}`@`{model_version}`):")
         await project_client.beta.models.delete(name=model_name, version=model_version)
