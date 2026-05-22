@@ -23,14 +23,14 @@ import asyncio
 import logging
 
 from azure.ai.agentserver.core import AgentServerHost
-from azure.ai.agentserver.core.durable import RetryPolicy, durable_task
+from azure.ai.agentserver.core.durable import RetryPolicy, task
 from azure.ai.agentserver.core.durable._context import TaskContext
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-@durable_task(name="stream_numbers")
+@task(name="stream_numbers")
 async def stream_numbers(ctx: TaskContext[None]) -> str:
     """Stream numbers 0-4 with a short delay, then return a summary."""
     for i in range(5):

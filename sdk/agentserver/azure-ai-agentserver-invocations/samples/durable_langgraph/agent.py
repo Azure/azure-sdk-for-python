@@ -25,7 +25,7 @@ from langgraph.graph import END, START, StateGraph, add_messages
 from langgraph.types import Command, interrupt
 from typing_extensions import TypedDict
 
-from azure.ai.agentserver.core.durable import TaskContext, durable_task
+from azure.ai.agentserver.core.durable import TaskContext, task
 
 from .store import FileStore
 
@@ -308,7 +308,7 @@ async def _finalize_invocation(
 # ---------------------------------------------------------------------------
 
 
-@durable_task(name="langgraph_session", steerable=True)
+@task(name="langgraph_session", steerable=True)
 async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Run one LangGraph conversation turn with steering support.
 

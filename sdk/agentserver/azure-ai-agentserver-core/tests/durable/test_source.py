@@ -79,15 +79,15 @@ class TestTaskCreateRequestSource:
 
 
 class TestSourceLocalProvider:
-    """Source persisted via LocalFileDurableTaskProvider."""
+    """Source persisted via LocalFileTaskProvider."""
 
     @pytest.mark.asyncio
     async def test_source_persisted_and_retrieved(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         src = {"type": "test", "run_id": "abc123"}
         req = TaskCreateRequest(
             agent_name="agent",
@@ -105,10 +105,10 @@ class TestSourceLocalProvider:
     @pytest.mark.asyncio
     async def test_source_none_not_persisted(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         req = TaskCreateRequest(agent_name="agent", session_id="test-session")
         created = await provider.create(req)
         assert created.source is None
@@ -121,11 +121,11 @@ class TestSourceLocalProvider:
     async def test_source_immutable_after_create(self, tmp_path):
         """Source must not be changeable via PATCH — TaskPatchRequest has no source field."""
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._models import TaskPatchRequest
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         req = TaskCreateRequest(
             agent_name="agent",
             session_id="test-session",

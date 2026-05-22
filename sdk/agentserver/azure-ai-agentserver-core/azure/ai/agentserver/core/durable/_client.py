@@ -29,7 +29,7 @@ _AUTH_SCOPE = "https://ai.azure.com/.default"
 _API_VERSION = "v1"
 
 
-class HostedDurableTaskProvider:
+class HostedTaskProvider:
     """HTTP-backed provider for the Foundry Task Storage API.
 
     :param project_endpoint: The ``FOUNDRY_PROJECT_ENDPOINT`` base URL.
@@ -198,8 +198,9 @@ class HostedDurableTaskProvider:
         status: TaskStatus | None = None,
         lease_owner: str | None = None,
         tag: dict[str, str] | None = None,
+        source_type: str | None = None,
     ) -> list[TaskInfo]:
-        """List tasks via GET /internal/tasks.
+        """List tasks via GET /internal/tasks with automatic pagination.
 
         :keyword agent_name: Filter by agent name.
         :paramtype agent_name: str
@@ -211,6 +212,8 @@ class HostedDurableTaskProvider:
         :paramtype lease_owner: str | None
         :keyword tag: Filter by tag key-value pairs.
         :paramtype tag: dict[str, str] | None
+        :keyword source_type: Filter by source type.
+        :paramtype source_type: str | None
         :return: Matching task records.
         :rtype: list[TaskInfo]
         """
@@ -219,6 +222,7 @@ class HostedDurableTaskProvider:
             "api-version": _API_VERSION,
             "agent_name": agent_name,
             "session_id": session_id,
+            "limit": "100",
         }
         if status is not None:
             params["status"] = status
@@ -227,14 +231,28 @@ class HostedDurableTaskProvider:
         if tag:
             for key, value in tag.items():
                 params[f"tag.{key}"] = value
+        if source_type is not None:
+            params["source_type"] = source_type
 
-        response = await self._client.get(
-            self._base_url, headers=headers, params=params
-        )
-        response.raise_for_status()
-        data = response.json()
-        items: list[dict[str, Any]] = data.get("data", data.get("items", []))
-        return [TaskInfo.from_dict(item) for item in items]
+        all_tasks: list[TaskInfo] = []
+        while True:
+            response = await self._client.get(
+                self._base_url, headers=headers, params=params
+            )
+            response.raise_for_status()
+            data = response.json()
+            items: list[dict[str, Any]] = data.get("data", data.get("items", []))
+            all_tasks.extend(TaskInfo.from_dict(item) for item in items)
+
+            if not data.get("has_more", False):
+                break
+            # Use cursor-based pagination: after = last_id from current page
+            last_id = data.get("last_id")
+            if not last_id:
+                break
+            params["after"] = last_id
+
+        return all_tasks
 
     async def close(self) -> None:
         """Close the underlying HTTP client."""

@@ -17,7 +17,7 @@ from typing import Any
 
 from azure.ai.agentserver.core.durable import (
     TaskContext,
-    durable_task,
+    task,
 )
 
 from .store import FileStore
@@ -53,7 +53,7 @@ def _generate_reply(state: dict[str, Any]) -> str:
     )
 
 
-@durable_task(name="session_workflow")
+@task(name="session_workflow")
 async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Single durable function for the entire session.
 

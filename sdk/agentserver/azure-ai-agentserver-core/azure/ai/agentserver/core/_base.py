@@ -245,24 +245,24 @@ class AgentServerHost(Starlette):
             )
 
             # --- Durable task manager auto-initialization ---
-            durable_manager = None
+            task_manager = None
             try:
                 from .durable._manager import (  # pylint: disable=import-outside-toplevel
-                    DurableTaskManager,
+                    TaskManager,
                     set_task_manager,
                 )
 
-                durable_manager = DurableTaskManager(
+                task_manager = TaskManager(
                     config=cfg,
                     shutdown_event=asyncio.Event(),
                 )
-                set_task_manager(durable_manager)
-                await durable_manager.startup()
-                logger.info("DurableTaskManager initialized automatically")
+                set_task_manager(task_manager)
+                await task_manager.startup()
+                logger.info("TaskManager initialized automatically")
             except ImportError:
                 pass  # durable module not available
             except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to initialize DurableTaskManager", exc_info=True)
+                logger.warning("Failed to initialize TaskManager", exc_info=True)
 
             yield
 
@@ -272,18 +272,18 @@ class AgentServerHost(Starlette):
                 self._graceful_shutdown_timeout,
             )
 
-            # Shutdown durable task manager
-            if durable_manager is not None:
+            # Shutdown task manager
+            if task_manager is not None:
                 try:
-                    await durable_manager.shutdown()
+                    await task_manager.shutdown()
                     from .durable._manager import (  # pylint: disable=import-outside-toplevel
                         set_task_manager as _clear_manager,
                     )
 
                     _clear_manager(None)
-                    logger.info("DurableTaskManager shut down")
+                    logger.info("TaskManager shut down")
                 except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Error shutting down DurableTaskManager", exc_info=True)
+                    logger.warning("Error shutting down TaskManager", exc_info=True)
 
             if self._graceful_shutdown_timeout == 0:
                 logger.info("Graceful shutdown drain period disabled (timeout=0)")

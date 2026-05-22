@@ -115,13 +115,13 @@ python my_agent.py
 
 ### Durable long-running agents
 
-The `@durable_task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
+The `@task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
 
 ```python
 from datetime import timedelta
-from azure.ai.agentserver.core.durable import durable_task, TaskContext, RetryPolicy
+from azure.ai.agentserver.core.durable import task, TaskContext, RetryPolicy
 
-@durable_task(
+@task(
     timeout=timedelta(minutes=30),
     retry=RetryPolicy.exponential_backoff(max_attempts=3),
     tags={"priority": "high"},
@@ -143,7 +143,7 @@ print(result.output)  # {"summary": "..."}
 **Multi-turn suspend/resume (e.g., conversational agents):**
 
 ```python
-@durable_task()
+@task()
 async def chat_session(ctx: TaskContext[dict]) -> dict:
     message = ctx.input["message"]
     history = ctx.metadata.get("history", [])

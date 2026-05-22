@@ -1,48 +1,48 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for @durable_task decorator and DurableTask class."""
+"""Tests for @task decorator and Task class."""
 
 import asyncio
 
 import pytest
 
 from azure.ai.agentserver.core.durable import (
-    DurableTask,
-    DurableTaskOptions,
+    Task,
+    TaskOptions,
     TaskContext,
-    durable_task,
+    task,
 )
 
 
-class TestDurableTaskDecorator:
-    """Tests for the @durable_task decorator."""
+class TestTaskDecorator:
+    """Tests for the @task decorator."""
 
     def test_bare_decorator(self) -> None:
-        """@durable_task with no arguments produces a DurableTask."""
+        """@task with no arguments produces a Task."""
 
-        @durable_task
+        @task
         async def my_task(ctx: TaskContext[str]) -> int:
             return 42
 
-        assert isinstance(my_task, DurableTask)
+        assert isinstance(my_task, Task)
         # Name includes class/method scope when defined inside a method
         assert "my_task" in my_task.name
 
     def test_decorator_with_name(self) -> None:
-        """@durable_task(name=...) sets a custom name."""
+        """@task(name=...) sets a custom name."""
 
-        @durable_task(name="custom_name")
+        @task(name="custom_name")
         async def my_task(ctx: TaskContext[str]) -> int:
             return 0
 
         assert my_task.name == "custom_name"
 
     def test_decorator_with_all_options(self) -> None:
-        """All decorator options are forwarded to DurableTaskOptions."""
+        """All decorator options are forwarded to TaskOptions."""
         from datetime import timedelta
 
-        @durable_task(
+        @task(
             name="full",
             ephemeral=False,
             lease_duration_seconds=120,
@@ -63,26 +63,26 @@ class TestDurableTaskDecorator:
         assert my_task._opts.timeout == timedelta(minutes=5)
 
     def test_rejects_sync_function(self) -> None:
-        """@durable_task rejects synchronous functions."""
+        """@task rejects synchronous functions."""
         with pytest.raises(TypeError, match="async function"):
 
-            @durable_task
+            @task
             def sync_fn(ctx: TaskContext[str]) -> int:
                 return 1
 
     def test_rejects_non_callable(self) -> None:
-        """@durable_task(...) rejects non-callable objects."""
+        """@task(...) rejects non-callable objects."""
         with pytest.raises((TypeError, AttributeError)):
-            durable_task(42)  # type: ignore[arg-type]
+            task(42)  # type: ignore[arg-type]
 
 
-class TestDurableTaskOptions:
-    """Tests for DurableTaskOptions merge via .options()."""
+class TestTaskOptions:
+    """Tests for TaskOptions merge via .options()."""
 
     def test_options_returns_new_instance(self) -> None:
-        """options() returns a new DurableTask, original unchanged."""
+        """options() returns a new Task, original unchanged."""
 
-        @durable_task(ephemeral=True)
+        @task(ephemeral=True)
         async def my_task(ctx: TaskContext[str]) -> int:
             return 1
 
@@ -94,7 +94,7 @@ class TestDurableTaskOptions:
     def test_options_merges_tags(self) -> None:
         """options() merges tags with existing ones."""
 
-        @durable_task(tags={"a": "1"})
+        @task(tags={"a": "1"})
         async def my_task(ctx: TaskContext[str]) -> int:
             return 1
 
@@ -104,7 +104,7 @@ class TestDurableTaskOptions:
     def test_options_overrides_title(self) -> None:
         """options() overrides title."""
 
-        @durable_task(title="original")
+        @task(title="original")
         async def my_task(ctx: TaskContext[str]) -> int:
             return 1
 
@@ -112,9 +112,9 @@ class TestDurableTaskOptions:
         assert updated._opts.title == "override"
 
     def test_default_options(self) -> None:
-        """Default DurableTaskOptions has sensible defaults."""
+        """Default TaskOptions has sensible defaults."""
 
-        @durable_task
+        @task
         async def my_task(ctx: TaskContext[str]) -> int:
             return 1
 
@@ -132,7 +132,7 @@ class TestTypeExtraction:
     def test_input_type_str(self) -> None:
         """Extracts str as Input type from TaskContext[str]."""
 
-        @durable_task
+        @task
         async def my_task(ctx: TaskContext[str]) -> int:
             return 1
 
@@ -141,7 +141,7 @@ class TestTypeExtraction:
     def test_input_type_dict(self) -> None:
         """Extracts dict as Input type."""
 
-        @durable_task
+        @task
         async def my_task(ctx: TaskContext[dict]) -> str:
             return ""
 
@@ -150,7 +150,7 @@ class TestTypeExtraction:
     def test_output_type_int(self) -> None:
         """Extracts int as Output type from return annotation."""
 
-        @durable_task
+        @task
         async def my_task(ctx: TaskContext[str]) -> int:
             return 1
 

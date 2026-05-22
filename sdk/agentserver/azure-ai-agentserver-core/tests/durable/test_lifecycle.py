@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for lifecycle-aware .run() and .start() on DurableTask."""
+"""Tests for lifecycle-aware .run() and .start() on Task."""
 
 import json
 from pathlib import Path
@@ -10,7 +10,7 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     TaskContext,
-    durable_task,
+    task,
 )
 from azure.ai.agentserver.core.durable._exceptions import TaskConflictError
 
@@ -20,15 +20,15 @@ class TestLifecycle:
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -39,7 +39,7 @@ class TestLifecycle:
                 "is_hosted": False,
             },
         )()
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
         return manager, mgr_mod
@@ -84,7 +84,7 @@ class TestLifecycle:
         """run() on non-existent task → creates and starts, entry_mode='fresh'."""
         observed_mode: list[str] = []
 
-        @durable_task(title="lifecycle-fresh")
+        @task(title="lifecycle-fresh")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_mode.append(ctx.entry_mode)
             return "result"
@@ -102,7 +102,7 @@ class TestLifecycle:
         """run() on pending task → starts it, entry_mode='fresh'."""
         observed_mode: list[str] = []
 
-        @durable_task(title="lifecycle-pending")
+        @task(title="lifecycle-pending")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_mode.append(ctx.entry_mode)
             return "started"
@@ -132,7 +132,7 @@ class TestLifecycle:
         """run() on suspended task → resumes with new input, entry_mode='resumed'."""
         observed: list[tuple[str, str]] = []
 
-        @durable_task(title="lifecycle-resume", ephemeral=False)
+        @task(title="lifecycle-resume", ephemeral=False)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.input))
             return await ctx.suspend(output="waiting")
@@ -153,7 +153,7 @@ class TestLifecycle:
     async def test_run_in_progress_not_stale_raises(self, tmp_path) -> None:
         """run() on in_progress (not stale) task → TaskConflictError."""
 
-        @durable_task(title="lifecycle-conflict")
+        @task(title="lifecycle-conflict")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "never"
 
@@ -183,7 +183,7 @@ class TestLifecycle:
         """run() on stale in_progress task → recovers, entry_mode='recovered'."""
         observed_mode: list[str] = []
 
-        @durable_task(title="lifecycle-stale")
+        @task(title="lifecycle-stale")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_mode.append(ctx.entry_mode)
             return "recovered"
@@ -218,7 +218,7 @@ class TestLifecycle:
     async def test_run_completed_task_raises(self, tmp_path) -> None:
         """run() on completed task → TaskConflictError (no restart)."""
 
-        @durable_task(title="lifecycle-completed")
+        @task(title="lifecycle-completed")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "never"
 
@@ -247,7 +247,7 @@ class TestLifecycle:
         """start() follows same lifecycle rules as run() — fresh + conflict."""
         observed_mode: list[str] = []
 
-        @durable_task(title="lifecycle-start")
+        @task(title="lifecycle-start")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_mode.append(ctx.entry_mode)
             return "started"
@@ -282,7 +282,7 @@ class TestLifecycle:
     async def test_stale_timeout_parameter(self, tmp_path) -> None:
         """stale_timeout controls when in_progress is considered stale."""
 
-        @durable_task(title="stale-timeout")
+        @task(title="stale-timeout")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "ok"
 

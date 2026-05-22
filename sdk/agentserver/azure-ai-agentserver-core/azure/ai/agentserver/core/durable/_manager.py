@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""DurableTaskManager — lifecycle orchestration for durable tasks.
+"""TaskManager — lifecycle orchestration for durable tasks.
 
 Manages task creation, lease acquisition, execution, recovery, and
 shutdown. One instance per ``AgentServerHost``, accessed via the
@@ -19,12 +19,12 @@ from typing import Any, TypeVar
 
 from .._config import AgentConfig
 from ._context import EntryMode, TaskContext
-from ._decorator import DurableTaskOptions, _deserialize_input, _serialize_input
+from ._decorator import TaskOptions, _deserialize_input, _serialize_input
 from ._exceptions import TaskFailed, TaskNotFound
 from ._lease import derive_lease_owner, generate_instance_id, lease_renewal_loop
 from ._metadata import TaskMetadata
 from ._models import TaskCreateRequest, TaskInfo, TaskPatchRequest, TaskStatus
-from ._provider import DurableTaskProvider
+from ._provider import TaskProvider
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
@@ -35,10 +35,10 @@ from .._server_version import build_server_version as _build_server_version
 logger = logging.getLogger("azure.ai.agentserver.durable")
 
 #: Auto-stamped source type for all tasks created by this framework.
-_SOURCE_TYPE = "agentserver.durable_task"
+_SOURCE_TYPE = "agentserver.task"
 
 #: Reserved tag key for task name filtering via the LIST API.
-_TAG_TASK_NAME = "_durable_task_name"
+_TAG_TASK_NAME = "_task_name"
 
 #: Pre-computed server version segment for source stamps.
 _SOURCE_SERVER_VERSION = _build_server_version(
@@ -49,31 +49,31 @@ Input = TypeVar("Input")
 Output = TypeVar("Output")
 
 # Module-level manager singleton
-_manager: DurableTaskManager | None = None
+_manager: TaskManager | None = None
 
 
-def get_task_manager() -> DurableTaskManager:
-    """Return the active DurableTaskManager singleton.
+def get_task_manager() -> TaskManager:
+    """Return the active TaskManager singleton.
 
     :raises RuntimeError: If no manager has been initialized.
     :return: The active manager.
-    :rtype: DurableTaskManager
+    :rtype: TaskManager
     """
     if _manager is None:
         raise RuntimeError(
-            "DurableTaskManager not initialized. Ensure durable tasks "
+            "TaskManager not initialized. Ensure durable tasks "
             "are enabled on the AgentServerHost."  # pylint: disable=implicit-str-concat
         )
     return _manager
 
 
-def set_task_manager(manager: DurableTaskManager | None) -> None:
-    """Set the module-level DurableTaskManager singleton.
+def set_task_manager(manager: TaskManager | None) -> None:
+    """Set the module-level TaskManager singleton.
 
     Called by ``AgentServerHost`` during startup/shutdown.
 
     :param manager: The manager to set, or ``None`` to clear.
-    :type manager: DurableTaskManager | None
+    :type manager: TaskManager | None
     """
     global _manager  # pylint: disable=global-statement
     _manager = manager
@@ -109,7 +109,7 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         terminate_event: asyncio.Event | None = None,
         fn: Callable[..., Awaitable[Any]] | None = None,
         input_type: type[Any] | None = None,
-        opts: DurableTaskOptions | None = None,
+        opts: TaskOptions | None = None,
         retry: RetryPolicy | None = None,
     ) -> None:
         self.task_id = task_id
@@ -126,7 +126,7 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         self.retry = retry
 
 
-class DurableTaskManager:
+class TaskManager:
     """Lifecycle orchestrator for durable tasks.
 
     Manages provider selection, task creation, lease management,
@@ -135,7 +135,7 @@ class DurableTaskManager:
     :param config: Resolved agent configuration.
     :type config: AgentConfig
     :param provider: Optional explicit provider (for testing).
-    :type provider: DurableTaskProvider | None
+    :type provider: TaskProvider | None
     :param shutdown_event: Shared shutdown event from the host.
     :type shutdown_event: asyncio.Event | None
     :param shutdown_grace_seconds: Seconds to wait for tasks to checkpoint
@@ -147,7 +147,7 @@ class DurableTaskManager:
         self,
         config: AgentConfig,
         *,
-        provider: DurableTaskProvider | None = None,
+        provider: TaskProvider | None = None,
         shutdown_event: asyncio.Event | None = None,
         shutdown_grace_seconds: float = 25.0,
     ) -> None:
@@ -155,7 +155,7 @@ class DurableTaskManager:
         self._provider = provider or self._create_provider(config)
         self._active_tasks: dict[str, _ActiveTask] = {}
         self._resume_callbacks: dict[str, Callable[..., Any]] = {}
-        self._resume_opts: dict[str, DurableTaskOptions] = {}
+        self._resume_opts: dict[str, TaskOptions] = {}
         self._lease_owner = derive_lease_owner(config.session_id or "local")
         self._instance_id = generate_instance_id()
         self._shutdown_event = shutdown_event or asyncio.Event()
@@ -173,7 +173,7 @@ class DurableTaskManager:
         registered callbacks to dispatch recovered tasks back to the correct
         function.
 
-        :param fn_name: The task name (from ``@durable_task(name=...)``).
+        :param fn_name: The task name (from ``@task(name=...)``).
         :type fn_name: str
         :return: Source metadata dict.
         :rtype: dict[str, str]
@@ -185,7 +185,7 @@ class DurableTaskManager:
         }
 
     @staticmethod
-    def _create_provider(config: AgentConfig) -> DurableTaskProvider:
+    def _create_provider(config: AgentConfig) -> TaskProvider:
         """Auto-select provider based on hosting environment.
 
         The Task Storage API is not yet generally available. To avoid
@@ -198,7 +198,7 @@ class DurableTaskManager:
         :param config: The agent configuration.
         :type config: AgentConfig
         :return: The storage provider instance.
-        :rtype: DurableTaskProvider
+        :rtype: TaskProvider
         """
         import os  # pylint: disable=import-outside-toplevel
 
@@ -206,7 +206,7 @@ class DurableTaskManager:
 
         if config.is_hosted and task_api_enabled in ("1", "true", "yes"):
             from ._client import (  # pylint: disable=import-outside-toplevel
-                HostedDurableTaskProvider,
+                HostedTaskProvider,
             )
 
             try:
@@ -221,9 +221,9 @@ class DurableTaskManager:
 
             logger.info(
                 "Task Storage API enabled via FOUNDRY_TASK_API_ENABLED; "  # pylint: disable=implicit-str-concat
-                "using HostedDurableTaskProvider"
+                "using HostedTaskProvider"
             )
-            return HostedDurableTaskProvider(
+            return HostedTaskProvider(
                 project_endpoint=config.project_endpoint,
                 credential=DefaultAzureCredential(),
             )
@@ -236,17 +236,17 @@ class DurableTaskManager:
             )
 
         from ._local_provider import (  # pylint: disable=import-outside-toplevel
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
 
-        return LocalFileDurableTaskProvider(base_dir=Path.home() / ".durable-tasks")
+        return LocalFileTaskProvider(base_dir=Path.home() / ".durable-tasks")
 
     @property
-    def provider(self) -> DurableTaskProvider:
+    def provider(self) -> TaskProvider:
         """The storage provider.
 
         :return: The active provider.
-        :rtype: DurableTaskProvider
+        :rtype: TaskProvider
         """
         return self._provider
 
@@ -254,7 +254,7 @@ class DurableTaskManager:
         self,
         fn_name: str,
         fn: Callable[..., Any],
-        opts: DurableTaskOptions | None = None,
+        opts: TaskOptions | None = None,
     ) -> None:
         """Register a function as a resume callback.
 
@@ -263,7 +263,7 @@ class DurableTaskManager:
         :param fn: The async function to call on resume.
         :type fn: Callable[..., Any]
         :param opts: The task options (for stream_handler_factory etc.).
-        :type opts: DurableTaskOptions | None
+        :type opts: TaskOptions | None
         """
         self._resume_callbacks[fn_name] = fn
         if opts is not None:
@@ -276,12 +276,11 @@ class DurableTaskManager:
         session_id: str | None = None,
         status: TaskStatus | None = None,
     ) -> list[TaskInfo]:
-        """List tasks scoped to a specific durable task function.
+        """List tasks scoped to a specific task function.
 
         Uses server-side filtering (``agent_name``, ``session_id``,
-        ``_durable_task_name`` tag, ``status``) and client-side filtering
-        (``source.type``) to return only tasks created by this framework
-        for the given function.
+        ``_task_name`` tag, ``status``, ``source_type``) to return only
+        tasks created by this framework for the given function.
 
         :keyword fn_name: The task function name (stable identity anchor).
         :paramtype fn_name: str
@@ -295,20 +294,14 @@ class DurableTaskManager:
         resolved_session = session_id or self._config.session_id or "local"
         agent_name = self._config.agent_name or "default"
 
-        # Server-side filters: agent_name, session_id, tag, status
-        results = await self._provider.list(
+        # All filters are now server-side
+        return await self._provider.list(
             agent_name=agent_name,
             session_id=resolved_session,
             status=status,
             tag={_TAG_TASK_NAME: fn_name},
+            source_type=_SOURCE_TYPE,
         )
-
-        # Client-side filter: source.type (until source_type server filter exists)
-        return [
-            task
-            for task in results
-            if task.source and task.source.get("type") == _SOURCE_TYPE
-        ]
 
     def _register_steering_future(self, task_id: str) -> asyncio.Future[Any]:
         """Create and register a future for a queued steering input.
@@ -334,7 +327,7 @@ class DurableTaskManager:
         Called by ``AgentServerHost`` during lifespan startup.
         """
         logger.info(
-            "DurableTaskManager starting (owner=%s, instance=%s, hosted=%s)",
+            "TaskManager starting (owner=%s, instance=%s, hosted=%s)",
             self._lease_owner,
             self._instance_id,
             self._config.is_hosted,
@@ -355,7 +348,7 @@ class DurableTaskManager:
 
         Called by ``AgentServerHost`` during lifespan shutdown.
         """
-        logger.info("DurableTaskManager shutting down")
+        logger.info("TaskManager shutting down")
         self._shutdown_event.set()
 
         # Signal shutdown on all active contexts
@@ -406,7 +399,7 @@ class DurableTaskManager:
         session_id: str | None,
         title: str,
         tags: dict[str, str],
-        opts: DurableTaskOptions,
+        opts: TaskOptions,
         retry: RetryPolicy | None = None,
         entry_mode: EntryMode = "fresh",
     ) -> Any:
@@ -427,7 +420,7 @@ class DurableTaskManager:
         :keyword tags: Task tags.
         :paramtype tags: dict[str, str]
         :keyword opts: Task options.
-        :paramtype opts: DurableTaskOptions
+        :paramtype opts: TaskOptions
         :keyword entry_mode: Entry mode.
         :paramtype entry_mode: EntryMode
         :keyword retry: Retry policy.
@@ -466,7 +459,7 @@ class DurableTaskManager:
         title: str,
         tags: dict[str, str],
         description: str | None = None,
-        opts: DurableTaskOptions,
+        opts: TaskOptions,
         retry: RetryPolicy | None = None,
         entry_mode: EntryMode = "fresh",
         stream_handler: StreamHandler | None = None,
@@ -495,7 +488,7 @@ class DurableTaskManager:
         :keyword description: Optional task description.
         :paramtype description: str | None
         :keyword opts: Task options.
-        :paramtype opts: DurableTaskOptions
+        :paramtype opts: TaskOptions
         :keyword retry: Retry policy.
         :paramtype retry: RetryPolicy | None
         :keyword entry_mode: Why this execution is starting.
@@ -732,7 +725,7 @@ class DurableTaskManager:
         entry_mode: EntryMode,
         input_val: Any | None = None,
         input_type: type[Any] | None = None,
-        opts: DurableTaskOptions | None = None,
+        opts: TaskOptions | None = None,
         retry: RetryPolicy | None = None,
         stream_handler: StreamHandler | None = None,
     ) -> TaskRun[Any]:
@@ -754,7 +747,7 @@ class DurableTaskManager:
         :keyword input_type: Type for deserializing persisted input.
         :paramtype input_type: type[Any] | None
         :keyword opts: Task options (uses defaults if not provided).
-        :paramtype opts: DurableTaskOptions | None
+        :paramtype opts: TaskOptions | None
         :keyword retry: Retry policy.
         :paramtype retry: RetryPolicy | None
         :keyword stream_handler: Custom stream handler. If ``None``, falls
@@ -764,7 +757,7 @@ class DurableTaskManager:
         :rtype: TaskRun[Any]
         """
         task_id = task_info.id
-        resolved_opts = opts or DurableTaskOptions(name=fn_name, ephemeral=False)
+        resolved_opts = opts or TaskOptions(name=fn_name, ephemeral=False)
         lease_duration = resolved_opts.lease_duration_seconds
 
         # Transition to in_progress with new lease
@@ -981,7 +974,7 @@ class DurableTaskManager:
         fn: Callable[..., Awaitable[Any]],
         ctx: TaskContext[Any],
         task_id: str,
-        opts: DurableTaskOptions,
+        opts: TaskOptions,
         result_future: asyncio.Future[Any],
         renewal_cancel: asyncio.Event,
         retry: RetryPolicy | None = None,
@@ -1001,7 +994,7 @@ class DurableTaskManager:
         :keyword task_id: The task identifier.
         :paramtype task_id: str
         :keyword opts: The task options.
-        :paramtype opts: DurableTaskOptions
+        :paramtype opts: TaskOptions
         :keyword result_future: Future to resolve with the result.
         :paramtype result_future: asyncio.Future[Any]
         :keyword renewal_cancel: Event to cancel lease renewal.
@@ -1052,7 +1045,7 @@ class DurableTaskManager:
         fn: Callable[..., Awaitable[Any]],
         ctx: TaskContext[Any],
         task_id: str,
-        opts: DurableTaskOptions,
+        opts: TaskOptions,
         result_future: asyncio.Future[Any],
         renewal_cancel: asyncio.Event,
         retry: RetryPolicy | None = None,
@@ -1068,7 +1061,7 @@ class DurableTaskManager:
         :keyword task_id: The task identifier.
         :paramtype task_id: str
         :keyword opts: The task options.
-        :paramtype opts: DurableTaskOptions
+        :paramtype opts: TaskOptions
         :keyword result_future: Future to resolve with the result.
         :paramtype result_future: asyncio.Future[Any]
         :keyword renewal_cancel: Event to cancel lease renewal.
@@ -1310,7 +1303,7 @@ class DurableTaskManager:
         *,
         task_id: str,
         ctx: TaskContext[Any],
-        opts: DurableTaskOptions,
+        opts: TaskOptions,
         result_future: asyncio.Future[Any],
         partial_output: Any | None = None,
     ) -> TaskContext[Any] | None:
@@ -1469,7 +1462,7 @@ class DurableTaskManager:
         task_id: str,
         result: Any,
         metadata: TaskMetadata,
-        opts: DurableTaskOptions,
+        opts: TaskOptions,
     ) -> bool:
         """Handle successful task completion.
 
@@ -1480,7 +1473,7 @@ class DurableTaskManager:
         :keyword metadata: The task metadata.
         :paramtype metadata: TaskMetadata
         :keyword opts: The task options.
-        :paramtype opts: DurableTaskOptions
+        :paramtype opts: TaskOptions
         :return: True if completion succeeded, False if etag conflict
             detected (steerable tasks only — caller should re-drain).
         :rtype: bool
@@ -1543,7 +1536,7 @@ class DurableTaskManager:
         task_id: str,
         exc: Exception,
         metadata: TaskMetadata,
-        opts: DurableTaskOptions,
+        opts: TaskOptions,
     ) -> None:
         """Handle task failure.
 
@@ -1554,7 +1547,7 @@ class DurableTaskManager:
         :keyword metadata: The task metadata.
         :paramtype metadata: TaskMetadata
         :keyword opts: The task options.
-        :paramtype opts: DurableTaskOptions
+        :paramtype opts: TaskOptions
         """
         error_dict = {
             "type": type(exc).__name__,
@@ -1597,7 +1590,7 @@ class DurableTaskManager:
         reason: str | None,
         output: Any | None,
         metadata: TaskMetadata,
-        opts: DurableTaskOptions,  # pylint: disable=unused-argument
+        opts: TaskOptions,  # pylint: disable=unused-argument
     ) -> None:
         """Handle task suspension.
 
@@ -1610,7 +1603,7 @@ class DurableTaskManager:
         :keyword metadata: The task metadata.
         :paramtype metadata: TaskMetadata
         :keyword opts: The task options.
-        :paramtype opts: DurableTaskOptions
+        :paramtype opts: TaskOptions
         """
         payload_patch: dict[str, Any] = {
             "metadata": metadata.to_dict(),

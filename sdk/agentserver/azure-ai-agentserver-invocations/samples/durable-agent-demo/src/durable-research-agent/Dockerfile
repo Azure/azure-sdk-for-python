@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app.py agent.py supervisor.py entrypoint.sh ./
 RUN chmod +x entrypoint.sh
 
-# Use local file-based durability (Task Storage API not yet available in this region)
-ENV FOUNDRY_TASK_API_ENABLED=0
+# Enable Task Storage API integration
+ENV FOUNDRY_TASK_API_ENABLED=1
 ENV STAGE_DURATION=5
 
 EXPOSE 8088

@@ -18,7 +18,7 @@ import uuid
 from collections.abc import Awaitable, Callable
 
 from ._models import TaskPatchRequest
-from ._provider import DurableTaskProvider
+from ._provider import TaskProvider
 
 logger = logging.getLogger("azure.ai.agentserver.durable")
 
@@ -50,7 +50,7 @@ def generate_instance_id() -> str:
 
 
 async def lease_renewal_loop(
-    provider: DurableTaskProvider,
+    provider: TaskProvider,
     task_id: str,
     *,
     lease_owner: str,
@@ -71,7 +71,7 @@ async def lease_renewal_loop(
     The loop exits when ``cancel_event`` is set or the task is cancelled.
 
     :param provider: The storage provider.
-    :type provider: DurableTaskProvider
+    :type provider: TaskProvider
     :param task_id: The task to renew.
     :type task_id: str
     :keyword lease_owner: The stable lease owner.

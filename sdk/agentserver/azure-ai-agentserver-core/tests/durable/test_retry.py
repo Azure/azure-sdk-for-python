@@ -15,7 +15,7 @@ from azure.ai.agentserver.core.durable import (
     RetryPolicy,
     TaskContext,
     TaskFailed,
-    durable_task,
+    task,
 )
 
 
@@ -240,20 +240,20 @@ class TestPresets:
 
 
 class TestRetryIntegration:
-    """Integration tests that run tasks through the full DurableTaskManager."""
+    """Integration tests that run tasks through the full TaskManager."""
 
     async def _setup_manager(self, tmp_path):
         """Create a manager with local file provider pointing to tmp_path."""
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -264,7 +264,7 @@ class TestRetryIntegration:
                 "is_hosted": False,
             },
         )()
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
         return manager, mgr_mod
@@ -278,7 +278,7 @@ class TestRetryIntegration:
         """Task fails twice then succeeds on attempt 2."""
         call_log: list[int] = []
 
-        @durable_task(title="retry-test")
+        @task(title="retry-test")
         async def flaky(ctx: TaskContext[str]) -> str:
             call_log.append(ctx.run_attempt)
             if ctx.run_attempt < 2:
@@ -302,7 +302,7 @@ class TestRetryIntegration:
     async def test_retry_exhausted(self, tmp_path) -> None:
         """Task always fails — retries exhaust and TaskFailed is raised."""
 
-        @durable_task(title="always-fail")
+        @task(title="always-fail")
         async def always_fail(ctx: TaskContext[str]) -> str:
             raise ValueError(f"boom on attempt {ctx.run_attempt}")
 
@@ -330,7 +330,7 @@ class TestRetryIntegration:
         """Wrong exception type — fails immediately without retry."""
         attempts: list[int] = []
 
-        @durable_task(title="wrong-exc")
+        @task(title="wrong-exc")
         async def wrong_exc(ctx: TaskContext[str]) -> str:
             attempts.append(ctx.run_attempt)
             raise TypeError("not retryable")

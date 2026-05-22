@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for the LocalFileDurableTaskProvider."""
+"""Tests for the LocalFileTaskProvider."""
 
 import json
 from pathlib import Path
@@ -10,7 +10,7 @@ from typing import Any
 import pytest
 
 from azure.ai.agentserver.core.durable._local_provider import (
-    LocalFileDurableTaskProvider,
+    LocalFileTaskProvider,
 )
 from azure.ai.agentserver.core.durable._models import (
     TaskCreateRequest,
@@ -19,9 +19,9 @@ from azure.ai.agentserver.core.durable._models import (
 
 
 @pytest.fixture
-def provider(tmp_path: Path) -> LocalFileDurableTaskProvider:
+def provider(tmp_path: Path) -> LocalFileTaskProvider:
     """Create a local provider backed by a temp directory."""
-    return LocalFileDurableTaskProvider(base_dir=tmp_path)
+    return LocalFileTaskProvider(base_dir=tmp_path)
 
 
 @pytest.fixture
@@ -44,47 +44,47 @@ class TestLocalProviderCRUD:
     @pytest.mark.asyncio
     async def test_create_and_get(
         self,
-        provider: LocalFileDurableTaskProvider,
+        provider: LocalFileTaskProvider,
         sample_create_request: TaskCreateRequest,
     ) -> None:
         """create returns a TaskInfo; get retrieves it."""
-        task = await provider.create(sample_create_request)
-        assert task.id
-        assert task.status == "pending"
-        assert task.agent_name == "test-agent"
+        task_record = await provider.create(sample_create_request)
+        assert task_record.id
+        assert task_record.status == "pending"
+        assert task_record.agent_name == "test-agent"
 
-        fetched = await provider.get(task.id)
+        fetched = await provider.get(task_record.id)
         assert fetched is not None
-        assert fetched.id == task.id
+        assert fetched.id == task_record.id
 
     @pytest.mark.asyncio
     async def test_update_status(
         self,
-        provider: LocalFileDurableTaskProvider,
+        provider: LocalFileTaskProvider,
         sample_create_request: TaskCreateRequest,
     ) -> None:
         """update changes the status."""
-        task = await provider.create(sample_create_request)
+        task_record = await provider.create(sample_create_request)
         patch = TaskPatchRequest(
             status="in_progress",
-            if_match=task.etag,
+            if_match=task_record.etag,
         )
-        updated = await provider.update(task.id, patch)
+        updated = await provider.update(task_record.id, patch)
         assert updated.status == "in_progress"
 
     @pytest.mark.asyncio
     async def test_update_payload(
         self,
-        provider: LocalFileDurableTaskProvider,
+        provider: LocalFileTaskProvider,
         sample_create_request: TaskCreateRequest,
     ) -> None:
         """update merges payload."""
-        task = await provider.create(sample_create_request)
+        task_record = await provider.create(sample_create_request)
         patch = TaskPatchRequest(
             payload={"output": {"result": 42}},
-            if_match=task.etag,
+            if_match=task_record.etag,
         )
-        updated = await provider.update(task.id, patch)
+        updated = await provider.update(task_record.id, patch)
         assert updated.payload is not None
         assert updated.payload["output"]["result"] == 42
         # Original input preserved
@@ -93,21 +93,21 @@ class TestLocalProviderCRUD:
     @pytest.mark.asyncio
     async def test_etag_mismatch_raises(
         self,
-        provider: LocalFileDurableTaskProvider,
+        provider: LocalFileTaskProvider,
         sample_create_request: TaskCreateRequest,
     ) -> None:
         """update raises on ETag mismatch."""
-        task = await provider.create(sample_create_request)
+        task_record = await provider.create(sample_create_request)
         patch = TaskPatchRequest(
             status="in_progress",
             if_match="wrong-etag",
         )
         with pytest.raises(ValueError, match="ETag mismatch"):
-            await provider.update(task.id, patch)
+            await provider.update(task_record.id, patch)
 
     @pytest.mark.asyncio
     async def test_get_nonexistent_returns_none(
-        self, provider: LocalFileDurableTaskProvider
+        self, provider: LocalFileTaskProvider
     ) -> None:
         """get returns None for nonexistent task."""
         result = await provider.get("nonexistent-id")
@@ -116,13 +116,13 @@ class TestLocalProviderCRUD:
     @pytest.mark.asyncio
     async def test_delete_task(
         self,
-        provider: LocalFileDurableTaskProvider,
+        provider: LocalFileTaskProvider,
         sample_create_request: TaskCreateRequest,
     ) -> None:
         """delete removes a task."""
-        task = await provider.create(sample_create_request)
-        await provider.delete(task.id)
-        result = await provider.get(task.id)
+        task_record = await provider.create(sample_create_request)
+        await provider.delete(task_record.id)
+        result = await provider.get(task_record.id)
         assert result is None
 
 
@@ -131,7 +131,7 @@ class TestLocalProviderListing:
 
     @pytest.mark.asyncio
     async def test_list_tasks_by_agent(
-        self, provider: LocalFileDurableTaskProvider
+        self, provider: LocalFileTaskProvider
     ) -> None:
         """list filters by agent_name and session_id."""
         req1 = TaskCreateRequest(
@@ -155,7 +155,7 @@ class TestLocalProviderListing:
 
     @pytest.mark.asyncio
     async def test_list_tasks_by_status(
-        self, provider: LocalFileDurableTaskProvider
+        self, provider: LocalFileTaskProvider
     ) -> None:
         """list filters by status."""
         req = TaskCreateRequest(
@@ -164,12 +164,12 @@ class TestLocalProviderListing:
             status="pending",
             payload={},
         )
-        task = await provider.create(req)
+        task_record = await provider.create(req)
         patch = TaskPatchRequest(
             status="in_progress",
-            if_match=task.etag,
+            if_match=task_record.etag,
         )
-        await provider.update(task.id, patch)
+        await provider.update(task_record.id, patch)
 
         pending = await provider.list(
             agent_name="agent", session_id="s1", status="pending"

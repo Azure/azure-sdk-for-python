@@ -23,25 +23,25 @@ from azure.ai.agentserver.core.durable import (
     RetryPolicy,
     TaskContext,
     TaskConflictError,
-    durable_task,
+    task,
 )
 
 
 class _ManagerFixture:
-    """Helper to set up a DurableTaskManager with local file storage."""
+    """Helper to set up a TaskManager with local file storage."""
 
     @staticmethod
     async def setup(tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -52,7 +52,7 @@ class _ManagerFixture:
                 "is_hosted": False,
             },
         )()
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
         return manager, mgr_mod
@@ -76,7 +76,7 @@ class TestStreamingSampleE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="e2e_stream_numbers")
+            @task(name="e2e_stream_numbers")
             async def stream_numbers(ctx: TaskContext[Any]) -> str:
                 for i in range(5):
                     await ctx.stream({"value": i, "message": f"Processing item {i}"})
@@ -112,7 +112,7 @@ class TestRetrySampleE2E:
         try:
             call_count = 0
 
-            @durable_task(
+            @task(
                 name="e2e_flaky",
                 retry=RetryPolicy.exponential_backoff(
                     max_attempts=4,
@@ -138,7 +138,7 @@ class TestRetrySampleE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(
+            @task(
                 name="e2e_selective",
                 retry=RetryPolicy(
                     initial_delay=timedelta(milliseconds=10),
@@ -173,7 +173,7 @@ class TestSourceSampleE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="e2e_with_source")
+            @task(name="e2e_with_source")
             async def process_order(ctx: TaskContext[Any]) -> dict:
                 return {"task_id": ctx.task_id}
 
@@ -191,7 +191,7 @@ class TestSourceSampleE2E:
         try:
             task_id = uuid.uuid4().hex
 
-            @durable_task(name="e2e_source_fields")
+            @task(name="e2e_source_fields")
             async def with_source(ctx: TaskContext[Any]) -> str:
                 return "done"
 
@@ -204,7 +204,7 @@ class TestSourceSampleE2E:
             # Verify source was auto-stamped on the task record
             task_info = await manager.provider.get(task_id)
             if task_info is not None and task_info.source is not None:
-                assert task_info.source["type"] == "agentserver.durable_task"
+                assert task_info.source["type"] == "agentserver.task"
                 assert task_info.source["name"] == "e2e_source_fields"
                 assert "server_version" in task_info.source
         finally:
@@ -217,7 +217,7 @@ class TestSourceSampleE2E:
 
 
 class TestListE2E:
-    """E2E for ``DurableTask.list()`` — per-function scoped task listing."""
+    """E2E for ``Task.list()`` — per-function scoped task listing."""
 
     @pytest.mark.asyncio
     async def test_list_returns_only_this_tasks_records(self, tmp_path):
@@ -225,11 +225,11 @@ class TestListE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="e2e_list_alpha", ephemeral=False)
+            @task(name="e2e_list_alpha", ephemeral=False)
             async def alpha(ctx: TaskContext[Any]) -> str:
                 return "alpha_done"
 
-            @durable_task(name="e2e_list_beta", ephemeral=False)
+            @task(name="e2e_list_beta", ephemeral=False)
             async def beta(ctx: TaskContext[Any]) -> str:
                 return "beta_done"
 
@@ -262,7 +262,7 @@ class TestListE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="e2e_list_status", ephemeral=False)
+            @task(name="e2e_list_status", ephemeral=False)
             async def suspendable(ctx: TaskContext[Any]) -> str:
                 if ctx.entry_mode == "fresh":
                     return await ctx.suspend(reason="waiting")
@@ -273,7 +273,7 @@ class TestListE2E:
             result = await handle.result()
             assert result.is_suspended
 
-            @durable_task(name="e2e_list_status", ephemeral=False)
+            @task(name="e2e_list_status", ephemeral=False)
             async def completer(ctx: TaskContext[Any]) -> str:
                 return "done"
 
@@ -300,7 +300,7 @@ class TestListE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="e2e_list_empty")
+            @task(name="e2e_list_empty")
             async def no_tasks(ctx: TaskContext[Any]) -> str:
                 return "never called"
 
@@ -311,12 +311,12 @@ class TestListE2E:
 
     @pytest.mark.asyncio
     async def test_list_auto_stamped_tag(self, tmp_path):
-        """Verify _durable_task_name tag is auto-stamped on created tasks."""
+        """Verify _task_name tag is auto-stamped on created tasks."""
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
             task_id = uuid.uuid4().hex
 
-            @durable_task(name="e2e_tag_stamp", ephemeral=False)
+            @task(name="e2e_tag_stamp", ephemeral=False)
             async def stamped(ctx: TaskContext[Any]) -> str:
                 return "done"
 
@@ -326,23 +326,23 @@ class TestListE2E:
             task_info = await manager.provider.get(task_id)
             assert task_info is not None
             assert task_info.tags is not None
-            assert task_info.tags.get("_durable_task_name") == "e2e_tag_stamp"
+            assert task_info.tags.get("_task_name") == "e2e_tag_stamp"
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 
     @pytest.mark.asyncio
     async def test_reserved_tag_cannot_be_overridden(self, tmp_path):
-        """Developer-provided _durable_task_ tags are stripped; framework wins."""
+        """Developer-provided _task_ tags are stripped; framework wins."""
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
             task_id = uuid.uuid4().hex
 
-            @durable_task(
+            @task(
                 name="e2e_reserved_tag",
                 ephemeral=False,
                 tags={
-                    "_durable_task_name": "evil_override",
-                    "_durable_task_custom": "should_be_stripped",
+                    "_task_name": "evil_override",
+                    "_task_custom": "should_be_stripped",
                     "user_tag": "kept",
                 },
             )
@@ -355,9 +355,9 @@ class TestListE2E:
             assert task_info is not None
             assert task_info.tags is not None
             # Framework-stamped tag wins
-            assert task_info.tags["_durable_task_name"] == "e2e_reserved_tag"
+            assert task_info.tags["_task_name"] == "e2e_reserved_tag"
             # Other reserved tags are stripped
-            assert "_durable_task_custom" not in task_info.tags
+            assert "_task_custom" not in task_info.tags
             # User tag is preserved
             assert task_info.tags["user_tag"] == "kept"
         finally:
@@ -370,20 +370,20 @@ class TestListE2E:
         try:
             task_id = uuid.uuid4().hex
 
-            @durable_task(name="e2e_callsite_tag", ephemeral=False)
+            @task(name="e2e_callsite_tag", ephemeral=False)
             async def callsite(ctx: TaskContext[Any]) -> str:
                 return "done"
 
             await callsite.run(
                 task_id=task_id,
                 input=None,
-                tags={"_durable_task_name": "evil", "safe_tag": "ok"},
+                tags={"_task_name": "evil", "safe_tag": "ok"},
             )
 
             task_info = await manager.provider.get(task_id)
             assert task_info is not None
             assert task_info.tags is not None
-            assert task_info.tags["_durable_task_name"] == "e2e_callsite_tag"
+            assert task_info.tags["_task_name"] == "e2e_callsite_tag"
             assert task_info.tags["safe_tag"] == "ok"
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -417,7 +417,7 @@ class TestMultiturnSampleE2E:
                     return _json.loads(p.read_text())
                 return {"history": [], "turn_count": 0}
 
-            @durable_task(name="e2e_session_workflow")
+            @task(name="e2e_session_workflow")
             async def session_workflow(ctx: TaskContext[Any]) -> dict:
                 session_id = ctx.input["session_id"]
                 message = ctx.input["message"]
@@ -463,9 +463,9 @@ class TestMultiturnSampleE2E:
             assert result1.output["turn"] == 1
 
             # Verify task is suspended in the store
-            task = await manager._provider.get(task_id)
+            task_record = await manager._provider.get(task_id)
             assert task is not None
-            assert task.status == "suspended"
+            assert task_record.status == "suspended"
 
             # Verify checkpoint file exists
             assert (checkpoint_dir / "s1.json").exists()
@@ -487,11 +487,11 @@ class TestMultiturnSampleE2E:
             # Wait for the task to suspend again
             for _ in range(100):
                 await asyncio.sleep(0.02)
-                task = await manager._provider.get(task_id)
-                if task and task.status == "suspended":
+                task_record = await manager._provider.get(task_id)
+                if task_record and task_record.status == "suspended":
                     break
-            assert task.status == "suspended"
-            assert task.payload["output"]["turn"] == 2
+            assert task_record.status == "suspended"
+            assert task_record.payload["output"]["turn"] == 2
             assert "Continue" in task.payload["output"]["reply"]
 
             # Verify checkpoint updated
@@ -511,11 +511,11 @@ class TestMultiturnSampleE2E:
             # Wait for completion
             for _ in range(100):
                 await asyncio.sleep(0.02)
-                task = await manager._provider.get(task_id)
-                if task and task.status == "completed":
+                task_record = await manager._provider.get(task_id)
+                if task_record and task_record.status == "completed":
                     break
-            assert task.status == "completed"
-            assert task.payload["output"]["finished"] is True
+            assert task_record.status == "completed"
+            assert task_record.payload["output"]["finished"] is True
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -612,7 +612,7 @@ class TestLangGraphSampleE2E:
 
         try:
 
-            @durable_task(name="e2e_langgraph_session")
+            @task(name="e2e_langgraph_session")
             async def lg_session(ctx: TaskContext[Any]) -> dict:
                 session_id = ctx.input["session_id"]
                 message = ctx.input["message"]
@@ -662,8 +662,8 @@ class TestLangGraphSampleE2E:
             assert result1.output["reply"] == "Reply #1: Hello"
             assert result1.output["turn"] == 1
 
-            task = await manager._provider.get(task_id)
-            assert task.status == "suspended"
+            task_record = await manager._provider.get(task_id)
+            assert task_record.status == "suspended"
 
             # --- Turn 2: resume with new input ---
             await manager._provider.update(
@@ -678,11 +678,11 @@ class TestLangGraphSampleE2E:
 
             for _ in range(100):
                 await asyncio.sleep(0.02)
-                task = await manager._provider.get(task_id)
-                if task and task.status == "suspended":
+                task_record = await manager._provider.get(task_id)
+                if task_record and task_record.status == "suspended":
                     break
-            assert task.status == "suspended"
-            assert task.payload["output"]["turn"] == 2
+            assert task_record.status == "suspended"
+            assert task_record.payload["output"]["turn"] == 2
             assert "Tell me more" in task.payload["output"]["reply"]
 
             # --- Turn 3: end session ---
@@ -696,12 +696,12 @@ class TestLangGraphSampleE2E:
 
             for _ in range(100):
                 await asyncio.sleep(0.02)
-                task = await manager._provider.get(task_id)
-                if task and task.status == "completed":
+                task_record = await manager._provider.get(task_id)
+                if task_record and task_record.status == "completed":
                     break
-            assert task.status == "completed"
-            assert task.payload["output"]["finished"] is True
-            assert task.payload["output"]["turn_count"] == 2
+            assert task_record.status == "completed"
+            assert task_record.payload["output"]["finished"] is True
+            assert task_record.payload["output"]["turn_count"] == 2
 
         finally:
             conn.close()
@@ -737,7 +737,7 @@ class TestLifecycleE2E:
 
             entry_modes: list[str] = []
 
-            @durable_task(name="e2e_lifecycle_session")
+            @task(name="e2e_lifecycle_session")
             async def lifecycle_session(ctx: TaskContext[Any]) -> dict:
                 entry_modes.append(ctx.entry_mode)
                 session_id = ctx.input["session_id"]
@@ -802,7 +802,7 @@ class TestLifecycleE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="e2e_completes_fast", ephemeral=False)
+            @task(name="e2e_completes_fast", ephemeral=False)
             async def completes_fast(ctx: TaskContext[Any]) -> str:
                 return "done"
 
@@ -823,7 +823,7 @@ class TestLifecycleE2E:
         try:
             entry_modes: list[str] = []
 
-            @durable_task(name="e2e_recoverable")
+            @task(name="e2e_recoverable")
             async def recoverable_task(ctx: TaskContext[Any]) -> str:
                 entry_modes.append(ctx.entry_mode)
                 return f"entry={ctx.entry_mode}"
@@ -863,7 +863,7 @@ class TestLifecycleE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="e2e_get_missing")
+            @task(name="e2e_get_missing")
             async def some_task(ctx: TaskContext[Any]) -> str:
                 return "ok"
 
@@ -902,7 +902,7 @@ class TestInvocationStoreDurability:
 
         try:
 
-            @durable_task(name="e2e_inv_suspend")
+            @task(name="e2e_inv_suspend")
             async def inv_suspend_task(ctx: TaskContext[Any]) -> dict:
                 inv_id = ctx.input["invocation_id"]
                 _inv_save(inv_id, {"status": "running"})
@@ -947,7 +947,7 @@ class TestInvocationStoreDurability:
 
         try:
 
-            @durable_task(name="e2e_inv_complete")
+            @task(name="e2e_inv_complete")
             async def inv_complete_task(ctx: TaskContext[Any]) -> dict:
                 inv_id = ctx.input["invocation_id"]
                 _inv_save(inv_id, {"status": "running"})
@@ -990,7 +990,7 @@ class TestInvocationStoreDurability:
 
         try:
 
-            @durable_task(name="e2e_inv_conflict", ephemeral=False)
+            @task(name="e2e_inv_conflict", ephemeral=False)
             async def inv_conflict_task(ctx: TaskContext[Any]) -> dict:
                 inv_id = ctx.input["invocation_id"]
                 _inv_save(inv_id, {"status": "running"})
@@ -1077,7 +1077,7 @@ class TestClaudeSteeringSampleE2E:
             store: dict[str, dict[str, Any]] = {}
             conv_store: dict[str, list[dict[str, str]]] = {}
 
-            @durable_task(name="e2e_claude_chat", steerable=True)
+            @task(name="e2e_claude_chat", steerable=True)
             async def claude_chat(ctx: TaskContext[dict]) -> dict[str, Any]:
                 session_id = ctx.input["session_id"]
                 message = ctx.input["message"]
@@ -1146,7 +1146,7 @@ class TestClaudeSteeringSampleE2E:
             store: dict[str, dict[str, Any]] = {}
             conv_store: dict[str, list[dict[str, str]]] = {}
 
-            @durable_task(name="e2e_claude_chat", steerable=True)
+            @task(name="e2e_claude_chat", steerable=True)
             async def claude_chat(ctx: TaskContext[dict]) -> dict[str, Any]:
                 session_id = ctx.input["session_id"]
                 message = ctx.input["message"]
@@ -1231,7 +1231,7 @@ class TestClaudeSteeringSampleE2E:
             store: dict[str, dict[str, Any]] = {}
             conv_store: dict[str, list[dict[str, str]]] = {}
 
-            @durable_task(name="e2e_claude_chat", steerable=True)
+            @task(name="e2e_claude_chat", steerable=True)
             async def claude_chat(ctx: TaskContext[dict]) -> dict[str, Any]:
                 session_id = ctx.input["session_id"]
                 message = ctx.input["message"]
@@ -1362,7 +1362,7 @@ class TestCopilotSteeringSampleE2E:
         try:
             store: dict[str, dict[str, Any]] = {}
 
-            @durable_task(name="e2e_copilot_chat", steerable=True)
+            @task(name="e2e_copilot_chat", steerable=True)
             async def copilot_chat(ctx: TaskContext[dict]) -> dict[str, Any]:
                 message = ctx.input["message"]
                 invocation_id = ctx.input["invocation_id"]
@@ -1444,7 +1444,7 @@ class TestCopilotSteeringSampleE2E:
         try:
             store: dict[str, dict[str, Any]] = {}
 
-            @durable_task(name="e2e_copilot_chat", steerable=True)
+            @task(name="e2e_copilot_chat", steerable=True)
             async def copilot_chat(ctx: TaskContext[dict]) -> dict[str, Any]:
                 message = ctx.input["message"]
                 invocation_id = ctx.input["invocation_id"]
@@ -1560,7 +1560,7 @@ class TestLangGraphSteeringSampleE2E:
             store: dict[str, dict[str, Any]] = {}
             checkpoints: list[str] = []
 
-            @durable_task(name="e2e_lg_session", steerable=True)
+            @task(name="e2e_lg_session", steerable=True)
             async def lg_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                 message = ctx.input["message"]
                 invocation_id = ctx.input["invocation_id"]
@@ -1634,7 +1634,7 @@ class TestLangGraphSteeringSampleE2E:
         try:
             store: dict[str, dict[str, Any]] = {}
 
-            @durable_task(name="e2e_lg_session", steerable=True, ephemeral=False)
+            @task(name="e2e_lg_session", steerable=True, ephemeral=False)
             async def lg_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                 message = ctx.input["message"]
                 invocation_id = ctx.input["invocation_id"]
@@ -1706,7 +1706,7 @@ class TestSSEStreamingE2E:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="e2e_sse_stream")
+            @task(name="e2e_sse_stream")
             async def sse_stream(ctx: TaskContext[dict]) -> dict[str, Any]:
                 invocation_id = ctx.input["invocation_id"]
                 await ctx.stream({"type": "lifecycle", "status": "running"})
@@ -1749,7 +1749,7 @@ class TestSSEStreamingE2E:
         try:
             store: dict[str, dict[str, Any]] = {}
 
-            @durable_task(name="e2e_sse_steer", steerable=True)
+            @task(name="e2e_sse_steer", steerable=True)
             async def sse_steer(ctx: TaskContext[dict]) -> dict[str, Any]:
                 invocation_id = ctx.input["invocation_id"]
                 store[invocation_id] = {"status": "running"}
@@ -1814,7 +1814,7 @@ class TestSSEStreamingE2E:
         try:
             store: dict[str, dict[str, Any]] = {}
 
-            @durable_task(name="e2e_sse_snapshot")
+            @task(name="e2e_sse_snapshot")
             async def sse_snapshot(ctx: TaskContext[dict]) -> dict[str, Any]:
                 invocation_id = ctx.input["invocation_id"]
                 store[invocation_id] = {"status": "running"}

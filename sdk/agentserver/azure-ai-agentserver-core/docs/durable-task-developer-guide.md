@@ -1,6 +1,6 @@
 # Durable Task Developer Guide
 
-> Developer guidance for building crash-resilient agents with `@durable_task` — the single decorator for turning async functions into units of work that survive container crashes, OOM kills, and redeployments.
+> Developer guidance for building crash-resilient agents with `@task` — the single decorator for turning async functions into units of work that survive container crashes, OOM kills, and redeployments.
 
 ---
 
@@ -61,7 +61,7 @@ Agent frameworks fall into two camps:
 | **Externally stateful** — the framework owns durability | Temporal, Durable Functions, Orleans | Platform visibility: lifecycle tracking, lease-based liveness, status reporting on top of the framework's own durability |
 | **Locally stateful** — the container holds state | LangGraph (SQLite checkpointer), Claude SDK tool loops, hand-written agents | A crash-safe entry point: lease-based liveness so the platform knows when to restart, plus run / resume / progress / suspend primitives the developer would otherwise hand-roll |
 
-`@durable_task` serves both camps. It is **not** a replacement for Temporal or
+`@task` serves both camps. It is **not** a replacement for Temporal or
 Durable Functions — it is the thin durable wrapper around the boundary between
 the platform and your code. It does not make your function deterministic or
 replayable. It turns `run(input) → output` into a unit of work that survives
@@ -120,9 +120,9 @@ it left off.
 A minimal durable task in 15 lines:
 
 ```python
-from azure.ai.agentserver.core.durable import durable_task, TaskContext
+from azure.ai.agentserver.core.durable import task, TaskContext
 
-@durable_task
+@task
 async def greet(ctx: TaskContext[str]) -> str:
     """A simple durable task that greets the user."""
     name = ctx.input
@@ -133,7 +133,7 @@ result = await greet.run(task_id="greet-alice", input="Alice")
 print(result.output)  # "Hello, Alice!"
 ```
 
-That's it. The decorator transforms your function into a `DurableTask` with `.run()`,
+That's it. The decorator transforms your function into a `Task` with `.run()`,
 `.start()`, `.get()`, and `.list()` methods. The function itself takes a single `TaskContext`
 parameter.
 
@@ -260,7 +260,7 @@ all_tasks = await greet.list()
 ```
 
 > `.list()` is automatically scoped — each decorated function only sees tasks it
-> created. The `name` option on `@durable_task` is the key that determines which
+> created. The `name` option on `@task` is the key that determines which
 > tasks belong to this function.
 
 `.get_active_run()` is an in-memory lookup — it returns a `TaskRun` handle for
@@ -308,9 +308,9 @@ where `Input` is your typed input type.
 Use `ctx.entry_mode` to handle different execution scenarios:
 
 ```python
-from azure.ai.agentserver.core.durable import durable_task, TaskContext, EntryMode
+from azure.ai.agentserver.core.durable import task, TaskContext, EntryMode
 
-@durable_task(name="process_order")
+@task(name="process_order")
 async def process_order(ctx: TaskContext[dict]) -> dict:
     order = ctx.input
 
@@ -373,7 +373,7 @@ resumes it with `entry_mode="resumed"` and new input.
 > or `await` silently breaks the suspension mechanism.
 
 ```python
-@durable_task(name="approval_flow")
+@task(name="approval_flow")
 async def approval_flow(ctx: TaskContext[dict]) -> dict:
     request = ctx.input
 
@@ -399,7 +399,7 @@ The suspend/resume pattern is ideal for multi-turn agents where each turn is
 one user ↔ agent interaction:
 
 ```python
-@durable_task(name="chat_session")
+@task(name="chat_session")
 async def chat_session(ctx: TaskContext[dict]) -> dict:
     message = ctx.input["message"]
 
@@ -472,7 +472,7 @@ invocation a caller is observing.
 Add `steerable=True` to the decorator:
 
 ```python
-@durable_task(name="chat_session", steerable=True)
+@task(name="chat_session", steerable=True)
 async def chat_session(ctx: TaskContext[dict]) -> dict:
     ...
 ```
@@ -492,7 +492,7 @@ function. But cancel can arrive at three different points. Your function must
 handle all three:
 
 ```python
-@durable_task(name="agent_session", steerable=True)
+@task(name="agent_session", steerable=True)
 async def agent_session(ctx: TaskContext[dict]) -> dict:
     message = ctx.input["message"]
     invocation_id = ctx.input["invocation_id"]
@@ -699,14 +699,14 @@ the task payload.
 A full steerable chat session combining all patterns:
 
 ```python
-from azure.ai.agentserver.core.durable import TaskContext, durable_task
+from azure.ai.agentserver.core.durable import TaskContext, task
 from my_app.store import FileStore
 
 invocation_store = FileStore("./invocations")
 conversation_store = FileStore("./conversations")
 
 
-@durable_task(name="chat_session", steerable=True)
+@task(name="chat_session", steerable=True)
 async def chat_session(ctx: TaskContext[dict]) -> dict:
     session_id = ctx.input["session_id"]
     message = ctx.input["message"]
@@ -770,7 +770,7 @@ Use `ctx.stream()` to emit incremental output and `async for` on the `TaskRun`
 handle to consume it:
 
 ```python
-@durable_task(name="generate_report")
+@task(name="generate_report")
 async def generate_report(ctx: TaskContext[str]) -> str:
     topic = ctx.input
     chunks = []
@@ -850,7 +850,7 @@ Set `stream_handler_factory` on the decorator to ensure recovery and resume
 paths always construct the correct handler:
 
 ```python
-@durable_task(
+@task(
     name="generate_report",
     stream_handler_factory=lambda task_id: RedisStreamHandler(
         redis, channel=f"stream:{task_id}"
@@ -941,7 +941,7 @@ correct pattern: write results **inside** the durable task function.
 # Your persistence layer (file store, Redis, database — your choice)
 invocation_store = FileStore("./invocations")
 
-@durable_task(name="agent_session")
+@task(name="agent_session")
 async def agent_session(ctx: TaskContext[dict]) -> dict:
     invocation_id = ctx.input["invocation_id"]
     message = ctx.input["message"]
@@ -996,22 +996,22 @@ Configure automatic retries on failure. Three presets cover most use cases:
 
 ```python
 from datetime import timedelta
-from azure.ai.agentserver.core.durable import durable_task, RetryPolicy, TaskContext
+from azure.ai.agentserver.core.durable import task, RetryPolicy, TaskContext
 
 # Exponential backoff (default: 1s → 2s → 4s, 3 attempts)
-@durable_task(name="call_api", retry=RetryPolicy.exponential_backoff())
+@task(name="call_api", retry=RetryPolicy.exponential_backoff())
 async def call_api(ctx: TaskContext[str]) -> dict: ...
 
 # Fixed delay (5s between each retry, 3 attempts)
-@durable_task(name="poll_status", retry=RetryPolicy.fixed_delay(delay=timedelta(seconds=5)))
+@task(name="poll_status", retry=RetryPolicy.fixed_delay(delay=timedelta(seconds=5)))
 async def poll_status(ctx: TaskContext[str]) -> dict: ...
 
 # Linear backoff (1s → 2s → 3s → 4s → 5s, 5 attempts)
-@durable_task(name="batch_job", retry=RetryPolicy.linear_backoff(max_attempts=5))
+@task(name="batch_job", retry=RetryPolicy.linear_backoff(max_attempts=5))
 async def batch_job(ctx: TaskContext[str]) -> dict: ...
 
 # No retry — fail immediately
-@durable_task(name="one_shot", retry=RetryPolicy.no_retry())
+@task(name="one_shot", retry=RetryPolicy.no_retry())
 async def one_shot(ctx: TaskContext[str]) -> dict: ...
 ```
 
@@ -1040,7 +1040,7 @@ result = await call_api.run(
 
 ## Decorator Options
 
-The `@durable_task` decorator accepts these options (defined in `DurableTaskOptions`):
+The `@task` decorator accepts these options (defined in `TaskOptions`):
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
@@ -1060,12 +1060,12 @@ The `@durable_task` decorator accepts these options (defined in `DurableTaskOpti
 > which function created the task and the SDK version. Source is not user-overridable;
 > use `tags` for custom metadata.
 >
-> **Reserved tags**: The framework stamps internal tags (prefixed with `_durable_task_`)
+> **Reserved tags**: The framework stamps internal tags (prefixed with `_task_`)
 > on every task for scoping and recovery. Any tags you provide with this prefix are
 > silently stripped. Use unprefixed tag keys for your own metadata.
 
 ```python
-@durable_task(
+@task(
     name="analyze_document",
     ephemeral=False,        # Keep task record after completion
     tags={"team": "platform", "model": "gpt-4o"},
@@ -1095,7 +1095,7 @@ When `tags`, `title`, or `description` is a callable, it receives `(input, task_
 is invoked at **task creation time** — before the task function runs.
 
 ```python
-@durable_task(
+@task(
     tags=lambda input, task_id: {"user": input["user_id"], "run": task_id[:8]},
     description=lambda input, task_id: f"Processing {input['filename']}",
 )
@@ -1186,7 +1186,7 @@ await run.cancel()  # Sets ctx.cancel — task should check and exit
 Inside the task function:
 
 ```python
-@durable_task
+@task
 async def my_task(ctx: TaskContext[Input]) -> Output:
     for item in items:
         if ctx.cancel.is_set():
@@ -1210,7 +1210,7 @@ eventually expires and the task is recovered on the next heartbeat.
 ```python
 from datetime import timedelta
 
-@durable_task(
+@task(
     timeout=timedelta(minutes=5),
 )
 async def analyze(ctx: TaskContext[dict]) -> dict:
@@ -1325,7 +1325,7 @@ async def invoke(request):
     return JSONResponse({"id": "inv-1"}, status_code=202)
 
 # ✅ GOOD — write results inside the task function itself
-@durable_task(name="my_task")
+@task(name="my_task")
 async def my_task(ctx: TaskContext[dict]) -> dict:
     invocation_id = ctx.input["invocation_id"]
     result = await do_work()
@@ -1347,14 +1347,14 @@ return JSONResponse({"invocation_id": invocation_id}, status_code=202)
 
 ```python
 # ❌ BAD — default QueueStreamHandler is in-memory only
-@durable_task(name="stream_report")
+@task(name="stream_report")
 async def stream_report(ctx: TaskContext[str]) -> str:
     for chunk in generate_chunks():
         await ctx.stream(chunk)  # Lost if process crashes here
     return "done"
 
 # ✅ GOOD — also persist to your store if durability matters
-@durable_task(name="stream_report")
+@task(name="stream_report")
 async def stream_report(ctx: TaskContext[str]) -> str:
     for chunk in generate_chunks():
         await ctx.stream(chunk)
@@ -1372,7 +1372,7 @@ run = await stream_report.start(
 
 ```python
 # ❌ BAD — metadata has a 1 MB cap and is not designed for growing data
-@durable_task(name="chat", steerable=True)
+@task(name="chat", steerable=True)
 async def chat(ctx: TaskContext[dict]) -> dict:
     history = ctx.metadata.get("history", [])
     history.append({"role": "user", "content": ctx.input["message"]})
@@ -1381,7 +1381,7 @@ async def chat(ctx: TaskContext[dict]) -> dict:
     ctx.metadata["history"] = history  # GROWS UNBOUNDED
 
 # ✅ GOOD — use an external store, reference by session_id
-@durable_task(name="chat", steerable=True)
+@task(name="chat", steerable=True)
 async def chat(ctx: TaskContext[dict]) -> dict:
     session_id = ctx.input["session_id"]
     history = conversation_store.load(session_id) or []
@@ -1395,13 +1395,13 @@ async def chat(ctx: TaskContext[dict]) -> dict:
 
 ```python
 # ❌ BAD — user's message is lost when cancel fires
-@durable_task(name="chat", steerable=True)
+@task(name="chat", steerable=True)
 async def chat(ctx: TaskContext[dict]) -> dict:
     if ctx.cancel.is_set():
         return await ctx.suspend(reason="steered")  # Message never saved!
 
 # ✅ GOOD — always save the user's message before returning
-@durable_task(name="chat", steerable=True)
+@task(name="chat", steerable=True)
 async def chat(ctx: TaskContext[dict]) -> dict:
     history = load_history(ctx.input["session_id"])
     history.append({"role": "user", "content": ctx.input["message"]})
@@ -1414,7 +1414,7 @@ async def chat(ctx: TaskContext[dict]) -> dict:
 
 ```python
 # ❌ BAD — starts an expensive LLM call even when cancel is already set
-@durable_task(name="chat", steerable=True)
+@task(name="chat", steerable=True)
 async def chat(ctx: TaskContext[dict]) -> dict:
     # Missing Phase 1 check!
     reply = ""
@@ -1425,7 +1425,7 @@ async def chat(ctx: TaskContext[dict]) -> dict:
     ...
 
 # ✅ GOOD — short-circuit before the LLM call
-@durable_task(name="chat", steerable=True)
+@task(name="chat", steerable=True)
 async def chat(ctx: TaskContext[dict]) -> dict:
     if ctx.cancel.is_set():          # Phase 1: pre-entry
         save_input_and_return(ctx)
@@ -1447,19 +1447,19 @@ pending queue. If it raises, the task enters the failure/retry path.
 
 ```python
 # ❌ BAD — task completes, can't accept next turn or drain queue
-@durable_task(name="chat", steerable=True)
+@task(name="chat", steerable=True)
 async def chat(ctx: TaskContext[dict]) -> dict:
     reply = await call_llm(ctx.input["message"])
     return {"reply": reply}  # Task completes → next .start() creates fresh task
 
 # ❌ BAD — raising on cancel enters the failure path
-@durable_task(name="chat", steerable=True)
+@task(name="chat", steerable=True)
 async def chat(ctx: TaskContext[dict]) -> dict:
     if ctx.cancel.is_set():
         raise RuntimeError("Cancelled")  # Wrong! Enters retry/failure path
 
 # ✅ GOOD — always suspend: on cancel AND on normal completion
-@durable_task(name="chat", steerable=True)
+@task(name="chat", steerable=True)
 async def chat(ctx: TaskContext[dict]) -> dict:
     if ctx.cancel.is_set():
         return await ctx.suspend(reason="steered")  # Keep alive for drain

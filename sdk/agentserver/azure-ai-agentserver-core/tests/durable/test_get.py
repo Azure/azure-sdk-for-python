@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for DurableTask.get() method."""
+"""Tests for Task.get() method."""
 
 from pathlib import Path
 
@@ -9,24 +9,24 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     TaskContext,
-    durable_task,
+    task,
 )
 
 
 class TestGet:
-    """Verify DurableTask.get() returns TaskInfo or None."""
+    """Verify Task.get() returns TaskInfo or None."""
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -37,7 +37,7 @@ class TestGet:
                 "is_hosted": False,
             },
         )()
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
         return manager, mgr_mod
@@ -50,7 +50,7 @@ class TestGet:
     async def test_get_existing_task(self, tmp_path) -> None:
         """get() returns TaskInfo for an existing task."""
 
-        @durable_task(title="get-test", ephemeral=False)
+        @task(title="get-test", ephemeral=False)
         async def my_task(ctx: TaskContext[str]) -> str:
             return await ctx.suspend(output="paused")
 
@@ -70,7 +70,7 @@ class TestGet:
     async def test_get_nonexistent_task(self, tmp_path) -> None:
         """get() returns None for a non-existent task."""
 
-        @durable_task(title="get-test")
+        @task(title="get-test")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "ok"
 
@@ -85,7 +85,7 @@ class TestGet:
     async def test_get_returns_correct_state(self, tmp_path) -> None:
         """get() returns correct info for various task states."""
 
-        @durable_task(title="get-states", ephemeral=False)
+        @task(title="get-states", ephemeral=False)
         async def my_task(ctx: TaskContext[str]) -> str:
             return await ctx.suspend(output="waiting")
 

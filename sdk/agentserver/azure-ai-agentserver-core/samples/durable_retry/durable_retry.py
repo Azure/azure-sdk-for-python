@@ -22,7 +22,7 @@ import logging
 from datetime import timedelta
 
 from azure.ai.agentserver.core import AgentServerHost
-from azure.ai.agentserver.core.durable import RetryPolicy, durable_task
+from azure.ai.agentserver.core.durable import RetryPolicy, task
 from azure.ai.agentserver.core.durable._context import TaskContext
 
 logging.basicConfig(level=logging.INFO)
@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 _call_count = 0
 
 
-@durable_task(
+@task(
     name="flaky_task",
     retry=RetryPolicy.exponential_backoff(
         max_attempts=4,
@@ -58,7 +58,7 @@ async def flaky_task(ctx: TaskContext[None]) -> str:
     return f"Success after {attempt + 1} attempts"
 
 
-@durable_task(
+@task(
     name="selective_retry",
     retry=RetryPolicy(
         initial_delay=timedelta(milliseconds=100),

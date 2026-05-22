@@ -3,7 +3,7 @@
 """The durable research task — this is what makes the agent crash-resilient.
 
 The ONLY things you need for durability:
-  1. ``@durable_task`` decorator
+  1. ``@task`` decorator
   2. ``ctx.metadata[...] = value`` + ``await ctx.metadata.flush()`` to checkpoint
 
 That's it. Everything else here is just normal agent logic.
@@ -21,7 +21,7 @@ from typing import Any
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
-from azure.ai.agentserver.core.durable import TaskContext, durable_task
+from azure.ai.agentserver.core.durable import TaskContext, task
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +118,7 @@ STAGE_DURATION = int(os.environ.get("STAGE_DURATION", "5"))
 
 # ── The durable task ──────────────────────────────────────────────────────────
 
-@durable_task(name="deep_research", stream_handler_factory=file_stream_factory)
+@task(name="deep_research", stream_handler_factory=file_stream_factory)
 async def deep_research(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Long-running deep research task that survives crashes.
 

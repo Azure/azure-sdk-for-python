@@ -27,7 +27,7 @@ async def _handle_resume_request(
     """Handle POST /tasks/resume.
 
     Expects a JSON body with ``{"task_id": "..."}`` and dispatches the
-    resume to the DurableTaskManager.
+    resume to the TaskManager.
 
     :param request: The incoming HTTP request.
     :type request: Request

@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- **Durable invocation samples** — Added `durable_langgraph` and `durable_multiturn` sample applications demonstrating crash-resilient long-running agents using `@durable_task` with the invocations protocol.
+- **Durable invocation samples** — Added `durable_langgraph` and `durable_multiturn` sample applications demonstrating crash-resilient long-running agents using `@task` with the invocations protocol.
 - Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Developer handler exceptions and missing handler registrations are classified as `upstream`. Exceptions tagged with the platform error tag are classified as `platform` and additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics.
 - WebSocket protocol support — `InvocationAgentServerHost` now hosts `/invocations_ws` alongside `POST /invocations`. Register the handler with the new `@app.ws_handler` decorator. The route is registered lazily on first decoration, so hosts without a registered handler return HTTP 404.
 - WebSocket Ping/Pong keep-alive — disabled by default; enable by setting the `WS_KEEPALIVE_INTERVAL` env var (auto-injected by AgentService into hosted-agent containers; surfaced on `app.config.ws_ping_interval` in `azure-ai-agentserver-core>=2.0.0b4`). `0` (or unset) disables keep-alive. Wired through to Hypercorn's `websocket_ping_interval` by `AgentServerHost._build_hypercorn_config`.

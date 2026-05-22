@@ -22,14 +22,14 @@ import asyncio
 import logging
 
 from azure.ai.agentserver.core import AgentServerHost
-from azure.ai.agentserver.core.durable import durable_task
+from azure.ai.agentserver.core.durable import task
 from azure.ai.agentserver.core.durable._context import TaskContext
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-@durable_task(
+@task(
     name="process_order",
     source={"system": "order-service", "version": "2.1"},
 )
@@ -64,7 +64,7 @@ async def main():
         logger.info("Result: %s", result2.output)
 
         # 3. Task without any source (None by default)
-        @durable_task(name="no_source_task")
+        @task(name="no_source_task")
         async def no_source_task(ctx: TaskContext[None]) -> str:
             return "done"
 

@@ -19,25 +19,25 @@ import pytest
 from azure.ai.agentserver.core.durable import (
     TaskContext,
     TaskTerminated,
-    durable_task,
+    task,
 )
 
 
 class _ManagerFixture:
-    """Helper to set up a DurableTaskManager with local file storage."""
+    """Helper to set up a TaskManager with local file storage."""
 
     @staticmethod
     async def setup(tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -48,7 +48,7 @@ class _ManagerFixture:
                 "is_hosted": False,
             },
         )()
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
         return manager, mgr_mod
@@ -74,7 +74,7 @@ class TestExecutionTimeout:
         try:
             cancel_observed = asyncio.Event()
 
-            @durable_task(
+            @task(
                 name="timeout_coop",
                 timeout=timedelta(seconds=0.2),
             )
@@ -99,7 +99,7 @@ class TestExecutionTimeout:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="no_timeout")
+            @task(name="no_timeout")
             async def quick_task(ctx: TaskContext[Any]) -> str:
                 return "done"
 
@@ -124,7 +124,7 @@ class TestTerminate:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="terminatable")
+            @task(name="terminatable")
             async def long_task(ctx: TaskContext[Any]) -> str:
                 await asyncio.sleep(100)
                 return "never"
@@ -144,7 +144,7 @@ class TestTerminate:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="term_status", ephemeral=False)
+            @task(name="term_status", ephemeral=False)
             async def long_task(ctx: TaskContext[Any]) -> str:
                 await asyncio.sleep(100)
                 return "never"
@@ -176,7 +176,7 @@ class TestTerminate:
         try:
             from azure.ai.agentserver.core.durable._exceptions import TaskCancelled
 
-            @durable_task(name="cancel_test")
+            @task(name="cancel_test")
             async def cancellable_task(ctx: TaskContext[Any]) -> str:
                 # Cooperatively check cancel
                 while not ctx.cancel.is_set():
@@ -199,7 +199,7 @@ class TestTerminate:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="term_reason_task")
+            @task(name="term_reason_task")
             async def slow_task(ctx: TaskContext[Any]) -> str:
                 await asyncio.sleep(10)
                 return "never"

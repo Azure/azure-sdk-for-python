@@ -13,7 +13,7 @@ import pytest
 from azure.ai.agentserver.core.durable import (
     TaskContext,
     TaskResult,
-    durable_task,
+    task,
     EntryMode,
     EtagConflict,
     SteeringQueueFull,
@@ -26,14 +26,14 @@ class TestSteering:
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -44,7 +44,7 @@ class TestSteering:
                 "is_hosted": False,
             },
         )()
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
         return manager, mgr_mod
@@ -63,7 +63,7 @@ class TestSteering:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
 
-            @durable_task(name="chat", steerable=True)
+            @task(name="chat", steerable=True)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 if ctx.cancel.is_set():
                     return await ctx.suspend(reason="steered")
@@ -110,7 +110,7 @@ class TestSteering:
         try:
             gate = asyncio.Event()
 
-            @durable_task(name="regular")
+            @task(name="regular")
             async def regular(ctx: TaskContext[dict]) -> dict:
                 await gate.wait()
                 return {"msg": "done"}
@@ -133,7 +133,7 @@ class TestSteering:
         try:
             gate = asyncio.Event()
 
-            @durable_task(name="chat", steerable=True, max_pending=2)
+            @task(name="chat", steerable=True, max_pending=2)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 await gate.wait()
                 return {"msg": "done"}
@@ -162,7 +162,7 @@ class TestSteering:
         manager, mgr_mod = await self._setup_manager(tmp_path)
         try:
 
-            @durable_task(name="chat", steerable=True)
+            @task(name="chat", steerable=True)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 # Always check cancel and suspend if set
                 if ctx.cancel.is_set():
@@ -204,7 +204,7 @@ class TestSteering:
         try:
             entries: list[tuple[str, bool]] = []
 
-            @durable_task(name="chat", steerable=True)
+            @task(name="chat", steerable=True)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 entries.append((ctx.input.get("msg", "?"), ctx.cancel.is_set()))
                 if ctx.cancel.is_set():
@@ -243,7 +243,7 @@ class TestSteering:
         try:
             cancel_states: list[bool] = []
 
-            @durable_task(name="chat", steerable=True)
+            @task(name="chat", steerable=True)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 cancel_states.append(ctx.cancel.is_set())
                 if ctx.cancel.is_set():
@@ -282,7 +282,7 @@ class TestSteering:
         try:
             contexts: list[dict[str, Any]] = []
 
-            @durable_task(name="chat", steerable=True)
+            @task(name="chat", steerable=True)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 contexts.append(
                     {
@@ -331,7 +331,7 @@ class TestSteering:
             modes: list[str] = []
             steered_flags: list[bool] = []
 
-            @durable_task(name="chat", steerable=True)
+            @task(name="chat", steerable=True)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 modes.append(ctx.entry_mode)
                 steered_flags.append(ctx.was_steered)
@@ -387,7 +387,7 @@ class TestSteering:
         try:
             gate = asyncio.Event()
 
-            @durable_task(name="chat")
+            @task(name="chat")
             async def chat(ctx: TaskContext[dict]) -> dict:
                 await gate.wait()
                 if ctx.cancel.is_set():
@@ -410,7 +410,7 @@ class TestSteering:
             await self._teardown_manager(manager, mgr_mod)
 
     # ------------------------------------------------------------------
-    # DurableTaskOptions validation
+    # TaskOptions validation
     # ------------------------------------------------------------------
 
     @pytest.mark.asyncio
@@ -418,7 +418,7 @@ class TestSteering:
         """max_pending < 1 raises ValueError at decoration time."""
         with pytest.raises(ValueError, match="max_pending"):
 
-            @durable_task(name="bad", max_pending=0)
+            @task(name="bad", max_pending=0)
             async def bad(ctx: TaskContext[dict]) -> dict:
                 return {}
 
@@ -452,7 +452,7 @@ class TestSteering:
         try:
             call_count = 0
 
-            @durable_task(name="chat", steerable=True, ephemeral=False)
+            @task(name="chat", steerable=True, ephemeral=False)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 nonlocal call_count
                 call_count += 1
@@ -478,14 +478,14 @@ class TestSteeringRecovery:
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -496,7 +496,7 @@ class TestSteeringRecovery:
                 "is_hosted": False,
             },
         )()
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
         return manager, mgr_mod
@@ -509,17 +509,17 @@ class TestSteeringRecovery:
     async def test_recovery_with_drain_in_progress(self, tmp_path):
         """Recovery after crash mid-drain uses active_input from steering state."""
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
         from azure.ai.agentserver.core.durable._models import (
             TaskPatchRequest,
         )
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -532,11 +532,11 @@ class TestSteeringRecovery:
         )()
 
         # Phase 1: Create a task and simulate crash mid-drain
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
 
-        @durable_task(name="chat", steerable=True, ephemeral=False)
+        @task(name="chat", steerable=True, ephemeral=False)
         async def chat(ctx: TaskContext[dict]) -> dict:
             return {"msg": ctx.input.get("msg", "?")}
 
@@ -566,13 +566,13 @@ class TestSteeringRecovery:
         mgr_mod._manager = None
 
         # Phase 2: Recover — new manager picks up the crashed task
-        manager2 = DurableTaskManager(config=config, provider=provider)
+        manager2 = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager2
         await manager2.startup()
 
         inputs_seen: list[dict] = []
 
-        @durable_task(name="chat", steerable=True, ephemeral=False)
+        @task(name="chat", steerable=True, ephemeral=False)
         async def chat2(ctx: TaskContext[dict]) -> dict:
             inputs_seen.append(dict(ctx.input))
             return {"msg": ctx.input.get("msg", "?")}
@@ -594,17 +594,17 @@ class TestSteeringRecovery:
     async def test_recovery_with_pending_inputs(self, tmp_path):
         """Recovery with pending inputs drains them after function completes."""
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
         from azure.ai.agentserver.core.durable._models import (
             TaskPatchRequest,
         )
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -617,11 +617,11 @@ class TestSteeringRecovery:
         )()
 
         # Phase 1: Create a task normally, then simulate crash with pending
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
 
-        @durable_task(name="chat", steerable=True, ephemeral=False)
+        @task(name="chat", steerable=True, ephemeral=False)
         async def chat_setup(ctx: TaskContext[dict]) -> dict:
             # Long sleep — we'll kill the manager before it completes
             await asyncio.sleep(10)
@@ -653,13 +653,13 @@ class TestSteeringRecovery:
         )
 
         # Phase 2: New manager recovers the task
-        manager2 = DurableTaskManager(config=config, provider=provider)
+        manager2 = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager2
         await manager2.startup()
 
         inputs_seen: list[str] = []
 
-        @durable_task(name="chat", steerable=True, ephemeral=False)
+        @task(name="chat", steerable=True, ephemeral=False)
         async def chat(ctx: TaskContext[dict]) -> dict:
             inputs_seen.append(ctx.input.get("msg", "?"))
             if ctx.cancel.is_set():

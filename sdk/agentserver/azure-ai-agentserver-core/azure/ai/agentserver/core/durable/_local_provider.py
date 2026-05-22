@@ -49,7 +49,7 @@ def _is_lease_expired(lease: LeaseInfo | None) -> bool:
         return True
 
 
-class LocalFileDurableTaskProvider:
+class LocalFileTaskProvider:
     """Filesystem-backed provider for local development.
 
     Tasks are stored as individual JSON files. Lease expiry is simulated
@@ -339,6 +339,7 @@ class LocalFileDurableTaskProvider:
         status: TaskStatus | None = None,
         lease_owner: str | None = None,
         tag: dict[str, str] | None = None,
+        source_type: str | None = None,
     ) -> list[TaskInfo]:
         """List tasks from the filesystem.
 
@@ -352,6 +353,8 @@ class LocalFileDurableTaskProvider:
         :paramtype lease_owner: str | None
         :keyword tag: Filter by tags (AND semantics — all must match).
         :paramtype tag: dict[str, str] | None
+        :keyword source_type: Filter by source type.
+        :paramtype source_type: str | None
         :return: Matching task records.
         :rtype: list[TaskInfo]
         """
@@ -372,6 +375,10 @@ class LocalFileDurableTaskProvider:
             if tag is not None:
                 task_tags = task.tags or {}
                 if not all(task_tags.get(k) == v for k, v in tag.items()):
+                    continue
+            if source_type is not None:
+                task_source = task.source or {}
+                if task_source.get("type") != source_type:
                     continue
             results.append(task)
         return results

@@ -17,7 +17,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from azure.ai.agentserver.core.durable import TaskContext, durable_task
+from azure.ai.agentserver.core.durable import TaskContext, task
 
 from .store import FileStore
 
@@ -43,7 +43,7 @@ def _save_history(session_id: str, history: list[dict[str, str]]) -> None:
     conversation_store.save(session_id, {"messages": history})
 
 
-@durable_task(name="claude_session", steerable=True)
+@task(name="claude_session", steerable=True)
 async def claude_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Run one Claude conversation turn with streaming and steering support.
 

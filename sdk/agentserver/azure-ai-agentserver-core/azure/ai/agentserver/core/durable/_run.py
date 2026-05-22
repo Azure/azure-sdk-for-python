@@ -13,7 +13,7 @@ from ._exceptions import (
 )
 from ._metadata import TaskMetadata
 from ._models import TaskInfo, TaskStatus
-from ._provider import DurableTaskProvider
+from ._provider import TaskProvider
 from ._result import TaskResult
 from ._stream import StreamHandler
 
@@ -49,13 +49,13 @@ class Suspended(Generic[Output]):
 class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
     """Handle to a running or completed durable task.
 
-    Returned by :meth:`DurableTask.start`. Provides external observation
+    Returned by :meth:`Task.start`. Provides external observation
     and control of the task lifecycle.
 
     :param task_id: The task identifier.
     :type task_id: str
     :param provider: Storage provider for refresh/delete operations.
-    :type provider: DurableTaskProvider
+    :type provider: TaskProvider
     :param result_future: Future that resolves with the task output.
     :type result_future: asyncio.Future[Output]
     :param metadata: The task's metadata instance.
@@ -84,7 +84,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         self,
         task_id: str,
         *,
-        provider: DurableTaskProvider,
+        provider: TaskProvider,
         result_future: asyncio.Future[TaskResult[Output]],
         metadata: TaskMetadata | None = None,
         cancel_event: asyncio.Event | None = None,

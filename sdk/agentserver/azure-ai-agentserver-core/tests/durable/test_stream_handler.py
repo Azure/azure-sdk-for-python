@@ -24,7 +24,7 @@ from azure.ai.agentserver.core.durable import (
     QueueStreamHandler,
     StreamHandler,
     TaskContext,
-    durable_task,
+    task,
 )
 from azure.ai.agentserver.core.durable._stream import QueueStreamHandler as _QSH
 
@@ -35,15 +35,15 @@ from azure.ai.agentserver.core.durable._stream import QueueStreamHandler as _QSH
 
 
 async def _setup_manager(tmp_path):
-    """Create a DurableTaskManager with local file storage."""
+    """Create a TaskManager with local file storage."""
     from azure.ai.agentserver.core.durable._local_provider import (
-        LocalFileDurableTaskProvider,
+        LocalFileTaskProvider,
     )
-    from azure.ai.agentserver.core.durable._manager import DurableTaskManager
+    from azure.ai.agentserver.core.durable._manager import TaskManager
 
     import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-    provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+    provider = LocalFileTaskProvider(Path(str(tmp_path)))
     config = type(
         "C",
         (),
@@ -54,7 +54,7 @@ async def _setup_manager(tmp_path):
             "is_hosted": False,
         },
     )()
-    manager = DurableTaskManager(config=config, provider=provider)
+    manager = TaskManager(config=config, provider=provider)
     mgr_mod._manager = manager
     await manager.startup()
     return manager, mgr_mod
@@ -144,7 +144,7 @@ class TestCustomHandlerDispatch:
         try:
             handler = RecordingHandler()
 
-            @durable_task(name="t010_custom_stream")
+            @task(name="t010_custom_stream")
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("chunk-1")
                 await ctx.stream("chunk-2")
@@ -175,7 +175,7 @@ class TestCustomHandlerDispatch:
         manager, mgr_mod = await _setup_manager(tmp_path)
         try:
 
-            @durable_task(name="t011_default_stream")
+            @task(name="t011_default_stream")
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("a")
                 await ctx.stream("b")
@@ -213,7 +213,7 @@ class TestSteeringCarryOver:
             handler = RecordingHandler()
             gen1_started = asyncio.Event()
 
-            @durable_task(name="t013_steerable", steerable=True)
+            @task(name="t013_steerable", steerable=True)
             async def steerable_task(ctx: TaskContext[dict]) -> dict:
                 gen = ctx.generation
                 await ctx.stream({"gen": gen, "event": "start"})
@@ -273,7 +273,7 @@ class TestStreamClosure:
         try:
             handler = RecordingHandler()
 
-            @durable_task(name="t015_success")
+            @task(name="t015_success")
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("data")
                 return "success"
@@ -296,7 +296,7 @@ class TestStreamClosure:
         try:
             handler = RecordingHandler()
 
-            @durable_task(name="t016_failure")
+            @task(name="t016_failure")
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("before-error")
                 raise ValueError("boom")
@@ -324,7 +324,7 @@ class TestStreamClosure:
         try:
             handler = FailingCloseHandler()
 
-            @durable_task(name="t017_close_error")
+            @task(name="t017_close_error")
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("data")
                 return "ok"
@@ -360,7 +360,7 @@ class TestStreamClosure:
         try:
             handler = FailingPutHandler()
 
-            @durable_task(name="t018_put_error")
+            @task(name="t018_put_error")
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("this will fail")
                 return "should not reach"
@@ -397,7 +397,7 @@ class TestLateJoinConsumer:
             task_started = asyncio.Event()
             proceed = asyncio.Event()
 
-            @durable_task(name="t021_late_join")
+            @task(name="t021_late_join")
             async def my_task(ctx: TaskContext[str]) -> str:
                 await ctx.stream("chunk-1")
                 task_started.set()
@@ -436,7 +436,7 @@ class TestLateJoinConsumer:
         manager, mgr_mod = await _setup_manager(tmp_path)
         try:
 
-            @durable_task(name="t021_inactive")
+            @task(name="t021_inactive")
             async def my_task(ctx: TaskContext[str]) -> str:
                 return "done"
 
@@ -487,7 +487,7 @@ class TestStreamHandlerFactory:
                 created_handlers.append(h)
                 return h
 
-            @durable_task(
+            @task(
                 name="t_factory_fresh",
                 stream_handler_factory=_factory,
             )
@@ -521,7 +521,7 @@ class TestStreamHandlerFactory:
                 factory_called = True
                 return RecordingHandler()
 
-            @durable_task(
+            @task(
                 name="t_factory_override",
                 stream_handler_factory=_factory,
             )
@@ -558,7 +558,7 @@ class TestStreamHandlerFactory:
                 created_handlers.append(h)
                 return h
 
-            @durable_task(
+            @task(
                 name="t_factory_recovery",
                 stream_handler_factory=_factory,
                 ephemeral=False,

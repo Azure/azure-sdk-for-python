@@ -9,7 +9,7 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     TaskContext,
-    durable_task,
+    task,
 )
 
 
@@ -18,15 +18,15 @@ class TestEntryMode:
 
     async def _setup_manager(self, tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -37,7 +37,7 @@ class TestEntryMode:
                 "is_hosted": False,
             },
         )()
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
         return manager, mgr_mod
@@ -51,7 +51,7 @@ class TestEntryMode:
         """First call to .run() produces entry_mode='fresh'."""
         observed_modes: list[str] = []
 
-        @durable_task(title="test-fresh")
+        @task(title="test-fresh")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_modes.append(ctx.entry_mode)
             return "done"
@@ -69,7 +69,7 @@ class TestEntryMode:
         """Calling .run() on a suspended task produces entry_mode='resumed' with new input."""
         observed: list[tuple[str, str]] = []
 
-        @durable_task(title="test-resume", ephemeral=False)
+        @task(title="test-resume", ephemeral=False)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.input))
             return await ctx.suspend(output={"partial": True})
@@ -93,7 +93,7 @@ class TestEntryMode:
         """Platform-initiated resume (handle_resume) produces entry_mode='resumed'."""
         observed: list[str] = []
 
-        @durable_task(title="test-platform-resume", ephemeral=False)
+        @task(title="test-platform-resume", ephemeral=False)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             return await ctx.suspend(output="waiting")
@@ -120,7 +120,7 @@ class TestEntryMode:
         """Calling .run() on a stale in_progress task produces entry_mode='recovered'."""
         observed: list[str] = []
 
-        @durable_task(title="test-recover", ephemeral=False)
+        @task(title="test-recover", ephemeral=False)
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             return "recovered-ok"
@@ -168,7 +168,7 @@ class TestEntryMode:
     async def test_ignoring_entry_mode_works(self, tmp_path) -> None:
         """A function that never reads entry_mode still works fine."""
 
-        @durable_task(title="test-ignore")
+        @task(title="test-ignore")
         async def my_task(ctx: TaskContext[str]) -> str:
             # Deliberately NOT reading ctx.entry_mode
             return f"processed: {ctx.input}"

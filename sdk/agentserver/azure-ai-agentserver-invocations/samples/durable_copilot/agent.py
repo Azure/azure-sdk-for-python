@@ -16,7 +16,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from azure.ai.agentserver.core.durable import TaskContext, durable_task
+from azure.ai.agentserver.core.durable import TaskContext, task
 
 from .store import FileStore
 
@@ -27,7 +27,7 @@ _DATA_DIR = Path.home() / ".durable-sessions"
 invocation_store = FileStore(_DATA_DIR / "copilot-invocations")
 
 
-@durable_task(name="copilot_session", steerable=True)
+@task(name="copilot_session", steerable=True)
 async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     """Run one Copilot conversation turn with steering support.
 

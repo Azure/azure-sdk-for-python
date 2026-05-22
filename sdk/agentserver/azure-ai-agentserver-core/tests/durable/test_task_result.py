@@ -88,14 +88,14 @@ class TestNestedTaskResultGuard:
         """Task function that returns TaskResult directly gets TypeError."""
         import uuid
         from pathlib import Path
-        from azure.ai.agentserver.core.durable import TaskContext, durable_task
+        from azure.ai.agentserver.core.durable import TaskContext, task
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
-        from azure.ai.agentserver.core.durable._manager import DurableTaskManager
+        from azure.ai.agentserver.core.durable._manager import TaskManager
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -106,7 +106,7 @@ class TestNestedTaskResultGuard:
                 "is_hosted": False,
             },
         )()
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
 
@@ -114,7 +114,7 @@ class TestNestedTaskResultGuard:
             from typing import Any
             from azure.ai.agentserver.core.durable import TaskContext
 
-            @durable_task(name="bad_return")
+            @task(name="bad_return")
             async def bad_task(ctx: TaskContext[Any]) -> Any:
                 return TaskResult(
                     task_id=ctx.task_id, output="data", status="completed"

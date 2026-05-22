@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for callable tag and description factories on @durable_task."""
+"""Tests for callable tag and description factories on @task."""
 
 from __future__ import annotations
 
@@ -13,25 +13,25 @@ import pytest
 
 from azure.ai.agentserver.core.durable import (
     TaskContext,
-    durable_task,
+    task,
 )
 
 
 class _ManagerFixture:
-    """Helper to set up a DurableTaskManager with local file storage."""
+    """Helper to set up a TaskManager with local file storage."""
 
     @staticmethod
     async def setup(tmp_path):
         from azure.ai.agentserver.core.durable._local_provider import (
-            LocalFileDurableTaskProvider,
+            LocalFileTaskProvider,
         )
         from azure.ai.agentserver.core.durable._manager import (
-            DurableTaskManager,
+            TaskManager,
         )
 
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
-        provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
         config = type(
             "C",
             (),
@@ -42,7 +42,7 @@ class _ManagerFixture:
                 "is_hosted": False,
             },
         )()
-        manager = DurableTaskManager(config=config, provider=provider)
+        manager = TaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()
         return manager, mgr_mod
@@ -54,7 +54,7 @@ class _ManagerFixture:
 
 
 class TestCallableTags:
-    """Tests for callable tag factories on @durable_task."""
+    """Tests for callable tag factories on @task."""
 
     @pytest.mark.asyncio
     async def test_static_tags_preserved(self, tmp_path):
@@ -62,15 +62,15 @@ class TestCallableTags:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="static_tags", tags={"env": "prod"}, ephemeral=False)
+            @task(name="static_tags", tags={"env": "prod"}, ephemeral=False)
             async def my_task(ctx: TaskContext[Any]) -> str:
                 return "done"
 
             task_id = uuid.uuid4().hex
             await my_task.run(task_id=task_id, input=None)
 
-            task = await manager.provider.get(task_id)
-            assert task.tags["env"] == "prod"
+            task_record = await manager.provider.get(task_id)
+            assert task_record.tags["env"] == "prod"
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -81,7 +81,7 @@ class TestCallableTags:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(
+            @task(
                 name="callable_tags",
                 tags=lambda inp, tid: {"tenant": inp["tenant"], "tid": tid[:8]},
                 ephemeral=False,
@@ -92,9 +92,9 @@ class TestCallableTags:
             task_id = uuid.uuid4().hex
             await my_task.run(task_id=task_id, input={"tenant": "acme"})
 
-            task = await manager.provider.get(task_id)
-            assert task.tags["tenant"] == "acme"
-            assert task.tags["tid"] == task_id[:8]
+            task_record = await manager.provider.get(task_id)
+            assert task_record.tags["tenant"] == "acme"
+            assert task_record.tags["tid"] == task_id[:8]
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -105,7 +105,7 @@ class TestCallableTags:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(
+            @task(
                 name="merge_tags",
                 tags=lambda inp, tid: {"source": "factory"},
                 ephemeral=False,
@@ -116,9 +116,9 @@ class TestCallableTags:
             task_id = uuid.uuid4().hex
             await my_task.run(task_id=task_id, input=None, tags={"extra": "call-site"})
 
-            task = await manager.provider.get(task_id)
-            assert task.tags["source"] == "factory"
-            assert task.tags["extra"] == "call-site"
+            task_record = await manager.provider.get(task_id)
+            assert task_record.tags["source"] == "factory"
+            assert task_record.tags["extra"] == "call-site"
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -129,7 +129,7 @@ class TestCallableTags:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(
+            @task(
                 name="bad_tags",
                 tags=lambda inp, tid: 1 / 0,  # type: ignore[return-value]
             )
@@ -144,7 +144,7 @@ class TestCallableTags:
 
 
 class TestCallableDescription:
-    """Tests for callable description factory on @durable_task."""
+    """Tests for callable description factory on @task."""
 
     @pytest.mark.asyncio
     async def test_static_description(self, tmp_path):
@@ -152,7 +152,7 @@ class TestCallableDescription:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(
+            @task(
                 name="static_desc", description="A static description", ephemeral=False
             )
             async def my_task(ctx: TaskContext[Any]) -> str:
@@ -161,8 +161,8 @@ class TestCallableDescription:
             task_id = uuid.uuid4().hex
             await my_task.run(task_id=task_id, input=None)
 
-            task = await manager.provider.get(task_id)
-            assert task.description == "A static description"
+            task_record = await manager.provider.get(task_id)
+            assert task_record.description == "A static description"
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -173,7 +173,7 @@ class TestCallableDescription:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(
+            @task(
                 name="callable_desc",
                 description=lambda inp, tid: f"Processing {inp['doc']}",
                 ephemeral=False,
@@ -184,8 +184,8 @@ class TestCallableDescription:
             task_id = uuid.uuid4().hex
             await my_task.run(task_id=task_id, input={"doc": "report.pdf"})
 
-            task = await manager.provider.get(task_id)
-            assert task.description == "Processing report.pdf"
+            task_record = await manager.provider.get(task_id)
+            assert task_record.description == "Processing report.pdf"
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -196,15 +196,15 @@ class TestCallableDescription:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="no_desc", ephemeral=False)
+            @task(name="no_desc", ephemeral=False)
             async def my_task(ctx: TaskContext[Any]) -> str:
                 return "done"
 
             task_id = uuid.uuid4().hex
             await my_task.run(task_id=task_id, input=None)
 
-            task = await manager.provider.get(task_id)
-            assert task.description is None
+            task_record = await manager.provider.get(task_id)
+            assert task_record.description is None
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
@@ -219,7 +219,7 @@ class TestFactoryValidation:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(
+            @task(
                 name="bad_tags_type",
                 tags=lambda inp, tid: "not-a-dict",  # type: ignore[return-value]
             )
@@ -238,7 +238,7 @@ class TestFactoryValidation:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(
+            @task(
                 name="bad_desc_type",
                 description=lambda inp, tid: 12345,  # type: ignore[return-value]
             )
@@ -254,7 +254,7 @@ class TestFactoryValidation:
     def test_options_mixing_callable_and_dict_tags_raises(self):
         """Mixing callable and dict tags in options() raises TypeError."""
 
-        @durable_task(
+        @task(
             name="callable_tags_task",
             tags=lambda inp, tid: {"k": "v"},
         )
@@ -267,7 +267,7 @@ class TestFactoryValidation:
     def test_options_callable_to_callable_ok(self):
         """Replacing callable tags with another callable in options() works."""
 
-        @durable_task(
+        @task(
             name="callable_swap",
             tags=lambda inp, tid: {"old": "factory"},
         )

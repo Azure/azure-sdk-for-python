@@ -1,14 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""``@durable_task`` decorator — turns an async function into a crash-resilient
+"""``@task`` decorator — turns an async function into a crash-resilient
 unit of work with automatic task lifecycle management.
 
 Usage::
 
-    from azure.ai.agentserver.core.durable import durable_task, TaskContext
+    from azure.ai.agentserver.core.durable import task, TaskContext
 
-    @durable_task
+    @task
     async def my_task(ctx: TaskContext[MyInput]) -> MyOutput:
         ...
 
@@ -52,19 +52,19 @@ _MAX_TASK_ID_LENGTH = 256
 
 #: Prefix for framework-reserved tags. Developer tags with this prefix are
 #: silently stripped to prevent collisions with auto-stamped tags.
-_RESERVED_TAG_PREFIX = "_durable_task_"
+_RESERVED_TAG_PREFIX = "_task_"
 
 _logger = _logging.getLogger("azure.ai.agentserver.durable")
 
 # Global registry of durable task descriptors for recovery purposes.
-# Populated at import time when @durable_task decorates a function.
-_REGISTERED_DESCRIPTORS: list[tuple[str, Callable[..., Any], "DurableTaskOptions"]] = []
+# Populated at import time when @task decorates a function.
+_REGISTERED_DESCRIPTORS: list[tuple[str, Callable[..., Any], "TaskOptions"]] = []
 
 
 def _strip_reserved_tags(tags: dict[str, str]) -> dict[str, str]:
     """Remove framework-reserved tags from developer-provided tags.
 
-    Tags prefixed with ``_durable_task_`` are reserved for framework use.
+    Tags prefixed with ``_task_`` are reserved for framework use.
     If a developer provides them, they are silently dropped with a warning.
 
     :param tags: Developer-provided tags.
@@ -205,7 +205,7 @@ def _is_stale(task_updated_at: str, timeout: float) -> bool:
     return (now - updated).total_seconds() > timeout
 
 
-class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
+class TaskOptions:  # pylint: disable=too-many-instance-attributes
     """Options for a durable task.
 
     :param name: **Stable identity anchor.** Used for recovery routing and
@@ -279,14 +279,14 @@ class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
 
     def __repr__(self) -> str:
         return (
-            f"DurableTaskOptions(name={self.name!r}, lease_duration_seconds={self.lease_duration_seconds}, "
+            f"TaskOptions(name={self.name!r}, lease_duration_seconds={self.lease_duration_seconds}, "
             f"store_input={self.store_input}, ephemeral={self.ephemeral}, retry={self.retry!r}, "
             f"timeout={self.timeout!r}, "
             f"steerable={self.steerable}, max_pending={self.max_pending})"
         )
 
 
-class DurableTask(Generic[Input, Output]):
+class Task(Generic[Input, Output]):
     """A decorated durable task function. Not callable directly.
 
     Use :meth:`run` (invoke-and-wait), :meth:`start` (fire-and-forget),
@@ -303,7 +303,7 @@ class DurableTask(Generic[Input, Output]):
     def __init__(
         self,
         fn: Callable[[TaskContext[Input]], Awaitable[Output]],
-        opts: DurableTaskOptions,
+        opts: TaskOptions,
         input_type: type[Input],
         output_type: type[Output],
     ) -> None:
@@ -325,7 +325,7 @@ class DurableTask(Generic[Input, Output]):
     def _resolve_tags(self, input_val: Input, task_id: str) -> dict[str, str]:
         """Resolve decorator-level tags (static dict or callable factory).
 
-        Reserved tags (prefixed with ``_durable_task_``) are stripped to
+        Reserved tags (prefixed with ``_task_``) are stripped to
         prevent developer code from colliding with framework-stamped tags.
 
         :param input_val: The task input value.
@@ -542,7 +542,7 @@ class DurableTask(Generic[Input, Output]):
         """List tasks created by this durable task function.
 
         Automatically scoped to this function's ``name`` via the
-        ``_durable_task_name`` tag (server-side) and ``source.type``
+        ``_task_name`` tag (server-side) and ``source.type``
         (client-side). Only returns tasks created by this framework.
 
         :keyword session_id: Session scope override.  Defaults to the
@@ -822,8 +822,8 @@ class DurableTask(Generic[Input, Output]):
         retry: RetryPolicy | None = None,
         steerable: bool | None = None,
         max_pending: int | None = None,
-    ) -> DurableTask[Input, Output]:
-        """Return a new DurableTask with merged options.
+    ) -> Task[Input, Output]:
+        """Return a new Task with merged options.
 
         The original is unchanged.
 
@@ -847,8 +847,8 @@ class DurableTask(Generic[Input, Output]):
         :paramtype steerable: bool | None
         :keyword max_pending: Maximum queued steering inputs.
         :paramtype max_pending: int | None
-        :return: A new DurableTask with overridden options.
-        :rtype: DurableTask[Input, Output]
+        :return: A new Task with overridden options.
+        :rtype: Task[Input, Output]
         """
         # For tags: if both old and new are dicts, merge them.
         # Mixing callable and dict is not supported — use one or the other.
@@ -867,7 +867,7 @@ class DurableTask(Generic[Input, Output]):
         else:
             resolved_tags = self._opts.tags
 
-        new_opts = DurableTaskOptions(
+        new_opts = TaskOptions(
             name=self._opts.name,
             title=title if title is not None else self._opts.title,
             tags=resolved_tags,
@@ -890,7 +890,7 @@ class DurableTask(Generic[Input, Output]):
                 max_pending if max_pending is not None else self._opts.max_pending
             ),
         )
-        return DurableTask(
+        return Task(
             fn=self._fn,
             opts=new_opts,
             input_type=self._input_type,
@@ -899,13 +899,13 @@ class DurableTask(Generic[Input, Output]):
 
 
 @overload
-def durable_task(
+def task(
     fn: Callable[[TaskContext[Input]], Awaitable[Output]],
-) -> DurableTask[Input, Output]: ...
+) -> Task[Input, Output]: ...
 
 
 @overload
-def durable_task(
+def task(
     *,
     name: str | None = ...,
     title: str | Callable[[Any, str], str] | None = ...,
@@ -921,11 +921,11 @@ def durable_task(
     stream_handler_factory: StreamHandlerFactory | None = ...,
 ) -> Callable[
     [Callable[[TaskContext[Input]], Awaitable[Output]]],
-    DurableTask[Input, Output],
+    Task[Input, Output],
 ]: ...
 
 
-def durable_task(
+def task(
     fn: Callable[..., Any] | None = None,
     *,
     name: str | None = None,
@@ -945,10 +945,10 @@ def durable_task(
 
     Can be used with or without arguments::
 
-        @durable_task
+        @task
         async def my_task(ctx: TaskContext[MyInput]) -> MyOutput: ...
 
-        @durable_task(name="custom-name", ephemeral=False)
+        @task(name="custom-name", ephemeral=False)
         async def my_task(ctx: TaskContext[MyInput]) -> MyOutput: ...
 
     :param fn: The async function to decorate (when used without parens).
@@ -979,16 +979,16 @@ def durable_task(
         and resume paths use this factory instead of defaulting to
         :class:`QueueStreamHandler`. Call-site ``stream_handler=`` overrides the
         factory for that specific call.
-    :return: A ``DurableTask[Input, Output]`` wrapper.
+    :return: A ``Task[Input, Output]`` wrapper.
     :rtype: Any
     """
 
     def _wrap(
         func: Callable[..., Any],
-    ) -> DurableTask[Any, Any]:
+    ) -> Task[Any, Any]:
         if not asyncio.iscoroutinefunction(func):
             raise TypeError(
-                f"@durable_task requires an async function, "
+                f"@task requires an async function, "
                 f"got {func.__qualname__!r}"
             )
 
@@ -1007,7 +1007,7 @@ def durable_task(
             tags if callable(tags) else _strip_reserved_tags(dict(tags) if tags else {})
         )
 
-        opts = DurableTaskOptions(
+        opts = TaskOptions(
             name=name or func.__qualname__,
             title=title,
             tags=resolved_tags,
@@ -1022,13 +1022,13 @@ def durable_task(
             stream_handler_factory=stream_handler_factory,
         )
 
-        task = DurableTask(
+        result = Task(
             fn=func,
             opts=opts,
             input_type=input_type,
             output_type=output_type,
         )
-        return task
+        return result
 
     if fn is not None:
         return _wrap(fn)

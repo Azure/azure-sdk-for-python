@@ -3,7 +3,7 @@
 kind: hosted
 name: durable-research-agent
 description: |
-    Demo agent showcasing crash-resilient long-running tasks using @durable_task.
+    Demo agent showcasing crash-resilient long-running tasks using @task.
     Survives crashes and auto-resumes from last checkpoint on restart.
 metadata:
     tags:

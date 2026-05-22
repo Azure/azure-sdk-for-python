@@ -16,11 +16,11 @@ from ._models import TaskCreateRequest, TaskInfo, TaskPatchRequest, TaskStatus
 
 
 @runtime_checkable
-class DurableTaskProvider(Protocol):
+class TaskProvider(Protocol):
     """Async storage backend for durable tasks.
 
-    Both :class:`HostedDurableTaskProvider` (HTTP → Task Storage API) and
-    :class:`LocalFileDurableTaskProvider` (filesystem) implement this
+    Both :class:`HostedTaskProvider` (HTTP → Task Storage API) and
+    :class:`LocalFileTaskProvider` (filesystem) implement this
     protocol.
     """
 
@@ -83,6 +83,7 @@ class DurableTaskProvider(Protocol):
         status: TaskStatus | None = None,
         lease_owner: str | None = None,
         tag: dict[str, str] | None = None,
+        source_type: str | None = None,
     ) -> list[TaskInfo]:
         """List tasks with filters.
 
@@ -96,6 +97,8 @@ class DurableTaskProvider(Protocol):
         :paramtype lease_owner: str | None
         :keyword tag: Filter by tags (AND semantics — all must match).
         :paramtype tag: dict[str, str] | None
+        :keyword source_type: Filter by source type.
+        :paramtype source_type: str | None
         :return: Matching task records.
         :rtype: list[TaskInfo]
         """

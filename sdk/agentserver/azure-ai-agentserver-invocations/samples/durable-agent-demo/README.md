@@ -2,7 +2,7 @@
 
 This sample demonstrates a **long-running research agent** that survives process
 crashes and automatically resumes from its last checkpoint. It uses the
-`@durable_task` decorator from `azure-ai-agentserver-core` to provide built-in
+`@task` decorator from `azure-ai-agentserver-core` to provide built-in
 crash resilience without any manual state management.
 
 ## What it showcases
@@ -230,7 +230,7 @@ azd ai agent monitor --type system
 
 ## How it works
 
-The `@durable_task` decorator provides:
+The `@task` decorator provides:
 
 - **Automatic persistence** — task state is checkpointed after each stage via
   `ctx.metadata.flush()`
@@ -246,7 +246,7 @@ The `@durable_task` decorator provides:
 
 Key code pattern:
 ```python
-@durable_task(name="deep_research", stream_handler_factory=file_stream_factory)
+@task(name="deep_research", stream_handler_factory=file_stream_factory)
 async def deep_research(ctx: TaskContext[dict]) -> dict:
     completed = ctx.metadata.get("completed_stages", 0)
 

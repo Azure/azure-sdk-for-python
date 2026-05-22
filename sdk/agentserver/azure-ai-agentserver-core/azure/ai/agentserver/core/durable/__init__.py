@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """Durable task subsystem for crash-resilient long-running agents.
 
-Provides the :func:`durable_task` decorator and supporting types for
+Provides the :func:`task` decorator and supporting types for
 building Azure AI Hosted Agents that survive container crashes,
 OOM kills, and redeployments.
 
@@ -23,8 +23,8 @@ Key features:
 Public API::
 
     from azure.ai.agentserver.core.durable import (
-        durable_task,
-        DurableTask,
+        task,
+        Task,
         RetryPolicy,
         TaskContext,
         TaskMetadata,
@@ -44,7 +44,7 @@ Public API::
 """
 
 from ._context import EntryMode, TaskContext
-from ._decorator import DurableTask, DurableTaskOptions, durable_task
+from ._decorator import Task, TaskOptions, task
 from ._exceptions import (
     EtagConflict,
     SteeringQueueFull,
@@ -63,9 +63,9 @@ from ._run import Suspended, TaskRun
 from ._stream import QueueStreamHandler, StreamHandler, StreamHandlerFactory
 
 __all__ = [
-    "durable_task",
-    "DurableTask",
-    "DurableTaskOptions",
+    "task",
+    "Task",
+    "TaskOptions",
     "QueueStreamHandler",
     "RetryPolicy",
     "StreamHandler",
