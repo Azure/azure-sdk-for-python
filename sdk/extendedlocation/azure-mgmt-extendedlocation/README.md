@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.extendedlocation import CustomLocations
+from azure.mgmt.extendedlocation import CustomLocationsMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = CustomLocations(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = CustomLocationsMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
