@@ -9,14 +9,22 @@ Async unit tests for PartitionKeyRangeCache:
 
 import asyncio
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
-from azure.cosmos._routing.aio.routing_map_provider import PartitionKeyRangeCache
+from azure.cosmos._routing.aio.routing_map_provider import (
+    PartitionKeyRangeCache,
+    _OVERLAP_RETRY_MAX_ATTEMPTS,
+)
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
+from azure.cosmos._routing._routing_map_provider_common import (
+    process_fetched_ranges,
+    _IncrementalMergeFailed,
+)
 from azure.cosmos import http_constants
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
 
 
@@ -488,6 +496,185 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         ids = [r['id'] for r in result._orderedPartitionKeyRanges]
         self.assertEqual(ids, ['4', '5', '3', '1'])
         self.assertEqual(result.change_feed_etag, '"etag-old"')
+
+    # ==========================================================================
+    # End-to-end retry-loop tests for transient /pkranges snapshot inconsistency.
+    #
+    # These cover the integration between the builder (which converts the
+    # underlying ValueError("Ranges overlap") into the _OverlapDetected
+    # sentinel) and _fetch_routing_map (which catches the sentinel, sleeps
+    # briefly, and re-fetches). The customer-observed failure mode is that
+    # one paginated /pkranges response can be internally inconsistent (e.g.
+    # a stale parent appearing alongside its children with missing parent
+    # references); a small retry budget with backoff gives the gateway time
+    # to converge before the SDK surfaces a transient HTTP 503.
+    # ==========================================================================
+
+    async def test_fetch_routing_map_recovers_after_transient_overlap_async(self):
+        """When the gateway returns an inconsistent paginated /pkranges snapshot
+        once and a consistent one on retry, the cache should populate cleanly
+        with the consistent data on the second attempt — the customer sees no
+        crash, no missing rows, just a brief stall."""
+        # First call: Mode 2 payload (stale parent + children missing parent ref) → triggers _OverlapDetected.
+        bad_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},  # stale parent
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},  # missing parents=['10']
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},  # missing parents=['10']
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        # Second call: same logical topology, but with the lineage metadata correctly
+        # propagated — gateway has now rotated to a consistent snapshot.
+        good_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90', 'parents': ['10']},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0', 'parents': ['10']},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+
+        responses = [bad_payload, good_payload]
+        call_count = {'n': 0}
+
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-{}"'.format(call_count['n'])}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+
+            async def async_gen():
+                for r in payload:
+                    yield r
+
+            return async_gen()
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        # Patch asyncio.sleep so the test does not actually wait the backoff.
+        async def _no_sleep(_seconds):
+            return None
+
+        with patch(
+            'azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep',
+            new=_no_sleep,
+        ):
+            result = await cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertIsNotNone(
+            result,
+            "Cache should populate after the transient overlap clears on retry."
+        )
+        self.assertEqual(
+            call_count['n'], 2,
+            "Expected exactly one retry: one failed fetch + one successful fetch."
+        )
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        # Post-fix expected ordering: L, 10/0, 10/1, R (the stale parent '10'
+        # is correctly filtered on the consistent retry payload).
+        self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
+
+    async def test_fetch_routing_map_surfaces_503_after_persistent_overlap_async(self):
+        """If the gateway keeps returning inconsistent snapshots through every
+        retry attempt, the cache should NOT silently return empty results from
+        get_overlapping_ranges (which would be a correctness bug masquerading
+        as zero data). It must surface a typed transient HTTP error so the
+        upstream retry policy can decide what to do."""
+        bad_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        call_count = {'n': 0}
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+
+            async def async_gen():
+                for r in bad_payload:
+                    yield r
+
+            return async_gen()
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        async def _no_sleep(_seconds):
+            return None
+
+        with patch(
+            'azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep',
+            new=_no_sleep,
+        ):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                await cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertEqual(
+            ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+            "Persistent overlap must surface as HTTP 503 (transient), not as a bare ValueError "
+            "or as a silent empty-result return."
+        )
+        # We should have exhausted the full retry budget (3 attempts by default).
+        self.assertEqual(
+            call_count['n'], _OVERLAP_RETRY_MAX_ATTEMPTS,
+            "Should have made exactly _OVERLAP_RETRY_MAX_ATTEMPTS fetch attempts before giving up."
+        )
+
+    async def test_incremental_overlap_converts_to_incremental_merge_failed_async(self):
+        """If the incremental-merge path produces overlapping ranges (e.g. the
+        delta contains a range whose key span overlaps an existing cached
+        range without either side declaring the other a parent), the
+        ``ValueError("Ranges overlap")`` raised by ``try_combine`` must NOT
+        escape to the caller. It must convert to ``_IncrementalMergeFailed``
+        so the standard fallback path takes over (retry incremental once,
+        then full-load — which has its own ``_OverlapDetected`` handler).
+        This is what guarantees the customer never observes a bare
+        ``ValueError`` from any of the validator's call sites."""
+
+        # Existing cached map: '0' covers ['', '80'] and '1' covers ['80', 'FF'].
+        previous_map = CollectionRoutingMap.CompleteRoutingMap(
+            [
+                ({'id': '0', 'minInclusive': '',   'maxExclusive': '80'}, True),
+                ({'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}, True),
+            ],
+            'coll1', '"etag-prev"'
+        )
+
+        # Delta:
+        #   - '0' re-declared with the same span (resolves via the existing
+        #     ``known_range_info_by_id`` lookup — no parents needed).
+        #   - '2' with ``parents=['1']`` and a span that overlaps '0'. The
+        #     parent-resolution loop succeeds because '1' is in the cache,
+        #     so we reach ``try_combine``. Once '1' is removed as the gone
+        #     parent, the merged map is { '0' ('', '80'), '2' ('40', 'FF') }
+        #     — '0' overlaps '2' on ['40', '80'], so ``is_complete_set_of_range``
+        #     raises ``ValueError("Ranges overlap: ...")`` from inside
+        #     ``try_combine``.
+        bad_delta = [
+            {'id': '0', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '2', 'minInclusive': '40', 'maxExclusive': 'FF', 'parents': ['1']},
+        ]
+
+        # The wrapper around try_combine must absorb the ValueError and convert
+        # it to _IncrementalMergeFailed for the caller's retry loop.
+        with self.assertRaises(_IncrementalMergeFailed):
+            process_fetched_ranges(
+                bad_delta, previous_map, 'coll1', 'dbs/db1/colls/coll1', '"etag-new"'
+            )
 
 
 if __name__ == "__main__":

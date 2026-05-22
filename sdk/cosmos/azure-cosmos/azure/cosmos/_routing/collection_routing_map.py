@@ -29,6 +29,30 @@ from typing import Optional, Union
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.routing_range import PartitionKeyRange, PKRange
 
+
+class _OverlapDetected(Exception):
+    """Sentinel raised by :func:`_build_routing_map_from_ranges` when the
+    ``/pkranges`` response contains overlapping ranges that the SDK cannot
+    reconcile from a single snapshot.
+
+    Distinct from a plain ``ValueError`` so the caller can identify the
+    overlap case explicitly and apply the retry-on-overlap policy instead
+    of treating it as a fatal programmer error. Overlap on this path is
+    expected to be transient (a paginated ``/pkranges`` response that is
+    not snapshot-isolated across gateway nodes), so a short retry budget
+    with backoff is sufficient.
+
+    The caller (``_fetch_routing_map`` on both sync and async cache
+    providers) catches this sentinel, sleeps briefly, and retries the
+    fetch. After a small number of failed retries it surfaces a typed
+    transient HTTP error so the upstream retry policy can take over. The
+    sentinel is intentionally not allowed to escape to the query layer
+    as a bare ``ValueError`` — that path would otherwise convert into a
+    silent empty-result return at ``get_overlapping_ranges`` (which
+    treats a ``None`` routing map as "no ranges"), masking the failure
+    as a correctness bug.
+    """
+
 # pylint: disable=line-too-long
 class CollectionRoutingMap(object):
     """Stores partition key ranges in an efficient way with some additional
@@ -196,7 +220,23 @@ class CollectionRoutingMap(object):
 
                 if not isComplete:
                     if previousRange[PartitionKeyRange.MaxExclusive] > currentRange[PartitionKeyRange.MinInclusive]:
-                        raise ValueError("Ranges overlap")
+                        # Include the offending pair in the message so whoever
+                        # investigates the next occurrence has actionable
+                        # diagnostics without having to reproduce the failure
+                        # under a debugger. Keep the literal substring
+                        # "Ranges overlap" for backwards compatibility with
+                        # any caller that pattern-matches on it.
+                        raise ValueError(
+                            "Ranges overlap: previous range id={!r} ({!r} -> {!r}) "
+                            "overlaps current range id={!r} ({!r} -> {!r})".format(
+                                previousRange.get(PartitionKeyRange.Id),
+                                previousRange[PartitionKeyRange.MinInclusive],
+                                previousRange[PartitionKeyRange.MaxExclusive],
+                                currentRange.get(PartitionKeyRange.Id),
+                                currentRange[PartitionKeyRange.MinInclusive],
+                                currentRange[PartitionKeyRange.MaxExclusive],
+                            )
+                        )
                     break
 
         return isComplete
@@ -270,7 +310,10 @@ def _build_routing_map_from_ranges(
 
     Filters out parent (gone) ranges and validates that the remaining ranges
     form a complete, gap-free partition key space. Returns None if the ranges
-    are incomplete.
+    are incomplete (gap), and raises ``_OverlapDetected`` if the ranges
+    overlap — the caller is expected to retry the fetch on the overlap case,
+    since overlap on the full-load path is treated as a transient gateway
+    inconsistency rather than a permanent input error.
 
     This is shared between the sync and async PartitionKeyRangeCache to avoid
     code duplication — the logic is purely synchronous.
@@ -280,9 +323,27 @@ def _build_routing_map_from_ranges(
     :param str new_etag: The ETag from the change feed response.
     :param str collection_link: The collection link, used for log messages.
     :param logging.Logger _logger: Logger instance for error reporting.
-    :return: A complete CollectionRoutingMap, or None if the ranges are incomplete.
+    :return: A complete CollectionRoutingMap, or None if the ranges are incomplete (gap).
     :rtype: Optional[CollectionRoutingMap]
+    :raises _OverlapDetected: If the ranges contain an overlap that could not
+        be resolved from this single snapshot. The caller should retry the
+        fetch; see :class:`_OverlapDetected` for the rationale.
     """
+    # Dedup the input by id BEFORE parent filtering and validation. At high
+    # partition counts the /pkranges response is paginated, and pagination
+    # is not snapshot-isolated across gateway nodes — consecutive pages can
+    # legitimately return the same range id when the page boundary falls
+    # between two nodes with one-tick-out-of-sync caches. Without this dedup
+    # the duplicate would survive into the sortedRanges list inside
+    # CompleteRoutingMap and trip the overlap check on two identical entries.
+    # Last-write-wins is safe: duplicates describe the same logical range
+    # and any later occurrence carries the same id, min/max, and (when
+    # present) the more-complete metadata such as ``parents``.
+    deduped_by_id: dict = {}
+    for r in ranges:
+        deduped_by_id[r[PartitionKeyRange.Id]] = r
+    ranges = list(deduped_by_id.values())
+
     gone_range_ids = set()
     for r in ranges:
         if PartitionKeyRange.Parents in r and r[PartitionKeyRange.Parents]:
@@ -294,11 +355,27 @@ def _build_routing_map_from_ranges(
     ]
     range_tuples = [(r, True) for r in filtered_ranges]
 
-    routing_map = CollectionRoutingMap.CompleteRoutingMap(
-        range_tuples,
-        collection_id,
-        new_etag
-    )
+    try:
+        routing_map = CollectionRoutingMap.CompleteRoutingMap(
+            range_tuples,
+            collection_id,
+            new_etag
+        )
+    except ValueError as overlap_error:
+        # ``is_complete_set_of_range`` raises ``ValueError("Ranges overlap: ...")``
+        # when the post-filter range list still contains an overlap. Convert
+        # it to ``_OverlapDetected`` so the caller can apply the retry-on-
+        # overlap policy. The bare ``ValueError`` must NOT escape to the
+        # cache layer: that path converts into a silent empty-result return
+        # at ``get_overlapping_ranges`` (which treats ``None`` from the
+        # cache as "no ranges"), masking the failure as a correctness bug.
+        _logger.warning(
+            "Full load of routing map for collection '%s' detected overlapping "
+            "partition key ranges: %s. Signalling caller to retry the "
+            "/pkranges fetch.",
+            collection_link, str(overlap_error),
+        )
+        raise _OverlapDetected() from overlap_error
 
     if not routing_map:
         _logger.error(

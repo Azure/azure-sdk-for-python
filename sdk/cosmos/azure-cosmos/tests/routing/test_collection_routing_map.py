@@ -7,7 +7,11 @@ import logging
 import pytest
 
 import azure.cosmos._routing.routing_range as routing_range
-from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap, _build_routing_map_from_ranges
+from azure.cosmos._routing.collection_routing_map import (
+    CollectionRoutingMap,
+    _build_routing_map_from_ranges,
+    _OverlapDetected,
+)
 
 
 @pytest.mark.cosmosEmulator
@@ -448,6 +452,142 @@ class TestCollectionRoutingMap(unittest.TestCase):
 
         result_none_etag = _build_routing_map_from_ranges(ranges, 'coll1', None, 'link', _logger)
         self.assertIsNone(result_none_etag.change_feed_etag)
+
+    # ==========================================================================
+    # Regression tests for ValueError("Ranges overlap") triggered by transient
+    # /pkranges snapshot inconsistencies at high partition counts.
+    #
+    # These tests reproduce three concrete failure modes observed against a
+    # customer container with ~25.6k physical partitions during a long-running
+    # async Spark scan.
+    #
+    # The desired behaviour at the builder layer is one of two outcomes per
+    # mode, never a bare ``ValueError`` escaping to the caller (which would
+    # otherwise reach ``get_overlapping_ranges`` where a ``None`` routing map
+    # silently returns an empty list — a correctness bug, not a crash):
+    #
+    #   * Mode 1 (duplicate range across pages) — the builder must dedup by
+    #     id BEFORE validation and succeed, since duplicates describe the
+    #     same logical range.
+    #
+    #   * Modes 2 and 3 (stale parent / surviving grandparent with broken
+    #     intermediate references) -- the builder cannot reconstruct what is
+    #     not in the data, so it must convert the unrecoverable-from-this-
+    #     snapshot ``ValueError`` into a typed ``_OverlapDetected`` sentinel.
+    #     The caller (`_fetch_routing_map`) catches the sentinel, retries
+    #     after a brief backoff, and ultimately surfaces a typed transient
+    #     HTTP 503 if the inconsistency persists across the retry budget.
+    # ==========================================================================
+
+    def test_full_load_dedups_duplicate_range_id_across_pages_mode_1(self):
+        """Mode 1 (duplicate range across pages): when /pkranges pagination
+        returns the same range id on two consecutive pages because two gateway
+        nodes serve from slightly different cached snapshots, the SDK should
+        dedup by id (last-write-wins) before validating and produce a valid
+        routing map — not raise."""
+        _logger = logging.getLogger("test")
+        # Range id '1' appears twice because page boundary fell between two
+        # gateway nodes with one-tick-out-of-sync caches.
+        ranges = [
+            {'id': '0', 'minInclusive': '',   'maxExclusive': '40'},
+            {'id': '1', 'minInclusive': '40', 'maxExclusive': '80'},
+            {'id': '1', 'minInclusive': '40', 'maxExclusive': '80'},  # duplicate from next page
+            {'id': '2', 'minInclusive': '80', 'maxExclusive': 'C0'},
+            {'id': '3', 'minInclusive': 'C0', 'maxExclusive': 'FF'},
+        ]
+        result = _build_routing_map_from_ranges(ranges, 'coll1', '"etag-dup"', 'dbs/db/colls/coll1', _logger)
+
+        self.assertIsNotNone(
+            result,
+            "Duplicate range id across pages should be deduped, not crash the builder."
+        )
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['0', '1', '2', '3'])
+
+    def test_full_load_raises_overlap_sentinel_for_stale_parent_with_missing_child_refs_mode_2(self):
+        """Mode 2 (stale parent, children missing parent reference): when a
+        gateway node returns a freshly-split parent alongside its children but
+        the children's 'parents' fields fail to reference the parent (because
+        the lineage metadata hadn't fully propagated when that node served the
+        page), _build_routing_map_from_ranges should convert the underlying
+        ValueError into _OverlapDetected so the caller can retry — and the
+        sentinel must NOT be a plain ValueError, since a plain ValueError
+        would escape to the cache layer and silently return empty results
+        from get_overlapping_ranges."""
+        _logger = logging.getLogger("test")
+        # Parent '10' was split into '10/0' and '10/1', but the children on
+        # this page lost their 'parents': ['10'] reference. The one-direction
+        # parent filter cannot remove '10' because no surviving range names it.
+        ranges = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},  # unaffected left neighbor
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},  # stale parent
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},  # SHOULD have parents=['10']
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},  # SHOULD have parents=['10']
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},  # unaffected right neighbor
+        ]
+        with self.assertRaises(_OverlapDetected):
+            _build_routing_map_from_ranges(ranges, 'coll1', '"etag-stale-parent"', 'dbs/db/colls/coll1', _logger)
+
+    def test_full_load_raises_overlap_sentinel_for_grandparent_surviving_cascade_split_mode_3(self):
+        """Mode 3 (grandparent surviving a cascade split): when two generations
+        of splits have completed and the intermediate parent drops its
+        reference to the grandparent, the grandparent survives every available
+        defense and overlaps its grandchildren. _build_routing_map_from_ranges
+        should convert this into _OverlapDetected so the caller can retry."""
+        _logger = logging.getLogger("test")
+        # '10' split into '10/0' and '10/1'; then '10/0' split into '10/0/0'
+        # and '10/0/1'. The grandchildren reference '10/0' correctly, but
+        # '10/0' and '10/1' both lost their 'parents': ['10'] reference, so
+        # the parent filter only collects {'10/0'} and leaves '10' in place.
+        ranges = [
+            {'id': 'L',       'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',      'minInclusive': '80', 'maxExclusive': 'A0'},                           # grandparent
+            {'id': '10/0',    'minInclusive': '80', 'maxExclusive': '90'},                           # SHOULD have parents=['10']
+            {'id': '10/0/0',  'minInclusive': '80', 'maxExclusive': '88', 'parents': ['10/0']},
+            {'id': '10/0/1',  'minInclusive': '88', 'maxExclusive': '90', 'parents': ['10/0']},
+            {'id': '10/1',    'minInclusive': '90', 'maxExclusive': 'A0'},                           # SHOULD have parents=['10']
+            {'id': 'R',       'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        with self.assertRaises(_OverlapDetected):
+            _build_routing_map_from_ranges(ranges, 'coll1', '"etag-cascade"', 'dbs/db/colls/coll1', _logger)
+
+    def test_overlap_sentinel_is_not_a_value_error(self):
+        """``_OverlapDetected`` must not be a subclass of ``ValueError`` (or any
+        other exception type that callers in the cache layer have historically
+        caught and swallowed). If it were, the very catch sites that today let
+        the bug crash the scan would silently absorb the sentinel and convert
+        it into the same empty-result correctness bug we were trying to avoid.
+
+        The sentinel must be plainly an ``Exception``, distinguishable by
+        type, so the dedicated retry loop in ``_fetch_routing_map`` is the
+        only handler."""
+        self.assertFalse(
+            issubclass(_OverlapDetected, ValueError),
+            "_OverlapDetected must not inherit from ValueError -- that would "
+            "allow legacy ValueError catches to absorb the retry signal."
+        )
+        # Should still be a concrete Exception subclass (sanity check).
+        self.assertTrue(issubclass(_OverlapDetected, Exception))
+
+    def test_overlap_error_message_identifies_offending_ranges(self):
+        """When is_complete_set_of_range is called directly with genuinely
+        overlapping input (i.e. an unrecoverable programmer error rather than
+        a transient gateway snapshot), the ValueError message should identify
+        which two ranges overlapped so that whoever investigates the next
+        occurrence has actionable diagnostics out of the box."""
+        ranges = [
+            {'id': 'A', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': 'B', 'minInclusive': '40', 'maxExclusive': 'FF'},  # overlaps with A
+        ]
+        with self.assertRaises(ValueError) as ctx:
+            CollectionRoutingMap.is_complete_set_of_range(ranges)
+
+        msg = str(ctx.exception)
+        self.assertIn('overlap', msg.lower())
+        self.assertIn('A', msg, "Error message should name the previous (offending) range id.")
+        self.assertIn('B', msg, "Error message should name the current (offending) range id.")
+        self.assertIn('80', msg, "Error message should include the previous range's maxExclusive.")
+        self.assertIn('40', msg, "Error message should include the current range's minInclusive.")
 
 
 if __name__ == '__main__':

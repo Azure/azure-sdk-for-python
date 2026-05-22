@@ -7,16 +7,25 @@ Sync unit tests for PartitionKeyRangeCache:
   - Empty change feed response (304 Not Modified / zero ranges from incremental update)
 """
 
+import logging
 import threading
 import time
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
+from azure.cosmos._routing._routing_map_provider_common import (
+    _OVERLAP_RETRY_INITIAL_BACKOFF_SECONDS,
+    _handle_overlap_retry_decision,
+)
+from azure.cosmos._routing.routing_map_provider import (
+    PartitionKeyRangeCache,
+    _OVERLAP_RETRY_MAX_ATTEMPTS,
+)
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos import http_constants
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
 
 
@@ -617,6 +626,208 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         ids = [r['id'] for r in result._orderedPartitionKeyRanges]
         self.assertEqual(ids, ['4', '5', '3', '1'])
         self.assertEqual(result.change_feed_etag, '"etag-old"')
+
+    # ==========================================================================
+    # End-to-end retry-loop tests for transient /pkranges snapshot inconsistency
+    # on the SYNC provider. Mirrors the async equivalents to guarantee both
+    # providers stay in lockstep on this contract: the cache-load pipeline
+    # never lets a bare ValueError("Ranges overlap") escape -- it either
+    # recovers on retry, or surfaces a typed CosmosHttpResponseError(503) the
+    # upstream retry policy already knows how to handle.
+    # ==========================================================================
+
+    # ==========================================================================
+    # Unit tests for the overlap-retry policy helper. These pin the contract
+    # that the returned backoff is always within the deterministic upper bound
+    # (so the worst-case-wall-time guarantee in the public docs holds) and that
+    # jitter is actually applied (so concurrent retriers in different Cosmos
+    # clients -- e.g. several PySpark workers in the same process -- do not
+    # retry in lockstep on the same gateway node).
+    # ==========================================================================
+
+    def test_overlap_retry_backoff_is_within_deterministic_upper_bound(self):
+        """For each non-terminal attempt, the returned backoff must lie inside
+        ``[0, deterministic_bound]`` where the deterministic bound is the
+        documented exponential schedule (0.5s, 1.0s, 2.0s). This is what
+        guarantees we never exceed the advertised worst-case wall time."""
+        # Build a fresh logger so we don't compete for handlers with the real one.
+        test_logger = logging.getLogger(__name__ + ".jitter_bounds_test")
+
+        # _OVERLAP_RETRY_MAX_ATTEMPTS is 3, so non-terminal attempts are 1 and 2.
+        # (Attempt 3 raises 503; that branch is exercised by the e2e test below.)
+        for attempt_index, expected_upper_bound in [(1, 0.5), (2, 1.0)]:
+            for _ in range(50):  # 50 draws per attempt -- catches an
+                                 # accidentally-constant return value as well.
+                backoff = _handle_overlap_retry_decision(
+                    overlap_attempt_count=attempt_index,
+                    collection_link="dbs/db1/colls/coll1",
+                    logger=test_logger,
+                )
+                self.assertGreaterEqual(
+                    backoff, 0.0,
+                    "Jittered backoff must be non-negative (random.uniform "
+                    "with low=0 invariant)."
+                )
+                self.assertLessEqual(
+                    backoff, expected_upper_bound,
+                    "Jittered backoff for attempt {} must not exceed the "
+                    "deterministic upper bound {}s; got {}s. This would "
+                    "violate the worst-case wall-time contract documented "
+                    "on _handle_overlap_retry_decision.".format(
+                        attempt_index, expected_upper_bound, backoff,
+                    )
+                )
+
+    def test_overlap_retry_backoff_actually_varies_between_calls(self):
+        """Two consecutive calls for the same attempt index must not return
+        the same value with overwhelming probability -- otherwise jitter has
+        regressed to a fixed backoff and concurrent retriers in different
+        Cosmos clients will land back on the same gateway node in lockstep.
+
+        We draw N samples and assert at least two distinct values. The
+        probability of all-identical draws from ``random.uniform(0, 0.5)`` is
+        effectively zero in 50 draws, so this is not a flake risk; but if a
+        future refactor accidentally returns the deterministic backoff, this
+        test fires loudly."""
+        test_logger = logging.getLogger(__name__ + ".jitter_variance_test")
+        samples = [
+            _handle_overlap_retry_decision(
+                overlap_attempt_count=1,
+                collection_link="dbs/db1/colls/coll1",
+                logger=test_logger,
+            )
+            for _ in range(50)
+        ]
+        self.assertGreater(
+            len(set(samples)), 1,
+            "Overlap-retry backoff produced identical values across 50 draws "
+            "-- jitter has likely regressed. Each draw should be an "
+            "independent random.uniform(0, deterministic_bound) sample."
+        )
+
+    def test_overlap_retry_raises_503_at_attempt_budget_exhaustion(self):
+        """At the documented attempt budget (_OVERLAP_RETRY_MAX_ATTEMPTS),
+        the helper must raise CosmosHttpResponseError(503) -- not return a
+        backoff. This is the only branch that surfaces an exception to the
+        caller, and it is what lets the upstream Cosmos retry policy take
+        over instead of the SDK silently giving up.
+
+        Also exercised end-to-end by
+        ``test_fetch_routing_map_surfaces_503_after_persistent_overlap``,
+        but this is the focused unit-level guard."""
+        test_logger = logging.getLogger(__name__ + ".jitter_budget_test")
+        with self.assertRaises(CosmosHttpResponseError) as ctx:
+            _handle_overlap_retry_decision(
+                overlap_attempt_count=_OVERLAP_RETRY_MAX_ATTEMPTS,
+                collection_link="dbs/db1/colls/coll1",
+                logger=test_logger,
+            )
+        self.assertEqual(
+            ctx.exception.status_code,
+            http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+        )
+
+    # ==========================================================================
+    # End-to-end retry-loop tests below ↓
+    # ==========================================================================
+
+    def test_fetch_routing_map_recovers_after_transient_overlap(self):
+        """When the gateway returns an inconsistent paginated /pkranges snapshot
+        once and a consistent one on retry, the sync cache should populate
+        cleanly on the second attempt — the customer sees no crash, no missing
+        rows, just a brief stall."""
+        # First call: Mode 2 payload (stale parent + children missing parent ref).
+        bad_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},  # stale parent
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},  # missing parents=['10']
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},  # missing parents=['10']
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        # Second call: consistent snapshot, lineage metadata correctly propagated.
+        good_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90', 'parents': ['10']},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0', 'parents': ['10']},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+
+        responses = [bad_payload, good_payload]
+        call_count = {'n': 0}
+
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-{}"'.format(call_count['n'])}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+            return iter(payload)
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        # Patch time.sleep so the test does not actually wait the backoff.
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            result = cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertIsNotNone(
+            result,
+            "Sync cache should populate after the transient overlap clears on retry."
+        )
+        self.assertEqual(
+            call_count['n'], 2,
+            "Expected exactly one retry: one failed fetch + one successful fetch."
+        )
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
+
+    def test_fetch_routing_map_surfaces_503_after_persistent_overlap(self):
+        """If the gateway keeps returning inconsistent snapshots across every
+        retry attempt on the sync provider, the cache must NOT silently return
+        empty results from get_overlapping_ranges (correctness bug). It must
+        surface a typed transient HTTP error so the upstream retry policy can
+        decide what to do."""
+        bad_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        call_count = {'n': 0}
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+            return iter(bad_payload)
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertEqual(
+            ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+            "Persistent overlap must surface as HTTP 503 (transient), not as a bare ValueError "
+            "or as a silent empty-result return."
+        )
+        self.assertEqual(
+            call_count['n'], _OVERLAP_RETRY_MAX_ATTEMPTS,
+            "Should have made exactly _OVERLAP_RETRY_MAX_ATTEMPTS fetch attempts before giving up."
+        )
 
 
 if __name__ == "__main__":

@@ -38,6 +38,9 @@ from .._routing_map_provider_common import (
     determine_refresh_action,
     get_smart_overlapping_ranges,
     _IncrementalMergeFailed,
+    _OverlapDetected,
+    _OVERLAP_RETRY_MAX_ATTEMPTS,  # noqa: F401  # re-exported for tests
+    _handle_overlap_retry_decision,
 )
 
 
@@ -103,6 +106,10 @@ logger = logging.getLogger(__name__)
 # Number of extra incremental attempts after an incomplete incremental merge
 # before falling back to a full routing-map refresh.
 _INCOMPLETE_ROUTING_MAP_MAX_RETRIES = 1
+
+# Overlap-retry budget and backoff live in ``_routing_map_provider_common`` so
+# the sync and async providers cannot drift on them. ``_OVERLAP_RETRY_MAX_ATTEMPTS``
+# is re-exported through this module for test imports.
 class PartitionKeyRangeCache(object):
     """
     PartitionKeyRangeCache provides list of effective partition key ranges for a
@@ -343,6 +350,7 @@ class PartitionKeyRangeCache(object):
         """
         current_previous_map = previous_routing_map
         incomplete_attempt_count = 0
+        overlap_attempt_count = 0
 
         while True:
             request_kwargs = dict(kwargs)
@@ -398,6 +406,24 @@ class PartitionKeyRangeCache(object):
                     continue
 
                 raise
+            except _OverlapDetected:
+                # The full-load builder reported overlapping ranges. Apply
+                # the retry-on-overlap policy: ``_handle_overlap_retry_decision``
+                # either returns a backoff to sleep or raises ``CosmosHttpResponseError``
+                # (503) when the attempt budget is exhausted. Reset
+                # ``current_previous_map`` to ``None`` so the next iteration
+                # runs the full-load path regardless of which path tripped
+                # the overlap — we do not want to keep retrying an incremental
+                # fetch against the same inconsistent base.
+                overlap_attempt_count += 1
+                backoff = _handle_overlap_retry_decision(
+                    overlap_attempt_count=overlap_attempt_count,
+                    collection_link=collection_link,
+                    logger=logger,
+                )
+                await asyncio.sleep(backoff)
+                current_previous_map = None
+                continue
 
     async def get_range_by_partition_key_range_id(
             self,
