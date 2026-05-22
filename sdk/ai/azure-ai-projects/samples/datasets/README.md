@@ -22,17 +22,6 @@ Set these environment variables:
 
 Optional per-sample variables (`DATASET_NAME`, `POLL_INTERVAL_SECONDS`, `FOUNDRY_TRACES_WINDOW_DAYS`, etc.) are documented in each sample's docstring.
 
-## Running a Sample
-
-```bash
-# Set environment variables
-export FOUNDRY_PROJECT_ENDPOINT="https://<your-account>.services.ai.azure.com/api/projects/<your-project>"
-export FOUNDRY_MODEL_NAME="<your-model-deployment-name>" # Replace with your model name
-
-# Run a sample. For example:
-python sample_datasets.py
-```
-
 ## Sample Index
 
 ### Dataset Basics
