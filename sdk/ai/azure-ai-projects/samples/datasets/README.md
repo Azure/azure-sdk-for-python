@@ -1,7 +1,5 @@
 # Azure AI Projects - Dataset Samples
 
-This folder contains samples demonstrating how to work with versioned Datasets and data generation jobs in Azure AI Foundry using the `azure-ai-projects` SDK.
-
 ## Prerequisites
 
 Before running any sample:
