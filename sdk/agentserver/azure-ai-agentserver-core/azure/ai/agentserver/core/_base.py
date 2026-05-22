@@ -244,6 +244,26 @@ class AgentServerHost(Starlette):
                 protocols,
             )
 
+            # --- Durable task manager auto-initialization ---
+            task_manager = None
+            try:
+                from .durable._manager import (  # pylint: disable=import-outside-toplevel
+                    TaskManager,
+                    set_task_manager,
+                )
+
+                task_manager = TaskManager(
+                    config=cfg,
+                    shutdown_event=asyncio.Event(),
+                )
+                set_task_manager(task_manager)
+                await task_manager.startup()
+                logger.info("TaskManager initialized automatically")
+            except ImportError:
+                pass  # durable module not available
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Failed to initialize TaskManager", exc_info=True)
+
             yield
 
             # --- SHUTDOWN: runs once when the server is stopping ---
@@ -251,6 +271,20 @@ class AgentServerHost(Starlette):
                 "AgentServerHost shutting down (graceful timeout=%ss)",
                 self._graceful_shutdown_timeout,
             )
+
+            # Shutdown task manager
+            if task_manager is not None:
+                try:
+                    await task_manager.shutdown()
+                    from .durable._manager import (  # pylint: disable=import-outside-toplevel
+                        set_task_manager as _clear_manager,
+                    )
+
+                    _clear_manager(None)
+                    logger.info("TaskManager shut down")
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Error shutting down TaskManager", exc_info=True)
+
             if self._graceful_shutdown_timeout == 0:
                 logger.info("Graceful shutdown drain period disabled (timeout=0)")
             else:

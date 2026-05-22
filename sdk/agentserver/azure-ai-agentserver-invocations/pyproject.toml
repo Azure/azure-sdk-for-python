@@ -68,6 +68,8 @@ mypy = true
 pyright = true
 verifytypes = false
 latestdependency = false
+# azure-ai-agentserver-core>=2.0.0b4 is not yet on PyPI
+mindependency = false
 pylint = true
 type_check_samples = false
 

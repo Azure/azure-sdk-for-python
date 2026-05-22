@@ -1,0 +1,5 @@
+anthropic>=0.30.0
+azure-ai-agentserver-core
+azure-ai-agentserver-invocations
+starlette
+uvicorn

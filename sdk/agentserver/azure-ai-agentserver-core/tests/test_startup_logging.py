@@ -20,7 +20,9 @@ class TestMaskUri:
         assert _mask_uri("   ") == _NOT_SET
 
     def test_https_uri_strips_path_and_query(self) -> None:
-        result = _mask_uri("https://myproject.azure.com/subscriptions/abc?api-version=2024")
+        result = _mask_uri(
+            "https://myproject.azure.com/subscriptions/abc?api-version=2024"
+        )
         assert result == "https://myproject.azure.com"
 
     def test_http_uri_with_port(self) -> None:
@@ -68,7 +70,9 @@ class TestStartupConfigurationLogging:
 
     @pytest.mark.usefixtures("_clean_env")
     @pytest.mark.asyncio
-    async def test_startup_logs_platform_environment(self, caplog: pytest.LogCaptureFixture) -> None:
+    async def test_startup_logs_platform_environment(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Lifespan startup emits platform environment log line."""
         from azure.ai.agentserver.core import AgentServerHost
 
@@ -78,7 +82,9 @@ class TestStartupConfigurationLogging:
             async with app.router.lifespan_context(app):
                 pass
 
-        platform_logs = [r for r in caplog.records if "Platform environment" in r.message]
+        platform_logs = [
+            r for r in caplog.records if "Platform environment" in r.message
+        ]
         assert len(platform_logs) == 1
         msg = platform_logs[0].message
         assert "is_hosted=False" in msg
@@ -86,7 +92,9 @@ class TestStartupConfigurationLogging:
 
     @pytest.mark.usefixtures("_clean_env")
     @pytest.mark.asyncio
-    async def test_startup_logs_connectivity(self, caplog: pytest.LogCaptureFixture) -> None:
+    async def test_startup_logs_connectivity(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Lifespan startup emits connectivity log line with masked URIs."""
         from azure.ai.agentserver.core import AgentServerHost
 
@@ -104,7 +112,9 @@ class TestStartupConfigurationLogging:
 
     @pytest.mark.usefixtures("_clean_env")
     @pytest.mark.asyncio
-    async def test_startup_logs_host_options(self, caplog: pytest.LogCaptureFixture) -> None:
+    async def test_startup_logs_host_options(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Lifespan startup emits host options log line."""
         from azure.ai.agentserver.core import AgentServerHost
 
@@ -125,7 +135,9 @@ class TestStartupConfigurationLogging:
         self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
     ) -> None:
         """Project endpoint URI is masked to scheme://host only."""
-        monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://myproject.azure.com/sub/123?key=secret")
+        monkeypatch.setenv(
+            "FOUNDRY_PROJECT_ENDPOINT", "https://myproject.azure.com/sub/123?key=secret"
+        )
         monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
         monkeypatch.delenv("PORT", raising=False)
 

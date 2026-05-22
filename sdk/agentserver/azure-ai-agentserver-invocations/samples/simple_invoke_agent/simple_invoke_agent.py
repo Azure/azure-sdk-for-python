@@ -11,11 +11,11 @@ Usage::
     curl -X POST http://localhost:8088/invocations -H "Content-Type: application/json" -d '{"name": "Alice"}'
     # -> {"greeting": "Hello, Alice!"}
 """
+
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
-
 
 app = InvocationAgentServerHost()
 

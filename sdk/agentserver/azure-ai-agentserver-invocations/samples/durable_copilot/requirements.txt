@@ -1,0 +1,5 @@
+github-copilot-sdk
+azure-ai-agentserver-core
+azure-ai-agentserver-invocations
+starlette
+uvicorn
