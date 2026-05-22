@@ -218,11 +218,21 @@ def build_packages(
 
 
 def create_package(
-    setup_directory_or_file: str, dest_folder: str, enable_wheel: bool = True, enable_sdist: bool = True
+    setup_directory_or_file: str,
+    dest_folder: str,
+    enable_wheel: bool = True,
+    enable_sdist: bool = True,
+    use_cibuildwheel: bool = True,
 ):
     """
     Uses the invoking python executable to build a wheel and sdist file given a setup.py or setup.py directory. Outputs
     into a distribution directory and defaults to the value of get_artifact_directory().
+
+    When ``use_cibuildwheel`` is False, packages with C extension modules are built with the
+    invoking Python via ``setup.py bdist_wheel`` instead of ``cibuildwheel``. This is the
+    appropriate choice when the wheel is only consumed by the current venv (e.g. dev-requirement
+    installs in CI), since ``cibuildwheel`` otherwise downloads a fresh CPython from nuget.org
+    which is not reachable from all CI agents.
     """
 
     dist = get_artifact_directory(dest_folder)
@@ -263,7 +273,7 @@ def create_package(
         )
     else:
         if enable_wheel:
-            if setup_parsed.ext_modules:
+            if setup_parsed.ext_modules and use_cibuildwheel:
                 run_logged(
                     [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
                     cwd=setup_parsed.folder,

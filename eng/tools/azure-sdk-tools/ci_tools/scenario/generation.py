@@ -350,7 +350,12 @@ def build_whl_for_req(req: str, package_path: str, wheel_dir: Optional[str]) -> 
                     os.mkdir(temp_dir)
 
             logging.info("Building wheel for package {}".format(parsed.name))
-            create_package(req_pkg_path, temp_dir, enable_sdist=False)
+            # ``cibuildwheel`` is intended for producing release artifacts that span multiple
+            # Python versions; it downloads its own CPython from nuget.org which is not
+            # reachable from all CI agents. For dev-requirements builds the wheel only needs
+            # to install into the current venv, so opt out of ``cibuildwheel`` here and let
+            # ``setup.py bdist_wheel`` run with the invoking Python.
+            create_package(req_pkg_path, temp_dir, enable_sdist=False, use_cibuildwheel=False)
 
             whl_path = os.path.join(temp_dir, find_whl(temp_dir, parsed.name, parsed.version))
 
