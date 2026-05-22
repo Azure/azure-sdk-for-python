@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -28,11 +28,15 @@ from .operations import (
     CommitmentPlansOperations,
     CommitmentTiersOperations,
     ComputeOperationsOperations,
+    ComputesOperations,
     DefenderForAISettingsOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
     EncryptionScopesOperations,
     LocationBasedModelCapacitiesOperations,
+    ManagedComputeCapacitiesOperations,
+    ManagedComputeDeploymentsOperations,
+    ManagedComputeUsagesOperationGroupOperations,
     ManagedNetworkProvisionsOperations,
     ManagedNetworkSettingsOperations,
     ModelCapacitiesOperations,
@@ -59,8 +63,14 @@ from .operations import (
     SubscriptionRaiPolicyOperations,
     TestRaiExternalSafetyProviderOperations,
     UsagesOperations,
+    WorkbenchesOperations,
     _CognitiveServicesManagementClientOperationsMixin,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -124,9 +134,23 @@ class CognitiveServicesManagementClient(
     :ivar agent_applications: AgentApplicationsOperations operations
     :vartype agent_applications:
      azure.mgmt.cognitiveservices.operations.AgentApplicationsOperations
+    :ivar managed_compute_deployments: ManagedComputeDeploymentsOperations operations
+    :vartype managed_compute_deployments:
+     azure.mgmt.cognitiveservices.operations.ManagedComputeDeploymentsOperations
     :ivar compute_operations: ComputeOperationsOperations operations
     :vartype compute_operations:
      azure.mgmt.cognitiveservices.operations.ComputeOperationsOperations
+    :ivar managed_compute_usages_operation_group: ManagedComputeUsagesOperationGroupOperations
+     operations
+    :vartype managed_compute_usages_operation_group:
+     azure.mgmt.cognitiveservices.operations.ManagedComputeUsagesOperationGroupOperations
+    :ivar computes: ComputesOperations operations
+    :vartype computes: azure.mgmt.cognitiveservices.operations.ComputesOperations
+    :ivar workbenches: WorkbenchesOperations operations
+    :vartype workbenches: azure.mgmt.cognitiveservices.operations.WorkbenchesOperations
+    :ivar managed_compute_capacities: ManagedComputeCapacitiesOperations operations
+    :vartype managed_compute_capacities:
+     azure.mgmt.cognitiveservices.operations.ManagedComputeCapacitiesOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.cognitiveservices.operations.PrivateLinkResourcesOperations
@@ -180,8 +204,9 @@ class CognitiveServicesManagementClient(
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-15-preview". Default value is "2026-01-15-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-03-15-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -279,7 +304,18 @@ class CognitiveServicesManagementClient(
         self.agent_applications = AgentApplicationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.managed_compute_deployments = ManagedComputeDeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.compute_operations = ComputeOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_compute_usages_operation_group = ManagedComputeUsagesOperationGroupOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.computes = ComputesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workbenches = WorkbenchesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_compute_capacities = ManagedComputeCapacitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
