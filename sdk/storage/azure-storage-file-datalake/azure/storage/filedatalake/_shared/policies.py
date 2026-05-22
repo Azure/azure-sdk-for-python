@@ -467,19 +467,27 @@ def _validate_content_response(
             # Raises exception if missing
             content_length = int(response.http_response.headers[CONTENT_LENGTH_HEADER])
 
-            # Patch response to return response iterator wrapped in structured message decoder
-            original_iter_bytes = response.http_response.iter_bytes
+            def _make_wrapper(original):
+                def wrapped(*args, **kwargs):
+                    iterator = original(*args, **kwargs)
+                    decoder = decoder_cls(iterator, content_length, block_size=DATA_BLOCK_SIZE)
+                    if hasattr(iterator, "request"):
+                        decoder.request = iterator.request  # type: ignore
+                    if hasattr(iterator, "response"):
+                        decoder.response = iterator.response  # type: ignore
+                    return decoder
+                return wrapped
 
-            def wrapped_iter_bytes(*args, **kwargs):
-                iterator = original_iter_bytes(*args, **kwargs)
-                decoder = decoder_cls(iterator, content_length, block_size=DATA_BLOCK_SIZE)
-                if hasattr(iterator, "request"):
-                    decoder.request = iterator.request  # type: ignore
-                if hasattr(iterator, "response"):
-                    decoder.response = iterator.response  # type: ignore
-                return decoder
-
-            response.http_response.iter_bytes = wrapped_iter_bytes
+            # Patch response to return response iterator wrapped in structured message decoder.
+            # Different generated code paths consume the response via different methods:
+            #  * Legacy generated code (e.g. azure-storage-blob) calls `stream_download(...)`.
+            #  * Modern generated code (filedatalake) calls `iter_bytes()`.
+            # Since filedatalake's pipeline is shared with the inner BlobClient, we must wrap
+            # whichever method ends up being called.
+            if hasattr(response.http_response, "iter_bytes"):
+                response.http_response.iter_bytes = _make_wrapper(response.http_response.iter_bytes)
+            if hasattr(response.http_response, "stream_download"):
+                response.http_response.stream_download = _make_wrapper(response.http_response.stream_download)
 
 
 class StorageContentValidation(SansIOHTTPPolicy):
