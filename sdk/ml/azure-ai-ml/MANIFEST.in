@@ -1,4 +1,5 @@
 recursive-include tests *.py
+recursive-include tests/test_configs *
 recursive-include samples *.py *.md *.txt
 include *.md
 include azure/__init__.py
