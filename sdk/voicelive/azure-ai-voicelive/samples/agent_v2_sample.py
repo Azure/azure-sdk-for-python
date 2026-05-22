@@ -28,7 +28,7 @@ DESCRIPTION:
     This sample also demonstrates:
     - Callback-based audio streaming for efficient capture and playback
     - Sequence number based audio packet system for proper interrupt handling
-    - Conversation logging to file
+    - Conversation logging through the standard logger
     - Proper audio device validation
 
 USAGE:
@@ -40,9 +40,13 @@ USAGE:
     3) AGENT_PROJECT_NAME - The name of the Foundry project containing the agent
 
     Optional environment variables:
+    - AZURE_VOICELIVE_USE_API_KEY - Set to "true" to use AZURE_VOICELIVE_API_KEY instead of Entra ID
+    - AZURE_VOICELIVE_API_KEY - VoiceLive API key used when AZURE_VOICELIVE_USE_API_KEY is enabled
     - AGENT_VERSION - The version of the agent (if not specified, uses latest)
     - AGENT_CONVERSATION_ID - Existing conversation ID to continue
     - AGENT_VOICE - Voice to use (default: en-US-Ava:DragonHDLatestNeural)
+    - AZURE_VOICELIVE_API_VERSION - VoiceLive API version to use for the agent connection
+        (default: 2026-04-10)
     - FOUNDRY_RESOURCE_OVERRIDE - Override for the Foundry resource URL
     - AGENT_AUTH_IDENTITY_CLIENT_ID - Client ID for agent authentication
 """
@@ -53,11 +57,9 @@ import asyncio
 import base64
 import logging
 import os
-import pathlib
 import queue
 import signal
 import sys
-from datetime import datetime
 from typing import Optional, Union, cast
 
 # Audio processing imports
@@ -93,6 +95,7 @@ from azure.ai.voicelive.models import (
     ServerEventType,
     ServerVad,
 )
+from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -101,32 +104,18 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
-def _get_required_env(name: str) -> str:
-    """Get a required environment variable or exit with error."""
-    value = os.environ.get(name)
-    if not value:
-        print(f"❌ Error: No {name} provided")
-        print(f"Please set the {name} environment variable.")
-        sys.exit(1)
-    return value
-
-
 # Configuration from environment variables
-endpoint = _get_required_env("AZURE_VOICELIVE_ENDPOINT")
-agent_name = _get_required_env("AGENT_NAME")
-agent_project_name = _get_required_env("AGENT_PROJECT_NAME")
+endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT")
+agent_name = os.environ.get("AGENT_NAME")
+agent_project_name = os.environ.get("AGENT_PROJECT_NAME")
 
 # Optional configuration
 agent_version = os.environ.get("AGENT_VERSION")  # Optional
 agent_conversation_id = os.environ.get("AGENT_CONVERSATION_ID")  # Optional
 agent_voice = os.environ.get("AGENT_VOICE", "en-US-Ava:DragonHDLatestNeural")
+agent_api_version = os.environ.get("AZURE_VOICELIVE_API_VERSION", "2026-04-10")
 foundry_resource_override = os.environ.get("FOUNDRY_RESOURCE_OVERRIDE")  # Optional
 agent_auth_identity_client_id = os.environ.get("AGENT_AUTH_IDENTITY_CLIENT_ID")  # Optional
-
-# Set up logging directory
-pathlib.Path("logs").mkdir(exist_ok=True)
-timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-logfilename = f"{timestamp}_agent_v2_conversation.log"
 
 
 class AudioProcessor:
@@ -312,13 +301,14 @@ class AgentV2VoiceAssistant:
 
     This demonstrates the new pattern where the agent is configured at
     connection time using connect() keyword arguments, rather than as a tool in the session.
-    This sample also collects a conversation log of user and agent interactions.
+    This sample also logs user and agent interactions through the standard logger.
     """
 
     def __init__(
         self,
         endpoint: str,
-        credential: AsyncTokenCredential,
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        api_version: str,
         agent_name: str,
         project_name: str,
         agent_version: Optional[str],
@@ -329,6 +319,7 @@ class AgentV2VoiceAssistant:
     ) -> None:
         self.endpoint = endpoint
         self.credential = credential
+        self.api_version = api_version
         self.agent_name = agent_name
         self.project_name = project_name
         self.agent_version = agent_version
@@ -340,19 +331,51 @@ class AgentV2VoiceAssistant:
         self.audio_processor: Optional[AudioProcessor] = None
         self.session_ready = False
 
+    async def _run_connected_session(self, connection: VoiceLiveConnection):
+        conn = connection
+        self.connection = conn
+
+        # Initialize audio processor
+        ap = AudioProcessor(conn)
+        self.audio_processor = ap
+
+        # Configure session for voice conversation
+        await self._setup_session()
+
+        # Start audio systems
+        ap.start_playback()
+
+        logger.info("Voice assistant ready! Start speaking...")
+        print("\n" + "=" * 60)
+        print("🎤 AGENT V2 VOICE ASSISTANT READY")
+        print(f"Agent: {self.agent_name}")
+        print(f"Project: {self.project_name}")
+        print(f"API version: {self.api_version}")
+        if self.agent_version:
+            print(f"Version: {self.agent_version}")
+        if self.conversation_id:
+            print(f"Conversation: {self.conversation_id}")
+        print("Start speaking to begin conversation")
+        print("Press Ctrl+C to exit")
+        print("=" * 60 + "\n")
+
+        # Process events
+        await self._process_events()
+
     async def start(self):
         """Start the voice assistant session."""
         try:
             logger.info(
-                "Connecting to VoiceLive API with agent %s for project %s",
+                "Connecting to VoiceLive API with agent %s for project %s using API version %s",
                 self.agent_name,
                 self.project_name,
+                self.api_version,
             )
 
-            # Connect using flattened Foundry keyword arguments.
             async with connect(
                 endpoint=self.endpoint,
                 credential=self.credential,
+                api_version=self.api_version,
                 agent_name=self.agent_name,
                 project_name=self.project_name,
                 agent_version=self.agent_version,
@@ -360,34 +383,7 @@ class AgentV2VoiceAssistant:
                 foundry_resource_override=self.foundry_resource_override,
                 authentication_identity_client_id=self.authentication_identity_client_id,
             ) as connection:
-                conn = connection
-                self.connection = conn
-
-                # Initialize audio processor
-                ap = AudioProcessor(conn)
-                self.audio_processor = ap
-
-                # Configure session for voice conversation
-                await self._setup_session()
-
-                # Start audio systems
-                ap.start_playback()
-
-                logger.info("Voice assistant ready! Start speaking...")
-                print("\n" + "=" * 60)
-                print("🎤 AGENT V2 VOICE ASSISTANT READY")
-                print(f"Agent: {self.agent_name}")
-                print(f"Project: {self.project_name}")
-                if self.agent_version:
-                    print(f"Version: {self.agent_version}")
-                if self.conversation_id:
-                    print(f"Conversation: {self.conversation_id}")
-                print("Start speaking to begin conversation")
-                print("Press Ctrl+C to exit")
-                print("=" * 60 + "\n")
-
-                # Process events
-                await self._process_events()
+                await self._run_connected_session(connection)
         except Exception:
             logger.exception("Voice assistant encountered an error")
             raise
@@ -516,35 +512,59 @@ class AgentV2VoiceAssistant:
 
 
 async def write_conversation_log(message: str) -> None:
-    """Write a message to the conversation log."""
-
-    def _write_to_file():
-        with open(f"logs/{logfilename}", "a", encoding="utf-8") as conversation_log:
-            conversation_log.write(message + "\n")
-
-    await asyncio.to_thread(_write_to_file)
+    """Log a conversation message without writing to disk."""
+    logger.info("%s", message)
 
 
 async def run_assistant():
     """Run the voice assistant."""
-    # Create client with token credential (required for Agent mode)
-    credential: AsyncTokenCredential = DefaultAzureCredential()
-    logger.info("Using DefaultAzureCredential")
+    missing = []
+    if not endpoint:
+        missing.append("AZURE_VOICELIVE_ENDPOINT")
+    if not agent_name:
+        missing.append("AGENT_NAME")
+    if not agent_project_name:
+        missing.append("AGENT_PROJECT_NAME")
 
-    # Create and start voice assistant
-    assistant = AgentV2VoiceAssistant(
-        endpoint=endpoint,
-        credential=credential,
-        agent_name=agent_name,
-        project_name=agent_project_name,
-        agent_version=agent_version,
-        conversation_id=agent_conversation_id,
-        foundry_resource_override=foundry_resource_override,
-        authentication_identity_client_id=agent_auth_identity_client_id,
-        voice=agent_voice,
-    )
+    if missing:
+        print("❌ Error: Missing required environment variables")
+        for name in missing:
+            print(f"Please set the {name} environment variable.")
+        sys.exit(1)
 
-    await assistant.start()
+    use_api_key = os.environ.get("AZURE_VOICELIVE_USE_API_KEY", "").strip().lower() in {"1", "true", "yes"}
+    api_key = os.environ.get("AZURE_VOICELIVE_API_KEY")
+
+    credential: Union[AzureKeyCredential, AsyncTokenCredential]
+    if use_api_key:
+        if not api_key:
+            print("❌ Error: No API key provided")
+            print("Please set the AZURE_VOICELIVE_API_KEY environment variable.")
+            sys.exit(1)
+        credential = AzureKeyCredential(api_key)
+        logger.info("Using API key credential")
+    else:
+        credential = DefaultAzureCredential()
+        logger.info("Using DefaultAzureCredential")
+
+    try:
+        assistant = AgentV2VoiceAssistant(
+            endpoint=cast(str, endpoint),
+            credential=credential,
+            api_version=agent_api_version,
+            agent_name=cast(str, agent_name),
+            project_name=cast(str, agent_project_name),
+            agent_version=agent_version,
+            conversation_id=agent_conversation_id,
+            foundry_resource_override=foundry_resource_override,
+            authentication_identity_client_id=agent_auth_identity_client_id,
+            voice=agent_voice,
+        )
+
+        await assistant.start()
+    finally:
+        if isinstance(credential, AsyncTokenCredential):
+            await credential.close()
 
 
 def main():
@@ -600,6 +620,7 @@ if __name__ == "__main__":
     print("=" * 50)
     print(f"Agent: {agent_name}")
     print(f"Project: {agent_project_name}")
+    print(f"API version: {agent_api_version}")
     if agent_version:
         print(f"Version: {agent_version}")
     if agent_conversation_id:
