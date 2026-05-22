@@ -4,7 +4,7 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import ArmStr, NestedField, UnionField
+from azure.ai.ml._schema.core.fields import ArmStr, NestedField, TypeSensitiveUnionField, UnionField
 from azure.ai.ml._schema.core.resource import ResourceSchema
 from azure.ai.ml._schema.job import CreationContextSchema
 from azure.ai.ml._schema.schedule.create_job import (
@@ -33,12 +33,14 @@ class ScheduleSchema(ResourceSchema):
 
 
 class JobScheduleSchema(ScheduleSchema):
-    create_job = UnionField(
-        [
+    create_job = TypeSensitiveUnionField(
+        {
+            "pipeline": [NestedField(PipelineCreateJobSchema)],
+            "command": [NestedField(CommandCreateJobSchema)],
+            "spark": [NestedField(SparkCreateJobSchema)],
+        },
+        plain_union_fields=[
             ArmStr(azureml_type=AzureMLResourceType.JOB),
             CreateJobFileRefField,
-            NestedField(PipelineCreateJobSchema),
-            NestedField(CommandCreateJobSchema),
-            NestedField(SparkCreateJobSchema),
-        ]
+        ],
     )

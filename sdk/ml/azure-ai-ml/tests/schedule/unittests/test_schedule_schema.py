@@ -157,3 +157,14 @@ class TestScheduleSchema:
         with pytest.raises(ValidationError) as e:
             load_schedule(test_path)
         assert "'type' must be specified when scheduling a remote job with updates." in e.value.messages[0]
+
+    def test_load_invalid_schedule_pipeline_file_not_found_error_simplified(self):
+        test_path = "./tests/test_configs/schedule/invalid/hello_cron_schedule_with_pipeline_file_not_found.yml"
+        with pytest.raises(ValidationError) as e:
+            load_schedule(test_path)
+
+        error_message = str(e.value.messages)
+        assert "No such file or directory" in error_message
+        assert "Not supporting non file for create_job" not in error_message
+        assert "Value 'pipeline' passed is not in set ['command']" not in error_message
+        assert "Value 'pipeline' passed is not in set ['spark']" not in error_message
