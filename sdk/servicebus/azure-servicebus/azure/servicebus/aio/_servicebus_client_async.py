@@ -726,18 +726,18 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         self,
         queue_name: str,
         *,
-        updated_after: Optional[datetime] = None,
+        session_state_updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> AsyncIterator[str]:
         """List session IDs with active messages in a session-enabled queue.
 
-        If ``updated_after`` is specified, only sessions whose
+        If ``session_state_updated_after`` is specified, only sessions whose
         session state was set or updated after that time are returned. If not specified, returns
         sessions with active messages in the queue.
 
         :param str queue_name: The name of the session-enabled queue.
-        :keyword ~datetime.datetime updated_after: If specified, only sessions whose
+        :keyword ~datetime.datetime session_state_updated_after: If specified, only sessions whose
             session state was set or updated after this time are returned.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: An async iterator of session ID strings.
@@ -754,7 +754,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             raise ValueError("The timeout must be greater than 0.")
         browser = self._create_session_browser(queue_name)
         try:
-            async for sid in browser.list_sessions(updated_after=updated_after, timeout=timeout):
+            async for sid in browser.list_sessions(session_state_updated_after=session_state_updated_after, timeout=timeout):
                 yield sid
         finally:
             await browser.close()
@@ -764,19 +764,19 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         topic_name: str,
         subscription_name: str,
         *,
-        updated_after: Optional[datetime] = None,
+        session_state_updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> AsyncIterator[str]:
         """List session IDs with active messages in a session-enabled subscription.
 
-        If ``updated_after`` is specified, only sessions whose
+        If ``session_state_updated_after`` is specified, only sessions whose
         session state was set or updated after that time are returned. If not specified, returns
         sessions with active messages in the subscription.
 
         :param str topic_name: The name of the topic.
         :param str subscription_name: The name of the subscription.
-        :keyword ~datetime.datetime updated_after: If specified, only sessions whose
+        :keyword ~datetime.datetime session_state_updated_after: If specified, only sessions whose
             session state was set or updated after this time are returned.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: An async iterator of session ID strings.
@@ -793,7 +793,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             raise ValueError("The timeout must be greater than 0.")
         browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
         try:
-            async for sid in browser.list_sessions(updated_after=updated_after, timeout=timeout):
+            async for sid in browser.list_sessions(session_state_updated_after=session_state_updated_after, timeout=timeout):
                 yield sid
         finally:
             await browser.close()

@@ -145,7 +145,7 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
             session_id = str(uuid.uuid4())
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage(
-                    "test updated_after", session_id=session_id))
+                    "test session_state_updated_after", session_id=session_id))
 
             # The service-side filter is "session state updated after
             # <timestamp>", so explicitly update the session state.
@@ -158,7 +158,7 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
                 receiver.session.set_state("updated-state")
 
             result = list(sb_client.list_queue_sessions(
-                servicebus_queue.name, updated_after=before_update))
+                servicebus_queue.name, session_state_updated_after=before_update))
 
             assert isinstance(result, list)
             assert session_id in result
@@ -218,7 +218,7 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
             session_id = str(uuid.uuid4())
             with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                 sender.send_messages(ServiceBusMessage(
-                    "test updated_after", session_id=session_id))
+                    "test session_state_updated_after", session_id=session_id))
 
             # The service-side filter is "session state updated after
             # <timestamp>", so explicitly update the session state.
@@ -230,7 +230,7 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
 
             result = list(sb_client.list_subscription_sessions(
                 servicebus_topic.name, servicebus_subscription.name,
-                updated_after=before_update))
+                session_state_updated_after=before_update))
 
             assert isinstance(result, list)
             assert session_id in result

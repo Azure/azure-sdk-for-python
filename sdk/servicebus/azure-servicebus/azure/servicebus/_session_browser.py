@@ -81,12 +81,12 @@ class _SessionBrowser(BaseHandler):
     def list_sessions(
         self,
         *,
-        updated_after: Optional[datetime] = None,
+        session_state_updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
     ) -> Iterator[str]:
         """List session IDs for this entity.
 
-        :keyword ~datetime.datetime updated_after: If specified, only sessions whose
+        :keyword ~datetime.datetime session_state_updated_after: If specified, only sessions whose
             session state was set or updated after this time are returned. If not specified,
             returns sessions with active messages in the entity.
         :keyword float timeout: The total operation timeout in seconds.
@@ -95,7 +95,7 @@ class _SessionBrowser(BaseHandler):
         """
         # DateTime.MaxValue triggers "active messages" mode on the service side.
         # A real timestamp triggers "sessions updated since" mode.
-        if updated_after is None:
+        if session_state_updated_after is None:
             last_updated_time_ms = _MAX_DATETIME_MS
         else:
             # Normalize naive datetimes to UTC. Python's datetime.timestamp()
@@ -103,10 +103,10 @@ class _SessionBrowser(BaseHandler):
             # value depend on the host's timezone. Treat naive values as UTC
             # (consistent with how naive datetimes are handled elsewhere in
             # this SDK) and convert aware values to UTC before serializing.
-            if updated_after.tzinfo is None:
-                normalized = updated_after.replace(tzinfo=timezone.utc)
+            if session_state_updated_after.tzinfo is None:
+                normalized = session_state_updated_after.replace(tzinfo=timezone.utc)
             else:
-                normalized = updated_after.astimezone(timezone.utc)
+                normalized = session_state_updated_after.astimezone(timezone.utc)
             last_updated_time_ms = int(normalized.timestamp() * 1000)
 
         skip = 0
