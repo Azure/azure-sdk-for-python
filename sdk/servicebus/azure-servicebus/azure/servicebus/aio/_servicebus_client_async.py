@@ -754,7 +754,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             raise ValueError("The timeout must be greater than 0.")
         browser = self._create_session_browser(queue_name)
         try:
-            async for sid in browser.list_sessions(session_state_updated_after=session_state_updated_after, timeout=timeout):
+            async for sid in browser.list_sessions(
+                session_state_updated_after=session_state_updated_after, timeout=timeout
+            ):
                 yield sid
         finally:
             await browser.close()
@@ -793,7 +795,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             raise ValueError("The timeout must be greater than 0.")
         browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
         try:
-            async for sid in browser.list_sessions(session_state_updated_after=session_state_updated_after, timeout=timeout):
+            async for sid in browser.list_sessions(
+                session_state_updated_after=session_state_updated_after, timeout=timeout
+            ):
                 yield sid
         finally:
             await browser.close()
