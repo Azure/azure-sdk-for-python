@@ -44,12 +44,12 @@ from .._routing_map_provider_common import (
 if TYPE_CHECKING:
     from ...aio._cosmos_client_connection_async import CosmosClientConnection
 
-# Module-level shared state, keyed by endpoint URL. All five dicts and the
-# refcount are mutated only while holding ``_shared_cache_lock``. Sharing across
-# every async CosmosClient that targets the same endpoint is what eliminates
-# the per-client duplicate copies of the routing map (the memory win driving
-# this change), and what lets concurrent readers single-flight a single
-# refresh.
+# Module-level shared state, keyed by endpoint URL. All five module globals
+# (four state dicts plus the refcount dict) are mutated only while holding
+# ``_shared_cache_lock``. Sharing across every async CosmosClient that targets
+# the same endpoint is what eliminates the per-client duplicate copies of the
+# routing map (the memory win driving this change), and what lets concurrent
+# readers single-flight a single refresh.
 
 # endpoint -> { collection_id -> CollectionRoutingMap }. The actual cached
 # routing maps. The inner dict is shared by every client for that endpoint, so

@@ -245,51 +245,38 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(result.change_feed_etag, expected_internal_etag)
         self.assertEqual(hook_calls, ['"user-hook-etag"'])
 
-    def test_get_routing_map_tight_timeout_kwarg_still_populates_cache(self):
-        """Sync path forwards timeout kwarg and populates cache on successful fetch."""
-        # The sync side of the PK-range cache work is much narrower than the
-        # async side: sync has no asyncio cancellation channel, so the
-        # "wait_for kills the fetch mid-flight" failure mode doesn't apply.
-        # What CAN reach the cache on sync is the `timeout=` kwarg
-        #
-        # This test covers the happy path of that flow:
-        #   1. Customer calls `get_routing_map(..., timeout=0.001)`.
-        #   2. The cache layer forwards the kwarg to the underlying read
-        #      (verified by inspecting what the mock saw).
-        #   3. The fetch completes successfully (the mock returns instantly
-        #      without honouring the tiny timeout).
-        #   4. The result lands in the cache as normal.
-        #   5. A second call hits the cache fast-path with no new fetch.
+    def test_get_routing_map_strips_customer_timeout_kwargs(self):
+        """Cache layer strips ``timeout=`` / ``read_timeout=`` before the fetch."""
         call_count = {'count': 0}
-        # We record the timeout the mock saw, to prove the kwargs path is
-        # intact end-to-end (cache layer didn't silently drop it).
-        seen_timeout = {'value': None}
+        seen_kwargs = {}
         original_ranges = self.partition_key_ranges
 
         class TimeoutAwareClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                seen_timeout['value'] = kwargs.get('timeout')
+                seen_kwargs.update(kwargs)
                 TestRoutingMapProvider._capture_internal_headers(kwargs, '"timeout-etag"')
                 return original_ranges
 
         provider = PartitionKeyRangeCache(TimeoutAwareClient())
         collection_link = "dbs/db/colls/container"
 
-        # === Step 1: first call with a tight timeout kwarg. The mock returns
-        # instantly so the timeout doesn't actually fire; the fetch succeeds.
-        result1 = provider.get_routing_map(collection_link, feed_options={}, timeout=0.001)
+        result1 = provider.get_routing_map(
+            collection_link, feed_options={}, timeout=0.001, read_timeout=0.001,
+        )
         self.assertIsNotNone(result1)
-        # === Step 2: verify the cache layer forwarded the timeout kwarg
-        # down to the mock. If this is None, the kwargs path is broken.
-        self.assertEqual(seen_timeout['value'], 0.001)
         self.assertEqual(call_count['count'], 1)
 
-        # === Step 3: confirm the routing map landed in the cache as normal.
+        self.assertNotIn('timeout', seen_kwargs,
+                         "Cache layer must strip customer 'timeout' before the fetch")
+        self.assertNotIn('read_timeout', seen_kwargs,
+                         "Cache layer must strip customer 'read_timeout' before the fetch")
+
+        # Internal header capture still needs to flow through.
+        self.assertIn('_internal_response_headers_capture', seen_kwargs)
+
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         self.assertIn(collection_id, provider._collection_routing_map_by_item)
-
-        # === Step 4: second call (no timeout). Cache hit, no extra fetch.
         result2 = provider.get_routing_map(collection_link, feed_options={})
         self.assertIs(result2, result1)
         self.assertEqual(call_count['count'], 1)

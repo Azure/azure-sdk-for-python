@@ -88,7 +88,26 @@ def prepare_fetch_options_and_headers(
 ) -> Dict[str, Any]:
     """Prepare sanitised feed options and headers for a PK-range fetch.
 
-    This mutates *kwargs* in-place (sets ``headers``).
+    This mutates *kwargs* in-place:
+
+    * sets ``headers`` (with the PK-range page size, the incremental-feed
+      ``A-IM`` value, and the optional ``If-None-Match`` ETag); and
+    * drops any customer-supplied ``timeout`` / ``read_timeout`` kwargs.
+
+    Stripping the customer's deadline at the cache layer is deliberate.
+    Most cache call sites already drop ``**kwargs`` two layers above the
+    fetch, but a small set of paths -- ``read_feed_ranges`` (sync and
+    async) and the circuit-breaker recovery path -- forward ``**kwargs``
+    all the way down. If the customer passed ``timeout=N`` on one of those
+    paths, the HTTP pipeline's connection-retry policy would otherwise read
+    it as a wall-clock budget on the routing-map fetch and raise
+    ``CosmosClientTimeoutError`` mid-fetch, leaving the cache empty
+    (cold-cache call) or stale (refresh call) and pushing the customer's
+    retry into a doomed loop. The routing-map fetch is internal metadata
+    and should be governed by the SDK's own retry behaviour, not by
+    deadlines the customer intended for their data operation. Stripping
+    here applies uniformly on sync and async, and is belt-and-braces with
+    the call-site-level drops that already cover the common paths.
 
     :param previous_routing_map: The base routing map for incremental
         updates, or ``None`` for a full load.
@@ -96,7 +115,8 @@ def prepare_fetch_options_and_headers(
         ~azure.cosmos._routing.collection_routing_map.CollectionRoutingMap
         or None
     :param dict feed_options: Raw feed options from the caller.
-    :param dict kwargs: Keyword arguments (mutated -- ``headers`` is set).
+    :param dict kwargs: Keyword arguments (mutated -- ``headers`` is set,
+        ``timeout`` and ``read_timeout`` are removed).
     :return: The sanitised ``change_feed_options`` dict.
     :rtype: dict
     """
@@ -119,6 +139,10 @@ def prepare_fetch_options_and_headers(
         headers.pop(http_constants.HttpHeaders.IfNoneMatch, None)
 
     kwargs['headers'] = headers
+    # Strip customer-side deadlines so they do not bound the metadata
+    # fetch -- see the function docstring for the full rationale.
+    kwargs.pop('timeout', None)
+    kwargs.pop('read_timeout', None)
     return change_feed_options
 
 
