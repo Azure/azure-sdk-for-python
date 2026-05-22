@@ -24,7 +24,7 @@ class TestContainerAppsAPIConnectedEnvironmentsDaprComponentsOperations(AzureMgm
         response = self.client.connected_environments_dapr_components.list(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIConnectedEnvironmentsDaprComponentsOperations(AzureMgm
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             component_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestContainerAppsAPIConnectedEnvironmentsDaprComponentsOperations(AzureMgm
                 "type": "str",
                 "version": "str",
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestContainerAppsAPIConnectedEnvironmentsDaprComponentsOperations(AzureMgm
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             component_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestContainerAppsAPIConnectedEnvironmentsDaprComponentsOperations(AzureMgm
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             component_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

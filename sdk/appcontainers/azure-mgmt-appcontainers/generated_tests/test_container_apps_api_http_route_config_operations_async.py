@@ -26,7 +26,7 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             environment_name="str",
             http_route_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             environment_name="str",
             http_route_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
                 },
                 "type": "str",
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 environment_name="str",
                 http_route_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,7 +115,7 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
         response = self.client.http_route_config.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
