@@ -242,7 +242,7 @@ Multiple removals of unreferenced models that are typically not used in the SDK:
 
 **Changelog Pattern**:
 
-Multiple removals of models following the pattern `xxxList`:
+Multiple removals of pageable models. A pageable model is a response wrapper for a list/paging operation whose only properties are `value`, or `next_link` plus `value`. Their names usually end with `List` but not always — verify by checking the model definition in `_models.py` or `_models_py3.py`.
 
 ```md
 - Deleted or renamed model `ElasticSanList`
