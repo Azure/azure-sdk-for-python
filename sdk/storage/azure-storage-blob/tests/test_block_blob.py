@@ -33,7 +33,7 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     StandardBlobTier,
 )
-from azure.storage.blob._shared.policies import StorageContentValidation
+from azure.storage.blob._shared.validation import calculate_content_md5
 
 
 # ------------------------------------------------------------------------------
@@ -555,7 +555,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         source_blob = self._create_blob(data=b"This is test data to be copied over.")
         source_blob_props = source_blob.get_blob_properties()
         source_md5 = source_blob_props.content_settings.content_md5
-        bad_source_md5 = StorageContentValidation.get_content_md5(b"this is bad data")
+        bad_source_md5 = calculate_content_md5(b"this is bad data")
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
