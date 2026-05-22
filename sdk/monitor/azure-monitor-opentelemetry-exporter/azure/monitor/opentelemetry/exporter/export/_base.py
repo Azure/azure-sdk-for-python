@@ -210,10 +210,18 @@ class BaseExporter:
             # Collect customer sdkstats metrics
             collect_customer_sdkstats(self)
 
+    # Maximum number of blobs to drain from storage per invocation.
+    # Prevents a retry storm when many blobs have accumulated during
+    # sustained throttling (e.g. 429).
+    _MAX_STORAGE_DRAIN_BATCH = 10
+
     def _transmit_from_storage(self) -> None:
         if not self.storage:
             return
+        drained = 0
         for blob in self.storage.gets():
+            if drained >= self._MAX_STORAGE_DRAIN_BATCH:
+                break
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
@@ -223,11 +231,16 @@ class BaseExporter:
                     result = self._transmit(envelopes)
                     if result == ExportResult.FAILED_RETRYABLE:
                         blob.lease(1)
-                    else:
-                        blob.delete()
+                        # Stop draining: the service is still under
+                        # pressure.  Remaining blobs will be retried on
+                        # the next successful export cycle, avoiding a
+                        # burst of requests that re-triggers throttling.
+                        break
+                    blob.delete()
                 else:
                     # If blob.get() returns None, delete the corrupted blob
                     blob.delete()
+                drained += 1
 
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
         if self.storage:

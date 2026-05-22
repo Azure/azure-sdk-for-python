@@ -1,137 +1,133 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""Live tests for ``SearchClient`` search, autocomplete, and suggest operations."""
 
-from azure.search.documents import SearchClient
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, get_credential
+from __future__ import annotations
 
-from search_service_preparer import SearchEnvVarPreparer, search_decorator
+from devtools_testutils import AzureRecordedTestCase
+
+from _search_helpers import (
+    HOTEL_SUGGESTER_NAME,
+    LARGE_HOTEL_DOCUMENT_COUNT,
+    SEARCH_SELECT_FIELDS,
+    hotel_index,
+    live_test,
+)
 
 
-class TestSearchClient(AzureRecordedTestCase):
-    @SearchEnvVarPreparer()
-    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
-    @recorded_by_proxy
-    def test_search_client(self, endpoint, index_name):
-        client = SearchClient(endpoint, index_name, get_credential(), retry_backoff_factor=60)
-        self._test_get_search_simple(client)
-        self._test_get_search_simple_with_top(client)
-        self._test_get_search_filter(client)
-        self._test_get_search_filter_array(client)
-        self._test_get_search_counts(client)
-        self._test_get_search_coverage(client)
-        self._test_get_search_facets_none(client)
-        self._test_get_search_facets_result(client)
-        self._test_autocomplete(client)
-        self._test_suggest(client)
+def _assert_budget_results(results):
+    assert [result["HotelName"] for result in results] == sorted(
+        [result["HotelName"] for result in results], reverse=True
+    )
+    assert all(result["Category"] == "Budget" for result in results)
+    assert all(set(SEARCH_SELECT_FIELDS).issubset(result) for result in results)
+    assert all("Rating" not in result for result in results)
 
-    def _test_get_search_simple(self, client):
-        results = list(client.search(search_text="hotel"))
-        assert len(results) == 7
 
-        results = list(client.search(search_text="motel"))
-        assert len(results) == 2
+class TestSearchClientSearch(AzureRecordedTestCase):
+    @live_test()
+    def test_search_returns_documents_matching_search_text(self, endpoint):
+        index_name = self.get_resource_name("index-search-text")
 
-    def _test_get_search_simple_with_top(self, client):
-        results = list(client.search(search_text="hotel", top=3))
-        assert len(results) == 3
+        with hotel_index(self, endpoint, index_name) as (search_client, _):
+            hotel_results = list(search_client.search(search_text="hotel"))
+            motel_results = list(search_client.search(search_text="motel"))
 
-        results = list(client.search(search_text="motel", top=3))
-        assert len(results) == 2
+            assert len(hotel_results) == 7
+            assert len(motel_results) == 2
 
-    def _test_get_search_filter(self, client):
-        select = ["hotelName", "category", "description"]
-        results = list(
-            client.search(
-                search_text="WiFi",
-                filter="category eq 'Budget'",
-                select=",".join(select),
-                order_by="hotelName desc",
+    @live_test()
+    def test_search_honors_top(self, endpoint):
+        index_name = self.get_resource_name("index-search-top")
+
+        with hotel_index(self, endpoint, index_name) as (search_client, _):
+            assert len(list(search_client.search(search_text="hotel", top=3))) == 3
+            assert len(list(search_client.search(search_text="motel", top=3))) == 2
+
+    @live_test()
+    def test_search_accepts_filter_select_and_order_by(self, endpoint):
+        index_name = self.get_resource_name("index-search-filter-select")
+
+        with hotel_index(self, endpoint, index_name) as (search_client, _):
+            results = list(
+                search_client.search(
+                    search_text="WiFi",
+                    filter="Category eq 'Budget'",
+                    select=SEARCH_SELECT_FIELDS,
+                    order_by="HotelName desc",
+                )
             )
-        )
-        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
-        expected = {
-            "category",
-            "hotelName",
-            "description",
-            "@search.score",
-            "@search.reranker_score",
-            "@search.highlights",
-            "@search.captions",
-            "@search.document_debug_info",
-            "@search.reranker_boosted_score",
-        }
-        assert all(set(x) == expected for x in results)
-        assert all(x["category"] == "Budget" for x in results)
 
-    def _test_get_search_filter_array(self, client):
-        select = ["hotelName", "category", "description"]
-        results = list(
-            client.search(
-                search_text="WiFi",
-                filter="category eq 'Budget'",
-                select=select,
-                order_by="hotelName desc",
+            _assert_budget_results(results)
+
+    @live_test()
+    def test_search_get_count_reads_first_page_metadata(self, endpoint):
+        index_name = self.get_resource_name("index-search-count")
+
+        with hotel_index(self, endpoint, index_name) as (search_client, _):
+            assert search_client.search(search_text="hotel", include_total_count=True).get_count() == 7
+
+    @live_test()
+    def test_search_get_coverage_reads_first_page_metadata(self, endpoint):
+        index_name = self.get_resource_name("index-search-coverage")
+
+        with hotel_index(self, endpoint, index_name) as (search_client, _):
+            coverage = search_client.search(search_text="hotel", minimum_coverage=50.0).get_coverage()
+
+            assert isinstance(coverage, float)
+            assert coverage >= 50.0
+
+    @live_test()
+    def test_search_get_facets_reads_first_page_metadata(self, endpoint):
+        index_name = self.get_resource_name("index-search-facets")
+
+        with hotel_index(self, endpoint, index_name) as (search_client, _):
+            results = search_client.search(search_text="WiFi", facets=["Category"], select=SEARCH_SELECT_FIELDS)
+
+            assert results.get_facets() == {
+                "Category": [
+                    {"value": "Budget", "count": 4},
+                    {"value": "Boutique", "count": 1},
+                    {"value": "Extended-Stay", "count": 1},
+                    {"value": "Luxury", "count": 1},
+                ]
+            }
+
+    @live_test()
+    def test_search_continues_across_service_pages(self, endpoint):
+        index_name = self.get_resource_name("index-search-pages")
+
+        with hotel_index(
+            self,
+            endpoint,
+            index_name,
+            document_count=LARGE_HOTEL_DOCUMENT_COUNT,
+        ) as (search_client, _):
+            assert (
+                len(list(search_client.search(search_text="")))
+                == LARGE_HOTEL_DOCUMENT_COUNT
             )
-        )
-        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
-        expected = {
-            "category",
-            "hotelName",
-            "description",
-            "@search.score",
-            "@search.reranker_score",
-            "@search.highlights",
-            "@search.captions",
-            "@search.document_debug_info",
-            "@search.reranker_boosted_score",
-        }
-        assert all(set(x) == expected for x in results)
-        assert all(x["category"] == "Budget" for x in results)
 
-    def _test_get_search_counts(self, client):
-        results = client.search(search_text="hotel")
-        assert results.get_count() is None
+    @live_test()
+    def test_autocomplete_returns_completed_terms(self, endpoint):
+        index_name = self.get_resource_name("index-autocomplete")
 
-        results = client.search(search_text="hotel", include_total_count=True)
-        assert results.get_count() == 7
+        with hotel_index(self, endpoint, index_name) as (search_client, _):
+            results = search_client.autocomplete(search_text="mot", suggester_name=HOTEL_SUGGESTER_NAME)
 
-    def _test_get_search_coverage(self, client):
-        results = client.search(search_text="hotel")
-        assert results.get_coverage() is None
+            assert any(result.text == "motel" for result in results)
+            assert any(result.query_plus_text == "motel" for result in results)
 
-        results = client.search(search_text="hotel", minimum_coverage=50.0)
-        cov = results.get_coverage()
-        assert isinstance(cov, float)
-        assert cov >= 50.0
+    @live_test()
+    def test_suggest_returns_matching_documents(self, endpoint):
+        index_name = self.get_resource_name("index-suggest")
 
-    def _test_get_search_facets_none(self, client):
-        select = ("hotelName", "category", "description")
-        results = client.search(search_text="WiFi", select=",".join(select))
-        assert results.get_facets() is None
+        with hotel_index(self, endpoint, index_name) as (search_client, _):
+            results = search_client.suggest(search_text="mot", suggester_name=HOTEL_SUGGESTER_NAME)
 
-    def _test_get_search_facets_result(self, client):
-        select = ("hotelName", "category", "description")
-        results = client.search(search_text="WiFi", facets=["category"], select=",".join(select))
-        assert results.get_facets() == {
-            "category": [
-                {"value": "Budget", "count": 4},
-                {"value": "Luxury", "count": 1},
-            ]
-        }
-
-    def _test_autocomplete(self, client):
-        results = client.autocomplete(search_text="mot", suggester_name="sg")
-        assert any(d.text == "motel" for d in results)
-        assert any(d.query_plus_text == "motel" for d in results)
-
-    def _test_suggest(self, client):
-        results = client.suggest(search_text="mot", suggester_name="sg")
-        result = results[0]
-        assert result["hotelId"] == "2"
-        assert result.text == "Cheapest hotel in town. Infact, a motel."
-        result = results[1]
-        assert result["hotelId"] == "9"
-        assert result.text == "Secret Point Motel"
+            assert {(result["HotelId"], result.text) for result in results} == {
+                ("4", "Economy Universe Motel"),
+                ("6", "Thunderbird Motel"),
+            }

@@ -21,7 +21,9 @@
       "JVBE",
       "hdrs",
       "myproj",
-      "myhost"
+      "myhost",
+      "bkey",
+      "bval"
     ],
     "ignorePaths": [
       "*.csv",

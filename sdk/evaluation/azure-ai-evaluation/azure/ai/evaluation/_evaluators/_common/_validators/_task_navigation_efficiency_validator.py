@@ -5,6 +5,7 @@
 Validator for task navigation inputs (actions and expected_actions).
 """
 
+import json
 from typing import Any, Dict, Optional
 from typing_extensions import override
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
@@ -229,6 +230,15 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
         Raises:
             EvaluationException: If validation fails.
         """
+        # If response or ground_truth is a string, try to parse it as JSON
+        for key in ("response", "ground_truth"):
+            value = eval_input.get(key)
+            if isinstance(value, str):
+                try:
+                    eval_input[key] = json.loads(value)
+                except (ValueError, TypeError):
+                    pass
+
         # Validate response
         response = eval_input.get("response")
         error = self._validate_response(response)

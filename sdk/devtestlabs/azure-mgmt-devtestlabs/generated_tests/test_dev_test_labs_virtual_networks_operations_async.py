@@ -21,7 +21,7 @@ class TestDevTestLabsVirtualNetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_virtual_networks_list(self, resource_group):
         response = self.client.virtual_networks.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -33,7 +33,7 @@ class TestDevTestLabsVirtualNetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_networks_get(self, resource_group):
         response = await self.client.virtual_networks.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -46,7 +46,7 @@ class TestDevTestLabsVirtualNetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_virtual_networks_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_networks.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -87,7 +87,7 @@ class TestDevTestLabsVirtualNetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_virtual_networks_begin_delete(self, resource_group):
         response = await (
             await self.client.virtual_networks.begin_delete(
                 resource_group_name=resource_group.name,
@@ -102,7 +102,7 @@ class TestDevTestLabsVirtualNetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_virtual_networks_update(self, resource_group):
         response = await self.client.virtual_networks.update(
             resource_group_name=resource_group.name,
             lab_name="str",

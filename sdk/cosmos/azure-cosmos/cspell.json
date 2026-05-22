@@ -2,10 +2,13 @@
     "ignoreWords": [
         "hdrh",
         "hdrhistogram",
+        "dedupe",
         "perfdb",
         "perfresults",
         "pkrange",
         "ppcb",
+        "reindexing",
+        "reranker",
         "toctou"
     ]
 }

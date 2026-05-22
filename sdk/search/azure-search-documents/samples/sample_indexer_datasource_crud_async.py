@@ -25,7 +25,7 @@ import os
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
 connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
-data_source_connection_name = "hotels-sample-blob"
+data_source_name = "hotels-sample-blob"
 container_name = "hotels-sample-container"
 
 
@@ -42,7 +42,7 @@ async def create_data_source_connection_async():
 
     container = SearchIndexerDataContainer(name=container_name)
     data_source_connection = SearchIndexerDataSourceConnection(
-        name=data_source_connection_name,
+        name=data_source_name,
         type="azureblob",
         connection_string=connection_string,
         container=container,
@@ -75,7 +75,7 @@ async def get_data_source_connection_async():
     indexer_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
     async with indexer_client:
-        result = await indexer_client.get_data_source_connection(data_source_connection_name)
+        result = await indexer_client.get_data_source_connection(data_source_name)
     print(f"Retrieved: data source '{result.name}'")
     return result
     # [END get_data_source_connection_async]
@@ -89,8 +89,8 @@ async def delete_data_source_connection_async():
     indexer_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
     async with indexer_client:
-        await indexer_client.delete_data_source_connection(data_source_connection_name)
-    print(f"Deleted: data source '{data_source_connection_name}'")
+        await indexer_client.delete_data_source_connection(data_source_name)
+    print(f"Deleted: data source '{data_source_name}'")
     # [END delete_data_source_connection_async]
 
 

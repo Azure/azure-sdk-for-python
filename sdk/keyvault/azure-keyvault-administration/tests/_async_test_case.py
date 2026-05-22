@@ -60,6 +60,7 @@ class KeyVaultBackupClientPreparer(BaseClientPreparer):
 
             async with client:
                 await fn(test_class, client, **kwargs)
+
         return _preparer
 
     def create_backup_client(self, **kwargs):
@@ -82,6 +83,7 @@ class KeyVaultBackupClientSasPreparer(BaseClientPreparer):
 
             async with client:
                 await fn(test_class, client, **kwargs)
+
         return _preparer
 
     def create_backup_client(self, **kwargs):
@@ -101,11 +103,11 @@ class KeyVaultAccessControlClientPreparer(BaseClientPreparer):
 
             async with client:
                 await fn(test_class, client, **kwargs)
+
         return _preparer
 
     def create_access_control_client(self, **kwargs):
-        from azure.keyvault.administration.aio import \
-            KeyVaultAccessControlClient
+        from azure.keyvault.administration.aio import KeyVaultAccessControlClient
 
         credential = self.get_credential(KeyVaultAccessControlClient, is_async=True)
         return self.create_client_from_credential(
@@ -121,11 +123,11 @@ class KeyVaultSettingsClientPreparer(BaseClientPreparer):
 
             async with client:
                 await fn(test_class, client, **kwargs)
+
         return _preparer
 
     def create_access_control_client(self, **kwargs):
-        from azure.keyvault.administration.aio import \
-            KeyVaultSettingsClient
+        from azure.keyvault.administration.aio import KeyVaultSettingsClient
 
         credential = self.get_credential(KeyVaultSettingsClient, is_async=True)
         return self.create_client_from_credential(

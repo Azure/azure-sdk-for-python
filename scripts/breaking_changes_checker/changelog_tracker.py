@@ -13,6 +13,7 @@ from breaking_changes_tracker import BreakingChangesTracker
 class ChangeType(str, Enum):
     ADDED_CLIENT = "AddedClient"
     ADDED_CLIENT_METHOD = "AddedClientMethod"
+    ADDED_CLIENT_METHOD_PARAMETER = "AddedClientMethodParameter"
     ADDED_CLASS = "AddedClass"
     ADDED_CLASS_METHOD = "AddedClassMethod"
     ADDED_CLASS_METHOD_PARAMETER = "AddedClassMethodParameter"
@@ -27,6 +28,8 @@ class ChangelogTracker(BreakingChangesTracker):
         "Added client `{}`"
     ADDED_CLIENT_METHOD_MSG = \
         "Client `{}` added method `{}`"
+    ADDED_CLIENT_METHOD_PARAMETER_MSG = \
+        "Client `{}` added parameter `{}` in method `{}`"
     ADDED_CLASS_MSG = \
         "Added model `{}`"
     ADDED_CLASS_METHOD_MSG = \
@@ -68,7 +71,7 @@ class ChangelogTracker(BreakingChangesTracker):
             stable_class_nodes = self.stable[self.module_name]["class_nodes"]
             if not isinstance(class_name, jsondiff.Symbol):
                 if self.class_name not in stable_class_nodes:
-                    if self.class_name.endswith("Client"):
+                    if self.is_client(self.module_name, self.class_name):
                         # This is a new client
                         fa = (
                             self.ADDED_CLIENT_MSG,
@@ -99,7 +102,7 @@ class ChangelogTracker(BreakingChangesTracker):
                         self.function_name = method_name
                         if not isinstance(self.function_name, jsondiff.Symbol):
                             if self.function_name not in stable_methods_node:
-                                if self.class_name.endswith("Client"):
+                                if self.is_client(self.module_name, self.class_name):
                                     # This is a new client method
                                     fa = (
                                         self.ADDED_CLIENT_METHOD_MSG,
@@ -141,7 +144,7 @@ class ChangelogTracker(BreakingChangesTracker):
                                     ChangeType.ADDED_CLASS_PROPERTY,
                                     self.module_name, class_name, property_name
                                 )
-                            if self.class_name.endswith("Client"):
+                            if self.is_client(self.module_name, self.class_name):
                                 if property_components["attr_type"] is not None and property_components["attr_type"].lower().endswith("operations"):
                                     fa = (
                                         self.ADDED_OPERATION_GROUP_MSG,
@@ -160,12 +163,20 @@ class ChangelogTracker(BreakingChangesTracker):
     def check_non_positional_parameter_added(self, current_parameters_node: Dict) -> None:
         if current_parameters_node["param_type"] != "positional_or_keyword":
             if self.class_name:
-                self.features_added.append(
-                    (
-                        self.ADDED_CLASS_METHOD_PARAMETER_MSG, ChangeType.ADDED_CLASS_METHOD_PARAMETER,
-                        self.module_name, self.class_name, self.parameter_name, self.function_name
+                if self.is_client(self.module_name, self.class_name):
+                    self.features_added.append(
+                        (
+                            self.ADDED_CLIENT_METHOD_PARAMETER_MSG, ChangeType.ADDED_CLIENT_METHOD_PARAMETER,
+                            self.module_name, self.class_name, self.parameter_name, self.function_name
+                        )
                     )
-                )
+                else:
+                    self.features_added.append(
+                        (
+                            self.ADDED_CLASS_METHOD_PARAMETER_MSG, ChangeType.ADDED_CLASS_METHOD_PARAMETER,
+                            self.module_name, self.class_name, self.parameter_name, self.function_name
+                        )
+                    )
             else:
                 self.features_added.append(
                     (

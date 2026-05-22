@@ -3,21 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import jwt
+
 import os
 import time
 import unittest
 from datetime import datetime, timedelta
 
+import jwt
 import pytest
 import requests
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
+from settings.testcase import FileSharePreparer
+
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
-    ResourceNotFoundError
+    ResourceNotFoundError,
 )
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
 from azure.storage.fileshare import (
     AccessPolicy,
     AccountSasPermissions,
@@ -25,9 +31,7 @@ from azure.storage.fileshare import (
     generate_account_sas,
     generate_file_sas,
     generate_share_sas,
-    Metrics,
     ResourceTypes,
-    RetentionPolicy,
     ShareAccessTier,
     ShareClient,
     ShareFileClient,
@@ -35,12 +39,9 @@ from azure.storage.fileshare import (
     ShareRootSquash,
     ShareSasPermissions,
     ShareServiceClient,
-    StorageErrorCode
+    StorageErrorCode,
 )
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
-from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
@@ -75,24 +76,30 @@ class TestStorageShare(StorageRecordedTestCase):
             pass
         return share_client
 
-    def _create_share_if_not_exists(self, prefix=TEST_SHARE_PREFIX, **kwargs):
-        share_client = self._get_share_reference(prefix)
-        return share_client.create_share_if_not_exists(**kwargs)
-    
     def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
         for l in self.fsc.list_shares(include_snapshots=True):
-            try:
-                self.fsc.delete_share(l.name, delete_snapshots=True)
-            except:
-                pass
+            if l.name.startswith(prefix):
+                try:
+                    self.fsc.delete_share(l.name, delete_snapshots=True)
+                except:
+                    pass
 
     # --Test cases for shares -----------------------------------------
     def test_create_share_client(self):
-        share_client = ShareClient.from_share_url("http://127.0.0.1:11002/account/customized/path/share?snapshot=baz&", credential={"account_name": "myaccount", "account_key": "key"})
+        share_client = ShareClient.from_share_url(
+            "http://127.0.0.1:11002/account/customized/path/share?snapshot=baz&",
+            credential={
+                "account_name": "myaccount",
+                "account_key": "key"
+            }
+        )
         assert share_client.share_name == "share"
         assert share_client.snapshot == "baz"
 
-        share_client = ShareClient.from_share_url("http://127.0.0.1:11002/account/share?snapshot=baz&", credential="credential")
+        share_client = ShareClient.from_share_url(
+            "http://127.0.0.1:11002/account/share?snapshot=baz&",
+            credential="credential"
+        )
         assert share_client.share_name == "share"
         assert share_client.snapshot == "baz"
 
@@ -728,7 +735,7 @@ class TestStorageShare(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        share_name = u'啊齄丂狛狜'
+        share_name = '啊齄丂狛狜'
 
         # Act
         with pytest.raises(HttpResponseError):
@@ -1285,7 +1292,7 @@ class TestStorageShare(StorageRecordedTestCase):
         share.create_share()
 
         # Act
-        resp = share.set_share_access_policy(signed_identifiers=dict())
+        resp = share.set_share_access_policy(signed_identifiers={})
 
         # Assert
         acl = share.get_share_access_policy()
@@ -1303,7 +1310,7 @@ class TestStorageShare(StorageRecordedTestCase):
         share.create_share()
 
         # Act
-        resp = share.set_share_access_policy(dict())
+        resp = share.set_share_access_policy({})
 
         # Assert
         acl = share.get_share_access_policy()
@@ -1361,7 +1368,10 @@ class TestStorageShare(StorageRecordedTestCase):
         # Assert
         with pytest.raises(ValueError) as e:
             share.set_share_access_policy(identifiers)
-            assert str(e.value.exception) == 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
+            assert str(e.value.exception) == (
+                'Too many access policies provided. '
+                'The server does not support setting more than 5 access policies on a single resource.'
+            )
         self._delete_shares()
 
     @FileSharePreparer()
@@ -1543,7 +1553,7 @@ class TestStorageShare(StorageRecordedTestCase):
 
         # Act
         print(sas_client.url)
-        response = requests.get(sas_client.url)
+        response = requests.get(sas_client.url, timeout=15)
 
         # Assert
         assert response.ok
@@ -1904,7 +1914,7 @@ class TestStorageShare(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
-    def test_share_cross_tenant_sas(self, **kwargs):
+    def test_share_cross_tenant_sas(self, **kwargs):  # pylint: disable=too-many-locals
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1918,7 +1928,7 @@ class TestStorageShare(StorageRecordedTestCase):
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
         token = token_credential.get_token("https://storage.azure.com/.default")
-        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        decoded = jwt.decode(token.token, options={"verify_signature": False})  # pylint: disable=no-member
         user_delegation_oid = decoded.get("oid")
         delegated_user_tid = decoded.get("tid")
         user_delegation_key = service.get_user_delegation_key(

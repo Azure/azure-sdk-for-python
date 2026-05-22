@@ -148,9 +148,12 @@ def _resolve_endpoint(client: Any) -> str:
         return f"__unknown_{id(client)}__"
 
 
-class _NeedFullRefresh(Exception):
+class _IncrementalMergeFailed(Exception):
     """Sentinel raised by :func:`process_fetched_ranges` when the
-    incremental update cannot be completed and a full refresh is needed."""
+    incremental update cannot resolve all partition key ranges.
+
+    The caller decides how to recover: retry the incremental fetch
+    (if attempts remain) or fall back to a full routing-map refresh."""
 
 
 def process_fetched_ranges(
@@ -178,10 +181,9 @@ def process_fetched_ranges(
         initial load yields no ranges.
     :rtype: ~azure.cosmos._routing.collection_routing_map.CollectionRoutingMap
         or None
-    :raises _NeedFullRefresh: When the incremental path determines a
-        full refresh is required.  The caller should catch this and
-        re-invoke ``_fetch_routing_map`` with
-        ``previous_routing_map=None``.
+    :raises _IncrementalMergeFailed: When the incremental path cannot
+        resolve all ranges.  The caller catches this and either retries
+        the incremental fetch or falls back to a full refresh.
     """
     if not previous_routing_map:
         # Initial load -- build the complete map.
@@ -251,7 +253,7 @@ def process_fetched_ranges(
                 collection_link,
                 first_unresolved.get(PartitionKeyRange.Id),
             )
-            raise _NeedFullRefresh()
+            raise _IncrementalMergeFailed()
 
         unresolved = next_unresolved
 
@@ -262,7 +264,7 @@ def process_fetched_ranges(
             "collection '%s'. Falling back to full refresh.",
             collection_link,
         )
-        raise _NeedFullRefresh()
+        raise _IncrementalMergeFailed()
 
     return result
 
