@@ -8,13 +8,13 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 # TODO: Waiting on Emitter Perf updates before updating these methods
 import xml.etree.ElementTree as ET
 from typing import Any, Callable, Dict, List, Optional
 
 from .._utils.model_base import Model as _deserialize
 from azure.core.serialization import as_attribute_dict
-
 
 # ---------------------------------------------------------------------------
 # Backcompat shims for public methods that existed on the old autorest msrest models.

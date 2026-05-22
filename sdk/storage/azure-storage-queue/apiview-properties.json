@@ -60,5 +60,6 @@
         "azure.storage.queue.aio.operations.QueueOperations.update_message": "Storage.Queues.Queue.updateMessage",
         "azure.storage.queue.operations.QueueOperations.delete_message": "Storage.Queues.Queue.deleteMessage",
         "azure.storage.queue.aio.operations.QueueOperations.delete_message": "Storage.Queues.Queue.deleteMessage"
-    }
+    },
+    "CrossLanguageVersion": "52f8059a5768"
 }

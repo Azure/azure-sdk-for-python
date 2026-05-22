@@ -9,9 +9,19 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
+import functools
 from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .._utils.model_base import Model as _Model, rest_field
+from .._utils.model_base import (
+    Model as _Model,
+    _xml_deser_bool,
+    _xml_deser_datetime_rfc7231,
+    _xml_deser_enum_or_str,
+    _xml_deser_int,
+    _xml_deser_str,
+    rest_field,
+)
+from ._enums import GeoReplicationStatus, StorageErrorCode
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -31,16 +41,19 @@ class AccessPolicy(_Model):
     start: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the policy is active."""
     expiry: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the policy expires."""
     permission: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Permission", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The permissions for the policy."""
 
@@ -85,30 +98,35 @@ class CorsRule(_Model):
         name="allowedOrigins",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AllowedOrigins", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The allowed origins. Required."""
     allowed_methods: str = rest_field(
         name="allowedMethods",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AllowedMethods", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The allowed methods. Required."""
     allowed_headers: str = rest_field(
         name="allowedHeaders",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AllowedHeaders", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The allowed headers. Required."""
     exposed_headers: str = rest_field(
         name="exposedHeaders",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ExposedHeaders", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The exposed headers. Required."""
     max_age_in_seconds: int = rest_field(
         name="maxAgeInSeconds",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MaxAgeInSeconds", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The maximum age in seconds. Required."""
 
@@ -165,6 +183,7 @@ class Error(_Model):
     code: Optional[Union[str, "_models.StorageErrorCode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Code", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, StorageErrorCode),
     )
     """The error code. Known values are: \"AccountAlreadyExists\", \"AccountBeingCreated\",
      \"AccountIsDisabled\", \"AuthenticationFailed\", \"AuthorizationFailure\",
@@ -188,6 +207,7 @@ class Error(_Model):
     message: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Message", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The error message."""
 
@@ -227,6 +247,7 @@ class GeoReplication(_Model):
     status: Union[str, "_models.GeoReplicationStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Status", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, GeoReplicationStatus),
     )
     """The status of the secondary location. Required. Known values are: \"live\", \"bootstrap\", and
      \"unavailable\"."""
@@ -235,6 +256,7 @@ class GeoReplication(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "LastSyncTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """A GMT date/time value, to the second. All primary writes preceding this value are guaranteed to
      be available for read operations at the secondary. Primary writes after this point in time may
@@ -275,17 +297,20 @@ class KeyInfo(_Model):
     start: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the key is active in ISO 8601 UTC time."""
     expiry: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the key expires in ISO 8601 UTC time. Required."""
     delegated_user_tid: Optional[str] = rest_field(
         name="delegatedUserTid",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DelegatedUserTid", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The delegated user tenant ID in Entra ID."""
 
@@ -368,22 +393,26 @@ class ListQueuesResponse(_Model):
         name="serviceEndpoint",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The service endpoint. Required."""
     prefix: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Prefix", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The prefix of the queues. Required."""
     marker: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """Identifies the current position in the list queues operation."""
     max_results: int = rest_field(
         name="maxResults",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The max results. Required."""
     queue_items: Optional[list["_models.QueueItem"]] = rest_field(
@@ -396,6 +425,7 @@ class ListQueuesResponse(_Model):
         name="nextMarker",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """Identifies the portion of the list of queues to be returned with the next listing operation.
      Required."""
@@ -443,21 +473,25 @@ class Logging(_Model):
     version: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Version", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The version of the logging properties. Required."""
     delete: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Delete", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether delete operation is logged. Required."""
     read: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Read", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether read operation is logged. Required."""
     write: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Write", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether write operation is logged. Required."""
     retention_policy: "_models.RetentionPolicy" = rest_field(
@@ -507,17 +541,20 @@ class Metrics(_Model):
     version: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Version", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The version of the metrics properties."""
     enabled: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Enabled", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether it is enabled. Required."""
     include_apis: Optional[bool] = rest_field(
         name="includeApis",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "IncludeAPIs", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether to include API in the metrics."""
     retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
@@ -570,6 +607,7 @@ class PeekedMessage(_Model):
         name="messageId",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MessageId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The ID of the message. Required."""
     insertion_time: datetime.datetime = rest_field(
@@ -577,6 +615,7 @@ class PeekedMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "InsertionTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The time the message was inserted into the queue. Required."""
     expiration_time: datetime.datetime = rest_field(
@@ -584,18 +623,21 @@ class PeekedMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "ExpirationTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The time that the message will expire and be automatically deleted. Required."""
     dequeue_count: int = rest_field(
         name="dequeueCount",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DequeueCount", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The number of times the message has been dequeued. Required."""
     message_text: str = rest_field(
         name="messageText",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MessageText", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The content of the message. Required."""
 
@@ -670,6 +712,7 @@ class QueueItem(_Model):
     name: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The name of the queue. Required."""
     metadata: Optional[dict[str, str]] = rest_field(
@@ -710,6 +753,7 @@ class QueueMessage(_Model):
         name="messageText",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MessageText", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The content of the message. Required."""
 
@@ -852,6 +896,7 @@ class ReceivedMessage(_Model):
         name="messageId",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MessageId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The ID of the message. Required."""
     insertion_time: datetime.datetime = rest_field(
@@ -859,6 +904,7 @@ class ReceivedMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "InsertionTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The time the message was inserted into the queue. Required."""
     expiration_time: datetime.datetime = rest_field(
@@ -866,12 +912,14 @@ class ReceivedMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "ExpirationTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The time that the message will expire and be automatically deleted. Required."""
     pop_receipt: str = rest_field(
         name="popReceipt",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "PopReceipt", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """An opaque value required to delete the message. If deletion fails using this PopReceipt then
      the message has been dequeued by another client. Required."""
@@ -880,18 +928,21 @@ class ReceivedMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "TimeNextVisible", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The time that the message will again become visible in the queue. Required."""
     dequeue_count: int = rest_field(
         name="dequeueCount",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DequeueCount", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The number of times the message has been dequeued. Required."""
     message_text: str = rest_field(
         name="messageText",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MessageText", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The content of the message. Required."""
 
@@ -968,11 +1019,13 @@ class RetentionPolicy(_Model):
     enabled: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Enabled", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether to enable the retention policy. Required."""
     days: Optional[int] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Days", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The number of days to retain the logs."""
 
@@ -1019,6 +1072,7 @@ class SentMessage(_Model):
         name="messageId",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MessageId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The ID of the message. Required."""
     insertion_time: datetime.datetime = rest_field(
@@ -1026,6 +1080,7 @@ class SentMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "InsertionTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The time the message was inserted into the queue. Required."""
     expiration_time: datetime.datetime = rest_field(
@@ -1033,12 +1088,14 @@ class SentMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "ExpirationTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The time that the message will expire and be automatically deleted. Required."""
     pop_receipt: str = rest_field(
         name="popReceipt",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "PopReceipt", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """An opaque value required to delete the message. If deletion fails using this PopReceipt then
      the message has been dequeued by another client. Required."""
@@ -1047,6 +1104,7 @@ class SentMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "TimeNextVisible", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The time that the message will again become visible in the queue. Required."""
 
@@ -1086,6 +1144,7 @@ class SignedIdentifier(_Model):
     id: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Id", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The unique ID for the signed identifier. Required."""
     access_policy: "_models.AccessPolicy" = rest_field(
@@ -1183,47 +1242,55 @@ class UserDelegationKey(_Model):
         name="signedOid",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedOid", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The Entra ID object ID in GUID format. Required."""
     signed_tid: str = rest_field(
         name="signedTid",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedTid", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The Entra ID tenant ID in GUID format. Required."""
     signed_start: str = rest_field(
         name="signedStart",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedStart", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the key is active. Required."""
     signed_expiry: str = rest_field(
         name="signedExpiry",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedExpiry", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the key expires. Required."""
     signed_service: str = rest_field(
         name="signedService",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedService", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The service that created the key. Required."""
     signed_version: str = rest_field(
         name="signedVersion",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedVersion", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The service version used when creating the key. Required."""
     signed_delegated_user_tid: Optional[str] = rest_field(
         name="signedDelegatedUserTid",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedDelegatedUserTid", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The delegated user tenant ID in Entra ID. Return if DelegatedUserTid is specified."""
     value: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Value", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The key as a base64 string. Required."""
 
