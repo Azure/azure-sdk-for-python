@@ -37,6 +37,8 @@ from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, 
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
+    build_agent_optimization_jobs_get_candidate_file_request,
+    build_agent_optimization_jobs_promote_candidate_request,
     build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
     build_agents_delete_request,
@@ -3059,6 +3061,261 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
 
+class AgentOptimizationJobsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`agent_optimization_jobs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get_candidate_file(
+        self, job_id: str, candidate_id: str, *, path: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Get a candidate file.
+
+        Stream a specific file from the candidate's blob directory.
+
+        :param job_id: The optimization job id. Required.
+        :type job_id: str
+        :param candidate_id: The candidate id. Required.
+        :type candidate_id: str
+        :keyword path: Relative path of the file to download (e.g. 'files/examples.jsonl'). Required.
+        :paramtype path: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_optimization_jobs_get_candidate_file_request(
+            job_id=job_id,
+            candidate_id=candidate_id,
+            path=path,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def promote_candidate(
+        self,
+        job_id: str,
+        candidate_id: str,
+        body: _models.PromoteCandidateRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PromoteCandidateResponse:
+        """Promote a candidate.
+
+        Promotes a candidate, recording the deployment timestamp and target agent version.
+
+        :param job_id: The optimization job id. Required.
+        :type job_id: str
+        :param candidate_id: The candidate id to promote. Required.
+        :type candidate_id: str
+        :param body: Promotion details. Required.
+        :type body: ~azure.ai.projects.models.PromoteCandidateRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PromoteCandidateResponse. The PromoteCandidateResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.PromoteCandidateResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def promote_candidate(
+        self, job_id: str, candidate_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.PromoteCandidateResponse:
+        """Promote a candidate.
+
+        Promotes a candidate, recording the deployment timestamp and target agent version.
+
+        :param job_id: The optimization job id. Required.
+        :type job_id: str
+        :param candidate_id: The candidate id to promote. Required.
+        :type candidate_id: str
+        :param body: Promotion details. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PromoteCandidateResponse. The PromoteCandidateResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.PromoteCandidateResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def promote_candidate(
+        self, job_id: str, candidate_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.PromoteCandidateResponse:
+        """Promote a candidate.
+
+        Promotes a candidate, recording the deployment timestamp and target agent version.
+
+        :param job_id: The optimization job id. Required.
+        :type job_id: str
+        :param candidate_id: The candidate id to promote. Required.
+        :type candidate_id: str
+        :param body: Promotion details. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PromoteCandidateResponse. The PromoteCandidateResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.PromoteCandidateResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def promote_candidate(
+        self,
+        job_id: str,
+        candidate_id: str,
+        body: Union[_models.PromoteCandidateRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.PromoteCandidateResponse:
+        """Promote a candidate.
+
+        Promotes a candidate, recording the deployment timestamp and target agent version.
+
+        :param job_id: The optimization job id. Required.
+        :type job_id: str
+        :param candidate_id: The candidate id to promote. Required.
+        :type candidate_id: str
+        :param body: Promotion details. Is one of the following types: PromoteCandidateRequest, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.PromoteCandidateRequest or JSON or IO[bytes]
+        :return: PromoteCandidateResponse. The PromoteCandidateResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.PromoteCandidateResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PromoteCandidateResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_optimization_jobs_promote_candidate_request(
+            job_id=job_id,
+            candidate_id=candidate_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PromoteCandidateResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
 class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
@@ -3887,23 +4144,29 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         Each SSE frame contains:
 
         * `event`: always `"log"`
-        * `data`: a plain-text log line (currently JSON-formatted, but the schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+        is not contractual and may include additional keys or change format
+        over time — clients should treat it as an opaque string)
 
         Example SSE frames:
 
         .. code-block::
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting FoundryCBAgent server on port 8088"}
+           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting
+        FoundryCBAgent server on port 8088"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application startup complete."}
+           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application
+        startup complete."}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+        connected to container"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since last 60 seconds"}
+           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since
+        last 60 seconds"}
 
         The stream remains open until the client disconnects or the server
         terminates the connection. Clients should handle reconnection as needed.
@@ -3945,7 +4208,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4561,8 +4824,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncItemPaged["_models.OptimizationJob"]:
         """Returns a list of agent optimization jobs.
 
-        List optimization jobs. Supports cursor pagination and optional ``status`` / ``agent_name``
-        filters.
+        List optimization jobs. Supports cursor pagination and optional status / agentName filters.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -4718,13 +4980,16 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_optimization_job(self, job_id: str, **kwargs: Any) -> None:
+    async def delete_optimization_job(self, job_id: str, *, force: Optional[bool] = None, **kwargs: Any) -> None:
         """Deletes an agent optimization job.
 
         Delete the job and its candidate artifacts. Cancels first if non-terminal.
 
         :param job_id: The ID of the job to delete. Required.
         :type job_id: str
+        :keyword force: When true, force-delete even if the job is in a non-terminal state. Default
+         value is None.
+        :paramtype force: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4744,6 +5009,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_beta_agents_delete_optimization_job_request(
             job_id=job_id,
+            force=force,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4875,17 +5141,17 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def get_optimization_candidate(
         self, job_id: str, candidate_id: str, **kwargs: Any
-    ) -> _models.OptimizationCandidate:
+    ) -> _models.CandidateMetadata:
         """Get a candidate by id.
 
-        Get a single candidate manifest and aggregated evaluation summary.
+        Get a single candidate's metadata, manifest, and promotion info.
 
         :param job_id: The optimization job id. Required.
         :type job_id: str
         :param candidate_id: The candidate id. Required.
         :type candidate_id: str
-        :return: OptimizationCandidate. The OptimizationCandidate is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationCandidate
+        :return: CandidateMetadata. The CandidateMetadata is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.CandidateMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4899,7 +5165,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OptimizationCandidate] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CandidateMetadata] = kwargs.pop("cls", None)
 
         _request = build_beta_agents_get_optimization_candidate_request(
             job_id=job_id,
@@ -4937,7 +5203,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OptimizationCandidate, response.json())
+            deserialized = _deserialize(_models.CandidateMetadata, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5223,10 +5489,7 @@ class BetaEvaluationTaxonomiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5656,10 +5919,7 @@ class BetaEvaluatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5759,10 +6019,7 @@ class BetaEvaluatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7278,10 +7535,7 @@ class BetaInsightsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7949,7 +8203,7 @@ class BetaMemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items": items,
+                "items_property": items,
                 "options": options,
                 "previous_search_id": previous_search_id,
                 "scope": scope,
@@ -8035,7 +8289,7 @@ class BetaMemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items": items,
+                "items_property": items,
                 "previous_update_id": previous_update_id,
                 "scope": scope,
                 "update_delay": update_delay,
@@ -8933,14 +9187,6 @@ class BetaMemoryStoresOperations:
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
-
-        # BUG? These lines were inside the prepare_request() method. Moved here instead.
-        if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {"scope": scope}
-            body = {k: v for k, v in body.items() if v is not None}
-
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -8949,6 +9195,12 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
+            if body is _Unset:
+                if scope is _Unset:
+                    raise TypeError("missing required argument: scope")
+                body = {"scope": scope}
+                body = {k: v for k, v in body.items() if v is not None}
+
             _request = build_beta_memory_stores_list_memories_request(
                 name=name,
                 kind=kind,
@@ -9135,10 +9387,7 @@ class BetaModelsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9223,10 +9472,7 @@ class BetaModelsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10107,10 +10353,7 @@ class BetaRedTeamsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11232,10 +11475,7 @@ class BetaSchedulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11535,10 +11775,7 @@ class BetaSchedulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers=_headers,
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

@@ -1,0 +1,3 @@
+[mcps.servers]
+github-agentic-workflows = { args = ["aw", "mcp-server"], command = "gh", tools = ["*"], type = "stdio" }
+azure-sdk-mcp = { args = ["./eng/common/mcp/azure-sdk-mcp.ps1", "-Run"], command = "pwsh", tools = ["*"], type = "stdio" }

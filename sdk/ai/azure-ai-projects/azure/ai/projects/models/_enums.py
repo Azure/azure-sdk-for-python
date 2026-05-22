@@ -76,8 +76,8 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY."""
     RESPONSES = "responses"
     """RESPONSES."""
-    A2A = "a2a"
-    """A2A."""
+    A2_A = "a2a"
+    """A2_A."""
     MCP = "mcp"
     """MCP."""
     INVOCATIONS = "invocations"
@@ -446,6 +446,15 @@ class EvalRunOutputItemResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """The evaluator skipped this result item."""
 
 
+class EvaluationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The level at which evaluation is performed."""
+
+    TURN = "turn"
+    """Evaluation is performed at the turn level."""
+    CONVERSATION = "conversation"
+    """Evaluation is performed at the conversation level."""
+
+
 class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the evaluation action."""
 
@@ -785,18 +794,7 @@ class OptimizationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Run mode for an optimization job."""
 
     OPTIMIZE = "optimize"
-    """Full optimization: baseline + mutation strategies."""
-
-
-class OptimizationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Optimization strategy dimension."""
-
-    INSTRUCTION = "instruction"
-    """Instruction-tuning strategy — rewrites agent system prompts."""
-    MODEL = "model"
-    """Model-selection strategy — evaluates alternative LLM deployments."""
-    SKILL = "skill"
-    """Skill-tuning strategy — generates or modifies agent tool descriptions."""
+    """Full optimization: baseline + mutation target attributes."""
 
 
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -825,8 +823,8 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AUTO = "auto"
     """AUTO."""
-    DEFAULT_2024_11_15 = "default-2024-11-15"
-    """DEFAULT_2024_11_15."""
+    DEFAULT2024_11_15 = "default-2024-11-15"
+    """DEFAULT2024_11_15."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -984,6 +982,19 @@ class SimpleQnAFineTuningQuestionType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Long answer question type."""
 
 
+class TargetAttribute(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Agent attribute that can be optimized."""
+
+    INSTRUCTION = "instruction"
+    """Instruction-tuning — rewrites agent system prompts."""
+    MODEL = "model"
+    """Model-selection — evaluates alternative LLM deployments."""
+    SKILL = "skill"
+    """Skill-tuning — generates or modifies agent skill descriptions."""
+    TOOL = "tool"
+    """Tool-tuning — optimizes function tool descriptions and parameter descriptions."""
+
+
 class TelemetryDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of telemetry data to export."""
 
@@ -1050,8 +1061,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WEB_SEARCH_PREVIEW."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
     """COMPUTER_USE_PREVIEW."""
-    WEB_SEARCH_PREVIEW_2025_03_11 = "web_search_preview_2025_03_11"
-    """WEB_SEARCH_PREVIEW_2025_03_11."""
+    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
+    """WEB_SEARCH_PREVIEW2025_03_11."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"
