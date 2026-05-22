@@ -82,8 +82,8 @@ def test_compute_chunks(size):
     (3705122932895036835, 444701, 17573219681510991482, 603875, 4421337306620606216),
 ])
 def test_concat(crc1, size1, crc2, size2, expected):
-    actaul = checksums.crc64.concat(0, 0, crc1, size1, 0, crc2, size2)
-    assert actaul == expected
+    actual = checksums.crc64.concat(0, 0, crc1, size1, 0, crc2, size2)
+    assert actual == expected
 
 @pytest.mark.parametrize("initial, initial1, crc1, size1, initial2, crc2, size2, expected", [
     (0, 0, 0, 0, 0, 0, 0, 0),
@@ -99,8 +99,8 @@ def test_concat(crc1, size1, crc2, size2, expected):
     (889000539881195835, 2971048229276949174, 5346315327374690144, 307387, 1407121768110541356, 10535852615249992663, 741189, 3634018251978804152),
 ])
 def test_concat__with_initials(initial, initial1, crc1, size1, initial2, crc2, size2, expected):
-    actaul = checksums.crc64.concat(initial, initial1, crc1, size1, initial2, crc2, size2)
-    assert actaul == expected
+    actual = checksums.crc64.concat(initial, initial1, crc1, size1, initial2, crc2, size2)
+    assert actual == expected
 
 def test_concat_chunks():
     data = os.urandom(4 * 1024 * 1024)

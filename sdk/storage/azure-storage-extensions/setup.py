@@ -53,9 +53,6 @@ setup(
     packages=[
         "azure.storage.extensions.checksums",
     ],
-    package_data={
-        "azure.storage.extensions.checksums": ["py.typed"],
-    },
     ext_package="azure.storage.extensions.checksums",
     ext_modules=[
         Extension(
