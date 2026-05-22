@@ -6,7 +6,7 @@
 
 """
 DESCRIPTION:
-    Generates an evaluation dataset from a Foundry agent's recent conversation
+    Generates an evaluation dataset from an agent's recent conversation
     traces. The sample:
 
       1. Creates a `DataGenerationJob` (scenario=EVALUATION, type=traces) that
@@ -31,7 +31,8 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry project.
-    2) FOUNDRY_AGENT_NAME - Required. The name of a Foundry agent that has recent
+    2) FOUNDRY_AGENT_NAME - Required. The name of an agent (Foundry Agent or
+       OpenTelemetry-instrumented third-party agent) that has recent
        conversation traces in Application Insights.
     3) DATASET_NAME - Optional. Name to assign to the generated output dataset.
        Defaults to `traces-eval-sample`. The service caps the rendered output
