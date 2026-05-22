@@ -1268,7 +1268,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 max_wait_time=5,
                 receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
             ) as receiver:
-                current_sessions = await receiver.list_sessions(updated_since=start_time)
+                current_sessions = await receiver.list_sessions(updated_after=start_time)
                 assert len(current_sessions) == 5
                 assert current_sessions == sessions
 
@@ -1307,7 +1307,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session) as receiver:
                     await receiver.session.set_state("SESSION {}".format(session))
 
-            current_sessions = await sb_client.list_sessions(updated_since=start_time)
+            current_sessions = await sb_client.list_sessions(updated_after=start_time)
             assert len(current_sessions) == 5
             assert current_sessions == sessions
 
