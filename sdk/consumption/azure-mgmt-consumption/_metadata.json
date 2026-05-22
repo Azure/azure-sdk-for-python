@@ -1,11 +1,10 @@
 {
-  "commit": "606c9fe76accc0e2b3fe2750c7f3bcd8fea62f79",
+  "apiVersion": "2024-08-01",
+  "apiVersions": {
+    "Microsoft.Consumption": "2024-08-01"
+  },
+  "commit": "e472029e99c30ea0d4e3c12efb6cfc6189583772",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/consumption/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\worktrees\\sdk-azure-mgmt-consumption\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/consumption/resource-manager/readme.md"
+  "typespec_src": "specification/consumption/resource-manager/Microsoft.Consumption/Consumption",
+  "emitterVersion": "0.62.1"
 }
