@@ -8,7 +8,6 @@
   - Model `JobExecution` added property `system_data`
   - Model `MaintenanceConfigurationResource` added property `properties`
   - Model `Usage` added property `unit`
-  - Added enum `ExtendedLocationType`
   - Added model `ScheduledEntries`
   - Added enum `SessionPoolIdentityLifeCycle`
 
@@ -32,7 +31,7 @@
   - Deleted or renamed model `ConnectedEnvironmentCollection`
   - Deleted or renamed model `ContainerAppCollection`
   - Deleted or renamed model `DaprComponentsCollection`
-  - Deleted or renamed model `ExtendedLocationTypes`
+  - Renamed enum `ExtendedLocationTypes` to `ExtendedLocationType`
   - Deleted or renamed model `HttpRouteConfigCollection`
   - Deleted or renamed model `JavaComponentsCollection`
   - Deleted or renamed model `JobExecutionNamesCollection`
