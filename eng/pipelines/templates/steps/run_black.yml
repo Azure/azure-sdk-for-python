@@ -4,7 +4,7 @@ parameters:
   AdditionalTestArgs: ''
 
 steps:
-  # this step should run on python 3.9.
+  # this step should run on python 3.10.
   # a previous step should have installed eng/ci_tools.txt to active venv
   - task: PythonScript@0
     displayName: 'Run Black'

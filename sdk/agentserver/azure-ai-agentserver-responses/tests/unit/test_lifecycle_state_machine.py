@@ -7,13 +7,13 @@ from __future__ import annotations
 import pytest
 
 from azure.ai.agentserver.responses.streaming._state_machine import (
-    normalize_lifecycle_events,
+    _normalize_lifecycle_events,
 )
 
 
 def test_lifecycle_state_machine__requires_response_created_as_first_event() -> None:
     with pytest.raises(ValueError):
-        normalize_lifecycle_events(
+        _normalize_lifecycle_events(
             response_id="resp_123",
             events=[
                 {
@@ -26,7 +26,7 @@ def test_lifecycle_state_machine__requires_response_created_as_first_event() -> 
 
 def test_lifecycle_state_machine__rejects_multiple_terminal_events() -> None:
     with pytest.raises(ValueError):
-        normalize_lifecycle_events(
+        _normalize_lifecycle_events(
             response_id="resp_123",
             events=[
                 {"type": "response.created", "response": {"status": "queued"}},
@@ -37,7 +37,7 @@ def test_lifecycle_state_machine__rejects_multiple_terminal_events() -> None:
 
 
 def test_lifecycle_state_machine__auto_appends_failed_when_terminal_missing() -> None:
-    normalized = normalize_lifecycle_events(
+    normalized = _normalize_lifecycle_events(
         response_id="resp_123",
         events=[
             {"type": "response.created", "response": {"status": "queued"}},
@@ -51,7 +51,7 @@ def test_lifecycle_state_machine__auto_appends_failed_when_terminal_missing() ->
 
 def test_lifecycle_state_machine__rejects_out_of_order_transitions() -> None:
     with pytest.raises(ValueError):
-        normalize_lifecycle_events(
+        _normalize_lifecycle_events(
             response_id="resp_123",
             events=[
                 {"type": "response.created", "response": {"status": "queued"}},
@@ -79,7 +79,7 @@ def test_lifecycle_state_machine__returns_deep_copied_response_snapshots() -> No
         },
     ]
 
-    normalized = normalize_lifecycle_events(response_id="resp_123", events=original_events)
+    normalized = _normalize_lifecycle_events(response_id="resp_123", events=original_events)
 
     original_events[0]["response"]["metadata"]["nested"] = "after"
     assert normalized[0]["response"]["metadata"]["nested"] == "before"

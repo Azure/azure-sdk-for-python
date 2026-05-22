@@ -261,7 +261,7 @@ def _make_two_item_gated_handler(
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_handler)
+    app.response_handler(handler or _noop_handler)
     return TestClient(app)
 
 
@@ -362,9 +362,9 @@ class TestEphemeralStoreFalse:
     def test_ephemeral_store_false_cancel_rejected(self, stream: bool) -> None:
         """B1, B14 — store=false response not bg, cancel rejected.
 
-        With unconditional runtime-state registration,
-        the cancel endpoint finds the record and returns 400 "Cannot cancel a
-        synchronous response." for non-bg requests.
+        After eager eviction, the runtime record is removed. Since store=false,
+        nothing was persisted — the provider throws ResourceNotFound → 404.
+        This matches .NET's ``Ephemeral_StoreFalse_Cancel_Returns404``.
         """
         handler = _simple_text_handler if stream else _noop_handler
         client = _build_client(handler)
@@ -388,8 +388,8 @@ class TestEphemeralStoreFalse:
             response_id = r.json()["id"]
 
         result = client.post(f"/responses/{response_id}/cancel")
-        # Contract: record found in runtime state → 400 (cannot cancel synchronous).
-        assert result.status_code == 400
+        # Contract: evicted + never persisted → 404.
+        assert result.status_code == 404
 
 
 # ════════════════════════════════════════════════════════════
@@ -523,7 +523,7 @@ class TestC1SyncStored:
 
         app = ResponsesAgentServerHost()
 
-        @app.create_handler
+        @app.response_handler
         def _handler(request: Any, context: Any, cancellation_signal: Any):
             async def _events():
                 handler_started.set()
@@ -628,7 +628,7 @@ class TestC2StreamStored:
 
         app = ResponsesAgentServerHost()
 
-        @app.create_handler
+        @app.response_handler
         def _handler(request: Any, context: Any, cancellation_signal: Any):
             async def _events():
                 stream = ResponseEventStream(
@@ -843,6 +843,9 @@ class TestC3BgPollStored:
 
         cancel_resp = client.post(f"/responses/{response_id}/cancel")
         assert cancel_resp.status_code == 400
+        error = cancel_resp.json()["error"]
+        assert error.get("code") == "invalid_request_error"
+        assert "Cannot cancel a response in terminal state" in error["message"]
 
     def test_e44_bg_progressive_polling_output_grows(self) -> None:
         """B5, B10 — background poll shows progressive output accumulation.

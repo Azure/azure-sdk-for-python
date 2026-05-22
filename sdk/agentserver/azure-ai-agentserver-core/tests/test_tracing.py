@@ -53,11 +53,11 @@ class TestTracingToggle:
             mock_configure.assert_called_once()
 
     def test_observability_receives_appinsights_env_var(self) -> None:
-        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
+        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
             mock_configure = mock.MagicMock()
             AgentServerHost(configure_observability=mock_configure)
             mock_configure.assert_called_once()
-            assert mock_configure.call_args[1]["connection_string"] == "InstrumentationKey=test"
+            assert mock_configure.call_args[1]["connection_string"] == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
 
     def test_observability_receives_otlp_env_var(self) -> None:
         with mock.patch.dict(os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}):
@@ -74,11 +74,12 @@ class TestTracingToggle:
         mock_configure.assert_called_once_with(
             connection_string="InstrumentationKey=ctor",
             log_level=None,
+            enable_sensitive_data=True,
         )
 
     def test_observability_disabled_when_none(self) -> None:
         """Passing configure_observability=None disables all SDK-managed observability."""
-        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
+        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
             # Should not raise even with App Insights configured
             AgentServerHost(configure_observability=None)
 
@@ -117,32 +118,30 @@ class TestAppInsightsConnectionString:
 
 
 # ------------------------------------------------------------------ #
-# _setup_azure_monitor (mocked)
+# _setup_distro_export (mocked)
 # ------------------------------------------------------------------ #
 
 
-class TestSetupAzureMonitor:
-    """Verify _configure_tracing calls the right exporter setup functions."""
+class TestSetupDistroExport:
+    """Verify _configure_tracing calls the distro with the right args."""
 
-    def test_setup_azure_monitor_called_when_conn_str_provided(self) -> None:
-        with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
-            with mock.patch("azure.ai.agentserver.core._tracing._setup_log_export"):
-                with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
-                    with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
-                        from azure.ai.agentserver.core import _tracing
-                        _tracing._configure_tracing(connection_string="InstrumentationKey=test")
-                        mock_trace.assert_called_once()
-                        args = mock_trace.call_args[0]
-                        assert args[1] == "InstrumentationKey=test"
+    def test_distro_called_when_conn_str_provided(self) -> None:
+        with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
+            from azure.ai.agentserver.core import _tracing
+            _tracing._configure_tracing(connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000")
+            mock_distro.assert_called_once()
+            kwargs = mock_distro.call_args[1]
+            assert kwargs["connection_string"] == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+            assert len(kwargs["span_processors"]) >= 1
+            assert len(kwargs["log_record_processors"]) >= 1
 
-    def test_setup_azure_monitor_not_called_when_no_conn_str(self) -> None:
-        with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
-            with mock.patch("azure.ai.agentserver.core._tracing._setup_log_export"):
-                with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
-                    with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
-                        from azure.ai.agentserver.core import _tracing
-                        _tracing._configure_tracing(connection_string=None)
-                        mock_trace.assert_not_called()
+    def test_distro_called_without_conn_str(self) -> None:
+        with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
+            from azure.ai.agentserver.core import _tracing
+            _tracing._configure_tracing(connection_string=None)
+            mock_distro.assert_called_once()
+            kwargs = mock_distro.call_args[1]
+            assert kwargs["connection_string"] is None
 
 
 # ------------------------------------------------------------------ #
@@ -162,6 +161,7 @@ class TestConstructorConnectionString:
         mock_configure.assert_called_once_with(
             connection_string="InstrumentationKey=ctor",
             log_level=None,
+            enable_sensitive_data=True,
         )
 
 
@@ -337,6 +337,54 @@ class TestFoundryEnrichmentSpanProcessor:
         assert spans_by_name["child"]["gen_ai.conversation.id"] == "conv-789"
         assert spans_by_name["parent"]["microsoft.session.id"] == "session-456"
         assert spans_by_name["parent"]["gen_ai.conversation.id"] == "conv-789"
+
+    def test_invocation_id_from_baggage(self) -> None:
+        """invocation_id baggage is stamped as azure.ai.agentserver.invocations.invocation_id."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.invocation_id", "inv-abc-123",
+        )
+        with tracer.start_as_current_span("span", context=ctx):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["azure.ai.agentserver.invocations.invocation_id"] == "inv-abc-123"
+
+    def test_invocation_id_not_set_when_no_baggage(self) -> None:
+        """invocation_id attr is not set when no invocation_id baggage is present."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        with tracer.start_as_current_span("span"):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert "azure.ai.agentserver.invocations.invocation_id" not in attrs
+
+    def test_invocation_id_propagates_to_child_spans(self) -> None:
+        """Child spans inherit invocation_id from baggage."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.invocation_id", "inv-xyz-789",
+        )
+        token = _otel_context.attach(ctx)
+        try:
+            with tracer.start_as_current_span("parent"):
+                with tracer.start_as_current_span("child"):
+                    pass
+        finally:
+            _otel_context.detach(token)
+
+        spans_by_name = {s.name: dict(s.attributes) for s in collector.spans}
+        assert spans_by_name["child"]["azure.ai.agentserver.invocations.invocation_id"] == "inv-xyz-789"
+        assert spans_by_name["parent"]["azure.ai.agentserver.invocations.invocation_id"] == "inv-xyz-789"
 
 
 # ------------------------------------------------------------------ #

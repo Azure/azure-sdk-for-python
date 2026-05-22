@@ -641,6 +641,21 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         for response_id in expired_ids:
             del self._entries[response_id]
+            self._stream_events.pop(response_id, None)
+
+        # Prune orphaned stream events that have no corresponding entry.
+        # This covers the standalone stream-only usage where
+        # InMemoryResponseProvider is auto-provisioned as a fallback and
+        # only receives save_stream_events() calls (no _entries).
+        orphaned_ids = [rid for rid in self._stream_events if rid not in self._entries]
+        cutoff = current_time - timedelta(seconds=_DEFAULT_REPLAY_EVENT_TTL_SECONDS)
+        for rid in orphaned_ids:
+            events = self._stream_events[rid]
+            live = [e for e in events if e.get("_saved_at", cutoff) >= cutoff]
+            if live:
+                self._stream_events[rid] = live
+            else:
+                del self._stream_events[rid]
 
         return len(expired_ids)
 

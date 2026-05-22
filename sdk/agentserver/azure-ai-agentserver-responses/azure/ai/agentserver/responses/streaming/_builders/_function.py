@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterable
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
+from typing import TYPE_CHECKING, AsyncIterator, Iterator, cast
 
 from ...models import _generated as generated_models
-from ._base import EVENT_TYPE, BaseOutputItemBuilder, _require_non_empty
+from ._base import BaseOutputItemBuilder, _require_non_empty
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
@@ -62,11 +62,11 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         """
         return self._call_id
 
-    def emit_added(self) -> generated_models.ResponseStreamEvent:
+    def emit_added(self) -> generated_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for this function call.
 
         :returns: The emitted event.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputItemAddedEvent
         """
         return self._emit_added(
             {
@@ -79,47 +79,53 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             }
         )
 
-    def emit_arguments_delta(self, delta: str) -> generated_models.ResponseStreamEvent:
+    def emit_arguments_delta(self, delta: str) -> generated_models.ResponseFunctionCallArgumentsDeltaEvent:
         """Emit a function-call arguments delta event.
 
         :param delta: The incremental arguments text fragment.
         :type delta: str
         :returns: The emitted event.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseFunctionCallArgumentsDeltaEvent
         """
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "delta": delta,
-            }
+        return cast(
+            generated_models.ResponseFunctionCallArgumentsDeltaEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "delta": delta,
+                }
+            ),
         )
 
-    def emit_arguments_done(self, arguments: str) -> generated_models.ResponseStreamEvent:
+    def emit_arguments_done(self, arguments: str) -> generated_models.ResponseFunctionCallArgumentsDoneEvent:
         """Emit a function-call arguments done event.
 
         :param arguments: The final, complete arguments string.
         :type arguments: str
         :returns: The emitted event.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseFunctionCallArgumentsDoneEvent
         """
         self._final_arguments = arguments
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "name": self._name,
-                "arguments": arguments,
-            }
+        return cast(
+            generated_models.ResponseFunctionCallArgumentsDoneEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "name": self._name,
+                    "arguments": arguments,
+                }
+            ),
         )
 
-    def emit_done(self) -> generated_models.ResponseStreamEvent:
+    def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this function call.
 
         :returns: The emitted event.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputItemDoneEvent
         """
         return self._emit_done(
             {
@@ -195,7 +201,15 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._call_id = _require_non_empty(call_id, "call_id")
-        self._final_output: str | list[Any] | None = None
+        self._final_output: (
+            str
+            | list[
+                generated_models.InputTextContentParam
+                | generated_models.InputImageContentParamAutoParam
+                | generated_models.InputFileContentParam
+            ]
+            | None
+        ) = None
 
     @property
     def call_id(self) -> str:
@@ -206,13 +220,22 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         """
         return self._call_id
 
-    def emit_added(self, output: str | list[Any] | None = None) -> generated_models.ResponseStreamEvent:
+    def emit_added(
+        self,
+        output: str
+        | list[
+            generated_models.InputTextContentParam
+            | generated_models.InputImageContentParamAutoParam
+            | generated_models.InputFileContentParam
+        ]
+        | None = None,
+    ) -> generated_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for this function-call output.
 
         :param output: Optional initial output value.
-        :type output: str | list[Any] | None
+        :type output: str | list[InputTextContentParam | InputImageContentParamAutoParam | InputFileContentParam] | None
         :returns: The emitted event.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputItemAddedEvent
         """
         return self._emit_added(
             {
@@ -224,13 +247,22 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
             }
         )
 
-    def emit_done(self, output: str | list[Any] | None = None) -> generated_models.ResponseStreamEvent:
+    def emit_done(
+        self,
+        output: str
+        | list[
+            generated_models.InputTextContentParam
+            | generated_models.InputImageContentParamAutoParam
+            | generated_models.InputFileContentParam
+        ]
+        | None = None,
+    ) -> generated_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this function-call output.
 
         :param output: Optional final output value. Uses previously set output if ``None``.
-        :type output: str | list[Any] | None
+        :type output: str | list[InputTextContentParam | InputImageContentParamAutoParam | InputFileContentParam] | None
         :returns: The emitted event.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputItemDoneEvent
         """
         if output is not None:
             self._final_output = deepcopy(output)

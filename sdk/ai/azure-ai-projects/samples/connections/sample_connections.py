@@ -17,7 +17,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project.
     2) CONNECTION_NAME - The name of a connection, as found in the "Connected resources" tab
        in the Management Center of your Microsoft Foundry project.
@@ -31,7 +31,7 @@ from azure.ai.projects.models import ConnectionType
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 connection_name = os.environ["CONNECTION_NAME"]
 
 with (

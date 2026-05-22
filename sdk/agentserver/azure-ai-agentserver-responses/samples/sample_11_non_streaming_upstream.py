@@ -57,7 +57,7 @@ from azure.ai.agentserver.responses import (
 app = ResponsesAgentServerHost()
 
 
-@app.create_handler
+@app.response_handler
 async def handler(
     request: CreateResponse,
     context: ResponseContext,

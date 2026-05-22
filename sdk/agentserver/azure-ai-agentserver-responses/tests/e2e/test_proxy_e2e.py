@@ -370,7 +370,7 @@ def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
 def _create_server_b(handler) -> ResponsesAgentServerHost:
     """Create Server B with the given handler."""
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     return app
 
 
@@ -388,7 +388,7 @@ def _create_openai_client_for_app(app: ResponsesAgentServerHost) -> openai.Async
 def _create_server_a(upstream_client: openai.AsyncOpenAI, handler_factory) -> ResponsesAgentServerHost:
     """Create Server A (proxy) with the given handler factory."""
     app = ResponsesAgentServerHost()
-    app.create_handler(handler_factory(upstream_client))
+    app.response_handler(handler_factory(upstream_client))
     return app
 
 

@@ -36,7 +36,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
 
 def _build_client() -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(_noop_response_handler)
+    app.response_handler(_noop_response_handler)
     return TestClient(app)
 
 
@@ -103,7 +103,7 @@ def test_store_lifecycle__background_completion_is_observed_deterministically() 
 
 def test_store_lifecycle__background_cancel_transition_is_deterministic() -> None:
     app = ResponsesAgentServerHost()
-    app.create_handler(_cancellable_bg_handler)
+    app.response_handler(_cancellable_bg_handler)
     client = TestClient(app)
 
     create_response = client.post(

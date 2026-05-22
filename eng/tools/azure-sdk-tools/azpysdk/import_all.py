@@ -59,7 +59,9 @@ class import_all(Check):
 
         for parsed in targeted:
             pkg = parsed.folder
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
+            executable, staging_directory = self.get_executable(
+                args.isolate, args.command, sys.executable, pkg, python_version=getattr(args, "python_version", None)
+            )
 
             self.install_dev_reqs(executable, args, pkg)
 

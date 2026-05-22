@@ -366,3 +366,70 @@ def test_to_output_item__returns_none_for_reference() -> None:
     ref = ItemReferenceParam(id="item_abc")
     result = to_output_item(ref)
     assert result is None
+
+
+# ------------------------------------------------------------------
+# _get_input_items_for_persistence: resolves references for storage
+# ------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_get_input_items_for_persistence__resolves_references() -> None:
+    """_get_input_items_for_persistence resolves item_reference entries to OutputItem."""
+    inline_msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(text="hi")])
+    ref = ItemReferenceParam(id="item_ref1")
+    resolved = OutputItemMessage(id="item_ref1", role="assistant", content=[], status="completed")
+    provider = _mock_provider(get_items_return=[resolved])
+
+    request = _make_request([inline_msg, ref])
+    ctx = ResponseContext(
+        response_id="resp_persist_001",
+        mode_flags=_mode_flags(),
+        request=request,
+        input_items=[inline_msg, ref],
+        provider=provider,
+    )
+
+    output_items = await ctx._get_input_items_for_persistence()
+
+    # Both items should be converted to OutputItem — including the resolved reference
+    assert len(output_items) == 2
+    assert all(isinstance(item, OutputItemMessage) for item in output_items)
+
+
+@pytest.mark.asyncio
+async def test_get_input_items_for_persistence__no_references_passes_through() -> None:
+    """When no references exist, all inline items are returned as OutputItem."""
+    msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(text="hello")])
+    request = _make_request([msg])
+    ctx = ResponseContext(
+        response_id="resp_persist_002",
+        mode_flags=_mode_flags(),
+        request=request,
+        input_items=[msg],
+    )
+
+    output_items = await ctx._get_input_items_for_persistence()
+
+    assert len(output_items) == 1
+    assert isinstance(output_items[0], OutputItemMessage)
+
+
+@pytest.mark.asyncio
+async def test_get_input_items_for_persistence__unresolvable_dropped() -> None:
+    """Unresolvable references are dropped from the persistence result."""
+    ref = ItemReferenceParam(id="item_gone")
+    provider = _mock_provider(get_items_return=[None])
+
+    request = _make_request([ref])
+    ctx = ResponseContext(
+        response_id="resp_persist_003",
+        mode_flags=_mode_flags(),
+        request=request,
+        input_items=[ref],
+        provider=provider,
+    )
+
+    output_items = await ctx._get_input_items_for_persistence()
+
+    assert len(output_items) == 0

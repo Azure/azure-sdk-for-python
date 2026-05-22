@@ -38,7 +38,7 @@ from azure.ai.agentserver.responses import (
 responses_app = ResponsesAgentServerHost()
 
 
-@responses_app.create_handler
+@responses_app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo handler mounted under /api."""
     input_text = await context.get_input_text()

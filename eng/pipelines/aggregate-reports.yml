@@ -29,6 +29,10 @@ stages:
             inputs:
               versionSpec: '$(PythonVersion)'
 
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              EnableTwineAuth: false
+
           - template: /eng/pipelines/templates/steps/use-venv.yml
 
           - template: /eng/pipelines/templates/steps/analyze_dependency.yml

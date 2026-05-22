@@ -23,7 +23,7 @@ class TestHDInsightManagementLocationsOperations(AzureMgmtRecordedTestCase):
     def test_locations_get_capabilities(self, resource_group):
         response = self.client.locations.get_capabilities(
             location="str",
-            api_version="2025-01-15-preview",
+            api_version="2021-06-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestHDInsightManagementLocationsOperations(AzureMgmtRecordedTestCase):
     def test_locations_list_usages(self, resource_group):
         response = self.client.locations.list_usages(
             location="str",
-            api_version="2025-01-15-preview",
+            api_version="2021-06-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestHDInsightManagementLocationsOperations(AzureMgmtRecordedTestCase):
     def test_locations_list_billing_specs(self, resource_group):
         response = self.client.locations.list_billing_specs(
             location="str",
-            api_version="2025-01-15-preview",
+            api_version="2021-06-01",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestHDInsightManagementLocationsOperations(AzureMgmtRecordedTestCase):
         response = self.client.locations.get_azure_async_operation_status(
             location="str",
             operation_id="str",
-            api_version="2025-01-15-preview",
+            api_version="2021-06-01",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestHDInsightManagementLocationsOperations(AzureMgmtRecordedTestCase):
         response = self.client.locations.check_name_availability(
             location="str",
             parameters={"name": "str", "type": "str"},
-            api_version="2025-01-15-preview",
+            api_version="2021-06-01",
         )
 
         # please add some check logic here by yourself
@@ -151,12 +151,7 @@ class TestHDInsightManagementLocationsOperations(AzureMgmtRecordedTestCase):
                         "configurationOverride": {"str": "str"},
                     },
                     "minSupportedTlsVersion": "str",
-                    "networkProperties": {
-                        "outboundDependenciesManagedType": "str",
-                        "privateLink": "str",
-                        "publicIpTag": {"ipTagType": "str", "tag": "str"},
-                        "resourceProviderConnection": "str",
-                    },
+                    "networkProperties": {"privateLink": "str", "resourceProviderConnection": "str"},
                     "osType": "str",
                     "privateLinkConfigurations": [
                         {
@@ -194,7 +189,6 @@ class TestHDInsightManagementLocationsOperations(AzureMgmtRecordedTestCase):
                         "storageaccounts": [
                             {
                                 "container": "str",
-                                "enableSecureChannel": bool,
                                 "fileSystem": "str",
                                 "fileshare": "str",
                                 "isDefault": bool,
@@ -213,7 +207,7 @@ class TestHDInsightManagementLocationsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2025-01-15-preview",
+            api_version="2021-06-01",
         )
 
         # please add some check logic here by yourself

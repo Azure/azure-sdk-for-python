@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-02-01/ListArcSettingsByCluster.json
+# x-ms-original-file: 2026-04-01-preview/ListArcSettingsByCluster.json
 if __name__ == "__main__":
     main()

@@ -4,31 +4,32 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
 import sys
 from typing import NamedTuple
 
-from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+import pytest
 
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.storage.filedatalake import (
     AnalyticsLogging,
     CorsRule,
     Metrics,
     RetentionPolicy,
-    StaticWebsite
+    StaticWebsite,
 )
 from azure.storage.filedatalake._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 from azure.storage.filedatalake.aio import (
     DataLakeDirectoryClient,
     DataLakeFileClient,
     DataLakeServiceClient,
-    FileSystemClient
+    FileSystemClient,
 )
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import DataLakePreparer
 
 if sys.version_info >= (3, 8):
     from unittest.mock import AsyncMock
@@ -105,9 +106,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
-            rule2 = cors2[i]
+        for rule1, rule2 in zip(cors1, cors2):
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
             assert rule1.max_age_in_seconds == rule2.max_age_in_seconds
@@ -218,7 +217,10 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_delete_retention_policy_not_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_not_equal(
+            received_props['delete_retention_policy'],
+            delete_retention_policy
+        )
 
         # Should not work with 366 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=366)
@@ -228,7 +230,10 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_delete_retention_policy_not_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_not_equal(
+            received_props['delete_retention_policy'],
+            delete_retention_policy
+        )
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -315,7 +320,12 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
-        logging = AnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = AnalyticsLogging(
+            read=True,
+            write=True,
+            delete=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5)
+        )
 
         # Act
         await self.dsc.set_service_properties(analytics_logging=logging)
@@ -444,7 +454,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 8), reason="AsyncMock not introduced until 3.8")
     @DataLakePreparer()
-    async def test_datalake_clients_properly_close(self, **kwargs):
+    async def test_datalake_clients_properly_close(self):
         account_name = "adlsstorage"
         # secret attribute necessary for credential parameter because of hidden environment variables from loader
         account_key = NamedTuple("StorageAccountKey", [("secret", str)])("adlskey")
@@ -466,13 +476,13 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Act
         async with self.dsc as dsc:
-            pass
+            pass  # pylint: disable=unnecessary-pass
             async with file_system_client as fsc:
-                pass
+                pass  # pylint: disable=unnecessary-pass
                 async with dir_client as dc:
-                    pass
+                    pass  # pylint: disable=unnecessary-pass
                     async with file_client as fc:
-                        pass
+                        pass  # pylint: disable=unnecessary-pass
 
         # Assert
         self.dsc._blob_service_client.__aexit__.assert_called_once()
@@ -523,7 +533,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         dsc = DataLakeServiceClient(
             self.account_url(datalake_storage_account_name, "blob"),
             credential=token_credential,
-            audience=f'https://badaudience.blob.core.windows.net/'
+            audience='https://badaudience.blob.core.windows.net/'
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge

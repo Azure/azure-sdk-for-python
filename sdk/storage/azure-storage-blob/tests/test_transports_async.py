@@ -3,17 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 import pytest
-
-from azure.storage.blob.aio import BlobClient, BlobServiceClient
-from azure.core.exceptions import ResourceExistsError
-from azure.core.pipeline.transport import AioHttpTransport, AsyncioRequestsTransport
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers_async import AsyncStream, MockLegacyTransport
+
+from azure.core.exceptions import ResourceExistsError
+from azure.core.pipeline.transport import AioHttpTransport, AsyncioRequestsTransport  # pylint: disable=no-name-in-module
+from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
 
 class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):

@@ -38,8 +38,6 @@ class TestAppConfigurationManagementSnapshotsOperations(AzureMgmtRecordedTestCas
             config_store_name="str",
             snapshot_name="str",
             body={
-                "id": "str",
-                "name": "str",
                 "properties": {
                     "filters": [{"key": "str", "label": "str"}],
                     "compositionType": "str",
@@ -53,6 +51,8 @@ class TestAppConfigurationManagementSnapshotsOperations(AzureMgmtRecordedTestCas
                     "status": "str",
                     "tags": {"str": "str"},
                 },
+                "id": "str",
+                "name": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",

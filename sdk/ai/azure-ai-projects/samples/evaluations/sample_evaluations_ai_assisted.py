@@ -18,29 +18,29 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    2) FOUNDRY_MODEL_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
 import os
-
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
 import time
 from pprint import pprint
+from dotenv import load_dotenv
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
 )
 from openai.types.eval_create_params import DataSourceConfigCustom
-from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")
 
 with (
     DefaultAzureCredential() as credential,
@@ -49,68 +49,66 @@ with (
 ):
 
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "response": {"type": "string"},
-                    "ground_truth": {"type": "string"},
-                },
-                "required": [],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "response": {"type": "string"},
+                "ground_truth": {"type": "string"},
             },
-            "include_sample_schema": False,
-        }
+            "required": [],
+        },
+        include_sample_schema=False,
     )
 
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "Similarity",
-            "evaluator_name": "builtin.similarity",
-            "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}", "threshold": 3},
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "ROUGEScore",
-            "evaluator_name": "builtin.rouge_score",
-            "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
-            "initialization_parameters": {
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="Similarity",
+            evaluator_name="builtin.similarity",
+            data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+            initialization_parameters={"deployment_name": f"{model_deployment_name}", "threshold": 3},
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="ROUGEScore",
+            evaluator_name="builtin.rouge_score",
+            data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+            initialization_parameters={
                 "rouge_type": "rouge1",
                 "f1_score_threshold": 0.5,
                 "precision_threshold": 0.5,
                 "recall_threshold": 0.5,
             },
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "METEORScore",
-            "evaluator_name": "builtin.meteor_score",
-            "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
-            "initialization_parameters": {"threshold": 0.5},
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "GLEUScore",
-            "evaluator_name": "builtin.gleu_score",
-            "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
-            "initialization_parameters": {"threshold": 0.5},
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "F1Score",
-            "evaluator_name": "builtin.f1_score",
-            "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
-            "initialization_parameters": {"threshold": 0.5},
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "BLEUScore",
-            "evaluator_name": "builtin.bleu_score",
-            "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
-            "initialization_parameters": {"threshold": 0.5},
-        },
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="METEORScore",
+            evaluator_name="builtin.meteor_score",
+            data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+            initialization_parameters={"threshold": 0.5},
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="GLEUScore",
+            evaluator_name="builtin.gleu_score",
+            data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+            initialization_parameters={"threshold": 0.5},
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="F1Score",
+            evaluator_name="builtin.f1_score",
+            data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+            initialization_parameters={"threshold": 0.5},
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="BLEUScore",
+            evaluator_name="builtin.bleu_score",
+            data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+            initialization_parameters={"threshold": 0.5},
+        ),
     ]
 
     print("Creating evaluation with AI-assisted evaluators")
@@ -164,7 +162,7 @@ with (
             ),
         ),
     )
-    print(f"Eval Run created")
+    print("Eval Run created")
     pprint(eval_run_object)
 
     print("Get Evaluation Run by Id")
@@ -174,7 +172,7 @@ with (
 
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-        if run.status == "completed" or run.status == "failed":
+        if run.status in ("completed", "failed"):
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"Eval Run Report URL: {run.report_url}")

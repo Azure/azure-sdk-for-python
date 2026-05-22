@@ -20,6 +20,7 @@ from azure.ai.agentserver.responses import (
     TextResponse,
 )
 from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam, ItemMessage
+from azure.ai.agentserver.responses.models._generated import StructuredOutputsOutputItem
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -28,7 +29,7 @@ from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam, I
 
 def _make_app(handler, **kwargs) -> TestClient:
     app = ResponsesAgentServerHost(**kwargs)
-    app.create_handler(handler)
+    app.response_handler(handler)
     return TestClient(app)
 
 
@@ -503,7 +504,7 @@ def test_sample8_mixin_composition_both_protocols() -> None:
             }
         )
 
-    host.create_handler(_sample8_response_handler)
+    host.response_handler(_sample8_response_handler)
 
     client = TestClient(host)
 
@@ -549,7 +550,7 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
             text=_create_text,
         )
 
-    responses_app.create_handler(_handler)
+    responses_app.response_handler(_handler)
 
     parent_app = Starlette(
         routes=[
@@ -1008,12 +1009,31 @@ def test_item_reference_input_items_endpoint() -> None:
     assert input_items_resp.status_code == 200
     input_items_body = input_items_resp.json()
 
-    # Should contain resolved items (not raw item_references)
+    # The endpoint returns history items (from the previous_response_id chain)
+    # PLUS input items for the current response.  With the item_reference fix,
+    # input items include the resolved reference AND the inline message.
     items = input_items_body.get("data", [])
-    assert len(items) >= 1
-    # None of the items should be type "item_reference" — they should all be resolved
+    # None of the items should be type "item_reference" — they must all be resolved
     for item in items:
         assert item.get("type") != "item_reference", f"Expected resolved item, got item_reference: {item}"
+
+    # At minimum we must have: the inline message + the resolved reference.
+    # History items from the chain may also be present.
+    item_ids = [item.get("id") for item in items]
+    inline_present = any(
+        any(p.get("text") == "New input" for p in (item.get("content") or []) if p.get("type") == "input_text")
+        for item in items
+    )
+    assert inline_present, "Inline message 'New input' not found in persisted input items"
+
+    # The resolved reference should produce an additional input item
+    # distinct from the original turn-1 output in the history chain.
+    # Count how many items have a *different* ID from the turn-1 output.
+    non_history_ids = [i for i in item_ids if i != t1_output_id]
+    assert len(non_history_ids) >= 2, (
+        f"Expected at least 2 non-history input items (resolved ref + inline), "
+        f"got {len(non_history_ids)}: {non_history_ids}"
+    )
 
 
 # ===========================================================================
@@ -1344,7 +1364,7 @@ def _structured_full_control_handler(
     yield stream.emit_created()
     yield stream.emit_in_progress()
     builder = stream.add_output_item_structured_outputs()
-    item = {"type": "structured_outputs", "id": builder.item_id, "output": {"status": "ok"}}
+    item = StructuredOutputsOutputItem(id=builder.item_id, output={"status": "ok"})
     yield builder.emit_added(item)
     yield builder.emit_done(item)
     yield stream.emit_completed()

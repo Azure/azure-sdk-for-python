@@ -18,7 +18,12 @@
       "arefusal",
       "asummary",
       "acode",
-      "JVBE"
+      "JVBE",
+      "hdrs",
+      "myproj",
+      "myhost",
+      "bkey",
+      "bval"
     ],
     "ignorePaths": [
       "*.csv",

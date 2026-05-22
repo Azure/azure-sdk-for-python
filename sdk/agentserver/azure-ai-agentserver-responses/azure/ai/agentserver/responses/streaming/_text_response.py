@@ -34,7 +34,7 @@ class TextResponse:
     """A high-level convenience that produces a complete text-message response stream.
 
     Implements :class:`AsyncIterable` so it can be returned directly from a
-    ``create_handler``.
+    ``response_handler``.
 
     Handles the full SSE lifecycle automatically:
 

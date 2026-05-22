@@ -22,7 +22,7 @@ pip install azure-batch azure-identity
 ### Prerequisites
 * An Azure subscription. If you don't have one, [create an account for free][azure_sub]
 * A [Batch account][azure_batch] with a linked [Storage account][azure_storage]
-* Python 3.9 or later. For more details, please see the [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md)
+* Python 3.9 or later.
 
 ### Authenticate the client
 
@@ -391,7 +391,7 @@ task1 = models.BatchTaskCreateOptions(id="task1", command_line='cmd /c "echo hel
 task2 = models.BatchTaskCreateOptions(id="task2", command_line='cmd /c "echo hello world"')
 task3 = models.BatchTaskCreateOptions(id="task3", command_line='cmd /c "echo hello world"')
 
-task_group = models.BatchTaskGroup(values_property=[task1, task2, task3])
+task_group = models.BatchTaskGroup(task_values=[task1, task2, task3])
 result = client.create_task_collection(job_id="my-job", task_collection=task_group)
 ```
 

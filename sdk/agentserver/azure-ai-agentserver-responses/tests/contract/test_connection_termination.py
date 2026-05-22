@@ -117,7 +117,7 @@ class _AsyncAsgiClient:
 
 def _build_client(handler: Any) -> _AsyncAsgiClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     return _AsyncAsgiClient(app)
 
 
@@ -227,7 +227,7 @@ async def test_non_bg_streaming_disconnect_results_in_cancelled() -> None:
 
     test_app = ResponsesAgentServerHost()
 
-    @test_app.create_handler
+    @test_app.response_handler
     def _handler(request, context, cancellation_signal):
         async def _events():
             stream = ResponseEventStream(

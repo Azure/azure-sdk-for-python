@@ -74,7 +74,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_handler)
+    app.response_handler(handler or _noop_handler)
     return TestClient(app)
 
 
@@ -343,6 +343,46 @@ def test_created_at__present_on_background_response() -> None:
 
 
 # ══════════════════════════════════════════════════════════
+# model field: always present in response payload
+# ══════════════════════════════════════════════════════════
+
+
+def test_model_field__present_when_omitted_from_request_sync() -> None:
+    """model must be present in the response payload even when the request omits it."""
+    client = _build_client()
+
+    response = client.post(
+        "/responses",
+        json={"input": "hello", "stream": False, "store": True, "background": False},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert "model" in payload, "model field must always be present in response"
+    assert isinstance(payload["model"], str), f"model must be a string, got: {type(payload['model'])}"
+
+
+def test_model_field__present_when_omitted_from_request_streaming() -> None:
+    """model must be present in SSE response.created / response.completed events when request omits it."""
+    client = _build_client()
+
+    with client.stream("POST", "/responses", json={"input": "hello", "stream": True}) as resp:
+        assert resp.status_code == 200
+        events: list[dict[str, Any]] = []
+        for line in resp.iter_lines():
+            if line.startswith("data: "):
+                import json
+
+                events.append(json.loads(line[len("data: ") :]))
+
+    # Check the terminal event (response.completed or response.failed)
+    terminal = [e for e in events if e.get("type", "").startswith("response.completed")]
+    assert len(terminal) >= 1, f"Expected response.completed event, got types: {[e.get('type') for e in events]}"
+    response_obj = terminal[0].get("response", {})
+    assert "model" in response_obj, "model field must be present in streaming response.completed event"
+    assert isinstance(response_obj["model"], str), f"model must be a string, got: {type(response_obj['model'])}"
+
+
+# ══════════════════════════════════════════════════════════
 # B8: ResponseError shape (only code + message, no type/param)
 # ══════════════════════════════════════════════════════════
 
@@ -603,7 +643,7 @@ def test_output_item__agent_reference_stamped_on_item() -> None:
         return _events()
 
     app = ResponsesAgentServerHost()
-    app.create_handler(_handler_with_agent_ref)
+    app.response_handler(_handler_with_agent_ref)
     client = TestClient(app)
 
     agent_ref = {"type": "agent_reference", "name": "my-agent", "version": "v2"}

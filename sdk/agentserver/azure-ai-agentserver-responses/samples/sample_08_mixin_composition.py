@@ -66,7 +66,7 @@ async def handle_invoke(request: Request) -> Response:
     )
 
 
-@app.create_handler
+@app.response_handler
 async def handle_response(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo response: returns the user's input text."""
     input_text = await context.get_input_text()

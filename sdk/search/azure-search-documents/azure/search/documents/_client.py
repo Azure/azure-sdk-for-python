@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 class SearchClient(_SearchClientOperationsMixin):
     """SearchClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: The endpoint URL of the search service. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
@@ -34,9 +34,9 @@ class SearchClient(_SearchClientOperationsMixin):
      ~azure.core.credentials.TokenCredential
     :param index_name: The name of the index. Required.
     :type index_name: str
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2025-11-01-preview" and None. Default value is "2025-11-01-preview". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01".
+     Default value is "2026-04-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 

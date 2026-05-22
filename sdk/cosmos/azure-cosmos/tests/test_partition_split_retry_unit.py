@@ -660,15 +660,11 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         )
         mock_provider_ctor.assert_not_called()
 
-    @patch('azure.cosmos._cosmos_client_connection.routing_map_provider.SmartRoutingMapProvider')
-    def test_refresh_routing_map_provider_transient_targeted_error_falls_back_to_full(self, mock_provider_ctor):
-        """Targeted refresh should degrade to full refresh on transient transport errors."""
+    def test_refresh_routing_map_provider_transient_targeted_error_falls_back_to_full(self):
+        """Targeted refresh should degrade to full refresh (clear_cache) on transient transport errors."""
         conn = object.__new__(CosmosClientConnection)
         conn._routing_map_provider = MagicMock()
         conn._routing_map_provider.get_routing_map.side_effect = ServiceRequestError("network down")
-
-        replacement_provider = MagicMock()
-        mock_provider_ctor.return_value = replacement_provider
 
         conn.refresh_routing_map_provider(
             collection_link="dbs/db/colls/c1",
@@ -676,21 +672,16 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             feed_options={}
         )
 
-        self.assertIs(conn._routing_map_provider, replacement_provider)
-        mock_provider_ctor.assert_called_once_with(conn)
+        conn._routing_map_provider.clear_cache.assert_called_once()
 
-    @patch('azure.cosmos._cosmos_client_connection.routing_map_provider.SmartRoutingMapProvider')
-    def test_refresh_routing_map_provider_410_targeted_error_falls_back_to_full(self, mock_provider_ctor):
-        """Targeted refresh should treat 410 as transient and fall back to full refresh with warning."""
+    def test_refresh_routing_map_provider_410_targeted_error_falls_back_to_full(self):
+        """Targeted refresh should treat 410 as transient and fall back to full refresh (clear_cache) with warning."""
         conn = object.__new__(CosmosClientConnection)
         conn._routing_map_provider = MagicMock()
         conn._routing_map_provider.get_routing_map.side_effect = exceptions.CosmosHttpResponseError(
             status_code=StatusCodes.GONE,
             message="partition split while refreshing routing map"
         )
-
-        replacement_provider = MagicMock()
-        mock_provider_ctor.return_value = replacement_provider
 
         with self.assertLogs("azure.cosmos._cosmos_client_connection", level="WARNING") as logs:
             conn.refresh_routing_map_provider(
@@ -699,8 +690,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
                 feed_options={}
             )
 
-        self.assertIs(conn._routing_map_provider, replacement_provider)
-        mock_provider_ctor.assert_called_once_with(conn)
+        conn._routing_map_provider.clear_cache.assert_called_once()
         self.assertTrue(any("transient status code 410" in message for message in logs.output))
 
     @patch('azure.cosmos._cosmos_client_connection.routing_map_provider.SmartRoutingMapProvider')

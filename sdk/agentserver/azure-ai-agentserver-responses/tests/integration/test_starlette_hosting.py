@@ -28,7 +28,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 def _build_client(*, prefix: str = "", options: ResponsesServerOptions | None = None) -> TestClient:
     app = ResponsesAgentServerHost(prefix=prefix, options=options)
-    app.create_handler(_noop_response_handler)
+    app.response_handler(_noop_response_handler)
     return TestClient(app)
 
 
@@ -159,7 +159,7 @@ def test_hosting__stream_mode_surfaces_handler_output_item_and_content_events() 
         return _events()
 
     app = ResponsesAgentServerHost()
-    app.create_handler(_streaming_handler)
+    app.response_handler(_streaming_handler)
     client = TestClient(app)
 
     with client.stream(
@@ -209,7 +209,7 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
         return _events()
 
     app = ResponsesAgentServerHost()
-    app.create_handler(_non_stream_handler)
+    app.response_handler(_non_stream_handler)
     client = TestClient(app)
 
     response = client.post(
@@ -237,7 +237,7 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
 def test_hosting__health_endpoint_is_available() -> None:
     """Verify AgentHost provides health endpoint automatically."""
     app = ResponsesAgentServerHost()
-    app.create_handler(_noop_response_handler)
+    app.response_handler(_noop_response_handler)
     client = TestClient(app)
 
     response = client.get("/readiness")
@@ -248,7 +248,7 @@ def test_hosting__health_endpoint_is_available() -> None:
 def test_hosting__multi_protocol_composition() -> None:
     """Verify ResponseHandler can coexist with other protocol handlers on the same server."""
     app = ResponsesAgentServerHost()
-    app.create_handler(_noop_response_handler)
+    app.response_handler(_noop_response_handler)
     client = TestClient(app)
 
     # Responses endpoint works
@@ -309,7 +309,7 @@ async def test_hosting__shutdown_signals_inflight_background_execution() -> None
     test_app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(shutdown_grace_period_seconds=2),
     )
-    test_app.create_handler(_shutdown_aware_handler)
+    test_app.response_handler(_shutdown_aware_handler)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind(("127.0.0.1", 0))
@@ -377,7 +377,7 @@ def test_hosting__client_headers_keys_are_normalized_to_lowercase() -> None:
         return _events()
 
     app = ResponsesAgentServerHost()
-    app.create_handler(_header_capturing_handler)
+    app.response_handler(_header_capturing_handler)
     client = TestClient(app)
 
     client.post(

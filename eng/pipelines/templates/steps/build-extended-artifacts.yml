@@ -28,6 +28,7 @@ steps:
   - template: auth-dev-feed.yml
     parameters:
       DevFeedName: ${{ parameters.DevFeedName }}
+      EnableTwineAuth: false
 
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.13'

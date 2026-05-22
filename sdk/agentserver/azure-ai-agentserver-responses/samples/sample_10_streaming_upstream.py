@@ -89,7 +89,7 @@ def my_function_tool(x: int) -> int:
     return x * 2
 
 
-@app.create_handler
+@app.response_handler
 async def handler(
     request: CreateResponse,
     context: ResponseContext,

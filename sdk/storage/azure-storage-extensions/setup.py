@@ -26,10 +26,10 @@ package_folder_path = PACKAGE_NAME.replace('-', '/')
 
 setup(
     name=PACKAGE_NAME,
-    version="1.0.0b1",
+    version="0.1.0",
     include_package_data=True,
     description=PACKAGE_PPRINT_NAME,
-    long_description=open('README.md', 'r').read(),
+    long_description=open('README.md', 'r', encoding='utf-8').read(),
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',

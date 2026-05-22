@@ -51,7 +51,7 @@ def _build_client(
 ) -> TestClient:
     options = ResponsesServerOptions(sse_keep_alive_interval_seconds=keep_alive_seconds)
     app = ResponsesAgentServerHost(options=options)
-    app.create_handler(handler or _noop_handler)
+    app.response_handler(handler or _noop_handler)
     return TestClient(app)
 
 

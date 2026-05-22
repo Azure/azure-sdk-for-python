@@ -20,10 +20,10 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 
 ### ResponsesAgentServerHost
 
-`ResponsesAgentServerHost` is an `AgentServerHost` subclass that adds Responses protocol endpoints. Register your handler with the `@app.create_handler` decorator:
+`ResponsesAgentServerHost` is an `AgentServerHost` subclass that adds Responses protocol endpoints. Register your handler with the `@app.response_handler` decorator:
 
 ```python
-@app.create_handler
+@app.response_handler
 def my_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
@@ -130,7 +130,7 @@ from azure.ai.agentserver.responses import (
 app = ResponsesAgentServerHost()
 
 
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {text}")

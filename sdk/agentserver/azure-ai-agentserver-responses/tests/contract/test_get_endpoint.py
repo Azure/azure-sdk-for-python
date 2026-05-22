@@ -25,7 +25,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 def _build_client() -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(_noop_response_handler)
+    app.response_handler(_noop_response_handler)
     return TestClient(app)
 
 
@@ -129,12 +129,20 @@ def test_get__returns_latest_snapshot_for_existing_response() -> None:
 
 
 def test_get__returns_404_for_unknown_response_id() -> None:
-    client = _build_client()
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
 
-    get_response = client.get("/responses/resp_does_not_exist")
+    client = _build_client()
+    unknown_id = IdGenerator.new_response_id()
+
+    get_response = client.get(f"/responses/{unknown_id}")
     assert get_response.status_code == 404
     payload = get_response.json()
     assert isinstance(payload.get("error"), dict)
+    assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
+    # 404 message must reference the requested response ID
+    error_message = payload["error"].get("message", "")
+    assert unknown_id in error_message, f"404 error message should reference the response ID, got: {error_message!r}"
 
 
 def test_get__returns_snapshot_for_stored_non_background_stream_response_after_completion() -> None:
@@ -159,7 +167,12 @@ def test_get_replay__rejects_request_when_replay_preconditions_are_not_met() -> 
     payload = replay_response.json()
     assert isinstance(payload.get("error"), dict)
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
     assert payload["error"].get("param") == "stream"
+    error_message = payload["error"].get("message", "")
+    assert "background=true" in error_message, (
+        f"SSE replay rejection for non-bg response must mention 'background=true', got: {error_message!r}"
+    )
 
 
 def test_get_replay__rejects_invalid_starting_after_cursor_type() -> None:
@@ -197,7 +210,12 @@ def test_get_replay__starting_after_returns_events_after_cursor() -> None:
 
 
 def test_get_replay__rejects_bg_non_stream_response() -> None:
-    """B2 — SSE replay requires stream=true at creation. background=true, stream=false → 400."""
+    """B2 — SSE replay on bg+non-stream after eviction → 400 with combined message.
+
+    After eager eviction the persisted response doesn't carry the stream mode
+    flag, so the server cannot distinguish bg+non-stream from bg+stream with
+    expired TTL.  The error uses a combined message matching .NET's SseReplayResult.
+    """
     client = _build_client()
 
     create_response = client.post(
@@ -217,6 +235,10 @@ def test_get_replay__rejects_bg_non_stream_response() -> None:
     assert replay_response.status_code == 400
     payload = replay_response.json()
     assert payload["error"]["type"] == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
+    error_message = payload["error"].get("message", "")
+    assert "stream=true" in error_message, f"SSE replay rejection must mention 'stream=true', got: {error_message!r}"
+    assert payload["error"].get("param") == "stream"
 
 
 # ══════════════════════════════════════════════════════════
@@ -251,6 +273,8 @@ def test_get_replay__rejection_message_hints_at_background_true() -> None:
     assert "background=true" in error_message, (
         f"Error message should hint at 'background=true' to guide the client, but got: {error_message!r}"
     )
+    assert payload["error"].get("code") == "invalid_request_error"
+    assert payload["error"].get("param") == "stream"
 
 
 # ════════════════════════════════════════════════════════
@@ -407,7 +431,7 @@ def test_bg_stream_cancelled_subject_completed() -> None:
     import threading
 
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_blocking_bg_stream_handler)  # type: ignore[arg-type]  # yields raw dicts to test coercion
+    _app.response_handler(_blocking_bg_stream_handler)  # type: ignore[arg-type]  # yields raw dicts to test coercion
     app = _app
 
     response_id = IdGenerator.new_response_id()
@@ -482,7 +506,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
 def test_get__in_progress_bg_response_returns_200() -> None:
     """GET on a background response that is still in_progress returns 200 with status in_progress."""
     app = ResponsesAgentServerHost()
-    app.create_handler(_cancellable_bg_handler)  # type: ignore[arg-type]  # yields raw dicts to test coercion
+    app.response_handler(_cancellable_bg_handler)  # type: ignore[arg-type]  # yields raw dicts to test coercion
     client = TestClient(app)
 
     create = client.post(
@@ -503,7 +527,7 @@ def test_get__in_progress_bg_response_returns_200() -> None:
 def test_get__cancelled_bg_returns_200_with_cancelled_status() -> None:
     """GET on a cancelled background response returns 200 with status=cancelled and empty output."""
     app = ResponsesAgentServerHost()
-    app.create_handler(_cancellable_bg_handler)  # type: ignore[arg-type]  # yields raw dicts to test coercion
+    app.response_handler(_cancellable_bg_handler)  # type: ignore[arg-type]  # yields raw dicts to test coercion
     client = TestClient(app)
 
     create = client.post(
@@ -552,6 +576,21 @@ def test_get__sse_replay_store_false_returns_404() -> None:
 
     with client.stream("GET", f"/responses/{response_id}?stream=true") as replay:
         assert replay.status_code == 404
+
+
+def test_get__sse_replay_unknown_id_returns_404_with_error_shape() -> None:
+    """SSE replay on a completely unknown response ID returns 404 with proper error envelope."""
+    client = _build_client()
+
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
+
+    unknown_id = IdGenerator.new_response_id()
+    replay_response = client.get(f"/responses/{unknown_id}?stream=true")
+    assert replay_response.status_code == 404
+    payload = replay_response.json()
+    assert isinstance(payload.get("error"), dict)
+    assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
 def test_get__stream_false_returns_json_snapshot() -> None:

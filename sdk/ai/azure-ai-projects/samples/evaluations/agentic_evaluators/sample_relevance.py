@@ -18,34 +18,35 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    2) FOUNDRY_MODEL_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
-from dotenv import load_dotenv
 import os
-import json
 import time
 from pprint import pprint
 
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
+from dotenv import load_dotenv
+
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
 )
 from openai.types.eval_create_params import DataSourceConfigCustom
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
 
 def main() -> None:
     endpoint = os.environ[
-        "AZURE_AI_PROJECT_ENDPOINT"
+        "FOUNDRY_PROJECT_ENDPOINT"
     ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
-    model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
+    model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
 
     with (
         DefaultAzureCredential() as credential,
@@ -54,28 +55,26 @@ def main() -> None:
     ):
 
         data_source_config = DataSourceConfigCustom(
-            {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    },
-                    "required": ["query", "response"],
+            type="custom",
+            item_schema={
+                "type": "object",
+                "properties": {
+                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                 },
-                "include_sample_schema": True,
-            }
+                "required": ["query", "response"],
+            },
+            include_sample_schema=True,
         )
 
         testing_criteria = [
-            {
-                "type": "azure_ai_evaluator",
-                "name": "relevance",
-                "evaluator_name": "builtin.relevance",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-                "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-            }
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="relevance",
+                evaluator_name="builtin.relevance",
+                initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+                data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
+            )
         ]
 
         print("Creating Evaluation")
@@ -84,7 +83,7 @@ def main() -> None:
             data_source_config=data_source_config,
             testing_criteria=testing_criteria,  # type: ignore
         )
-        print(f"Evaluation created")
+        print("Evaluation created")
 
         print("Get Evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
@@ -145,7 +144,7 @@ def main() -> None:
             ),
         )
 
-        print(f"Eval Run created")
+        print("Eval Run created")
         pprint(eval_run_object)
 
         print("Get Eval Run by Id")
@@ -157,7 +156,7 @@ def main() -> None:
 
         while True:
             run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-            if run.status == "completed" or run.status == "failed":
+            if run.status in ("completed", "failed"):
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 pprint(output_items)
                 print(f"Eval Run Status: {run.status}")

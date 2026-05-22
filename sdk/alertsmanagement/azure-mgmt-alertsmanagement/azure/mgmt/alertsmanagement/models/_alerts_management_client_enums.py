@@ -10,11 +10,19 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Action that should be applied."""
+class ActionRuleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if the given action rule is enabled or disabled."""
 
-    ADD_ACTION_GROUPS = "AddActionGroups"
-    REMOVE_ALL_ACTION_GROUPS = "RemoveAllActionGroups"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class ActionRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates type of action rule."""
+
+    SUPPRESSION = "Suppression"
+    ACTION_GROUP = "ActionGroup"
+    DIAGNOSTICS = "Diagnostics"
 
 
 class AlertModificationEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -29,6 +37,13 @@ class AlertModificationEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIONS_TRIGGERED = "ActionsTriggered"
     ACTIONS_SUPPRESSED = "ActionsSuppressed"
     ACTIONS_FAILED = "ActionsFailed"
+
+
+class AlertRuleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The alert rule state."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class AlertsSortByFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -63,43 +78,6 @@ class AlertState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEW = "New"
     ACKNOWLEDGED = "Acknowledged"
     CLOSED = "Closed"
-
-
-class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource."""
-
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-
-class DaysOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Days of week."""
-
-    SUNDAY = "Sunday"
-    MONDAY = "Monday"
-    TUESDAY = "Tuesday"
-    WEDNESDAY = "Wednesday"
-    THURSDAY = "Thursday"
-    FRIDAY = "Friday"
-    SATURDAY = "Saturday"
-
-
-class Field(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Field for a given condition."""
-
-    SEVERITY = "Severity"
-    MONITOR_SERVICE = "MonitorService"
-    MONITOR_CONDITION = "MonitorCondition"
-    SIGNAL_TYPE = "SignalType"
-    TARGET_RESOURCE_TYPE = "TargetResourceType"
-    TARGET_RESOURCE = "TargetResource"
-    TARGET_RESOURCE_GROUP = "TargetResourceGroup"
-    ALERT_RULE_ID = "AlertRuleId"
-    ALERT_RULE_NAME = "AlertRuleName"
-    DESCRIPTION = "Description"
-    ALERT_CONTEXT = "AlertContext"
 
 
 class Identifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -141,7 +119,7 @@ class MonitorService(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operator for a given condition."""
+    """operator for a given condition."""
 
     EQUALS = "Equals"
     NOT_EQUALS = "NotEquals"
@@ -149,12 +127,12 @@ class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DOES_NOT_CONTAIN = "DoesNotContain"
 
 
-class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies when the recurrence should be applied."""
+class ScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """type of target scope."""
 
-    DAILY = "Daily"
-    WEEKLY = "Weekly"
-    MONTHLY = "Monthly"
+    RESOURCE_GROUP = "ResourceGroup"
+    RESOURCE = "Resource"
+    SUBSCRIPTION = "Subscription"
 
 
 class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -207,6 +185,16 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEW = "New"
     ACKNOWLEDGED = "Acknowledged"
     CLOSED = "Closed"
+
+
+class SuppressionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies when the suppression should be applied."""
+
+    ALWAYS = "Always"
+    ONCE = "Once"
+    DAILY = "Daily"
+    WEEKLY = "Weekly"
+    MONTHLY = "Monthly"
 
 
 class TimeRange(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-12-15-preview/Accounts_ChangeKeyVault.json
+# x-ms-original-file: 2026-01-01/Accounts_ChangeKeyVault.json
 if __name__ == "__main__":
     main()

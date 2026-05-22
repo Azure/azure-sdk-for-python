@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b1 (Unreleased)
+## 0.1.0 (Unreleased)
 
 Initial release.
 

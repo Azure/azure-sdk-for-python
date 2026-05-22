@@ -4,14 +4,17 @@
 
 from __future__ import annotations
 
-import uuid
+import hashlib
+import re
 
 import pytest
 
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.hosting._request_parsing import (
+    _compute_hex_hash,
     _resolve_identity_fields,
     _resolve_session_id,
+    derive_session_id,
 )
 from azure.ai.agentserver.responses.streaming._internals import (
     apply_common_defaults,
@@ -145,11 +148,12 @@ class TestSessionIdResolution:
         assert result == "env-session-123"
 
     def test_generated_uuid_third_priority(self):
-        """B39 P3: generated UUID when no payload field or env_session_id."""
+        """B39 P3: random hex when no payload, env, or conversational context."""
         parsed = _FakeParsed()
         result = _resolve_session_id(parsed, {})
-        # Should be a valid UUID
-        uuid.UUID(result)  # raises ValueError if invalid
+        # Should be a 63-char lowercase hex string
+        assert len(result) == 63
+        assert re.fullmatch(r"[0-9a-f]+", result)
 
     def test_payload_overrides_env_var(self):
         """B39: payload field takes precedence over env_session_id."""
@@ -163,11 +167,12 @@ class TestSessionIdResolution:
         result = _resolve_session_id(parsed, {}, env_session_id="env-fallback")
         assert result == "env-fallback"
 
-    def test_empty_env_falls_to_uuid(self):
-        """B39: empty env_session_id falls through to generated UUID."""
+    def test_empty_env_falls_to_random_hex(self):
+        """B39: empty env_session_id falls through to random hex."""
         parsed = _FakeParsed()
         result = _resolve_session_id(parsed, {}, env_session_id="  ")
-        uuid.UUID(result)
+        assert len(result) == 63
+        assert re.fullmatch(r"[0-9a-f]+", result)
 
 
 # ===================================================================
@@ -274,3 +279,169 @@ class TestSessionIdStamping:
             assert events[0]["response"]["agent_session_id"] == "all-types-session", (
                 f"Missing agent_session_id on {event_type}"
             )
+
+
+# ===================================================================
+# B39: Deterministic session ID derivation
+# ===================================================================
+
+
+class TestSessionIdDerivation:
+    """Tests for deterministic session ID derivation from conversational context."""
+
+    def test_conversation_id_produces_deterministic_hash(self):
+        """Same conversation_id + agent identity → same session ID every time."""
+        conv_id = IdGenerator.new_response_id()  # valid ID with partition key
+        ref = {"name": "my-agent", "version": "1.0"}
+
+        result1 = derive_session_id(conversation_id=conv_id, agent_reference=ref)
+        result2 = derive_session_id(conversation_id=conv_id, agent_reference=ref)
+
+        assert result1 == result2
+        assert len(result1) == 63
+        assert re.fullmatch(r"[0-9a-f]+", result1)
+
+    def test_previous_response_id_produces_deterministic_hash(self):
+        """Same previous_response_id + agent identity → same session ID."""
+        prev_id = IdGenerator.new_response_id()
+        ref = {"name": "agent-x", "version": "2.0"}
+
+        result1 = derive_session_id(previous_response_id=prev_id, agent_reference=ref)
+        result2 = derive_session_id(previous_response_id=prev_id, agent_reference=ref)
+
+        assert result1 == result2
+        assert len(result1) == 63
+
+    def test_conversation_id_takes_priority_over_previous_response_id(self):
+        """conversation_id is used as partition source when both are present."""
+        conv_id = IdGenerator.new_response_id()
+        prev_id = IdGenerator.new_response_id()
+        ref = {"name": "agent", "version": "1"}
+
+        conv_only = derive_session_id(conversation_id=conv_id, agent_reference=ref)
+        both = derive_session_id(conversation_id=conv_id, previous_response_id=prev_id, agent_reference=ref)
+
+        assert conv_only == both  # conversation_id wins
+
+    def test_different_agents_produce_different_sessions(self):
+        """Same conversation but different agent identity → different session IDs."""
+        conv_id = IdGenerator.new_response_id()
+
+        result_a = derive_session_id(
+            conversation_id=conv_id,
+            agent_reference={"name": "agent-a", "version": "1"},
+        )
+        result_b = derive_session_id(
+            conversation_id=conv_id,
+            agent_reference={"name": "agent-b", "version": "1"},
+        )
+
+        assert result_a != result_b
+
+    def test_different_versions_produce_different_sessions(self):
+        """Same agent name but different version → different session IDs."""
+        conv_id = IdGenerator.new_response_id()
+
+        result_v1 = derive_session_id(
+            conversation_id=conv_id,
+            agent_reference={"name": "agent", "version": "1.0"},
+        )
+        result_v2 = derive_session_id(
+            conversation_id=conv_id,
+            agent_reference={"name": "agent", "version": "2.0"},
+        )
+
+        assert result_v1 != result_v2
+
+    def test_no_context_produces_random_hex(self):
+        """No conversation_id or previous_response_id → random hex."""
+        result1 = derive_session_id()
+        result2 = derive_session_id()
+
+        # Both are valid 63-char hex
+        assert len(result1) == 63
+        assert len(result2) == 63
+        assert re.fullmatch(r"[0-9a-f]+", result1)
+        assert re.fullmatch(r"[0-9a-f]+", result2)
+        # Extremely unlikely to collide
+        assert result1 != result2
+
+    def test_none_agent_reference_uses_default_name(self):
+        """When agent_reference is None, a default name is used in the hash."""
+        conv_id = IdGenerator.new_response_id()
+        result = derive_session_id(conversation_id=conv_id, agent_reference=None)
+        assert len(result) == 63
+        assert re.fullmatch(r"[0-9a-f]+", result)
+
+    def test_compute_hex_hash_matches_sha256(self):
+        """_compute_hex_hash produces expected SHA-256 output."""
+        value = "my-agent:1.0:abc123"
+        expected = hashlib.sha256(value.encode("utf-8")).hexdigest()[:63]
+        assert _compute_hex_hash(value) == expected
+
+    def test_resolve_session_id_derives_from_conversation_id(self):
+        """_resolve_session_id uses conversation_id for deterministic derivation."""
+        conv_id = IdGenerator.new_response_id()
+        parsed = _FakeParsed(conversation={"id": conv_id})
+        ref = {"name": "test-agent", "version": "1.0"}
+
+        result = _resolve_session_id(parsed, {}, agent_reference=ref)
+
+        # Must be deterministic
+        result2 = _resolve_session_id(parsed, {}, agent_reference=ref)
+        assert result == result2
+        assert len(result) == 63
+
+    def test_resolve_session_id_derives_from_previous_response_id(self):
+        """_resolve_session_id uses previous_response_id when no conversation."""
+        prev_id = IdGenerator.new_response_id()
+        parsed = _FakeParsed(previous_response_id=prev_id)
+        ref = {"name": "test-agent", "version": "2.0"}
+
+        result = _resolve_session_id(parsed, {}, agent_reference=ref)
+
+        result2 = _resolve_session_id(parsed, {}, agent_reference=ref)
+        assert result == result2
+        assert len(result) == 63
+
+    def test_resolve_session_id_explicit_beats_derivation(self):
+        """Explicit session ID in payload takes precedence over derivation."""
+        conv_id = IdGenerator.new_response_id()
+        parsed = _FakeParsed(
+            agent_session_id="explicit-session",
+            conversation={"id": conv_id},
+        )
+        ref = {"name": "agent", "version": "1"}
+
+        result = _resolve_session_id(parsed, {}, agent_reference=ref)
+        assert result == "explicit-session"
+
+    def test_resolve_session_id_env_beats_derivation(self):
+        """Platform env session ID takes precedence over derivation."""
+        conv_id = IdGenerator.new_response_id()
+        parsed = _FakeParsed(conversation={"id": conv_id})
+        ref = {"name": "agent", "version": "1"}
+
+        result = _resolve_session_id(parsed, {}, env_session_id="env-session", agent_reference=ref)
+        assert result == "env-session"
+
+    def test_string_conversation_id_also_derives(self):
+        """String-typed conversation in parsed request is used for derivation."""
+        conv_id = IdGenerator.new_response_id()
+        parsed = _FakeParsed(conversation=conv_id)
+        ref = {"name": "agent", "version": "1"}
+
+        result = _resolve_session_id(parsed, {}, agent_reference=ref)
+        assert len(result) == 63
+        assert re.fullmatch(r"[0-9a-f]+", result)
+
+    def test_non_id_format_conversation_id_still_derives(self):
+        """Conversation ID that isn't a valid IdGenerator format still produces deterministic hash."""
+        parsed = _FakeParsed(conversation="plain-conversation-id")
+        ref = {"name": "agent", "version": "1"}
+
+        result1 = _resolve_session_id(parsed, {}, agent_reference=ref)
+        result2 = _resolve_session_id(parsed, {}, agent_reference=ref)
+
+        assert result1 == result2
+        assert len(result1) == 63

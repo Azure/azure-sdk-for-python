@@ -43,4 +43,7 @@ steps:
         } else {
           Write-Host "##[warning]PIP_INDEX_URL not set - uv will fall back to public PyPI."
         }
+        # Force any managed Python downloads to go directly to GitHub releases
+        # rather than the default CDN (releases.astral.sh).
+        Write-Host "##vso[task.setvariable variable=UV_PYTHON_INSTALL_MIRROR]https://github.com/astral-sh/python-build-standalone/releases/download"
       displayName: 'Configure UV Authentication'

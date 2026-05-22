@@ -151,6 +151,8 @@ class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DAILY."""
     ONETIME = "Onetime"
     """ONETIME."""
+    NONE = "None"
+    """No schedule frequency. The job definition will not run on a schedule."""
 
 
 class JobRunScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -264,14 +266,16 @@ class S3WithHmacSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MINIO = "MINIO"
     """MINIO."""
-    BACKBLAZE = "BACKBLAZE"
-    """BACKBLAZE."""
     IBM = "IBM"
     """IBM."""
-    CLOUDFLARE = "CLOUDFLARE"
-    """CLOUDFLARE."""
     GCS = "GCS"
     """GCS."""
+    ALIBABA = "ALIBABA"
+    """ALIBABA."""
+    DELL_EMC = "DELL_EMC"
+    """DELL_EMC."""
+    OTHER = "OTHER"
+    """OTHER."""
 
 
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

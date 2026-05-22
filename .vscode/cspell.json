@@ -14,6 +14,7 @@
     ".devcontainer/**",
     "eng/**",
     ".github/CODEOWNERS",
+    ".github/**/*.lock.yml",
     "scripts/**",
     "**/tests/recordings/**",
     ".vscode/cspell.json",
@@ -104,9 +105,6 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
     "sdk/storage/azure-storage-file-datalake/tests/**",
-    "sdk/projects/azure-projects/tests/test_infra/**",
-    "sdk/projects/azure-projects/samples/**/*.html",
-    "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
@@ -135,6 +133,7 @@
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
+    ".gitattributes",
     ".gitignore",
     "eng/tools/azure-sdk-tools/ci_tools/github_tools.py",
     "eng/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
@@ -156,6 +155,9 @@
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "vally",
+    "regen",
+    "pylintrc",
     "qnas",
     "msedge",
     "spinup",
@@ -185,6 +187,8 @@
     "adfs",
     "adls",
     "aenter",
+    "agentic",
+    "Agentic",
     "aiohttp",
     "alru",
     "amqp",
@@ -221,6 +225,7 @@
     "consts",
     "contoso",
     "contosodataset",
+    "contosowidgetmanager",
     "centralus",
     "centraluseuap",
     "creds",
@@ -290,6 +295,7 @@
     "inotify",
     "ints",
     "iohttp",
+    "iscai",
     "IOHTTP",
     "IOLRO",
     "incompat",
@@ -343,6 +349,7 @@
     "msauth",
     "msrest",
     "msrestazure",
+    "msyyc",
     "MSSQL",
     "MSRC",
     "mutex",
@@ -490,6 +497,7 @@
     "vnet",
     "volcz",
     "vsts",
+    "waza",
     "wchar",
     "wesh",
     "westcentralus",
@@ -672,46 +680,6 @@
       "filename": "sdk/identity/azure-identity-broker/tests/*.py",
       "words": [
         "signin"
-      ]
-    },
-    {
-      "filename": "sdk/projects/azure-projects/tests/**/*.py",
-      "words": [
-        "tofile",
-        "rgtest",
-        "rgexists",
-        "rgtag",
-        "kvtest",
-        "testb",
-        "sclient",
-        "aclient"
-      ]
-    },
-    {
-      "filename": "sdk/projects/azure-projects/**",
-      "words": [
-        "azproj",
-        "azproject",
-        "azprojects",
-        "aiservices",
-        "aifoundry",
-        "mcpcommand",
-        "fastmcp",
-        "GUNICORN",
-        "GZRS",
-        "RAGZRS",
-        "nfsv",
-        "Eloqua",
-        "Hdfs",
-        "Informix",
-        "Magento",
-        "Netezza",
-        "Odbc",
-        "Serp",
-        "Sybase",
-        "Vertica",
-        "Xero",
-        "redef"
       ]
     },
     {
@@ -1965,7 +1933,8 @@
         "wday",
         "mday",
         "deseralize",
-        "astimezone"
+        "astimezone",
+        "Merkle"
       ]
     },
     {
@@ -2197,7 +2166,12 @@
       "words": ["envml", "paginators"]
     },
     {
+      "filename": "sdk/planetarycomputer/azure-planetarycomputer/**",
+      "words": ["topo", "haline", "Aproperty", "pygen"]
+    },
+    {
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
+      "filename": "sdk/agentserver/azure-ai-agentserver-ghcopilot/**",
       "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
     }
   ],

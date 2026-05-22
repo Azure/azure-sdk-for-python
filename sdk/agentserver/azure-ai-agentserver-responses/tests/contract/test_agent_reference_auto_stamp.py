@@ -139,7 +139,7 @@ def _direct_yield_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _build_client(handler: Any) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     return TestClient(app)
 
 

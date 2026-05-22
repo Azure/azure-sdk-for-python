@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import pytest
 
+from azure.ai.agentserver.responses.models._generated import ResponseStreamEvent
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 RESPONSE_ID = "resp_gen_test_12345"
@@ -31,6 +32,9 @@ def test_output_item_message_yields_full_lifecycle() -> None:
     events = list(stream.output_item_message("Hello world"))
 
     assert len(events) == 6
+    # Every yielded event must be a ResponseStreamEvent model, not a plain dict
+    for event in events:
+        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
     types = [e["type"] for e in events]
     assert types == [
         "response.output_item.added",
@@ -58,6 +62,8 @@ def test_output_item_function_call_yields_full_lifecycle() -> None:
     events = list(stream.output_item_function_call("get_weather", "call_abc", '{"city":"Seattle"}'))
 
     assert len(events) == 4
+    for event in events:
+        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
     types = [e["type"] for e in events]
     assert types == [
         "response.output_item.added",
@@ -86,6 +92,8 @@ def test_output_item_function_call_output_yields_added_and_done() -> None:
     events = list(stream.output_item_function_call_output("call_abc", "Sunny, 72F"))
 
     assert len(events) == 2
+    for event in events:
+        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
     types = [e["type"] for e in events]
     assert types == [
         "response.output_item.added",
@@ -106,6 +114,8 @@ def test_output_item_reasoning_item_yields_full_lifecycle() -> None:
     events = list(stream.output_item_reasoning_item("The user asked about weather"))
 
     assert len(events) == 6
+    for event in events:
+        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
     types = [e["type"] for e in events]
     assert types == [
         "response.output_item.added",
