@@ -23,7 +23,7 @@ from ..models._models import (
     FileDatasetVersion,
     FolderDatasetVersion,
     PendingUploadRequest,
-    PendingUploadResult,
+    PendingUploadResponse,
     PendingUploadType,
 )
 from ..models._patch import DatasetsFolderUploadProgress
@@ -50,7 +50,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         connection_name: Optional[str] = None,
     ) -> Tuple[ContainerClient, str]:
 
-        pending_upload_response: PendingUploadResult = self.pending_upload(
+        pending_upload_response: PendingUploadResponse = self.pending_upload(
             name=name,
             version=input_version,
             pending_upload_request=PendingUploadRequest(

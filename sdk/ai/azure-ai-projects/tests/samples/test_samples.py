@@ -85,6 +85,7 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents",
             samples_to_skip=[
+                "sample_external_agents_crud.py",  # Skipped until recordings are available.
                 "sample_workflow_multi_agent.py",  # No issue to run.  Just postpone recording.
                 "sample_workflow_multi_agent_with_mcp_approval.py",  # No issue to run.  Just postpone recording.
             ],
@@ -149,14 +150,25 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm()
 
+    @servicePreparer()
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
+                sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
+                env_vars={
+                    "POLL_INTERVAL_SECONDS": "60",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
             "datasets",
-            samples_to_skip=[],
+            samples_to_skip=["sample_dataset_generation_job_simpleqna_with_prompt_source.py"],
         ),
     )
-    @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_datasets_samples(self, sample_path: str, **kwargs) -> None:
@@ -181,6 +193,18 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm()
 
+    @servicePreparer()
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_create_hosted_agent_from_remote_build",
+                sample_filename="sample_create_hosted_agent_from_code.py",
+                env_vars={
+                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
@@ -188,12 +212,11 @@ class TestSamples(AzureRecordedTestCase):
             samples_to_skip=[],
         ),
     )
-    @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
-        if os.path.basename(sample_path) == "sample_hosted_agent_create.py" and not self.is_live:
-            pytest.skip("sample_hosted_agent_create.py is skipped in replay mode due to RBAC complications.")
+        if os.path.basename(sample_path).startswith("sample_create_hosted_agent") and not self.is_live:
+            pytest.skip("sample_create_hosted_agent.py is skipped in replay mode due to RBAC complications.")
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
