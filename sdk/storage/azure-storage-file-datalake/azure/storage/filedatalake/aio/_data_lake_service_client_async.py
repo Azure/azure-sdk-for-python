@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import (
-    Any, cast, Dict, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, cast, Dict, Optional, Union, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
@@ -19,13 +16,7 @@ from azure.storage.blob.aio import BlobServiceClient
 from .._data_lake_service_client_helpers import _format_url, _parse_url
 from .._deserialize import get_datalake_service_properties
 from .._generated.aio import AzureDataLakeStorageRESTAPI
-from .._models import (
-    DirectoryProperties,
-    FileProperties,
-    FileSystemProperties,
-    LocationMode,
-    UserDelegationKey
-)
+from .._models import DirectoryProperties, FileProperties, FileSystemProperties, LocationMode, UserDelegationKey
 from .._serialize import convert_dfs_url_to_blob_url, get_api_version
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
@@ -100,11 +91,14 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
     """The hostname of the primary endpoint."""
 
     def __init__(
-        self, account_url: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        self,
+        account_url: str,
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
-        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
 
         parsed_url = _parse_url(account_url=account_url)
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
@@ -116,19 +110,17 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 
-        super(DataLakeServiceClient, self).__init__(parsed_url, service='dfs',
-                                                    credential=self._raw_credential, **kwargs)
+        super(DataLakeServiceClient, self).__init__(
+            parsed_url, service="dfs", credential=self._raw_credential, **kwargs
+        )
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
 
         self._api_version = get_api_version(kwargs)
         self._client = AzureDataLakeStorageRESTAPI(
-            self.url,
-            version=self._api_version,
-            base_url=self.url,
-            pipeline=self._pipeline
+            self.url, version=self._api_version, base_url=self.url, pipeline=self._pipeline
         )
-        self._loop = kwargs.get('loop', None)
+        self._loop = kwargs.get("loop", None)
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
@@ -140,7 +132,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:  # type: ignore
-        """ This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
 
         :return: None
@@ -160,8 +152,11 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        cls,
+        conn_str: str,
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Self:
         """
@@ -199,12 +194,13 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
                 :dedent: 8
                 :caption: Creating the DataLakeServiceClient from a connection string.
         """
-        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
+        account_url, _, credential = parse_connection_str(conn_str, credential, "dfs")
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_user_delegation_key(
-        self, key_start_time: "datetime",
+        self,
+        key_start_time: "datetime",
         key_expiry_time: "datetime",
         *,
         delegated_user_tid: Optional[str] = None,
@@ -247,9 +243,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
     @distributed_trace
     def list_file_systems(
-        self, name_starts_with: Optional[str] = None,
-        include_metadata: bool = False,
-        **kwargs: Any
+        self, name_starts_with: Optional[str] = None, include_metadata: bool = False, **kwargs: Any
     ) -> AsyncItemPaged[FileSystemProperties]:
         """Returns a generator to list the file systems under the specified account.
 
@@ -290,17 +284,19 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
                 :dedent: 8
                 :caption: Listing the file systems in the datalake service.
         """
-        item_paged = cast(AsyncItemPaged[FileSystemProperties], self._blob_service_client.list_containers(
-            name_starts_with=name_starts_with,
-            include_metadata=include_metadata,
-            **kwargs
-        ))
+        item_paged = cast(
+            AsyncItemPaged[FileSystemProperties],
+            self._blob_service_client.list_containers(
+                name_starts_with=name_starts_with, include_metadata=include_metadata, **kwargs
+            ),
+        )
         item_paged._page_iterator_class = FileSystemPropertiesPaged  # pylint: disable=protected-access
         return item_paged
 
     @distributed_trace_async
     async def create_file_system(
-        self, file_system: Union[FileSystemProperties, str],
+        self,
+        file_system: Union[FileSystemProperties, str],
         metadata: Optional[Dict[str, str]] = None,
         public_access: Optional["PublicAccess"] = None,
         **kwargs: Any
@@ -371,7 +367,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         :returns: FileSystemClient with the newly specified name.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
-        await self._blob_service_client._rename_container(name, new_name, **kwargs)   # pylint: disable=protected-access
+        await self._blob_service_client._rename_container(name, new_name, **kwargs)  # pylint: disable=protected-access
         renamed_file_system = self.get_file_system_client(new_name)
         return renamed_file_system
 
@@ -398,15 +394,14 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         :returns: The FileSystemClient of the restored soft-deleted filesystem.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
-        new_name = kwargs.pop('new_name', None)
+        new_name = kwargs.pop("new_name", None)
         await self._blob_service_client.undelete_container(name, deleted_version, new_name=new_name, **kwargs)
         file_system = self.get_file_system_client(new_name or name)
         return file_system
 
     @distributed_trace_async
     async def delete_file_system(
-        self, file_system: Union[FileSystemProperties, str],
-        **kwargs: Any
+        self, file_system: Union[FileSystemProperties, str], **kwargs: Any
     ) -> FileSystemClient:
         """Marks the specified file system for deletion.
 
@@ -489,16 +484,20 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies,  # type: ignore [arg-type] # pylint: disable=protected-access
         )
-        return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
-                                api_version=self.api_version,
-                                _configuration=self._config,
-                                _pipeline=_pipeline, _hosts=self._hosts)
+        return FileSystemClient(
+            self.url,
+            file_system_name,
+            credential=self._raw_credential,
+            api_version=self.api_version,
+            _configuration=self._config,
+            _pipeline=_pipeline,
+            _hosts=self._hosts,
+        )
 
     def get_directory_client(
-        self, file_system: Union[FileSystemProperties,str],
-        directory: Union[DirectoryProperties, str]
+        self, file_system: Union[FileSystemProperties, str], directory: Union[DirectoryProperties, str]
     ) -> DataLakeDirectoryClient:
         """Get a client to interact with the specified directory.
 
@@ -535,17 +534,21 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies,  # type: ignore [arg-type] # pylint: disable=protected-access
         )
-        return DataLakeDirectoryClient(self.url, file_system_name, directory_name=directory_name,
-                                       credential=self._raw_credential,
-                                       api_version=self.api_version,
-                                       _configuration=self._config, _pipeline=_pipeline,
-                                       _hosts=self._hosts)
+        return DataLakeDirectoryClient(
+            self.url,
+            file_system_name,
+            directory_name=directory_name,
+            credential=self._raw_credential,
+            api_version=self.api_version,
+            _configuration=self._config,
+            _pipeline=_pipeline,
+            _hosts=self._hosts,
+        )
 
     def get_file_client(
-        self, file_system: Union[FileSystemProperties, str],
-        file_path: Union[FileProperties, str]
+        self, file_system: Union[FileSystemProperties, str], file_path: Union[FileProperties, str]
     ) -> DataLakeFileClient:
         """Get a client to interact with the specified file.
 
@@ -582,12 +585,18 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies,  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeFileClient(
-            self.url, file_system_name, file_path=file_path, credential=self._raw_credential,
+            self.url,
+            file_system_name,
+            file_path=file_path,
+            credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
+            _hosts=self._hosts,
+            _configuration=self._config,
+            _pipeline=_pipeline,
+        )
 
     @distributed_trace_async
     async def set_service_properties(self, **kwargs: Any) -> None:

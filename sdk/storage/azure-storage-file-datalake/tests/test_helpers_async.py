@@ -12,7 +12,10 @@ from aiohttp import ClientResponse
 from aiohttp.client_proto import ResponseHandler
 from aiohttp.streams import StreamReader
 
-from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport  # pylint: disable=no-name-in-module
+from azure.core.pipeline.transport import (
+    AioHttpTransportResponse,
+    AsyncHttpTransport,
+)  # pylint: disable=no-name-in-module
 from azure.core.rest import HttpRequest
 
 
@@ -56,11 +59,7 @@ class AsyncStream:
 
 class MockAioHttpClientResponse(ClientResponse):
     def __init__(
-        self, url: str,
-        body_bytes: bytes,
-        headers: Dict[str, Any],
-        status: int = 200,
-        reason: str = "OK"
+        self, url: str, body_bytes: bytes, headers: Dict[str, Any], status: int = 200, reason: str = "OK"
     ) -> None:
         super(MockAioHttpClientResponse).__init__()
         self._url = url
@@ -78,11 +77,12 @@ class MockAioHttpClientResponse(ClientResponse):
 
 class MockStorageTransport(AsyncHttpTransport):
     """
-    This transport returns legacy http response objects from azure core and is 
+    This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
     """
+
     async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
-        if request.method == 'GET':
+        if request.method == "GET":
             # download_file
             headers = {
                 "Content-Type": "application/octet-stream",
@@ -100,9 +100,9 @@ class MockStorageTransport(AsyncHttpTransport):
                     b"Hello Async World!",
                     headers,
                 ),
-                decompress=False
+                decompress=False,
             )
-        elif request.method == 'HEAD':
+        elif request.method == "HEAD":
             # get_file_properties
             rest_response = AioHttpTransportResponse(
                 request=request,
@@ -114,9 +114,9 @@ class MockStorageTransport(AsyncHttpTransport):
                         "Content-Length": "1024",
                     },
                 ),
-                decompress=False
+                decompress=False,
             )
-        elif request.method == 'PUT':
+        elif request.method == "PUT":
             # upload_data
             rest_response = AioHttpTransportResponse(
                 request=request,
@@ -127,11 +127,11 @@ class MockStorageTransport(AsyncHttpTransport):
                         "Content-Length": "0",
                     },
                     201,
-                    "Created"
+                    "Created",
                 ),
-                decompress=False
+                decompress=False,
             )
-        elif request.method == 'PATCH':
+        elif request.method == "PATCH":
             # upload_data_chunks
             parsed = urlparse(request.url)
             if "action=flush" in parsed.query:
@@ -144,9 +144,9 @@ class MockStorageTransport(AsyncHttpTransport):
                             "Content-Length": "0",
                         },
                         200,
-                        "OK"
+                        "OK",
                     ),
-                    decompress=False
+                    decompress=False,
                 )
             else:
                 rest_response = AioHttpTransportResponse(
@@ -158,11 +158,11 @@ class MockStorageTransport(AsyncHttpTransport):
                             "Content-Length": "0",
                         },
                         202,
-                        "Accepted"
+                        "Accepted",
                     ),
-                    decompress=False
+                    decompress=False,
                 )
-        elif request.method == 'DELETE':
+        elif request.method == "DELETE":
             # delete_file
             rest_response = AioHttpTransportResponse(
                 request=request,
@@ -173,9 +173,9 @@ class MockStorageTransport(AsyncHttpTransport):
                         "Content-Length": "0",
                     },
                     202,
-                    "Accepted"
+                    "Accepted",
                 ),
-                decompress=False
+                decompress=False,
             )
         else:
             raise ValueError("The request is not accepted as part of MockStorageTransport.")

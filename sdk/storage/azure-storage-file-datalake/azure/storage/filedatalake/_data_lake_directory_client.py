@@ -6,10 +6,7 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
-from typing import (
-    Any, cast, Dict, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, cast, Dict, Optional, Union, TYPE_CHECKING
 from urllib.parse import quote, unquote
 from typing_extensions import Self
 
@@ -84,22 +81,29 @@ class DataLakeDirectoryClient(PathClient):
     """The hostname of the primary endpoint."""
 
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         file_system_name: str,
         directory_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
     ) -> None:
-        super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, path_name=directory_name,
-                                                      credential=credential, **kwargs)
+        super(DataLakeDirectoryClient, self).__init__(
+            account_url, file_system_name, path_name=directory_name, credential=credential, **kwargs
+        )
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
+        cls,
+        conn_str: str,
         file_system_name: str,
         directory_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
     ) -> Self:
         """
         Create DataLakeDirectoryClient from a Connection String.
@@ -135,15 +139,18 @@ class DataLakeDirectoryClient(PathClient):
         :return: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
-        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
+        account_url, _, credential = parse_connection_str(conn_str, credential, "dfs")
         return cls(
-            account_url, file_system_name=file_system_name, directory_name=directory_name,
-            credential=credential, **kwargs)
+            account_url,
+            file_system_name=file_system_name,
+            directory_name=directory_name,
+            credential=credential,
+            **kwargs,
+        )
 
     @distributed_trace
     def create_directory(
-        self, metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        self, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> Dict[str, Union[str, "datetime"]]:
         """
         Create a new directory.
@@ -227,7 +234,7 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 8
                 :caption: Create directory.
         """
-        return self._create('directory', metadata=metadata, **kwargs)
+        return self._create("directory", metadata=metadata, **kwargs)
 
     @distributed_trace
     def delete_directory(self, **kwargs: Any) -> None:
@@ -332,11 +339,11 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
-        upn = kwargs.pop('upn', None)
+        upn = kwargs.pop("upn", None)
         if upn:
-            headers = kwargs.pop('headers', {})
-            headers['x-ms-upn'] = str(upn)
-            kwargs['headers'] = headers
+            headers = kwargs.pop("headers", {})
+            headers["x-ms-upn"] = str(upn)
+            kwargs["headers"] = headers
         return cast(DirectoryProperties, self._get_path_properties(cls=deserialize_dir_properties, **kwargs))
 
     @distributed_trace
@@ -425,21 +432,26 @@ class DataLakeDirectoryClient(PathClient):
                 :caption: Rename the source directory.
         """
         new_file_system, new_path, new_dir_sas = _parse_rename_path(
-            new_name, self.file_system_name, self._query_str, self._raw_credential)
+            new_name, self.file_system_name, self._query_str, self._raw_credential
+        )
 
         new_directory_client = DataLakeDirectoryClient(
-            f"{self.scheme}://{self.primary_hostname}", new_file_system, directory_name=new_path,
-            credential=self._raw_credential or new_dir_sas, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=self._pipeline)
+            f"{self.scheme}://{self.primary_hostname}",
+            new_file_system,
+            directory_name=new_path,
+            credential=self._raw_credential or new_dir_sas,
+            _hosts=self._hosts,
+            _configuration=self._config,
+            _pipeline=self._pipeline,
+        )
         new_directory_client._rename_path(  # pylint: disable=protected-access
-            f'/{quote(unquote(self.file_system_name))}/{quote(unquote(self.path_name))}{self._query_str}', **kwargs)
+            f"/{quote(unquote(self.file_system_name))}/{quote(unquote(self.path_name))}{self._query_str}", **kwargs
+        )
         return new_directory_client
 
     @distributed_trace
     def create_sub_directory(
-        self, sub_directory: Union[DirectoryProperties, str],
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        self, sub_directory: Union[DirectoryProperties, str], metadata: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> "DataLakeDirectoryClient":
         """
         Create a subdirectory and return the subdirectory client to be interacted with.
@@ -524,8 +536,7 @@ class DataLakeDirectoryClient(PathClient):
 
     @distributed_trace
     def delete_sub_directory(  # pylint: disable=delete-operation-wrong-return-type
-        self, sub_directory: Union[DirectoryProperties, str],
-        **kwargs: Any
+        self, sub_directory: Union[DirectoryProperties, str], **kwargs: Any
     ) -> "DataLakeDirectoryClient":
         """
         Marks the specified subdirectory for deletion.
@@ -661,13 +672,14 @@ class DataLakeDirectoryClient(PathClient):
 
     @distributed_trace
     def get_paths(
-        self, *,
+        self,
+        *,
         recursive: bool = True,
         max_results: Optional[int] = None,
         upn: Optional[bool] = None,
         start_from: Optional[str] = None,
         timeout: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged["PathProperties"]:
         """Returns a generator to list the paths under specified file system and directory.
         The generator will lazily follow the continuation tokens returned by the service.
@@ -702,15 +714,16 @@ class DataLakeDirectoryClient(PathClient):
         url = f"{self.scheme}://{hostname}/{quote(self.file_system_name)}"
         client = self._build_generated_client(url)
         command = functools.partial(
-            client.file_system.list_paths,
-            path=self.path_name,
-            begin_from=start_from,
-            timeout=timeout,
-            **kwargs
+            client.file_system.list_paths, path=self.path_name, begin_from=start_from, timeout=timeout, **kwargs
         )
         return ItemPaged(
-            command, recursive, path=self.path_name, max_results=max_results,
-            upn=upn, page_iterator_class=PathPropertiesPaged, **kwargs
+            command,
+            recursive,
+            path=self.path_name,
+            max_results=max_results,
+            upn=upn,
+            page_iterator_class=PathPropertiesPaged,
+            **kwargs,
         )
 
     def get_file_client(self, file: Union[FileProperties, str]) -> DataLakeFileClient:
@@ -726,18 +739,24 @@ class DataLakeDirectoryClient(PathClient):
         :rtype: ~azure.storage.filedatalake.DataLakeFileClient
         """
         if isinstance(file, FileProperties):
-            file_path = file.get('name')
+            file_path = file.get("name")
         else:
-            file_path = self.path_name + '/' + str(file)
+            file_path = self.path_name + "/" + str(file)
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies,  # pylint: disable = protected-access
         )
         return DataLakeFileClient(
-            self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
+            self.url,
+            self.file_system_name,
+            file_path=file_path,
+            credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
+            _hosts=self._hosts,
+            _configuration=self._config,
+            _pipeline=_pipeline,
+        )
 
     def get_sub_directory_client(self, sub_directory: Union[DirectoryProperties, str]) -> "DataLakeDirectoryClient":
         """Get a client to interact with the specified subdirectory of the current directory.
@@ -752,15 +771,21 @@ class DataLakeDirectoryClient(PathClient):
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
         if isinstance(sub_directory, DirectoryProperties):
-            subdir_path = sub_directory.get('name')
+            subdir_path = sub_directory.get("name")
         else:
-            subdir_path = self.path_name + '/' + str(sub_directory)
+            subdir_path = self.path_name + "/" + str(sub_directory)
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies # pylint: disable=protected-access
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         return DataLakeDirectoryClient(
-            self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
+            self.url,
+            self.file_system_name,
+            directory_name=subdir_path,
+            credential=self._raw_credential,
             api_version=self.api_version,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
+            _hosts=self._hosts,
+            _configuration=self._config,
+            _pipeline=_pipeline,
+        )
