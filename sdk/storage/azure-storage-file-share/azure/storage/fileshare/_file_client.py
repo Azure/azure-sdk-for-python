@@ -168,7 +168,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         *,
         token_intent: Optional[Literal["backup"]] = None,
         **kwargs: Any,
@@ -225,7 +225,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """A client to interact with a specific file, although that file may not yet exist.
@@ -269,7 +269,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """Create ShareFileClient from a Connection String.

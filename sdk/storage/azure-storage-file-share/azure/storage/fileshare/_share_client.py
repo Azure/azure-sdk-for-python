@@ -92,7 +92,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         *,
         token_intent: Optional[Literal["backup"]] = None,
         **kwargs: Any
@@ -147,7 +147,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any
     ) -> Self:
         """
@@ -194,7 +194,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any
     ) -> Self:
         """Create ShareClient from a Connection String.

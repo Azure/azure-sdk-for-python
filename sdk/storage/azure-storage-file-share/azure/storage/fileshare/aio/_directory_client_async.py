@@ -106,7 +106,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         *,
         token_intent: Optional[Literal["backup"]] = None,
         **kwargs: Any,
@@ -169,7 +169,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """Create a ShareDirectoryClient from a directory url.
@@ -227,7 +227,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         directory_path: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """Create ShareDirectoryClient from a Connection String.
