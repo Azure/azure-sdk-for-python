@@ -88,9 +88,8 @@ def recursive_access_control_sample(filesystem_client):
     # if an error was encountered, a continuation token would be returned if the operation can be resumed
     if acl_change_result.continuation is not None:
         print(
-            "The operation can be resumed by passing the continuation token {} again into the access control method.".format(
-                acl_change_result.continuation
-            )
+            "The operation can be resumed by passing the continuation token "
+            "{} again into the access control method.".format(acl_change_result.continuation)
         )
 
     # get and display the permissions of the parent directory again

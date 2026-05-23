@@ -111,9 +111,9 @@ class Metrics(GenMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            ),  # pylint: disable=protected-access
+            ),
         )
 
 
@@ -1329,9 +1329,9 @@ class AnalyticsLogging(GenLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            ),  # pylint: disable=protected-access
+            ),
         )
 
 
