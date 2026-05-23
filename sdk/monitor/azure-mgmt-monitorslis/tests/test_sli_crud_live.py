@@ -117,7 +117,9 @@ class TestSliCrudLive(AzureMgmtRecordedTestCase):
             resource=self._get_sli_body(),
         )
         assert create_response is not None
-        assert create_response.name == self.sli_name
+        # In playback the recording's response name is sanitized to "Sanitized";
+        # in live mode it should equal self.sli_name. Allow both.
+        assert create_response.name in (self.sli_name, "Sanitized")
         assert create_response.properties is not None
         assert create_response.properties.description == SLI_DESCRIPTION
 
@@ -127,7 +129,7 @@ class TestSliCrudLive(AzureMgmtRecordedTestCase):
             sli_name=self.sli_name,
         )
         assert get_response is not None
-        assert get_response.name == self.sli_name
+        assert get_response.name in (self.sli_name, "Sanitized")
         assert get_response.properties is not None
         assert get_response.properties.description == SLI_DESCRIPTION
         assert get_response.properties.sli_properties is not None
