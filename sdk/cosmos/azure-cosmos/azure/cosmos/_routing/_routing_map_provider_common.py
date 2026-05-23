@@ -36,7 +36,8 @@ from ..exceptions import CosmosHttpResponseError
 from .collection_routing_map import (
     CollectionRoutingMap,
     _build_routing_map_from_ranges,
-    _OverlapDetected,  # noqa: F401  # re-exported for sync/async provider modules and tests
+    _OverlapDetected,  # noqa: F401  # re-exported for provider modules and tests
+    _GapDetected,  # noqa: F401  # re-exported for provider modules and tests
 )
 from . import routing_range
 from .routing_range import (
@@ -50,113 +51,97 @@ logger = logging.getLogger(__name__)
 
 PAGE_SIZE_CHANGE_FEED = "-1"  # Return all available changes
 
-# Number of times the full-load path will re-fetch ``/pkranges`` when the
-# builder reports an overlap (``_OverlapDetected``). Overlap on the full-load
-# path is treated as a transient gateway inconsistency, so a small fixed
-# retry budget with backoff is preferred over surfacing immediately. After
-# this many attempts the caller surfaces a transient HTTP 503 so the
-# upstream retry policy can take over.
-#
-# Defined here (rather than in each provider module) so the sync and async
-# providers cannot drift on the retry budget — both import the same constant.
-_OVERLAP_RETRY_MAX_ATTEMPTS = 3
-# Initial backoff between overlap retries; doubles each attempt. Worst-case
-# total sleep under the budget above is ~3.5s (0.5 + 1.0 + 2.0).
-_OVERLAP_RETRY_INITIAL_BACKOFF_SECONDS = 0.5
+# Maximum retry attempts for transient full-load /pkranges inconsistencies
+# (overlap OR gap) before surfacing a transient HTTP 503. Centralised here so
+# the sync and async providers share one source of truth.
+_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS = 3
+# Initial backoff between inconsistency retries; doubles each attempt. With
+# ``_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS = 3``, attempt 3 raises 503 before
+# sleeping, so only the post-attempt-1 and post-attempt-2 backoffs are slept --
+# deterministic worst case is the sum of the first two schedule entries
+# (``_TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS`` and that value
+# doubled); expected wall time is half of that under full jitter.
+_TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS = 0.5
 
 
 def _jittered_backoff(backoff_seconds: float) -> float:
     """Return a uniformly-jittered backoff in the range ``[0, backoff_seconds]``.
 
-    Implements the "full jitter" strategy: the actual sleep is drawn uniformly
-    from zero to the full deterministic backoff. This decorrelates concurrent
-    retriers (for example, multiple Cosmos clients running inside a single
-    PySpark process that all hit the same gateway node on the same bad
-    ``/pkranges`` snapshot at the same instant) so they do not retry in
-    lockstep and re-collide on the same gateway node.
+    Implements the "full jitter" strategy so concurrent retriers in different
+    processes do not retry in lockstep against the same gateway node.
 
-    The worst-case sleep per attempt is unchanged (still bounded by the
-    deterministic backoff), so the documented retry-budget contract still
-    holds; the expected per-attempt sleep is half of it.
+    :param float backoff_seconds: Deterministic upper bound for the backoff,
+        in seconds. Must be non-negative.
+    :return: A uniformly-distributed sleep value in ``[0, backoff_seconds]``.
+    :rtype: float
     """
     return random.uniform(0, backoff_seconds)
 
 
-def _handle_overlap_retry_decision(
+def _handle_transient_snapshot_retry_decision(
     *,
-    overlap_attempt_count: int,
+    retry_attempt_count: int,
     collection_link: str,
     logger: logging.Logger,  # pylint: disable=redefined-outer-name
 ) -> float:
-    """Decide what to do after the full-load builder reported an overlap.
+    """Decide what to do after the full-load builder reported a transient
+    snapshot inconsistency (overlap or gap).
 
-    Centralises the sync/async-identical retry policy. Returns the number of
-    seconds the caller should sleep before the next attempt. Raises
-    :class:`CosmosHttpResponseError` (HTTP 503) when the attempt budget has
-    been exhausted; the caller's existing retry policy then handles it as
-    a transient error.
+    Returns a jittered backoff for the caller to sleep before the next
+    attempt; raises :class:`CosmosHttpResponseError` (HTTP 503) once
+    ``_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS`` is reached. Under the default
+    budget the final attempt raises 503 before sleeping, so only the first
+    ``_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS - 1`` attempts produce a sleep
+    (deterministic upper bounds doubling from
+    ``_TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS``). The caller
+    performs the actual sleep (``time.sleep`` vs ``await asyncio.sleep``),
+    which is the only line that differs between the sync and async
+    providers.
 
-    The returned sleep duration is jittered (see :func:`_jittered_backoff`)
-    so concurrent retriers do not retry in lockstep. The deterministic
-    backoff schedule (0.5s -> 1.0s -> 2.0s, doubling) defines the *upper
-    bound* of each attempt's sleep; the actual sleep is drawn uniformly
-    from ``[0, that upper bound]``.
-
-    The caller is responsible for the actual sleep (sync ``time.sleep`` or
-    ``await asyncio.sleep``). Keeping the sleep at the call site is what
-    lets this helper stay free of concurrency-runtime assumptions — the
-    only line that has to differ between the sync and async providers.
-
-    :param int overlap_attempt_count: Number of overlap attempts made so far,
-        including the one that just failed. Pass ``1`` after the first failure,
-        ``2`` after the second, etc.
-    :param str collection_link: Used in log messages and the 503 error body
-        so the caller knows which collection ran out of budget.
-    :param logging.Logger logger: Caller's module-level logger, so messages
-        appear under the right ``azure.cosmos._routing.*`` namespace.
-    :return: Jittered backoff seconds to sleep before retrying. Guaranteed
-        to be in ``[0, deterministic_backoff_for_attempt]``.
+    :keyword int retry_attempt_count: Attempts so far, including the one
+        that just failed. Pass ``1`` after the first failure.
+    :keyword str collection_link: Used in log messages and the 503 body.
+    :keyword logging.Logger logger: Caller's module-level logger.
+    :return: Jittered backoff seconds in ``[0, deterministic_upper_bound]``.
     :rtype: float
-    :raises CosmosHttpResponseError: When ``overlap_attempt_count`` has reached
-        ``_OVERLAP_RETRY_MAX_ATTEMPTS``. Status code is 503 so the upstream
-        retry policy classifies it as transient.
+    :raises CosmosHttpResponseError: When the attempt budget is exhausted.
     """
-    if overlap_attempt_count >= _OVERLAP_RETRY_MAX_ATTEMPTS:
+    if retry_attempt_count >= _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS:
         logger.error(
-            "Full-load routing-map fetch for collection '%s' detected "
-            "overlapping partition key ranges on every one of %d attempt(s). "
-            "Surfacing as transient HTTP 503 so the caller's retry policy "
-            "can take over.",
+            "Full-load routing-map fetch for collection '%s' detected a "
+            "transient snapshot inconsistency (overlap or gap) on every "
+            "one of %d attempt(s). Surfacing as transient HTTP 503 so the "
+            "caller's retry policy can take over.",
             collection_link,
-            overlap_attempt_count,
+            retry_attempt_count,
         )
         raise CosmosHttpResponseError(
             status_code=http_constants.StatusCodes.SERVICE_UNAVAILABLE,
             message=(
-                "Failed to build routing map for collection '{}': "
-                "overlapping partition key ranges persisted across {} "
+                "Failed to build routing map for collection '{}': transient "
+                "snapshot inconsistency (overlap or gap) persisted across {} "
                 "full-load attempt(s). Surfaced as a retryable transient "
-                "error so the upstream retry policy can take over, rather "
-                "than allowing the underlying ValueError to escape as a "
-                "fatal crash."
-            ).format(collection_link, overlap_attempt_count),
+                "error so the upstream retry policy can take over."
+            ).format(collection_link, retry_attempt_count),
         )
 
     deterministic_backoff = (
-        _OVERLAP_RETRY_INITIAL_BACKOFF_SECONDS * (2 ** (overlap_attempt_count - 1))
+        _TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS * (2 ** (retry_attempt_count - 1))
     )
     jittered_backoff = _jittered_backoff(deterministic_backoff)
     logger.warning(
-        "Full-load routing-map fetch for collection '%s' detected overlapping "
-        "partition key ranges (attempt %d/%d). Sleeping %.2fs (jittered from "
-        "upper bound %.2fs) and retrying.",
+        "Full-load routing-map fetch for collection '%s' detected a transient "
+        "snapshot inconsistency (overlap or gap) (attempt %d/%d). Sleeping "
+        "%.2fs (jittered from upper bound %.2fs) and retrying.",
         collection_link,
-        overlap_attempt_count,
-        _OVERLAP_RETRY_MAX_ATTEMPTS,
+        retry_attempt_count,
+        _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
         jittered_backoff,
         deterministic_backoff,
     )
     return jittered_backoff
+
+
 
 
 def is_cache_unchanged_since_previous(
@@ -263,7 +248,7 @@ def _resolve_endpoint(client: Any) -> str:
 
 
 class _IncrementalMergeFailed(Exception):
-    """Sentinel raised by :func:`process_fetched_ranges` when the
+    """Private exception type raised by :func:`process_fetched_ranges` when the
     incremental update cannot resolve all partition key ranges.
 
     The caller decides how to recover: retry the incremental fetch
@@ -276,7 +261,7 @@ def process_fetched_ranges(
     collection_id: str,
     collection_link: str,
     new_etag: Optional[str],
-) -> Optional[CollectionRoutingMap]:
+) -> CollectionRoutingMap:
     """Turn raw PK-range results into a :class:`CollectionRoutingMap`.
 
     Handles both initial-load (when *previous_routing_map* is ``None``)
@@ -291,10 +276,8 @@ def process_fetched_ranges(
     :param str collection_id: The ID of the collection.
     :param str collection_link: The link to the collection.
     :param str new_etag: The ETag from the change feed response, or ``None``.
-    :return: The new/updated routing map, or ``None`` when an
-        initial load yields no ranges.
+    :return: The new/updated routing map.
     :rtype: ~azure.cosmos._routing.collection_routing_map.CollectionRoutingMap
-        or None
     :raises _IncrementalMergeFailed: When the incremental path cannot
         resolve all ranges.  The caller catches this and either retries
         the incremental fetch or falls back to a full refresh.
@@ -374,22 +357,15 @@ def process_fetched_ranges(
     try:
         result = previous_routing_map.try_combine(range_tuples, effective_etag)
     except ValueError as overlap_error:
-        # ``try_combine`` validates the merged map via
-        # ``CollectionRoutingMap.is_complete_set_of_range`` and raises
-        # ``ValueError("Ranges overlap: ...")`` if the merge produces a
-        # self-contradictory tiling. This can happen during the incremental
-        # path when the delta contains a range whose key span overlaps an
-        # existing cached range without either side declaring the other a
-        # parent.
-        #
-        # We must NOT let this ``ValueError`` escape: the cache layer above
-        # treats a ``None`` routing map as "no ranges" and would convert
-        # the bare exception into a silent empty-result return at
-        # ``get_overlapping_ranges``. Convert to ``_IncrementalMergeFailed``
-        # so the caller's existing retry loop retries the incremental fetch
-        # once and then falls back to the full-load path, which has its own
-        # ``_OverlapDetected`` handler with retry+backoff and surfaces a
-        # transient HTTP 503 if the inconsistency persists.
+        # Convert the overlap ``ValueError`` from ``try_combine`` into
+        # ``_IncrementalMergeFailed`` so the caller retries the incremental
+        # fetch and ultimately falls back to the full-load path (which has
+        # its own ``_OverlapDetected`` retry + 503 safety net). Narrow to
+        # the literal ``"Ranges overlap"`` prefix (kept stable in
+        # ``is_complete_set_of_range`` and pinned by the regression tests)
+        # so any future unrelated ``ValueError`` surfaces as a real bug.
+        if not str(overlap_error).startswith("Ranges overlap"):
+            raise
         logger.warning(
             "Incremental merge for collection '%s' produced overlapping ranges: %s. "
             "Converting to _IncrementalMergeFailed so the caller retries / "

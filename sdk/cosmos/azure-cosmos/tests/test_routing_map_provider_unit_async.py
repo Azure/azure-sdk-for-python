@@ -13,15 +13,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
 from azure.cosmos._routing.aio.routing_map_provider import (
     PartitionKeyRangeCache,
-    _OVERLAP_RETRY_MAX_ATTEMPTS,
 )
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos._routing._routing_map_provider_common import (
     process_fetched_ranges,
     _IncrementalMergeFailed,
+    _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
 )
 from azure.cosmos import http_constants
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -220,21 +219,25 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(ids, ['0'], "Ranges should be preserved from previous map")
         self.assertEqual(result.change_feed_etag, '"etag-new"', "ETag should be updated")
 
-    async def test_fetch_routing_map_empty_full_load_returns_none_async(self):
-        """_fetch_routing_map should return None when a full load (no previous
-        map) returns zero ranges — this means the service returned nothing."""
+    async def test_fetch_routing_map_empty_full_load_raises_503_after_budget_async(self):
+        """When a full load (no previous map) repeatedly returns zero ranges,
+        ``_fetch_routing_map`` should retry up to the overlap budget and then
+        surface ``CosmosHttpResponseError(status_code=503)`` rather than
+        returning ``None``. Empty ranges hit the same ``_GapDetected`` path as
+        a gap in the key space; without retry-then-503 the empty result
+        would later crash ``SmartRoutingMapProvider`` with ``AssertionError``."""
         client = _make_mock_async_client(ranges=[], response_etag='"etag"')
 
         cache = PartitionKeyRangeCache(client)
 
-        result = await cache._fetch_routing_map(
-            collection_link="dbs/db1/colls/coll1",
-            collection_id="dbs/db1/colls/coll1",
-            previous_routing_map=None,
-            feed_options={}
-        )
-
-        self.assertIsNone(result, "Full load with empty ranges should return None")
+        with self.assertRaises(CosmosHttpResponseError) as ctx:
+            await cache._fetch_routing_map(
+                collection_link="dbs/db1/colls/coll1",
+                collection_id="dbs/db1/colls/coll1",
+                previous_routing_map=None,
+                feed_options={}
+            )
+        self.assertEqual(ctx.exception.status_code, 503)
 
 
     async def test_get_previous_routing_map_exact_key_finds_entry_async(self):
@@ -502,12 +505,12 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
     #
     # These cover the integration between the builder (which converts the
     # underlying ValueError("Ranges overlap") into the _OverlapDetected
-    # sentinel) and _fetch_routing_map (which catches the sentinel, sleeps
-    # briefly, and re-fetches). The customer-observed failure mode is that
-    # one paginated /pkranges response can be internally inconsistent (e.g.
-    # a stale parent appearing alongside its children with missing parent
-    # references); a small retry budget with backoff gives the gateway time
-    # to converge before the SDK surfaces a transient HTTP 503.
+    # signal exception) and _fetch_routing_map (which catches the signal,
+    # sleeps briefly, and re-fetches). The customer-observed failure scenario
+    # is that one paginated /pkranges response can be internally inconsistent
+    # (e.g. a stale parent appearing alongside its children with missing
+    # parent references); a small retry budget with backoff gives the gateway
+    # time to converge before the SDK surfaces a transient HTTP 503.
     # ==========================================================================
 
     async def test_fetch_routing_map_recovers_after_transient_overlap_async(self):
@@ -515,7 +518,7 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         once and a consistent one on retry, the cache should populate cleanly
         with the consistent data on the second attempt — the customer sees no
         crash, no missing rows, just a brief stall."""
-        # First call: Mode 2 payload (stale parent + children missing parent ref) → triggers _OverlapDetected.
+        # First call: stale parent + children missing parent reference → triggers _OverlapDetected.
         bad_payload = [
             {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
             {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},  # stale parent
@@ -630,9 +633,111 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         )
         # We should have exhausted the full retry budget (3 attempts by default).
         self.assertEqual(
-            call_count['n'], _OVERLAP_RETRY_MAX_ATTEMPTS,
-            "Should have made exactly _OVERLAP_RETRY_MAX_ATTEMPTS fetch attempts before giving up."
+            call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
+            "Should have made exactly _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS fetch attempts before giving up."
         )
+
+    async def test_fetch_routing_map_recovers_after_transient_gap_async(self):
+        """Mirror of the overlap-recovery test for the gap side: when the
+        gateway returns a snapshot with a hole in the key space once and a
+        consistent one on retry, the async cache should populate cleanly on
+        the second attempt rather than letting the empty result reach
+        ``SmartRoutingMapProvider`` (which would crash with
+        ``AssertionError``)."""
+        bad_payload = [
+            {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        good_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+
+        responses = [bad_payload, good_payload]
+        call_count = {'n': 0}
+
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-{}"'.format(call_count['n'])}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+
+            async def async_gen():
+                for r in payload:
+                    yield r
+
+            return async_gen()
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        async def _no_sleep(_seconds):
+            return None
+
+        with patch(
+            'azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep',
+            new=_no_sleep,
+        ):
+            result = await cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertIsNotNone(
+            result,
+            "Async cache should populate after the transient gap clears on retry."
+        )
+        self.assertEqual(call_count['n'], 2, "Expected exactly one retry.")
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
+
+    async def test_fetch_routing_map_surfaces_503_after_persistent_gap_async(self):
+        """Mirror of the overlap-503 test for the gap side: a persistent gap
+        across the retry budget must surface as ``CosmosHttpResponseError(503)``
+        rather than as an ``AssertionError("code bug: ...")`` from
+        ``SmartRoutingMapProvider``."""
+        bad_payload = [
+            {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        call_count = {'n': 0}
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+
+            async def async_gen():
+                for r in bad_payload:
+                    yield r
+
+            return async_gen()
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        async def _no_sleep(_seconds):
+            return None
+
+        with patch(
+            'azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep',
+            new=_no_sleep,
+        ):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                await cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
+        self.assertEqual(call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS)
 
     async def test_incremental_overlap_converts_to_incremental_merge_failed_async(self):
         """If the incremental-merge path produces overlapping ranges (e.g. the
