@@ -20,7 +20,6 @@ except ImportError:
 
 
 LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"
-LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"
 os.environ["DATALAKE_STORAGE_ACCOUNT_NAME"] = (
     os.environ.get("DATALAKE_STORAGE_ACCOUNT_NAME", None) or DATALAKE_STORAGE_ACCOUNT_NAME
 )
