@@ -9,7 +9,9 @@ service and persists them into the standard local directory layout::
 
     <local_dir>/
     └── <candidate_id>/
-        ├── config.json
+        ├── metadata.yaml
+        ├── instructions.md
+        ├── tools.json
         └── skills/
             └── <skill_name>/
                 └── SKILL.md
@@ -19,15 +21,14 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import pathlib
 import shutil
 import urllib.error
 import urllib.parse
 import urllib.request
 from typing import Any
-from azure.ai.agentserver.optimization._models import (
-    OptimizationConfig)
+
+from azure.ai.agentserver.optimization._models import OptimizationConfig
 
 logger = logging.getLogger("azure.ai.agentserver.optimization")
 
@@ -46,6 +47,13 @@ def resolve_candidate(
     following the standard local directory layout.
     Returns ``None`` if the call fails.
     """
+    # Guard against path traversal in candidate_id
+    if local_dir is not None:
+        candidate_path_check = (local_dir / candidate_id).resolve()
+        if not str(candidate_path_check).startswith(str(local_dir.resolve())):
+            logger.error("Path traversal detected in candidate_id: %r — aborting", candidate_id)
+            return None
+
     if candidate_id in _downloaded:
         if local_dir is not None and (local_dir / candidate_id).is_dir():
             logger.debug("Candidate %s already downloaded — skipping", candidate_id)
@@ -123,11 +131,11 @@ def _persist_to_local_layout(candidate_path: pathlib.Path, config: dict[str, Any
         instr_file.write_text(instructions, encoding="utf-8")
 
     # tools.json — write tool_descriptions / toolDescriptions as dict format
-    tool_descs = config.get("tool_descriptions") or config.get("toolDescriptions")
+    tool_data = config.get("tool_descriptions") or config.get("toolDescriptions")
     tools_list = config.get("tools")
-    if tool_descs and isinstance(tool_descs, dict):
+    if tool_data and isinstance(tool_data, dict):
         tools_file = candidate_path / OptimizationConfig.TOOLS_FILE
-        tools_file.write_text(json.dumps(tool_descs, indent=2, ensure_ascii=False), encoding="utf-8")
+        tools_file.write_text(json.dumps(tool_data, indent=2, ensure_ascii=False), encoding="utf-8")
     elif tools_list and isinstance(tools_list, list):
         tools_file = candidate_path / OptimizationConfig.TOOLS_FILE
         tools_file.write_text(json.dumps(tools_list, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -180,7 +188,11 @@ def _download_skill_files(
         if rel_path.startswith(prefix):
             rel_path = rel_path[len(prefix):]
 
-        out_path = skills_dir / rel_path
+        out_path = (skills_dir / rel_path).resolve()
+        if not str(out_path).startswith(str(skills_dir.resolve())):
+            logger.warning("Path traversal detected in skill file path: %r — skipping", file_path)
+            continue
+
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(content, encoding="utf-8")
         logger.info("  → %s (%d bytes)", out_path, len(content))

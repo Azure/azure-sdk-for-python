@@ -21,3 +21,4 @@ def clean_env(monkeypatch):
     """Ensure optimization env vars are cleared before each test."""
     for var in ENV_VARS:
         monkeypatch.delenv(var, raising=False)
+    yield

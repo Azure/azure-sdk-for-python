@@ -9,12 +9,12 @@ One import, one call::
     from azure.ai.agentserver.optimization import load_config
 
     config = load_config(default_instructions="You are a helpful assistant.")
-    # config.instructions      — optimized or default
-    # config.model             — optimized or default
-    # config.temperature       — optimized or default
-    # config.skills            — learned skills (empty if none)
-    # config.tool_definitions  — optimized tool definitions (empty if none)
-    # config.source            — "api:candidate:abc", "env:config", or "defaults"
+    # config.instructions        — optimized or default
+    # config.model              — optimized or default
+    # config.temperature        — optimized or default
+    # config.skills             — learned skills (empty list if none)
+    # config.tool_descriptions  — optimized tool descriptions (empty dict if none)
+    # config.source             — "env:OPTIMIZATION_CONFIG", "api:candidate:abc", "local:<path>", or "defaults"
 
 Resolution order (first match wins):
     1. OPTIMIZATION_CONFIG env var   → inline JSON (used by temp agent versions)

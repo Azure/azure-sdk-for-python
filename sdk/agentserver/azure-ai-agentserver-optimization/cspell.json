@@ -1,0 +1,11 @@
+{
+    "ignoreWords": [
+        "agentserver",
+        "autouse",
+        "cand"
+    ],
+    "ignorePaths": [
+        "*.json",
+        "*.rst"
+    ]
+}

@@ -185,13 +185,29 @@ def _resolve_local_dir() -> Path:
     (``".agent_configs"``) when the env var is not set.
     """
     local_dir_env = os.environ.get(OptimizationConfig.ENV_LOCAL_DIR, "").strip()
-    local_dir = Path(local_dir_env) if local_dir_env else Path(OptimizationConfig.DEFAULT_LOCAL_DIR)
+    explicitly_set = bool(local_dir_env)
+    local_dir = Path(local_dir_env) if explicitly_set else Path(OptimizationConfig.DEFAULT_LOCAL_DIR)
+
+    # Guard: reject paths with ".." components (path traversal)
+    if ".." in local_dir.parts:
+        logger.warning(
+            "OPTIMIZATION_LOCAL_DIR contains '..' path traversal: %r — ignoring",
+            local_dir_env,
+        )
+        local_dir = Path(OptimizationConfig.DEFAULT_LOCAL_DIR)
+        explicitly_set = False
+
     if not local_dir.is_absolute():
         import sys
         main_mod = sys.modules.get("__main__")
         main_file = getattr(main_mod, "__file__", None) if main_mod else None
         if main_file is not None:
             local_dir = Path(main_file).resolve().parent / local_dir
+    if explicitly_set and not local_dir.is_dir():
+        logger.warning(
+            "OPTIMIZATION_LOCAL_DIR is set to %r but the directory does not exist",
+            str(local_dir),
+        )
     return local_dir
 
 
@@ -249,20 +265,33 @@ def _load_candidate_from_metadata(
 
     meta = MetadataConfig.from_dict(raw)
 
-    # Read instructions from the referenced file
+    # Read instructions from the referenced file (guard against traversal)
     instructions_path = candidate_path / meta.instruction_file
-    if instructions_path.is_file():
+    if _is_safe_child(candidate_path, instructions_path) and instructions_path.is_file():
         instructions = instructions_path.read_text(encoding="utf-8").strip()
     else:
+        if not _is_safe_child(candidate_path, instructions_path):
+            logger.warning("Path traversal in instruction_file: %r", meta.instruction_file)
         instructions = default_instructions
 
-    # Resolve skills directory
-    skills_path = (candidate_path / meta.skill_dir).resolve()
-    skills = _load_skills_from_dir(skills_path) if skills_path.is_dir() else []
-    skills_dir = str(skills_path) if skills_path.is_dir() else default_skills_dir
+    # Resolve skills directory (guard against traversal)
+    skills_path = candidate_path / meta.skill_dir
+    if _is_safe_child(candidate_path, skills_path) and skills_path.resolve().is_dir():
+        skills = _load_skills_from_dir(skills_path.resolve())
+        skills_dir = str(skills_path.resolve())
+    else:
+        if not _is_safe_child(candidate_path, skills_path):
+            logger.warning("Path traversal in skill_dir: %r", meta.skill_dir)
+        skills = []
+        skills_dir = default_skills_dir
 
-    # Load tool descriptions
-    tool_descriptions = _load_tool_descriptions(candidate_path / meta.tool_file)
+    # Load tool descriptions (guard against traversal)
+    tool_file_path = candidate_path / meta.tool_file
+    if _is_safe_child(candidate_path, tool_file_path):
+        tool_descriptions = _load_tool_descriptions(tool_file_path)
+    else:
+        logger.warning("Path traversal in tool_file: %r", meta.tool_file)
+        tool_descriptions = {}
 
     return OptimizationConfig(
         instructions=instructions,
@@ -301,7 +330,11 @@ def _load_tool_descriptions(tool_file: Path) -> dict[str, ToolDescription]:
 
 
 def _parse_simple_yaml(path: Path) -> dict:
-    """Minimal key: value parser for metadata.yaml when PyYAML is not installed."""
+    """Minimal key: value parser for metadata.yaml when PyYAML is not installed.
+
+    Coerces numeric-looking values to float/int and recognizes
+    null/true/false literals.
+    """
     result: dict = {}
     try:
         for line in path.read_text(encoding="utf-8").splitlines():
@@ -310,10 +343,29 @@ def _parse_simple_yaml(path: Path) -> dict:
                 continue
             if ":" in line:
                 key, _, value = line.partition(":")
-                result[key.strip()] = value.strip()
+                result[key.strip()] = _coerce_yaml_value(value.strip())
     except OSError as exc:
         logger.warning("Failed to read %s: %s", path, exc)
     return result
+
+
+def _coerce_yaml_value(value: str) -> Any:
+    """Coerce a YAML scalar string to the appropriate Python type."""
+    if not value or value in ("null", "~"):
+        return None
+    if value.lower() == "true":
+        return True
+    if value.lower() == "false":
+        return False
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    try:
+        return float(value)
+    except ValueError:
+        pass
+    return value
 
 
 def _resolve_candidate_folder(local_dir: Path, candidate_id: str | None) -> Path | None:
@@ -324,10 +376,22 @@ def _resolve_candidate_folder(local_dir: Path, candidate_id: str | None) -> Path
     """
     if candidate_id:
         exact = local_dir / candidate_id
+        if not _is_safe_child(local_dir, exact):
+            logger.warning("Path traversal detected in candidate_id: %r", candidate_id)
+            return None
         if exact.is_dir():
             return exact
     baseline = local_dir / OptimizationConfig.BASELINE_DIR
     return baseline if baseline.is_dir() else None
+
+
+def _is_safe_child(parent: Path, child: Path) -> bool:
+    """Return True if *child* is strictly inside *parent* (no traversal)."""
+    try:
+        child.resolve().relative_to(parent.resolve())
+        return True
+    except ValueError:
+        return False
 
 
 def _load_skills_from_dir(skills_dir: Path) -> list[Skill]:

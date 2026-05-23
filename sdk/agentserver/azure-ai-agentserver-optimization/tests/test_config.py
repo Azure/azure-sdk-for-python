@@ -4,7 +4,6 @@
 """Tests for load_config — priority resolution, fallback, and edge cases."""
 
 import json
-from unittest.mock import patch
 
 import pytest
 
@@ -455,6 +454,48 @@ class TestLocalDir:
         config = load_config(default_instructions="default")
         assert config.source == "defaults"
 
+    def test_metadata_traversal_instruction_file(self, monkeypatch, tmp_path):
+        """instruction_file with '../' in metadata.yaml is rejected."""
+        candidate_dir = tmp_path / "baseline"
+        candidate_dir.mkdir()
+        (candidate_dir / "metadata.yaml").write_text(
+            "instruction_file: ../../etc/passwd\n"
+        )
+        # Create the traversal target to prove it's NOT read
+        secret = tmp_path / "secret.txt"
+        secret.write_text("SECRET DATA")
+
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        config = load_config(default_instructions="safe default")
+        assert config.instructions == "safe default"
+        assert "SECRET" not in config.instructions
+
+    def test_metadata_traversal_skill_dir(self, monkeypatch, tmp_path):
+        """skill_dir with '../' in metadata.yaml is rejected."""
+        candidate_dir = tmp_path / "baseline"
+        candidate_dir.mkdir()
+        (candidate_dir / "metadata.yaml").write_text(
+            "skill_dir: ../../other_skills\n"
+        )
+        (candidate_dir / "instructions.md").write_text("ok")
+
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        config = load_config()
+        assert config.skills == []
+
+    def test_metadata_traversal_tool_file(self, monkeypatch, tmp_path):
+        """tool_file with '../' in metadata.yaml is rejected."""
+        candidate_dir = tmp_path / "baseline"
+        candidate_dir.mkdir()
+        (candidate_dir / "metadata.yaml").write_text(
+            "tool_file: ../../secrets.json\n"
+        )
+        (candidate_dir / "instructions.md").write_text("ok")
+
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        config = load_config()
+        assert config.tool_descriptions == {}
+
 
 # ── _resolve_local_dir ──────────────────────────────────────────────
 
@@ -471,6 +512,19 @@ class TestResolveLocalDir:
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         local_dir = _resolve_local_dir()
         assert local_dir == tmp_path
+
+    def test_rejects_dotdot_traversal(self, monkeypatch):
+        """OPTIMIZATION_LOCAL_DIR with '..' is rejected, falls back to default."""
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "../../etc/sensitive")
+        local_dir = _resolve_local_dir()
+        assert local_dir.name == ".agent_configs"
+
+    def test_rejects_dotdot_in_absolute_path(self, monkeypatch, tmp_path):
+        """Even absolute paths with '..' are rejected."""
+        malicious = str(tmp_path / ".." / ".." / "etc")
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", malicious)
+        local_dir = _resolve_local_dir()
+        assert local_dir.name == ".agent_configs"
 
 
 # ── _resolve_candidate_folder ───────────────────────────────────────
@@ -500,6 +554,16 @@ class TestResolveCandidateFolder:
 
     def test_returns_none_no_id_no_baseline(self, tmp_path):
         result = _resolve_candidate_folder(tmp_path, None)
+        assert result is None
+
+    def test_rejects_traversal_candidate_id(self, tmp_path):
+        """candidate_id with '../' is rejected as path traversal."""
+        result = _resolve_candidate_folder(tmp_path, "../../etc")
+        assert result is None
+
+    def test_rejects_absolute_candidate_id(self, tmp_path):
+        """Absolute path in candidate_id is rejected."""
+        result = _resolve_candidate_folder(tmp_path, "/etc/passwd")
         assert result is None
 
 
@@ -1009,7 +1073,8 @@ class TestSimpleYaml:
         f.write_text("model: gpt-4o\ntemperature: 0.5\n")
         result = _parse_simple_yaml(f)
         assert result["model"] == "gpt-4o"
-        assert result["temperature"] == "0.5"
+        assert result["temperature"] == 0.5
+        assert isinstance(result["temperature"], float)
 
     def test_skips_comments_and_blanks(self, tmp_path):
         f = tmp_path / "test.yaml"
@@ -1026,3 +1091,25 @@ class TestSimpleYaml:
         f.write_text("url: http://example.com\n")
         result = _parse_simple_yaml(f)
         assert result["url"] == "http://example.com"
+
+    def test_coerces_int(self, tmp_path):
+        f = tmp_path / "test.yaml"
+        f.write_text("count: 42\n")
+        result = _parse_simple_yaml(f)
+        assert result["count"] == 42
+        assert isinstance(result["count"], int)
+
+    def test_coerces_null(self, tmp_path):
+        f = tmp_path / "test.yaml"
+        f.write_text("value: null\nempty: ~\nblank:\n")
+        result = _parse_simple_yaml(f)
+        assert result["value"] is None
+        assert result["empty"] is None
+        assert result["blank"] is None
+
+    def test_coerces_bool(self, tmp_path):
+        f = tmp_path / "test.yaml"
+        f.write_text("enabled: true\ndisabled: false\n")
+        result = _parse_simple_yaml(f)
+        assert result["enabled"] is True
+        assert result["disabled"] is False

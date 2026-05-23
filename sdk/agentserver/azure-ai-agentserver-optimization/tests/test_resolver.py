@@ -277,13 +277,6 @@ class TestDownloadSkillFiles:
             ]
         }
 
-        def mock_get(url, headers, **kwargs):
-            if "config" in url:
-                return None
-            if "files" in url:
-                return None
-            return manifest
-
         def mock_text(url, headers, params=None):
             return "# Math Skill\nDo math."
 
@@ -340,6 +333,53 @@ class TestDownloadSkillFiles:
             _download_skill_files(ENDPOINT, JOB_ID, "cand-dl-fail", {}, candidate_path)
         # No crash, skill file simply not written
         assert not (candidate_path / "skills" / "bad" / "SKILL.md").exists()
+
+    def test_rejects_traversal_in_file_path(self, tmp_path):
+        """File paths with '../' are rejected (zip-slip prevention)."""
+        candidate_path = tmp_path / "cand-traversal"
+        candidate_path.mkdir()
+        manifest = {"files": [{"path": "skills/../../etc/passwd", "type": "skill"}]}
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._api_get_json", return_value=manifest),
+            patch("azure.ai.agentserver.optimization._resolver._api_get_text", return_value="malicious"),
+        ):
+            _download_skill_files(ENDPOINT, JOB_ID, "cand-traversal", {}, candidate_path)
+        # Malicious file must NOT be written outside skills_dir
+        assert not (tmp_path / "etc" / "passwd").exists()
+        assert not (candidate_path / "skills" / ".." / ".." / "etc" / "passwd").exists()
+
+
+# ── Path traversal in resolve_candidate ─────────────────────────────
+
+
+class TestPathTraversalGuard:
+    """Tests for path traversal prevention in resolve_candidate."""
+
+    def test_rejects_traversal_candidate_id(self, tmp_path):
+        """candidate_id with '../' is rejected before any API call."""
+        result = resolve_candidate(
+            "../../etc", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=tmp_path
+        )
+        assert result is None
+
+    def test_rejects_absolute_candidate_id(self, tmp_path):
+        """Absolute path in candidate_id is rejected."""
+        result = resolve_candidate(
+            "/etc/passwd", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=tmp_path
+        )
+        assert result is None
+
+    def test_normal_candidate_id_allowed(self, tmp_path):
+        """Normal candidate IDs pass the guard."""
+        config = {"instructions": "ok", "model": "gpt-4o"}
+        with patch(
+            "azure.ai.agentserver.optimization._resolver._api_get_json",
+            return_value=config,
+        ):
+            result = resolve_candidate(
+                "valid-candidate-123", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=tmp_path
+            )
+            assert result is not None
 
 
 # ── _is_skill_file ──────────────────────────────────────────────────

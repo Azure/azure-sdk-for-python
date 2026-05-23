@@ -1,32 +1,22 @@
-# azure-ai-agentserver-optimization
+# Azure AI Agent Server Optimization client library for Python
 
-Optimization config loader for Azure AI Hosted Agents.
+The `azure-ai-agentserver-optimization` package provides a drop-in config loader for optimization-ready Azure AI Hosted Agents. A single `load_config()` call resolves optimization parameters (instructions, model, temperature, skills, tool descriptions) from multiple sources with graceful fallback — your agent works unchanged when not running under optimization.
 
-Provides a single `load_config()` call that resolves optimization parameters (instructions, model, temperature, skills, tool definitions) from multiple sources with graceful fallback — your agent works unchanged when not running under optimization.
+## Getting started
 
-## Installation
+### Install the package
 
 ```bash
 pip install azure-ai-agentserver-optimization
 ```
 
-## Quick Start
+### Prerequisites
 
-```python
-from azure.ai.agentserver.optimization import load_config
+- Python 3.10 or later
 
-config = load_config(default_instructions="You are a helpful assistant.")
+## Key concepts
 
-# Use config in your agent
-print(config.instructions)       # optimized or default
-print(config.model)              # optimized or default
-print(config.temperature)        # optimized or default
-print(config.skills)             # learned skills (empty list if none)
-print(config.tool_descriptions)  # optimized tool descriptions (empty dict if none)
-print(config.source)             # "api:candidate:abc", "env:OPTIMIZATION_CONFIG", "local:...", or "defaults"
-```
-
-## Resolution Order
+### Resolution Order
 
 `load_config()` resolves from four sources in order — first match wins:
 
@@ -39,7 +29,7 @@ print(config.source)             # "api:candidate:abc", "env:OPTIMIZATION_CONFIG
 
 Any unexpected error is caught and logged — `load_config()` always returns a valid `OptimizationConfig`.
 
-## Environment Variables
+### Environment Variables
 
 | Variable | Description |
 |----------|-------------|
@@ -50,7 +40,7 @@ Any unexpected error is caught and logged — `load_config()` always returns a v
 | `OPTIMIZATION_LOCAL_DIR` | Path to the local config directory (default: `.agent_configs/`). |
 | `MODEL_DEPLOYMENT_NAME` | Fallback model name when no model is resolved or specified. |
 
-## Local Directory Layout
+### Local Directory Layout
 
 When using the local directory (Priority 3) or after the resolver API persists a candidate (Priority 2), the directory uses the following structure:
 
@@ -72,7 +62,7 @@ When using the local directory (Priority 3) or after the resolver API persists a
             └── SKILL.md
 ```
 
-## Tool Description Formats
+### Tool Description Formats
 
 `tools.json` and the inline JSON config support three formats:
 
@@ -107,7 +97,7 @@ When using the local directory (Priority 3) or after the resolver API persists a
 ]
 ```
 
-## OptimizationConfig Properties
+### OptimizationConfig Properties
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -122,6 +112,41 @@ When using the local directory (Priority 3) or after the resolver API persists a
 | `job_id` | `str \| None` | Job ID (when resolved via API). |
 | `has_skills` | `bool` | Whether skills are available. |
 | `has_tool_descriptions` | `bool` | Whether tool descriptions are available. |
+
+## Examples
+
+```python
+from azure.ai.agentserver.optimization import load_config
+
+config = load_config(default_instructions="You are a helpful assistant.")
+
+# Use config in your agent
+print(config.instructions)       # optimized or default
+print(config.model)              # optimized or default
+print(config.temperature)        # optimized or default
+print(config.skills)             # learned skills (empty list if none)
+print(config.tool_descriptions)  # optimized tool descriptions (empty dict if none)
+print(config.source)             # "env:OPTIMIZATION_CONFIG", "api:candidate:abc", "local:...", or "defaults"
+```
+
+## Troubleshooting
+
+Enable debug logging to see resolution details:
+
+```python
+import logging
+logging.getLogger("azure.ai.agentserver.optimization").setLevel(logging.DEBUG)
+```
+
+Common issues:
+- **Config not loading from resolver API** — ensure all three env vars are set: `OPTIMIZATION_CANDIDATE_ID`, `OPTIMIZATION_JOB_ID`, and `OPTIMIZATION_RESOLVE_ENDPOINT`.
+- **Local directory not found** — check that `OPTIMIZATION_LOCAL_DIR` points to an existing directory, or ensure `.agent_configs/` exists relative to your main script.
+- **`load_config()` returns defaults unexpectedly** — check logs for warnings about path traversal, bad JSON, or missing directories.
+
+## Next steps
+
+- [Azure SDK for Python documentation](https://learn.microsoft.com/azure/developer/python/)
+- [Contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md)
 
 ## Contributing
 
