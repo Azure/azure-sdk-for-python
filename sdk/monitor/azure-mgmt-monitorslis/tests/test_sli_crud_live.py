@@ -20,11 +20,11 @@ from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 SERVICE_GROUP_NAME = os.environ.get("SERVICE_GROUP_NAME", "arm-sdk-tests-sg")
 AMW_RESOURCE_ID = os.environ.get(
     "AMW_RESOURCE_ID",
-    "/subscriptions/6820e35f-0fe6-4af3-aad2-27414fa82621/resourceGroups/mfrei/providers/microsoft.monitor/accounts/streaming-3p-slo-am2cbn-eastus2euap-1",
+    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/arm-sdk-tests-rg/providers/microsoft.monitor/accounts/amw-arm-sdk-tests-rg",
 )
 MANAGED_IDENTITY_RESOURCE_ID = os.environ.get(
     "MANAGED_IDENTITY_RESOURCE_ID",
-    "/subscriptions/6820e35f-0fe6-4af3-aad2-27414fa82621/resourceGroups/mfrei/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mfrei-test-user-managed-identity",
+    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/arm-sdk-tests-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami-arm-sdk-tests-rg",
 )
 SOURCE_AMW_RESOURCE_ID = os.environ.get("SOURCE_AMW_RESOURCE_ID", AMW_RESOURCE_ID)
 SOURCE_MANAGED_IDENTITY_RESOURCE_ID = os.environ.get(
