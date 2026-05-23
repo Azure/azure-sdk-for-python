@@ -730,8 +730,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         container = self.get_container_client(new_name or deleted_container_name)
         try:
-            container._client.container.restore(
-                deleted_container_name=deleted_container_name,  # pylint: disable = protected-access
+            container._client.container.restore(  # pylint: disable=protected-access
+                deleted_container_name=deleted_container_name,
                 deleted_container_version=deleted_container_version,
                 timeout=kwargs.pop("timeout", None),
                 **kwargs,

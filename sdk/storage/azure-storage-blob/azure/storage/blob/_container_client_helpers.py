@@ -78,17 +78,17 @@ def _generate_delete_blobs_subrequest_options(
     timeout = kwargs.pop("timeout", None)
     query_parameters = {}
     if snapshot is not None:
-        query_parameters["snapshot"] = client._serialize.query(
+        query_parameters["snapshot"] = client._serialize.query(  # pylint: disable=protected-access
             "snapshot", snapshot, "str"
-        )  # pylint: disable=protected-access
+        )
     if version_id is not None:
-        query_parameters["versionid"] = client._serialize.query(
+        query_parameters["versionid"] = client._serialize.query(  # pylint: disable=protected-access
             "version_id", version_id, "str"
-        )  # pylint: disable=protected-access
+        )
     if timeout is not None:
-        query_parameters["timeout"] = client._serialize.query(
+        query_parameters["timeout"] = client._serialize.query(  # pylint: disable=protected-access
             "timeout", timeout, "int", minimum=0
-        )  # pylint: disable=protected-access
+        )
 
     # Construct headers
     header_parameters = {}
@@ -117,9 +117,9 @@ def _generate_delete_blobs_subrequest_options(
             "if_none_match", if_none_match, "str"
         )
     if if_tags is not None:
-        header_parameters["x-ms-if-tags"] = client._serialize.header(
+        header_parameters["x-ms-if-tags"] = client._serialize.header(  # pylint: disable=protected-access
             "if_tags", if_tags, "str"
-        )  # pylint: disable=protected-access
+        )
 
     return query_parameters, header_parameters
 
@@ -218,36 +218,36 @@ def _generate_set_tiers_subrequest_options(
     # Construct parameters
     query_parameters = {}
     if snapshot is not None:
-        query_parameters["snapshot"] = client._serialize.query(
+        query_parameters["snapshot"] = client._serialize.query(  # pylint: disable=protected-access
             "snapshot", snapshot, "str"
-        )  # pylint: disable=protected-access
+        )
     if version_id is not None:
-        query_parameters["versionid"] = client._serialize.query(
+        query_parameters["versionid"] = client._serialize.query(  # pylint: disable=protected-access
             "version_id", version_id, "str"
-        )  # pylint: disable=protected-access
+        )
     if timeout is not None:
-        query_parameters["timeout"] = client._serialize.query(
+        query_parameters["timeout"] = client._serialize.query(  # pylint: disable=protected-access
             "timeout", timeout, "int", minimum=0
-        )  # pylint: disable=protected-access
+        )
     query_parameters["comp"] = client._serialize.query("comp", comp, "str")  # pylint: disable=protected-access
 
     # Construct headers
     header_parameters = {}
-    header_parameters["x-ms-access-tier"] = client._serialize.header(
+    header_parameters["x-ms-access-tier"] = client._serialize.header(  # pylint: disable=protected-access
         "tier", tier, "str"
-    )  # pylint: disable=protected-access
+    )
     if rehydrate_priority is not None:
         header_parameters["x-ms-rehydrate-priority"] = client._serialize.header(  # pylint: disable=protected-access
             "rehydrate_priority", rehydrate_priority, "str"
         )
     if lease_id is not None:
-        header_parameters["x-ms-lease-id"] = client._serialize.header(
+        header_parameters["x-ms-lease-id"] = client._serialize.header(  # pylint: disable=protected-access
             "lease_id", lease_id, "str"
-        )  # pylint: disable=protected-access
+        )
     if if_tags is not None:
-        header_parameters["x-ms-if-tags"] = client._serialize.header(
+        header_parameters["x-ms-if-tags"] = client._serialize.header(  # pylint: disable=protected-access
             "if_tags", if_tags, "str"
-        )  # pylint: disable=protected-access
+        )
 
     return query_parameters, header_parameters
 
