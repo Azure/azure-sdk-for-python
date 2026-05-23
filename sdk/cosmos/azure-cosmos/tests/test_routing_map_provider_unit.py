@@ -632,22 +632,14 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         self.assertEqual(ids, ['4', '5', '3', '1'])
         self.assertEqual(result.change_feed_etag, '"etag-old"')
 
-    # ==========================================================================
-    # End-to-end retry-loop tests for transient /pkranges snapshot inconsistency
-    # on the SYNC provider. Mirrors the async equivalents to guarantee both
-    # providers stay in lockstep on this contract: the cache-load pipeline
-    # never lets a bare ValueError("Ranges overlap") escape -- it either
-    # recovers on retry, or surfaces a typed CosmosHttpResponseError(503) the
-    # upstream retry policy already knows how to handle.
-    # ==========================================================================
 
     # ==========================================================================
-    # Unit tests for the overlap-retry policy helper. These pin the contract
-    # that the returned backoff is always within the deterministic upper bound
-    # (so the worst-case-wall-time guarantee in the public docs holds) and that
-    # jitter is actually applied (so concurrent retriers in different Cosmos
-    # clients -- e.g. several PySpark workers in the same process -- do not
-    # retry in lockstep on the same gateway node).
+    # Helper-level retry-policy unit tests.
+    #
+    # These target only the pure helper that computes retry backoff / 503
+    # escalation (no cache object, no fetch loop). They pin the contract that
+    # backoff stays within the deterministic upper bound and that jitter is
+    # actually applied so concurrent retriers do not retry in lockstep.
     # ==========================================================================
 
     def test_overlap_retry_backoff_is_within_deterministic_upper_bound(self):
@@ -733,7 +725,12 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         )
 
     # ==========================================================================
-    # End-to-end retry-loop tests below ↓
+    # Provider retry-loop behavior tests (mocked integration path).
+    #
+    # These exercise the sync provider's full fetch/retry loop with mocked
+    # /pkranges payloads. They verify the full path contract: transient
+    # inconsistencies either recover on retry or surface typed HTTP 503, and
+    # never leak raw ``ValueError("Ranges overlap")`` to callers.
     # ==========================================================================
 
     def test_fetch_routing_map_recovers_after_transient_overlap(self):
@@ -1025,9 +1022,9 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
 
     def test_fetch_routing_map_preserves_existing_cache_entry_when_force_refresh_surfaces_503(self):
         """A 503 raised by ``_fetch_routing_map`` during a forced refresh must
-        NOT corrupt the existing cached routing map. Customers commonly chain
-        ``force_refresh=True`` after a 410-Gone retry: if the refresh itself
-        fails transiently we want subsequent reads to keep returning the
+        NOT corrupt the existing cached routing map. The SDK commonly issues
+        ``force_refresh=True`` during 410/Gone recovery paths; if that refresh
+        itself fails transiently we want subsequent reads to keep returning the
         previously-cached map (a slightly stale answer is far better than a
         cache wiped out by a transient gateway hiccup, which would make
         every future query pay the full reload cost)."""

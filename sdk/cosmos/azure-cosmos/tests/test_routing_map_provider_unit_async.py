@@ -501,16 +501,12 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.change_feed_etag, '"etag-old"')
 
     # ==========================================================================
-    # End-to-end retry-loop tests for transient /pkranges snapshot inconsistency.
+    # Provider retry-loop behavior tests (mocked integration path).
     #
-    # These cover the integration between the builder (which converts the
-    # underlying ValueError("Ranges overlap") into the _OverlapDetected
-    # signal exception) and _fetch_routing_map (which catches the signal,
-    # sleeps briefly, and re-fetches). The customer-observed failure scenario
-    # is that one paginated /pkranges response can be internally inconsistent
-    # (e.g. a stale parent appearing alongside its children with missing
-    # parent references); a small retry budget with backoff gives the gateway
-    # time to converge before the SDK surfaces a transient HTTP 503.
+    # These cover integration between builder signaling (overlap/gap) and the
+    # async provider fetch/retry loop. With mocked /pkranges payloads we verify
+    # the full path contract: transient inconsistencies either recover on retry
+    # or surface typed HTTP 503, and never leak raw ``ValueError`` failures.
     # ==========================================================================
 
     async def test_fetch_routing_map_recovers_after_transient_overlap_async(self):
@@ -780,6 +776,164 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
             process_fetched_ranges(
                 bad_delta, previous_map, 'coll1', 'dbs/db1/colls/coll1', '"etag-new"'
             )
+
+    async def test_fetch_routing_map_mixed_overlap_and_gap_signals_share_retry_budget_async(self):
+        """Async mirror of
+        ``test_fetch_routing_map_mixed_overlap_and_gap_signals_share_retry_budget``.
+
+        The transient-snapshot retry budget is a single counter shared by
+        BOTH ``_OverlapDetected`` and ``_GapDetected`` signals -- it is not
+        per-signal-type. If the gateway alternates between overlap snapshots
+        and gap snapshots across attempts, the SDK must still surface a 503
+        after the same ``_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS`` budget.
+
+        Async coverage is independent of the sync test because the async
+        ``_fetch_routing_map`` has its own ``except (_OverlapDetected,
+        _GapDetected)`` block and increments its own
+        ``inconsistency_attempt_count`` local under ``async with`` lock
+        scoping -- a future refactor that, for example, reset the counter
+        on signal-type change, or that lost the counter across an
+        ``await`` boundary, would only be caught by exercising the async
+        codepath end-to-end."""
+        # Overlap payload: stale parent '10' coexists with its children that
+        # lack a ``parents`` reference. Triggers ``_OverlapDetected``.
+        overlap_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        # Gap payload: ['80', 'A0') is missing entirely. Triggers ``_GapDetected``.
+        gap_payload = [
+            {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+
+        responses = [overlap_payload, gap_payload, overlap_payload]
+        call_count = {'n': 0}
+
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            payload = responses[call_count['n']] if call_count['n'] < len(responses) else overlap_payload
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-mixed-{}"'.format(call_count['n'])}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+
+            async def async_gen():
+                for r in payload:
+                    yield r
+
+            return async_gen()
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        async def _no_sleep(_seconds):
+            return None
+
+        with patch(
+            'azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep',
+            new=_no_sleep,
+        ):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                await cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertEqual(
+            ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+            "Alternating overlap/gap signals must still surface as HTTP 503 once "
+            "the shared budget is exhausted."
+        )
+        self.assertEqual(
+            call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
+            "Overlap and gap signals must share one retry budget; alternating "
+            "between them must NOT extend the total number of attempts."
+        )
+
+    async def test_fetch_routing_map_preserves_existing_cache_entry_when_force_refresh_surfaces_503_async(self):
+        """Async mirror of
+        ``test_fetch_routing_map_preserves_existing_cache_entry_when_force_refresh_surfaces_503``.
+
+        A 503 raised by ``_fetch_routing_map`` during a forced refresh must
+        NOT corrupt the existing cached routing map. The SDK commonly issues
+        ``force_refresh=True`` during 410/Gone recovery paths; if that refresh
+        itself fails transiently we want subsequent reads to keep returning
+        the previously-cached map (a slightly stale answer is far better than
+        a cache wiped out by a transient gateway hiccup).
+
+        Async coverage is independent of the sync test because the async
+        ``get_routing_map`` writes to the cache from inside an ``async with``
+        block. If a future refactor moved the write before the inner
+        ``try``/``except``, or if exception unwinding through the async
+        context manager somehow cleared the entry, only the async-level
+        end-to-end test would catch it."""
+        # Pre-populate the shared cache with a known-good routing map.
+        cached_map = _make_complete_routing_map("dbs/db1/colls/coll1", '"etag-cached"')
+        cache = PartitionKeyRangeCache(MagicMock())
+        cache._collection_routing_map_by_item["dbs/db1/colls/coll1"] = cached_map
+
+        # Wire the client to return an inconsistent (overlap) snapshot every
+        # time -- forces the retry loop to exhaust its budget and raise 503.
+        bad_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+
+            async def async_gen():
+                for r in bad_payload:
+                    yield r
+
+            return async_gen()
+
+        cache._document_client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+
+        async def _no_sleep(_seconds):
+            return None
+
+        with patch(
+            'azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep',
+            new=_no_sleep,
+        ):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                await cache.get_routing_map(
+                    "dbs/db1/colls/coll1",
+                    feed_options={},
+                    force_refresh=True,
+                    previous_routing_map=cached_map,
+                )
+
+        self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
+
+        # Critical invariant: the previously-cached map must still be reachable
+        # via the same key. A 503 from a forced refresh must never evict good
+        # cache state -- otherwise every transient gateway blip would force the
+        # next reader to pay a cold-start cost.
+        self.assertIs(
+            cache._collection_routing_map_by_item.get("dbs/db1/colls/coll1"), cached_map,
+            "Cached routing map must be preserved after a 503 from forced refresh -- "
+            "transient inconsistencies must not evict good cache state."
+        )
+        self.assertEqual(
+            cache._collection_routing_map_by_item["dbs/db1/colls/coll1"].change_feed_etag,
+            '"etag-cached"',
+            "Cached ETag must remain the pre-503 value (no partial overwrite)."
+        )
 
 
 if __name__ == "__main__":

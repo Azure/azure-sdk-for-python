@@ -14,6 +14,7 @@ from azure.cosmos import PartitionKey
 from azure.cosmos import http_constants
 from azure.cosmos import _base
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 async def run_queries(container, iterations):
     ret_list = []
@@ -592,12 +593,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.key_database.delete_container(container_id)
 
-    async def test_full_load_with_incomplete_ranges_returns_none_async(self):
+    async def test_full_load_with_incomplete_ranges_surfaces_503_async(self):
         """
-        Validates that a full load with incomplete ranges returns None immediately.
+        Validates that a full load with incomplete ranges surfaces a retryable
+        HTTP 503 after exhausting the bounded retry budget.
         When a full load is performed (previous_routing_map=None) and the service
-        returns gapped ranges, _fetch_routing_map should return None without retrying  - 
-        there is no incremental state to fall back from.
+        returns gapped ranges, _fetch_routing_map should not leak internal
+        map-construction failures to callers.
         """
         container_id = 'test_fallback_guard_async_' + str(uuid.uuid4())
         await self.key_database.create_container(
@@ -632,19 +634,20 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                     '_ReadPartitionKeyRanges',
                     side_effect=mock_read_ranges
             ):
-                # Full load with incomplete ranges should return None immediately
-                result = await provider._fetch_routing_map(
-                    collection_link=collection_link,
-                    collection_id=collection_id,
-                    previous_routing_map=None,
-                    feed_options={},
-                )
+                async def _no_sleep(_seconds):
+                    return None
 
-                # Should return None instead of recursing infinitely
-                assert result is None, \
-                    "_fetch_routing_map should return None when full load produces incomplete ranges"
+                with patch('azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep', new=_no_sleep):
+                    with self.assertRaises(CosmosHttpResponseError) as ctx:
+                        await provider._fetch_routing_map(
+                            collection_link=collection_link,
+                            collection_id=collection_id,
+                            previous_routing_map=None,
+                            feed_options={},
+                        )
+                self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
 
-            print("Validated: full load with incomplete ranges returns None without recursion")
+            print("Validated: full load with incomplete ranges surfaces retryable HTTP 503")
 
         finally:
             await self.key_database.delete_container(container_id)

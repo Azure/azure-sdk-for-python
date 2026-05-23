@@ -33,11 +33,16 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .. import _base, http_constants
 from ..exceptions import CosmosHttpResponseError
-from .collection_routing_map import (
+# ``_OverlapDetected`` and ``_GapDetected`` are imported (but not referenced
+# inside this module) so that provider modules and tests can import them from
+# this single module instead of reaching into ``collection_routing_map``
+# directly. Pylint reports ``unused-import`` on the ``from`` line as a whole
+# (not on the individual names), so the disable must live on that line.
+from .collection_routing_map import (  # pylint: disable=unused-import
     CollectionRoutingMap,
     _build_routing_map_from_ranges,
-    _OverlapDetected,  # noqa: F401  # re-exported for provider modules and tests
-    _GapDetected,  # noqa: F401  # re-exported for provider modules and tests
+    _OverlapDetected,
+    _GapDetected,
 )
 from . import routing_range
 from .routing_range import (

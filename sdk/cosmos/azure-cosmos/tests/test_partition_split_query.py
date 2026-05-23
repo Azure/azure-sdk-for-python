@@ -608,9 +608,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
         the service returns an incomplete set of partition ranges.
 
         When a full load is performed (previous_routing_map=None) and the service
-        returns gapped ranges, _fetch_routing_map must return None immediately  - 
-        there is no incremental state to fall back from, and repeating the
-        identical request would produce the same result."""
+        returns gapped ranges, _fetch_routing_map should surface a retryable
+        HTTP 503 after exhausting the bounded retry budget."""
         container_id = 'test_fallback_guard_' + str(uuid.uuid4())
         self.key_database.create_container(
             id=container_id,
@@ -644,19 +643,17 @@ class TestPartitionSplitQuery(unittest.TestCase):
                     '_ReadPartitionKeyRanges',
                     side_effect=mock_read_ranges
             ):
-                # Full load with incomplete ranges should return None immediately
-                result = provider._fetch_routing_map(
-                    collection_link=collection_link,
-                    collection_id=collection_id,
-                    previous_routing_map=None,
-                    feed_options={},
-                )
+                with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+                    with self.assertRaises(CosmosHttpResponseError) as ctx:
+                        provider._fetch_routing_map(
+                            collection_link=collection_link,
+                            collection_id=collection_id,
+                            previous_routing_map=None,
+                            feed_options={},
+                        )
+                    self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
 
-                # Should return None instead of recursing infinitely
-                assert result is None, \
-                    "_fetch_routing_map should return None when full load produces incomplete ranges"
-
-            print("Validated: full load with incomplete ranges returns None without recursion")
+            print("Validated: full load with incomplete ranges surfaces retryable HTTP 503")
 
         finally:
             self.key_database.delete_container(container_id)

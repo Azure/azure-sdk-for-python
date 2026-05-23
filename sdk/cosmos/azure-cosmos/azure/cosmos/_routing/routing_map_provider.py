@@ -285,9 +285,12 @@ class PartitionKeyRangeCache(object):
                     feed_options,
                     **kwargs
                 )
-
-                if new_routing_map:
-                    self._collection_routing_map_by_item[collection_id] = new_routing_map
+                # ``_fetch_routing_map`` always returns a populated
+                # ``CollectionRoutingMap`` on success and raises otherwise --
+                # No defensive None-check needed; one
+                # would only mask a future regression by silently leaving
+                # the cache empty instead of surfacing the failure.
+                self._collection_routing_map_by_item[collection_id] = new_routing_map
 
             return self._collection_routing_map_by_item.get(collection_id)
 
@@ -300,7 +303,7 @@ class PartitionKeyRangeCache(object):
             previous_routing_map: Optional[CollectionRoutingMap],
             feed_options: Optional[Dict[str, Any]],
             **kwargs
-    ) -> Optional[CollectionRoutingMap]:
+    ) -> CollectionRoutingMap:
 
         """Fetches or updates the routing map using an incremental change feed.
 
@@ -311,14 +314,26 @@ class PartitionKeyRangeCache(object):
         of inconsistencies during an incremental update, it automatically falls
         back to a full refresh.
 
+        Always returns a populated :class:`CollectionRoutingMap` on success.
+        Failure modes raise an exception rather than returning ``None``:
+        ``CosmosHttpResponseError`` for the underlying network call (including
+        the transient HTTP 503 raised once the snapshot-inconsistency retry
+        budget is exhausted), or the internal ``_IncrementalMergeFailed``
+        signal when the incremental-merge path cannot make progress and there
+        is no previous map to fall back on.
+
         :param str collection_link: The link to the collection.
         :param str collection_id: The unique identifier of the collection.
         :param previous_routing_map: The routing map to be updated. If None, a full load is performed.
         :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
         :param feed_options: Options for the change feed request.
         :type feed_options: dict or None
-        :return: The new or updated CollectionRoutingMap, or None if retrieval fails.
-        :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
+        :return: The new or updated CollectionRoutingMap.
+        :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
+        :raises CosmosHttpResponseError: If the underlying ``/pkranges`` fetch
+            fails, or if every snapshot-inconsistency retry exhausts the
+            budget (surfaced as HTTP 503 so the upstream retry policy can
+            take over).
         """
         current_previous_map = previous_routing_map
         incomplete_attempt_count = 0

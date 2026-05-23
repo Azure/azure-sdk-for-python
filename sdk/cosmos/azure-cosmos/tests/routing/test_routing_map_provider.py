@@ -12,8 +12,9 @@ from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 from azure.cosmos import http_constants
 
 from typing import Optional, Mapping, Any
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import threading
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProvider(unittest.TestCase):
@@ -336,14 +337,18 @@ class TestRoutingMapProvider(unittest.TestCase):
         mock_map2.change_feed_etag = cached_map.change_feed_etag
         self.assertFalse(provider._is_cache_stale(collection_id, mock_map2))
 
-    def test_fetch_routing_map_full_load_with_incomplete_ranges_returns_none(self):
-        """When a full load (previous_routing_map=None) returns gapped ranges, returns None immediately."""
+    def test_fetch_routing_map_full_load_with_incomplete_ranges_surfaces_503(self):
+        """When a full load (previous_routing_map=None) repeatedly returns
+        gapped ranges, the retry budget should be exhausted and the provider
+        should surface a retryable HTTP 503."""
         incomplete_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '80'}  # Gap from 80 to FF
         ]
+        call_count = {'count': 0}
 
         class IncompleteClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
                 TestRoutingMapProvider._capture_internal_headers(kwargs, '"incomplete-etag"')
                 return incomplete_ranges
 
@@ -352,13 +357,16 @@ class TestRoutingMapProvider(unittest.TestCase):
         collection_link = "dbs/db/colls/container"
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
-        result = provider._fetch_routing_map(
-            collection_link=collection_link,
-            collection_id=collection_id,
-            previous_routing_map=None,
-            feed_options={},
-        )
-        self.assertIsNone(result, "Should return None when full load produces incomplete ranges")
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                provider._fetch_routing_map(
+                    collection_link=collection_link,
+                    collection_id=collection_id,
+                    previous_routing_map=None,
+                    feed_options={},
+                )
+        self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
+        self.assertEqual(call_count['count'], 3)
 
     def test_fetch_routing_map_incremental_with_parents(self):
         """Incremental update correctly merges child ranges that reference a parent."""
