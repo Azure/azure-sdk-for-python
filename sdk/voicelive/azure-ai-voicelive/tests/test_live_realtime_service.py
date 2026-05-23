@@ -820,7 +820,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             "mai-transcribe-1",
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-01-01-preview"])
     async def test_realtime_service_input_audio_transcription(
         self,
         test_data_dir: Path,
