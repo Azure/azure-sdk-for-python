@@ -388,10 +388,16 @@ class TestLocalDir:
 
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         config = load_config()
-        assert len(config.skills) == 1
-        assert config.skills[0].name == "math"
-        assert config.skills[0].description == "Do math"
-        assert config.skills[0].body == "Body here."
+        assert config.skills_dir is not None
+        assert config.skills == []
+
+        from pathlib import Path
+        from azure.ai.agentserver.optimization import load_skills_from_dir
+        skills = load_skills_from_dir(Path(config.skills_dir))
+        assert len(skills) == 1
+        assert skills[0].name == "math"
+        assert skills[0].description == "Do math"
+        assert skills[0].body == "Body here."
 
     def test_loads_tools_dict_from_local_dir(self, monkeypatch, tmp_path):
         candidate_dir = tmp_path / "baseline"
@@ -1113,3 +1119,251 @@ class TestSimpleYaml:
         result = _parse_simple_yaml(f)
         assert result["enabled"] is True
         assert result["disabled"] is False
+
+
+# ── apply_tool_descriptions ──────────────────────────────────────────
+
+
+class TestApplyToolDescriptions:
+    """Tests for OptimizationConfig.apply_tool_descriptions."""
+
+    def _make_config(self, tool_descriptions=None):
+        return OptimizationConfig(
+            instructions="test",
+            model=None,
+            temperature=None,
+            tool_descriptions=tool_descriptions or {},
+        )
+
+    def test_patches_docstring(self):
+        def lookup_policy():
+            """Original description."""
+
+        config = self._make_config(
+            {"lookup_policy": ToolDescription(description="Optimized description.")}
+        )
+        result = config.apply_tool_descriptions([lookup_policy])
+        assert result is not None
+        assert lookup_policy.__doc__ == "Optimized description."
+
+    def test_returns_same_list(self):
+        def my_tool():
+            """Original."""
+
+        config = self._make_config(
+            {"my_tool": ToolDescription(description="New.")}
+        )
+        tools = [my_tool]
+        result = config.apply_tool_descriptions(tools)
+        assert result is tools
+
+    def test_skips_tools_not_in_descriptions(self):
+        def unknown_tool():
+            """Should not change."""
+
+        config = self._make_config(
+            {"other_tool": ToolDescription(description="Something.")}
+        )
+        config.apply_tool_descriptions([unknown_tool])
+        assert unknown_tool.__doc__ == "Should not change."
+
+    def test_skips_empty_description(self):
+        def my_tool():
+            """Original doc."""
+
+        config = self._make_config(
+            {"my_tool": ToolDescription(description="")}
+        )
+        config.apply_tool_descriptions([my_tool])
+        assert my_tool.__doc__ == "Original doc."
+
+    def test_noop_when_no_tool_descriptions(self):
+        def my_tool():
+            """Keep me."""
+
+        config = self._make_config()
+        config.apply_tool_descriptions([my_tool])
+        assert my_tool.__doc__ == "Keep me."
+
+    def test_handles_objects_without_name(self):
+        """Non-function items without __name__ are silently skipped."""
+        config = self._make_config(
+            {"something": ToolDescription(description="X.")}
+        )
+        obj = object()
+        # Should not raise
+        config.apply_tool_descriptions([obj])
+
+    def test_multiple_tools_selective_patch(self):
+        def tool_a():
+            """A original."""
+
+        def tool_b():
+            """B original."""
+
+        def tool_c():
+            """C original."""
+
+        config = self._make_config({
+            "tool_a": ToolDescription(description="A optimized."),
+            "tool_c": ToolDescription(description="C optimized."),
+        })
+        config.apply_tool_descriptions([tool_a, tool_b, tool_c])
+        assert tool_a.__doc__ == "A optimized."
+        assert tool_b.__doc__ == "B original."
+        assert tool_c.__doc__ == "C optimized."
+
+    def test_uses_name_attribute_fallback(self):
+        """Falls back to .name when __name__ is not available."""
+        class FakeTool:
+            name = "my_tool"
+            __doc__ = "Original."
+
+        tool = FakeTool()
+        config = self._make_config(
+            {"my_tool": ToolDescription(description="Patched via .name attr.")}
+        )
+        config.apply_tool_descriptions([tool])
+        assert tool.__doc__ == "Patched via .name attr."
+
+    def test_patches_description_attribute(self):
+        """Patches .description attribute for AIFunction/ToolProtocol objects."""
+        def search_flights():
+            """Original."""
+
+        search_flights.description = "Original."  # type: ignore[attr-defined]
+
+        config = self._make_config(
+            {"search_flights": ToolDescription(description="Optimized flights search.")}
+        )
+        config.apply_tool_descriptions([search_flights])
+        assert search_flights.description == "Optimized flights search."  # type: ignore[attr-defined]
+        assert search_flights.__doc__ == "Optimized flights search."
+
+    def test_description_attribute_not_set_when_readonly(self):
+        """If .description is read-only, only __doc__ is patched."""
+        class ReadOnlyTool:
+            __name__ = "my_tool"
+            __doc__ = "Original doc."
+
+            @property
+            def description(self):
+                return "read-only"
+
+        tool = ReadOnlyTool()
+        config = self._make_config(
+            {"my_tool": ToolDescription(description="Patched.")}
+        )
+        config.apply_tool_descriptions([tool])
+        assert tool.__doc__ == "Patched."
+        assert tool.description == "read-only"  # unchanged
+
+    def test_patches_input_model_param_descriptions(self):
+        """Patches parameter descriptions on input_model.model_fields."""
+        class FakeField:
+            def __init__(self, desc):
+                self.description = desc
+
+        class FakeInputModel:
+            model_fields = {
+                "destination": FakeField("Old dest description"),
+                "date": FakeField("Old date description"),
+            }
+            _rebuild_called = False
+
+            @classmethod
+            def model_rebuild(cls, force=False):
+                cls._rebuild_called = True
+
+        def search_flights(destination: str, date: str):
+            """Search."""
+
+        search_flights.input_model = FakeInputModel  # type: ignore[attr-defined]
+
+        config = self._make_config({
+            "search_flights": ToolDescription(
+                description="Find flights.",
+                parameters={"destination": "The travel destination city"},
+            ),
+        })
+        config.apply_tool_descriptions([search_flights])
+        assert search_flights.__doc__ == "Find flights."
+        assert FakeInputModel.model_fields["destination"].description == "The travel destination city"
+        assert FakeInputModel.model_fields["date"].description == "Old date description"
+        assert FakeInputModel._rebuild_called is True
+
+    def test_skips_param_patch_when_no_input_model(self):
+        """No crash when tool has no input_model attribute."""
+        def my_tool():
+            """Original."""
+
+        config = self._make_config({
+            "my_tool": ToolDescription(
+                description="New.",
+                parameters={"x": "Some param"},
+            ),
+        })
+        config.apply_tool_descriptions([my_tool])
+        assert my_tool.__doc__ == "New."
+
+    def test_skips_unknown_params_in_input_model(self):
+        """Parameters not in model_fields are silently ignored."""
+        class FakeField:
+            def __init__(self, desc):
+                self.description = desc
+
+        class FakeInputModel:
+            model_fields = {"known": FakeField("Known param")}
+            _rebuild_called = False
+
+            @classmethod
+            def model_rebuild(cls, force=False):
+                cls._rebuild_called = True
+
+        def my_tool():
+            """Doc."""
+
+        my_tool.input_model = FakeInputModel  # type: ignore[attr-defined]
+
+        config = self._make_config({
+            "my_tool": ToolDescription(
+                description="New doc.",
+                parameters={"unknown_param": "Should be ignored"},
+            ),
+        })
+        config.apply_tool_descriptions([my_tool])
+        assert FakeInputModel.model_fields["known"].description == "Known param"
+        assert FakeInputModel._rebuild_called is False
+
+    def test_no_rebuild_when_no_params_patched(self):
+        """model_rebuild is NOT called if no parameters were actually patched."""
+        class FakeField:
+            def __init__(self, desc):
+                self.description = desc
+
+        class FakeInputModel:
+            model_fields = {"x": FakeField("X")}
+            _rebuild_called = False
+
+            @classmethod
+            def model_rebuild(cls, force=False):
+                cls._rebuild_called = True
+
+        def my_tool():
+            """Doc."""
+
+        my_tool.input_model = FakeInputModel  # type: ignore[attr-defined]
+
+        config = self._make_config({
+            "my_tool": ToolDescription(description="New.", parameters={}),
+        })
+        config.apply_tool_descriptions([my_tool])
+        assert FakeInputModel._rebuild_called is False
+
+    def test_empty_tools_list(self):
+        """Passing an empty list is fine."""
+        config = self._make_config(
+            {"tool": ToolDescription(description="X.")}
+        )
+        result = config.apply_tool_descriptions([])
+        assert result == []

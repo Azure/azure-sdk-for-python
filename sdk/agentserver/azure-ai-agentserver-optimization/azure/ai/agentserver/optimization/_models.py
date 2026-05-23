@@ -6,8 +6,11 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field, fields
 from typing import Any, ClassVar
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -116,7 +119,7 @@ class MetadataConfig:
 
 
 @dataclass
-class OptimizationConfig:
+class OptimizationConfig:  # pylint: disable=too-many-instance-attributes
     """Resolved optimization config.
 
     When not running under optimization, all fields contain the defaults
@@ -165,6 +168,47 @@ class OptimizationConfig:
         if td is None:
             return None
         return td.parameters.get(param_name)
+
+    def apply_tool_descriptions(self, tools: list) -> list:  # pylint: disable=too-many-nested-blocks
+        """Apply optimized tool descriptions to a list of tool functions.
+
+        Patches ``__doc__`` (used by the Agent Framework as the tool
+        description) on each tool function whose name appears in
+        :attr:`tool_descriptions`.
+
+        Args:
+            tools: List of @tool-decorated functions.
+
+        Returns:
+            The same list of tools (mutated in place).
+        """
+        if not self.tool_descriptions:
+            return tools
+        for tool_fn in tools:
+            tool_name = getattr(tool_fn, "__name__", None) or getattr(tool_fn, "name", None)
+            if tool_name and tool_name in self.tool_descriptions:
+                overrides = self.tool_descriptions[tool_name]
+                if overrides.description:
+                    # Patch .description (AIFunction/ToolProtocol) and __doc__ (plain functions)
+                    try:
+                        tool_fn.description = overrides.description
+                    except AttributeError:
+                        pass
+                    tool_fn.__doc__ = overrides.description
+                    logger.debug("Applied optimized description for tool '%s'", tool_name)
+                # Patch parameter descriptions on AIFunction's input_model
+                if overrides.parameters:
+                    input_model = getattr(tool_fn, "input_model", None)
+                    if input_model and hasattr(input_model, "model_fields"):
+                        patched = False
+                        for param_name, param_desc in overrides.parameters.items():
+                            if param_name in input_model.model_fields:
+                                input_model.model_fields[param_name].description = param_desc
+                                patched = True
+                        if patched:
+                            input_model.model_rebuild(force=True)
+                            logger.debug("Applied optimized parameter descriptions for tool '%s'", tool_name)
+        return tools
 
     def compose_instructions(self) -> str:
         """Return instructions with skill catalog appended (if any)."""
@@ -239,12 +283,12 @@ def _parse_tools_list(tools: list) -> dict[str, ToolDescription]:
             continue
         description = func.get("description", "")
         params_schema = func.get("parameters", {})
-        param_descs: dict[str, str] = {}
+        param_descriptions: dict[str, str] = {}
         if isinstance(params_schema, dict):
             props = params_schema.get("properties", {})
             if isinstance(props, dict):
-                for pname, pval in props.items():
-                    if isinstance(pval, dict) and "description" in pval:
-                        param_descs[pname] = pval["description"]
-        result[name] = ToolDescription(description=description, parameters=param_descs)
+                for param_name, param_val in props.items():
+                    if isinstance(param_val, dict) and "description" in param_val:
+                        param_descriptions[param_name] = param_val["description"]
+        result[name] = ToolDescription(description=description, parameters=param_descriptions)
     return result

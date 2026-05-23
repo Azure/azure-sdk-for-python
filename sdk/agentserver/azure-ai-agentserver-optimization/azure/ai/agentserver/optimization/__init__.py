@@ -23,7 +23,7 @@ Resolution order (first match wins):
     4. Defaults                      → your hardcoded values (agent works normally)
 """
 
-from azure.ai.agentserver.optimization._config import load_config
+from azure.ai.agentserver.optimization._config import load_config, load_skills_from_dir
 from azure.ai.agentserver.optimization._models import (
     CandidateConfig,
     OptimizationConfig,
@@ -38,5 +38,6 @@ __all__ = [
     "Skill",
     "ToolDescription",
     "load_config",
+    "load_skills_from_dir",
 ]
 __version__ = VERSION

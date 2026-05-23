@@ -113,20 +113,68 @@ When using the local directory (Priority 3) or after the resolver API persists a
 | `has_skills` | `bool` | Whether skills are available. |
 | `has_tool_descriptions` | `bool` | Whether tool descriptions are available. |
 
+### Public API
+
+| Export | Type | Description |
+|--------|------|-------------|
+| `load_config(...)` | function | Load optimization config with 4-priority resolution. |
+| `load_skills_from_dir(path)` | function | Load skills from a directory of `SKILL.md` files. |
+| `OptimizationConfig` | dataclass | Resolved config with instructions, model, temperature, skills_dir, tool_descriptions. |
+| `OptimizationConfig.apply_tool_descriptions(tools)` | method | Patch `__doc__` on tool functions from optimized descriptions. |
+| `OptimizationConfig.compose_instructions()` | method | Return instructions with skill catalog appended. |
+| `CandidateConfig` | dataclass | Typed representation of the resolver API response. |
+| `Skill` | dataclass | A learned skill (name, description, body). |
+| `ToolDescription` | dataclass | Optimized tool description (description, parameters). |
+
 ## Examples
+
+### Basic usage
 
 ```python
 from azure.ai.agentserver.optimization import load_config
 
 config = load_config(default_instructions="You are a helpful assistant.")
 
-# Use config in your agent
 print(config.instructions)       # optimized or default
 print(config.model)              # optimized or default
 print(config.temperature)        # optimized or default
-print(config.skills)             # learned skills (empty list if none)
 print(config.tool_descriptions)  # optimized tool descriptions (empty dict if none)
 print(config.source)             # "env:OPTIMIZATION_CONFIG", "api:candidate:abc", "local:...", or "defaults"
+```
+
+### Apply optimized tool descriptions
+
+```python
+from azure.ai.agentserver.optimization import load_config
+
+config = load_config(default_instructions="You are a travel agent.")
+
+# Your @tool-decorated functions
+def search_flights(origin: str, destination: str):
+    """Search for flights."""
+    ...
+
+def book_hotel(city: str):
+    """Book a hotel room."""
+    ...
+
+# Patches __doc__ on matching tools with optimized descriptions
+config.apply_tool_descriptions([search_flights, book_hotel])
+```
+
+### Load skills on demand
+
+```python
+from pathlib import Path
+from azure.ai.agentserver.optimization import load_config, load_skills_from_dir
+
+config = load_config(default_instructions="You are a helpful assistant.")
+
+# Skills are not loaded inline — load them when needed
+if config.skills_dir:
+    skills = load_skills_from_dir(Path(config.skills_dir))
+    for skill in skills:
+        print(f"{skill.name}: {skill.description}")
 ```
 
 ## Troubleshooting

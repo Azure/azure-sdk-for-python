@@ -14,8 +14,7 @@ from azure.ai.agentserver.optimization._resolver import (
     _persist_to_local_layout,
     _download_skill_files,
     _is_skill_file,
-    _build_headers,
-    _get_bearer_token,
+    _build_client,
 )
 from azure.ai.agentserver.optimization._models import OptimizationConfig
 
@@ -26,6 +25,14 @@ def clear_downloaded():
     _downloaded.clear()
     yield
     _downloaded.clear()
+
+
+@pytest.fixture()
+def mock_client():
+    """Return a MagicMock that stands in for PipelineClient."""
+    client = MagicMock()
+    client._base_url = "http://fake-endpoint"
+    return client
 
 
 ENDPOINT = "http://fake-endpoint"
@@ -39,9 +46,12 @@ class TestResolveCandidate:
     """Tests for resolve_candidate function."""
 
     def test_returns_none_on_api_failure(self):
-        with patch(
-            "azure.ai.agentserver.optimization._resolver._api_get_json",
-            return_value=None,
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value=None,
+            ),
         ):
             result = resolve_candidate("cand-1", job_id=JOB_ID, endpoint=ENDPOINT)
             assert result is None
@@ -53,34 +63,43 @@ class TestResolveCandidate:
             "temperature": 0.2,
             "skills": [],
         }
-        with patch(
-            "azure.ai.agentserver.optimization._resolver._api_get_json",
-            return_value=config,
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value=config,
+            ),
         ):
             result = resolve_candidate("cand-1", job_id=JOB_ID, endpoint=ENDPOINT)
             assert result is not None
             assert result["instructions"] == "Optimized."
             assert result["model"] == "gpt-4o"
 
-    def test_uses_correct_url(self):
-        """Verify the API route follows agent_optimization_jobs/{jobId}/candidates/{candidateId}/config."""
-        called_urls: list[str] = []
+    def test_uses_correct_path(self):
+        """Verify the API route follows /agent_optimization_jobs/{jobId}/candidates/{candidateId}/config."""
+        called_args: list = []
 
-        def capture_url(url, headers):
-            called_urls.append(url)
+        def capture_call(client, path, params=None):
+            called_args.append((path, params))
             return {"instructions": "ok"}
 
-        with patch(
-            "azure.ai.agentserver.optimization._resolver._api_get_json",
-            side_effect=capture_url,
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                side_effect=capture_call,
+            ),
         ):
             resolve_candidate("cand-abc", job_id="job-xyz", endpoint="http://api.test")
-            assert called_urls[0] == "http://api.test/agent_optimization_jobs/job-xyz/candidates/cand-abc/config"
+            assert called_args[0][0] == "/agent_optimization_jobs/job-xyz/candidates/cand-abc/config"
 
     def test_marks_downloaded_after_success(self):
-        with patch(
-            "azure.ai.agentserver.optimization._resolver._api_get_json",
-            return_value={"instructions": "ok"},
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value={"instructions": "ok"},
+            ),
         ):
             resolve_candidate("cand-mark", job_id=JOB_ID, endpoint=ENDPOINT)
             assert "cand-mark" in _downloaded
@@ -99,9 +118,12 @@ class TestResolveCandidate:
         """If downloaded but folder is gone, re-download."""
         _downloaded.add("cand-gone")
         config = {"instructions": "re-downloaded"}
-        with patch(
-            "azure.ai.agentserver.optimization._resolver._api_get_json",
-            return_value=config,
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value=config,
+            ),
         ):
             result = resolve_candidate(
                 "cand-gone", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=None,
@@ -111,9 +133,12 @@ class TestResolveCandidate:
             assert result["instructions"] == "re-downloaded"
 
     def test_does_not_mark_downloaded_on_api_failure(self):
-        with patch(
-            "azure.ai.agentserver.optimization._resolver._api_get_json",
-            return_value=None,
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value=None,
+            ),
         ):
             resolve_candidate("cand-fail", job_id=JOB_ID, endpoint=ENDPOINT)
             assert "cand-fail" not in _downloaded
@@ -268,7 +293,7 @@ class TestPersistRoundTrip:
 class TestDownloadSkillFiles:
     """Tests for _download_skill_files."""
 
-    def test_downloads_skill_files(self, tmp_path):
+    def test_downloads_skill_files(self, tmp_path, mock_client):
         candidate_path = tmp_path / "cand-sk"
         candidate_path.mkdir()
         manifest = {
@@ -277,30 +302,33 @@ class TestDownloadSkillFiles:
             ]
         }
 
-        def mock_text(url, headers, params=None):
+        def mock_json(client, path, params=None):
+            return manifest
+
+        def mock_text(client, path, params=None):
             return "# Math Skill\nDo math."
 
         with (
-            patch("azure.ai.agentserver.optimization._resolver._api_get_json", side_effect=lambda u, h: manifest),
+            patch("azure.ai.agentserver.optimization._resolver._api_get_json", side_effect=mock_json),
             patch("azure.ai.agentserver.optimization._resolver._api_get_text", side_effect=mock_text),
         ):
-            _download_skill_files(ENDPOINT, JOB_ID, "cand-sk", {}, candidate_path)
+            _download_skill_files(mock_client, JOB_ID, "cand-sk", candidate_path)
 
         skill_file = candidate_path / "skills" / "math" / "SKILL.md"
         assert skill_file.exists()
         assert "Math Skill" in skill_file.read_text()
 
-    def test_skips_when_no_manifest(self, tmp_path):
+    def test_skips_when_no_manifest(self, tmp_path, mock_client):
         candidate_path = tmp_path / "cand-no-manifest"
         candidate_path.mkdir()
         with patch(
             "azure.ai.agentserver.optimization._resolver._api_get_json",
             return_value=None,
         ):
-            _download_skill_files(ENDPOINT, JOB_ID, "cand-no-manifest", {}, candidate_path)
+            _download_skill_files(mock_client, JOB_ID, "cand-no-manifest", candidate_path)
         assert not (candidate_path / "skills").exists()
 
-    def test_skips_when_no_skill_files_in_manifest(self, tmp_path):
+    def test_skips_when_no_skill_files_in_manifest(self, tmp_path, mock_client):
         candidate_path = tmp_path / "cand-no-skills"
         candidate_path.mkdir()
         manifest = {"files": [{"path": "other.txt", "type": "config"}]}
@@ -308,10 +336,10 @@ class TestDownloadSkillFiles:
             "azure.ai.agentserver.optimization._resolver._api_get_json",
             return_value=manifest,
         ):
-            _download_skill_files(ENDPOINT, JOB_ID, "cand-no-skills", {}, candidate_path)
+            _download_skill_files(mock_client, JOB_ID, "cand-no-skills", candidate_path)
         assert not (candidate_path / "skills").exists()
 
-    def test_skips_empty_path_entries(self, tmp_path):
+    def test_skips_empty_path_entries(self, tmp_path, mock_client):
         candidate_path = tmp_path / "cand-empty-path"
         candidate_path.mkdir()
         manifest = {"files": [{"path": "", "type": "skill"}]}
@@ -319,10 +347,10 @@ class TestDownloadSkillFiles:
             "azure.ai.agentserver.optimization._resolver._api_get_json",
             return_value=manifest,
         ):
-            _download_skill_files(ENDPOINT, JOB_ID, "cand-empty-path", {}, candidate_path)
+            _download_skill_files(mock_client, JOB_ID, "cand-empty-path", candidate_path)
         assert not (candidate_path / "skills").exists()
 
-    def test_handles_download_failure(self, tmp_path):
+    def test_handles_download_failure(self, tmp_path, mock_client):
         candidate_path = tmp_path / "cand-dl-fail"
         candidate_path.mkdir()
         manifest = {"files": [{"path": "skills/bad/SKILL.md", "type": "skill"}]}
@@ -330,11 +358,11 @@ class TestDownloadSkillFiles:
             patch("azure.ai.agentserver.optimization._resolver._api_get_json", return_value=manifest),
             patch("azure.ai.agentserver.optimization._resolver._api_get_text", return_value=None),
         ):
-            _download_skill_files(ENDPOINT, JOB_ID, "cand-dl-fail", {}, candidate_path)
+            _download_skill_files(mock_client, JOB_ID, "cand-dl-fail", candidate_path)
         # No crash, skill file simply not written
         assert not (candidate_path / "skills" / "bad" / "SKILL.md").exists()
 
-    def test_rejects_traversal_in_file_path(self, tmp_path):
+    def test_rejects_traversal_in_file_path(self, tmp_path, mock_client):
         """File paths with '../' are rejected (zip-slip prevention)."""
         candidate_path = tmp_path / "cand-traversal"
         candidate_path.mkdir()
@@ -343,7 +371,7 @@ class TestDownloadSkillFiles:
             patch("azure.ai.agentserver.optimization._resolver._api_get_json", return_value=manifest),
             patch("azure.ai.agentserver.optimization._resolver._api_get_text", return_value="malicious"),
         ):
-            _download_skill_files(ENDPOINT, JOB_ID, "cand-traversal", {}, candidate_path)
+            _download_skill_files(mock_client, JOB_ID, "cand-traversal", candidate_path)
         # Malicious file must NOT be written outside skills_dir
         assert not (tmp_path / "etc" / "passwd").exists()
         assert not (candidate_path / "skills" / ".." / ".." / "etc" / "passwd").exists()
@@ -372,9 +400,12 @@ class TestPathTraversalGuard:
     def test_normal_candidate_id_allowed(self, tmp_path):
         """Normal candidate IDs pass the guard."""
         config = {"instructions": "ok", "model": "gpt-4o"}
-        with patch(
-            "azure.ai.agentserver.optimization._resolver._api_get_json",
-            return_value=config,
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value=config,
+            ),
         ):
             result = resolve_candidate(
                 "valid-candidate-123", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=tmp_path
@@ -410,6 +441,7 @@ class TestPersistErrorHandling:
     def test_persist_oserror_does_not_crash(self, tmp_path):
         config = {"instructions": "ok", "model": "gpt-4o"}
         with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
             patch(
                 "azure.ai.agentserver.optimization._resolver._api_get_json",
                 return_value=config,
@@ -431,41 +463,24 @@ class TestPersistErrorHandling:
 # ── HTTP helpers ─────────────────────────────────────────────────────
 
 
-class TestBuildHeaders:
-    """Tests for _build_headers."""
+class TestBuildClient:
+    """Tests for _build_client."""
 
-    def test_includes_accept_header(self):
-        headers = _build_headers()
-        assert headers["Accept"] == "application/json"
+    def test_returns_pipeline_client(self):
+        from azure.core import PipelineClient
 
-    def test_includes_auth_when_token_available(self):
+        client = _build_client("http://example.com")
+        assert isinstance(client, PipelineClient)
+        client.close()
+
+    def test_works_without_credentials(self):
+        """If DefaultAzureCredential fails, client is still created (no auth)."""
+        from azure.core import PipelineClient
+
         with patch(
-            "azure.ai.agentserver.optimization._resolver._get_bearer_token",
-            return_value="fake-token",
+            "azure.identity.DefaultAzureCredential",
+            side_effect=Exception("No cred"),
         ):
-            headers = _build_headers()
-            assert headers["Authorization"] == "Bearer fake-token"
-
-    def test_no_auth_when_no_token(self):
-        with patch(
-            "azure.ai.agentserver.optimization._resolver._get_bearer_token",
-            return_value=None,
-        ):
-            headers = _build_headers()
-            assert "Authorization" not in headers
-
-
-class TestGetBearerToken:
-    """Tests for _get_bearer_token."""
-
-    def test_returns_none_without_azure_identity(self):
-        with patch.dict("sys.modules", {"azure.identity": None}):
-            token = _get_bearer_token()
-            assert token is None or isinstance(token, str)
-
-    def test_returns_none_on_exception(self):
-        mock_identity = MagicMock()
-        mock_identity.DefaultAzureCredential.side_effect = Exception("No cred")
-        with patch.dict("sys.modules", {"azure.identity": mock_identity}):
-            token = _get_bearer_token()
-            assert token is None
+            client = _build_client("http://example.com")
+            assert isinstance(client, PipelineClient)
+            client.close()

@@ -83,7 +83,7 @@ def load_config(
             default_temperature=default_temperature,
             default_skills_dir=default_skills_dir,
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
         logger.error("Unexpected error loading optimization config — returning defaults: %s", exc)
         model = default_model or os.environ.get("MODEL_DEPLOYMENT_NAME")
         return OptimizationConfig(
@@ -181,7 +181,7 @@ def _load_config_inner(
 def _resolve_local_dir() -> Path:
     """Resolve the local optimization directory path.
 
-    Falls back to :pyattr:`OptimizationConfig.DEFAULT_LOCAL_DIR`
+    Falls back to ``OptimizationConfig.DEFAULT_LOCAL_DIR``
     (``".agent_configs"``) when the env var is not set.
     """
     local_dir_env = os.environ.get(OptimizationConfig.ENV_LOCAL_DIR, "").strip()
@@ -275,14 +275,13 @@ def _load_candidate_from_metadata(
         instructions = default_instructions
 
     # Resolve skills directory (guard against traversal)
+    skills_dir: str | None
     skills_path = candidate_path / meta.skill_dir
     if _is_safe_child(candidate_path, skills_path) and skills_path.resolve().is_dir():
-        skills = _load_skills_from_dir(skills_path.resolve())
         skills_dir = str(skills_path.resolve())
     else:
         if not _is_safe_child(candidate_path, skills_path):
             logger.warning("Path traversal in skill_dir: %r", meta.skill_dir)
-        skills = []
         skills_dir = default_skills_dir
 
     # Load tool descriptions (guard against traversal)
@@ -297,7 +296,6 @@ def _load_candidate_from_metadata(
         instructions=instructions,
         model=meta.model or default_model,
         temperature=meta.temperature if meta.temperature is not None else default_temperature,
-        skills=skills,
         skills_dir=skills_dir,
         tool_descriptions=tool_descriptions,
         source=f"local:{candidate_path}",
@@ -394,7 +392,7 @@ def _is_safe_child(parent: Path, child: Path) -> bool:
         return False
 
 
-def _load_skills_from_dir(skills_dir: Path) -> list[Skill]:
+def load_skills_from_dir(skills_dir: Path) -> list[Skill]:
     """Load skills from a directory of skill folders.
 
     Expected layout::

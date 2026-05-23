@@ -23,16 +23,22 @@ import json
 import logging
 import pathlib
 import shutil
-import urllib.error
-import urllib.parse
-import urllib.request
 from typing import Any
+
+from azure.core import PipelineClient
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy, RetryPolicy
+from azure.core.rest import HttpRequest
 
 from azure.ai.agentserver.optimization._models import OptimizationConfig
 
 logger = logging.getLogger("azure.ai.agentserver.optimization")
 
 _downloaded: set[str] = set()
+
+# API path and version constants
+_API_VERSION = "2025-11-15-preview"
+_JOBS_PATH = "agent_optimization_jobs"
+_AUTH_SCOPE = "https://ai.azure.com/.default"
 
 
 def resolve_candidate(
@@ -61,11 +67,16 @@ def resolve_candidate(
         logger.warning("Candidate %s was downloaded but folder is missing — re-downloading", candidate_id)
         _downloaded.discard(candidate_id)
 
-    headers = _build_headers()
+    client = _build_client(endpoint)
 
     # ── Step 1: Fetch config ─────────────────────────────────────────
-    config = _api_get_json(f"{endpoint}/agent_optimization_jobs/{job_id}/candidates/{candidate_id}/config", headers)
+    config = _api_get_json(
+        client,
+        f"/{_JOBS_PATH}/{job_id}/candidates/{candidate_id}/config",
+        params={"api-version": _API_VERSION},
+    )
     if config is None:
+        client.close()
         return None
 
     logger.info(
@@ -82,7 +93,7 @@ def resolve_candidate(
         candidate_path = local_dir / candidate_id
         try:
             _persist_to_local_layout(candidate_path, config)
-            _download_skill_files(endpoint, job_id, candidate_id, headers, candidate_path)
+            _download_skill_files(client, job_id, candidate_id, candidate_path)
         except OSError as exc:
             logger.warning("Failed to persist candidate %s to disk: %s", candidate_id, exc)
         # Point skills_dir to the downloaded skills folder
@@ -90,6 +101,7 @@ def resolve_candidate(
         if skills_path.is_dir():
             config["skills_dir"] = str(skills_path)
 
+    client.close()
     _downloaded.add(candidate_id)
     return config
 
@@ -102,7 +114,10 @@ def _persist_to_local_layout(candidate_path: pathlib.Path, config: dict[str, Any
         <candidate_path>/
         ├── metadata.yaml
         ├── instructions.md
-        └── tools.json
+        ├── tools.json
+        └── skills/
+            └── <skill_name>/
+                └── SKILL.md
 
     If the folder already exists it is removed and re-created.
     """
@@ -140,18 +155,44 @@ def _persist_to_local_layout(candidate_path: pathlib.Path, config: dict[str, Any
         tools_file = candidate_path / OptimizationConfig.TOOLS_FILE
         tools_file.write_text(json.dumps(tools_list, indent=2, ensure_ascii=False), encoding="utf-8")
 
+    # skills/ — write inline skills as <skills_dir>/<name>/SKILL.md
+    inline_skills = config.get("skills", [])
+    if inline_skills and isinstance(inline_skills, list):
+        skills_dir = candidate_path / OptimizationConfig.SKILLS_DIR
+        for skill in inline_skills:
+            if not isinstance(skill, dict) or not skill.get("name"):
+                continue
+            skill_name = skill["name"]
+            skill_folder = skills_dir / skill_name
+            skill_folder.mkdir(parents=True, exist_ok=True)
+            # Build SKILL.md with YAML frontmatter
+            lines: list[str] = ["---"]
+            lines.append(f"name: {skill_name}")
+            if skill.get("description"):
+                lines.append(f"description: {skill['description']}")
+            lines.append("---")
+            if skill.get("body"):
+                lines.append("")
+                lines.append(skill["body"])
+            skill_file = skill_folder / OptimizationConfig.SKILL_FILE
+            skill_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        logger.info("Persisted %d inline skill(s) to %s", len(inline_skills), skills_dir)
+
     logger.info("Persisted config to local layout: %s", candidate_path)
 
 
 def _download_skill_files(
-    endpoint: str,
+    client: PipelineClient,
     job_id: str,
     candidate_id: str,
-    headers: dict[str, str],
     candidate_path: pathlib.Path,
 ) -> None:
     """Fetch manifest and download skill files into candidate_path/skills/<name>/SKILL.md."""
-    manifest = _api_get_json(f"{endpoint}/agent_optimization_jobs/{job_id}/candidates/{candidate_id}", headers)
+    manifest = _api_get_json(
+        client,
+        f"/{_JOBS_PATH}/{job_id}/candidates/{candidate_id}",
+        params={"api-version": _API_VERSION},
+    )
     if manifest is None:
         logger.debug("Could not fetch manifest for candidate %s", candidate_id)
         return
@@ -174,9 +215,9 @@ def _download_skill_files(
             continue
 
         content = _api_get_text(
-            f"{endpoint}/agent_optimization_jobs/{job_id}/candidates/{candidate_id}/files",
-            headers,
-            params={"path": file_path},
+            client,
+            f"/{_JOBS_PATH}/{job_id}/candidates/{candidate_id}/files",
+            params={"path": file_path, "api-version": _API_VERSION},
         )
         if content is None:
             logger.warning("Failed to download skill file: %s", file_path)
@@ -205,57 +246,53 @@ def _is_skill_file(file_entry: dict) -> bool:
     return file_type == "skill" or path.startswith("skills/")
 
 
-# ── HTTP helpers ─────────────────────────────────────────────────────
+# ── HTTP helpers (azure.core transport) ──────────────────────────────
 
 
-def _build_headers() -> dict[str, str]:
-    headers: dict[str, str] = {"Accept": "application/json"}
-    token = _get_bearer_token()
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
-    return headers
+def _build_client(endpoint: str) -> PipelineClient:
+    """Create a PipelineClient with credential-based auth and retry."""
+    policies: list = [RetryPolicy()]
+    try:
+        from azure.identity import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
+        policies.insert(0, BearerTokenCredentialPolicy(credential, _AUTH_SCOPE))
+    except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
+        logger.debug("azure-identity not available or credentials failed — proceeding without auth")
+    return PipelineClient(base_url=endpoint, policies=policies)
 
 
-def _api_get_json(url: str, headers: dict[str, str]) -> dict[str, Any] | None:
+def _api_get_json(
+    client: PipelineClient, path: str, params: dict[str, str] | None = None
+) -> dict[str, Any] | None:
     """GET a JSON endpoint, return parsed dict or None on failure."""
+    url = f"{client._base_url.rstrip('/')}{path}"  # pylint: disable=protected-access
+    request = HttpRequest("GET", url, params=params)
     logger.debug("GET %s", url)
     try:
-        req = urllib.request.Request(url, method="GET", headers=headers)
-        with urllib.request.urlopen(req, timeout=30) as resp:  # noqa: S310
-            return json.loads(resp.read().decode("utf-8"))
-    except (urllib.error.URLError, json.JSONDecodeError, OSError) as exc:
+        response = client.send_request(request)
+        if response.status_code != 200:
+            logger.error("GET %s returned %d", url, response.status_code)
+            return None
+        return response.json()
+    except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
         logger.error("GET %s failed: %s", url, exc)
         return None
 
 
 def _api_get_text(
-    url: str, headers: dict[str, str], params: dict[str, str] | None = None
+    client: PipelineClient, path: str, params: dict[str, str] | None = None
 ) -> str | None:
     """GET an endpoint, return response body as text or None on failure."""
-    if params:
-        query = "&".join(f"{k}={urllib.parse.quote(v)}" for k, v in params.items())
-        url = f"{url}?{query}"
+    url = f"{client._base_url.rstrip('/')}{path}"  # pylint: disable=protected-access
+    request = HttpRequest("GET", url, params=params)
     logger.debug("GET %s", url)
     try:
-        req = urllib.request.Request(url, method="GET", headers=headers)
-        with urllib.request.urlopen(req, timeout=60) as resp:  # noqa: S310
-            return resp.read().decode("utf-8")
-    except (urllib.error.URLError, OSError) as exc:
+        response = client.send_request(request)
+        if response.status_code != 200:
+            logger.error("GET %s returned %d", url, response.status_code)
+            return None
+        return response.text()
+    except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
         logger.error("GET %s failed: %s", url, exc)
-        return None
-
-
-def _get_bearer_token() -> str | None:
-    """Acquire a bearer token for the resolver API.
-
-    Uses ``azure-identity`` if available; returns ``None`` otherwise.
-    This keeps azure-identity as an optional dependency.
-    """
-    try:
-        from azure.identity import DefaultAzureCredential  # type: ignore[import-untyped]
-
-        cred = DefaultAzureCredential()
-        token = cred.get_token("https://ai.azure.com/.default")
-        return token.token
-    except Exception:  # noqa: BLE001
         return None
