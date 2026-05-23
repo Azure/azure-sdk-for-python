@@ -33,8 +33,9 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry project.
-    2) FOUNDRY_MODEL_NAME - Required. The name of the LLM model deployment that
-       the generation job will use (e.g. `gpt-4o`, `gpt-4.1`).
+    2) FOUNDRY_MODEL_NAME - Required. The name of the model the generation job
+       will use (e.g. `gpt-4o`, `gpt-4.1`). The generation runs inline server
+       side, so no deployment in your project is required.
     3) FOUNDRY_AGENT_NAME - Optional. Name of an agent registered in the project.
        Enables the `Agent` source and the `traces`-source job.
     4) FOUNDRY_REFERENCE_DATASET_NAME - Optional. Name of an uploaded dataset.

@@ -82,8 +82,6 @@ These samples require additional setup or Azure services:
 
 ### Rubric Evaluators
 
-A rubric evaluator is a collection of independent scoring dimensions evaluated by an LLM judge. You can hand-author a rubric or have the service generate one from a description of your application using one or more **source types** (prompt, agent, dataset, and traces). The samples below cover both the manual authoring path and the generation path.
-
 | Sample | Description |
 |--------|-------------|
 | [sample_rubric_evaluator_manual.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_manual.py) | Hand-author a rubric evaluator (dimensions, weights, pass threshold) with `create_version`, then use it in an OpenAI eval run |

@@ -35,8 +35,10 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry project.
-    2) FOUNDRY_MODEL_NAME - Required. The name of the LLM model deployment that
-       the generation job will use (e.g. `gpt-4o`, `gpt-4.1`).
+    2) FOUNDRY_MODEL_NAME - Required. The name of the model used by both the
+       generation job and the eval run's LLM judge (e.g. `gpt-4o`, `gpt-4.1`).
+       The generation runs inline server side (no deployment required), but the
+       eval run's grader does require a model deployment in your project.
     3) POLL_INTERVAL_SECONDS - Optional. Number of seconds to sleep between status
        polls for both the generation job and the evaluation run. Defaults to 10.
 """
