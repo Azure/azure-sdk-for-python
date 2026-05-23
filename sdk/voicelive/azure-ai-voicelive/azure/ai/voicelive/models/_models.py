@@ -403,14 +403,15 @@ class AudioEchoCancellation(_Model):
        behavior).
      * `client`: EC uses the client-supplied reference channel (ch1 of stereo input). Internal
        TTS loopback is skipped. Known values are: "server" and "client".
+
     :vartype reference_source: str or ~azure.ai.voicelive.models.EchoCancellationReferenceSource
     :ivar channels: Number of input audio channels.
 
      * `1`: Mono input (default).
      * `2`: Interleaved stereo input where channel 0 is the microphone signal and channel 1 is
-       the echo reference signal.
-     When set to 2, `reference_source` must be `client` and `input_audio_format` must be
-     `pcm16`.
+             the echo reference signal. When set to 2, `reference_source` must be `client` and
+             `input_audio_format` must be `pcm16`.
+
     :vartype channels: int
     """
 
