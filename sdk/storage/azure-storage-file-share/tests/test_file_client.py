@@ -552,7 +552,10 @@ class TestStorageFileClient(StorageRecordedTestCase):
         assert service.url.startswith("http://local-machine:11002/custom/account/path/foo/file?")
 
     @pytest.mark.skip(
-        reason="Client Request ID is different for every request, needs further investigation: https://github.com/Azure/azure-sdk-for-python/issues/8098"
+        reason=(
+            "Client Request ID is different for every request, needs further investigation: "
+            "https://github.com/Azure/azure-sdk-for-python/issues/8098"
+        )
     )  # pylint: disable=line-too-long
     @FileSharePreparer()
     def test_client_request_id_echo(self, **kwargs):
