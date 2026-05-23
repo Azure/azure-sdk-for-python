@@ -154,8 +154,8 @@ class TestSamples(AzureRecordedTestCase):
     @additionalSampleTests(
         [
             AdditionalSampleTestDetail(
-                test_id="sample_dataset_generation_job_with_evaluation",
-                sample_filename="sample_dataset_generation_job_with_evaluation.py",
+                test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
+                sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
                 env_vars={
                     "POLL_INTERVAL_SECONDS": "60",
                 },
@@ -166,7 +166,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "datasets",
-            samples_to_skip=["sample_dataset_generation_job_with_evaluation.py"],
+            samples_to_skip=["sample_dataset_generation_job_simpleqna_with_prompt_source.py"],
         ),
     )
     @SamplePathPasser()
