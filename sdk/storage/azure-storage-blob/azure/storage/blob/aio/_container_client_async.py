@@ -136,7 +136,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         container_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
@@ -181,7 +181,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         container_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """Create ContainerClient from a container url.
@@ -237,7 +237,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         container_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """Create ContainerClient from a Connection String.

@@ -484,7 +484,7 @@ class ContainerProperties(DictMixin):
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.immutable_storage_with_versioning_enabled = (
             generated.properties.is_immutable_storage_with_versioning_enabled
-        )  # pylint: disable=line-too-long, name-too-long
+        )  # pylint: disable=name-too-long
         props.deleted = generated.deleted
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
@@ -1480,8 +1480,8 @@ class BlobProperties(DictMixin):
         self.version_id = kwargs.get("x-ms-version-id")
         self.is_current_version = kwargs.get("x-ms-is-current-version")
         self.blob_type = (
-            BlobType(kwargs["x-ms-blob-type"]) if (kwargs.get("x-ms-blob-type")) else None
-        )  # type: ignore [assignment]
+            BlobType(kwargs["x-ms-blob-type"]) if (kwargs.get("x-ms-blob-type")) else None  # type: ignore [assignment]
+        )
         self.metadata = kwargs.get("metadata")  # type: ignore [assignment]
         self.encrypted_metadata = kwargs.get("encrypted_metadata")
         self.last_modified = kwargs.get("Last-Modified")  # type: ignore [assignment]

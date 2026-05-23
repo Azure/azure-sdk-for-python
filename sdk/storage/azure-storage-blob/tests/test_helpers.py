@@ -13,10 +13,10 @@ from requests import Response
 from typing_extensions import Self
 from urllib3 import HTTPResponse
 
-from azure.core.pipeline.transport import (
+from azure.core.pipeline.transport import (  # pylint: disable=no-name-in-module
     RequestsTransport,
     RequestsTransportResponse,
-)  # pylint: disable=no-name-in-module
+)
 from azure.core.rest import HttpRequest
 from azure.storage.blob._serialize import get_api_version
 

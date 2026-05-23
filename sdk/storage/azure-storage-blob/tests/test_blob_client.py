@@ -701,14 +701,14 @@ class TestStorageClient(StorageRecordedTestCase):
 
     def test_create_blob_client_with_sub_directory_path_in_blob_name(self):
         blob_url = (
-            "https://testaccount.blob.core.windows.net/containername/" "dir1/sub000/2010_Unit150_Ivan097_img0003.jpg"
+            "https://testaccount.blob.core.windows.net/containername/dir1/sub000/2010_Unit150_Ivan097_img0003.jpg"
         )
         blob_client = BlobClient.from_blob_url(blob_url)
         assert blob_client.container_name == "containername"
         assert blob_client.blob_name == "dir1/sub000/2010_Unit150_Ivan097_img0003.jpg"
 
         blob_emulator_url = (
-            "http://127.0.0.1:1000/devstoreaccount1/containername/" "dir1/sub000/2010_Unit150_Ivan097_img0003.jpg"
+            "http://127.0.0.1:1000/devstoreaccount1/containername/dir1/sub000/2010_Unit150_Ivan097_img0003.jpg"
         )
         blob_client = BlobClient.from_blob_url(blob_emulator_url)
         assert blob_client.container_name == "containername"
