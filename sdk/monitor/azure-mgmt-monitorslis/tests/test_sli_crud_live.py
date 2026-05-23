@@ -43,7 +43,14 @@ class TestSliCrudLive(AzureMgmtRecordedTestCase):
 
     def _get_sli_body(self):
         """Return a valid SLI resource body for create/update."""
+        identities = {MANAGED_IDENTITY_RESOURCE_ID: models.UserAssignedIdentity()}
+        if SOURCE_MANAGED_IDENTITY_RESOURCE_ID.lower() != MANAGED_IDENTITY_RESOURCE_ID.lower():
+            identities[SOURCE_MANAGED_IDENTITY_RESOURCE_ID] = models.UserAssignedIdentity()
         return models.Sli(
+            identity=models.ManagedServiceIdentity(
+                type="UserAssigned",
+                user_assigned_identities=identities,
+            ),
             properties=models.SliResource(
                 description=SLI_DESCRIPTION,
                 category="Latency",
@@ -63,29 +70,34 @@ class TestSliCrudLive(AzureMgmtRecordedTestCase):
                     )
                 ),
                 sli_properties=models.SliProperties(
-                    window_uptime_criteria=models.WindowUptimeCriteria(target=95, comparator="GreaterThanOrEqual"),
+                    window_uptime_criteria=models.WindowUptimeCriteria(target=95, comparator="gte"),
                     signals=models.Signal(
                         signal_sources=[
                             models.SignalSource(
                                 signal_source_id="A",
                                 source_amw_account_managed_identity=SOURCE_MANAGED_IDENTITY_RESOURCE_ID,
                                 source_amw_account_resource_id=SOURCE_AMW_RESOURCE_ID,
-                                metric_namespace="TestMetrics",
-                                metric_name="TestLatency",
+                                # Source metric is a real Azure Managed Prometheus metric scraped by AKS.
+                                # Test infra (bicep) deploys an AKS cluster with the Azure Monitor metrics addon
+                                # pointed at the source AMW; container_cpu_usage_seconds_total is always populated.
+                                metric_namespace="customdefault",
+                                metric_name="container_cpu_usage_seconds_total",
                                 filters=[
                                     models.Condition(
-                                        dimension_name="ApiName",
-                                        operator="Equal",
-                                        value="TestApi",
+                                        dimension_name="container",
+                                        # Use wire value "ne" directly (the generated ConditionOperator
+                                        # enum has incorrect values — tracked separately).
+                                        operator="ne",
+                                        value="POD",
                                     )
                                 ],
                                 spatial_aggregation=models.SpatialAggregation(
-                                    type="Average",
-                                    dimensions=["Region"],
+                                    type="Sum",
+                                    dimensions=["instance"],
                                 ),
                                 temporal_aggregation=models.TemporalAggregation(
-                                    type="Average",
-                                    window_size_minutes=5,
+                                    type="Rate",
+                                    window_size_minutes=1,
                                 ),
                             )
                         ],
