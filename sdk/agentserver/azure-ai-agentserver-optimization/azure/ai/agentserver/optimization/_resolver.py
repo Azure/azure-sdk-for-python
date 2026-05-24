@@ -37,34 +37,40 @@ _downloaded: set[str] = set()
 
 # API path and version constants
 _API_VERSION = "2025-11-15-preview"
-_JOBS_PATH = "agent_optimization_jobs"
 _AUTH_SCOPE = "https://ai.azure.com/.default"
 
 
 def resolve_candidate(
     candidate_id: str,
-    job_id: str,
     endpoint: str,
     local_dir: pathlib.Path | None = None,
 ) -> dict[str, Any] | None:
     """Resolve a candidate's full config from the optimization service.
 
+    ``endpoint`` should be the full job-scoped URL,
+    The resolver appends ``/candidates/{candidate_id}/config``.
+
     Downloads config and skills into ``local_dir/<candidate_id>/``
     following the standard local directory layout.
     Returns ``None`` if the call fails.
-    """
-    # Guard against path traversal in candidate_id
-    if local_dir is not None:
-        candidate_path_check = (local_dir / candidate_id).resolve()
-        if not str(candidate_path_check).startswith(str(local_dir.resolve())):
-            logger.error("Path traversal detected in candidate_id: %r — aborting", candidate_id)
-            return None
 
+    :param candidate_id: Candidate identifier.
+    :type candidate_id: str
+    :param endpoint: Full job-scoped endpoint URL.
+    :type endpoint: str
+    :param local_dir: Local directory for persisting config.
+    :type local_dir: pathlib.Path | None
+    :return: Candidate config dict, or ``None`` on failure.
+    :rtype: dict[str, Any] | None
+    """
     if candidate_id in _downloaded:
         if local_dir is not None and (local_dir / candidate_id).is_dir():
-            logger.debug("Candidate %s already downloaded — skipping", candidate_id)
+            logger.warning("Candidate %s already downloaded — skipping", candidate_id)
             return None
-        logger.warning("Candidate %s was downloaded but folder is missing — re-downloading", candidate_id)
+        logger.warning(
+            "Candidate %s was downloaded but folder is missing — re-downloading",
+            candidate_id,
+        )
         _downloaded.discard(candidate_id)
 
     client = _build_client(endpoint)
@@ -72,7 +78,7 @@ def resolve_candidate(
     # ── Step 1: Fetch config ─────────────────────────────────────────
     config = _api_get_json(
         client,
-        f"/{_JOBS_PATH}/{job_id}/candidates/{candidate_id}/config",
+        f"/candidates/{candidate_id}/config",
         params={"api-version": _API_VERSION},
     )
     if config is None:
@@ -80,12 +86,12 @@ def resolve_candidate(
         return None
 
     logger.info(
-        "Resolved candidate %s: model=%s, instructions=%d chars, skills=%d, tool_descriptions=%d",
+        "Resolved candidate %s: model=%s, instructions=%d chars, skills=%d, tool_definitions=%d",
         candidate_id,
         config.get("model", "?"),
         len(config.get("instructions", "")),
         len(config.get("skills", [])),
-        len(config.get("toolDescriptions", {}) or config.get("tool_descriptions", {})),
+        len(config.get("tools", [])),
     )
 
     # ── Step 2: Persist to local directory layout ────────────────────
@@ -93,9 +99,11 @@ def resolve_candidate(
         candidate_path = local_dir / candidate_id
         try:
             _persist_to_local_layout(candidate_path, config)
-            _download_skill_files(client, job_id, candidate_id, candidate_path)
+            _download_skill_files(client, candidate_id, candidate_path)
         except OSError as exc:
-            logger.warning("Failed to persist candidate %s to disk: %s", candidate_id, exc)
+            logger.warning(
+                "Failed to persist candidate %s to disk: %s", candidate_id, exc
+            )
         # Point skills_dir to the downloaded skills folder
         skills_path = candidate_path / OptimizationConfig.SKILLS_DIR
         if skills_path.is_dir():
@@ -106,7 +114,9 @@ def resolve_candidate(
     return config
 
 
-def _persist_to_local_layout(candidate_path: pathlib.Path, config: dict[str, Any]) -> None:
+def _persist_to_local_layout(
+    candidate_path: pathlib.Path, config: dict[str, Any]
+) -> None:
     """Write config into the standard local directory layout.
 
     Produces the same structure that ``_load_local_dir`` reads::
@@ -120,6 +130,11 @@ def _persist_to_local_layout(candidate_path: pathlib.Path, config: dict[str, Any
                 └── SKILL.md
 
     If the folder already exists it is removed and re-created.
+
+    :param candidate_path: Target directory for the candidate layout.
+    :type candidate_path: pathlib.Path
+    :param config: Candidate config dict from the API.
+    :type config: dict[str, Any]
     """
     if candidate_path.is_dir():
         logger.info("Overwriting existing candidate folder: %s", candidate_path)
@@ -145,15 +160,13 @@ def _persist_to_local_layout(candidate_path: pathlib.Path, config: dict[str, Any
         instr_file = candidate_path / OptimizationConfig.INSTRUCTIONS_FILE
         instr_file.write_text(instructions, encoding="utf-8")
 
-    # tools.json — write tool_descriptions / toolDescriptions as dict format
-    tool_data = config.get("tool_descriptions") or config.get("toolDescriptions")
+    # tools.json — write tool definitions in list format
     tools_list = config.get("tools")
-    if tool_data and isinstance(tool_data, dict):
+    if tools_list and isinstance(tools_list, list):
         tools_file = candidate_path / OptimizationConfig.TOOLS_FILE
-        tools_file.write_text(json.dumps(tool_data, indent=2, ensure_ascii=False), encoding="utf-8")
-    elif tools_list and isinstance(tools_list, list):
-        tools_file = candidate_path / OptimizationConfig.TOOLS_FILE
-        tools_file.write_text(json.dumps(tools_list, indent=2, ensure_ascii=False), encoding="utf-8")
+        tools_file.write_text(
+            json.dumps(tools_list, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
 
     # skills/ — write inline skills as <skills_dir>/<name>/SKILL.md
     inline_skills = config.get("skills", [])
@@ -176,21 +189,30 @@ def _persist_to_local_layout(candidate_path: pathlib.Path, config: dict[str, Any
                 lines.append(skill["body"])
             skill_file = skill_folder / OptimizationConfig.SKILL_FILE
             skill_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
-        logger.info("Persisted %d inline skill(s) to %s", len(inline_skills), skills_dir)
+        logger.info(
+            "Persisted %d inline skill(s) to %s", len(inline_skills), skills_dir
+        )
 
     logger.info("Persisted config to local layout: %s", candidate_path)
 
 
 def _download_skill_files(
     client: PipelineClient,
-    job_id: str,
     candidate_id: str,
     candidate_path: pathlib.Path,
 ) -> None:
-    """Fetch manifest and download skill files into candidate_path/skills/<name>/SKILL.md."""
+    """Fetch manifest and download skill files into candidate_path/skills/<name>/SKILL.md.
+
+    :param client: Azure PipelineClient for API calls.
+    :type client: PipelineClient
+    :param candidate_id: Candidate identifier.
+    :type candidate_id: str
+    :param candidate_path: Local directory for the candidate.
+    :type candidate_path: pathlib.Path
+    """
     manifest = _api_get_json(
         client,
-        f"/{_JOBS_PATH}/{job_id}/candidates/{candidate_id}",
+        f"/candidates/{candidate_id}",
         params={"api-version": _API_VERSION},
     )
     if manifest is None:
@@ -205,7 +227,8 @@ def _download_skill_files(
 
     logger.info(
         "Downloading %d skill file(s) for candidate %s",
-        len(skill_files), candidate_id,
+        len(skill_files),
+        candidate_id,
     )
 
     skills_dir = candidate_path / OptimizationConfig.SKILLS_DIR
@@ -216,7 +239,7 @@ def _download_skill_files(
 
         content = _api_get_text(
             client,
-            f"/{_JOBS_PATH}/{job_id}/candidates/{candidate_id}/files",
+            f"/candidates/{candidate_id}/files",
             params={"path": file_path, "api-version": _API_VERSION},
         )
         if content is None:
@@ -227,11 +250,13 @@ def _download_skill_files(
         rel_path = file_path
         prefix = OptimizationConfig.SKILLS_DIR + "/"
         if rel_path.startswith(prefix):
-            rel_path = rel_path[len(prefix):]
+            rel_path = rel_path[len(prefix) :]
 
         out_path = (skills_dir / rel_path).resolve()
         if not str(out_path).startswith(str(skills_dir.resolve())):
-            logger.warning("Path traversal detected in skill file path: %r — skipping", file_path)
+            logger.warning(
+                "Path traversal detected in skill file path: %r — skipping", file_path
+            )
             continue
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -240,7 +265,13 @@ def _download_skill_files(
 
 
 def _is_skill_file(file_entry: dict) -> bool:
-    """Check if a manifest entry is a skill file."""
+    """Check if a manifest entry is a skill file.
+
+    :param file_entry: Manifest entry dict.
+    :type file_entry: dict
+    :return: ``True`` if the entry represents a skill file.
+    :rtype: bool
+    """
     path = file_entry.get("path", "")
     file_type = file_entry.get("type", "")
     return file_type == "skill" or path.startswith("skills/")
@@ -250,7 +281,13 @@ def _is_skill_file(file_entry: dict) -> bool:
 
 
 def _build_client(endpoint: str) -> PipelineClient:
-    """Create a PipelineClient with credential-based auth and retry."""
+    """Create a PipelineClient with credential-based auth and retry.
+
+    :param endpoint: Base URL for the API.
+    :type endpoint: str
+    :return: Configured pipeline client.
+    :rtype: PipelineClient
+    """
     policies: list = [RetryPolicy()]
     try:
         from azure.identity import DefaultAzureCredential
@@ -258,14 +295,26 @@ def _build_client(endpoint: str) -> PipelineClient:
         credential = DefaultAzureCredential()
         policies.insert(0, BearerTokenCredentialPolicy(credential, _AUTH_SCOPE))
     except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
-        logger.debug("azure-identity not available or credentials failed — proceeding without auth")
+        logger.debug(
+            "azure-identity not available or credentials failed — proceeding without auth"
+        )
     return PipelineClient(base_url=endpoint, policies=policies)
 
 
 def _api_get_json(
     client: PipelineClient, path: str, params: dict[str, str] | None = None
 ) -> dict[str, Any] | None:
-    """GET a JSON endpoint, return parsed dict or None on failure."""
+    """GET a JSON endpoint, return parsed dict or None on failure.
+
+    :param client: Azure PipelineClient.
+    :type client: PipelineClient
+    :param path: API path to append to the base URL.
+    :type path: str
+    :param params: Query parameters.
+    :type params: dict[str, str] | None
+    :return: Parsed response dict or ``None``.
+    :rtype: dict[str, Any] | None
+    """
     url = f"{client._base_url.rstrip('/')}{path}"  # pylint: disable=protected-access
     request = HttpRequest("GET", url, params=params)
     logger.debug("GET %s", url)
@@ -283,7 +332,17 @@ def _api_get_json(
 def _api_get_text(
     client: PipelineClient, path: str, params: dict[str, str] | None = None
 ) -> str | None:
-    """GET an endpoint, return response body as text or None on failure."""
+    """GET an endpoint, return response body as text or None on failure.
+
+    :param client: Azure PipelineClient.
+    :type client: PipelineClient
+    :param path: API path to append to the base URL.
+    :type path: str
+    :param params: Query parameters.
+    :type params: dict[str, str] | None
+    :return: Response body text or ``None``.
+    :rtype: str | None
+    """
     url = f"{client._base_url.rstrip('/')}{path}"  # pylint: disable=protected-access
     request = HttpRequest("GET", url, params=params)
     logger.debug("GET %s", url)

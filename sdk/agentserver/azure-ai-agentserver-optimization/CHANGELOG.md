@@ -1,26 +1,24 @@
 # Release History
 
-## 1.0.0b1 (2026-05-22)
+## 1.0.0b1 (2026-05-24)
 
 ### Features Added
 
 - Initial beta release.
-- `load_config()` — single-call config loader with 4-priority resolution and graceful fallback (never crashes).
+- `load_config(*, config_dir, required)` — single-call config loader with 4-priority resolution and graceful fallback.
 - `load_skills_from_dir(path)` — load skills from a directory on demand (not loaded inline by `load_config`).
-- `OptimizationConfig` dataclass with instructions, model, temperature, skills_dir, tool descriptions, source tracking, candidate_id, and job_id.
-- `OptimizationConfig.apply_tool_descriptions(tools)` — patch `__doc__` on @tool-decorated functions from optimized descriptions.
+- `OptimizationConfig` dataclass with instructions, model, temperature, skills, skills_dir, tool_definitions, source, and candidate_id.
+- `OptimizationConfig.apply_tool_descriptions(tools)` — patch `__doc__`, `.description`, and `input_model` parameter descriptions on @tool-decorated functions from optimized tool definitions.
 - `OptimizationConfig.compose_instructions()` — append skill catalog to instructions.
-- `OptimizationConfig.get_tool_description(name)` / `get_tool_param_description(name, param)` — look up individual optimized descriptions.
 - `CandidateConfig` — typed representation of the resolver API payload.
 - `Skill` — learned skill model (name, description, body).
-- `ToolDescription` — optimized tool description model (description, parameters).
 - 4-priority resolution order:
   1. Inline JSON via `OPTIMIZATION_CONFIG` env var.
-  2. Resolver API via `OPTIMIZATION_CANDIDATE_ID` + `OPTIMIZATION_JOB_ID` + `OPTIMIZATION_RESOLVE_ENDPOINT`.
-  3. Local directory layout (`OPTIMIZATION_LOCAL_DIR`, defaults to `.agent_configs/`).
-  4. Caller-supplied defaults.
+  2. Resolver API via `OPTIMIZATION_CANDIDATE_ID` + `OPTIMIZATION_RESOLVE_ENDPOINT` (endpoint is the full job-scoped URL).
+  3. Local directory layout (`OPTIMIZATION_LOCAL_DIR` or `config_dir` param, defaults to `.agent_configs/`).
+  4. `required=True` raises `ValueError`; `required=False` returns `None`.
 - Local directory layout: `metadata.yaml` + `instructions.md` + `tools.json` + `skills/` per candidate, with `baseline/` fallback.
-- 3 tool description formats: `tool_descriptions` dict, `toolDescriptions` (legacy camelCase), and OpenAI function-calling `tools` list.
+- Tool definitions use the OpenAI function-calling list format exclusively.
 - Skill loading from `SKILL.md` files with YAML frontmatter.
-- Resolver API persists fetched configs to local directory for offline use.
-- Path traversal (zip-slip) protection on all untrusted path inputs.
+- Resolver API persists fetched configs and skill files to local directory for offline use.
+- Path traversal (zip-slip) protection on skill file downloads from the API.

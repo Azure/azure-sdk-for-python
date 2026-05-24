@@ -11,17 +11,14 @@ from azure.ai.agentserver.optimization import (
     CandidateConfig,
     OptimizationConfig,
     Skill,
-    ToolDescription,
     load_config,
 )
 from azure.ai.agentserver.optimization._models import (
     MetadataConfig,
     _parse_skills,
-    _parse_tool_descriptions,
-    _parse_tools_list,
 )
 from azure.ai.agentserver.optimization._config import (
-    _load_tool_descriptions,
+    _load_tool_definitions,
     _parse_simple_yaml,
     _parse_skill_frontmatter,
     _resolve_candidate_folder,
@@ -41,48 +38,32 @@ def clear_downloaded():
 
 
 class TestDefaults:
-    """When no env vars are set, load_config returns caller-supplied defaults."""
+    """When no env vars or config dir are set."""
 
-    def test_returns_default_instructions(self):
-        config = load_config(default_instructions="Be helpful.")
-        assert config.instructions == "Be helpful."
-        assert config.source == "defaults"
+    def test_required_true_raises_by_default(self):
+        with pytest.raises(ValueError, match="No optimization config found"):
+            load_config()
 
-    def test_returns_default_model(self):
-        config = load_config(default_model="gpt-4o")
-        assert config.model == "gpt-4o"
-
-    def test_returns_default_temperature(self):
-        config = load_config(default_temperature=0.5)
-        assert config.temperature == 0.5
-
-    def test_returns_default_skills_dir(self):
-        config = load_config(default_skills_dir="/some/path")
-        assert config.skills_dir == "/some/path"
-
-    def test_empty_skills_by_default(self):
-        config = load_config()
-        assert config.skills == []
-        assert not config.has_skills
-
-    def test_empty_tool_descriptions_by_default(self):
-        config = load_config()
-        assert config.tool_descriptions == {}
-        assert not config.has_tool_descriptions
+    def test_required_false_returns_none(self):
+        config = load_config(required=False)
+        assert config is None
 
     def test_falls_back_to_model_deployment_name_env(self, monkeypatch):
+        """MODEL_DEPLOYMENT_NAME is only used by priority 1/2, not by required=False."""
         monkeypatch.setenv("MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
-        config = load_config()
-        assert config.model == "gpt-4o-mini"
+        config = load_config(required=False)
+        assert config is None
 
-    def test_explicit_model_overrides_env(self, monkeypatch):
-        monkeypatch.setenv("MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
-        config = load_config(default_model="gpt-4o")
+    def test_config_dir_loads_baseline(self, monkeypatch, tmp_path):
+        """config_dir parameter points to a custom agent config folder."""
+        baseline = tmp_path / "baseline"
+        baseline.mkdir()
+        (baseline / "instructions.md").write_text("Custom dir prompt.")
+        (baseline / "metadata.yaml").write_text("model: gpt-4o\n")
+        config = load_config(config_dir=tmp_path)
+        assert config.instructions == "Custom dir prompt."
         assert config.model == "gpt-4o"
-
-    def test_default_instructions_value(self):
-        config = load_config()
-        assert config.instructions == "You are a helpful assistant."
+        assert config.source.startswith("local:")
 
 
 # ── Inline JSON env var (Priority 1) ────────────────────────────────
@@ -98,7 +79,7 @@ class TestEnvConfig:
             "temperature": 0.3,
         }
         monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(payload))
-        config = load_config(default_instructions="default")
+        config = load_config()
         assert config.instructions == "Optimized prompt."
         assert config.model == "gpt-4o"
         assert config.temperature == 0.3
@@ -124,37 +105,35 @@ class TestEnvConfig:
     def test_env_config_with_tool_descriptions(self, monkeypatch):
         payload = {
             "instructions": "With tools.",
-            "tool_descriptions": {
-                "lookup_travel_policy": {
-                    "description": "Look up the company travel policy.",
-                    "parameters": {},
+            "tools": [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "lookup_travel_policy",
+                        "description": "Look up the company travel policy.",
+                        "parameters": {"type": "object", "properties": {}},
+                    },
                 },
-                "check_department_budget": {
-                    "description": "Check remaining budget.",
-                    "parameters": {"dept": "Department name"},
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "check_department_budget",
+                        "description": "Check remaining budget.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "dept": {"type": "string", "description": "Department name"}
+                            },
+                        },
+                    },
                 },
-            },
+            ],
         }
         monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(payload))
         config = load_config()
-        assert config.has_tool_descriptions
-        assert "lookup_travel_policy" in config.tool_descriptions
-        td = config.tool_descriptions["check_department_budget"]
-        assert isinstance(td, ToolDescription)
-        assert td.description == "Check remaining budget."
-        assert td.parameters == {"dept": "Department name"}
+        assert len(config.tool_definitions) == 2
+        assert config.tool_definitions[0]["function"]["name"] == "lookup_travel_policy"
 
-    def test_env_config_with_legacy_toolDescriptions(self, monkeypatch):
-        payload = {
-            "instructions": "With tools.",
-            "toolDescriptions": {
-                "search": {"description": "Search something.", "parameters": {}},
-            },
-        }
-        monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(payload))
-        config = load_config()
-        assert config.has_tool_descriptions
-        assert "search" in config.tool_descriptions
 
     def test_env_config_with_tools_list(self, monkeypatch):
         """OpenAI function-calling list format is supported."""
@@ -178,61 +157,32 @@ class TestEnvConfig:
         }
         monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(payload))
         config = load_config()
-        assert config.has_tool_descriptions
-        assert "lookup_policy" in config.tool_descriptions
-        td = config.tool_descriptions["lookup_policy"]
-        assert td.description == "Look up policy"
-        assert td.parameters == {"dept": "Department name"}
+        assert len(config.tool_definitions) == 1
+        assert config.tool_definitions[0]["function"]["name"] == "lookup_policy"
 
-    def test_tool_descriptions_takes_priority_over_legacy(self, monkeypatch):
-        payload = {
-            "instructions": "Both.",
-            "tool_descriptions": {"new_tool": {"description": "New"}},
-            "toolDescriptions": {"old_tool": {"description": "Old"}},
-        }
-        monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(payload))
-        config = load_config()
-        assert "new_tool" in config.tool_descriptions
-        assert "old_tool" not in config.tool_descriptions
-
-    def test_tool_descriptions_takes_priority_over_tools_list(self, monkeypatch):
-        payload = {
-            "instructions": "Both.",
-            "tool_descriptions": {"dict_tool": {"description": "Dict"}},
-            "tools": [{"type": "function", "function": {"name": "list_tool", "description": "List"}}],
-        }
-        monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(payload))
-        config = load_config()
-        assert "dict_tool" in config.tool_descriptions
-        assert "list_tool" not in config.tool_descriptions
 
     def test_bad_json_falls_through(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CONFIG", "not-json{{{")
-        config = load_config(default_instructions="fallback")
-        assert config.instructions == "fallback"
-        assert config.source == "defaults"
+        config = load_config(required=False)
+        assert config is None
 
     def test_empty_env_var_ignored(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CONFIG", "   ")
-        config = load_config(default_instructions="fallback")
-        assert config.source == "defaults"
+        config = load_config(required=False)
+        assert config is None
 
-    def test_partial_config_uses_defaults(self, monkeypatch):
+    def test_partial_config_fills_none(self, monkeypatch):
         payload = {"model": "gpt-4o"}
         monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(payload))
-        config = load_config(
-            default_instructions="My default",
-            default_temperature=0.7,
-        )
-        assert config.instructions == "My default"
+        config = load_config()
+        assert config.instructions is None
         assert config.model == "gpt-4o"
-        assert config.temperature == 0.7
+        assert config.temperature is None
 
     def test_env_config_takes_priority_over_candidate_id(self, monkeypatch):
         payload = {"instructions": "From env."}
         monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(payload))
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "some-candidate")
-        monkeypatch.setenv("OPTIMIZATION_JOB_ID", "job-1")
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         config = load_config()
         assert config.source == "env:OPTIMIZATION_CONFIG"
@@ -242,7 +192,7 @@ class TestEnvConfig:
 
 
 class TestCandidateResolver:
-    """OPTIMIZATION_CANDIDATE_ID + JOB_ID + ENDPOINT triggers resolver API."""
+    """OPTIMIZATION_CANDIDATE_ID + ENDPOINT triggers resolver API."""
 
     def test_candidate_id_calls_resolver(self, monkeypatch):
         resolved = {
@@ -252,54 +202,41 @@ class TestCandidateResolver:
             "skills": [{"name": "s1", "description": "d1"}],
         }
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-123")
-        monkeypatch.setenv("OPTIMIZATION_JOB_ID", "job-42")
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, job_id, endpoint, local_dir=None: resolved,
+            lambda cid, endpoint, local_dir=None: resolved,
         )
         config = load_config()
         assert config.source == "api:candidate:cand-123"
         assert config.instructions == "Resolved prompt."
         assert config.candidate_id == "cand-123"
-        assert config.job_id == "job-42"
         assert len(config.skills) == 1
 
     def test_resolver_failure_falls_to_defaults(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "bad-id")
-        monkeypatch.setenv("OPTIMIZATION_JOB_ID", "job-1")
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, job_id, endpoint, local_dir=None: None,
+            lambda cid, endpoint, local_dir=None: None,
         )
-        config = load_config(default_instructions="fallback")
-        assert config.source == "defaults"
-        assert config.instructions == "fallback"
-
-    def test_missing_job_id_skips_resolver(self, monkeypatch):
-        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-1")
-        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
-        # No JOB_ID set
-        config = load_config(default_instructions="default")
-        assert config.source == "defaults"
+        config = load_config(required=False)
+        assert config is None
 
     def test_missing_endpoint_skips_resolver(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-1")
-        monkeypatch.setenv("OPTIMIZATION_JOB_ID", "job-1")
         # No ENDPOINT set
-        config = load_config(default_instructions="default")
-        assert config.source == "defaults"
+        config = load_config(required=False)
+        assert config is None
 
     def test_resolver_falls_to_local_dir(self, monkeypatch, tmp_path):
         """When resolver returns None, falls to local dir (priority 3)."""
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-local")
-        monkeypatch.setenv("OPTIMIZATION_JOB_ID", "job-1")
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, job_id, endpoint, local_dir=None: None,
+            lambda cid, endpoint, local_dir=None: None,
         )
         # Set up local dir with this candidate
         candidate_dir = tmp_path / "cand-local"
@@ -404,13 +341,15 @@ class TestLocalDir:
         candidate_dir.mkdir()
         (candidate_dir / "metadata.yaml").write_text("tool_file: tools.json\n")
         (candidate_dir / "instructions.md").write_text("With tools.")
-        tools = {"search": {"description": "Search stuff", "parameters": {"q": "query"}}}
+        tools = [
+            {"type": "function", "function": {"name": "search", "description": "Search stuff", "parameters": {"type": "object", "properties": {"q": {"type": "string", "description": "query"}}}}}
+        ]
         (candidate_dir / "tools.json").write_text(json.dumps(tools))
 
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         config = load_config()
-        assert "search" in config.tool_descriptions
-        assert config.tool_descriptions["search"].description == "Search stuff"
+        assert len(config.tool_definitions) == 1
+        assert config.tool_definitions[0]["function"]["name"] == "search"
 
     def test_loads_tools_list_from_local_dir(self, monkeypatch, tmp_path):
         """OpenAI function-calling list format in tools.json."""
@@ -436,71 +375,77 @@ class TestLocalDir:
 
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         config = load_config()
-        assert "get_weather" in config.tool_descriptions
-        assert config.tool_descriptions["get_weather"].description == "Get the weather"
-        assert config.tool_descriptions["get_weather"].parameters == {"city": "City name"}
+        assert len(config.tool_definitions) == 1
+        assert config.tool_definitions[0]["function"]["name"] == "get_weather"
 
-    def test_missing_instructions_uses_default(self, monkeypatch, tmp_path):
+    def test_missing_instructions_returns_none(self, monkeypatch, tmp_path):
         candidate_dir = tmp_path / "baseline"
         candidate_dir.mkdir()
         (candidate_dir / "metadata.yaml").write_text("model: gpt-4o\n")
 
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
-        config = load_config(default_instructions="My default")
-        assert config.instructions == "My default"
+        config = load_config()
+        assert config.instructions is None
+        assert config.model == "gpt-4o"
 
     def test_nonexistent_local_dir_falls_to_defaults(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent/path")
-        config = load_config(default_instructions="fallback")
-        assert config.source == "defaults"
+        config = load_config(required=False)
+        assert config is None
 
     def test_no_candidate_no_baseline_falls_to_defaults(self, monkeypatch, tmp_path):
         """Empty local dir with no baseline falls through."""
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
-        config = load_config(default_instructions="default")
-        assert config.source == "defaults"
+        config = load_config(required=False)
+        assert config is None
 
-    def test_metadata_traversal_instruction_file(self, monkeypatch, tmp_path):
-        """instruction_file with '../' in metadata.yaml is rejected."""
+    def test_metadata_instruction_file_outside_candidate(self, monkeypatch, tmp_path):
+        """instruction_file can point outside the candidate folder."""
         candidate_dir = tmp_path / "baseline"
         candidate_dir.mkdir()
+        shared = tmp_path / "shared_instructions.md"
+        shared.write_text("Shared prompt.")
         (candidate_dir / "metadata.yaml").write_text(
-            "instruction_file: ../../etc/passwd\n"
+            "instruction_file: ../shared_instructions.md\n"
         )
-        # Create the traversal target to prove it's NOT read
-        secret = tmp_path / "secret.txt"
-        secret.write_text("SECRET DATA")
-
-        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
-        config = load_config(default_instructions="safe default")
-        assert config.instructions == "safe default"
-        assert "SECRET" not in config.instructions
-
-    def test_metadata_traversal_skill_dir(self, monkeypatch, tmp_path):
-        """skill_dir with '../' in metadata.yaml is rejected."""
-        candidate_dir = tmp_path / "baseline"
-        candidate_dir.mkdir()
-        (candidate_dir / "metadata.yaml").write_text(
-            "skill_dir: ../../other_skills\n"
-        )
-        (candidate_dir / "instructions.md").write_text("ok")
 
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         config = load_config()
-        assert config.skills == []
+        assert config.instructions == "Shared prompt."
 
-    def test_metadata_traversal_tool_file(self, monkeypatch, tmp_path):
-        """tool_file with '../' in metadata.yaml is rejected."""
+    def test_metadata_skill_dir_outside_candidate(self, monkeypatch, tmp_path):
+        """skill_dir can point outside the candidate folder."""
         candidate_dir = tmp_path / "baseline"
         candidate_dir.mkdir()
-        (candidate_dir / "metadata.yaml").write_text(
-            "tool_file: ../../secrets.json\n"
-        )
         (candidate_dir / "instructions.md").write_text("ok")
+        shared_skills = tmp_path / "shared_skills" / "math"
+        shared_skills.mkdir(parents=True)
+        (shared_skills / "SKILL.md").write_text(
+            "---\nname: math\ndescription: Do math\n---\nBody."
+        )
+        (candidate_dir / "metadata.yaml").write_text(
+            "skill_dir: ../shared_skills\n"
+        )
 
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         config = load_config()
-        assert config.tool_descriptions == {}
+        assert config.skills_dir is not None
+
+    def test_metadata_tool_file_outside_candidate(self, monkeypatch, tmp_path):
+        """tool_file can point outside the candidate folder."""
+        candidate_dir = tmp_path / "baseline"
+        candidate_dir.mkdir()
+        (candidate_dir / "instructions.md").write_text("ok")
+        shared_tools = tmp_path / "shared_tools.json"
+        shared_tools.write_text('[{"type": "function", "function": {"name": "search", "description": "Search"}}]')
+        (candidate_dir / "metadata.yaml").write_text(
+            "tool_file: ../shared_tools.json\n"
+        )
+
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        config = load_config()
+        assert len(config.tool_definitions) == 1
+        assert config.tool_definitions[0]["function"]["name"] == "search"
 
 
 # ── _resolve_local_dir ──────────────────────────────────────────────
@@ -519,16 +464,31 @@ class TestResolveLocalDir:
         local_dir = _resolve_local_dir()
         assert local_dir == tmp_path
 
-    def test_rejects_dotdot_traversal(self, monkeypatch):
-        """OPTIMIZATION_LOCAL_DIR with '..' is rejected, falls back to default."""
-        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "../../etc/sensitive")
-        local_dir = _resolve_local_dir()
-        assert local_dir.name == ".agent_configs"
+    def test_config_dir_param_takes_priority_over_env(self, monkeypatch, tmp_path):
+        """config_dir argument wins over OPTIMIZATION_LOCAL_DIR env var."""
+        env_dir = tmp_path / "env_dir"
+        env_dir.mkdir()
+        param_dir = tmp_path / "param_dir"
+        param_dir.mkdir()
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(env_dir))
+        local_dir = _resolve_local_dir(str(param_dir))
+        assert local_dir == param_dir
 
-    def test_rejects_dotdot_in_absolute_path(self, monkeypatch, tmp_path):
-        """Even absolute paths with '..' are rejected."""
-        malicious = str(tmp_path / ".." / ".." / "etc")
-        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", malicious)
+    def test_config_dir_param_as_path_object(self, tmp_path):
+        """config_dir can be a Path object."""
+        from pathlib import Path
+        local_dir = _resolve_local_dir(Path(tmp_path))
+        assert local_dir == tmp_path
+
+    def test_env_var_whitespace_stripped(self, monkeypatch, tmp_path):
+        """Leading/trailing whitespace in OPTIMIZATION_LOCAL_DIR is stripped."""
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", f"  {tmp_path}  ")
+        local_dir = _resolve_local_dir()
+        assert local_dir == tmp_path
+
+    def test_empty_env_var_uses_default(self, monkeypatch):
+        """Empty OPTIMIZATION_LOCAL_DIR falls back to default."""
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "   ")
         local_dir = _resolve_local_dir()
         assert local_dir.name == ".agent_configs"
 
@@ -562,43 +522,47 @@ class TestResolveCandidateFolder:
         result = _resolve_candidate_folder(tmp_path, None)
         assert result is None
 
-    def test_rejects_traversal_candidate_id(self, tmp_path):
-        """candidate_id with '../' is rejected as path traversal."""
-        result = _resolve_candidate_folder(tmp_path, "../../etc")
-        assert result is None
-
-    def test_rejects_absolute_candidate_id(self, tmp_path):
-        """Absolute path in candidate_id is rejected."""
-        result = _resolve_candidate_folder(tmp_path, "/etc/passwd")
-        assert result is None
+    def test_empty_string_candidate_id_uses_baseline(self, tmp_path):
+        """Empty string candidate_id is falsy, falls to baseline."""
+        (tmp_path / "baseline").mkdir()
+        result = _resolve_candidate_folder(tmp_path, "")
+        assert result == tmp_path / "baseline"
 
 
 # ── Graceful error handling ─────────────────────────────────────────
 
 
 class TestGracefulErrorHandling:
-    """load_config never crashes — always returns a valid config."""
+    """load_config never crashes — always returns a valid config (unless required ValueError)."""
 
-    def test_unexpected_exception_returns_defaults(self, monkeypatch):
-        """Any unexpected error in _load_config_inner returns defaults."""
+    def test_unexpected_exception_returns_none(self, monkeypatch):
+        """Any unexpected error in _load_config_inner returns None."""
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config._load_config_inner",
             lambda **kwargs: (_ for _ in ()).throw(RuntimeError("boom")),
         )
-        config = load_config(default_instructions="safe")
-        assert config.source == "defaults"
-        assert config.instructions == "safe"
+        config = load_config(required=False)
+        assert config is None
 
-    def test_load_config_never_raises(self, monkeypatch):
-        """Even with corrupted env vars, load_config returns something."""
+    def test_load_config_never_raises_on_corrupt_env(self, monkeypatch):
+        """Even with corrupted env vars, load_config(required=False) returns None."""
         monkeypatch.setenv("OPTIMIZATION_CONFIG", "{invalid")
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "x")
-        monkeypatch.setenv("OPTIMIZATION_JOB_ID", "y")
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://nope")
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent")
-        config = load_config(default_instructions="fallback")
-        assert isinstance(config, OptimizationConfig)
-        assert config.instructions == "fallback"
+        config = load_config(required=False)
+        assert config is None
+
+    def test_required_true_raises_value_error(self):
+        """required=True (default) raises ValueError when no config found."""
+        with pytest.raises(ValueError, match="No optimization config found"):
+            load_config()
+
+    def test_required_true_not_caught_by_broad_except(self, monkeypatch):
+        """ValueError from required=True is NOT swallowed by the outer try/except."""
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent")
+        with pytest.raises(ValueError, match="baseline"):
+            load_config(required=True)
 
 
 # ── OptimizationConfig dataclass ────────────────────────────────────
@@ -649,38 +613,6 @@ class TestOptimizationConfig:
         )
         assert not config.has_skills
 
-    def test_has_tool_descriptions(self):
-        config = OptimizationConfig(
-            instructions="", model=None, temperature=None,
-            tool_descriptions={"t": ToolDescription(description="d")},
-        )
-        assert config.has_tool_descriptions
-
-    def test_no_tool_descriptions(self):
-        config = OptimizationConfig(
-            instructions="", model=None, temperature=None,
-        )
-        assert not config.has_tool_descriptions
-
-    def test_get_tool_description(self):
-        td = ToolDescription(description="Search things", parameters={"q": "query"})
-        config = OptimizationConfig(
-            instructions="", model=None, temperature=None,
-            tool_descriptions={"search": td},
-        )
-        assert config.get_tool_description("search") is td
-        assert config.get_tool_description("missing") is None
-
-    def test_get_tool_param_description(self):
-        td = ToolDescription(description="Search", parameters={"q": "The query"})
-        config = OptimizationConfig(
-            instructions="", model=None, temperature=None,
-            tool_descriptions={"search": td},
-        )
-        assert config.get_tool_param_description("search", "q") == "The query"
-        assert config.get_tool_param_description("search", "missing") is None
-        assert config.get_tool_param_description("missing", "q") is None
-
     def test_constants(self):
         assert OptimizationConfig.DEFAULT_LOCAL_DIR == ".agent_configs"
         assert OptimizationConfig.METADATA_FILE == "metadata.yaml"
@@ -689,31 +621,6 @@ class TestOptimizationConfig:
         assert OptimizationConfig.SKILLS_DIR == "skills"
         assert OptimizationConfig.SKILL_FILE == "SKILL.md"
         assert OptimizationConfig.BASELINE_DIR == "baseline"
-
-
-# ── ToolDescription ──────────────────────────────────────────────────
-
-
-class TestToolDescription:
-    """Tests for ToolDescription dataclass."""
-
-    def test_from_dict(self):
-        td = ToolDescription.from_dict({
-            "description": "Search things",
-            "parameters": {"q": "The query", "limit": "Max results"},
-        })
-        assert td.description == "Search things"
-        assert td.parameters == {"q": "The query", "limit": "Max results"}
-
-    def test_from_dict_defaults(self):
-        td = ToolDescription.from_dict({})
-        assert td.description == ""
-        assert td.parameters == {}
-
-    def test_from_dict_missing_parameters(self):
-        td = ToolDescription.from_dict({"description": "No params"})
-        assert td.description == "No params"
-        assert td.parameters == {}
 
 
 # ── CandidateConfig ─────────────────────────────────────────────────
@@ -732,16 +639,10 @@ class TestCandidateConfig:
                 {"name": "budget-checker", "description": "Check budget", "body": "# Budget"},
                 {"name": "policy-reviewer", "description": "Review policy"},
             ],
-            "tool_descriptions": {
-                "lookup_travel_policy": {
-                    "description": "Look up travel policy.",
-                    "parameters": {},
-                },
-                "get_flight_alternatives": {
-                    "description": "Find cheaper flights.",
-                    "parameters": {"destination": "The destination city"},
-                },
-            },
+            "tools": [
+                {"type": "function", "function": {"name": "lookup_travel_policy", "description": "Look up travel policy."}},
+                {"type": "function", "function": {"name": "get_flight_alternatives", "description": "Find cheaper flights.", "parameters": {"type": "object", "properties": {"destination": {"type": "string", "description": "The destination city"}}}}},
+            ],
         }
         candidate = CandidateConfig.from_dict(payload)
         assert candidate.name == "travel-agent-v2"
@@ -751,10 +652,8 @@ class TestCandidateConfig:
         assert len(candidate.skills) == 2
         assert candidate.skills[0].name == "budget-checker"
         assert candidate.skills[0].body == "# Budget"
-        assert len(candidate.tool_descriptions) == 2
-        td = candidate.tool_descriptions["get_flight_alternatives"]
-        assert td.description == "Find cheaper flights."
-        assert td.parameters["destination"] == "The destination city"
+        assert len(candidate.tool_definitions) == 2
+        assert candidate.tool_definitions[1]["function"]["name"] == "get_flight_alternatives"
 
     def test_minimal_payload(self):
         candidate = CandidateConfig.from_dict({})
@@ -763,16 +662,7 @@ class TestCandidateConfig:
         assert candidate.model is None
         assert candidate.temperature is None
         assert candidate.skills == []
-        assert candidate.tool_descriptions == {}
-
-    def test_legacy_toolDescriptions_key(self):
-        payload = {
-            "toolDescriptions": {
-                "search": {"description": "Search", "parameters": {}},
-            },
-        }
-        candidate = CandidateConfig.from_dict(payload)
-        assert "search" in candidate.tool_descriptions
+        assert candidate.tool_definitions == []
 
     def test_tools_list_format(self):
         payload = {
@@ -793,9 +683,28 @@ class TestCandidateConfig:
             ],
         }
         candidate = CandidateConfig.from_dict(payload)
-        assert "get_weather" in candidate.tool_descriptions
-        assert candidate.tool_descriptions["get_weather"].description == "Get weather"
-        assert candidate.tool_descriptions["get_weather"].parameters == {"city": "City"}
+        assert len(candidate.tool_definitions) == 1
+        assert candidate.tool_definitions[0]["function"]["name"] == "get_weather"
+
+    def test_tools_non_list_ignored(self):
+        """Non-list tools value is coerced to empty list."""
+        candidate = CandidateConfig.from_dict({"tools": "not a list"})
+        assert candidate.tool_definitions == []
+
+    def test_tools_dict_ignored(self):
+        """Dict tools value is coerced to empty list."""
+        candidate = CandidateConfig.from_dict({"tools": {"a": "b"}})
+        assert candidate.tool_definitions == []
+
+    def test_tools_none_ignored(self):
+        """None tools value results in empty list."""
+        candidate = CandidateConfig.from_dict({"tools": None})
+        assert candidate.tool_definitions == []
+
+    def test_no_job_id_field(self):
+        """OptimizationConfig no longer carries a job_id field."""
+        candidate = CandidateConfig.from_dict({"instructions": "test"})
+        assert not hasattr(candidate, "job_id")
 
 
 # ── MetadataConfig ──────────────────────────────────────────────────
@@ -821,6 +730,16 @@ class TestMetadataConfig:
         assert meta.instruction_file == "instructions.md"
         assert meta.skill_dir == "skills"
         assert meta.tool_file == "tools.json"
+
+    def test_custom_file_paths(self):
+        meta = MetadataConfig.from_dict({
+            "instruction_file": "prompt.txt",
+            "skill_dir": "my_skills",
+            "tool_file": "my_tools.json",
+        })
+        assert meta.instruction_file == "prompt.txt"
+        assert meta.skill_dir == "my_skills"
+        assert meta.tool_file == "my_tools.json"
 
 
 # ── _parse_skills ───────────────────────────────────────────────────
@@ -860,150 +779,11 @@ class TestParseSkills:
         assert len(result) == 2
 
 
-# ── _parse_tool_descriptions ────────────────────────────────────────
+# ── _load_tool_definitions (file loading) ───────────────────────────
 
 
-class TestParseToolDescriptions:
-    """Tests for _parse_tool_descriptions edge cases."""
-
-    def test_empty_data(self):
-        assert _parse_tool_descriptions({}) == {}
-
-    def test_tool_descriptions_dict(self):
-        data = {"tool_descriptions": {"t1": {"description": "D1", "parameters": {}}}}
-        result = _parse_tool_descriptions(data)
-        assert "t1" in result
-        assert result["t1"].description == "D1"
-
-    def test_toolDescriptions_camelCase(self):
-        data = {"toolDescriptions": {"t2": {"description": "D2"}}}
-        result = _parse_tool_descriptions(data)
-        assert "t2" in result
-
-    def test_tool_descriptions_wins_over_toolDescriptions(self):
-        data = {
-            "tool_descriptions": {"winner": {"description": "W"}},
-            "toolDescriptions": {"loser": {"description": "L"}},
-        }
-        result = _parse_tool_descriptions(data)
-        assert "winner" in result
-        assert "loser" not in result
-
-    def test_tools_list_fallback(self):
-        data = {
-            "tools": [
-                {"type": "function", "function": {"name": "f1", "description": "Func"}},
-            ]
-        }
-        result = _parse_tool_descriptions(data)
-        assert "f1" in result
-        assert result["f1"].description == "Func"
-
-    def test_string_value_coerced(self):
-        data = {"tool_descriptions": {"t": "just a string"}}
-        result = _parse_tool_descriptions(data)
-        assert result["t"].description == "just a string"
-
-    def test_non_dict_raw_ignored(self):
-        data = {"tool_descriptions": "not a dict"}
-        result = _parse_tool_descriptions(data)
-        assert result == {}
-
-
-# ── _parse_tools_list ────────────────────────────────────────────────
-
-
-class TestParseToolsList:
-    """Tests for _parse_tools_list (OpenAI function-calling format)."""
-
-    def test_basic(self):
-        tools = [
-            {
-                "type": "function",
-                "function": {
-                    "name": "search",
-                    "description": "Search things",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "q": {"type": "string", "description": "Query"},
-                        },
-                    },
-                },
-            },
-        ]
-        result = _parse_tools_list(tools)
-        assert "search" in result
-        assert result["search"].description == "Search things"
-        assert result["search"].parameters == {"q": "Query"}
-
-    def test_no_parameters(self):
-        tools = [
-            {"type": "function", "function": {"name": "noop", "description": "Do nothing"}},
-        ]
-        result = _parse_tools_list(tools)
-        assert result["noop"].parameters == {}
-
-    def test_skips_non_dict_items(self):
-        result = _parse_tools_list(["garbage", 42])
-        assert result == {}
-
-    def test_skips_items_without_function(self):
-        result = _parse_tools_list([{"type": "code_interpreter"}])
-        assert result == {}
-
-    def test_skips_items_without_name(self):
-        result = _parse_tools_list([
-            {"type": "function", "function": {"description": "nameless"}},
-        ])
-        assert result == {}
-
-    def test_empty_list(self):
-        assert _parse_tools_list([]) == {}
-
-    def test_param_without_description_skipped(self):
-        tools = [
-            {
-                "type": "function",
-                "function": {
-                    "name": "f",
-                    "description": "F",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "has_desc": {"type": "string", "description": "Yes"},
-                            "no_desc": {"type": "integer"},
-                        },
-                    },
-                },
-            },
-        ]
-        result = _parse_tools_list(tools)
-        assert result["f"].parameters == {"has_desc": "Yes"}
-
-    def test_multiple_functions(self):
-        tools = [
-            {"type": "function", "function": {"name": "a", "description": "A"}},
-            {"type": "function", "function": {"name": "b", "description": "B"}},
-        ]
-        result = _parse_tools_list(tools)
-        assert len(result) == 2
-
-
-# ── _load_tool_descriptions (file loading) ──────────────────────────
-
-
-class TestLoadToolDescriptions:
-    """Tests for _load_tool_descriptions from tools.json."""
-
-    def test_load_dict_format(self, tmp_path):
-        tool_file = tmp_path / "tools.json"
-        tools = {"my_tool": {"description": "My tool", "parameters": {"x": "input"}}}
-        tool_file.write_text(json.dumps(tools))
-        result = _load_tool_descriptions(tool_file)
-        assert "my_tool" in result
-        assert isinstance(result["my_tool"], ToolDescription)
-        assert result["my_tool"].parameters == {"x": "input"}
+class TestLoadToolDefinitions:
+    """Tests for _load_tool_definitions from tools.json."""
 
     def test_load_list_format(self, tmp_path):
         tool_file = tmp_path / "tools.json"
@@ -1011,31 +791,49 @@ class TestLoadToolDescriptions:
             {"type": "function", "function": {"name": "f1", "description": "Func 1"}},
         ]
         tool_file.write_text(json.dumps(tools))
-        result = _load_tool_descriptions(tool_file)
-        assert "f1" in result
-        assert result["f1"].description == "Func 1"
+        result = _load_tool_definitions(tool_file)
+        assert len(result) == 1
+        assert result[0]["function"]["name"] == "f1"
 
     def test_missing_file_returns_empty(self, tmp_path):
-        result = _load_tool_descriptions(tmp_path / "nonexistent.json")
-        assert result == {}
+        result = _load_tool_definitions(tmp_path / "nonexistent.json")
+        assert result == []
 
     def test_bad_json_returns_empty(self, tmp_path):
         tool_file = tmp_path / "tools.json"
         tool_file.write_text("not json")
-        result = _load_tool_descriptions(tool_file)
-        assert result == {}
+        result = _load_tool_definitions(tool_file)
+        assert result == []
 
-    def test_non_dict_non_list_returns_empty(self, tmp_path):
+    def test_non_list_returns_empty(self, tmp_path):
         tool_file = tmp_path / "tools.json"
         tool_file.write_text('"just a string"')
-        result = _load_tool_descriptions(tool_file)
-        assert result == {}
+        result = _load_tool_definitions(tool_file)
+        assert result == []
 
-    def test_string_value_in_dict(self, tmp_path):
+    def test_dict_format_returns_empty(self, tmp_path):
         tool_file = tmp_path / "tools.json"
         tool_file.write_text(json.dumps({"t": "simple description"}))
-        result = _load_tool_descriptions(tool_file)
-        assert result["t"].description == "simple description"
+        result = _load_tool_definitions(tool_file)
+        assert result == []
+
+    def test_empty_list_returns_empty(self, tmp_path):
+        tool_file = tmp_path / "tools.json"
+        tool_file.write_text("[]")
+        result = _load_tool_definitions(tool_file)
+        assert result == []
+
+    def test_multiple_tools(self, tmp_path):
+        tool_file = tmp_path / "tools.json"
+        tools = [
+            {"type": "function", "function": {"name": "a", "description": "A"}},
+            {"type": "function", "function": {"name": "b", "description": "B"}},
+        ]
+        tool_file.write_text(json.dumps(tools))
+        result = _load_tool_definitions(tool_file)
+        assert len(result) == 2
+        assert result[0]["function"]["name"] == "a"
+        assert result[1]["function"]["name"] == "b"
 
 
 # ── Skill frontmatter parsing ───────────────────────────────────────
@@ -1127,21 +925,29 @@ class TestSimpleYaml:
 class TestApplyToolDescriptions:
     """Tests for OptimizationConfig.apply_tool_descriptions."""
 
-    def _make_config(self, tool_descriptions=None):
+    @staticmethod
+    def _tool_def(name, description="", parameters=None):
+        """Helper to build a tool definition dict."""
+        func = {"name": name, "description": description}
+        if parameters:
+            func["parameters"] = parameters
+        return {"type": "function", "function": func}
+
+    def _make_config(self, tool_definitions=None):
         return OptimizationConfig(
             instructions="test",
             model=None,
             temperature=None,
-            tool_descriptions=tool_descriptions or {},
+            tool_definitions=tool_definitions or [],
         )
 
     def test_patches_docstring(self):
         def lookup_policy():
             """Original description."""
 
-        config = self._make_config(
-            {"lookup_policy": ToolDescription(description="Optimized description.")}
-        )
+        config = self._make_config([
+            self._tool_def("lookup_policy", "Optimized description."),
+        ])
         result = config.apply_tool_descriptions([lookup_policy])
         assert result is not None
         assert lookup_policy.__doc__ == "Optimized description."
@@ -1150,20 +956,20 @@ class TestApplyToolDescriptions:
         def my_tool():
             """Original."""
 
-        config = self._make_config(
-            {"my_tool": ToolDescription(description="New.")}
-        )
+        config = self._make_config([
+            self._tool_def("my_tool", "New."),
+        ])
         tools = [my_tool]
         result = config.apply_tool_descriptions(tools)
         assert result is tools
 
-    def test_skips_tools_not_in_descriptions(self):
+    def test_skips_tools_not_in_definitions(self):
         def unknown_tool():
             """Should not change."""
 
-        config = self._make_config(
-            {"other_tool": ToolDescription(description="Something.")}
-        )
+        config = self._make_config([
+            self._tool_def("other_tool", "Something."),
+        ])
         config.apply_tool_descriptions([unknown_tool])
         assert unknown_tool.__doc__ == "Should not change."
 
@@ -1171,13 +977,13 @@ class TestApplyToolDescriptions:
         def my_tool():
             """Original doc."""
 
-        config = self._make_config(
-            {"my_tool": ToolDescription(description="")}
-        )
+        config = self._make_config([
+            self._tool_def("my_tool", ""),
+        ])
         config.apply_tool_descriptions([my_tool])
         assert my_tool.__doc__ == "Original doc."
 
-    def test_noop_when_no_tool_descriptions(self):
+    def test_noop_when_no_tool_definitions(self):
         def my_tool():
             """Keep me."""
 
@@ -1187,9 +993,9 @@ class TestApplyToolDescriptions:
 
     def test_handles_objects_without_name(self):
         """Non-function items without __name__ are silently skipped."""
-        config = self._make_config(
-            {"something": ToolDescription(description="X.")}
-        )
+        config = self._make_config([
+            self._tool_def("something", "X."),
+        ])
         obj = object()
         # Should not raise
         config.apply_tool_descriptions([obj])
@@ -1204,10 +1010,10 @@ class TestApplyToolDescriptions:
         def tool_c():
             """C original."""
 
-        config = self._make_config({
-            "tool_a": ToolDescription(description="A optimized."),
-            "tool_c": ToolDescription(description="C optimized."),
-        })
+        config = self._make_config([
+            self._tool_def("tool_a", "A optimized."),
+            self._tool_def("tool_c", "C optimized."),
+        ])
         config.apply_tool_descriptions([tool_a, tool_b, tool_c])
         assert tool_a.__doc__ == "A optimized."
         assert tool_b.__doc__ == "B original."
@@ -1220,9 +1026,9 @@ class TestApplyToolDescriptions:
             __doc__ = "Original."
 
         tool = FakeTool()
-        config = self._make_config(
-            {"my_tool": ToolDescription(description="Patched via .name attr.")}
-        )
+        config = self._make_config([
+            self._tool_def("my_tool", "Patched via .name attr."),
+        ])
         config.apply_tool_descriptions([tool])
         assert tool.__doc__ == "Patched via .name attr."
 
@@ -1233,9 +1039,9 @@ class TestApplyToolDescriptions:
 
         search_flights.description = "Original."  # type: ignore[attr-defined]
 
-        config = self._make_config(
-            {"search_flights": ToolDescription(description="Optimized flights search.")}
-        )
+        config = self._make_config([
+            self._tool_def("search_flights", "Optimized flights search."),
+        ])
         config.apply_tool_descriptions([search_flights])
         assert search_flights.description == "Optimized flights search."  # type: ignore[attr-defined]
         assert search_flights.__doc__ == "Optimized flights search."
@@ -1251,9 +1057,9 @@ class TestApplyToolDescriptions:
                 return "read-only"
 
         tool = ReadOnlyTool()
-        config = self._make_config(
-            {"my_tool": ToolDescription(description="Patched.")}
-        )
+        config = self._make_config([
+            self._tool_def("my_tool", "Patched."),
+        ])
         config.apply_tool_descriptions([tool])
         assert tool.__doc__ == "Patched."
         assert tool.description == "read-only"  # unchanged
@@ -1280,12 +1086,14 @@ class TestApplyToolDescriptions:
 
         search_flights.input_model = FakeInputModel  # type: ignore[attr-defined]
 
-        config = self._make_config({
-            "search_flights": ToolDescription(
-                description="Find flights.",
-                parameters={"destination": "The travel destination city"},
-            ),
-        })
+        config = self._make_config([
+            self._tool_def("search_flights", "Find flights.", parameters={
+                "type": "object",
+                "properties": {
+                    "destination": {"type": "string", "description": "The travel destination city"},
+                },
+            }),
+        ])
         config.apply_tool_descriptions([search_flights])
         assert search_flights.__doc__ == "Find flights."
         assert FakeInputModel.model_fields["destination"].description == "The travel destination city"
@@ -1297,12 +1105,12 @@ class TestApplyToolDescriptions:
         def my_tool():
             """Original."""
 
-        config = self._make_config({
-            "my_tool": ToolDescription(
-                description="New.",
-                parameters={"x": "Some param"},
-            ),
-        })
+        config = self._make_config([
+            self._tool_def("my_tool", "New.", parameters={
+                "type": "object",
+                "properties": {"x": {"type": "string", "description": "Some param"}},
+            }),
+        ])
         config.apply_tool_descriptions([my_tool])
         assert my_tool.__doc__ == "New."
 
@@ -1325,12 +1133,12 @@ class TestApplyToolDescriptions:
 
         my_tool.input_model = FakeInputModel  # type: ignore[attr-defined]
 
-        config = self._make_config({
-            "my_tool": ToolDescription(
-                description="New doc.",
-                parameters={"unknown_param": "Should be ignored"},
-            ),
-        })
+        config = self._make_config([
+            self._tool_def("my_tool", "New doc.", parameters={
+                "type": "object",
+                "properties": {"unknown_param": {"type": "string", "description": "Should be ignored"}},
+            }),
+        ])
         config.apply_tool_descriptions([my_tool])
         assert FakeInputModel.model_fields["known"].description == "Known param"
         assert FakeInputModel._rebuild_called is False
@@ -1354,16 +1162,201 @@ class TestApplyToolDescriptions:
 
         my_tool.input_model = FakeInputModel  # type: ignore[attr-defined]
 
-        config = self._make_config({
-            "my_tool": ToolDescription(description="New.", parameters={}),
-        })
+        config = self._make_config([
+            self._tool_def("my_tool", "New."),
+        ])
         config.apply_tool_descriptions([my_tool])
         assert FakeInputModel._rebuild_called is False
 
     def test_empty_tools_list(self):
         """Passing an empty list is fine."""
-        config = self._make_config(
-            {"tool": ToolDescription(description="X.")}
-        )
+        config = self._make_config([
+            self._tool_def("tool", "X."),
+        ])
         result = config.apply_tool_descriptions([])
         assert result == []
+
+    def test_non_dict_items_in_tool_definitions_ignored(self):
+        """Non-dict entries in tool_definitions are silently skipped."""
+        def my_tool():
+            """Original."""
+
+        config = self._make_config([
+            "not a dict",
+            42,
+            self._tool_def("my_tool", "Patched."),
+        ])
+        config.apply_tool_descriptions([my_tool])
+        assert my_tool.__doc__ == "Patched."
+
+    def test_tool_definition_without_function_key_ignored(self):
+        """Tool definition dict without 'function' key is skipped."""
+        def my_tool():
+            """Original."""
+
+        config = self._make_config([
+            {"type": "function"},  # missing 'function' key
+            self._tool_def("my_tool", "Patched."),
+        ])
+        config.apply_tool_descriptions([my_tool])
+        assert my_tool.__doc__ == "Patched."
+
+
+# ── OptimizationConfig field checks ─────────────────────────────────
+
+
+class TestOptimizationConfigFields:
+    """Verify OptimizationConfig fields after recent refactors."""
+
+    def test_no_job_id_field(self):
+        """job_id was removed — OptimizationConfig should not have it."""
+        config = OptimizationConfig(instructions="test")
+        assert not hasattr(config, "job_id")
+
+    def test_no_env_job_id_classvar(self):
+        """ENV_JOB_ID ClassVar was removed."""
+        assert not hasattr(OptimizationConfig, "ENV_JOB_ID")
+
+    def test_has_candidate_id(self):
+        config = OptimizationConfig(instructions="test", candidate_id="cand-1")
+        assert config.candidate_id == "cand-1"
+
+    def test_tool_definitions_is_list(self):
+        config = OptimizationConfig(
+            instructions="test",
+            tool_definitions=[{"type": "function", "function": {"name": "f"}}],
+        )
+        assert isinstance(config.tool_definitions, list)
+        assert len(config.tool_definitions) == 1
+
+    def test_default_tool_definitions_empty(self):
+        config = OptimizationConfig(instructions="test")
+        assert config.tool_definitions == []
+
+
+# ── Priority ordering ───────────────────────────────────────────────
+
+
+class TestPriorityOrdering:
+    """Verify the priority resolution: env > resolver > local > defaults."""
+
+    def test_env_beats_resolver(self, monkeypatch):
+        """Priority 1 (env) wins over Priority 2 (resolver)."""
+        monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps({"instructions": "from env"}))
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-1")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        config = load_config()
+        assert config.source == "env:OPTIMIZATION_CONFIG"
+        assert config.instructions == "from env"
+
+    def test_resolver_beats_local(self, monkeypatch, tmp_path):
+        """Priority 2 (resolver) wins over Priority 3 (local)."""
+        # Set up local dir with baseline
+        baseline = tmp_path / "baseline"
+        baseline.mkdir()
+        (baseline / "instructions.md").write_text("From local.")
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+
+        # Set up resolver to succeed
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-1")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: {"instructions": "From resolver."},
+        )
+        config = load_config()
+        assert config.source == "api:candidate:cand-1"
+        assert config.instructions == "From resolver."
+
+    def test_local_is_last_resort(self, monkeypatch, tmp_path):
+        """Priority 3 (local) used when no env var and no resolver."""
+        baseline = tmp_path / "baseline"
+        baseline.mkdir()
+        (baseline / "instructions.md").write_text("From local.")
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        config = load_config()
+        assert config.source.startswith("local:")
+        assert config.instructions == "From local."
+
+    def test_candidate_id_without_endpoint_falls_to_local(self, monkeypatch, tmp_path):
+        """candidate_id without endpoint skips resolver, uses local."""
+        baseline = tmp_path / "baseline"
+        baseline.mkdir()
+        (baseline / "instructions.md").write_text("Local fallback.")
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-1")
+        # No OPTIMIZATION_RESOLVE_ENDPOINT set
+        config = load_config()
+        assert config.source.startswith("local:")
+
+    def test_resolver_provides_skills_dir(self, monkeypatch):
+        """Resolver response with skills_dir is passed through to OptimizationConfig."""
+        resolved = {
+            "instructions": "With skills.",
+            "skills_dir": "/some/path/skills",
+        }
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-1")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved,
+        )
+        config = load_config()
+        assert config.skills_dir == "/some/path/skills"
+
+    def test_resolver_provides_tool_definitions(self, monkeypatch):
+        """Resolver response with tools list is parsed into tool_definitions."""
+        resolved = {
+            "instructions": "With tools.",
+            "tools": [
+                {"type": "function", "function": {"name": "search", "description": "Find stuff"}},
+            ],
+        }
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-1")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved,
+        )
+        config = load_config()
+        assert len(config.tool_definitions) == 1
+        assert config.tool_definitions[0]["function"]["name"] == "search"
+
+
+# ── config_dir parameter ────────────────────────────────────────────
+
+
+class TestConfigDirParam:
+    """Tests for the config_dir parameter of load_config."""
+
+    def test_config_dir_string(self, tmp_path):
+        baseline = tmp_path / "baseline"
+        baseline.mkdir()
+        (baseline / "instructions.md").write_text("String dir.")
+        config = load_config(config_dir=str(tmp_path))
+        assert config.instructions == "String dir."
+
+    def test_config_dir_path_object(self, tmp_path):
+        from pathlib import Path
+        baseline = tmp_path / "baseline"
+        baseline.mkdir()
+        (baseline / "instructions.md").write_text("Path dir.")
+        config = load_config(config_dir=Path(tmp_path))
+        assert config.instructions == "Path dir."
+
+    def test_config_dir_nonexistent_required_false(self, tmp_path):
+        config = load_config(config_dir=tmp_path / "nope", required=False)
+        assert config is None
+
+    def test_config_dir_nonexistent_required_true(self, tmp_path):
+        with pytest.raises(ValueError, match="baseline"):
+            load_config(config_dir=tmp_path / "nope")
+
+    def test_config_dir_with_candidate(self, tmp_path, monkeypatch):
+        """config_dir + OPTIMIZATION_CANDIDATE_ID selects the right folder."""
+        cand_dir = tmp_path / "my-cand"
+        cand_dir.mkdir()
+        (cand_dir / "instructions.md").write_text("Candidate instructions.")
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "my-cand")
+        config = load_config(config_dir=tmp_path)
+        assert config.instructions == "Candidate instructions."

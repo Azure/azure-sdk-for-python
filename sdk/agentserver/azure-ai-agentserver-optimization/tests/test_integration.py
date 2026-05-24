@@ -11,7 +11,6 @@ import pytest
 from azure.ai.agentserver.optimization import (
     OptimizationConfig,
     Skill,
-    ToolDescription,
     load_config,
     load_skills_from_dir,
 )
@@ -34,16 +33,29 @@ class TestLoadConfigAndApplyTools:
             "instructions": "Optimized prompt.",
             "model": "gpt-4o",
             "temperature": 0.5,
-            "tool_descriptions": {
-                "search_flights": {
-                    "description": "Find the cheapest flight options.",
-                    "parameters": {"destination": "City name"},
+            "tools": [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "search_flights",
+                        "description": "Find the cheapest flight options.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "destination": {"type": "string", "description": "City name"},
+                            },
+                        },
+                    },
                 },
-                "book_hotel": {
-                    "description": "Reserve a hotel room.",
-                    "parameters": {},
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "book_hotel",
+                        "description": "Reserve a hotel room.",
+                        "parameters": {"type": "object", "properties": {}},
+                    },
                 },
-            },
+            ],
         }
         monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(cfg))
 
@@ -56,10 +68,10 @@ class TestLoadConfigAndApplyTools:
         def unrelated_tool():
             """Should stay unchanged."""
 
-        config = load_config(default_instructions="fallback")
+        config = load_config()
         assert config.source == "env:OPTIMIZATION_CONFIG"
         assert config.instructions == "Optimized prompt."
-        assert config.has_tool_descriptions
+        assert len(config.tool_definitions) == 2
 
         tools = config.apply_tool_descriptions([search_flights, book_hotel, unrelated_tool])
         assert search_flights.__doc__ == "Find the cheapest flight options."
@@ -95,7 +107,6 @@ class TestLoadConfigAndApplyTools:
         config = load_config()
         config.apply_tool_descriptions([lookup_policy])
         assert lookup_policy.__doc__ == "Look up travel policy."
-        assert config.get_tool_param_description("lookup_policy", "dept") == "Department name"
 
 
 class TestLoadConfigAndLoadSkills:
@@ -121,13 +132,13 @@ class TestLoadConfigAndLoadSkills:
         )
 
         # Create tools.json
-        tools_data = {
-            "search": {"description": "Search destinations.", "parameters": {"q": "Query"}},
-        }
+        tools_data = [
+            {"type": "function", "function": {"name": "search", "description": "Search destinations.", "parameters": {"type": "object", "properties": {"q": {"type": "string", "description": "Query"}}}}},
+        ]
         (candidate_dir / "tools.json").write_text(json.dumps(tools_data))
 
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
-        config = load_config(default_instructions="fallback")
+        config = load_config()
 
         # Verify config loaded
         assert config.instructions == "You are a travel agent."
@@ -144,9 +155,9 @@ class TestLoadConfigAndLoadSkills:
         assert "budget-checker" in names
         assert "route-planner" in names
 
-        # Verify tool descriptions also loaded
-        assert config.has_tool_descriptions
-        assert config.tool_descriptions["search"].description == "Search destinations."
+        # Verify tool definitions also loaded
+        assert len(config.tool_definitions) == 1
+        assert config.tool_definitions[0]["function"]["name"] == "search"
 
     def test_no_skills_dir_returns_empty(self):
         """load_skills_from_dir on non-existent dir returns empty list."""
@@ -184,10 +195,10 @@ class TestFullWorkflow:
         (candidate_dir / "instructions.md").write_text(
             "You are a concise travel booking assistant."
         )
-        tools_data = {
-            "search_flights": {"description": "Find flights between cities.", "parameters": {}},
-            "book_flight": {"description": "Book the selected flight.", "parameters": {}},
-        }
+        tools_data = [
+            {"type": "function", "function": {"name": "search_flights", "description": "Find flights between cities."}},
+            {"type": "function", "function": {"name": "book_flight", "description": "Book the selected flight."}},
+        ]
         (candidate_dir / "tools.json").write_text(json.dumps(tools_data))
         skills_dir = candidate_dir / "skills" / "rebooking"
         skills_dir.mkdir(parents=True)
@@ -200,10 +211,7 @@ class TestFullWorkflow:
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "candidate-v2")
 
         # Step 1: Load config
-        config = load_config(
-            default_instructions="Default prompt.",
-            default_model="gpt-3.5-turbo",
-        )
+        config = load_config()
         assert config.instructions == "You are a concise travel booking assistant."
         assert config.model == "gpt-4o-mini"
         assert config.temperature == 0.3
@@ -233,7 +241,7 @@ class TestFullWorkflow:
             temperature=config.temperature,
             skills=skills,
             skills_dir=config.skills_dir,
-            tool_descriptions=config.tool_descriptions,
+            tool_definitions=config.tool_definitions,
             source=config.source,
             candidate_id=config.candidate_id,
         )
@@ -243,32 +251,226 @@ class TestFullWorkflow:
         assert "Handle rebooking requests" in composed
 
     def test_defaults_workflow_no_optimization(self):
-        """When no optimization is configured, everything works with defaults."""
+        """When no optimization is configured, returns None."""
+        config = load_config(required=False)
+        assert config is None
 
-        def my_tool():
+
+class TestResolverPersistLoadRoundTrip:
+    """End-to-end: resolver persists → load_config reads back."""
+
+    def test_resolver_persist_and_reload(self, monkeypatch, tmp_path):
+        """Simulate resolver writing to disk, then load_config reading it via local dir."""
+        from azure.ai.agentserver.optimization._resolver import _persist_to_local_layout
+
+        api_response = {
+            "instructions": "Optimized agent prompt.",
+            "model": "gpt-4o-mini",
+            "temperature": 0.2,
+            "tools": [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "search",
+                        "description": "Search the web.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {"q": {"type": "string", "description": "Query"}},
+                        },
+                    },
+                }
+            ],
+            "skills": [
+                {"name": "summarize", "description": "Summarize text", "body": "Condense."},
+            ],
+        }
+        candidate_path = tmp_path / "cand-resolved"
+        _persist_to_local_layout(candidate_path, api_response)
+
+        # Now load via local dir
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-resolved")
+        config = load_config()
+
+        assert config.instructions == "Optimized agent prompt."
+        assert config.model == "gpt-4o-mini"
+        assert config.temperature == 0.2
+        assert config.source.startswith("local:")
+        assert len(config.tool_definitions) == 1
+        assert config.tool_definitions[0]["function"]["name"] == "search"
+        # Skills are loaded via skills_dir, not inline
+        assert config.skills_dir is not None
+
+        skills = load_skills_from_dir(Path(config.skills_dir))
+        assert len(skills) == 1
+        assert skills[0].name == "summarize"
+        assert skills[0].body == "Condense."
+
+
+class TestComposeInstructions:
+    """Tests for OptimizationConfig.compose_instructions edge cases."""
+
+    def test_compose_with_no_base_instructions(self):
+        """compose_instructions with None base instructions."""
+        config = OptimizationConfig(
+            instructions=None,
+            skills=[Skill(name="s1", description="Skill one")],
+        )
+        result = config.compose_instructions()
+        assert "## Available Skills" in result
+        assert "**s1**: Skill one" in result
+
+    def test_compose_empty_instructions_with_skills(self):
+        config = OptimizationConfig(
+            instructions="",
+            skills=[Skill(name="s1", description="d1")],
+        )
+        result = config.compose_instructions()
+        assert result.startswith("## Available Skills")
+
+    def test_compose_no_instructions_no_skills(self):
+        config = OptimizationConfig(instructions=None)
+        assert config.compose_instructions() == ""
+
+    def test_compose_empty_instructions_no_skills(self):
+        config = OptimizationConfig(instructions="")
+        assert config.compose_instructions() == ""
+
+    def test_compose_preserves_multiline_base(self):
+        config = OptimizationConfig(
+            instructions="Line 1.\nLine 2.",
+            skills=[Skill(name="s1", description="d1")],
+        )
+        result = config.compose_instructions()
+        assert "Line 1.\nLine 2." in result
+        assert "## Available Skills" in result
+
+
+class TestApplyToolDescriptionsEndToEnd:
+    """Integration: load_config → apply_tool_descriptions with parameter patching."""
+
+    def test_parameter_patching_e2e(self, monkeypatch):
+        """Full flow: env config → apply → verify parameter descriptions patched."""
+
+        class FakeField:
+            def __init__(self, desc):
+                self.description = desc
+
+        class FakeInputModel:
+            model_fields = {
+                "destination": FakeField("Original dest"),
+                "date": FakeField("Original date"),
+            }
+            _rebuild_called = False
+
+            @classmethod
+            def model_rebuild(cls, force=False):
+                cls._rebuild_called = True
+
+        cfg = {
+            "instructions": "Agent.",
+            "tools": [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "search_flights",
+                        "description": "Find flights.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "destination": {"type": "string", "description": "The city to fly to"},
+                            },
+                        },
+                    },
+                }
+            ],
+        }
+        monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(cfg))
+
+        def search_flights(destination: str, date: str):
             """Original."""
 
-        config = load_config(
-            default_instructions="Be helpful.",
-            default_model="gpt-4o",
-            default_temperature=0.7,
+        search_flights.input_model = FakeInputModel  # type: ignore[attr-defined]
+
+        config = load_config()
+        config.apply_tool_descriptions([search_flights])
+
+        assert search_flights.__doc__ == "Find flights."
+        assert FakeInputModel.model_fields["destination"].description == "The city to fly to"
+        assert FakeInputModel.model_fields["date"].description == "Original date"
+        assert FakeInputModel._rebuild_called is True
+
+
+class TestConfigDirIntegration:
+    """Integration tests for config_dir parameter."""
+
+    def test_config_dir_with_full_setup(self, tmp_path):
+        """config_dir param with complete directory layout."""
+        baseline = tmp_path / "baseline"
+        baseline.mkdir()
+        (baseline / "metadata.yaml").write_text(
+            "model: gpt-4o\ntemperature: 0.8\n"
         )
-        assert config.source == "defaults"
-        assert config.instructions == "Be helpful."
+        (baseline / "instructions.md").write_text("Custom agent.")
+        tools = [
+            {"type": "function", "function": {"name": "t1", "description": "Tool one"}},
+        ]
+        (baseline / "tools.json").write_text(json.dumps(tools))
+        skill_dir = baseline / "skills" / "helper"
+        skill_dir.mkdir(parents=True)
+        (skill_dir / "SKILL.md").write_text(
+            "---\nname: helper\ndescription: A helper skill\n---\nHelp."
+        )
+
+        config = load_config(config_dir=tmp_path)
+        assert config.instructions == "Custom agent."
         assert config.model == "gpt-4o"
-        assert config.temperature == 0.7
-        assert not config.has_tool_descriptions
-        assert not config.has_skills
-        assert config.skills_dir is None
+        assert config.temperature == 0.8
+        assert len(config.tool_definitions) == 1
+        assert config.skills_dir is not None
 
-        # apply_tool_descriptions is a no-op
-        config.apply_tool_descriptions([my_tool])
-        assert my_tool.__doc__ == "Original."
+        skills = load_skills_from_dir(Path(config.skills_dir))
+        assert len(skills) == 1
+        assert skills[0].name == "helper"
 
-        # load_skills_from_dir with None skills_dir — user checks before calling
-        # This is the expected pattern:
-        if config.skills_dir:
-            skills = load_skills_from_dir(Path(config.skills_dir))
-        else:
-            skills = []
-        assert skills == []
+    def test_config_dir_overrides_env_local_dir(self, monkeypatch, tmp_path):
+        """config_dir param takes priority over OPTIMIZATION_LOCAL_DIR env var."""
+        env_dir = tmp_path / "env_configs"
+        env_dir.mkdir()
+        (env_dir / "baseline").mkdir()
+        (env_dir / "baseline" / "instructions.md").write_text("From env dir.")
+
+        param_dir = tmp_path / "param_configs"
+        param_dir.mkdir()
+        (param_dir / "baseline").mkdir()
+        (param_dir / "baseline" / "instructions.md").write_text("From param dir.")
+
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(env_dir))
+        config = load_config(config_dir=param_dir)
+        assert config.instructions == "From param dir."
+
+
+class TestNoJobIdAnywhere:
+    """Verify job_id is completely removed from the system."""
+
+    def test_no_job_id_in_env_vars_list(self):
+        """OPTIMIZATION_JOB_ID should not be recognized."""
+        assert not hasattr(OptimizationConfig, "ENV_JOB_ID")
+
+    def test_no_job_id_on_config(self):
+        config = OptimizationConfig(instructions="test")
+        assert not hasattr(config, "job_id")
+
+    def test_config_from_env_no_job_id(self, monkeypatch):
+        cfg = {"instructions": "test"}
+        monkeypatch.setenv("OPTIMIZATION_CONFIG", json.dumps(cfg))
+        config = load_config()
+        assert not hasattr(config, "job_id")
+
+    def test_config_from_local_no_job_id(self, monkeypatch, tmp_path):
+        baseline = tmp_path / "baseline"
+        baseline.mkdir()
+        (baseline / "instructions.md").write_text("ok")
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        config = load_config()
+        assert not hasattr(config, "job_id")

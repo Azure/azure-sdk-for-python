@@ -10,7 +10,7 @@ The local directory uses a reserved folder structure::
     ├── baseline/                        (fallback candidate)
     │   ├── metadata.yaml                (model, temperature, file pointers)
     │   ├── instructions.md              (system prompt)
-    │   ├── tools.json                   (tool descriptions — dict or list format)
+    │   ├── tools.json                   (tool definitions — list format)
     │   └── skills/                      (learned skills)
     │       └── <skill_name>/
     │           └── SKILL.md
@@ -40,8 +40,6 @@ from azure.ai.agentserver.optimization._models import (
     MetadataConfig,
     OptimizationConfig,
     Skill,
-    ToolDescription,
-    _parse_tools_list,
 )
 from azure.ai.agentserver.optimization._resolver import resolve_candidate
 
@@ -50,11 +48,9 @@ logger = logging.getLogger("azure.ai.agentserver.optimization")
 
 def load_config(
     *,
-    default_instructions: str = "You are a helpful assistant.",
-    default_model: str | None = None,
-    default_temperature: float | None = None,
-    default_skills_dir: str | None = None,
-) -> OptimizationConfig:
+    config_dir: str | Path | None = None,
+    required: bool = True,
+) -> OptimizationConfig | None:
     """Load optimization config with graceful fallback.
 
     Resolution order (first match wins):
@@ -62,47 +58,58 @@ def load_config(
     1. **Inline JSON** — ``OPTIMIZATION_CONFIG`` env var contains the
        full config as a JSON string.  Used by temporary agent versions
        during evaluation; this path is being deprecated.
-    2. **Resolver API** — ``OPTIMIZATION_CANDIDATE_ID``,
-       ``OPTIMIZATION_JOB_ID``, and ``OPTIMIZATION_RESOLVE_ENDPOINT``
-       are all set.  Fetches the candidate config from the remote
-       optimization service and persists it to the local directory.
+    2. **Resolver API** — ``OPTIMIZATION_CANDIDATE_ID`` and
+       ``OPTIMIZATION_RESOLVE_ENDPOINT`` are both set.  The endpoint
+       should be the full job-scoped URL.  Fetches the candidate
+       config from the remote optimization service and persists it
+       to the local directory.
     3. **Local directory** — reads from
-       ``<local_dir>/<candidate_id>/`` (or ``baseline/`` as fallback).
-       The local directory defaults to ``.agent_configs/`` relative to
-       the main script, overridable via ``OPTIMIZATION_LOCAL_DIR``.
-    4. **Defaults** — returns the caller-supplied defaults unchanged.
-       The agent works exactly as if optimization were not installed.
+       ``<config_dir>/<candidate_id>/`` (or ``<config_dir>/baseline/``
+       as fallback).  Defaults to ``.agent_configs/`` relative to the
+       main script, overridable via ``OPTIMIZATION_LOCAL_DIR`` env var.
+    4. When none of the above match:
 
-    Safe to call at module load time.  Any unexpected error is caught
-    and logged — the caller always gets a valid config back.
+       - ``required=True``  (default) → raises ``ValueError``.
+       - ``required=False`` → returns ``None``.
+
+    :keyword config_dir: Path to the agent config directory.  When ``None``,
+        falls back to the ``OPTIMIZATION_LOCAL_DIR`` env var, then
+        to ``.agent_configs/`` next to the main script.
+    :paramtype config_dir: str | Path | None
+    :keyword required: If ``True`` (default), raise ``ValueError`` when no
+        config source is found.  Set to ``False`` during initial
+        setup or testing.
+    :paramtype required: bool
+    :return: The resolved optimization config, or ``None`` when not found
+        and *required* is ``False``.
+    :rtype: OptimizationConfig | None
+    :raises ValueError: When *required* is ``True`` and no config source
+        (env var, resolver API, or local directory) provides a
+        valid config.
     """
     try:
-        return _load_config_inner(
-            default_instructions=default_instructions,
-            default_model=default_model,
-            default_temperature=default_temperature,
-            default_skills_dir=default_skills_dir,
-        )
+        return _load_config_inner(config_dir=config_dir, required=required)
+    except ValueError:
+        raise
     except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
-        logger.error("Unexpected error loading optimization config — returning defaults: %s", exc)
-        model = default_model or os.environ.get("MODEL_DEPLOYMENT_NAME")
-        return OptimizationConfig(
-            instructions=default_instructions,
-            model=model,
-            temperature=default_temperature,
-            skills_dir=default_skills_dir,
-            source="defaults",
-        )
+        logger.error("Unexpected error loading optimization config: %s", exc)
+        return None
 
 
 def _load_config_inner(
     *,
-    default_instructions: str,
-    default_model: str | None,
-    default_temperature: float | None,
-    default_skills_dir: str | None,
-) -> OptimizationConfig:
-    """Internal config loader — may raise on unexpected errors."""
+    config_dir: str | Path | None,
+    required: bool,
+) -> OptimizationConfig | None:
+    """Internal config loader — may raise on unexpected errors.
+
+    :keyword config_dir: Path to the agent config directory.
+    :paramtype config_dir: str | Path | None
+    :keyword required: Whether to raise on missing config.
+    :paramtype required: bool
+    :return: Resolved config or ``None``.
+    :rtype: OptimizationConfig | None
+    """
     # ── Priority 1: Inline JSON env var (used by temp agent versions, deprecating) ─
     env_var = OptimizationConfig.ENV_CONFIG
     raw_config = os.environ.get(env_var, "").strip()
@@ -112,15 +119,15 @@ def _load_config_inner(
             candidate = CandidateConfig.from_dict(cfg)
             logger.warning(
                 "Loaded optimization config from %s env var (%d chars instructions)",
-                env_var, len(candidate.instructions or ""),
+                env_var,
+                len(candidate.instructions or ""),
             )
             return OptimizationConfig(
-                instructions=candidate.instructions or default_instructions,
-                model=candidate.model or default_model,
-                temperature=candidate.temperature if candidate.temperature is not None else default_temperature,
+                instructions=candidate.instructions,
+                model=candidate.model,
+                temperature=candidate.temperature,
                 skills=candidate.skills,
-                skills_dir=cfg.get("skills_dir", default_skills_dir),
-                tool_descriptions=candidate.tool_descriptions,
+                tool_definitions=candidate.tool_definitions,
                 source=f"env:{env_var}",
             )
         except (json.JSONDecodeError, TypeError) as exc:
@@ -128,11 +135,14 @@ def _load_config_inner(
 
     # ── Priority 2: Candidate ID → resolver API ──────────────────────
     candidate_id = os.environ.get(OptimizationConfig.ENV_CANDIDATE_ID, "").strip()
-    job_id = os.environ.get(OptimizationConfig.ENV_JOB_ID, "").strip()
-    endpoint = os.environ.get(OptimizationConfig.ENV_RESOLVE_ENDPOINT, "").strip().rstrip("/")
-    if candidate_id and job_id and endpoint:
-        local_dir = _resolve_local_dir()
-        resolved = resolve_candidate(candidate_id, job_id=job_id, endpoint=endpoint, local_dir=local_dir)
+    endpoint = (
+        os.environ.get(OptimizationConfig.ENV_RESOLVE_ENDPOINT, "").strip().rstrip("/")
+    )
+    if candidate_id and endpoint:
+        local_dir = _resolve_local_dir(config_dir)
+        resolved = resolve_candidate(
+            candidate_id, endpoint=endpoint, local_dir=local_dir
+        )
         if resolved is not None:
             candidate = CandidateConfig.from_dict(resolved)
             logger.warning(
@@ -140,15 +150,14 @@ def _load_config_inner(
                 candidate_id,
             )
             return OptimizationConfig(
-                instructions=candidate.instructions or default_instructions,
-                model=candidate.model or default_model,
-                temperature=candidate.temperature if candidate.temperature is not None else default_temperature,
+                instructions=candidate.instructions,
+                model=candidate.model,
+                temperature=candidate.temperature,
                 skills=candidate.skills,
-                skills_dir=resolved.get("skills_dir", default_skills_dir),
-                tool_descriptions=candidate.tool_descriptions,
+                skills_dir=resolved.get("skills_dir"),
+                tool_definitions=candidate.tool_definitions,
                 source=f"api:candidate:{candidate_id}",
                 candidate_id=candidate_id,
-                job_id=job_id,
             )
         logger.warning(
             "Failed to resolve candidate %s — falling through to local/defaults",
@@ -156,49 +165,53 @@ def _load_config_inner(
         )
 
     # ── Priority 3: Local directory (.agent_configs/) ──────────
-    local_config = _load_local_dir(
-        candidate_id or None, default_instructions,
-        default_model, default_temperature, default_skills_dir,
-    )
+    local_config = _load_local_dir(candidate_id or None, config_dir)
     if local_config is not None:
         logger.warning(
             "Loaded optimization config from local directory: %s (candidate_id=%s)",
-            local_config.source, local_config.candidate_id,
+            local_config.source,
+            local_config.candidate_id,
         )
         return local_config
 
-    # ── Priority 4: Defaults ─────────────────────────────────────────
-    model = default_model or os.environ.get("MODEL_DEPLOYMENT_NAME")
-    return OptimizationConfig(
-        instructions=default_instructions,
-        model=model,
-        temperature=default_temperature,
-        skills_dir=default_skills_dir,
-        source="defaults",
-    )
+    # ── Priority 4: No config found ───────────────────────────────────
+    if required:
+        local_dir = _resolve_local_dir(config_dir)
+        raise ValueError(
+            "No optimization config found. Prepare a baseline folder at "
+            f"'{local_dir / OptimizationConfig.BASELINE_DIR}' with at least "
+            "an instructions.md file, or pass required=False."
+        )
+    logger.warning("No optimization config found — returning None")
+    return None
 
 
-def _resolve_local_dir() -> Path:
+def _resolve_local_dir(config_dir: str | Path | None = None) -> Path:
     """Resolve the local optimization directory path.
 
-    Falls back to ``OptimizationConfig.DEFAULT_LOCAL_DIR``
-    (``".agent_configs"``) when the env var is not set.
-    """
-    local_dir_env = os.environ.get(OptimizationConfig.ENV_LOCAL_DIR, "").strip()
-    explicitly_set = bool(local_dir_env)
-    local_dir = Path(local_dir_env) if explicitly_set else Path(OptimizationConfig.DEFAULT_LOCAL_DIR)
+    Priority: *config_dir* argument → ``OPTIMIZATION_LOCAL_DIR`` env
+    var → ``OptimizationConfig.DEFAULT_LOCAL_DIR`` (``.agent_configs``).
 
-    # Guard: reject paths with ".." components (path traversal)
-    if ".." in local_dir.parts:
-        logger.warning(
-            "OPTIMIZATION_LOCAL_DIR contains '..' path traversal: %r — ignoring",
-            local_dir_env,
+    :param config_dir: Explicit config directory path.
+    :type config_dir: str | Path | None
+    :return: Resolved directory path.
+    :rtype: Path
+    """
+    if config_dir is not None:
+        local_dir = Path(config_dir)
+        explicitly_set = True
+    else:
+        local_dir_env = os.environ.get(OptimizationConfig.ENV_LOCAL_DIR, "").strip()
+        explicitly_set = bool(local_dir_env)
+        local_dir = (
+            Path(local_dir_env)
+            if explicitly_set
+            else Path(OptimizationConfig.DEFAULT_LOCAL_DIR)
         )
-        local_dir = Path(OptimizationConfig.DEFAULT_LOCAL_DIR)
-        explicitly_set = False
 
     if not local_dir.is_absolute():
         import sys
+
         main_mod = sys.modules.get("__main__")
         main_file = getattr(main_mod, "__file__", None) if main_mod else None
         if main_file is not None:
@@ -213,13 +226,18 @@ def _resolve_local_dir() -> Path:
 
 def _load_local_dir(
     candidate_id: str | None,
-    default_instructions: str,
-    default_model: str | None,
-    default_temperature: float | None,
-    default_skills_dir: str | None,
+    config_dir: str | Path | None,
 ) -> OptimizationConfig | None:
-    """Load optimization config from a local directory."""
-    local_dir = _resolve_local_dir()
+    """Load optimization config from a local directory.
+
+    :param candidate_id: Candidate identifier, or ``None`` for baseline.
+    :type candidate_id: str | None
+    :param config_dir: Explicit config directory path.
+    :type config_dir: str | Path | None
+    :return: Loaded config or ``None`` if directory does not exist.
+    :rtype: OptimizationConfig | None
+    """
+    local_dir = _resolve_local_dir(config_dir)
     if not local_dir.is_dir():
         return None
 
@@ -229,25 +247,27 @@ def _load_local_dir(
 
     metadata_file = candidate_path / OptimizationConfig.METADATA_FILE
 
-    return _load_candidate_from_metadata(
-        candidate_path, metadata_file, candidate_id,
-        default_instructions, default_model, default_temperature, default_skills_dir,
-    )
+    return _load_candidate_from_metadata(candidate_path, metadata_file, candidate_id)
 
 
 def _load_candidate_from_metadata(
     candidate_path: Path,
     metadata_file: Path,
     candidate_id: str | None,
-    default_instructions: str,
-    default_model: str | None,
-    default_temperature: float | None,
-    default_skills_dir: str | None,
 ) -> OptimizationConfig | None:
     """Load candidate config from metadata.yaml + instructions.md layout.
 
     If ``metadata_file`` does not exist, all default paths
     (instructions.md, skills/, tools.json) are used.
+
+    :param candidate_path: Path to the candidate folder.
+    :type candidate_path: Path
+    :param metadata_file: Path to the metadata.yaml file.
+    :type metadata_file: Path
+    :param candidate_id: Candidate identifier.
+    :type candidate_id: str | None
+    :return: Loaded config or ``None``.
+    :rtype: OptimizationConfig | None
     """
     if metadata_file.is_file():
         try:
@@ -265,66 +285,59 @@ def _load_candidate_from_metadata(
 
     meta = MetadataConfig.from_dict(raw)
 
-    # Read instructions from the referenced file (guard against traversal)
+    # Read instructions from the referenced file
     instructions_path = candidate_path / meta.instruction_file
-    if _is_safe_child(candidate_path, instructions_path) and instructions_path.is_file():
-        instructions = instructions_path.read_text(encoding="utf-8").strip()
+    if instructions_path.is_file():
+        instructions: str | None = instructions_path.read_text(encoding="utf-8").strip()
     else:
-        if not _is_safe_child(candidate_path, instructions_path):
-            logger.warning("Path traversal in instruction_file: %r", meta.instruction_file)
-        instructions = default_instructions
+        instructions = None
 
-    # Resolve skills directory (guard against traversal)
+    # Resolve skills directory
     skills_dir: str | None
     skills_path = candidate_path / meta.skill_dir
-    if _is_safe_child(candidate_path, skills_path) and skills_path.resolve().is_dir():
+    if skills_path.resolve().is_dir():
         skills_dir = str(skills_path.resolve())
     else:
-        if not _is_safe_child(candidate_path, skills_path):
-            logger.warning("Path traversal in skill_dir: %r", meta.skill_dir)
-        skills_dir = default_skills_dir
+        skills_dir = None
 
-    # Load tool descriptions (guard against traversal)
+    # Load tool definitions
     tool_file_path = candidate_path / meta.tool_file
-    if _is_safe_child(candidate_path, tool_file_path):
-        tool_descriptions = _load_tool_descriptions(tool_file_path)
-    else:
-        logger.warning("Path traversal in tool_file: %r", meta.tool_file)
-        tool_descriptions = {}
+    tool_definitions = _load_tool_definitions(tool_file_path)
 
     return OptimizationConfig(
         instructions=instructions,
-        model=meta.model or default_model,
-        temperature=meta.temperature if meta.temperature is not None else default_temperature,
+        model=meta.model,
+        temperature=meta.temperature,
         skills_dir=skills_dir,
-        tool_descriptions=tool_descriptions,
+        tool_definitions=tool_definitions,
         source=f"local:{candidate_path}",
         candidate_id=candidate_id,
     )
 
 
-def _load_tool_descriptions(tool_file: Path) -> dict[str, ToolDescription]:
-    """Load tool descriptions from a tools.json file.
+def _load_tool_definitions(tool_file: Path) -> list[dict]:
+    """Load tool definitions from a tools.json file.
 
-    Supports both dict format ``{name: {description, parameters}}``
-    and OpenAI function-calling list format ``[{type, function: {name, ...}}]``.
+    Expects the OpenAI function-calling list format::
+
+        [{"type": "function", "function": {"name": "...", "description": "...", "parameters": {...}}}]
+
+    :param tool_file: Path to the tools.json file.
+    :type tool_file: Path
+    :return: List of tool definition dicts.
+    :rtype: list[dict]
     """
     if not tool_file.is_file():
-        return {}
+        return []
     try:
         raw = tool_file.read_text(encoding="utf-8")
         data = json.loads(raw)
-        if isinstance(data, dict):
-            return {
-                name: ToolDescription.from_dict(v) if isinstance(v, dict) else ToolDescription(description=str(v))
-                for name, v in data.items()
-            }
         if isinstance(data, list):
-            return _parse_tools_list(data)
-        return {}
+            return data
+        return []
     except (json.JSONDecodeError, OSError) as exc:
         logger.warning("Failed to read tools file %s: %s", tool_file, exc)
-        return {}
+        return []
 
 
 def _parse_simple_yaml(path: Path) -> dict:
@@ -332,6 +345,11 @@ def _parse_simple_yaml(path: Path) -> dict:
 
     Coerces numeric-looking values to float/int and recognizes
     null/true/false literals.
+
+    :param path: Path to the YAML file.
+    :type path: Path
+    :return: Parsed key-value mapping.
+    :rtype: dict
     """
     result: dict = {}
     try:
@@ -348,7 +366,13 @@ def _parse_simple_yaml(path: Path) -> dict:
 
 
 def _coerce_yaml_value(value: str) -> Any:
-    """Coerce a YAML scalar string to the appropriate Python type."""
+    """Coerce a YAML scalar string to the appropriate Python type.
+
+    :param value: Raw YAML scalar string.
+    :type value: str
+    :return: Coerced Python value.
+    :rtype: Any
+    """
     if not value or value in ("null", "~"):
         return None
     if value.lower() == "true":
@@ -371,25 +395,20 @@ def _resolve_candidate_folder(local_dir: Path, candidate_id: str | None) -> Path
 
     Returns ``local_dir/<candidate_id>`` if it exists, otherwise falls
     back to ``local_dir/baseline/``.  Returns ``None`` if neither exists.
+
+    :param local_dir: Root optimization directory.
+    :type local_dir: Path
+    :param candidate_id: Candidate identifier.
+    :type candidate_id: str | None
+    :return: Resolved candidate folder path, or ``None``.
+    :rtype: Path | None
     """
     if candidate_id:
         exact = local_dir / candidate_id
-        if not _is_safe_child(local_dir, exact):
-            logger.warning("Path traversal detected in candidate_id: %r", candidate_id)
-            return None
         if exact.is_dir():
             return exact
     baseline = local_dir / OptimizationConfig.BASELINE_DIR
     return baseline if baseline.is_dir() else None
-
-
-def _is_safe_child(parent: Path, child: Path) -> bool:
-    """Return True if *child* is strictly inside *parent* (no traversal)."""
-    try:
-        child.resolve().relative_to(parent.resolve())
-        return True
-    except ValueError:
-        return False
 
 
 def load_skills_from_dir(skills_dir: Path) -> list[Skill]:
@@ -400,6 +419,11 @@ def load_skills_from_dir(skills_dir: Path) -> list[Skill]:
         skills/
         └── <skill_name>/
             └── SKILL.md
+
+    :param skills_dir: Path to the skills directory.
+    :type skills_dir: Path
+    :return: List of loaded skills.
+    :rtype: list[Skill]
     """
     if not skills_dir.is_dir():
         return []
@@ -428,7 +452,13 @@ def load_skills_from_dir(skills_dir: Path) -> list[Skill]:
 
 
 def _parse_skill_frontmatter(content: str) -> tuple[dict, str]:
-    """Extract YAML frontmatter and body from a SKILL.md file."""
+    """Extract YAML frontmatter and body from a SKILL.md file.
+
+    :param content: Raw SKILL.md content.
+    :type content: str
+    :return: Tuple of (frontmatter dict, body text).
+    :rtype: tuple[dict, str]
+    """
     if not content.startswith("---"):
         return {}, content
 
@@ -437,7 +467,7 @@ def _parse_skill_frontmatter(content: str) -> tuple[dict, str]:
         return {}, content
 
     fm_text = content[3:end].strip()
-    body = content[end + 3:].strip()
+    body = content[end + 3 :].strip()
 
     frontmatter: dict = {}
     for line in fm_text.splitlines():

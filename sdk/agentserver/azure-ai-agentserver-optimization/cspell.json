@@ -2,7 +2,12 @@
     "ignoreWords": [
         "agentserver",
         "autouse",
-        "cand"
+        "cand",
+        "dataclass",
+        "frontmatter",
+        "paramtype",
+        "pathlib",
+        "rtype"
     ],
     "ignorePaths": [
         "*.json",

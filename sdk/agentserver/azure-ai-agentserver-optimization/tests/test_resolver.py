@@ -36,7 +36,6 @@ def mock_client():
 
 
 ENDPOINT = "http://fake-endpoint"
-JOB_ID = "job-42"
 
 
 # ── resolve_candidate ───────────────────────────────────────────────
@@ -53,7 +52,7 @@ class TestResolveCandidate:
                 return_value=None,
             ),
         ):
-            result = resolve_candidate("cand-1", job_id=JOB_ID, endpoint=ENDPOINT)
+            result = resolve_candidate("cand-1", endpoint=ENDPOINT)
             assert result is None
 
     def test_returns_config_on_success(self):
@@ -70,13 +69,13 @@ class TestResolveCandidate:
                 return_value=config,
             ),
         ):
-            result = resolve_candidate("cand-1", job_id=JOB_ID, endpoint=ENDPOINT)
+            result = resolve_candidate("cand-1", endpoint=ENDPOINT)
             assert result is not None
             assert result["instructions"] == "Optimized."
             assert result["model"] == "gpt-4o"
 
     def test_uses_correct_path(self):
-        """Verify the API route follows /agent_optimization_jobs/{jobId}/candidates/{candidateId}/config."""
+        """Verify the API route follows /candidates/{candidateId}/config."""
         called_args: list = []
 
         def capture_call(client, path, params=None):
@@ -90,8 +89,8 @@ class TestResolveCandidate:
                 side_effect=capture_call,
             ),
         ):
-            resolve_candidate("cand-abc", job_id="job-xyz", endpoint="http://api.test")
-            assert called_args[0][0] == "/agent_optimization_jobs/job-xyz/candidates/cand-abc/config"
+            resolve_candidate("cand-abc", endpoint="http://api.test")
+            assert called_args[0][0] == "/candidates/cand-abc/config"
 
     def test_marks_downloaded_after_success(self):
         with (
@@ -101,7 +100,7 @@ class TestResolveCandidate:
                 return_value={"instructions": "ok"},
             ),
         ):
-            resolve_candidate("cand-mark", job_id=JOB_ID, endpoint=ENDPOINT)
+            resolve_candidate("cand-mark", endpoint=ENDPOINT)
             assert "cand-mark" in _downloaded
 
     def test_skips_if_already_downloaded_and_folder_exists(self, tmp_path):
@@ -110,7 +109,7 @@ class TestResolveCandidate:
         _downloaded.add("cand-skip")
 
         result = resolve_candidate(
-            "cand-skip", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=tmp_path,
+            "cand-skip", endpoint=ENDPOINT, local_dir=tmp_path,
         )
         assert result is None
 
@@ -126,7 +125,7 @@ class TestResolveCandidate:
             ),
         ):
             result = resolve_candidate(
-                "cand-gone", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=None,
+                "cand-gone", endpoint=ENDPOINT, local_dir=None,
             )
             # local_dir is None → can't check folder → should re-download
             assert result is not None
@@ -140,7 +139,7 @@ class TestResolveCandidate:
                 return_value=None,
             ),
         ):
-            resolve_candidate("cand-fail", job_id=JOB_ID, endpoint=ENDPOINT)
+            resolve_candidate("cand-fail", endpoint=ENDPOINT)
             assert "cand-fail" not in _downloaded
 
 
@@ -177,29 +176,32 @@ class TestPersistToLocalLayout:
 
         assert not (candidate_path / "instructions.md").exists()
 
-    def test_writes_tools_json_dict_format(self, tmp_path):
+    def test_writes_tools_json_list_format_from_tools_key(self, tmp_path):
         candidate_path = tmp_path / "cand-4"
         config = {
-            "tool_descriptions": {
-                "search": {"description": "Search it", "parameters": {"q": "query"}},
-            }
+            "tools": [
+                {"type": "function", "function": {"name": "search", "description": "Search it", "parameters": {"type": "object", "properties": {"q": {"type": "string", "description": "query"}}}}},
+            ]
         }
         _persist_to_local_layout(candidate_path, config)
 
         tools = json.loads((candidate_path / "tools.json").read_text())
-        assert tools["search"]["description"] == "Search it"
+        assert isinstance(tools, list)
+        assert tools[0]["function"]["name"] == "search"
 
-    def test_writes_tools_json_from_toolDescriptions(self, tmp_path):
+    def test_writes_tools_json_multiple_tools(self, tmp_path):
         candidate_path = tmp_path / "cand-5"
         config = {
-            "toolDescriptions": {
-                "lookup": {"description": "Look up policy"},
-            }
+            "tools": [
+                {"type": "function", "function": {"name": "lookup", "description": "Look up policy"}},
+                {"type": "function", "function": {"name": "search", "description": "Search"}},
+            ]
         }
         _persist_to_local_layout(candidate_path, config)
 
         tools = json.loads((candidate_path / "tools.json").read_text())
-        assert tools["lookup"]["description"] == "Look up policy"
+        assert len(tools) == 2
+        assert tools[0]["function"]["name"] == "lookup"
 
     def test_writes_tools_json_list_format(self, tmp_path):
         candidate_path = tmp_path / "cand-6"
@@ -214,18 +216,15 @@ class TestPersistToLocalLayout:
         assert isinstance(tools, list)
         assert tools[0]["function"]["name"] == "f1"
 
-    def test_tool_descriptions_wins_over_tools_list(self, tmp_path):
-        """tool_descriptions dict takes priority over tools list."""
+    def test_no_tools_file_when_tools_is_not_list(self, tmp_path):
+        """Non-list tools value does not produce tools.json."""
         candidate_path = tmp_path / "cand-7"
         config = {
-            "tool_descriptions": {"search": {"description": "Dict format"}},
-            "tools": [{"type": "function", "function": {"name": "f1"}}],
+            "tools": "not a list",
         }
         _persist_to_local_layout(candidate_path, config)
 
-        tools = json.loads((candidate_path / "tools.json").read_text())
-        assert isinstance(tools, dict)
-        assert "search" in tools
+        assert not (candidate_path / "tools.json").exists()
 
     def test_no_tools_file_when_no_tools(self, tmp_path):
         candidate_path = tmp_path / "cand-8"
@@ -255,6 +254,52 @@ class TestPersistToLocalLayout:
         assert "model:" not in meta
         assert "temperature:" not in meta
 
+    def test_writes_inline_skills(self, tmp_path):
+        """Inline skills are persisted as skills/<name>/SKILL.md with frontmatter."""
+        candidate_path = tmp_path / "cand-skills"
+        config = {
+            "instructions": "With skills.",
+            "skills": [
+                {"name": "math", "description": "Do math", "body": "Calculate things."},
+                {"name": "code", "description": "Write code"},
+            ],
+        }
+        _persist_to_local_layout(candidate_path, config)
+
+        math_skill = candidate_path / "skills" / "math" / "SKILL.md"
+        assert math_skill.exists()
+        content = math_skill.read_text()
+        assert "name: math" in content
+        assert "description: Do math" in content
+        assert "Calculate things." in content
+
+        code_skill = candidate_path / "skills" / "code" / "SKILL.md"
+        assert code_skill.exists()
+        code_content = code_skill.read_text()
+        assert "name: code" in code_content
+
+    def test_skips_skills_without_name(self, tmp_path):
+        """Skills without a name are skipped during persist."""
+        candidate_path = tmp_path / "cand-no-name"
+        config = {
+            "skills": [
+                {"description": "no name"},
+                {"name": "valid", "description": "has name"},
+            ],
+        }
+        _persist_to_local_layout(candidate_path, config)
+        skills_dir = candidate_path / "skills"
+        # Only the valid skill should be written
+        assert not (skills_dir / "no name").exists()
+        assert (skills_dir / "valid" / "SKILL.md").exists()
+
+    def test_skips_non_dict_skills(self, tmp_path):
+        """Non-dict skill entries are skipped."""
+        candidate_path = tmp_path / "cand-bad-skills"
+        config = {"skills": ["not a dict", 42]}
+        _persist_to_local_layout(candidate_path, config)
+        assert not (candidate_path / "skills").exists()
+
 
 # ── _persist + resolve round-trip ────────────────────────────────────
 
@@ -269,9 +314,9 @@ class TestPersistRoundTrip:
             "instructions": "Round-trip test.",
             "model": "gpt-4o",
             "temperature": 0.3,
-            "tool_descriptions": {
-                "search": {"description": "Find things", "parameters": {"q": "query"}},
-            },
+            "tools": [
+                {"type": "function", "function": {"name": "search", "description": "Find things", "parameters": {"type": "object", "properties": {"q": {"type": "string", "description": "query"}}}}},
+            ],
         }
         candidate_path = tmp_path / "cand-rt"
         _persist_to_local_layout(candidate_path, config)
@@ -279,11 +324,12 @@ class TestPersistRoundTrip:
         # Now load via local dir
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-rt")
-        loaded = load_config(default_instructions="unused")
+        loaded = load_config()
         assert loaded.instructions == "Round-trip test."
         assert loaded.model == "gpt-4o"
         assert loaded.temperature == 0.3
-        assert "search" in loaded.tool_descriptions
+        assert len(loaded.tool_definitions) == 1
+        assert loaded.tool_definitions[0]["function"]["name"] == "search"
         assert loaded.source.startswith("local:")
 
 
@@ -312,7 +358,7 @@ class TestDownloadSkillFiles:
             patch("azure.ai.agentserver.optimization._resolver._api_get_json", side_effect=mock_json),
             patch("azure.ai.agentserver.optimization._resolver._api_get_text", side_effect=mock_text),
         ):
-            _download_skill_files(mock_client, JOB_ID, "cand-sk", candidate_path)
+            _download_skill_files(mock_client, "cand-sk", candidate_path)
 
         skill_file = candidate_path / "skills" / "math" / "SKILL.md"
         assert skill_file.exists()
@@ -325,7 +371,7 @@ class TestDownloadSkillFiles:
             "azure.ai.agentserver.optimization._resolver._api_get_json",
             return_value=None,
         ):
-            _download_skill_files(mock_client, JOB_ID, "cand-no-manifest", candidate_path)
+            _download_skill_files(mock_client, "cand-no-manifest", candidate_path)
         assert not (candidate_path / "skills").exists()
 
     def test_skips_when_no_skill_files_in_manifest(self, tmp_path, mock_client):
@@ -336,7 +382,7 @@ class TestDownloadSkillFiles:
             "azure.ai.agentserver.optimization._resolver._api_get_json",
             return_value=manifest,
         ):
-            _download_skill_files(mock_client, JOB_ID, "cand-no-skills", candidate_path)
+            _download_skill_files(mock_client, "cand-no-skills", candidate_path)
         assert not (candidate_path / "skills").exists()
 
     def test_skips_empty_path_entries(self, tmp_path, mock_client):
@@ -347,7 +393,7 @@ class TestDownloadSkillFiles:
             "azure.ai.agentserver.optimization._resolver._api_get_json",
             return_value=manifest,
         ):
-            _download_skill_files(mock_client, JOB_ID, "cand-empty-path", candidate_path)
+            _download_skill_files(mock_client, "cand-empty-path", candidate_path)
         assert not (candidate_path / "skills").exists()
 
     def test_handles_download_failure(self, tmp_path, mock_client):
@@ -358,7 +404,7 @@ class TestDownloadSkillFiles:
             patch("azure.ai.agentserver.optimization._resolver._api_get_json", return_value=manifest),
             patch("azure.ai.agentserver.optimization._resolver._api_get_text", return_value=None),
         ):
-            _download_skill_files(mock_client, JOB_ID, "cand-dl-fail", candidate_path)
+            _download_skill_files(mock_client, "cand-dl-fail", candidate_path)
         # No crash, skill file simply not written
         assert not (candidate_path / "skills" / "bad" / "SKILL.md").exists()
 
@@ -371,32 +417,78 @@ class TestDownloadSkillFiles:
             patch("azure.ai.agentserver.optimization._resolver._api_get_json", return_value=manifest),
             patch("azure.ai.agentserver.optimization._resolver._api_get_text", return_value="malicious"),
         ):
-            _download_skill_files(mock_client, JOB_ID, "cand-traversal", candidate_path)
+            _download_skill_files(mock_client, "cand-traversal", candidate_path)
         # Malicious file must NOT be written outside skills_dir
         assert not (tmp_path / "etc" / "passwd").exists()
         assert not (candidate_path / "skills" / ".." / ".." / "etc" / "passwd").exists()
 
+    def test_downloads_multiple_skill_files(self, tmp_path, mock_client):
+        """Multiple skill files are downloaded correctly."""
+        candidate_path = tmp_path / "cand-multi"
+        candidate_path.mkdir()
+        manifest = {
+            "files": [
+                {"path": "skills/math/SKILL.md", "type": "skill"},
+                {"path": "skills/code/SKILL.md", "type": "skill"},
+            ]
+        }
+        call_count = {"json": 0, "text": 0}
 
-# ── Path traversal in resolve_candidate ─────────────────────────────
+        def mock_json(client, path, params=None):
+            call_count["json"] += 1
+            return manifest
+
+        def mock_text(client, path, params=None):
+            call_count["text"] += 1
+            if "math" in str(params):
+                return "# Math\nDo math."
+            return "# Code\nWrite code."
+
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._api_get_json", side_effect=mock_json),
+            patch("azure.ai.agentserver.optimization._resolver._api_get_text", side_effect=mock_text),
+        ):
+            _download_skill_files(mock_client, "cand-multi", candidate_path)
+
+        assert (candidate_path / "skills" / "math" / "SKILL.md").exists()
+        assert (candidate_path / "skills" / "code" / "SKILL.md").exists()
+
+    def test_uses_correct_api_paths(self, tmp_path, mock_client):
+        """Verify correct API paths: /candidates/{id} for manifest, /candidates/{id}/files for downloads."""
+        candidate_path = tmp_path / "cand-paths"
+        candidate_path.mkdir()
+        called_paths: list = []
+
+        def mock_json(client, path, params=None):
+            called_paths.append(("json", path))
+            return {"files": [{"path": "skills/s1/SKILL.md", "type": "skill"}]}
+
+        def mock_text(client, path, params=None):
+            called_paths.append(("text", path))
+            return "content"
+
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._api_get_json", side_effect=mock_json),
+            patch("azure.ai.agentserver.optimization._resolver._api_get_text", side_effect=mock_text),
+        ):
+            _download_skill_files(mock_client, "cand-x", candidate_path)
+
+        assert called_paths[0] == ("json", "/candidates/cand-x")
+        assert called_paths[1] == ("text", "/candidates/cand-x/files")
+
+    def test_empty_files_list_in_manifest(self, tmp_path, mock_client):
+        """Empty files list in manifest → no downloads."""
+        candidate_path = tmp_path / "cand-empty-files"
+        candidate_path.mkdir()
+        with patch(
+            "azure.ai.agentserver.optimization._resolver._api_get_json",
+            return_value={"files": []},
+        ):
+            _download_skill_files(mock_client, "cand-empty-files", candidate_path)
+        assert not (candidate_path / "skills").exists()
 
 
-class TestPathTraversalGuard:
-    """Tests for path traversal prevention in resolve_candidate."""
-
-    def test_rejects_traversal_candidate_id(self, tmp_path):
-        """candidate_id with '../' is rejected before any API call."""
-        result = resolve_candidate(
-            "../../etc", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=tmp_path
-        )
-        assert result is None
-
-    def test_rejects_absolute_candidate_id(self, tmp_path):
-        """Absolute path in candidate_id is rejected."""
-        result = resolve_candidate(
-            "/etc/passwd", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=tmp_path
-        )
-        assert result is None
-
+class TestNormalCandidateId:
     def test_normal_candidate_id_allowed(self, tmp_path):
         """Normal candidate IDs pass the guard."""
         config = {"instructions": "ok", "model": "gpt-4o"}
@@ -408,9 +500,118 @@ class TestPathTraversalGuard:
             ),
         ):
             result = resolve_candidate(
-                "valid-candidate-123", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=tmp_path
+                "valid-candidate-123", endpoint=ENDPOINT, local_dir=tmp_path
             )
             assert result is not None
+
+    def test_candidate_id_with_dots_allowed(self):
+        """candidate_id containing dots is fine."""
+        config = {"instructions": "ok"}
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value=config,
+            ),
+        ):
+            result = resolve_candidate(
+                "candidate.v2.1", endpoint=ENDPOINT
+            )
+            assert result is not None
+
+
+# ── resolve_candidate with local_dir ─────────────────────────────────
+
+
+class TestResolveCandidateWithLocalDir:
+    """Tests for resolve_candidate persisting to disk."""
+
+    def test_persists_config_to_disk(self, tmp_path):
+        config = {
+            "instructions": "Persisted.",
+            "model": "gpt-4o",
+            "temperature": 0.5,
+        }
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value=config,
+            ),
+        ):
+            result = resolve_candidate("cand-persist", endpoint=ENDPOINT, local_dir=tmp_path)
+            assert result is not None
+            assert (tmp_path / "cand-persist" / "metadata.yaml").exists()
+            assert (tmp_path / "cand-persist" / "instructions.md").read_text() == "Persisted."
+
+    def test_sets_skills_dir_when_skills_exist(self, tmp_path):
+        """skills_dir is set in returned config when skills folder exists after persist."""
+        config = {
+            "instructions": "ok",
+            "skills": [{"name": "math", "description": "Do math", "body": "# Math"}],
+        }
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value=config,
+            ),
+        ):
+            result = resolve_candidate("cand-skills", endpoint=ENDPOINT, local_dir=tmp_path)
+            assert result is not None
+            assert "skills_dir" in result
+            assert "cand-skills" in result["skills_dir"]
+
+    def test_no_skills_dir_when_no_skills(self, tmp_path):
+        """skills_dir is not set when no skills are persisted."""
+        config = {"instructions": "ok", "model": "gpt-4o"}
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value=config,
+            ),
+        ):
+            result = resolve_candidate("cand-no-skills", endpoint=ENDPOINT, local_dir=tmp_path)
+            assert result is not None
+            assert "skills_dir" not in result
+
+    def test_local_dir_none_skips_persist(self):
+        """When local_dir is None, no files are written."""
+        config = {"instructions": "ok"}
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client"),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._api_get_json",
+                return_value=config,
+            ),
+        ):
+            result = resolve_candidate("cand-no-dir", endpoint=ENDPOINT, local_dir=None)
+            assert result is not None
+            assert result["instructions"] == "ok"
+            # No skills_dir because no local_dir
+            assert "skills_dir" not in result
+
+    def test_endpoint_trailing_slash_stripped(self):
+        """Endpoint URL trailing slash doesn't break API paths."""
+        called_urls: list = []
+
+        def capture_build(endpoint):
+            m = MagicMock()
+            m._base_url = endpoint
+            return m
+
+        def capture_json(client, path, params=None):
+            called_urls.append(f"{client._base_url}{path}")
+            return {"instructions": "ok"}
+
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._build_client", side_effect=capture_build),
+            patch("azure.ai.agentserver.optimization._resolver._api_get_json", side_effect=capture_json),
+        ):
+            resolve_candidate("cand-1", endpoint="http://host/job/123")
+            # Verify the URL construction
+            assert "/candidates/cand-1/config" in called_urls[0]
 
 
 # ── _is_skill_file ──────────────────────────────────────────────────
@@ -452,7 +653,7 @@ class TestPersistErrorHandling:
             ),
         ):
             result = resolve_candidate(
-                "cand-io", job_id=JOB_ID, endpoint=ENDPOINT, local_dir=tmp_path,
+                "cand-io", endpoint=ENDPOINT, local_dir=tmp_path,
             )
             # Config is still returned from API even if persist fails
             assert result is not None
