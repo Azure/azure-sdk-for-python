@@ -14,7 +14,7 @@ the user handler with:
   upstream proxy / load-balancer idle timeouts;
 * a clean close on handler return (code 1000) or a 1011 close on uncaught
   handler exceptions;
-* a structured close-event log line and OTel span attributes carrying
+* a structured close-event log line carrying
   ``azure.ai.agentserver.invocations_ws.session_id``,
   ``azure.ai.agentserver.invocations_ws.close_code``, and
   ``azure.ai.agentserver.invocations_ws.duration_ms``.
@@ -31,15 +31,14 @@ from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
-    end_span,
 )
 
 from ._constants import InvocationsWSConstants
 
 # Type-checking only base so the mixin reads as an ``AgentServerHost`` to
-# mypy / pyright (resolves ``self.config``, ``self.request_span``,
-# ``self.router``) without coupling the runtime hierarchy.  At runtime the
-# mixin is a plain ``object`` subclass — only the concrete
+# mypy / pyright (resolves ``self.config`` and ``self.router``) without
+# coupling the runtime hierarchy.  At runtime the mixin is a plain
+# ``object`` subclass — only the concrete
 # ``InvocationAgentServerHost`` MRO actually inherits ``AgentServerHost``,
 # which keeps the diamond out of the runtime class graph.
 if TYPE_CHECKING:
@@ -53,23 +52,6 @@ logger = logging.getLogger("azure.ai.agentserver")
 WSHandler = Callable[[WebSocket], Awaitable[None]]
 
 
-def _safe_set_attrs(span: Any, attrs: dict[str, Any]) -> None:
-    """Best-effort ``span.set_attribute`` for a batch of attributes.
-
-    :param span: The OTel span (or ``None`` when tracing is disabled).
-    :type span: any
-    :param attrs: Mapping of attribute keys to values.
-    :type attrs: dict[str, any]
-    """
-    if span is None:
-        return
-    try:
-        for key, value in attrs.items():
-            span.set_attribute(key, value)
-    except Exception:  # pylint: disable=broad-exception-caught
-        logger.debug("Failed to set WS span attributes: %s", list(attrs.keys()), exc_info=True)
-
-
 class _WSHandlerMixin(_MixinBase):
     """Pure mixin that adds the ``@app.ws_handler`` decorator and ``/invocations_ws`` route.
 
@@ -79,8 +61,8 @@ class _WSHandlerMixin(_MixinBase):
     both ``POST /invocations`` (HTTP) and ``/invocations_ws`` (WebSocket)
     on the same Starlette application.  At runtime the mixin is a plain
     ``object`` subclass — host attributes (``self.config``,
-    ``self.request_span``, ``self.router``) are accessed via duck typing
-    and are typed only for the static checkers (see ``_MixinBase``).
+    ``self.router``) are accessed via duck typing and are typed only for
+    the static checkers (see ``_MixinBase``).
     """
 
     # Slots populated by __init__.
@@ -216,21 +198,6 @@ class _WSHandlerMixin(_MixinBase):
         session_id = self.config.session_id or str(uuid.uuid4())
         start_ns = time.monotonic_ns()
 
-        # Open the OTel span before accepting so any tracecontext header
-        # the client sent is honoured for parenting child spans inside the
-        # user handler.  ``end_on_exit=False`` so we can attach the close
-        # code / duration before ending.
-        span_ctx = self.request_span(
-            websocket.headers,
-            session_id,
-            "websocket_session",
-            operation_name="websocket_session",
-            session_id=session_id,
-            end_on_exit=False,
-        )
-        otel_span = span_ctx.__enter__()
-        _safe_set_attrs(otel_span, {InvocationsWSConstants.ATTR_SPAN_SESSION_ID: session_id})
-
         # NOTE: when no ``@ws_handler`` is registered, the route itself is
         # not registered (see ``_ensure_ws_route_registered``), so this
         # endpoint is unreachable in that state — Starlette returns 404.
@@ -241,12 +208,9 @@ class _WSHandlerMixin(_MixinBase):
         except Exception as exc:  # pylint: disable=broad-exception-caught
             await self._finalize_session(
                 websocket=None,
-                span_ctx=span_ctx,
-                otel_span=otel_span,
                 session_id=session_id,
                 start_ns=start_ns,
                 close_code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
-                handler_exc=exc,
                 error_code="accept_failed",
             )
             logger.error(
@@ -262,16 +226,16 @@ class _WSHandlerMixin(_MixinBase):
         except BaseException as exc:  # pylint: disable=broad-exception-caught
             # ``_invoke_user_handler`` catches ``Exception`` but not
             # ``BaseException`` (notably ``asyncio.CancelledError``).  Capture
-            # the exception so the ``finally`` block below can record it on
-            # the span, then re-raise via ``finally`` so cancellation is
-            # never swallowed.
+            # the exception so the ``finally`` block below can record it,
+            # then re-raise via ``finally`` so cancellation is never
+            # swallowed.
             close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
             handler_exc = exc
             raise
         finally:
-            # Always finalize \u2014 emits the close-event log line, ends the
-            # span, and best-effort closes the socket \u2014 even when the
-            # handler raised a ``BaseException`` like ``CancelledError``.
+            # Always finalize — emits the close-event log line and
+            # best-effort closes the socket — even when the handler
+            # raised a ``BaseException`` like ``CancelledError``.
             error_code: Optional[str]
             if handler_exc is None:
                 error_code = None
@@ -281,12 +245,9 @@ class _WSHandlerMixin(_MixinBase):
                 error_code = "cancelled"
             await self._finalize_session(
                 websocket=websocket,
-                span_ctx=span_ctx,
-                otel_span=otel_span,
                 session_id=session_id,
                 start_ns=start_ns,
                 close_code=close_code,
-                handler_exc=handler_exc,
                 error_code=error_code,
             )
 
@@ -332,35 +293,25 @@ class _WSHandlerMixin(_MixinBase):
         self,
         *,
         websocket: Optional[WebSocket],
-        span_ctx: Any,
-        otel_span: Any,
         session_id: str,
         start_ns: int,
         close_code: int,
-        handler_exc: Optional[BaseException],
         error_code: Optional[str],
     ) -> None:
-        """Close the WS (best-effort), emit metrics, and end the span.
+        """Close the WS (best-effort) and emit the close-event log line.
 
         Called from both the success path and the accept-failure path.
 
         :keyword websocket: The connected WebSocket, or ``None`` when the
             ASGI ``accept`` itself failed (no socket to close).
         :paramtype websocket: Optional[~starlette.websockets.WebSocket]
-        :keyword span_ctx: The active ``request_span`` context manager.
-        :paramtype span_ctx: any
-        :keyword otel_span: The current OTel span (or ``None`` when tracing is off).
-        :paramtype otel_span: any
         :keyword session_id: Per-connection session ID.
         :paramtype session_id: str
         :keyword start_ns: ``time.monotonic_ns()`` at connection start.
         :paramtype start_ns: int
         :keyword close_code: The RFC 6455 code to report to the client.
         :paramtype close_code: int
-        :keyword handler_exc: Unhandled exception raised by the user handler,
-            or ``None`` for a clean close.
-        :paramtype handler_exc: Optional[BaseException]
-        :keyword error_code: Short error tag for span / log; ``None`` for success.
+        :keyword error_code: Short error tag for the log line; ``None`` for success.
         :paramtype error_code: Optional[str]
         """
         duration_ms = (time.monotonic_ns() - start_ns) // 1_000_000
@@ -387,24 +338,11 @@ class _WSHandlerMixin(_MixinBase):
                 )
 
         self._emit_close_event(
-            otel_span,
             session_id,
             close_code,
             duration_ms,
             error_code=error_code,
-            error_message=str(handler_exc) if handler_exc is not None else None,
         )
-
-        # Always exit the context manager with ``(None, None, None)``:
-        # OpenTelemetry's ``start_as_current_span`` records an exception
-        # event whenever ``__exit__`` is given exception info, so passing
-        # the user exception there *and* calling ``end_span(span, exc=...)``
-        # would double-record.  We take ownership of error recording and
-        # ending via ``end_span`` instead.
-        try:
-            span_ctx.__exit__(None, None, None)
-        finally:
-            end_span(otel_span, exc=handler_exc)
 
     # ------------------------------------------------------------------
     # Close event
@@ -412,65 +350,50 @@ class _WSHandlerMixin(_MixinBase):
 
     @staticmethod
     def _emit_close_event(
-        otel_span: Any,
         session_id: str,
         close_code: int,
         duration_ms: int,
         *,
         error_code: Optional[str] = None,
-        error_message: Optional[str] = None,
     ) -> None:
-        """Record close-event span attributes and emit a structured log line.
+        """Emit the structured close-event log line for one WS connection.
 
-        The log record carries the ``azure.ai.agentserver.invocations_ws.session_id``,
+        The log record carries ``azure.ai.agentserver.invocations_ws.session_id``,
         ``azure.ai.agentserver.invocations_ws.close_code``, and
-        ``azure.ai.agentserver.invocations_ws.duration_ms`` fields listed in the spec via the standard
+        ``azure.ai.agentserver.invocations_ws.duration_ms`` via the standard
         ``logging`` ``extra`` dict — a structured-logging formatter or an
-        OTel logging bridge can pick them up directly without having to
-        parse the message.
+        OTel logging bridge can pick them up directly without parsing the
+        message.  Exception details are deliberately NOT included here; they
+        flow through ``logger.error(..., exc_info=True)`` in
+        ``_invoke_user_handler`` instead.
 
-        :param otel_span: The connection span (or ``None`` when tracing is off).
-        :type otel_span: any
         :param session_id: Per-connection session ID.
         :type session_id: str
         :param close_code: The RFC 6455 close code reported to the client.
         :type close_code: int
         :param duration_ms: Connection duration in milliseconds (monotonic).
         :type duration_ms: int
-        :keyword error_code: Optional short error tag for span attribute.
+        :keyword error_code: Optional short error tag for the log record.
         :paramtype error_code: Optional[str]
-        :keyword error_message: Optional human-readable error message for
-            span attribute (NOT included in the log line — exception details
-            are logged separately by ``logger.error(..., exc_info=True)``).
-        :paramtype error_message: Optional[str]
         """
-        attrs: dict[str, Any] = {
+        extra: dict[str, Any] = {
             InvocationsWSConstants.ATTR_SPAN_SESSION_ID: session_id,
             InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE: close_code,
             InvocationsWSConstants.ATTR_SPAN_DURATION_MS: duration_ms,
         }
         if error_code:
-            attrs[InvocationsWSConstants.ATTR_SPAN_ERROR_CODE] = error_code
-        if error_message:
-            attrs[InvocationsWSConstants.ATTR_SPAN_ERROR_MESSAGE] = error_message
-        _safe_set_attrs(otel_span, attrs)
+            extra[InvocationsWSConstants.ATTR_SPAN_ERROR_CODE] = error_code
 
-        # NOTE: ``extra`` keys deliberately use dotted names (``azure.ai.agentserver.invocations_ws.session_id``
-        # etc.) so they line up 1:1 with the OTel span-attribute keys defined
-        # in :class:`InvocationsWSConstants`.  This makes log<->trace
-        # correlation trivial in OTel logging bridges.  The trade-off is that
-        # ``%(azure.ai.agentserver.invocations_ws.session_id)s`` printf-style formatters can't address them
-        # directly — use a structured formatter (JSON, OTel) or access via
-        # ``LogRecord.__dict__["azure.ai.agentserver.invocations_ws.session_id"]`` if you need them in plain
-        # ``logging`` output.
+        # NOTE: ``extra`` keys deliberately use dotted names
+        # (``azure.ai.agentserver.invocations_ws.session_id`` etc.) so they
+        # line up 1:1 with the keys defined in :class:`InvocationsWSConstants`.
+        # The trade-off is that printf-style log formatters can't address
+        # them directly — use a structured (JSON / OTel) formatter, or
+        # access via ``LogRecord.__dict__["<key>"]`` for plain ``logging``.
         logger.info(
             "invocations_ws connection closed: session_id=%s code=%s duration_ms=%s",
             session_id,
             close_code,
             duration_ms,
-            extra={
-                InvocationsWSConstants.ATTR_SPAN_SESSION_ID: session_id,
-                InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE: close_code,
-                InvocationsWSConstants.ATTR_SPAN_DURATION_MS: duration_ms,
-            },
+            extra=extra,
         )
