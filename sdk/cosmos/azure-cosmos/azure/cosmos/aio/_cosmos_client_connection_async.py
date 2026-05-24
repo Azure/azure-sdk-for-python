@@ -62,11 +62,9 @@ from .._routing.feed_range_continuation import (
     _count_page_items_from_partial_result,
     _decode_token,
     _derive_initial_feedranges,
-    _hash_feed_range,
-    _hash_query_spec,
     _increment_explode_iterations_or_raise,
     _normalize_max_item_count,
-    _should_attempt_legacy_bridge_fallback,
+    _should_bridge_legacy_continuation,
     _update_no_progress_page_count,
     _validate_token_identity,
     _write_query_outbound_continuation,
@@ -164,8 +162,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.availability_strategy: Union[CrossRegionHedgingStrategy, None] =\
             validate_client_hedging_strategy(availability_strategy)
         self.availability_strategy_max_concurrency: Optional[int] = availability_strategy_max_concurrency
-        emit_structured_env = os.environ.get(Constants.EMIT_STRUCTURED_CONTINUATION_PK_CONFIG, "")
-        self._emit_structured_continuation_pk = emit_structured_env.strip().lower() in ("1", "true", "yes", "on")
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[AsyncTokenCredential] = None
@@ -2133,7 +2129,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                        headers,
                                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
-        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
@@ -3054,9 +3049,20 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # we need to set operation_state in kwargs as that's where it is looked at while sending the request
             kwargs.setdefault("timeout", timeout)
 
+        # The capture dict can arrive via two upstream paths:
+        #   1. The query execution context puts it into ``options`` (the
+        #      common case for query pagination — see the async
+        #      ``_QueryExecutionContextBase._fetch_items_helper_no_retries``).
+        #   2. ``routing_map_provider.get_routing_map`` puts it into
+        #      ``kwargs`` for PK-range fetches.
+        # Honour both so checkpoint-on-failure works on every path.
         internal_headers_capture: Optional[Dict[str, Any]] = kwargs.pop(
             "_internal_response_headers_capture", None
         )
+        if internal_headers_capture is None and isinstance(options, dict):
+            internal_headers_capture = options.pop(
+                "_internal_response_headers_capture", None
+            )
 
         def _capture_internal_headers(headers: Mapping[str, Any]) -> None:
             # `internal_headers_capture` is Optional[Dict]; checking it
@@ -3153,8 +3159,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Check if the overlapping ranges can be populated
         feed_range_epk = None
-        is_full_pk_structured_scope = False
-        legacy_partition_key_header = req_headers.get(http_constants.HttpHeaders.PartitionKey)
+        is_full_pk_scope = False
         if "feed_range" in kwargs:
             feed_range = kwargs.pop("feed_range")
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
@@ -3172,7 +3177,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 feed_range_epk = partition_key_obj._get_epk_range_for_partition_key(
                     partition_key_value
                 ).to_normalized_range()
-                is_full_pk_structured_scope = True
+                is_full_pk_scope = True
 
         if feed_range_epk is not None:
             if id_ is None:
@@ -3186,20 +3191,57 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # ``None`` means start from the beginning of the requested
             # feed range.
             page_size_hint = _normalize_max_item_count(options.get("maxItemCount"))
-            query_hash = _hash_query_spec(query)
-            feedrange_hash = _hash_feed_range(feed_range_epk)
-            should_emit_structured_full_pk = self._emit_structured_continuation_pk
+            # Single shared copy of options for routing-map lookups in this call.
+            # ``get_overlapping_ranges`` does not mutate options; copying once
+            # avoids per-iteration ``dict(options)`` allocations.
+            routing_options = dict(options)
             inbound_serialized_continuation = options.get("continuation")
             inbound_token_payload = _decode_token(inbound_serialized_continuation)
             legacy_bridge_in_use = False
-            legacy_fallback_attempted = False
-            if inbound_serialized_continuation and inbound_token_payload is None:
-                if is_full_pk_structured_scope:
-                    _LOGGER.warning(
-                        "Full-PK query continuation token is in legacy format; "
-                        "bridging it into structured pagination state for resume."
+            # Cache for the input scope's single-partition classification.
+            # We compute it at most once per __QueryFeed call so inbound
+            # bridge-detection, mid-page checkpoint, and end-of-page outbound
+            # writer all agree even if the PK range cache refreshes mid-call.
+            cached_is_single_partition: Optional[bool] = None
+
+            async def _is_input_scope_single_partition() -> bool:
+                """Return True when the caller input range currently maps to one physical partition.
+
+                Result is cached for the duration of this __QueryFeed call.
+
+                :returns: True if the input scope maps to a single physical partition.
+                :rtype: bool
+                """
+                nonlocal cached_is_single_partition
+                if cached_is_single_partition is None:
+                    scope_overlaps = await self._routing_map_provider.get_overlapping_ranges(
+                        resource_id_str, [feed_range_epk], routing_options
                     )
+                    cached_is_single_partition = (
+                        len(_derive_initial_feedranges(feed_range_epk, scope_overlaps)) == 1
+                    )
+                return cached_is_single_partition
+
+            if inbound_serialized_continuation and inbound_token_payload is None:
+                scope_is_single_partition = False
+                if not is_full_pk_scope:
+                    scope_is_single_partition = await _is_input_scope_single_partition()
+                if _should_bridge_legacy_continuation(
+                    inbound_serialized_continuation,
+                    inbound_token_payload,
+                    is_full_pk_scope,
+                    scope_is_single_partition,
+                ):
                     legacy_bridge_in_use = True
+                    # Hot path: legacy is the normal inbound shape for full-PK
+                    # and currently-single-partition feed-range queries (we
+                    # just emitted one). The bridge wires the legacy string
+                    # into the internal pagination queue; the outbound token
+                    # format on the next page is unchanged.
+                    _LOGGER.debug(
+                        "Bridging inbound legacy continuation into internal pagination state; "
+                        "outbound token format will remain unchanged (legacy single-string)."
+                    )
                 else:
                     _LOGGER.warning(
                         "Feed-range query continuation token is not in the supported structured format; "
@@ -3211,8 +3253,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     resource_id_str,
                     query,
                     feed_range_epk,
-                    expected_query_hash=query_hash,
-                    expected_feedrange_hash=feedrange_hash,
                 )
                 pagination_state = _FeedRangePaginationState.from_inbound(
                     inbound_token_payload, page_size_hint
@@ -3225,7 +3265,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 )
             else:
                 first_overlaps = await self._routing_map_provider.get_overlapping_ranges(
-                    id_, [feed_range_epk], dict(options)
+                    resource_id_str, [feed_range_epk], routing_options
                 )
                 all_feedranges = _derive_initial_feedranges(feed_range_epk, first_overlaps)
                 if not all_feedranges:
@@ -3247,27 +3287,30 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 feedrange_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
                 consecutive_no_progress_pages = 0
 
-                def _checkpoint_and_reraise(error: Exception) -> NoReturn:
+                async def _checkpoint_and_reraise(error: Exception) -> NoReturn:
                     # Intentionally broad: stamp the latest resumable checkpoint
                     # for any mid-page failure, then re-raise the original error.
                     self.last_response_headers = feedrange_response_headers
                     try:
+                        single_partition_scope_for_outbound = (
+                            (not is_full_pk_scope) and (await _is_input_scope_single_partition())
+                        )
                         _write_query_outbound_continuation(
                             feedrange_response_headers,
                             pagination_state,
                             resource_id_str,
                             query,
                             feed_range_epk,
-                            is_full_pk_structured_scope,
-                            should_emit_structured_full_pk,
-                            query_hash,
-                            feedrange_hash,
+                            is_full_pk_scope,
+                            single_partition_scope_for_outbound,
                         )
                     except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
                         _LOGGER.warning(
                             "Failed to write continuation while handling query POST failure: %s",
                             continuation_write_error,
                         )
+                    if internal_headers_capture is not None:
+                        _capture_internal_headers(feedrange_response_headers)
                     raise error
 
                 # NOTE: Keep this feed_range pagination loop in sync with
@@ -3277,56 +3320,71 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     if head_feedrange is None:
                         break
 
-                    # Look up the live routing map for the current feedrange.
-                    # Doing this every iteration is what makes the token
-                    # split-safe.
-                    overlapping = await self._routing_map_provider.get_overlapping_ranges(
-                        id_, [head_feedrange], dict(options)
-                    )
-                    overlapping, partition_scope = _build_scope_from_overlaps(
-                        overlapping, head_feedrange
-                    )
-
-                    # If routing returns multiple overlaps, the head sub-range now spans a split
-                    # that occurred after the token was created. Re-slice and re-resolve until
-                    # each head maps to one partition. See
-                    # ``_FeedRangePaginationState.explode_on_multi_overlap`` for details.
-                    explode_iterations = 0
-                    while pagination_state.explode_on_multi_overlap(overlapping):
-                        explode_iterations = _increment_explode_iterations_or_raise(explode_iterations)
-                        head_feedrange = pagination_state.head_range
-                        if head_feedrange is None:
-                            break
+                    # Wrap all mid-page work that can raise (routing lookups,
+                    # scope build/explode, backend POST, and result merge) so
+                    # we always stamp a resumable checkpoint into
+                    # last_response_headers[Continuation] before re-raising.
+                    # Post-result accounting below is pure local bookkeeping
+                    # and is intentionally left outside this try.
+                    try:
+                        # Look up the live routing map for the current feedrange.
+                        # Doing this every iteration is what makes the token
+                        # split-safe.
                         overlapping = await self._routing_map_provider.get_overlapping_ranges(
-                            id_, [head_feedrange], dict(options)
+                            resource_id_str, [head_feedrange], routing_options
                         )
                         overlapping, partition_scope = _build_scope_from_overlaps(
                             overlapping, head_feedrange
                         )
 
-                    head_feedrange = pagination_state.head_range
-                    if head_feedrange is None:
-                        continue
+                        # If routing returns multiple overlaps, the head sub-range now spans a split
+                        # that occurred after the token was created. Re-slice and re-resolve until
+                        # each head maps to one partition. See
+                        # ``_FeedRangePaginationState.explode_on_multi_overlap`` for details.
+                        explode_iterations = 0
+                        while pagination_state.explode_on_multi_overlap(overlapping):
+                            # Splitting the head invalidates the per-call
+                            # single-partition classification: the input scope
+                            # now overlaps >= 2 physical partitions. Drop the
+                            # cached answer so the outbound writer (and the
+                            # mid-page checkpoint writer) re-evaluate and emit
+                            # the structured envelope instead of a legacy
+                            # single-string that would silently lose tail
+                            # entries from the exploded queue.
+                            cached_is_single_partition = None
+                            explode_iterations = _increment_explode_iterations_or_raise(explode_iterations)
+                            head_feedrange = pagination_state.head_range
+                            if head_feedrange is None:
+                                break
+                            overlapping = await self._routing_map_provider.get_overlapping_ranges(
+                                resource_id_str, [head_feedrange], routing_options
+                            )
+                            overlapping, partition_scope = _build_scope_from_overlaps(
+                                overlapping, head_feedrange
+                            )
 
-                    # Populate request headers for this single backend POST.
-                    # The shared helper handles partition routing (PKR id +
-                    # optional EPK filter), page-size cap, and continuation
-                    # set/clear so the same rules apply to sync and async.
-                    _apply_feedrange_request_headers(
-                        req_headers,
-                        overlapping,
-                        partition_scope,
-                        head_feedrange,
-                        pagination_state.page_size_hint,
-                        pagination_state.head_bc,
-                    )
-                    # Use the session token for this specific partition so we don't
-                    # send a compound token covering all partitions.
-                    await base.set_session_token_header_async(
-                        self, req_headers, path, request_params, options, overlapping[0]["id"]
-                    )
+                        head_feedrange = pagination_state.head_range
+                        if head_feedrange is None:
+                            continue
 
-                    try:
+                        # Populate request headers for this single backend POST.
+                        # The shared helper handles partition routing (PKR id +
+                        # optional EPK filter), page-size cap, and continuation
+                        # set/clear so the same rules apply to sync and async.
+                        _apply_feedrange_request_headers(
+                            req_headers,
+                            overlapping,
+                            partition_scope,
+                            head_feedrange,
+                            pagination_state.page_size_hint,
+                            pagination_state.head_bc,
+                        )
+                        # Use the session token for this specific partition so we don't
+                        # send a compound token covering all partitions.
+                        await base.set_session_token_header_async(
+                            self, req_headers, path, request_params, options, overlapping[0]["id"]
+                        )
+
                         backend_query_result, backend_response_headers = await self.__Post(
                             path,
                             request_params,
@@ -3334,73 +3392,36 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             req_headers,
                             **kwargs
                         )
-                    except exceptions.CosmosHttpResponseError as post_error:
-                        if (
-                            legacy_bridge_in_use
-                            and not legacy_fallback_attempted
-                            and _should_attempt_legacy_bridge_fallback(post_error)
-                        ):
-                            legacy_fallback_attempted = True
-                            req_headers.pop(http_constants.HttpHeaders.PartitionKeyRangeID, None)
-                            req_headers.pop(http_constants.HttpHeaders.StartEpkString, None)
-                            req_headers.pop(http_constants.HttpHeaders.EndEpkString, None)
-                            req_headers.pop(http_constants.HttpHeaders.ReadFeedKeyType, None)
-                            if legacy_partition_key_header is not None:
-                                req_headers[http_constants.HttpHeaders.PartitionKey] = legacy_partition_key_header
-                            req_headers[http_constants.HttpHeaders.Continuation] = inbound_serialized_continuation
-                            await base.set_session_token_header_async(
-                                self, req_headers, path, request_params, options, partition_key_range_id
-                            )
-                            try:
-                                backend_query_result, backend_response_headers = await self.__Post(
-                                    path,
-                                    request_params,
-                                    query,
-                                    req_headers,
-                                    **kwargs
-                                )
-                            except Exception as fallback_error:  # pylint: disable=broad-exception-caught
-                                _checkpoint_and_reraise(fallback_error)
-                            self.last_response_headers = backend_response_headers
-                            if internal_headers_capture is not None:
-                                _capture_internal_headers(backend_response_headers)
-                            self._UpdateSessionIfRequired(
-                                req_headers, backend_query_result, backend_response_headers
-                            )
-                            if response_headers_list is not None:
-                                response_headers_list.append(backend_response_headers.copy())
-                            if response_hook:
-                                response_hook(backend_response_headers, backend_query_result)
-                            return __GetBodiesFromQueryResult(backend_query_result)
-                        _checkpoint_and_reraise(post_error)
-                    except Exception as post_error:  # pylint: disable=broad-exception-caught
-                        _checkpoint_and_reraise(post_error)
-                    feedrange_response_headers = backend_response_headers
-                    self.last_response_headers = feedrange_response_headers
-                    if internal_headers_capture is not None:
-                        _capture_internal_headers(backend_response_headers)
-                    self._UpdateSessionIfRequired(req_headers, backend_query_result, backend_response_headers)
-                    if response_headers_list is not None:
-                        response_headers_list.append(backend_response_headers.copy())
+                        feedrange_response_headers = backend_response_headers
+                        self.last_response_headers = feedrange_response_headers
+                        if internal_headers_capture is not None:
+                            _capture_internal_headers(backend_response_headers)
+                        self._UpdateSessionIfRequired(req_headers, backend_query_result, backend_response_headers)
+                        if response_headers_list is not None:
+                            response_headers_list.append(backend_response_headers.copy())
 
-                    # Merge results, falling back to a plain extend if the
-                    # aggregating merge raises (it can on aggregated queries
-                    # during splits).
-                    try:
-                        results = base._merge_query_results(results, backend_query_result, query)
-                    except ValueError as merge_error:
-                        base._raise_query_merge_value_error(merge_error)
-                    except (TypeError, KeyError) as merge_error:
-                        _LOGGER.warning(
-                            "Falling back to non-aggregate merge after aggregate merge failure: %s",
-                            merge_error,
-                        )
-                        results_docs = results.get("Documents") if results else None
-                        partial_docs = backend_query_result.get("Documents") if backend_query_result else None
-                        if isinstance(results_docs, list) and isinstance(partial_docs, list):
-                            results_docs.extend(partial_docs)
-                        elif backend_query_result:
-                            results = backend_query_result
+                        # Merge results, falling back to a plain extend if the
+                        # aggregating merge raises (it can on aggregated queries
+                        # during splits).
+                        try:
+                            results = base._merge_query_results(results, backend_query_result, query)
+                        except ValueError as merge_error:
+                            base._raise_query_merge_value_error(merge_error)
+                        except (TypeError, KeyError) as merge_error:
+                            _LOGGER.warning(
+                                "Falling back to non-aggregate merge after aggregate merge failure: %s",
+                                merge_error,
+                            )
+                            results_docs = results.get("Documents") if results else None
+                            partial_docs = backend_query_result.get("Documents") if backend_query_result else None
+                            if isinstance(results_docs, list) and isinstance(partial_docs, list):
+                                results_docs.extend(partial_docs)
+                            elif not results and backend_query_result:
+                                # Preserve already-accumulated rows: only seed from
+                                # fallback payload when no prior merged result exists.
+                                results = backend_query_result
+                    except Exception as mid_page_error:  # pylint: disable=broad-exception-caught
+                        await _checkpoint_and_reraise(mid_page_error)
 
                     previous_feedrange = pagination_state.head_range
                     previous_backend_continuation = pagination_state.head_bc
@@ -3444,16 +3465,17 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # Pagination loop is done — write the final outbound
                 # continuation (or clear the header if the queue is fully
                 # drained) so the caller's ``by_page`` loop terminates.
+                single_partition_scope_for_outbound = (
+                    (not is_full_pk_scope) and (await _is_input_scope_single_partition())
+                )
                 _write_query_outbound_continuation(
                     feedrange_response_headers,
                     pagination_state,
                     resource_id_str,
                     query,
                     feed_range_epk,
-                    is_full_pk_structured_scope,
-                    should_emit_structured_full_pk,
-                    query_hash,
-                    feedrange_hash,
+                    is_full_pk_scope,
+                    single_partition_scope_for_outbound,
                 )
                 # End feed_range pagination block.
                 self.last_response_headers = feedrange_response_headers

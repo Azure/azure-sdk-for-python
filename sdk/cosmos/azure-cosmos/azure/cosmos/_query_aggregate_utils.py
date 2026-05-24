@@ -212,9 +212,11 @@ def _extract_outer_select_value_projection(normalized_query: str) -> Optional[st
     :rtype: Optional[str]
     """
     select_value = "SELECT VALUE"
-    start_idx = normalized_query.find(select_value)
-    if start_idx < 0:
+    # Minimal hardening: only classify when the OUTER query starts with
+    # SELECT VALUE. This avoids matching nested SELECT VALUE occurrences.
+    if not normalized_query.startswith(select_value):
         return None
+    start_idx = 0
 
     projection_start = start_idx + len(select_value)
     if projection_start < len(normalized_query) and normalized_query[projection_start] == " ":

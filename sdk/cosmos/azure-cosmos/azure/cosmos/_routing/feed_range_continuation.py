@@ -13,6 +13,7 @@ is drained.
 import base64
 import binascii
 import json
+import logging
 from collections import deque
 from typing import Any, Deque, Iterable, List, MutableMapping, Optional, Tuple
 
@@ -21,6 +22,9 @@ from .._cosmos_integers import _UInt128
 from .._cosmos_murmurhash3 import murmurhash3_128
 from .._query_aggregate_utils import _AggregatePartialClassification, _classify_aggregate_partial
 from . import routing_range
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 # ----- Token wire-format constants ---------------------------------------
@@ -265,8 +269,6 @@ def _validate_token_identity(
     resource_id: str,
     query: Any,
     feed_range_epk: routing_range.Range,
-    expected_query_hash: Optional[str] = None,
-    expected_feedrange_hash: Optional[str] = None,
 ) -> None:
     """Confirm the inbound token was created for the same collection,
     query, and feed_range the current call is using. If any of the
@@ -282,13 +284,9 @@ def _validate_token_identity(
     :type query: str or dict
     :param feed_range_epk: Current feed range scope.
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
-    :param expected_query_hash: Precomputed query hash to validate against inbound token.
-    :type expected_query_hash: Optional[str]
-    :param expected_feedrange_hash: Precomputed feed_range hash to validate against inbound token.
-    :type expected_feedrange_hash: Optional[str]
     """
-    expected_qh = expected_query_hash or _hash_query_spec(query)
-    expected_frh = expected_feedrange_hash or _hash_feed_range(feed_range_epk)
+    expected_qh = _hash_query_spec(query)
+    expected_frh = _hash_feed_range(feed_range_epk)
     if inbound[_FIELD_COLLECTION_RID] != resource_id:
         raise ValueError(
             "Continuation token was created for a different collection "
@@ -304,6 +302,40 @@ def _validate_token_identity(
             "Continuation token was created for a different feed_range "
             "(feed_range hash mismatch)."
         )
+
+
+def _should_bridge_legacy_continuation(
+    inbound_serialized_continuation: Optional[str],
+    inbound_token_payload: Optional[dict],
+    is_full_pk_scope: bool,
+    is_single_partition_scope: bool,
+) -> bool:
+    """Whether to bridge an inbound legacy continuation into pagination state.
+
+    We bridge only when the inbound continuation exists, did not decode as
+    structured ``v=1`` (legacy/opaque token), and the current request scope can
+    be represented safely by a single legacy continuation slot:
+
+    * full-PK scope (structurally single-partition forever), or
+    * non-full-PK scope that currently maps to one physical partition.
+
+    :param inbound_serialized_continuation: Caller-supplied continuation string, if any.
+    :type inbound_serialized_continuation: Optional[str]
+    :param inbound_token_payload: Decoded structured payload, or ``None`` for legacy/absent token.
+    :type inbound_token_payload: Optional[dict]
+    :param is_full_pk_scope: Whether request scope is a full partition-key query
+        (always emits legacy outbound regardless of partition count).
+    :type is_full_pk_scope: bool
+    :param is_single_partition_scope: Whether the current input scope maps to one partition.
+    :type is_single_partition_scope: bool
+    :returns: ``True`` when the legacy continuation can safely be bridged.
+    :rtype: bool
+    """
+    return bool(
+        inbound_serialized_continuation
+        and inbound_token_payload is None
+        and (is_full_pk_scope or is_single_partition_scope)
+    )
 
 
 def _extract_resume_queue(
@@ -568,8 +600,6 @@ class _FeedRangePaginationState:
         resource_id: str,
         query: Any,
         feed_range_epk: routing_range.Range,
-        query_hash: Optional[str] = None,
-        feedrange_hash: Optional[str] = None,
     ) -> None:
         """Set or clear the outbound continuation header from the queue.
 
@@ -586,10 +616,6 @@ class _FeedRangePaginationState:
         :type query: str or dict
         :param feed_range_epk: Original request feed range.
         :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
-        :param query_hash: Optional precomputed query hash to embed in the outbound token.
-        :type query_hash: Optional[str]
-        :param feedrange_hash: Optional precomputed feed_range hash to embed in the outbound token.
-        :type feedrange_hash: Optional[str]
         """
         if not self.queue:
             last_response_headers.pop(http_constants.HttpHeaders.Continuation, None)
@@ -599,8 +625,6 @@ class _FeedRangePaginationState:
             query,
             feed_range_epk,
             self.queue,
-            query_hash=query_hash,
-            feedrange_hash=feedrange_hash,
         )
 
 
@@ -610,15 +634,25 @@ def _write_query_outbound_continuation(
     resource_id: str,
     query: Any,
     feed_range_epk: routing_range.Range,
-    is_full_pk_structured_scope: bool,
-    should_emit_structured_full_pk: bool,
-    query_hash: str,
-    feedrange_hash: str,
+    is_full_pk_scope: bool,
+    emit_legacy_for_single_partition: bool,
 ) -> None:
     """Write outbound continuation for feed-range pagination.
 
-    Full-PK queries keep legacy continuation emission unless structured
-    emission is explicitly enabled by the client-level env-var contract.
+    Full-PK queries always emit the legacy single-string continuation
+    so persisted bookmarks remain readable by older SDK versions.
+    Feed-range/prefix queries emit legacy continuation when the caller's
+    input scope currently maps to a single physical partition; otherwise
+    they emit the structured envelope.
+
+    Defense in depth: even when the caller requests legacy emission, the
+    writer verifies that the pagination queue can actually be represented
+    by a single legacy string (i.e. ``len(queue) <= 1``). If the queue
+    has grown past one entry (e.g. via a mid-page split that bypassed the
+    caller's single-partition cache invalidation), the writer falls
+    through to the structured envelope and logs a warning. This prevents
+    silent loss of tail queue entries when caller-side flags disagree
+    with the actual queue shape.
 
     :param last_response_headers: Response headers to mutate.
     :type last_response_headers: MutableMapping[str, Any]
@@ -630,46 +664,47 @@ def _write_query_outbound_continuation(
     :type query: Any
     :param feed_range_epk: Original request feed range.
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
-    :param is_full_pk_structured_scope: Whether request scope is full-PK on structured path.
-    :type is_full_pk_structured_scope: bool
-    :param should_emit_structured_full_pk: Whether structured emission is enabled for full-PK.
-    :type should_emit_structured_full_pk: bool
-    :param query_hash: Precomputed query hash for outbound token identity.
-    :type query_hash: str
-    :param feedrange_hash: Precomputed feed range hash for outbound token identity.
-    :type feedrange_hash: str
+    :param is_full_pk_scope: Whether request scope is a full partition-key query
+        (always emits legacy outbound regardless of partition count).
+    :type is_full_pk_scope: bool
+    :param emit_legacy_for_single_partition: Whether non-full-PK scope currently maps to a
+        single physical partition and can safely emit legacy continuation.
+    :type emit_legacy_for_single_partition: bool
     :returns: None. Mutates ``last_response_headers`` in place.
     :rtype: None
     """
-    if is_full_pk_structured_scope and not should_emit_structured_full_pk:
-        legacy_outbound = pagination_state.head_bc
-        if legacy_outbound is None:
-            last_response_headers.pop(http_constants.HttpHeaders.Continuation, None)
-        else:
-            last_response_headers[http_constants.HttpHeaders.Continuation] = legacy_outbound
-        return
+    if is_full_pk_scope or emit_legacy_for_single_partition:
+        # A single legacy string can represent at most one queue entry's
+        # backend continuation. If the queue grew past that (e.g. a
+        # mid-page split exploded the head into children), emitting
+        # legacy would silently discard every entry past the head.
+        # Fall through to structured emission instead and surface the
+        # caller-side inconsistency at WARNING level so the upstream
+        # bug can be diagnosed.
+        if len(pagination_state.queue) <= 1:
+            legacy_outbound = pagination_state.head_bc
+            if legacy_outbound is None:
+                last_response_headers.pop(http_constants.HttpHeaders.Continuation, None)
+            else:
+                last_response_headers[http_constants.HttpHeaders.Continuation] = legacy_outbound
+            return
+        _LOGGER.warning(
+            "Pagination queue has %d entries but caller requested legacy emission "
+            "(is_full_pk_scope=%s, emit_legacy_for_single_partition=%s). Falling "
+            "through to structured envelope to preserve full pagination state; "
+            "this indicates a caller-side single-partition classification that is "
+            "out of sync with the actual queue shape.",
+            len(pagination_state.queue),
+            is_full_pk_scope,
+            emit_legacy_for_single_partition,
+        )
     pagination_state.write_outbound_continuation(
         last_response_headers,
         resource_id,
         query,
         feed_range_epk,
-        query_hash=query_hash,
-        feedrange_hash=feedrange_hash,
     )
 
-
-def _should_attempt_legacy_bridge_fallback(error: Any) -> bool:
-    """Return whether a compatibility fallback should be attempted.
-
-    Compatibility fallback is restricted to legacy-token bridge failures
-    that surface as ``400 BadRequest``.
-
-    :param error: Exception raised by backend request execution.
-    :type error: Any
-    :returns: ``True`` when the error is a ``400 BadRequest`` compatibility failure.
-    :rtype: bool
-    """
-    return getattr(error, "status_code", None) == http_constants.StatusCodes.BAD_REQUEST
 
 
 def _build_outbound_token(
@@ -677,8 +712,6 @@ def _build_outbound_token(
     query: Any,
     feed_range_epk: routing_range.Range,
     entries: Iterable[Tuple[routing_range.Range, Optional[str]]],
-    query_hash: Optional[str] = None,
-    feedrange_hash: Optional[str] = None,
 ) -> str:
     """Build and base64-encode the outbound continuation token from a
     queue of ``(range, backend_continuation)`` entries.
@@ -693,18 +726,14 @@ def _build_outbound_token(
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
     :param entries: Ordered ``(range, bc)`` pairs to serialize.
     :type entries: Iterable[tuple[~azure.cosmos._routing.routing_range.Range, Optional[str]]]
-    :param query_hash: Optional precomputed query hash to persist in the token envelope.
-    :type query_hash: Optional[str]
-    :param feedrange_hash: Optional precomputed feed_range hash to persist in the token envelope.
-    :type feedrange_hash: Optional[str]
     :returns: Encoded continuation token.
     :rtype: str
     """
     payload = {
         _FIELD_VERSION: _TOKEN_VERSION,
         _FIELD_COLLECTION_RID: resource_id,
-        _FIELD_QUERY_HASH: query_hash or _hash_query_spec(query),
-        _FIELD_FEEDRANGE_HASH: feedrange_hash or _hash_feed_range(feed_range_epk),
+        _FIELD_QUERY_HASH: _hash_query_spec(query),
+        _FIELD_FEEDRANGE_HASH: _hash_feed_range(feed_range_epk),
         _FIELD_CONTINUATIONS: [
             {"min": r.min, "max": r.max, _FIELD_BACKEND_CONTINUATION: bc}
             for r, bc in entries

@@ -250,7 +250,6 @@ def _raise_query_merge_value_error(merge_error: ValueError) -> None:
         ) from merge_error
     raise merge_error
 
-
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
         default_headers: Mapping[str, Any],

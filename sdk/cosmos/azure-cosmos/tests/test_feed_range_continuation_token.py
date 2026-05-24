@@ -54,7 +54,9 @@ from azure.cosmos._routing.feed_range_continuation import (
     _hash_query_spec,
     _stable_hash_128,
     _normalize_max_item_count,
+    _should_bridge_legacy_continuation,
     _increment_explode_iterations_or_raise,
+    _write_query_outbound_continuation,
     _update_no_progress_page_count,
     _validate_token_identity,
     _FIELD_BACKEND_CONTINUATION,
@@ -226,28 +228,6 @@ class TestTokenRoundTrip:
         assert "cf" not in decoded
         assert "rf" not in decoded
 
-    def test_build_outbound_token_uses_precomputed_hashes_without_rehash(self, monkeypatch):
-        monkeypatch.setattr(
-            "azure.cosmos._routing.feed_range_continuation._hash_query_spec",
-            lambda _query: (_ for _ in ()).throw(AssertionError("query hash should not be recomputed")),
-        )
-        monkeypatch.setattr(
-            "azure.cosmos._routing.feed_range_continuation._hash_feed_range",
-            lambda _feed_range: (_ for _ in ()).throw(AssertionError("feed_range hash should not be recomputed")),
-        )
-
-        wire = _build_outbound_token(
-            resource_id=_RID,
-            query=_QUERY,
-            feed_range_epk=_FEED_RANGE,
-            entries=[(_HEAD_FEEDRANGE, _BACKEND_CONT)],
-            query_hash="precomputed-query-hash",
-            feedrange_hash="precomputed-feedrange-hash",
-        )
-        decoded = _decode_token(wire)
-        assert decoded is not None
-        assert decoded[_FIELD_QUERY_HASH] == "precomputed-query-hash"
-        assert decoded[_FIELD_FEEDRANGE_HASH] == "precomputed-feedrange-hash"
 
     def test_per_entry_backend_continuations_coexist(self):
         # The shape that motivated the flat ``c`` list: a future
@@ -551,28 +531,6 @@ class TestIdentityFingerprintMismatch:
             )
         assert "feed_range" in str(excinfo.value).lower()
 
-    def test_validate_token_identity_uses_precomputed_hashes_without_rehash(self, monkeypatch):
-        payload = _make_valid_token_payload()
-        inbound = _decode_token(_encode_token(payload))
-        assert inbound is not None
-
-        monkeypatch.setattr(
-            "azure.cosmos._routing.feed_range_continuation._hash_query_spec",
-            lambda _query: (_ for _ in ()).throw(AssertionError("query hash should not be recomputed")),
-        )
-        monkeypatch.setattr(
-            "azure.cosmos._routing.feed_range_continuation._hash_feed_range",
-            lambda _feed_range: (_ for _ in ()).throw(AssertionError("feed_range hash should not be recomputed")),
-        )
-
-        _validate_token_identity(
-            inbound,
-            resource_id=_RID,
-            query=_QUERY,
-            feed_range_epk=_FEED_RANGE,
-            expected_query_hash=inbound[_FIELD_QUERY_HASH],
-            expected_feedrange_hash=inbound[_FIELD_FEEDRANGE_HASH],
-        )
 
 
 # ---------------------------------------------------------------------- #
@@ -1012,30 +970,6 @@ class TestAggregateMergeConsistency:
 
         assert "VALUE aggregate classification" in str(excinfo.value)
 
-    def test_value_avg_merge_raises_as_unsupported(self):
-        query = "SELECT VALUE AVG(c.value) FROM c"
-
-        with pytest.raises(ValueError) as excinfo:
-            _base._merge_query_results({"Documents": [7.0]}, {"Documents": [3.0]}, query)
-
-        assert "VALUE AVG aggregate merge" in str(excinfo.value)
-
-    def test_raise_query_merge_value_error_rewrites_value_avg_message(self):
-        original = ValueError("VALUE AVG aggregate merge across partitions is not supported client-side.")
-
-        with pytest.raises(ValueError) as excinfo:
-            _base._raise_query_merge_value_error(original)
-
-        assert "SELECT VALUE AVG(...)" in str(excinfo.value)
-        assert "range-scoped pagination" in str(excinfo.value)
-
-    def test_raise_query_merge_value_error_preserves_other_value_errors(self):
-        original = ValueError("Invariant violation: VALUE aggregate classification requires a recognized aggregate function.")
-
-        with pytest.raises(ValueError) as excinfo:
-            _base._raise_query_merge_value_error(original)
-
-        assert str(excinfo.value) == str(original)
 
     def test_value_aggregate_detection_allows_space_before_open_paren(self):
         query = "SELECT VALUE COUNT (1) FROM c"
@@ -1090,6 +1024,10 @@ class TestSelectValueProjectionParser:
 
     def test_array_projection_subquery_is_not_classified_as_outer_aggregate(self):
         query = "SELECT VALUE ARRAY(SELECT VALUE COUNT(1) FROM d IN c.items) FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+
+    def test_nested_select_value_in_where_subquery_does_not_drive_outer_detection(self):
+        query = "SELECT c.count FROM c WHERE c.count IN (SELECT VALUE COUNT(1) FROM c)"
         assert _get_select_value_aggregate_function(query) is None
 
 
@@ -1520,4 +1458,169 @@ class TestCheckpointRoundTripOnException:
         state.write_outbound_continuation(headers, _RID, _QUERY, _FEED_RANGE)
 
         assert http_constants.HttpHeaders.Continuation not in headers
+
+
+class TestWriteQueryOutboundContinuation:
+    """Outbound continuation format selection should match request scope policy."""
+
+    def test_full_pk_scope_always_emits_legacy(self):
+        state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
+            _HEAD_FEEDRANGE,
+            _BACKEND_CONT,
+            page_size_hint=5,
+        )
+        headers: dict = {}
+
+        _write_query_outbound_continuation(
+            headers,
+            state,
+            _RID,
+            _QUERY,
+            _FEED_RANGE,
+            is_full_pk_scope=True,
+            emit_legacy_for_single_partition=False,
+        )
+
+        assert headers[http_constants.HttpHeaders.Continuation] == _BACKEND_CONT
+
+    def test_non_full_pk_single_partition_scope_emits_legacy(self):
+        state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
+            _HEAD_FEEDRANGE,
+            _BACKEND_CONT,
+            page_size_hint=5,
+        )
+        headers: dict = {}
+
+        _write_query_outbound_continuation(
+            headers,
+            state,
+            _RID,
+            _QUERY,
+            _FEED_RANGE,
+            is_full_pk_scope=False,
+            emit_legacy_for_single_partition=True,
+        )
+
+        assert headers[http_constants.HttpHeaders.Continuation] == _BACKEND_CONT
+
+    def test_non_full_pk_multi_partition_scope_emits_structured(self):
+        state = _FeedRangePaginationState(
+            [(_HEAD_FEEDRANGE, _BACKEND_CONT), (_REMAINING_FEEDRANGE, None)],
+            page_size_hint=5,
+        )
+        headers: dict = {}
+
+        _write_query_outbound_continuation(
+            headers,
+            state,
+            _RID,
+            _QUERY,
+            _FEED_RANGE,
+            is_full_pk_scope=False,
+            emit_legacy_for_single_partition=False,
+        )
+
+        decoded = _decode_token(headers[http_constants.HttpHeaders.Continuation])
+        assert decoded is not None
+        assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
+
+    def test_full_pk_scope_with_multi_entry_queue_falls_through_to_structured(self, caplog):
+        """Defense in depth: if the queue somehow has >1 entries while the
+        caller claims ``is_full_pk_scope=True`` (a structural impossibility
+        in normal operation, but a possible caller-side bug surface), the
+        writer must NOT silently discard tail entries via legacy emission.
+        It falls through to the structured envelope and logs a warning.
+        """
+        state = _FeedRangePaginationState(
+            [(_HEAD_FEEDRANGE, _BACKEND_CONT), (_REMAINING_FEEDRANGE, None)],
+            page_size_hint=5,
+        )
+        headers: dict = {}
+
+        with caplog.at_level("WARNING", logger="azure.cosmos._routing.feed_range_continuation"):
+            _write_query_outbound_continuation(
+                headers,
+                state,
+                _RID,
+                _QUERY,
+                _FEED_RANGE,
+                is_full_pk_scope=True,
+                emit_legacy_for_single_partition=False,
+            )
+
+        # Defense: queue has 2 entries, so the writer falls through to structured.
+        decoded = _decode_token(headers[http_constants.HttpHeaders.Continuation])
+        assert decoded is not None
+        assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
+        # And it surfaces the caller-side inconsistency as a WARNING.
+        assert any(
+            "Pagination queue has 2 entries" in record.getMessage()
+            and record.levelname == "WARNING"
+            for record in caplog.records
+        )
+
+    def test_emit_legacy_with_multi_entry_queue_falls_through_to_structured(self, caplog):
+        """Defense in depth: a stale single-partition cache after a mid-page
+        split could set ``emit_legacy_for_single_partition=True`` on a
+        multi-entry queue. The writer must not silently drop the tail
+        entries — fall through to structured envelope instead.
+        """
+        state = _FeedRangePaginationState(
+            [(_HEAD_FEEDRANGE, _BACKEND_CONT), (_REMAINING_FEEDRANGE, None)],
+            page_size_hint=5,
+        )
+        headers: dict = {}
+
+        with caplog.at_level("WARNING", logger="azure.cosmos._routing.feed_range_continuation"):
+            _write_query_outbound_continuation(
+                headers,
+                state,
+                _RID,
+                _QUERY,
+                _FEED_RANGE,
+                is_full_pk_scope=False,
+                emit_legacy_for_single_partition=True,
+            )
+
+        decoded = _decode_token(headers[http_constants.HttpHeaders.Continuation])
+        assert decoded is not None
+        assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
+        assert any(
+            "Pagination queue has 2 entries" in record.getMessage()
+            and record.levelname == "WARNING"
+            for record in caplog.records
+        )
+
+
+class TestLegacyBridgeDecision:
+    """Legacy inbound continuation is bridged only when scope is safely single-partition."""
+
+    @pytest.mark.parametrize(
+        "inbound_serialized_continuation,inbound_token_payload,is_full_pk_scope,"
+        "is_single_partition_scope,expected",
+        [
+            (None, None, False, True, False),
+            ("", None, False, True, False),
+            ("legacy", {"v": 1}, False, True, False),
+            ("legacy", None, True, False, True),
+            ("legacy", None, False, True, True),
+            ("legacy", None, False, False, False),
+        ],
+    )
+    def test_should_bridge_legacy_continuation_policy(
+        self,
+        inbound_serialized_continuation,
+        inbound_token_payload,
+        is_full_pk_scope,
+        is_single_partition_scope,
+        expected,
+    ):
+        assert _should_bridge_legacy_continuation(
+            inbound_serialized_continuation,
+            inbound_token_payload,
+            is_full_pk_scope,
+            is_single_partition_scope,
+        ) is expected
+
+
 

@@ -189,9 +189,22 @@ class _QueryExecutionContextBase(object):
                         max_retries
                     )
 
-                    # Refresh routing map to get new partition key ranges
-                    self._client.refresh_routing_map_provider()
-                    # Reset execution context state to allow retry from the beginning
+                    # Refresh routing map to get new partition key ranges.
+                    collection_link = self._resource_link
+                    if collection_link:
+                        previous_routing_map = None
+                        routing_map_provider = getattr(self._client, "_routing_map_provider", None)
+                        if routing_map_provider is not None:
+                            routing_map_cache = getattr(routing_map_provider, "_collection_routing_map_by_item", {})
+                            if isinstance(routing_map_cache, dict):
+                                previous_routing_map = routing_map_cache.get(collection_link)
+                        await self._client.refresh_routing_map_provider(
+                            collection_link,
+                            previous_routing_map,
+                            self._options,
+                        )
+                    else:
+                        await self._client.refresh_routing_map_provider()
 
                     # Reset execution context state for retry. If __QueryFeed already
                     # stamped a checkpoint continuation on failure, resume from it.
