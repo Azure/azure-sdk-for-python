@@ -37,7 +37,7 @@ class MockHttpClientResponse(Response):
     def __init__(
         self, url: str, body_bytes: bytes, headers: Dict[str, Any], status: int = 200, reason: str = "OK"
     ) -> None:
-        super(MockHttpClientResponse, self).__init__()
+        super(MockHttpClientResponse).__init__()
         self._url = url
         self._body = body_bytes
         self._content = body_bytes

@@ -61,7 +61,7 @@ class MockAioHttpClientResponse(ClientResponse):
     def __init__(
         self, url: str, body_bytes: bytes, headers: Dict[str, Any], status: int = 200, reason: str = "OK"
     ) -> None:
-        super(MockAioHttpClientResponse, self).__init__()
+        super(MockAioHttpClientResponse).__init__()
         self._url = url
         self._body = body_bytes
         self._headers = headers
