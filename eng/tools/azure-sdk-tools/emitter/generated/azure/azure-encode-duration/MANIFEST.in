@@ -1,0 +1,8 @@
+include *.md
+include LICENSE
+include specs/azure/encode/duration/py.typed
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include specs/__init__.py
+include specs/azure/__init__.py
+include specs/azure/encode/__init__.py

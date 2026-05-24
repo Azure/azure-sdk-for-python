@@ -1,0 +1,457 @@
+# coding=utf-8
+
+import datetime
+from typing import Literal, Optional, Union
+from typing_extensions import Required, TypedDict
+
+
+class DifferentSpreadFloatRecord(TypedDict, total=False):
+    """The model spread Record<float32> with the different known property type.
+
+    :ivar name: The id property. Required.
+    :vartype name: str
+    """
+
+    name: Required[str]
+    """The id property. Required."""
+
+
+class DifferentSpreadFloatDerived(DifferentSpreadFloatRecord):
+    """The model extends from a model that spread Record<float32> with the different known property
+    type.
+
+    :ivar name: The id property. Required.
+    :vartype name: str
+    :ivar derived_prop: The index property. Required.
+    :vartype derived_prop: float
+    """
+
+    derivedProp: Required[float]
+    """The index property. Required."""
+
+
+class DifferentSpreadModelArrayRecord(TypedDict, total=False):
+    """The model spread Record<ModelForRecord[]> with the different known property type.
+
+    :ivar known_prop: Required.
+    :vartype known_prop: str
+    """
+
+    knownProp: Required[str]
+    """Required."""
+
+
+class DifferentSpreadModelArrayDerived(DifferentSpreadModelArrayRecord):
+    """The model extends from a model that spread Record<ModelForRecord[]> with the different known
+    property type.
+
+    :ivar known_prop: Required.
+    :vartype known_prop: str
+    :ivar derived_prop: The index property. Required.
+    :vartype derived_prop: list[~typetest.property.additionalproperties.models.ModelForRecord]
+    """
+
+    derivedProp: Required[list["ModelForRecord"]]
+    """The index property. Required."""
+
+
+class DifferentSpreadModelRecord(TypedDict, total=False):
+    """The model spread Record<ModelForRecord> with the different known property type.
+
+    :ivar known_prop: Required.
+    :vartype known_prop: str
+    """
+
+    knownProp: Required[str]
+    """Required."""
+
+
+class DifferentSpreadModelDerived(DifferentSpreadModelRecord):
+    """The model extends from a model that spread Record<ModelForRecord> with the different known
+    property type.
+
+    :ivar known_prop: Required.
+    :vartype known_prop: str
+    :ivar derived_prop: The index property. Required.
+    :vartype derived_prop: ~typetest.property.additionalproperties.models.ModelForRecord
+    """
+
+    derivedProp: Required["ModelForRecord"]
+    """The index property. Required."""
+
+
+class DifferentSpreadStringRecord(TypedDict, total=False):
+    """The model spread Record<string> with the different known property type.
+
+    :ivar id: The name property. Required.
+    :vartype id: float
+    """
+
+    id: Required[float]
+    """The name property. Required."""
+
+
+class DifferentSpreadStringDerived(DifferentSpreadStringRecord):
+    """The model extends from a model that spread Record<string> with the different known property
+    type.
+
+    :ivar id: The name property. Required.
+    :vartype id: float
+    :ivar derived_prop: The index property. Required.
+    :vartype derived_prop: str
+    """
+
+    derivedProp: Required[str]
+    """The index property. Required."""
+
+
+class ExtendsFloatAdditionalProperties(TypedDict, total=False):
+    """The model extends from Record<float32> type.
+
+    :ivar id: The id property. Required.
+    :vartype id: float
+    """
+
+    id: Required[float]
+    """The id property. Required."""
+
+
+class ExtendsModelAdditionalProperties(TypedDict, total=False):
+    """The model extends from Record<ModelForRecord> type.
+
+    :ivar known_prop: Required.
+    :vartype known_prop: ~typetest.property.additionalproperties.models.ModelForRecord
+    """
+
+    knownProp: Required["ModelForRecord"]
+    """Required."""
+
+
+class ExtendsModelArrayAdditionalProperties(TypedDict, total=False):
+    """The model extends from Record<ModelForRecord[]> type.
+
+    :ivar known_prop: Required.
+    :vartype known_prop: list[~typetest.property.additionalproperties.models.ModelForRecord]
+    """
+
+    knownProp: Required[list["ModelForRecord"]]
+    """Required."""
+
+
+class ExtendsStringAdditionalProperties(TypedDict, total=False):
+    """The model extends from Record<string> type.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    """
+
+    name: Required[str]
+    """The name property. Required."""
+
+
+class ExtendsUnknownAdditionalProperties(TypedDict, total=False):
+    """The model extends from Record<unknown> type.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    """
+
+    name: Required[str]
+    """The name property. Required."""
+
+
+class ExtendsUnknownAdditionalPropertiesDerived(ExtendsUnknownAdditionalProperties):  # pylint: disable=name-too-long
+    """The model extends from a type that extends from Record<unknown>.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    :ivar index: The index property. Required.
+    :vartype index: int
+    :ivar age: The age property.
+    :vartype age: float
+    """
+
+    index: Required[int]
+    """The index property. Required."""
+    age: Optional[float]
+    """The age property."""
+
+
+class ExtendsUnknownAdditionalPropertiesDiscriminatedDerived(TypedDict, total=False):  # pylint: disable=name-too-long
+    """The derived discriminated type.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    :ivar kind: Required. Default value is "derived".
+    :vartype kind: str
+    :ivar index: The index property. Required.
+    :vartype index: int
+    :ivar age: The age property.
+    :vartype age: float
+    """
+
+    name: Required[str]
+    """The name property. Required."""
+    kind: Required[Literal["derived"]]
+    """Required. Default value is \"derived\"."""
+    index: Required[int]
+    """The index property. Required."""
+    age: Optional[float]
+    """The age property."""
+
+
+class IsFloatAdditionalProperties(TypedDict, total=False):
+    """The model is from Record<float32> type.
+
+    :ivar id: The id property. Required.
+    :vartype id: float
+    """
+
+    id: Required[float]
+    """The id property. Required."""
+
+
+class IsModelAdditionalProperties(TypedDict, total=False):
+    """The model is from Record<ModelForRecord> type.
+
+    :ivar known_prop: Required.
+    :vartype known_prop: ~typetest.property.additionalproperties.models.ModelForRecord
+    """
+
+    knownProp: Required["ModelForRecord"]
+    """Required."""
+
+
+class IsModelArrayAdditionalProperties(TypedDict, total=False):
+    """The model is from Record<ModelForRecord[]> type.
+
+    :ivar known_prop: Required.
+    :vartype known_prop: list[~typetest.property.additionalproperties.models.ModelForRecord]
+    """
+
+    knownProp: Required[list["ModelForRecord"]]
+    """Required."""
+
+
+class IsStringAdditionalProperties(TypedDict, total=False):
+    """The model is from Record<string> type.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    """
+
+    name: Required[str]
+    """The name property. Required."""
+
+
+class IsUnknownAdditionalProperties(TypedDict, total=False):
+    """The model is from Record<unknown> type.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    """
+
+    name: Required[str]
+    """The name property. Required."""
+
+
+class IsUnknownAdditionalPropertiesDerived(IsUnknownAdditionalProperties):
+    """The model extends from a type that is Record<unknown> type.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    :ivar index: The index property. Required.
+    :vartype index: int
+    :ivar age: The age property.
+    :vartype age: float
+    """
+
+    index: Required[int]
+    """The index property. Required."""
+    age: Optional[float]
+    """The age property."""
+
+
+class IsUnknownAdditionalPropertiesDiscriminatedDerived(TypedDict, total=False):  # pylint: disable=name-too-long
+    """The derived discriminated type.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    :ivar kind: Required. Default value is "derived".
+    :vartype kind: str
+    :ivar index: The index property. Required.
+    :vartype index: int
+    :ivar age: The age property.
+    :vartype age: float
+    """
+
+    name: Required[str]
+    """The name property. Required."""
+    kind: Required[Literal["derived"]]
+    """Required. Default value is \"derived\"."""
+    index: Required[int]
+    """The index property. Required."""
+    age: Optional[float]
+    """The age property."""
+
+
+class ModelForRecord(TypedDict, total=False):
+    """model for record.
+
+    :ivar state: The state property. Required.
+    :vartype state: str
+    """
+
+    state: Required[str]
+    """The state property. Required."""
+
+
+class MultipleSpreadRecord(TypedDict, total=False):
+    """The model spread Record<string> and Record<float32>.
+
+    :ivar flag: The name property. Required.
+    :vartype flag: bool
+    """
+
+    flag: Required[bool]
+    """The name property. Required."""
+
+
+class SpreadFloatRecord(TypedDict, total=False):
+    """The model spread Record<float32> with the same known property type.
+
+    :ivar id: The id property. Required.
+    :vartype id: float
+    """
+
+    id: Required[float]
+    """The id property. Required."""
+
+
+class SpreadModelArrayRecord(TypedDict, total=False):
+    """SpreadModelArrayRecord.
+
+    :ivar known_prop: Required.
+    :vartype known_prop: list[~typetest.property.additionalproperties.models.ModelForRecord]
+    """
+
+    knownProp: Required[list["ModelForRecord"]]
+    """Required."""
+
+
+class SpreadModelRecord(TypedDict, total=False):
+    """The model spread Record<ModelForRecord> with the same known property type.
+
+    :ivar known_prop: Required.
+    :vartype known_prop: ~typetest.property.additionalproperties.models.ModelForRecord
+    """
+
+    knownProp: Required["ModelForRecord"]
+    """Required."""
+
+
+class SpreadRecordForNonDiscriminatedUnion(TypedDict, total=False):
+    """The model spread Record<WidgetData0 | WidgetData1>.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    """
+
+    name: Required[str]
+    """The name property. Required."""
+
+
+class SpreadRecordForNonDiscriminatedUnion2(TypedDict, total=False):
+    """The model spread Record<WidgetData2 | WidgetData1>.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    """
+
+    name: Required[str]
+    """The name property. Required."""
+
+
+class SpreadRecordForNonDiscriminatedUnion3(TypedDict, total=False):
+    """The model spread Record<WidgetData2[] | WidgetData1>.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    """
+
+    name: Required[str]
+    """The name property. Required."""
+
+
+class SpreadRecordForUnion(TypedDict, total=False):
+    """The model spread Record<string | float32>.
+
+    :ivar flag: The name property. Required.
+    :vartype flag: bool
+    """
+
+    flag: Required[bool]
+    """The name property. Required."""
+
+
+class SpreadStringRecord(TypedDict, total=False):
+    """The model spread Record<string> with the same known property type.
+
+    :ivar name: The name property. Required.
+    :vartype name: str
+    """
+
+    name: Required[str]
+    """The name property. Required."""
+
+
+class WidgetData0(TypedDict, total=False):
+    """WidgetData0.
+
+    :ivar kind: Required. Default value is "kind0".
+    :vartype kind: str
+    :ivar foo_prop: Required.
+    :vartype foo_prop: str
+    """
+
+    kind: Required[Literal["kind0"]]
+    """Required. Default value is \"kind0\"."""
+    fooProp: Required[str]
+    """Required."""
+
+
+class WidgetData1(TypedDict, total=False):
+    """WidgetData1.
+
+    :ivar kind: Required. Default value is "kind1".
+    :vartype kind: str
+    :ivar start: Required.
+    :vartype start: ~datetime.datetime
+    :ivar end:
+    :vartype end: ~datetime.datetime
+    """
+
+    kind: Required[Literal["kind1"]]
+    """Required. Default value is \"kind1\"."""
+    start: Required[datetime.datetime]
+    """Required."""
+    end: Optional[datetime.datetime]
+
+
+class WidgetData2(TypedDict, total=False):
+    """WidgetData2.
+
+    :ivar kind: Required. Default value is "kind1".
+    :vartype kind: str
+    :ivar start: Required.
+    :vartype start: str
+    """
+
+    kind: Required[Literal["kind1"]]
+    """Required. Default value is \"kind1\"."""
+    start: Required[str]
+    """Required."""
+
+
+ExtendsUnknownAdditionalPropertiesDiscriminated = Union[ExtendsUnknownAdditionalPropertiesDiscriminatedDerived]
+IsUnknownAdditionalPropertiesDiscriminated = Union[IsUnknownAdditionalPropertiesDiscriminatedDerived]
