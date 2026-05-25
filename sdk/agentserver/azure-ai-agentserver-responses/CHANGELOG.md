@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b7 (2026-05-22)
+
+### Features Added
+
+- Added MCP output item builder enhancements for hosted MCP relay scenarios: `ResponseEventStream.add_output_item_mcp_call()` now supports caller-supplied item IDs, and MCP call `emit_done()` supports optional `output` and `error` payloads for canonical `mcp_call` persistence and replay.
+
 ## 1.0.0b6 (2026-05-21)
 
 ### Features Added
