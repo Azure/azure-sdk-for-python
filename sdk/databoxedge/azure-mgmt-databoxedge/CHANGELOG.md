@@ -2,7 +2,77 @@
 
 ## 2.1.0 (2026-05-25)
 
-skip changelog generation
+### Features Added
+
+  - Client `DataBoxEdgeManagementClient` added method `send_request`
+  - Model `DataBoxEdgeDevicePatch` added property `properties`
+  - Model `DiagnosticProactiveLogCollectionSettings` added property `properties`
+  - Model `EdgeProfileSubscription` added property `properties`
+  - Model `FileEventTrigger` added property `properties`
+  - Model `Job` added property `system_data`
+  - Model `PeriodicTimerEventTrigger` added property `properties`
+  - Model `TriggerSupportPackageRequest` added property `properties`
+  - Added model `CloudError`
+  - Added model `DCAccessCodeProperties`
+  - Added model `DataBoxEdgeDevicePropertiesPatch`
+  - Added model `DeviceCapacityRequestInfoProperties`
+  - Added model `FileTriggerProperties`
+  - Added model `MetricDimension_V1`
+  - Added model `MetricSpecification_V1`
+  - Added model `PeriodicTimerProperties`
+  - Added model `ProactiveLogCollectionSettingsProperties`
+  - Added model `ProxyResource`
+  - Added model `RawCertificateData`
+  - Added model `Resource`
+  - Added model `SubscriptionProperties`
+  - Added model `SupportPackageRequestProperties`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - Model `DCAccessCode` deleted or renamed its instance variable `auth_code`
+  - Model `DataBoxEdgeDevicePatch` deleted or renamed its instance variable `edge_profile`
+  - Model `DeviceCapacityRequestInfo` deleted or renamed its instance variable `vm_placement_query`
+  - Model `DeviceCapacityRequestInfo` deleted or renamed its instance variable `vm_placement_results`
+  - Model `DiagnosticProactiveLogCollectionSettings` deleted or renamed its instance variable `user_consent`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `tenant_id`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `location_placement_id`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `quota_id`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `serialized_details`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `registered_features`
+  - Model `FileEventTrigger` deleted or renamed its instance variable `source_info`
+  - Model `FileEventTrigger` deleted or renamed its instance variable `sink_info`
+  - Model `FileEventTrigger` deleted or renamed its instance variable `custom_context_tag`
+  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `source_info`
+  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `sink_info`
+  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `custom_context_tag`
+  - Model `TriggerSupportPackageRequest` deleted or renamed its instance variable `minimum_time_stamp`
+  - Model `TriggerSupportPackageRequest` deleted or renamed its instance variable `maximum_time_stamp`
+  - Model `TriggerSupportPackageRequest` deleted or renamed its instance variable `include`
+  - Model `UploadCertificateRequest` deleted or renamed its instance variable `authentication_type`
+  - Model `UploadCertificateRequest` deleted or renamed its instance variable `certificate`
+  - Deleted or renamed model `AddonList`
+  - Deleted or renamed model `AlertList`
+  - Deleted or renamed model `BandwidthSchedulesList`
+  - Deleted or renamed model `ContainerList`
+  - Deleted or renamed model `DataBoxEdgeDeviceList`
+  - Deleted or renamed model `DataBoxEdgeMoveRequest`
+  - Deleted or renamed model `DataBoxEdgeSkuList`
+  - Deleted or renamed model `MetricDimensionV1`
+  - Deleted or renamed model `MetricSpecificationV1`
+  - Deleted or renamed model `MonitoringMetricConfigurationList`
+  - Deleted or renamed model `NodeList`
+  - Deleted or renamed model `OperationsList`
+  - Deleted or renamed model `OrderList`
+  - Deleted or renamed model `RoleList`
+  - Deleted or renamed model `ShareList`
+  - Deleted or renamed model `StorageAccountCredentialList`
+  - Deleted or renamed model `StorageAccountList`
+  - Deleted or renamed model `TriggerList`
+  - Deleted or renamed model `UserList`
+  - Method `DeviceCapacityCheckOperations.begin_check_resource_creation_feasibility` changed its parameter `capacity_name` from `positional_or_keyword` to `keyword_only`
+  - Method `DevicesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DevicesOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
 
 ## 3.0.0b1 (2025-08-06)
 
