@@ -85,6 +85,7 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents",
             samples_to_skip=[
+                "sample_external_agents_crud.py",  # Skipped until recordings are available.
                 "sample_workflow_multi_agent.py",  # No issue to run.  Just postpone recording.
                 "sample_workflow_multi_agent_with_mcp_approval.py",  # No issue to run.  Just postpone recording.
             ],
@@ -187,8 +188,8 @@ class TestSamples(AzureRecordedTestCase):
     @additionalSampleTests(
         [
             AdditionalSampleTestDetail(
-                test_id="sample_dataset_generation_job_with_evaluation",
-                sample_filename="sample_dataset_generation_job_with_evaluation.py",
+                test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
+                sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
                 env_vars={
                     "POLL_INTERVAL_SECONDS": "60",
                 },
@@ -199,7 +200,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "datasets",
-            samples_to_skip=["sample_dataset_generation_job_with_evaluation.py"],
+            samples_to_skip=["sample_dataset_generation_job_simpleqna_with_prompt_source.py"],
         ),
     )
     @SamplePathPasser()
