@@ -40,15 +40,16 @@
   - Added enum `VmPriority`
   - Added model `Workbench`
   - Added model `WorkbenchProperties`
-  - Model `AccountsOperations` added method `evaluate_deployment_policies`
-  - Added model `ComputesOperations`
-  - Added model `ManagedComputeCapacitiesOperations`
-  - Added model `ManagedComputeDeploymentsOperations`
-  - Added model `ManagedComputeUsagesOperationGroupOperations`
-  - Added model `WorkbenchesOperations`
+  - Operation group `AccountsOperations` added method `evaluate_deployment_policies`
+  - Added operation group `ComputesOperations`
+  - Added operation group `ManagedComputeCapacitiesOperations`
+  - Added operation group `ManagedComputeDeploymentsOperations`
+  - Added operation group `ManagedComputeUsagesOperationGroupOperations`
+  - Added operation group `WorkbenchesOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `RaiPolicyProperties` deleted or renamed its instance variable `custom_topics`
   - Deleted or renamed enum value `RoutingMode.ACCURACY`
   - Deleted or renamed model `CustomTopicConfig`
