@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from packaging_tools.generate_utils import (
     _TRIPLE_QUOTED_RE,
     _fix_triple_quoted,
@@ -39,7 +37,8 @@ def test_leaves_raw_strings_alone():
 
 def test_leaves_byte_strings_alone():
     # Byte triple-quoted strings are rare in docstrings but must not be touched.
-    # Our regex deliberately doesn't include b/B in the allowed prefix so they're skipped.
+    # The regex matches them, but `_fix_triple_quoted` bails out because the
+    # captured prefix contains `b`.
     src = 'b"""[\\W_]"""'
     assert _run(src) == src
 
