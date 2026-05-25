@@ -1,11 +1,10 @@
 {
-  "commit": "0e38f0a383cabf58342a19c6351766da0153b4f4",
+  "apiVersion": "2024-11-30",
+  "apiVersions": {
+    "Microsoft.ManagedIdentity": "2024-11-30"
+  },
+  "commit": "2c7a167981a674e5602a9a2d9da8237584c0375c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/msi/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\worktrees\\sdk-azure-mgmt-msi\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/msi/resource-manager/readme.md"
+  "typespec_src": "specification/msi/resource-manager/Microsoft.ManagedIdentity/ManagedIdentity",
+  "emitterVersion": "0.62.1"
 }
