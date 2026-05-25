@@ -179,8 +179,8 @@ def _load_config_inner(
         local_dir = _resolve_local_dir(config_dir)
         raise ValueError(
             "No optimization config found. Prepare a baseline folder at "
-            f"'{local_dir / OptimizationConfig.BASELINE_DIR}' with at least "
-            "an instructions.md file, or pass required=False."
+            f"'{local_dir / OptimizationConfig.BASELINE_DIR}' with a "
+            "metadata.yaml file, or pass required=False."
         )
     logger.warning("No optimization config found — returning None")
     return None
