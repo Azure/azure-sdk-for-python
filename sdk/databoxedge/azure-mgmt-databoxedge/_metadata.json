@@ -1,11 +1,10 @@
 {
-  "commit": "f08909b11b193ea57272a544387e3a67f60a7c13",
+  "apiVersion": "2023-12-01",
+  "apiVersions": {
+    "Microsoft.DataBoxEdge": "2023-12-01"
+  },
+  "commit": "04e1bf1293607d05faacc008c84d64a9bb3f3338",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/DataBoxEdge/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=C:\\dev\\worktrees\\sdk-azure-mgmt-databoxedge\\sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/DataBoxEdge/readme.md"
+  "typespec_src": "specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/DataBoxEdge",
+  "emitterVersion": "0.62.1"
 }
