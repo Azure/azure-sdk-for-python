@@ -195,5 +195,5 @@
         "azure.ai.voicelive.models.RequestImageContentPartDetail": "VoiceLive.RequestImageContentPartDetail",
         "azure.ai.voicelive.models.ServerEventType": "VoiceLive.ServerEventType"
     },
-    "CrossLanguageVersion": "86299c665983"
+    "CrossLanguageVersion": "4f7c08a38aa5"
 }

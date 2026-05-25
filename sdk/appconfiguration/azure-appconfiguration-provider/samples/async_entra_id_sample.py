@@ -16,16 +16,22 @@ async def main():
     credential = get_credential(authority, is_async=True)
     kwargs = get_client_modifications()
 
-    # Connecting to Azure App Configuration using AAD
+    # [START create_provider_entra_id_async]
+    from azure.appconfiguration.provider.aio import load
+
+    # Connecting to Azure App Configuration using Entra ID
     config = await load(endpoint=endpoint, credential=credential, **kwargs)
     print(config["message"])
 
     await credential.close()
     await config.close()
+    # [END create_provider_entra_id_async]
 
-    # Connecting to Azure App Configuration using AAD and trim key prefixes
+    # [START trim_prefixes_entra_id_async]
+    # Connecting to Azure App Configuration using Entra ID and trim key prefixes
     trimmed = ["test."]
     config = await load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed, **kwargs)
+    # [END trim_prefixes_entra_id_async]
 
     print(config["message"])
 
