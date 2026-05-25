@@ -728,7 +728,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         *,
         session_state_updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
-        **kwargs: Any,
     ) -> AsyncIterator[str]:
         """List session IDs with active messages in a session-enabled queue.
 
@@ -770,7 +769,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         *,
         session_state_updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
-        **kwargs: Any,
     ) -> AsyncIterator[str]:
         """List session IDs with active messages in a session-enabled subscription.
 
