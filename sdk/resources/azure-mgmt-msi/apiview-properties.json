@@ -16,6 +16,7 @@
         "azure.mgmt.msi.models.SystemData": null,
         "azure.mgmt.msi.models.UserAssignedIdentitiesListResult": null,
         "azure.mgmt.msi.models.CreatedByType": null,
+        "azure.mgmt.msi.models.IsolationScope": null,
         "azure.mgmt.msi.operations.SystemAssignedIdentitiesOperations.get_by_scope": null,
         "azure.mgmt.msi.aio.operations.SystemAssignedIdentitiesOperations.get_by_scope": null,
         "azure.mgmt.msi.operations.Operations.list": null,

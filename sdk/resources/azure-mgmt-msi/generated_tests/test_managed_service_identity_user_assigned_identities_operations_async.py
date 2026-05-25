@@ -23,7 +23,7 @@ class TestManagedServiceIdentityUserAssignedIdentitiesOperationsAsync(AzureMgmtR
     @recorded_by_proxy_async
     async def test_user_assigned_identities_list_by_subscription(self, resource_group):
         response = self.client.user_assigned_identities.list_by_subscription(
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestManagedServiceIdentityUserAssignedIdentitiesOperationsAsync(AzureMgmtR
     async def test_user_assigned_identities_list_by_resource_group(self, resource_group):
         response = self.client.user_assigned_identities.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -50,6 +50,7 @@ class TestManagedServiceIdentityUserAssignedIdentitiesOperationsAsync(AzureMgmtR
                 "location": "str",
                 "clientId": "str",
                 "id": "str",
+                "isolationScope": "str",
                 "name": "str",
                 "principalId": "str",
                 "systemData": {
@@ -64,7 +65,7 @@ class TestManagedServiceIdentityUserAssignedIdentitiesOperationsAsync(AzureMgmtR
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
 
         # please add some check logic here by yourself
@@ -79,6 +80,7 @@ class TestManagedServiceIdentityUserAssignedIdentitiesOperationsAsync(AzureMgmtR
             parameters={
                 "clientId": "str",
                 "id": "str",
+                "isolationScope": "str",
                 "location": "str",
                 "name": "str",
                 "principalId": "str",
@@ -94,7 +96,7 @@ class TestManagedServiceIdentityUserAssignedIdentitiesOperationsAsync(AzureMgmtR
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +108,7 @@ class TestManagedServiceIdentityUserAssignedIdentitiesOperationsAsync(AzureMgmtR
         response = await self.client.user_assigned_identities.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
 
         # please add some check logic here by yourself
@@ -118,7 +120,7 @@ class TestManagedServiceIdentityUserAssignedIdentitiesOperationsAsync(AzureMgmtR
         response = await self.client.user_assigned_identities.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
 
         # please add some check logic here by yourself

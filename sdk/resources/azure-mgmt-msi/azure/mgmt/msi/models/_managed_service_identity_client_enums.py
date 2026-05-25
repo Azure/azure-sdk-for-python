@@ -17,3 +17,10 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class IsolationScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to configure regional restrictions on identity assignment, as necessary."""
+
+    NONE = "None"
+    REGIONAL = "Regional"

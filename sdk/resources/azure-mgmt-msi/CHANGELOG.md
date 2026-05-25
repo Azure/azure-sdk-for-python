@@ -1,5 +1,9 @@
 # Release History
 
+## 7.2.0 (2026-05-25)
+
+skip changelog generation
+
 ## 8.0.0b1 (2025-08-15)
 
 ### Breaking Changes

@@ -32,6 +32,7 @@ from ._models_py3 import (  # type: ignore
 
 from ._managed_service_identity_client_enums import (  # type: ignore
     CreatedByType,
+    IsolationScope,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -53,6 +54,7 @@ __all__ = [
     "TrackedResource",
     "UserAssignedIdentitiesListResult",
     "CreatedByType",
+    "IsolationScope",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

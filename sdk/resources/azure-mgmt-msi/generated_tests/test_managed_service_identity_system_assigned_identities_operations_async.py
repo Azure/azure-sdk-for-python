@@ -24,7 +24,7 @@ class TestManagedServiceIdentitySystemAssignedIdentitiesOperationsAsync(AzureMgm
     async def test_system_assigned_identities_get_by_scope(self, resource_group):
         response = await self.client.system_assigned_identities.get_by_scope(
             scope="str",
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
 
         # please add some check logic here by yourself

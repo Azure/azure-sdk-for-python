@@ -24,7 +24,7 @@ class TestManagedServiceIdentityFederatedIdentityCredentialsOperations(AzureMgmt
         response = self.client.federated_identity_credentials.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestManagedServiceIdentityFederatedIdentityCredentialsOperations(AzureMgmt
                 },
                 "type": "str",
             },
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestManagedServiceIdentityFederatedIdentityCredentialsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             resource_name="str",
             federated_identity_credential_resource_name="str",
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestManagedServiceIdentityFederatedIdentityCredentialsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             resource_name="str",
             federated_identity_credential_resource_name="str",
-            api_version="2023-01-31",
+            api_version="2024-11-30",
         )
 
         # please add some check logic here by yourself

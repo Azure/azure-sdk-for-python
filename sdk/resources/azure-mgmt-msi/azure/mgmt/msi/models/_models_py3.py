@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -44,7 +44,7 @@ class CloudErrorBody(_serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
+        details: Optional[list["_models.CloudErrorBody"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -173,7 +173,7 @@ class FederatedIdentityCredential(ProxyResource):
         *,
         issuer: Optional[str] = None,
         subject: Optional[str] = None,
-        audiences: Optional[List[str]] = None,
+        audiences: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -208,7 +208,7 @@ class FederatedIdentityCredentialsListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.FederatedIdentityCredential"]] = None,
+        value: Optional[list["_models.FederatedIdentityCredential"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -266,7 +266,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -308,6 +308,9 @@ class Identity(TrackedResource):
     :ivar client_id: The id of the app associated with the identity. This is a random generated
      UUID by MSI.
     :vartype client_id: str
+    :ivar isolation_scope: Enum to configure regional restrictions on identity assignment, as
+     necessary. Known values are: "None" and "Regional".
+    :vartype isolation_scope: str or ~azure.mgmt.msi.models.IsolationScope
     """
 
     _validation = {
@@ -331,19 +334,31 @@ class Identity(TrackedResource):
         "tenant_id": {"key": "properties.tenantId", "type": "str"},
         "principal_id": {"key": "properties.principalId", "type": "str"},
         "client_id": {"key": "properties.clientId", "type": "str"},
+        "isolation_scope": {"key": "properties.isolationScope", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        isolation_scope: Optional[Union[str, "_models.IsolationScope"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword isolation_scope: Enum to configure regional restrictions on identity assignment, as
+         necessary. Known values are: "None" and "Regional".
+        :paramtype isolation_scope: str or ~azure.mgmt.msi.models.IsolationScope
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.tenant_id: Optional[str] = None
         self.principal_id: Optional[str] = None
         self.client_id: Optional[str] = None
+        self.isolation_scope = isolation_scope
 
 
 class IdentityUpdate(Resource):
@@ -374,6 +389,9 @@ class IdentityUpdate(Resource):
     :ivar client_id: The id of the app associated with the identity. This is a random generated
      UUID by MSI.
     :vartype client_id: str
+    :ivar isolation_scope: Enum to configure regional restrictions on identity assignment, as
+     necessary. Known values are: "None" and "Regional".
+    :vartype isolation_scope: str or ~azure.mgmt.msi.models.IsolationScope
     """
 
     _validation = {
@@ -396,14 +414,25 @@ class IdentityUpdate(Resource):
         "tenant_id": {"key": "properties.tenantId", "type": "str"},
         "principal_id": {"key": "properties.principalId", "type": "str"},
         "client_id": {"key": "properties.clientId", "type": "str"},
+        "isolation_scope": {"key": "properties.isolationScope", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        isolation_scope: Optional[Union[str, "_models.IsolationScope"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword isolation_scope: Enum to configure regional restrictions on identity assignment, as
+         necessary. Known values are: "None" and "Regional".
+        :paramtype isolation_scope: str or ~azure.mgmt.msi.models.IsolationScope
         """
         super().__init__(**kwargs)
         self.location = location
@@ -411,6 +440,7 @@ class IdentityUpdate(Resource):
         self.tenant_id: Optional[str] = None
         self.principal_id: Optional[str] = None
         self.client_id: Optional[str] = None
+        self.isolation_scope = isolation_scope
 
 
 class Operation(_serialization.Model):
@@ -504,7 +534,7 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: A list of operations supported by Microsoft.ManagedIdentity Resource Provider.
@@ -577,7 +607,7 @@ class SystemAssignedIdentity(ProxyResource):
         "client_secret_url": {"key": "properties.clientSecretUrl", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
@@ -672,7 +702,7 @@ class UserAssignedIdentitiesListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Identity"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Identity"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The collection of userAssignedIdentities returned by the listing operation.
