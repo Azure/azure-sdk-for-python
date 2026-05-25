@@ -11,11 +11,25 @@ import random
 from typing import Any, Dict, TYPE_CHECKING
 
 from azure.core.exceptions import AzureError, StreamClosedError, StreamConsumedError
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
+from azure.core.pipeline.policies import (
+    AsyncBearerTokenCredentialPolicy,
+    AsyncHTTPPolicy,
+)
 
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
-from .policies import encode_base64, is_retry, StorageContentValidation, StorageRetryPolicy
+from .policies import (
+    _prepare_content_validation,
+    _validate_content_response,
+    encode_base64,
+    is_retry,
+    StorageRetryPolicy,
+)
+from .streams_async import AsyncStructuredMessageDecoder
+from .validation import (
+    calculate_content_md5,
+    is_md5_validation,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -37,19 +51,50 @@ async def retry_hook(settings, **kwargs):
 
 
 async def is_checksum_retry(response):
-    # retry if invalid content md5
-    if response.context.get("validate_content", False) and response.http_response.headers.get("content-md5"):
+    validate_content = response.context.get("validate_content", False)
+    if not validate_content:
+        return False
+
+    # Legacy code - evaluate retry only on validate_content=True
+    if validate_content is True and response.http_response.headers.get("content-md5"):
         if hasattr(response.http_response, "load_body"):
             try:
                 await response.http_response.load_body()  # Load the body in memory and close the socket
             except (StreamClosedError, StreamConsumedError):
                 pass
         computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
-            StorageContentValidation.get_content_md5(response.http_response.body())
+            calculate_content_md5(response.http_response.body())
         )
         if response.http_response.headers["content-md5"] != computed_md5:
             return True
     return False
+
+
+class AsyncContentValidationPolicy(AsyncHTTPPolicy):
+    """A pipeline policy that performs content validation on uploads and downloads when enabled by the user.
+    This is enabled by setting the "validate_content" key in the request context. When enabled, this policy will
+    calculate and verify content checksums for uploads and downloads, and raise an exception if a mismatch is detected.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+        super().__init__()
+
+    async def send(self, request: "PipelineRequest") -> "PipelineResponse":
+        _prepare_content_validation(request)
+
+        response = await self.next.send(request)
+
+        validate_content = response.context.get("validate_content", False)
+        if validate_content and is_md5_validation(validate_content):
+            if hasattr(response.http_response, "load_body"):
+                try:
+                    await response.http_response.load_body()
+                except (StreamClosedError, StreamConsumedError):
+                    pass
+
+        _validate_content_response(request, response, AsyncStructuredMessageDecoder)
+
+        return response
 
 
 class AsyncStorageResponseHook(AsyncHTTPPolicy):
@@ -125,11 +170,16 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
                 response = await self.next.send(request)
                 if is_retry(response, retry_settings["mode"]) or await is_checksum_retry(response):
                     retries_remaining = self.increment(
-                        retry_settings, request=request.http_request, response=response.http_response
+                        retry_settings,
+                        request=request.http_request,
+                        response=response.http_response,
                     )
                     if retries_remaining:
                         await retry_hook(
-                            retry_settings, request=request.http_request, response=response.http_response, error=None
+                            retry_settings,
+                            request=request.http_request,
+                            response=response.http_response,
+                            error=None,
                         )
                         await self.sleep(retry_settings, request.context.transport)
                         continue
@@ -139,7 +189,12 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
                     raise
                 retries_remaining = self.increment(retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
-                    await retry_hook(retry_settings, request=request.http_request, response=None, error=err)
+                    await retry_hook(
+                        retry_settings,
+                        request=request.http_request,
+                        response=None,
+                        error=err,
+                    )
                     await self.sleep(retry_settings, request.context.transport)
                     continue
                 raise err
