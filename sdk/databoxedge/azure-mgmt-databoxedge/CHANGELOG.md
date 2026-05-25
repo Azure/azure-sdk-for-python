@@ -17,8 +17,6 @@
   - Added model `DataBoxEdgeDevicePropertiesPatch`
   - Added model `DeviceCapacityRequestInfoProperties`
   - Added model `FileTriggerProperties`
-  - Added model `MetricDimension_V1`
-  - Added model `MetricSpecification_V1`
   - Added model `PeriodicTimerProperties`
   - Added model `ProactiveLogCollectionSettingsProperties`
   - Added model `ProxyResource`
@@ -58,8 +56,8 @@
   - Deleted or renamed model `DataBoxEdgeDeviceList`
   - Deleted or renamed model `DataBoxEdgeMoveRequest`
   - Deleted or renamed model `DataBoxEdgeSkuList`
-  - Deleted or renamed model `MetricDimensionV1`
-  - Deleted or renamed model `MetricSpecificationV1`
+  - Renamed model `MetricDimensionV1` to `MetricDimension_V1`
+  - Renamed model `MetricSpecificationV1` to `MetricSpecification_V1`
   - Deleted or renamed model `MonitoringMetricConfigurationList`
   - Deleted or renamed model `NodeList`
   - Deleted or renamed model `OperationsList`
