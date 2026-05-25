@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.costmanagement import CostManagementClient
 
 """
@@ -32,12 +34,13 @@ def main():
         scope="providers/Microsoft.Management/managementGroups/TestMG",
         export_name="TestExport",
         parameters={
+            "identity": {"type": "SystemAssigned"},
+            "location": "centralus",
             "properties": {
+                "compressionMode": "gzip",
+                "dataOverwriteBehavior": "OverwritePreviousReport",
                 "definition": {
-                    "dataSet": {
-                        "configuration": {"columns": ["Date", "MeterId", "ResourceId", "ResourceLocation", "Quantity"]},
-                        "granularity": "Daily",
-                    },
+                    "dataSet": {"configuration": {"dataVersion": "2023-05-01"}, "granularity": "Daily"},
                     "timeframe": "MonthToDate",
                     "type": "ActualCost",
                 },
@@ -46,20 +49,23 @@ def main():
                         "container": "exports",
                         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MYDEVTESTRG/providers/Microsoft.Storage/storageAccounts/ccmeastusdiag182",
                         "rootFolderPath": "ad-hoc",
+                        "type": "AzureBlob",
                     }
                 },
+                "exportDescription": "This is a test export.",
                 "format": "Csv",
+                "partitionData": True,
                 "schedule": {
-                    "recurrence": "Weekly",
-                    "recurrencePeriod": {"from": "2020-06-01T00:00:00Z", "to": "2020-10-31T00:00:00Z"},
+                    "recurrence": "Daily",
+                    "recurrencePeriod": {"from": "2020-06-01T00:00:00Z", "to": "2020-06-30T00:00:00Z"},
                     "status": "Active",
                 },
-            }
+            },
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/cost-management/resource-manager/Microsoft.CostManagement/stable/2022-10-01/examples/ExportCreateOrUpdateByManagementGroup.json
+# x-ms-original-file: specification/cost-management/resource-manager/Microsoft.CostManagement/CostManagement/stable/2025-03-01/examples/ExportCreateOrUpdateByManagementGroup.json
 if __name__ == "__main__":
     main()

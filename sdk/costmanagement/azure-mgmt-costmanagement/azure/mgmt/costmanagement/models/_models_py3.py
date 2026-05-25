@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class CostManagementProxyResource(_serialization.Model):
@@ -60,13 +54,13 @@ class CostManagementProxyResource(_serialization.Model):
         :paramtype e_tag: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.e_tag = e_tag
 
 
-class Alert(CostManagementProxyResource):  # pylint: disable=too-many-instance-attributes
+class Alert(CostManagementProxyResource):
     """An individual alert.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -239,7 +233,7 @@ class AlertPropertiesDefinition(_serialization.Model):
         self.criteria = criteria
 
 
-class AlertPropertiesDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class AlertPropertiesDetails(_serialization.Model):
     """Alert details.
 
     :ivar time_grain_type: Type of timegrain cadence. Known values are: "None", "Monthly",
@@ -321,18 +315,18 @@ class AlertPropertiesDetails(_serialization.Model):  # pylint: disable=too-many-
         time_grain_type: Optional[Union[str, "_models.AlertTimeGrainType"]] = None,
         period_start_date: Optional[str] = None,
         triggered_by: Optional[str] = None,
-        resource_group_filter: Optional[List[Any]] = None,
-        resource_filter: Optional[List[Any]] = None,
-        meter_filter: Optional[List[Any]] = None,
+        resource_group_filter: Optional[list[Any]] = None,
+        resource_filter: Optional[list[Any]] = None,
+        meter_filter: Optional[list[Any]] = None,
         tag_filter: Optional[JSON] = None,
         threshold: Optional[float] = None,
         operator: Optional[Union[str, "_models.AlertOperator"]] = None,
         amount: Optional[float] = None,
         unit: Optional[str] = None,
         current_spend: Optional[float] = None,
-        contact_emails: Optional[List[str]] = None,
-        contact_groups: Optional[List[str]] = None,
-        contact_roles: Optional[List[str]] = None,
+        contact_emails: Optional[list[str]] = None,
+        contact_groups: Optional[list[str]] = None,
+        contact_roles: Optional[list[str]] = None,
         overriding_alert: Optional[str] = None,
         department_name: Optional[str] = None,
         company_name: Optional[str] = None,
@@ -439,8 +433,8 @@ class AlertsResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.Alert"]] = None
+        self.next_link: Optional[str] = None
 
 
 class AllSavingsBenefitDetails(_serialization.Model):
@@ -501,15 +495,15 @@ class AllSavingsBenefitDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.overage_cost = None
-        self.benefit_cost = None
-        self.total_cost = None
-        self.savings_amount = None
-        self.savings_percentage = None
-        self.coverage_percentage = None
-        self.commitment_amount = None
-        self.average_utilization_percentage = None
-        self.wastage_cost = None
+        self.overage_cost: Optional[float] = None
+        self.benefit_cost: Optional[float] = None
+        self.total_cost: Optional[float] = None
+        self.savings_amount: Optional[float] = None
+        self.savings_percentage: Optional[float] = None
+        self.coverage_percentage: Optional[float] = None
+        self.commitment_amount: Optional[float] = None
+        self.average_utilization_percentage: Optional[float] = None
+        self.wastage_cost: Optional[float] = None
 
 
 class AllSavingsList(_serialization.Model):
@@ -536,8 +530,65 @@ class AllSavingsList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.AllSavingsBenefitDetails"]] = None
+        self.next_link: Optional[str] = None
+
+
+class AsyncOperationStatusProperties(_serialization.Model):
+    """Object representing the report url and valid until date of the async report generated.
+
+    :ivar report_url: Sas url to the async benefit utilization summaries report. Will be empty if
+     the report is in Running or Failed state. Known values are: "Kind", "AvgUtilizationPercentage",
+     "BenefitOrderId", "BenefitId", "BenefitType", "MaxUtilizationPercentage",
+     "MinUtilizationPercentage", "UsageDate", and "UtilizedPercentage".
+    :vartype report_url: str or
+     ~azure.mgmt.costmanagement.models.BenefitUtilizationSummaryReportSchema
+    :ivar secondary_report_url: Sas url to async benefit utilization summaries report in secondary
+     storage in case of primary outage. Will be empty if the report is in Running or Failed state.
+     Known values are: "Kind", "AvgUtilizationPercentage", "BenefitOrderId", "BenefitId",
+     "BenefitType", "MaxUtilizationPercentage", "MinUtilizationPercentage", "UsageDate", and
+     "UtilizedPercentage".
+    :vartype secondary_report_url: str or
+     ~azure.mgmt.costmanagement.models.BenefitUtilizationSummaryReportSchema
+    :ivar valid_until: The date that the sas url provided in reportUrl expires.
+    :vartype valid_until: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "report_url": {"key": "reportUrl", "type": "str"},
+        "secondary_report_url": {"key": "secondaryReportUrl", "type": "str"},
+        "valid_until": {"key": "validUntil", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        report_url: Optional[Union[str, "_models.BenefitUtilizationSummaryReportSchema"]] = None,
+        secondary_report_url: Optional[Union[str, "_models.BenefitUtilizationSummaryReportSchema"]] = None,
+        valid_until: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword report_url: Sas url to the async benefit utilization summaries report. Will be empty
+         if the report is in Running or Failed state. Known values are: "Kind",
+         "AvgUtilizationPercentage", "BenefitOrderId", "BenefitId", "BenefitType",
+         "MaxUtilizationPercentage", "MinUtilizationPercentage", "UsageDate", and "UtilizedPercentage".
+        :paramtype report_url: str or
+         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummaryReportSchema
+        :keyword secondary_report_url: Sas url to async benefit utilization summaries report in
+         secondary storage in case of primary outage. Will be empty if the report is in Running or
+         Failed state. Known values are: "Kind", "AvgUtilizationPercentage", "BenefitOrderId",
+         "BenefitId", "BenefitType", "MaxUtilizationPercentage", "MinUtilizationPercentage",
+         "UsageDate", and "UtilizedPercentage".
+        :paramtype secondary_report_url: str or
+         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummaryReportSchema
+        :keyword valid_until: The date that the sas url provided in reportUrl expires.
+        :paramtype valid_until: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.report_url = report_url
+        self.secondary_report_url = secondary_report_url
+        self.valid_until = valid_until
 
 
 class Resource(_serialization.Model):
@@ -570,9 +621,9 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class BenefitResource(Resource):
@@ -668,7 +719,7 @@ class BenefitRecommendationModel(BenefitResource):
         self.properties = properties
 
 
-class BenefitRecommendationProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BenefitRecommendationProperties(_serialization.Model):
     """The properties of the benefit recommendations.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -676,7 +727,7 @@ class BenefitRecommendationProperties(_serialization.Model):  # pylint: disable=
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar first_consumption_date: The first usage date used for looking back for computing the
      recommendations.
@@ -777,18 +828,18 @@ class BenefitRecommendationProperties(_serialization.Model):  # pylint: disable=
         :paramtype recommendation_details: ~azure.mgmt.costmanagement.models.AllSavingsBenefitDetails
         """
         super().__init__(**kwargs)
-        self.first_consumption_date = None
-        self.last_consumption_date = None
+        self.first_consumption_date: Optional[datetime.datetime] = None
+        self.last_consumption_date: Optional[datetime.datetime] = None
         self.look_back_period = look_back_period
-        self.total_hours = None
+        self.total_hours: Optional[int] = None
         self.usage = usage
-        self.arm_sku_name = None
+        self.arm_sku_name: Optional[str] = None
         self.term = term
         self.commitment_granularity = commitment_granularity
-        self.currency_code = None
-        self.cost_without_benefit = None
+        self.currency_code: Optional[str] = None
+        self.cost_without_benefit: Optional[float] = None
         self.recommendation_details = recommendation_details
-        self.all_recommendation_details = None
+        self.all_recommendation_details: Optional["_models.AllSavingsList"] = None
         self.scope: Optional[str] = None
 
 
@@ -816,8 +867,8 @@ class BenefitRecommendationsListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.BenefitRecommendationModel"]] = None
+        self.next_link: Optional[str] = None
 
 
 class BenefitUtilizationSummariesListResult(_serialization.Model):
@@ -844,8 +895,156 @@ class BenefitUtilizationSummariesListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.BenefitUtilizationSummary"]] = None
+        self.next_link: Optional[str] = None
+
+
+class BenefitUtilizationSummariesOperationStatus(_serialization.Model):  # pylint: disable=name-too-long
+    """Status of a benefit utilization summaries report. Provides Async Benefit Utilization Summaries
+    Request input, status, and report sas url.
+
+    :ivar input: Input given to create the benefit utilization summaries report.
+    :vartype input: ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest
+    :ivar status: The status of the creation of the benefit utilization summaries report. Known
+     values are: "Running", "Complete", "Failed", and "Completed".
+    :vartype status: str or ~azure.mgmt.costmanagement.models.OperationStatusType
+    :ivar properties: Contains sas url to the async benefit utilization summaries report and a date
+     that the url is valid until. These values will be empty if the report is in a Running or Failed
+     state.
+    :vartype properties: ~azure.mgmt.costmanagement.models.AsyncOperationStatusProperties
+    """
+
+    _attribute_map = {
+        "input": {"key": "input", "type": "BenefitUtilizationSummariesRequest"},
+        "status": {"key": "status", "type": "str"},
+        "properties": {"key": "properties", "type": "AsyncOperationStatusProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        input: Optional["_models.BenefitUtilizationSummariesRequest"] = None,
+        status: Optional[Union[str, "_models.OperationStatusType"]] = None,
+        properties: Optional["_models.AsyncOperationStatusProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword input: Input given to create the benefit utilization summaries report.
+        :paramtype input: ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest
+        :keyword status: The status of the creation of the benefit utilization summaries report. Known
+         values are: "Running", "Complete", "Failed", and "Completed".
+        :paramtype status: str or ~azure.mgmt.costmanagement.models.OperationStatusType
+        :keyword properties: Contains sas url to the async benefit utilization summaries report and a
+         date that the url is valid until. These values will be empty if the report is in a Running or
+         Failed state.
+        :paramtype properties: ~azure.mgmt.costmanagement.models.AsyncOperationStatusProperties
+        """
+        super().__init__(**kwargs)
+        self.input = input
+        self.status = status
+        self.properties = properties
+
+
+class BenefitUtilizationSummariesRequest(_serialization.Model):
+    """Properties of an async benefit utilization summaries request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar billing_account_id: Billing account the benefit utilization summaries report is for.
+     Required for billing account and billing profile scopes. Not supported for any benefit scopes.
+    :vartype billing_account_id: str
+    :ivar billing_profile_id: Billing profile id the benefit utilization summaries report is for.
+     Required for billing profile scope. Not supported for billing account or any benefit scopes.
+    :vartype billing_profile_id: str
+    :ivar benefit_order_id: Benefit order id the benefit utilization summaries report is for.
+     Required for benefit order and benefit id scopes. Not supported for any billing scopes.
+    :vartype benefit_order_id: str
+    :ivar benefit_id: Benefit id the benefit utilization summaries report is for. Required for
+     benefit id scope. Not supported for benefit order or any billing scopes.
+    :vartype benefit_id: str
+    :ivar grain: The grain the summaries data is served at in the report. Accepted values are
+     'Daily' or 'Monthly'. Required. Known values are: "Hourly", "Daily", and "Monthly".
+    :vartype grain: str or ~azure.mgmt.costmanagement.models.Grain
+    :ivar start_date: The start date of the summaries data that will be served in the report.
+     Required.
+    :vartype start_date: ~datetime.datetime
+    :ivar end_date: The end date of the summaries data that will be served in the report. Required.
+    :vartype end_date: ~datetime.datetime
+    :ivar kind: The type of benefit data requested. Required for billing account and billing
+     profile scopes. Implied and not to be passed at benefit scopes. Supported values are
+     Reservation and SavingsPlan. Known values are: "IncludedQuantity", "Reservation", and
+     "SavingsPlan".
+    :vartype kind: str or ~azure.mgmt.costmanagement.models.BenefitKind
+    """
+
+    _validation = {
+        "grain": {"required": True},
+        "start_date": {"required": True},
+        "end_date": {"required": True},
+    }
+
+    _attribute_map = {
+        "billing_account_id": {"key": "billingAccountId", "type": "str"},
+        "billing_profile_id": {"key": "billingProfileId", "type": "str"},
+        "benefit_order_id": {"key": "benefitOrderId", "type": "str"},
+        "benefit_id": {"key": "benefitId", "type": "str"},
+        "grain": {"key": "grain", "type": "str"},
+        "start_date": {"key": "startDate", "type": "iso-8601"},
+        "end_date": {"key": "endDate", "type": "iso-8601"},
+        "kind": {"key": "kind", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        grain: Union[str, "_models.Grain"],
+        start_date: datetime.datetime,
+        end_date: datetime.datetime,
+        billing_account_id: Optional[str] = None,
+        billing_profile_id: Optional[str] = None,
+        benefit_order_id: Optional[str] = None,
+        benefit_id: Optional[str] = None,
+        kind: Optional[Union[str, "_models.BenefitKind"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword billing_account_id: Billing account the benefit utilization summaries report is for.
+         Required for billing account and billing profile scopes. Not supported for any benefit scopes.
+        :paramtype billing_account_id: str
+        :keyword billing_profile_id: Billing profile id the benefit utilization summaries report is
+         for. Required for billing profile scope. Not supported for billing account or any benefit
+         scopes.
+        :paramtype billing_profile_id: str
+        :keyword benefit_order_id: Benefit order id the benefit utilization summaries report is for.
+         Required for benefit order and benefit id scopes. Not supported for any billing scopes.
+        :paramtype benefit_order_id: str
+        :keyword benefit_id: Benefit id the benefit utilization summaries report is for. Required for
+         benefit id scope. Not supported for benefit order or any billing scopes.
+        :paramtype benefit_id: str
+        :keyword grain: The grain the summaries data is served at in the report. Accepted values are
+         'Daily' or 'Monthly'. Required. Known values are: "Hourly", "Daily", and "Monthly".
+        :paramtype grain: str or ~azure.mgmt.costmanagement.models.Grain
+        :keyword start_date: The start date of the summaries data that will be served in the report.
+         Required.
+        :paramtype start_date: ~datetime.datetime
+        :keyword end_date: The end date of the summaries data that will be served in the report.
+         Required.
+        :paramtype end_date: ~datetime.datetime
+        :keyword kind: The type of benefit data requested. Required for billing account and billing
+         profile scopes. Implied and not to be passed at benefit scopes. Supported values are
+         Reservation and SavingsPlan. Known values are: "IncludedQuantity", "Reservation", and
+         "SavingsPlan".
+        :paramtype kind: str or ~azure.mgmt.costmanagement.models.BenefitKind
+        """
+        super().__init__(**kwargs)
+        self.billing_account_id = billing_account_id
+        self.billing_profile_id = billing_profile_id
+        self.benefit_order_id = benefit_order_id
+        self.benefit_id = benefit_id
+        self.grain = grain
+        self.start_date = start_date
+        self.end_date = end_date
+        self.kind = kind
 
 
 class BenefitUtilizationSummary(Resource):
@@ -856,7 +1055,7 @@ class BenefitUtilizationSummary(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -939,11 +1138,11 @@ class BenefitUtilizationSummaryProperties(_serialization.Model):
         :paramtype benefit_type: str or ~azure.mgmt.costmanagement.models.BenefitKind
         """
         super().__init__(**kwargs)
-        self.arm_sku_name = None
-        self.benefit_id = None
-        self.benefit_order_id = None
+        self.arm_sku_name: Optional[str] = None
+        self.benefit_id: Optional[str] = None
+        self.benefit_order_id: Optional[str] = None
         self.benefit_type = benefit_type
-        self.usage_date = None
+        self.usage_date: Optional[datetime.datetime] = None
 
 
 class BlobInfo(_serialization.Model):
@@ -970,6 +1169,444 @@ class BlobInfo(_serialization.Model):
         super().__init__(**kwargs)
         self.blob_link = blob_link
         self.byte_count = byte_count
+
+
+class Budget(CostManagementProxyResource):
+    """A budget resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+     used to determine whether the user is updating the latest version or not.
+    :vartype e_tag: str
+    :ivar category: The category of the budget.
+
+     * 'Cost' defines a Budget.
+     * 'ReservationUtilization' defines a Reservation Utilization Alert Rule. Known values are:
+       "Cost" and "ReservationUtilization".
+    :vartype category: str or ~azure.mgmt.costmanagement.models.CategoryType
+    :ivar amount: The total amount of cost to track with the budget.
+
+      Supported for CategoryType(s): Cost.
+
+      Required for CategoryType(s): Cost.
+    :vartype amount: float
+    :ivar time_grain: The time covered by a budget. Tracking of the amount will be reset based on
+     the time grain. Supported for CategoryType(s): Cost, ReservationUtilization. Supported
+     timeGrainTypes for **CategoryType: Cost**
+
+     * Monthly
+     * Quarterly
+     * Annually
+     * BillingMonth*
+     * BillingQuarter*
+     *
+     BillingAnnual*
+
+     *only supported for Web Direct customers.
+
+     Supported timeGrainTypes for **CategoryType: ReservationUtilization**
+
+     * Last7Days
+     *
+     Last30Days
+
+     Required for CategoryType(s): Cost, ReservationUtilization. Known values are: "Monthly",
+     "Quarterly", "Annually", "BillingMonth", "BillingQuarter", "BillingAnnual", "Last7Days", and
+     "Last30Days".
+    :vartype time_grain: str or ~azure.mgmt.costmanagement.models.TimeGrainType
+    :ivar time_period: The time period that defines the active period of the budget. The budget
+     will evaluate data on or after the startDate and will expire on the endDate.
+
+      Supported for CategoryType(s): Cost, ReservationUtilization.
+
+      Required for CategoryType(s): Cost, ReservationUtilization.
+    :vartype time_period: ~azure.mgmt.costmanagement.models.BudgetTimePeriod
+    :ivar filter: May be used to filter budgets by user-specified dimensions and/or tags.
+
+      Supported for CategoryType(s): Cost, ReservationUtilization.
+    :vartype filter: ~azure.mgmt.costmanagement.models.BudgetFilter
+    :ivar current_spend: The current amount of cost which is being tracked for a budget.
+
+      Supported for CategoryType(s): Cost.
+    :vartype current_spend: ~azure.mgmt.costmanagement.models.CurrentSpend
+    :ivar notifications: Dictionary of notifications associated with the budget. Supported for
+     CategoryType(s): Cost, ReservationUtilization.
+
+     * Constraints for **CategoryType: Cost** - Budget can have up to 5 notifications with
+       thresholdType: Actual and 5 notifications with thresholdType: Forecasted.
+     * Constraints for **CategoryType: ReservationUtilization** - Only one notification
+       allowed. thresholdType is not applicable.
+    :vartype notifications: dict[str, ~azure.mgmt.costmanagement.models.Notification]
+    :ivar forecast_spend: The forecasted cost which is being tracked for a budget.
+
+      Supported for CategoryType(s): Cost.
+    :vartype forecast_spend: ~azure.mgmt.costmanagement.models.ForecastSpend
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "current_spend": {"readonly": True},
+        "forecast_spend": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "category": {"key": "properties.category", "type": "str"},
+        "amount": {"key": "properties.amount", "type": "float"},
+        "time_grain": {"key": "properties.timeGrain", "type": "str"},
+        "time_period": {"key": "properties.timePeriod", "type": "BudgetTimePeriod"},
+        "filter": {"key": "properties.filter", "type": "BudgetFilter"},
+        "current_spend": {"key": "properties.currentSpend", "type": "CurrentSpend"},
+        "notifications": {"key": "properties.notifications", "type": "{Notification}"},
+        "forecast_spend": {"key": "properties.forecastSpend", "type": "ForecastSpend"},
+    }
+
+    def __init__(
+        self,
+        *,
+        e_tag: Optional[str] = None,
+        category: Optional[Union[str, "_models.CategoryType"]] = None,
+        amount: Optional[float] = None,
+        time_grain: Optional[Union[str, "_models.TimeGrainType"]] = None,
+        time_period: Optional["_models.BudgetTimePeriod"] = None,
+        filter: Optional["_models.BudgetFilter"] = None,  # pylint: disable=redefined-builtin
+        notifications: Optional[dict[str, "_models.Notification"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
+         used to determine whether the user is updating the latest version or not.
+        :paramtype e_tag: str
+        :keyword category: The category of the budget.
+
+          * 'Cost' defines a Budget.
+          * 'ReservationUtilization' defines a Reservation Utilization Alert Rule. Known values
+            are: "Cost" and "ReservationUtilization".
+        :paramtype category: str or ~azure.mgmt.costmanagement.models.CategoryType
+        :keyword amount: The total amount of cost to track with the budget.
+
+          Supported for CategoryType(s): Cost.
+
+          Required for CategoryType(s): Cost.
+        :paramtype amount: float
+        :keyword time_grain: The time covered by a budget. Tracking of the amount will be reset based
+          on the time grain. Supported for CategoryType(s): Cost, ReservationUtilization. Supported
+          timeGrainTypes for **CategoryType: Cost**
+
+          * Monthly
+          * Quarterly
+          * Annually
+          * BillingMonth*
+          * BillingQuarter*
+          *
+          BillingAnnual*
+
+          *only supported for Web Direct customers.
+
+          Supported timeGrainTypes for **CategoryType: ReservationUtilization**
+
+          * Last7Days
+          *
+          Last30Days
+
+          Required for CategoryType(s): Cost, ReservationUtilization. Known values are:
+          "Monthly", "Quarterly", "Annually", "BillingMonth", "BillingQuarter", "BillingAnnual",
+          "Last7Days", and "Last30Days".
+        :paramtype time_grain: str or ~azure.mgmt.costmanagement.models.TimeGrainType
+        :keyword time_period: The time period that defines the active period of the budget. The budget
+         will evaluate data on or after the startDate and will expire on the endDate.
+
+          Supported for CategoryType(s): Cost, ReservationUtilization.
+
+          Required for CategoryType(s): Cost, ReservationUtilization.
+        :paramtype time_period: ~azure.mgmt.costmanagement.models.BudgetTimePeriod
+        :keyword filter: May be used to filter budgets by user-specified dimensions and/or tags.
+
+          Supported for CategoryType(s): Cost, ReservationUtilization.
+        :paramtype filter: ~azure.mgmt.costmanagement.models.BudgetFilter
+        :keyword notifications: Dictionary of notifications associated with the budget. Supported for
+          CategoryType(s): Cost, ReservationUtilization.
+
+          * Constraints for **CategoryType: Cost** - Budget can have up to 5 notifications with
+            thresholdType: Actual and 5 notifications with thresholdType: Forecasted.
+          * Constraints for **CategoryType: ReservationUtilization** - Only one notification
+            allowed. thresholdType is not applicable.
+        :paramtype notifications: dict[str, ~azure.mgmt.costmanagement.models.Notification]
+        """
+        super().__init__(e_tag=e_tag, **kwargs)
+        self.category = category
+        self.amount = amount
+        self.time_grain = time_grain
+        self.time_period = time_period
+        self.filter = filter
+        self.current_spend: Optional["_models.CurrentSpend"] = None
+        self.notifications = notifications
+        self.forecast_spend: Optional["_models.ForecastSpend"] = None
+
+
+class BudgetComparisonExpression(_serialization.Model):
+    """The comparison expression to be used in the budgets.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the column to use in comparison. Required.
+    :vartype name: str
+    :ivar operator: The operator to use for comparison. Required. "In"
+    :vartype operator: str or ~azure.mgmt.costmanagement.models.BudgetOperatorType
+    :ivar values: Array of values to use for comparison. Required.
+    :vartype values: list[str]
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "operator": {"required": True},
+        "values": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+    }
+
+    def __init__(
+        self, *, name: str, operator: Union[str, "_models.BudgetOperatorType"], values: list[str], **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the column to use in comparison. Required.
+        :paramtype name: str
+        :keyword operator: The operator to use for comparison. Required. "In"
+        :paramtype operator: str or ~azure.mgmt.costmanagement.models.BudgetOperatorType
+        :keyword values: Array of values to use for comparison. Required.
+        :paramtype values: list[str]
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.operator = operator
+        self.values = values
+
+
+class BudgetFilter(_serialization.Model):
+    """May be used to filter budgets by user-specified dimensions and/or tags.
+
+     Supported for CategoryType(s): Cost, ReservationUtilization.
+
+    :ivar and_property: The logical "AND" expression. Must have at least 2 items.
+
+      Supported for CategoryType(s): Cost.
+    :vartype and_property: list[~azure.mgmt.costmanagement.models.BudgetFilterProperties]
+    :ivar dimensions: Has comparison expression for a dimension. Supported for CategoryType(s):
+     Cost, ReservationUtilization. Supported dimension names for **CategoryType:
+     ReservationUtilization**
+
+     * ReservationId
+     * ReservedResourceType.
+    :vartype dimensions: ~azure.mgmt.costmanagement.models.BudgetComparisonExpression
+    :ivar tags: Has comparison expression for a tag.
+
+      Supported for CategoryType(s): Cost.
+    :vartype tags: ~azure.mgmt.costmanagement.models.BudgetComparisonExpression
+    """
+
+    _attribute_map = {
+        "and_property": {"key": "and", "type": "[BudgetFilterProperties]"},
+        "dimensions": {"key": "dimensions", "type": "BudgetComparisonExpression"},
+        "tags": {"key": "tags", "type": "BudgetComparisonExpression"},
+    }
+
+    def __init__(
+        self,
+        *,
+        and_property: Optional[list["_models.BudgetFilterProperties"]] = None,
+        dimensions: Optional["_models.BudgetComparisonExpression"] = None,
+        tags: Optional["_models.BudgetComparisonExpression"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword and_property: The logical "AND" expression. Must have at least 2 items.
+
+          Supported for CategoryType(s): Cost.
+        :paramtype and_property: list[~azure.mgmt.costmanagement.models.BudgetFilterProperties]
+        :keyword dimensions: Has comparison expression for a dimension. Supported for CategoryType(s):
+          Cost, ReservationUtilization. Supported dimension names for **CategoryType:
+          ReservationUtilization**
+
+          * ReservationId
+          * ReservedResourceType.
+        :paramtype dimensions: ~azure.mgmt.costmanagement.models.BudgetComparisonExpression
+        :keyword tags: Has comparison expression for a tag.
+
+          Supported for CategoryType(s): Cost.
+        :paramtype tags: ~azure.mgmt.costmanagement.models.BudgetComparisonExpression
+        """
+        super().__init__(**kwargs)
+        self.and_property = and_property
+        self.dimensions = dimensions
+        self.tags = tags
+
+
+class BudgetFilterProperties(_serialization.Model):
+    """The Dimensions or Tags to filter a budget by.
+
+     Supported for CategoryType(s): Cost, ReservationUtilization.
+
+    :ivar dimensions: Has comparison expression for a dimension. Supported for CategoryType(s):
+     Cost, ReservationUtilization. Supported dimension names for **CategoryType:
+     ReservationUtilization**
+
+     * ReservationId
+     * ReservedResourceType.
+    :vartype dimensions: ~azure.mgmt.costmanagement.models.BudgetComparisonExpression
+    :ivar tags: Has comparison expression for a tag.
+
+      Supported for CategoryType(s): Cost.
+    :vartype tags: ~azure.mgmt.costmanagement.models.BudgetComparisonExpression
+    """
+
+    _attribute_map = {
+        "dimensions": {"key": "dimensions", "type": "BudgetComparisonExpression"},
+        "tags": {"key": "tags", "type": "BudgetComparisonExpression"},
+    }
+
+    def __init__(
+        self,
+        *,
+        dimensions: Optional["_models.BudgetComparisonExpression"] = None,
+        tags: Optional["_models.BudgetComparisonExpression"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword dimensions: Has comparison expression for a dimension. Supported for CategoryType(s):
+          Cost, ReservationUtilization. Supported dimension names for **CategoryType:
+          ReservationUtilization**
+
+          * ReservationId
+          * ReservedResourceType.
+        :paramtype dimensions: ~azure.mgmt.costmanagement.models.BudgetComparisonExpression
+        :keyword tags: Has comparison expression for a tag.
+
+          Supported for CategoryType(s): Cost.
+        :paramtype tags: ~azure.mgmt.costmanagement.models.BudgetComparisonExpression
+        """
+        super().__init__(**kwargs)
+        self.dimensions = dimensions
+        self.tags = tags
+
+
+class BudgetsListResult(_serialization.Model):
+    """Result of listing budgets. It contains a list of available budgets in the scope provided.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of budgets.
+    :vartype value: list[~azure.mgmt.costmanagement.models.Budget]
+    :ivar next_link: The link (url) to the next page of results. It's null for now, added for
+     future use.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Budget]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value: Optional[list["_models.Budget"]] = None
+        self.next_link: Optional[str] = None
+
+
+class BudgetTimePeriod(_serialization.Model):
+    """The time period that defines the active period of the budget. The budget will evaluate data on
+    or after the startDate and will expire on the endDate.
+
+     Supported for CategoryType(s): Cost, ReservationUtilization.
+
+     Required for CategoryType(s): Cost, ReservationUtilization.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar start_date: The start date for the budget.
+
+     *
+     Constraints for **CategoryType: Cost** - Must be first of the month and should be less
+     than the end date. Budget start date must be on or after June 1, 2017. Future start date should
+     not be more than twelve months. Past start date should  be selected within the timegrain
+     period.
+
+     *
+     Constraints for **CategoryType: ReservationUtilization** - Must be on or after the current
+     date and less than the end date. Required.
+    :vartype start_date: ~datetime.datetime
+    :ivar end_date: The end date for the budget.
+
+     *
+     Constraints for **CategoryType: Cost** - No constraints. If not provided, we default this
+     to 10 years from the start date.
+
+     *
+     Constraints for **CategoryType: ReservationUtilization** - End date cannot be more than 3
+     years after the start date.
+    :vartype end_date: ~datetime.datetime
+    """
+
+    _validation = {
+        "start_date": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_date": {"key": "startDate", "type": "iso-8601"},
+        "end_date": {"key": "endDate", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self, *, start_date: datetime.datetime, end_date: Optional[datetime.datetime] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword start_date: The start date for the budget.
+
+          *
+          Constraints for **CategoryType: Cost** - Must be first of the month and should be less
+          than the end date. Budget start date must be on or after June 1, 2017. Future start date should
+          not be more than twelve months. Past start date should  be selected within the timegrain
+          period.
+
+          *
+          Constraints for **CategoryType: ReservationUtilization** - Must be on or after the
+          current date and less than the end date. Required.
+        :paramtype start_date: ~datetime.datetime
+        :keyword end_date: The end date for the budget.
+
+          *
+          Constraints for **CategoryType: Cost** - No constraints. If not provided, we default
+          this to 10 years from the start date.
+
+          *
+          Constraints for **CategoryType: ReservationUtilization** - End date cannot be more
+          than 3 years after the start date.
+        :paramtype end_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.start_date = start_date
+        self.end_date = end_date
 
 
 class CheckNameAvailabilityRequest(_serialization.Model):
@@ -1044,10 +1681,9 @@ class CommonExportProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar format: The format of the export being delivered. Currently only 'Csv' is supported.
-     "Csv"
+    :ivar format: The format of the export being delivered. Known values are: "Csv" and "Parquet".
     :vartype format: str or ~azure.mgmt.costmanagement.models.FormatType
     :ivar delivery_info: Has delivery information for the export. Required.
     :vartype delivery_info: ~azure.mgmt.costmanagement.models.ExportDeliveryInfo
@@ -1056,18 +1692,34 @@ class CommonExportProperties(_serialization.Model):
     :ivar run_history: If requested, has the most recent run history for the export.
     :vartype run_history: ~azure.mgmt.costmanagement.models.ExportExecutionListResult
     :ivar partition_data: If set to true, exported data will be partitioned by size and placed in a
-     blob directory together with a manifest file. Note: this option is currently available only for
-     Microsoft Customer Agreement commerce scopes.
+     blob directory together with a manifest file.
     :vartype partition_data: bool
+    :ivar data_overwrite_behavior: Allow customers to select overwrite
+     data(OverwritePreviousReport) for exports. This setting will enable overwrite data for the same
+     month in customer storage account. By default set to CreateNewReport. Known values are:
+     "OverwritePreviousReport" and "CreateNewReport".
+    :vartype data_overwrite_behavior: str or
+     ~azure.mgmt.costmanagement.models.DataOverwriteBehaviorType
+    :ivar compression_mode: Allow customers to select compress data for exports. This setting will
+     enable destination file compression scheme at runtime. By default set to None. Gzip is for csv
+     and snappy for parquet. Known values are: "gzip", "snappy", and "none".
+    :vartype compression_mode: str or ~azure.mgmt.costmanagement.models.CompressionModeType
+    :ivar export_description: The export description set by customer at time of export
+     creation/update.
+    :vartype export_description: str
     :ivar next_run_time_estimate: If the export has an active schedule, provides an estimate of the
      next run time.
     :vartype next_run_time_estimate: ~datetime.datetime
+    :ivar system_suspension_context: The export suspension reason if export is in SystemSuspended
+     state. This is not populated currently.
+    :vartype system_suspension_context: ~azure.mgmt.costmanagement.models.ExportSuspensionContext
     """
 
     _validation = {
         "delivery_info": {"required": True},
         "definition": {"required": True},
         "next_run_time_estimate": {"readonly": True},
+        "system_suspension_context": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1076,7 +1728,11 @@ class CommonExportProperties(_serialization.Model):
         "definition": {"key": "definition", "type": "ExportDefinition"},
         "run_history": {"key": "runHistory", "type": "ExportExecutionListResult"},
         "partition_data": {"key": "partitionData", "type": "bool"},
+        "data_overwrite_behavior": {"key": "dataOverwriteBehavior", "type": "str"},
+        "compression_mode": {"key": "compressionMode", "type": "str"},
+        "export_description": {"key": "exportDescription", "type": "str"},
         "next_run_time_estimate": {"key": "nextRunTimeEstimate", "type": "iso-8601"},
+        "system_suspension_context": {"key": "systemSuspensionContext", "type": "ExportSuspensionContext"},
     }
 
     def __init__(
@@ -1087,11 +1743,14 @@ class CommonExportProperties(_serialization.Model):
         format: Optional[Union[str, "_models.FormatType"]] = None,
         run_history: Optional["_models.ExportExecutionListResult"] = None,
         partition_data: Optional[bool] = None,
+        data_overwrite_behavior: Optional[Union[str, "_models.DataOverwriteBehaviorType"]] = None,
+        compression_mode: Optional[Union[str, "_models.CompressionModeType"]] = None,
+        export_description: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword format: The format of the export being delivered. Currently only 'Csv' is supported.
-         "Csv"
+        :keyword format: The format of the export being delivered. Known values are: "Csv" and
+         "Parquet".
         :paramtype format: str or ~azure.mgmt.costmanagement.models.FormatType
         :keyword delivery_info: Has delivery information for the export. Required.
         :paramtype delivery_info: ~azure.mgmt.costmanagement.models.ExportDeliveryInfo
@@ -1100,9 +1759,21 @@ class CommonExportProperties(_serialization.Model):
         :keyword run_history: If requested, has the most recent run history for the export.
         :paramtype run_history: ~azure.mgmt.costmanagement.models.ExportExecutionListResult
         :keyword partition_data: If set to true, exported data will be partitioned by size and placed
-         in a blob directory together with a manifest file. Note: this option is currently available
-         only for Microsoft Customer Agreement commerce scopes.
+         in a blob directory together with a manifest file.
         :paramtype partition_data: bool
+        :keyword data_overwrite_behavior: Allow customers to select overwrite
+         data(OverwritePreviousReport) for exports. This setting will enable overwrite data for the same
+         month in customer storage account. By default set to CreateNewReport. Known values are:
+         "OverwritePreviousReport" and "CreateNewReport".
+        :paramtype data_overwrite_behavior: str or
+         ~azure.mgmt.costmanagement.models.DataOverwriteBehaviorType
+        :keyword compression_mode: Allow customers to select compress data for exports. This setting
+         will enable destination file compression scheme at runtime. By default set to None. Gzip is for
+         csv and snappy for parquet. Known values are: "gzip", "snappy", and "none".
+        :paramtype compression_mode: str or ~azure.mgmt.costmanagement.models.CompressionModeType
+        :keyword export_description: The export description set by customer at time of export
+         creation/update.
+        :paramtype export_description: str
         """
         super().__init__(**kwargs)
         self.format = format
@@ -1110,10 +1781,329 @@ class CommonExportProperties(_serialization.Model):
         self.definition = definition
         self.run_history = run_history
         self.partition_data = partition_data
-        self.next_run_time_estimate = None
+        self.data_overwrite_behavior = data_overwrite_behavior
+        self.compression_mode = compression_mode
+        self.export_description = export_description
+        self.next_run_time_estimate: Optional[datetime.datetime] = None
+        self.system_suspension_context: Optional["_models.ExportSuspensionContext"] = None
 
 
-class CostDetailsOperationResults(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class CostAllocationProportion(_serialization.Model):
+    """Target resources and allocation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: Target resource for cost allocation. Required.
+    :vartype name: str
+    :ivar percentage: Percentage of source cost to allocate to this resource. This value can be
+     specified to two decimal places and the total percentage of all resources in this rule must sum
+     to 100.00. Required.
+    :vartype percentage: float
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "percentage": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "percentage": {"key": "percentage", "type": "float"},
+    }
+
+    def __init__(self, *, name: str, percentage: float, **kwargs: Any) -> None:
+        """
+        :keyword name: Target resource for cost allocation. Required.
+        :paramtype name: str
+        :keyword percentage: Percentage of source cost to allocate to this resource. This value can be
+         specified to two decimal places and the total percentage of all resources in this rule must sum
+         to 100.00. Required.
+        :paramtype percentage: float
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.percentage = percentage
+
+
+class CostAllocationResource(_serialization.Model):
+    """Common values for resources for cost allocation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar resource_type: Type of resources contained in this cost allocation rule. Required. Known
+     values are: "Dimension" and "Tag".
+    :vartype resource_type: str or ~azure.mgmt.costmanagement.models.CostAllocationResourceType
+    :ivar name: If resource type is dimension, this must be either ResourceGroupName or
+     SubscriptionId. If resource type is tag, this must be a valid Azure tag. Required.
+    :vartype name: str
+    """
+
+    _validation = {
+        "resource_type": {"required": True},
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self, *, resource_type: Union[str, "_models.CostAllocationResourceType"], name: str, **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_type: Type of resources contained in this cost allocation rule. Required.
+         Known values are: "Dimension" and "Tag".
+        :paramtype resource_type: str or ~azure.mgmt.costmanagement.models.CostAllocationResourceType
+        :keyword name: If resource type is dimension, this must be either ResourceGroupName or
+         SubscriptionId. If resource type is tag, this must be a valid Azure tag. Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.resource_type = resource_type
+        self.name = name
+
+
+class CostAllocationRuleCheckNameAvailabilityRequest(_serialization.Model):  # pylint: disable=name-too-long
+    """The cost allocation rule check name availability request.
+
+    :ivar name: Rule name.
+    :vartype name: str
+    :ivar type: Resource type. This is expected to be Microsoft.CostManagement/costAllocationRules.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Rule name.
+        :paramtype name: str
+        :keyword type: Resource type. This is expected to be
+         Microsoft.CostManagement/costAllocationRules.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
+class CostAllocationRuleCheckNameAvailabilityResponse(_serialization.Model):  # pylint: disable=name-too-long
+    """The cost allocation rule check name availability response.
+
+    :ivar name_available: Whether this rule name is available.
+    :vartype name_available: bool
+    :ivar reason: The reason this name is not available. Known values are: "Invalid",
+     "AlreadyExists", and "Valid".
+    :vartype reason: str or ~azure.mgmt.costmanagement.models.Reason
+    :ivar message: Error message if the name is not available.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name_available: Optional[bool] = None,
+        reason: Optional[Union[str, "_models.Reason"]] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name_available: Whether this rule name is available.
+        :paramtype name_available: bool
+        :keyword reason: The reason this name is not available. Known values are: "Invalid",
+         "AlreadyExists", and "Valid".
+        :paramtype reason: str or ~azure.mgmt.costmanagement.models.Reason
+        :keyword message: Error message if the name is not available.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message
+
+
+class CostAllocationRuleDefinition(_serialization.Model):
+    """The cost allocation rule model definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Azure Resource Manager Id for the rule. This is a read ony value.
+    :vartype id: str
+    :ivar name: Name of the rule. This is a read only value.
+    :vartype name: str
+    :ivar type: Resource type of the rule. This is a read only value of
+     Microsoft.CostManagement/CostAllocationRule.
+    :vartype type: str
+    :ivar properties: Cost allocation rule properties.
+    :vartype properties: ~azure.mgmt.costmanagement.models.CostAllocationRuleProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "CostAllocationRuleProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.CostAllocationRuleProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Cost allocation rule properties.
+        :paramtype properties: ~azure.mgmt.costmanagement.models.CostAllocationRuleProperties
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.properties = properties
+
+
+class CostAllocationRuleDetails(_serialization.Model):
+    """Resource details of the cost allocation rule.
+
+    :ivar source_resources: Source resources for cost allocation. At this time, this list can
+     contain no more than one element.
+    :vartype source_resources: list[~azure.mgmt.costmanagement.models.SourceCostAllocationResource]
+    :ivar target_resources: Target resources for cost allocation. At this time, this list can
+     contain no more than one element.
+    :vartype target_resources: list[~azure.mgmt.costmanagement.models.TargetCostAllocationResource]
+    """
+
+    _attribute_map = {
+        "source_resources": {"key": "sourceResources", "type": "[SourceCostAllocationResource]"},
+        "target_resources": {"key": "targetResources", "type": "[TargetCostAllocationResource]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_resources: Optional[list["_models.SourceCostAllocationResource"]] = None,
+        target_resources: Optional[list["_models.TargetCostAllocationResource"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_resources: Source resources for cost allocation. At this time, this list can
+         contain no more than one element.
+        :paramtype source_resources:
+         list[~azure.mgmt.costmanagement.models.SourceCostAllocationResource]
+        :keyword target_resources: Target resources for cost allocation. At this time, this list can
+         contain no more than one element.
+        :paramtype target_resources:
+         list[~azure.mgmt.costmanagement.models.TargetCostAllocationResource]
+        """
+        super().__init__(**kwargs)
+        self.source_resources = source_resources
+        self.target_resources = target_resources
+
+
+class CostAllocationRuleList(_serialization.Model):
+    """Result of listing cost allocation rules. It contains a list of available rules in the billing
+    account or enterprise enrollment provided.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of cost allocation rules.
+    :vartype value: list[~azure.mgmt.costmanagement.models.CostAllocationRuleDefinition]
+    :ivar next_link: URL to get the next set of rule list results if there are any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[CostAllocationRuleDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[list["_models.CostAllocationRuleDefinition"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of cost allocation rules.
+        :paramtype value: list[~azure.mgmt.costmanagement.models.CostAllocationRuleDefinition]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link: Optional[str] = None
+
+
+class CostAllocationRuleProperties(_serialization.Model):
+    """The properties of a cost allocation rule.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar description: Description of a cost allocation rule.
+    :vartype description: str
+    :ivar details: Resource information for the cost allocation rule. Required.
+    :vartype details: ~azure.mgmt.costmanagement.models.CostAllocationRuleDetails
+    :ivar status: Status of the rule. Required. Known values are: "NotActive", "Active", and
+     "Processing".
+    :vartype status: str or ~azure.mgmt.costmanagement.models.RuleStatus
+    :ivar created_date: Time at which the rule was created. Rules that change cost for the same
+     resource are applied in order of creation.
+    :vartype created_date: ~datetime.datetime
+    :ivar updated_date: Time at which the rule was last updated.
+    :vartype updated_date: ~datetime.datetime
+    """
+
+    _validation = {
+        "details": {"required": True},
+        "status": {"required": True},
+        "created_date": {"readonly": True},
+        "updated_date": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "details": {"key": "details", "type": "CostAllocationRuleDetails"},
+        "status": {"key": "status", "type": "str"},
+        "created_date": {"key": "createdDate", "type": "iso-8601"},
+        "updated_date": {"key": "updatedDate", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        details: "_models.CostAllocationRuleDetails",
+        status: Union[str, "_models.RuleStatus"],
+        description: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Description of a cost allocation rule.
+        :paramtype description: str
+        :keyword details: Resource information for the cost allocation rule. Required.
+        :paramtype details: ~azure.mgmt.costmanagement.models.CostAllocationRuleDetails
+        :keyword status: Status of the rule. Required. Known values are: "NotActive", "Active", and
+         "Processing".
+        :paramtype status: str or ~azure.mgmt.costmanagement.models.RuleStatus
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.details = details
+        self.status = status
+        self.created_date: Optional[datetime.datetime] = None
+        self.updated_date: Optional[datetime.datetime] = None
+
+
+class CostDetailsOperationResults(_serialization.Model):
     """The result of the long running operation for cost details Api.
 
     :ivar id: The id of the long running operation.
@@ -1183,7 +2173,7 @@ class CostDetailsOperationResults(_serialization.Model):  # pylint: disable=too-
         byte_count: Optional[int] = None,
         blob_count: Optional[int] = None,
         compress_data: Optional[bool] = None,
-        blobs: Optional[List["_models.BlobInfo"]] = None,
+        blobs: Optional[list["_models.BlobInfo"]] = None,
         request_scope: Optional[str] = None,
         request_body: Optional["_models.GenerateCostDetailsReportRequestDefinition"] = None,
         **kwargs: Any
@@ -1242,7 +2232,7 @@ class CostDetailsTimePeriod(_serialization.Model):
     """The start and end date for pulling data for the cost detailed report. API only allows data to
     be pulled for 1 month or less and no older than 13 months.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar start: The start date to pull data from. example format 2020-03-15. Required.
     :vartype start: str
@@ -1315,11 +2305,11 @@ class Operation(_serialization.Model):
         :paramtype display: ~azure.mgmt.costmanagement.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.is_data_action = None
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
-        self.origin = None
-        self.action_type = None
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
 class CostManagementOperation(Operation):
@@ -1369,7 +2359,7 @@ class CostManagementOperation(Operation):
         :paramtype display: ~azure.mgmt.costmanagement.models.OperationDisplay
         """
         super().__init__(display=display, **kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class CostManagementResource(_serialization.Model):
@@ -1416,16 +2406,46 @@ class CostManagementResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = None
-        self.sku = None
-        self.e_tag = None
-        self.tags = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.location: Optional[str] = None
+        self.sku: Optional[str] = None
+        self.e_tag: Optional[str] = None
+        self.tags: Optional[dict[str, str]] = None
 
 
-class Dimension(CostManagementResource):  # pylint: disable=too-many-instance-attributes
+class CurrentSpend(_serialization.Model):
+    """The current amount of cost which is being tracked for a budget.
+
+     Supported for CategoryType(s): Cost.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar amount: The total amount of cost which is being tracked by the budget.
+    :vartype amount: float
+    :ivar unit: The unit of measure for the budget amount.
+    :vartype unit: str
+    """
+
+    _validation = {
+        "amount": {"readonly": True},
+        "unit": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "amount": {"key": "amount", "type": "float"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.amount: Optional[float] = None
+        self.unit: Optional[str] = None
+
+
+class Dimension(CostManagementResource):
     """List of Dimension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1501,21 +2521,21 @@ class Dimension(CostManagementResource):  # pylint: disable=too-many-instance-at
         "next_link": {"key": "properties.nextLink", "type": "str"},
     }
 
-    def __init__(self, *, data: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, data: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword data: Dimension data.
         :paramtype data: list[str]
         """
         super().__init__(**kwargs)
-        self.description = None
-        self.filter_enabled = None
-        self.grouping_enabled = None
+        self.description: Optional[str] = None
+        self.filter_enabled: Optional[bool] = None
+        self.grouping_enabled: Optional[bool] = None
         self.data = data
-        self.total = None
-        self.category = None
-        self.usage_start = None
-        self.usage_end = None
-        self.next_link = None
+        self.total: Optional[int] = None
+        self.category: Optional[str] = None
+        self.usage_start: Optional[datetime.datetime] = None
+        self.usage_end: Optional[datetime.datetime] = None
+        self.next_link: Optional[str] = None
 
 
 class DimensionsListResult(_serialization.Model):
@@ -1538,10 +2558,10 @@ class DimensionsListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[list["_models.Dimension"]] = None
 
 
-class DismissAlertPayload(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DismissAlertPayload(_serialization.Model):
     """The request payload to update an alert.
 
     :ivar definition: defines the type of alert.
@@ -1674,9 +2694,293 @@ class DownloadURL(_serialization.Model):
         :paramtype download_url: str
         """
         super().__init__(**kwargs)
-        self.expiry_time = None
+        self.expiry_time: Optional[datetime.datetime] = None
         self.valid_till = valid_till
         self.download_url = download_url
+
+
+class EAPriceSheetProperties(_serialization.Model):
+    """The properties of the EA price sheet. Properties supported with version 2025-03-01 are as
+    below.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar enrollment_number: Unique identifier for the EA billing account.
+    :vartype enrollment_number: str
+    :ivar service_family: Type of Azure service. For example, Compute, Analytics, and Security.
+    :vartype service_family: float
+    :ivar product: Name of the product accruing the charges.
+    :vartype product: str
+    :ivar product_id: Unique identifier for the product whose meter is consumed.
+    :vartype product_id: str
+    :ivar sku_id: Unique identifier of the SKU.
+    :vartype sku_id: str
+    :ivar unit_of_measure: How usage is measured for the service. Note: The field “Unit” has been
+     removed with version 2023-11-01 as a duplicate of “UnitofMeasure”, please use the field
+     “UnitOfMeasure”.
+    :vartype unit_of_measure: str
+    :ivar meter_id: Unique identifier of the meter.
+    :vartype meter_id: str
+    :ivar meter_name: Name of the meter. The meter represents the deployable resource of an Azure
+     service.
+    :vartype meter_name: str
+    :ivar meter_type: Name of the meter type.
+    :vartype meter_type: str
+    :ivar offer_id: Determines the Azure offer associated with this meter. [Learn more about Azure
+     offers] (https://azure.microsoft.com/en-us/support/legal/offer-details/).
+    :vartype offer_id: str
+    :ivar meter_category: Name of the classification category for the meter. For example, Cloud
+     services, Networking, etc.
+    :vartype meter_category: str
+    :ivar meter_sub_category: Name of the meter subclassification category.
+    :vartype meter_sub_category: str
+    :ivar meter_region: Name of the Azure region where the meter for the service is available.
+    :vartype meter_region: str
+    :ivar effective_start_date: Effective start date of the Price Sheet billing period.
+    :vartype effective_start_date: ~datetime.datetime
+    :ivar effective_end_date: Effective end date of the Price Sheet billing period.
+    :vartype effective_end_date: ~datetime.datetime
+    :ivar unit_price: The per-unit price at the time of billing for a given product or service,
+     inclusive of any negotiated discounts on top of the market price.
+
+      For PriceType ReservedInstance, unit price reflects the total cost of the 1 or 3-year
+     commitment including discounts.
+
+      Note: The unit price isn't the same as the effective price in usage details downloads when
+     services have differential prices across tiers.
+
+      If services have multi-tiered pricing, the effective price is a blended rate across the tiers
+     and doesn't show a tier-specific unit price. The blended price or effective price is the net
+     price for the consumed quantity spanning across the multiple tiers (where each tier has a
+     specific unit price).
+    :vartype unit_price: str
+    :ivar base_price: The unit price at the time the customer signs on or the unit price at the
+     time of service meter GA launch if it is after sign-on.
+
+      This is applicable for Enterprise Agreement users.
+    :vartype base_price: str
+    :ivar market_price: The current list price for a given product or service. This price is
+     without any negotiations and is based on your Microsoft Agreement type.
+
+      For PriceType Consumption, market price is reflected as the pay-as-you-go price.
+
+      For PriceType Savings Plan, market price reflects the Savings plan benefit on top of
+     pay-as-you-go price for the corresponding commitment term.
+
+      For PriceType ReservedInstance, market price reflects the total price of the 1 or 3-year
+     commitment.
+
+      Note: For EA customers with no negotiations, market price may appear rounded to a different
+     decimal precision than unit price.
+    :vartype market_price: str
+    :ivar included_quantity: Quantities of a specific service to which an EA customer is entitled
+     to consume without incremental charges.
+    :vartype included_quantity: str
+    :ivar currency_code: Currency in which the Enterprise Agreement was signed.
+    :vartype currency_code: str
+    :ivar term: Term length for Azure Savings Plan or Reservation term – one year or three years
+     (P1Y or P3Y).
+    :vartype term: str
+    :ivar price_type: Price type for a product. For example, an Azure resource with a pay-as-you-go
+     rate with priceType as Consumption. Other price types include ReservedInstance and Savings
+     Plan.
+    :vartype price_type: str
+    :ivar part_number: Part number associated with the meter.
+    :vartype part_number: str
+    """
+
+    _validation = {
+        "enrollment_number": {"readonly": True},
+        "service_family": {"readonly": True},
+        "product": {"readonly": True},
+        "product_id": {"readonly": True},
+        "sku_id": {"readonly": True},
+        "unit_of_measure": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "meter_name": {"readonly": True},
+        "meter_type": {"readonly": True},
+        "offer_id": {"readonly": True},
+        "meter_category": {"readonly": True},
+        "meter_sub_category": {"readonly": True},
+        "meter_region": {"readonly": True},
+        "effective_start_date": {"readonly": True},
+        "effective_end_date": {"readonly": True},
+        "unit_price": {"readonly": True},
+        "base_price": {"readonly": True},
+        "market_price": {"readonly": True},
+        "included_quantity": {"readonly": True},
+        "currency_code": {"readonly": True},
+        "term": {"readonly": True},
+        "price_type": {"readonly": True},
+        "part_number": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "enrollment_number": {"key": "enrollmentNumber", "type": "str"},
+        "service_family": {"key": "serviceFamily", "type": "float"},
+        "product": {"key": "product", "type": "str"},
+        "product_id": {"key": "productId", "type": "str"},
+        "sku_id": {"key": "skuId", "type": "str"},
+        "unit_of_measure": {"key": "unitOfMeasure", "type": "str"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "meter_name": {"key": "meterName", "type": "str"},
+        "meter_type": {"key": "meterType", "type": "str"},
+        "offer_id": {"key": "offerId", "type": "str"},
+        "meter_category": {"key": "meterCategory", "type": "str"},
+        "meter_sub_category": {"key": "meterSubCategory", "type": "str"},
+        "meter_region": {"key": "meterRegion", "type": "str"},
+        "effective_start_date": {"key": "effectiveStartDate", "type": "iso-8601"},
+        "effective_end_date": {"key": "effectiveEndDate", "type": "iso-8601"},
+        "unit_price": {"key": "unitPrice", "type": "str"},
+        "base_price": {"key": "basePrice", "type": "str"},
+        "market_price": {"key": "marketPrice", "type": "str"},
+        "included_quantity": {"key": "includedQuantity", "type": "str"},
+        "currency_code": {"key": "currencyCode", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "price_type": {"key": "priceType", "type": "str"},
+        "part_number": {"key": "partNumber", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.enrollment_number: Optional[str] = None
+        self.service_family: Optional[float] = None
+        self.product: Optional[str] = None
+        self.product_id: Optional[str] = None
+        self.sku_id: Optional[str] = None
+        self.unit_of_measure: Optional[str] = None
+        self.meter_id: Optional[str] = None
+        self.meter_name: Optional[str] = None
+        self.meter_type: Optional[str] = None
+        self.offer_id: Optional[str] = None
+        self.meter_category: Optional[str] = None
+        self.meter_sub_category: Optional[str] = None
+        self.meter_region: Optional[str] = None
+        self.effective_start_date: Optional[datetime.datetime] = None
+        self.effective_end_date: Optional[datetime.datetime] = None
+        self.unit_price: Optional[str] = None
+        self.base_price: Optional[str] = None
+        self.market_price: Optional[str] = None
+        self.included_quantity: Optional[str] = None
+        self.currency_code: Optional[str] = None
+        self.term: Optional[str] = None
+        self.price_type: Optional[str] = None
+        self.part_number: Optional[str] = None
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.costmanagement.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.costmanagement.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorDetailAutoGenerated(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.costmanagement.models.ErrorDetailAutoGenerated]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.costmanagement.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetailAutoGenerated]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetailAutoGenerated"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorDetails(_serialization.Model):
@@ -1703,8 +3007,8 @@ class ErrorDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class ErrorDetailsWithNestedDetails(ErrorDetails):
@@ -1735,7 +3039,7 @@ class ErrorDetailsWithNestedDetails(ErrorDetails):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.details = None
+        self.details: Optional[list["_models.ErrorDetailsWithNestedDetails"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -1765,6 +3069,48 @@ class ErrorResponse(_serialization.Model):
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.costmanagement.models.ErrorDetails
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseAutoGenerated(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.costmanagement.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.costmanagement.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseAutoGenerated2(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.costmanagement.models.ErrorDetailAutoGenerated
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetailAutoGenerated"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetailAutoGenerated"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.costmanagement.models.ErrorDetailAutoGenerated
         """
         super().__init__(**kwargs)
         self.error = error
@@ -1802,7 +3148,7 @@ class ErrorResponseWithNestedDetails(_serialization.Model):
         self.error = error
 
 
-class Export(CostManagementProxyResource):  # pylint: disable=too-many-instance-attributes
+class Export(CostManagementProxyResource):
     """An export resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1816,8 +3162,12 @@ class Export(CostManagementProxyResource):  # pylint: disable=too-many-instance-
     :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
      used to determine whether the user is updating the latest version or not.
     :vartype e_tag: str
-    :ivar format: The format of the export being delivered. Currently only 'Csv' is supported.
-     "Csv"
+    :ivar identity: The managed identity associated with Export.
+    :vartype identity: ~azure.mgmt.costmanagement.models.SystemAssignedServiceIdentity
+    :ivar location: The location of the Export's managed identity. Only required when utilizing
+     managed identity.
+    :vartype location: str
+    :ivar format: The format of the export being delivered. Known values are: "Csv" and "Parquet".
     :vartype format: str or ~azure.mgmt.costmanagement.models.FormatType
     :ivar delivery_info: Has delivery information for the export.
     :vartype delivery_info: ~azure.mgmt.costmanagement.models.ExportDeliveryInfo
@@ -1826,12 +3176,27 @@ class Export(CostManagementProxyResource):  # pylint: disable=too-many-instance-
     :ivar run_history: If requested, has the most recent run history for the export.
     :vartype run_history: ~azure.mgmt.costmanagement.models.ExportExecutionListResult
     :ivar partition_data: If set to true, exported data will be partitioned by size and placed in a
-     blob directory together with a manifest file. Note: this option is currently available only for
-     Microsoft Customer Agreement commerce scopes.
+     blob directory together with a manifest file.
     :vartype partition_data: bool
+    :ivar data_overwrite_behavior: Allow customers to select overwrite
+     data(OverwritePreviousReport) for exports. This setting will enable overwrite data for the same
+     month in customer storage account. By default set to CreateNewReport. Known values are:
+     "OverwritePreviousReport" and "CreateNewReport".
+    :vartype data_overwrite_behavior: str or
+     ~azure.mgmt.costmanagement.models.DataOverwriteBehaviorType
+    :ivar compression_mode: Allow customers to select compress data for exports. This setting will
+     enable destination file compression scheme at runtime. By default set to None. Gzip is for csv
+     and snappy for parquet. Known values are: "gzip", "snappy", and "none".
+    :vartype compression_mode: str or ~azure.mgmt.costmanagement.models.CompressionModeType
+    :ivar export_description: The export description set by customer at time of export
+     creation/update.
+    :vartype export_description: str
     :ivar next_run_time_estimate: If the export has an active schedule, provides an estimate of the
      next run time.
     :vartype next_run_time_estimate: ~datetime.datetime
+    :ivar system_suspension_context: The export suspension reason if export is in SystemSuspended
+     state. This is not populated currently.
+    :vartype system_suspension_context: ~azure.mgmt.costmanagement.models.ExportSuspensionContext
     :ivar schedule: Has schedule information for the export.
     :vartype schedule: ~azure.mgmt.costmanagement.models.ExportSchedule
     """
@@ -1841,6 +3206,7 @@ class Export(CostManagementProxyResource):  # pylint: disable=too-many-instance-
         "name": {"readonly": True},
         "type": {"readonly": True},
         "next_run_time_estimate": {"readonly": True},
+        "system_suspension_context": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1848,12 +3214,18 @@ class Export(CostManagementProxyResource):  # pylint: disable=too-many-instance-
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "e_tag": {"key": "eTag", "type": "str"},
+        "identity": {"key": "identity", "type": "SystemAssignedServiceIdentity"},
+        "location": {"key": "location", "type": "str"},
         "format": {"key": "properties.format", "type": "str"},
         "delivery_info": {"key": "properties.deliveryInfo", "type": "ExportDeliveryInfo"},
         "definition": {"key": "properties.definition", "type": "ExportDefinition"},
         "run_history": {"key": "properties.runHistory", "type": "ExportExecutionListResult"},
         "partition_data": {"key": "properties.partitionData", "type": "bool"},
+        "data_overwrite_behavior": {"key": "properties.dataOverwriteBehavior", "type": "str"},
+        "compression_mode": {"key": "properties.compressionMode", "type": "str"},
+        "export_description": {"key": "properties.exportDescription", "type": "str"},
         "next_run_time_estimate": {"key": "properties.nextRunTimeEstimate", "type": "iso-8601"},
+        "system_suspension_context": {"key": "properties.systemSuspensionContext", "type": "ExportSuspensionContext"},
         "schedule": {"key": "properties.schedule", "type": "ExportSchedule"},
     }
 
@@ -1861,11 +3233,16 @@ class Export(CostManagementProxyResource):  # pylint: disable=too-many-instance-
         self,
         *,
         e_tag: Optional[str] = None,
+        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
+        location: Optional[str] = None,
         format: Optional[Union[str, "_models.FormatType"]] = None,
         delivery_info: Optional["_models.ExportDeliveryInfo"] = None,
         definition: Optional["_models.ExportDefinition"] = None,
         run_history: Optional["_models.ExportExecutionListResult"] = None,
         partition_data: Optional[bool] = None,
+        data_overwrite_behavior: Optional[Union[str, "_models.DataOverwriteBehaviorType"]] = None,
+        compression_mode: Optional[Union[str, "_models.CompressionModeType"]] = None,
+        export_description: Optional[str] = None,
         schedule: Optional["_models.ExportSchedule"] = None,
         **kwargs: Any
     ) -> None:
@@ -1873,8 +3250,13 @@ class Export(CostManagementProxyResource):  # pylint: disable=too-many-instance-
         :keyword e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
          used to determine whether the user is updating the latest version or not.
         :paramtype e_tag: str
-        :keyword format: The format of the export being delivered. Currently only 'Csv' is supported.
-         "Csv"
+        :keyword identity: The managed identity associated with Export.
+        :paramtype identity: ~azure.mgmt.costmanagement.models.SystemAssignedServiceIdentity
+        :keyword location: The location of the Export's managed identity. Only required when utilizing
+         managed identity.
+        :paramtype location: str
+        :keyword format: The format of the export being delivered. Known values are: "Csv" and
+         "Parquet".
         :paramtype format: str or ~azure.mgmt.costmanagement.models.FormatType
         :keyword delivery_info: Has delivery information for the export.
         :paramtype delivery_info: ~azure.mgmt.costmanagement.models.ExportDeliveryInfo
@@ -1883,27 +3265,45 @@ class Export(CostManagementProxyResource):  # pylint: disable=too-many-instance-
         :keyword run_history: If requested, has the most recent run history for the export.
         :paramtype run_history: ~azure.mgmt.costmanagement.models.ExportExecutionListResult
         :keyword partition_data: If set to true, exported data will be partitioned by size and placed
-         in a blob directory together with a manifest file. Note: this option is currently available
-         only for Microsoft Customer Agreement commerce scopes.
+         in a blob directory together with a manifest file.
         :paramtype partition_data: bool
+        :keyword data_overwrite_behavior: Allow customers to select overwrite
+         data(OverwritePreviousReport) for exports. This setting will enable overwrite data for the same
+         month in customer storage account. By default set to CreateNewReport. Known values are:
+         "OverwritePreviousReport" and "CreateNewReport".
+        :paramtype data_overwrite_behavior: str or
+         ~azure.mgmt.costmanagement.models.DataOverwriteBehaviorType
+        :keyword compression_mode: Allow customers to select compress data for exports. This setting
+         will enable destination file compression scheme at runtime. By default set to None. Gzip is for
+         csv and snappy for parquet. Known values are: "gzip", "snappy", and "none".
+        :paramtype compression_mode: str or ~azure.mgmt.costmanagement.models.CompressionModeType
+        :keyword export_description: The export description set by customer at time of export
+         creation/update.
+        :paramtype export_description: str
         :keyword schedule: Has schedule information for the export.
         :paramtype schedule: ~azure.mgmt.costmanagement.models.ExportSchedule
         """
         super().__init__(e_tag=e_tag, **kwargs)
+        self.identity = identity
+        self.location = location
         self.format = format
         self.delivery_info = delivery_info
         self.definition = definition
         self.run_history = run_history
         self.partition_data = partition_data
-        self.next_run_time_estimate = None
+        self.data_overwrite_behavior = data_overwrite_behavior
+        self.compression_mode = compression_mode
+        self.export_description = export_description
+        self.next_run_time_estimate: Optional[datetime.datetime] = None
+        self.system_suspension_context: Optional["_models.ExportSuspensionContext"] = None
         self.schedule = schedule
 
 
 class ExportDataset(_serialization.Model):
     """The definition for data in the export.
 
-    :ivar granularity: The granularity of rows in the export. Currently only 'Daily' is supported.
-     "Daily"
+    :ivar granularity: The granularity of rows in the export. Currently 'Daily' is supported for
+     most cases. Known values are: "Daily" and "Monthly".
     :vartype granularity: str or ~azure.mgmt.costmanagement.models.GranularityType
     :ivar configuration: The export dataset configuration.
     :vartype configuration: ~azure.mgmt.costmanagement.models.ExportDatasetConfiguration
@@ -1922,8 +3322,8 @@ class ExportDataset(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword granularity: The granularity of rows in the export. Currently only 'Daily' is
-         supported. "Daily"
+        :keyword granularity: The granularity of rows in the export. Currently 'Daily' is supported for
+         most cases. Known values are: "Daily" and "Monthly".
         :paramtype granularity: str or ~azure.mgmt.costmanagement.models.GranularityType
         :keyword configuration: The export dataset configuration.
         :paramtype configuration: ~azure.mgmt.costmanagement.models.ExportDatasetConfiguration
@@ -1934,42 +3334,64 @@ class ExportDataset(_serialization.Model):
 
 
 class ExportDatasetConfiguration(_serialization.Model):
-    """The export dataset configuration. Allows columns to be selected for the export. If not provided
-    then the export will include all available columns.
+    """This is on path to deprecation and will not be supported going forward.
 
     :ivar columns: Array of column names to be included in the export. If not provided then the
      export will include all available columns. The available columns can vary by customer channel
      (see examples).
     :vartype columns: list[str]
+    :ivar data_version: The data version for the selected for the export. If not provided then the
+     export will default to latest data version.
+    :vartype data_version: str
+    :ivar filters: Filters associated with the data sets.
+    :vartype filters: list[~azure.mgmt.costmanagement.models.FilterItems]
     """
 
     _attribute_map = {
         "columns": {"key": "columns", "type": "[str]"},
+        "data_version": {"key": "dataVersion", "type": "str"},
+        "filters": {"key": "filters", "type": "[FilterItems]"},
     }
 
-    def __init__(self, *, columns: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        columns: Optional[list[str]] = None,
+        data_version: Optional[str] = None,
+        filters: Optional[list["_models.FilterItems"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword columns: Array of column names to be included in the export. If not provided then the
          export will include all available columns. The available columns can vary by customer channel
          (see examples).
         :paramtype columns: list[str]
+        :keyword data_version: The data version for the selected for the export. If not provided then
+         the export will default to latest data version.
+        :paramtype data_version: str
+        :keyword filters: Filters associated with the data sets.
+        :paramtype filters: list[~azure.mgmt.costmanagement.models.FilterItems]
         """
         super().__init__(**kwargs)
         self.columns = columns
+        self.data_version = data_version
+        self.filters = filters
 
 
 class ExportDefinition(_serialization.Model):
     """The definition of an export.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the export. Note that 'Usage' is equivalent to 'ActualCost' and is
      applicable to exports that do not yet provide data for charges or amortization for service
-     reservations. Required. Known values are: "Usage", "ActualCost", and "AmortizedCost".
+     reservations. Required. Known values are: "Usage", "ActualCost", "AmortizedCost", "FocusCost",
+     "PriceSheet", "ReservationTransactions", "ReservationRecommendations", and
+     "ReservationDetails".
     :vartype type: str or ~azure.mgmt.costmanagement.models.ExportType
     :ivar timeframe: The time frame for pulling data for the export. If custom, then a specific
      time period must be provided. Required. Known values are: "MonthToDate", "BillingMonthToDate",
-     "TheLastMonth", "TheLastBillingMonth", "WeekToDate", and "Custom".
+     "TheLastMonth", "TheLastBillingMonth", "WeekToDate", "Custom", and "TheCurrentMonth".
     :vartype timeframe: str or ~azure.mgmt.costmanagement.models.TimeframeType
     :ivar time_period: Has time period for pulling data for the export.
     :vartype time_period: ~azure.mgmt.costmanagement.models.ExportTimePeriod
@@ -2001,11 +3423,13 @@ class ExportDefinition(_serialization.Model):
         """
         :keyword type: The type of the export. Note that 'Usage' is equivalent to 'ActualCost' and is
          applicable to exports that do not yet provide data for charges or amortization for service
-         reservations. Required. Known values are: "Usage", "ActualCost", and "AmortizedCost".
+         reservations. Required. Known values are: "Usage", "ActualCost", "AmortizedCost", "FocusCost",
+         "PriceSheet", "ReservationTransactions", "ReservationRecommendations", and
+         "ReservationDetails".
         :paramtype type: str or ~azure.mgmt.costmanagement.models.ExportType
         :keyword timeframe: The time frame for pulling data for the export. If custom, then a specific
          time period must be provided. Required. Known values are: "MonthToDate", "BillingMonthToDate",
-         "TheLastMonth", "TheLastBillingMonth", "WeekToDate", and "Custom".
+         "TheLastMonth", "TheLastBillingMonth", "WeekToDate", "Custom", and "TheCurrentMonth".
         :paramtype timeframe: str or ~azure.mgmt.costmanagement.models.TimeframeType
         :keyword time_period: Has time period for pulling data for the export.
         :paramtype time_period: ~azure.mgmt.costmanagement.models.ExportTimePeriod
@@ -2037,8 +3461,11 @@ class ExportDeliveryDestination(_serialization.Model):
     https://docs.microsoft.com/en-us/azure/cost-management-billing/costs/export-cost-data-storage-account-sas-key
     ).
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
+    :ivar type: The export delivery destination type. Currently only 'AzureBlob' is supported.
+     "AzureBlob"
+    :vartype type: str or ~azure.mgmt.costmanagement.models.DestinationType
     :ivar resource_id: The resource id of the storage account where exports will be delivered. This
      is not required if a sasToken and storageAccount are specified.
     :vartype resource_id: str
@@ -2063,6 +3490,7 @@ class ExportDeliveryDestination(_serialization.Model):
     }
 
     _attribute_map = {
+        "type": {"key": "type", "type": "str"},
         "resource_id": {"key": "resourceId", "type": "str"},
         "container": {"key": "container", "type": "str"},
         "root_folder_path": {"key": "rootFolderPath", "type": "str"},
@@ -2074,6 +3502,7 @@ class ExportDeliveryDestination(_serialization.Model):
         self,
         *,
         container: str,
+        type: Optional[Union[str, "_models.DestinationType"]] = None,
         resource_id: Optional[str] = None,
         root_folder_path: Optional[str] = None,
         sas_token: Optional[str] = None,
@@ -2081,6 +3510,9 @@ class ExportDeliveryDestination(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
+        :keyword type: The export delivery destination type. Currently only 'AzureBlob' is supported.
+         "AzureBlob"
+        :paramtype type: str or ~azure.mgmt.costmanagement.models.DestinationType
         :keyword resource_id: The resource id of the storage account where exports will be delivered.
          This is not required if a sasToken and storageAccount are specified.
         :paramtype resource_id: str
@@ -2100,6 +3532,7 @@ class ExportDeliveryDestination(_serialization.Model):
         :paramtype storage_account: str
         """
         super().__init__(**kwargs)
+        self.type = type
         self.resource_id = resource_id
         self.container = container
         self.root_folder_path = root_folder_path
@@ -2110,7 +3543,7 @@ class ExportDeliveryDestination(_serialization.Model):
 class ExportDeliveryInfo(_serialization.Model):
     """The delivery information associated with a export.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar destination: Has destination for the export being delivered. Required.
     :vartype destination: ~azure.mgmt.costmanagement.models.ExportDeliveryDestination
@@ -2153,7 +3586,7 @@ class ExportExecutionListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[list["_models.ExportRun"]] = None
 
 
 class ExportListResult(_serialization.Model):
@@ -2176,7 +3609,7 @@ class ExportListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[list["_models.Export"]] = None
 
 
 class ExportProperties(CommonExportProperties):
@@ -2184,10 +3617,9 @@ class ExportProperties(CommonExportProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar format: The format of the export being delivered. Currently only 'Csv' is supported.
-     "Csv"
+    :ivar format: The format of the export being delivered. Known values are: "Csv" and "Parquet".
     :vartype format: str or ~azure.mgmt.costmanagement.models.FormatType
     :ivar delivery_info: Has delivery information for the export. Required.
     :vartype delivery_info: ~azure.mgmt.costmanagement.models.ExportDeliveryInfo
@@ -2196,12 +3628,27 @@ class ExportProperties(CommonExportProperties):
     :ivar run_history: If requested, has the most recent run history for the export.
     :vartype run_history: ~azure.mgmt.costmanagement.models.ExportExecutionListResult
     :ivar partition_data: If set to true, exported data will be partitioned by size and placed in a
-     blob directory together with a manifest file. Note: this option is currently available only for
-     Microsoft Customer Agreement commerce scopes.
+     blob directory together with a manifest file.
     :vartype partition_data: bool
+    :ivar data_overwrite_behavior: Allow customers to select overwrite
+     data(OverwritePreviousReport) for exports. This setting will enable overwrite data for the same
+     month in customer storage account. By default set to CreateNewReport. Known values are:
+     "OverwritePreviousReport" and "CreateNewReport".
+    :vartype data_overwrite_behavior: str or
+     ~azure.mgmt.costmanagement.models.DataOverwriteBehaviorType
+    :ivar compression_mode: Allow customers to select compress data for exports. This setting will
+     enable destination file compression scheme at runtime. By default set to None. Gzip is for csv
+     and snappy for parquet. Known values are: "gzip", "snappy", and "none".
+    :vartype compression_mode: str or ~azure.mgmt.costmanagement.models.CompressionModeType
+    :ivar export_description: The export description set by customer at time of export
+     creation/update.
+    :vartype export_description: str
     :ivar next_run_time_estimate: If the export has an active schedule, provides an estimate of the
      next run time.
     :vartype next_run_time_estimate: ~datetime.datetime
+    :ivar system_suspension_context: The export suspension reason if export is in SystemSuspended
+     state. This is not populated currently.
+    :vartype system_suspension_context: ~azure.mgmt.costmanagement.models.ExportSuspensionContext
     :ivar schedule: Has schedule information for the export.
     :vartype schedule: ~azure.mgmt.costmanagement.models.ExportSchedule
     """
@@ -2210,6 +3657,7 @@ class ExportProperties(CommonExportProperties):
         "delivery_info": {"required": True},
         "definition": {"required": True},
         "next_run_time_estimate": {"readonly": True},
+        "system_suspension_context": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2218,7 +3666,11 @@ class ExportProperties(CommonExportProperties):
         "definition": {"key": "definition", "type": "ExportDefinition"},
         "run_history": {"key": "runHistory", "type": "ExportExecutionListResult"},
         "partition_data": {"key": "partitionData", "type": "bool"},
+        "data_overwrite_behavior": {"key": "dataOverwriteBehavior", "type": "str"},
+        "compression_mode": {"key": "compressionMode", "type": "str"},
+        "export_description": {"key": "exportDescription", "type": "str"},
         "next_run_time_estimate": {"key": "nextRunTimeEstimate", "type": "iso-8601"},
+        "system_suspension_context": {"key": "systemSuspensionContext", "type": "ExportSuspensionContext"},
         "schedule": {"key": "schedule", "type": "ExportSchedule"},
     }
 
@@ -2230,12 +3682,15 @@ class ExportProperties(CommonExportProperties):
         format: Optional[Union[str, "_models.FormatType"]] = None,
         run_history: Optional["_models.ExportExecutionListResult"] = None,
         partition_data: Optional[bool] = None,
+        data_overwrite_behavior: Optional[Union[str, "_models.DataOverwriteBehaviorType"]] = None,
+        compression_mode: Optional[Union[str, "_models.CompressionModeType"]] = None,
+        export_description: Optional[str] = None,
         schedule: Optional["_models.ExportSchedule"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword format: The format of the export being delivered. Currently only 'Csv' is supported.
-         "Csv"
+        :keyword format: The format of the export being delivered. Known values are: "Csv" and
+         "Parquet".
         :paramtype format: str or ~azure.mgmt.costmanagement.models.FormatType
         :keyword delivery_info: Has delivery information for the export. Required.
         :paramtype delivery_info: ~azure.mgmt.costmanagement.models.ExportDeliveryInfo
@@ -2244,9 +3699,21 @@ class ExportProperties(CommonExportProperties):
         :keyword run_history: If requested, has the most recent run history for the export.
         :paramtype run_history: ~azure.mgmt.costmanagement.models.ExportExecutionListResult
         :keyword partition_data: If set to true, exported data will be partitioned by size and placed
-         in a blob directory together with a manifest file. Note: this option is currently available
-         only for Microsoft Customer Agreement commerce scopes.
+         in a blob directory together with a manifest file.
         :paramtype partition_data: bool
+        :keyword data_overwrite_behavior: Allow customers to select overwrite
+         data(OverwritePreviousReport) for exports. This setting will enable overwrite data for the same
+         month in customer storage account. By default set to CreateNewReport. Known values are:
+         "OverwritePreviousReport" and "CreateNewReport".
+        :paramtype data_overwrite_behavior: str or
+         ~azure.mgmt.costmanagement.models.DataOverwriteBehaviorType
+        :keyword compression_mode: Allow customers to select compress data for exports. This setting
+         will enable destination file compression scheme at runtime. By default set to None. Gzip is for
+         csv and snappy for parquet. Known values are: "gzip", "snappy", and "none".
+        :paramtype compression_mode: str or ~azure.mgmt.costmanagement.models.CompressionModeType
+        :keyword export_description: The export description set by customer at time of export
+         creation/update.
+        :paramtype export_description: str
         :keyword schedule: Has schedule information for the export.
         :paramtype schedule: ~azure.mgmt.costmanagement.models.ExportSchedule
         """
@@ -2256,6 +3723,9 @@ class ExportProperties(CommonExportProperties):
             definition=definition,
             run_history=run_history,
             partition_data=partition_data,
+            data_overwrite_behavior=data_overwrite_behavior,
+            compression_mode=compression_mode,
+            export_description=export_description,
             **kwargs
         )
         self.schedule = schedule
@@ -2264,7 +3734,7 @@ class ExportProperties(CommonExportProperties):
 class ExportRecurrencePeriod(_serialization.Model):
     """The start and end date for recurrence schedule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar from_property: The start date of recurrence. Required.
     :vartype from_property: ~datetime.datetime
@@ -2295,7 +3765,7 @@ class ExportRecurrencePeriod(_serialization.Model):
         self.to = to
 
 
-class ExportRun(CostManagementProxyResource):  # pylint: disable=too-many-instance-attributes
+class ExportRun(CostManagementProxyResource):
     """An export run.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2323,8 +3793,14 @@ class ExportRun(CostManagementProxyResource):  # pylint: disable=too-many-instan
     :vartype processing_start_time: ~datetime.datetime
     :ivar processing_end_time: The time when the export run finished.
     :vartype processing_end_time: ~datetime.datetime
+    :ivar start_date: The start datetime for the export.
+    :vartype start_date: ~datetime.datetime
+    :ivar end_date: The end datetime for the export.
+    :vartype end_date: ~datetime.datetime
     :ivar file_name: The name of the exported file.
     :vartype file_name: str
+    :ivar manifest_file: The manifest file location(URI location) for the exported files.
+    :vartype manifest_file: str
     :ivar run_settings: The export settings that were in effect for this run.
     :vartype run_settings: ~azure.mgmt.costmanagement.models.CommonExportProperties
     :ivar error: The details of any error.
@@ -2348,7 +3824,10 @@ class ExportRun(CostManagementProxyResource):  # pylint: disable=too-many-instan
         "submitted_time": {"key": "properties.submittedTime", "type": "iso-8601"},
         "processing_start_time": {"key": "properties.processingStartTime", "type": "iso-8601"},
         "processing_end_time": {"key": "properties.processingEndTime", "type": "iso-8601"},
+        "start_date": {"key": "properties.startDate", "type": "iso-8601"},
+        "end_date": {"key": "properties.endDate", "type": "iso-8601"},
         "file_name": {"key": "properties.fileName", "type": "str"},
+        "manifest_file": {"key": "properties.manifestFile", "type": "str"},
         "run_settings": {"key": "properties.runSettings", "type": "CommonExportProperties"},
         "error": {"key": "properties.error", "type": "ErrorDetails"},
     }
@@ -2363,7 +3842,10 @@ class ExportRun(CostManagementProxyResource):  # pylint: disable=too-many-instan
         submitted_time: Optional[datetime.datetime] = None,
         processing_start_time: Optional[datetime.datetime] = None,
         processing_end_time: Optional[datetime.datetime] = None,
+        start_date: Optional[datetime.datetime] = None,
+        end_date: Optional[datetime.datetime] = None,
         file_name: Optional[str] = None,
+        manifest_file: Optional[str] = None,
         run_settings: Optional["_models.CommonExportProperties"] = None,
         error: Optional["_models.ErrorDetails"] = None,
         **kwargs: Any
@@ -2387,8 +3869,14 @@ class ExportRun(CostManagementProxyResource):  # pylint: disable=too-many-instan
         :paramtype processing_start_time: ~datetime.datetime
         :keyword processing_end_time: The time when the export run finished.
         :paramtype processing_end_time: ~datetime.datetime
+        :keyword start_date: The start datetime for the export.
+        :paramtype start_date: ~datetime.datetime
+        :keyword end_date: The end datetime for the export.
+        :paramtype end_date: ~datetime.datetime
         :keyword file_name: The name of the exported file.
         :paramtype file_name: str
+        :keyword manifest_file: The manifest file location(URI location) for the exported files.
+        :paramtype manifest_file: str
         :keyword run_settings: The export settings that were in effect for this run.
         :paramtype run_settings: ~azure.mgmt.costmanagement.models.CommonExportProperties
         :keyword error: The details of any error.
@@ -2401,16 +3889,40 @@ class ExportRun(CostManagementProxyResource):  # pylint: disable=too-many-instan
         self.submitted_time = submitted_time
         self.processing_start_time = processing_start_time
         self.processing_end_time = processing_end_time
+        self.start_date = start_date
+        self.end_date = end_date
         self.file_name = file_name
+        self.manifest_file = manifest_file
         self.run_settings = run_settings
         self.error = error
+
+
+class ExportRunRequest(_serialization.Model):
+    """The export run request.
+
+    :ivar time_period: Has time period for pulling data for the export.
+    :vartype time_period: ~azure.mgmt.costmanagement.models.ExportTimePeriod
+    """
+
+    _attribute_map = {
+        "time_period": {"key": "timePeriod", "type": "ExportTimePeriod"},
+    }
+
+    def __init__(self, *, time_period: Optional["_models.ExportTimePeriod"] = None, **kwargs: Any) -> None:
+        """
+        :keyword time_period: Has time period for pulling data for the export.
+        :paramtype time_period: ~azure.mgmt.costmanagement.models.ExportTimePeriod
+        """
+        super().__init__(**kwargs)
+        self.time_period = time_period
 
 
 class ExportSchedule(_serialization.Model):
     """The schedule associated with the export.
 
     :ivar status: The status of the export's schedule. If 'Inactive', the export's schedule is
-     paused. Known values are: "Active" and "Inactive".
+     paused. To enable export set the status to be Active and then make a PUT request. Known values
+     are: "Active" and "Inactive".
     :vartype status: str or ~azure.mgmt.costmanagement.models.StatusType
     :ivar recurrence: The schedule recurrence. Known values are: "Daily", "Weekly", "Monthly", and
      "Annually".
@@ -2436,7 +3948,8 @@ class ExportSchedule(_serialization.Model):
     ) -> None:
         """
         :keyword status: The status of the export's schedule. If 'Inactive', the export's schedule is
-         paused. Known values are: "Active" and "Inactive".
+         paused. To enable export set the status to be Active and then make a PUT request. Known values
+         are: "Active" and "Inactive".
         :paramtype status: str or ~azure.mgmt.costmanagement.models.StatusType
         :keyword recurrence: The schedule recurrence. Known values are: "Daily", "Weekly", "Monthly",
          and "Annually".
@@ -2451,11 +3964,50 @@ class ExportSchedule(_serialization.Model):
         self.recurrence_period = recurrence_period
 
 
+class ExportSuspensionContext(_serialization.Model):
+    """The properties of the export run. This is not populated currently.
+
+    :ivar suspension_code: The code for export suspension.
+    :vartype suspension_code: str
+    :ivar suspension_reason: The detailed reason for export suspension.
+    :vartype suspension_reason: str
+    :ivar suspension_time: The time when the export was suspended.
+    :vartype suspension_time: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "suspension_code": {"key": "suspensionCode", "type": "str"},
+        "suspension_reason": {"key": "suspensionReason", "type": "str"},
+        "suspension_time": {"key": "suspensionTime", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        suspension_code: Optional[str] = None,
+        suspension_reason: Optional[str] = None,
+        suspension_time: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword suspension_code: The code for export suspension.
+        :paramtype suspension_code: str
+        :keyword suspension_reason: The detailed reason for export suspension.
+        :paramtype suspension_reason: str
+        :keyword suspension_time: The time when the export was suspended.
+        :paramtype suspension_time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.suspension_code = suspension_code
+        self.suspension_reason = suspension_reason
+        self.suspension_time = suspension_time
+
+
 class ExportTimePeriod(_serialization.Model):
     """The date range for data in the export. This should only be specified with timeFrame set to
-    'Custom'. The maximum date range is 3 months.
+    'Custom'. The maximum date range is 1 calendar month.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar from_property: The start date for export data. Required.
     :vartype from_property: ~datetime.datetime
@@ -2496,7 +4048,7 @@ class FileDestination(_serialization.Model):
         "file_formats": {"key": "fileFormats", "type": "[str]"},
     }
 
-    def __init__(self, *, file_formats: Optional[List[Union[str, "_models.FileFormat"]]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, file_formats: Optional[list[Union[str, "_models.FileFormat"]]] = None, **kwargs: Any) -> None:
         """
         :keyword file_formats: Destination of the view data. Currently only CSV format is supported.
         :paramtype file_formats: list[str or ~azure.mgmt.costmanagement.models.FileFormat]
@@ -2505,10 +4057,57 @@ class FileDestination(_serialization.Model):
         self.file_formats = file_formats
 
 
+class FilterItems(_serialization.Model):
+    """Will contain the filter name and value to operate on. This is currently only supported for
+    Export Definition type of ReservationRecommendations.
+
+    :ivar name: The name of the filter. This is currently only supported for Export Definition type
+     of ReservationRecommendations. Supported names are ['ReservationScope', 'LookBackPeriod',
+     'ResourceType']. Known values are: "ReservationScope", "ResourceType", and "LookBackPeriod".
+    :vartype name: str or ~azure.mgmt.costmanagement.models.FilterItemNames
+    :ivar value: Value to filter by. Currently values supported per name are, for
+     'ReservationScope' supported values are ['Single', 'Shared'], for 'LookBackPeriod' supported
+     values are ['Last7Days', 'Last30Days', 'Last60Days'] and for 'ResourceType' supported values
+     are ['VirtualMachines', 'SQLDatabases', 'PostgreSQL', 'ManagedDisk', 'MySQL', 'RedHat',
+     'MariaDB', 'RedisCache', 'CosmosDB', 'SqlDataWarehouse', 'SUSELinux', 'AppService',
+     'BlockBlob', 'AzureDataExplorer', 'VMwareCloudSimple'].
+    :vartype value: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[Union[str, "_models.FilterItemNames"]] = None,
+        value: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the filter. This is currently only supported for Export Definition
+         type of ReservationRecommendations. Supported names are ['ReservationScope', 'LookBackPeriod',
+         'ResourceType']. Known values are: "ReservationScope", "ResourceType", and "LookBackPeriod".
+        :paramtype name: str or ~azure.mgmt.costmanagement.models.FilterItemNames
+        :keyword value: Value to filter by. Currently values supported per name are, for
+         'ReservationScope' supported values are ['Single', 'Shared'], for 'LookBackPeriod' supported
+         values are ['Last7Days', 'Last30Days', 'Last60Days'] and for 'ResourceType' supported values
+         are ['VirtualMachines', 'SQLDatabases', 'PostgreSQL', 'ManagedDisk', 'MySQL', 'RedHat',
+         'MariaDB', 'RedisCache', 'CosmosDB', 'SqlDataWarehouse', 'SUSELinux', 'AppService',
+         'BlockBlob', 'AzureDataExplorer', 'VMwareCloudSimple'].
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.value = value
+
+
 class ForecastAggregation(_serialization.Model):
     """The aggregation expression to be used in the forecast.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the column to aggregate. Required. Known values are: "PreTaxCostUSD",
      "Cost", "CostUSD", and "PreTaxCost".
@@ -2571,11 +4170,11 @@ class ForecastColumn(_serialization.Model):
 class ForecastComparisonExpression(_serialization.Model):
     """The comparison expression to be used in the forecast.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the column to use in comparison. Required.
     :vartype name: str
-    :ivar operator: The operator to use for comparison. Required. Known values are: "In" and "In".
+    :ivar operator: The operator to use for comparison. Required. "In"
     :vartype operator: str or ~azure.mgmt.costmanagement.models.ForecastOperatorType
     :ivar values: Array of values to use for comparison. Required.
     :vartype values: list[str]
@@ -2594,13 +4193,12 @@ class ForecastComparisonExpression(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, operator: Union[str, "_models.ForecastOperatorType"], values: List[str], **kwargs: Any
+        self, *, name: str, operator: Union[str, "_models.ForecastOperatorType"], values: list[str], **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the column to use in comparison. Required.
         :paramtype name: str
-        :keyword operator: The operator to use for comparison. Required. Known values are: "In" and
-         "In".
+        :keyword operator: The operator to use for comparison. Required. "In"
         :paramtype operator: str or ~azure.mgmt.costmanagement.models.ForecastOperatorType
         :keyword values: Array of values to use for comparison. Required.
         :paramtype values: list[str]
@@ -2614,9 +4212,10 @@ class ForecastComparisonExpression(_serialization.Model):
 class ForecastDataset(_serialization.Model):
     """The definition of data present in the forecast.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar granularity: The granularity of rows in the forecast. "Daily"
+    :ivar granularity: The granularity of rows in the forecast. Known values are: "Daily" and
+     "Monthly".
     :vartype granularity: str or ~azure.mgmt.costmanagement.models.GranularityType
     :ivar configuration: Has configuration information for the data in the export. The
      configuration will be ignored if aggregation and grouping are provided.
@@ -2643,14 +4242,15 @@ class ForecastDataset(_serialization.Model):
     def __init__(
         self,
         *,
-        aggregation: Dict[str, "_models.ForecastAggregation"],
+        aggregation: dict[str, "_models.ForecastAggregation"],
         granularity: Optional[Union[str, "_models.GranularityType"]] = None,
         configuration: Optional["_models.ForecastDatasetConfiguration"] = None,
         filter: Optional["_models.ForecastFilter"] = None,  # pylint: disable=redefined-builtin
         **kwargs: Any
     ) -> None:
         """
-        :keyword granularity: The granularity of rows in the forecast. "Daily"
+        :keyword granularity: The granularity of rows in the forecast. Known values are: "Daily" and
+         "Monthly".
         :paramtype granularity: str or ~azure.mgmt.costmanagement.models.GranularityType
         :keyword configuration: Has configuration information for the data in the export. The
          configuration will be ignored if aggregation and grouping are provided.
@@ -2681,7 +4281,7 @@ class ForecastDatasetConfiguration(_serialization.Model):
         "columns": {"key": "columns", "type": "[str]"},
     }
 
-    def __init__(self, *, columns: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, columns: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword columns: Array of column names to be included in the forecast. Any valid forecast
          column name is allowed. If not provided, then forecast includes all columns.
@@ -2694,7 +4294,7 @@ class ForecastDatasetConfiguration(_serialization.Model):
 class ForecastDefinition(_serialization.Model):
     """The definition of a forecast.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the forecast. Required. Known values are: "Usage", "ActualCost", and
      "AmortizedCost".
@@ -2792,8 +4392,8 @@ class ForecastFilter(_serialization.Model):
     def __init__(
         self,
         *,
-        and_property: Optional[List["_models.ForecastFilter"]] = None,
-        or_property: Optional[List["_models.ForecastFilter"]] = None,
+        and_property: Optional[list["_models.ForecastFilter"]] = None,
+        or_property: Optional[list["_models.ForecastFilter"]] = None,
         dimensions: Optional["_models.ForecastComparisonExpression"] = None,
         tags: Optional["_models.ForecastComparisonExpression"] = None,
         **kwargs: Any
@@ -2869,8 +4469,8 @@ class ForecastResult(CostManagementResource):
         self,
         *,
         next_link: Optional[str] = None,
-        columns: Optional[List["_models.ForecastColumn"]] = None,
-        rows: Optional[List[List[Any]]] = None,
+        columns: Optional[list["_models.ForecastColumn"]] = None,
+        rows: Optional[list[list[Any]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2887,10 +4487,41 @@ class ForecastResult(CostManagementResource):
         self.rows = rows
 
 
+class ForecastSpend(_serialization.Model):
+    """The forecasted cost which is being tracked for a budget.
+
+     Supported for CategoryType(s): Cost.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar amount: The forecasted cost for the total time period which is being tracked by the
+     budget. This value is only provided if the budget contains a forecast alert type.
+    :vartype amount: float
+    :ivar unit: The unit of measure for the budget amount.
+    :vartype unit: str
+    """
+
+    _validation = {
+        "amount": {"readonly": True},
+        "unit": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "amount": {"key": "amount", "type": "float"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.amount: Optional[float] = None
+        self.unit: Optional[str] = None
+
+
 class ForecastTimePeriod(_serialization.Model):
     """Has time period for pulling data for the forecast.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar from_property: The start date to pull data from. Required.
     :vartype from_property: ~datetime.datetime
@@ -2969,7 +4600,7 @@ class GenerateCostDetailsReportErrorResponse(_serialization.Model):
         self.error = error
 
 
-class GenerateCostDetailsReportRequestDefinition(_serialization.Model):
+class GenerateCostDetailsReportRequestDefinition(_serialization.Model):  # pylint: disable=name-too-long
     """The definition of a cost detailed report.
 
     :ivar metric: The type of the detailed report. By default ActualCost is provided. Known values
@@ -3148,7 +4779,7 @@ class GenerateDetailedCostReportErrorResponse(_serialization.Model):
         self.error = error
 
 
-class GenerateDetailedCostReportOperationResult(_serialization.Model):
+class GenerateDetailedCostReportOperationResult(_serialization.Model):  # pylint: disable=name-too-long
     """The result of the long running operation for cost detailed report.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3209,12 +4840,12 @@ class GenerateDetailedCostReportOperationResult(_serialization.Model):
         self.id = id
         self.name = name
         self.type = type
-        self.expiry_time = None
+        self.expiry_time: Optional[datetime.datetime] = None
         self.valid_till = valid_till
         self.download_url = download_url
 
 
-class GenerateDetailedCostReportOperationStatuses(_serialization.Model):
+class GenerateDetailedCostReportOperationStatuses(_serialization.Model):  # pylint: disable=name-too-long
     """The status of the long running operation for cost detailed report.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3303,7 +4934,7 @@ class GenerateDetailedCostReportOperationStatuses(_serialization.Model):
         self.end_time = end_time
         self.type = type
         self.error = error
-        self.expiry_time = None
+        self.expiry_time: Optional[datetime.datetime] = None
         self.valid_till = valid_till
         self.download_url = download_url
 
@@ -3311,7 +4942,7 @@ class GenerateDetailedCostReportOperationStatuses(_serialization.Model):
 class GenerateDetailedCostReportTimePeriod(_serialization.Model):
     """The start and end date for pulling data for the cost detailed report.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar start: The start date to pull data from. example format 2020-03-15. Required.
     :vartype start: str
@@ -3346,7 +4977,7 @@ class IncludedQuantityUtilizationSummary(BenefitUtilizationSummary):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -3408,15 +5039,17 @@ class IncludedQuantityUtilizationSummary(BenefitUtilizationSummary):
         """
         super().__init__(**kwargs)
         self.kind: str = "IncludedQuantity"
-        self.arm_sku_name = None
-        self.benefit_id = None
-        self.benefit_order_id = None
+        self.arm_sku_name: Optional[str] = None
+        self.benefit_id: Optional[str] = None
+        self.benefit_order_id: Optional[str] = None
         self.benefit_type = benefit_type
-        self.usage_date = None
-        self.utilization_percentage = None
+        self.usage_date: Optional[datetime.datetime] = None
+        self.utilization_percentage: Optional[float] = None
 
 
-class IncludedQuantityUtilizationSummaryProperties(BenefitUtilizationSummaryProperties):
+class IncludedQuantityUtilizationSummaryProperties(
+    BenefitUtilizationSummaryProperties
+):  # pylint: disable=name-too-long
     """Included Quantity utilization summary properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3461,7 +5094,7 @@ class IncludedQuantityUtilizationSummaryProperties(BenefitUtilizationSummaryProp
         :paramtype benefit_type: str or ~azure.mgmt.costmanagement.models.BenefitKind
         """
         super().__init__(benefit_type=benefit_type, **kwargs)
-        self.utilization_percentage = None
+        self.utilization_percentage: Optional[float] = None
 
 
 class KpiProperties(_serialization.Model):
@@ -3503,10 +5136,374 @@ class KpiProperties(_serialization.Model):
         self.enabled = enabled
 
 
+class MCAPriceSheetProperties(_serialization.Model):
+    """The properties of the price sheet.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar billing_account_id: Unique identifier for the billing account.
+    :vartype billing_account_id: str
+    :ivar billing_account_name: Name of the billing profile that is set up to receive invoices. The
+     prices in the price sheet are associated with this billing profile.
+    :vartype billing_account_name: str
+    :ivar billing_profile_id: Unique identifier for the billing profile.
+    :vartype billing_profile_id: str
+    :ivar billing_profile_name: Name of the billing profile that is set up to receive invoices. The
+     prices in the price sheet are associated with this billing profile.
+    :vartype billing_profile_name: str
+    :ivar product_order_name: Name of the purchased product plan. Indicates if this pricing is
+     standard Azure Plan pricing, Dev/Test pricing etc.
+
+      Currently unavailable for Azure 3rd party and ReservedInstance meters.
+    :vartype product_order_name: str
+    :ivar service_family: Type of Azure service. For example, Compute, Analytics, and Security.
+    :vartype service_family: float
+    :ivar product: Name of the product accruing the charges.
+    :vartype product: str
+    :ivar product_id: Unique identifier for the product whose meter is consumed.
+    :vartype product_id: str
+    :ivar sku_id: Unique identifier of the SKU.
+    :vartype sku_id: str
+    :ivar unit_of_measure: How usage is measured for the service.
+    :vartype unit_of_measure: str
+    :ivar meter_id: Unique identifier of the meter.
+    :vartype meter_id: str
+    :ivar meter_name: Name of the meter. The meter represents the deployable resource of an Azure
+     service.
+    :vartype meter_name: str
+    :ivar meter_type: Name of the meter type.
+    :vartype meter_type: str
+    :ivar meter_category: Name of the classification category for the meter. For example, Cloud
+     services, Networking, etc.
+    :vartype meter_category: str
+    :ivar meter_sub_category: Name of the meter subclassification category.
+    :vartype meter_sub_category: str
+    :ivar meter_region: Name of the Azure region where the meter for the service is available.
+    :vartype meter_region: str
+    :ivar tier_minimum_units: Defines the lower bound of the tier range for which prices are
+     defined. For example, if the range is 0 to 100, tierMinimumUnits would be 0.
+    :vartype tier_minimum_units: str
+    :ivar effective_start_date: Effective start date of the Price Sheet billing period.
+    :vartype effective_start_date: ~datetime.datetime
+    :ivar effective_end_date: Effective end date of the Price Sheet billing period.
+    :vartype effective_end_date: ~datetime.datetime
+    :ivar unit_price: The per-unit price at the time of billing for a given product or service,
+     inclusive of any negotiated discounts on top of the market price.
+
+      For PriceType ReservedInstance, unit price reflects the total cost of the 1 or 3-year
+     commitment including discounts.
+
+      Note: The unit price isn't the same as the effective price in usage details downloads when
+     services have differential prices across tiers.
+
+      If services have multi-tiered pricing, the effective price is a blended rate across the tiers
+     and doesn't show a tier-specific unit price. The blended price or effective price is the net
+     price for the consumed quantity spanning across the multiple tiers (where each tier has a
+     specific unit price).
+    :vartype unit_price: str
+    :ivar base_price: The unit price at the time the customer signs on or the unit price at the
+     time of service meter GA launch if it is after sign-on.
+
+      This is applicable for Enterprise Agreement users.
+    :vartype base_price: str
+    :ivar market_price: The current list price for a given product or service. This price is
+     without any negotiations and is based on your Microsoft Agreement type.
+
+      For PriceType Consumption, market price is reflected as the pay-as-you-go price.
+
+      For PriceType Savings Plan, market price reflects the Savings plan benefit on top of
+     pay-as-you-go price for the corresponding commitment term.
+
+      For PriceType ReservedInstance, market price reflects the total price of the 1 or 3-year
+     commitment.
+    :vartype market_price: str
+    :ivar currency: Currency in which all the prices are reflected.
+    :vartype currency: str
+    :ivar billing_currency: Currency in which charges are posted.
+    :vartype billing_currency: str
+    :ivar term: Term length for Azure Savings Plan or Reservation term – one year or three years
+     (P1Y or P3Y).
+    :vartype term: str
+    :ivar price_type: Price type for a product. For example, an Azure resource with a pay-as-you-go
+     rate with priceType as Consumption. Other price types include ReservedInstance and Savings
+     Plan.
+    :vartype price_type: str
+    """
+
+    _validation = {
+        "billing_account_id": {"readonly": True},
+        "billing_account_name": {"readonly": True},
+        "billing_profile_id": {"readonly": True},
+        "billing_profile_name": {"readonly": True},
+        "product_order_name": {"readonly": True},
+        "service_family": {"readonly": True},
+        "product": {"readonly": True},
+        "product_id": {"readonly": True},
+        "sku_id": {"readonly": True},
+        "unit_of_measure": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "meter_name": {"readonly": True},
+        "meter_type": {"readonly": True},
+        "meter_category": {"readonly": True},
+        "meter_sub_category": {"readonly": True},
+        "meter_region": {"readonly": True},
+        "tier_minimum_units": {"readonly": True},
+        "effective_start_date": {"readonly": True},
+        "effective_end_date": {"readonly": True},
+        "unit_price": {"readonly": True},
+        "base_price": {"readonly": True},
+        "market_price": {"readonly": True},
+        "currency": {"readonly": True},
+        "billing_currency": {"readonly": True},
+        "term": {"readonly": True},
+        "price_type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "billing_account_id": {"key": "billingAccountID", "type": "str"},
+        "billing_account_name": {"key": "billingAccountName", "type": "str"},
+        "billing_profile_id": {"key": "billingProfileId", "type": "str"},
+        "billing_profile_name": {"key": "billingProfileName", "type": "str"},
+        "product_order_name": {"key": "productOrderName", "type": "str"},
+        "service_family": {"key": "serviceFamily", "type": "float"},
+        "product": {"key": "product", "type": "str"},
+        "product_id": {"key": "productId", "type": "str"},
+        "sku_id": {"key": "skuId", "type": "str"},
+        "unit_of_measure": {"key": "unitOfMeasure", "type": "str"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "meter_name": {"key": "meterName", "type": "str"},
+        "meter_type": {"key": "meterType", "type": "str"},
+        "meter_category": {"key": "meterCategory", "type": "str"},
+        "meter_sub_category": {"key": "meterSubCategory", "type": "str"},
+        "meter_region": {"key": "meterRegion", "type": "str"},
+        "tier_minimum_units": {"key": "tierMinimumUnits", "type": "str"},
+        "effective_start_date": {"key": "effectiveStartDate", "type": "iso-8601"},
+        "effective_end_date": {"key": "effectiveEndDate", "type": "iso-8601"},
+        "unit_price": {"key": "unitPrice", "type": "str"},
+        "base_price": {"key": "basePrice", "type": "str"},
+        "market_price": {"key": "marketPrice", "type": "str"},
+        "currency": {"key": "currency", "type": "str"},
+        "billing_currency": {"key": "billingCurrency", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "price_type": {"key": "priceType", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
+        """ """
+        super().__init__(**kwargs)
+        self.billing_account_id: Optional[str] = None
+        self.billing_account_name: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_name: Optional[str] = None
+        self.product_order_name: Optional[str] = None
+        self.service_family: Optional[float] = None
+        self.product: Optional[str] = None
+        self.product_id: Optional[str] = None
+        self.sku_id: Optional[str] = None
+        self.unit_of_measure: Optional[str] = None
+        self.meter_id: Optional[str] = None
+        self.meter_name: Optional[str] = None
+        self.meter_type: Optional[str] = None
+        self.meter_category: Optional[str] = None
+        self.meter_sub_category: Optional[str] = None
+        self.meter_region: Optional[str] = None
+        self.tier_minimum_units: Optional[str] = None
+        self.effective_start_date: Optional[datetime.datetime] = None
+        self.effective_end_date: Optional[datetime.datetime] = None
+        self.unit_price: Optional[str] = None
+        self.base_price: Optional[str] = None
+        self.market_price: Optional[str] = None
+        self.currency: Optional[str] = None
+        self.billing_currency: Optional[str] = None
+        self.term: Optional[str] = None
+        self.price_type: Optional[str] = None
+
+
+class Notification(_serialization.Model):
+    """The notification associated with a budget.
+
+     Supported for CategoryType(s): Cost, ReservationUtilization.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar enabled: The notification is enabled or not.
+
+      Supported for CategoryType(s): Cost, ReservationUtilization. Required.
+    :vartype enabled: bool
+    :ivar operator: The comparison operator. Supported for CategoryType(s): Cost,
+     ReservationUtilization. Supported operators for **CategoryType: Cost**
+
+     * GreaterThan
+     *
+     GreaterThanOrEqualTo
+
+     Supported operators for **CategoryType: ReservationUtilization**
+
+     * LessThan. Required. Known values are: "EqualTo", "GreaterThan", "GreaterThanOrEqualTo",
+       and "LessThan".
+    :vartype operator: str or ~azure.mgmt.costmanagement.models.BudgetNotificationOperatorType
+    :ivar threshold: Threshold value associated with a notification. It is always percent with a
+     maximum of 2 decimal places.
+
+      Supported for CategoryType(s): Cost, ReservationUtilization.
+
+      **CategoryType: Cost** - Must be between 0 and 1000. Notification is sent when the cost
+     exceeded the threshold.
+
+      **CategoryType: ReservationUtilization** - Must be between 0 and 100. Notification is sent
+     when a reservation has a utilization percentage below the threshold. Required.
+    :vartype threshold: float
+    :ivar frequency: Frequency of a notification. Represents how long the notification will be
+     silent after triggering an alert for a threshold breach. If not specified, the frequency will
+     be set by default based on the timeGrain (Weekly when timeGrain: Last7Days, Monthly when
+     timeGrain: Last30Days).
+
+      Supported for CategoryType(s): ReservationUtilization. Known values are: "Daily", "Weekly",
+     and "Monthly".
+    :vartype frequency: str or ~azure.mgmt.costmanagement.models.Frequency
+    :ivar contact_emails: Email addresses to send the notification to when the threshold is
+     breached. Must have at least one contact email or contact group specified at the Subscription
+     or Resource Group scopes. All other scopes must have at least one contact email specified.
+
+      Supported for CategoryType(s): Cost, ReservationUtilization. Required.
+    :vartype contact_emails: list[str]
+    :ivar contact_roles: Subscription or Resource Group scopes only. Contact roles to send the
+     notification to when the threshold is breached.
+
+      Supported for CategoryType(s): Cost.
+    :vartype contact_roles: list[str]
+    :ivar contact_groups: Subscription or Resource Group scopes only. Action groups to send the
+     notification to when the threshold is exceeded. Must be provided as a fully qualified Azure
+     resource id.
+
+      Supported for CategoryType(s): Cost.
+    :vartype contact_groups: list[str]
+    :ivar threshold_type: The type of threshold.
+
+      Supported for CategoryType(s): Cost. Known values are: "Actual" and "Forecasted".
+    :vartype threshold_type: str or ~azure.mgmt.costmanagement.models.ThresholdType
+    :ivar locale: Language in which the recipient will receive the notification,
+
+      Supported for CategoryType(s): Cost, ReservationUtilization. Known values are: "en-us",
+     "ja-jp", "zh-cn", "de-de", "es-es", "fr-fr", "it-it", "ko-kr", "pt-br", "ru-ru", "zh-tw",
+     "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl", "pt-pt", and "sv-se".
+    :vartype locale: str or ~azure.mgmt.costmanagement.models.CultureCode
+    """
+
+    _validation = {
+        "enabled": {"required": True},
+        "operator": {"required": True},
+        "threshold": {"required": True},
+        "contact_emails": {"required": True, "max_items": 50, "min_items": 0},
+        "contact_groups": {"max_items": 50, "min_items": 0},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+        "operator": {"key": "operator", "type": "str"},
+        "threshold": {"key": "threshold", "type": "float"},
+        "frequency": {"key": "frequency", "type": "str"},
+        "contact_emails": {"key": "contactEmails", "type": "[str]"},
+        "contact_roles": {"key": "contactRoles", "type": "[str]"},
+        "contact_groups": {"key": "contactGroups", "type": "[str]"},
+        "threshold_type": {"key": "thresholdType", "type": "str"},
+        "locale": {"key": "locale", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+        operator: Union[str, "_models.BudgetNotificationOperatorType"],
+        threshold: float,
+        contact_emails: list[str],
+        frequency: Optional[Union[str, "_models.Frequency"]] = None,
+        contact_roles: Optional[list[str]] = None,
+        contact_groups: Optional[list[str]] = None,
+        threshold_type: Union[str, "_models.ThresholdType"] = "Actual",
+        locale: Optional[Union[str, "_models.CultureCode"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword enabled: The notification is enabled or not.
+
+          Supported for CategoryType(s): Cost, ReservationUtilization. Required.
+        :paramtype enabled: bool
+        :keyword operator: The comparison operator. Supported for CategoryType(s): Cost,
+          ReservationUtilization. Supported operators for **CategoryType: Cost**
+
+          * GreaterThan
+          *
+          GreaterThanOrEqualTo
+
+          Supported operators for **CategoryType: ReservationUtilization**
+
+          * LessThan. Required. Known values are: "EqualTo", "GreaterThan",
+            "GreaterThanOrEqualTo", and "LessThan".
+        :paramtype operator: str or ~azure.mgmt.costmanagement.models.BudgetNotificationOperatorType
+        :keyword threshold: Threshold value associated with a notification. It is always percent with a
+         maximum of 2 decimal places.
+
+          Supported for CategoryType(s): Cost, ReservationUtilization.
+
+          **CategoryType: Cost** - Must be between 0 and 1000. Notification is sent when the cost
+         exceeded the threshold.
+
+          **CategoryType: ReservationUtilization** - Must be between 0 and 100. Notification is sent
+         when a reservation has a utilization percentage below the threshold. Required.
+        :paramtype threshold: float
+        :keyword frequency: Frequency of a notification. Represents how long the notification will be
+         silent after triggering an alert for a threshold breach. If not specified, the frequency will
+         be set by default based on the timeGrain (Weekly when timeGrain: Last7Days, Monthly when
+         timeGrain: Last30Days).
+
+          Supported for CategoryType(s): ReservationUtilization. Known values are: "Daily", "Weekly",
+         and "Monthly".
+        :paramtype frequency: str or ~azure.mgmt.costmanagement.models.Frequency
+        :keyword contact_emails: Email addresses to send the notification to when the threshold is
+         breached. Must have at least one contact email or contact group specified at the Subscription
+         or Resource Group scopes. All other scopes must have at least one contact email specified.
+
+          Supported for CategoryType(s): Cost, ReservationUtilization. Required.
+        :paramtype contact_emails: list[str]
+        :keyword contact_roles: Subscription or Resource Group scopes only. Contact roles to send the
+         notification to when the threshold is breached.
+
+          Supported for CategoryType(s): Cost.
+        :paramtype contact_roles: list[str]
+        :keyword contact_groups: Subscription or Resource Group scopes only. Action groups to send the
+         notification to when the threshold is exceeded. Must be provided as a fully qualified Azure
+         resource id.
+
+          Supported for CategoryType(s): Cost.
+        :paramtype contact_groups: list[str]
+        :keyword threshold_type: The type of threshold.
+
+          Supported for CategoryType(s): Cost. Known values are: "Actual" and "Forecasted".
+        :paramtype threshold_type: str or ~azure.mgmt.costmanagement.models.ThresholdType
+        :keyword locale: Language in which the recipient will receive the notification,
+
+          Supported for CategoryType(s): Cost, ReservationUtilization. Known values are: "en-us",
+         "ja-jp", "zh-cn", "de-de", "es-es", "fr-fr", "it-it", "ko-kr", "pt-br", "ru-ru", "zh-tw",
+         "cs-cz", "pl-pl", "tr-tr", "da-dk", "en-gb", "hu-hu", "nb-no", "nl-nl", "pt-pt", and "sv-se".
+        :paramtype locale: str or ~azure.mgmt.costmanagement.models.CultureCode
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
+        self.operator = operator
+        self.threshold = threshold
+        self.frequency = frequency
+        self.contact_emails = contact_emails
+        self.contact_roles = contact_roles
+        self.contact_groups = contact_groups
+        self.threshold_type = threshold_type
+        self.locale = locale
+
+
 class NotificationProperties(_serialization.Model):
     """The properties of the scheduled action notification.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar to: Array of email addresses. Required.
     :vartype to: list[str]
@@ -3537,7 +5534,7 @@ class NotificationProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        to: List[str],
+        to: list[str],
         subject: str,
         language: Optional[str] = None,
         message: Optional[str] = None,
@@ -3602,10 +5599,10 @@ class OperationDisplay(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
@@ -3634,15 +5631,15 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.CostManagementOperation"]] = None
+        self.next_link: Optional[str] = None
 
 
 class OperationStatus(_serialization.Model):
     """The status of the long running operation.
 
     :ivar status: The status of the long running operation. Known values are: "Running",
-     "Completed", and "Failed".
+     "Complete", "Failed", and "Completed".
     :vartype status: str or ~azure.mgmt.costmanagement.models.OperationStatusType
     :ivar report_url: The CSV file from the reportUrl blob link consists of reservation usage data
      with the following schema at daily granularity. Known values are: "InstanceFlexibilityGroup",
@@ -3669,7 +5666,7 @@ class OperationStatus(_serialization.Model):
     ) -> None:
         """
         :keyword status: The status of the long running operation. Known values are: "Running",
-         "Completed", and "Failed".
+         "Complete", "Failed", and "Completed".
         :paramtype status: str or ~azure.mgmt.costmanagement.models.OperationStatusType
         :keyword report_url: The CSV file from the reportUrl blob link consists of reservation usage
          data with the following schema at daily granularity. Known values are:
@@ -3684,6 +5681,55 @@ class OperationStatus(_serialization.Model):
         self.status = status
         self.report_url = report_url
         self.valid_until = valid_until
+
+
+class OperationStatusAutoGenerated(_serialization.Model):
+    """The status of the long running operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The status of the long running operation. Known values are: "Running",
+     "Complete", "Failed", and "Completed".
+    :vartype status: str or ~azure.mgmt.costmanagement.models.OperationStatusType
+    :ivar download_url: The link (url) to download the pricesheet.
+    :vartype download_url: str
+    :ivar valid_till: Download link validity.
+    :vartype valid_till: ~datetime.datetime
+    :ivar download_file_properties: The properties in downloaded file.
+    :vartype download_file_properties: ~azure.mgmt.costmanagement.models.EAPriceSheetProperties
+    """
+
+    _validation = {
+        "download_url": {"readonly": True},
+        "valid_till": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "download_url": {"key": "properties.downloadUrl", "type": "str"},
+        "valid_till": {"key": "properties.validTill", "type": "iso-8601"},
+        "download_file_properties": {"key": "properties.downloadFileProperties", "type": "EAPriceSheetProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.OperationStatusType"]] = None,
+        download_file_properties: Optional["_models.EAPriceSheetProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword status: The status of the long running operation. Known values are: "Running",
+         "Complete", "Failed", and "Completed".
+        :paramtype status: str or ~azure.mgmt.costmanagement.models.OperationStatusType
+        :keyword download_file_properties: The properties in downloaded file.
+        :paramtype download_file_properties: ~azure.mgmt.costmanagement.models.EAPriceSheetProperties
+        """
+        super().__init__(**kwargs)
+        self.status = status
+        self.download_url: Optional[str] = None
+        self.valid_till: Optional[datetime.datetime] = None
+        self.download_file_properties = download_file_properties
 
 
 class PivotProperties(_serialization.Model):
@@ -3714,6 +5760,49 @@ class PivotProperties(_serialization.Model):
         self.name = name
 
 
+class PricesheetDownloadProperties(_serialization.Model):
+    """The URL to download the generated report.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar expiry_time: The time at which report URL becomes invalid/expires in UTC e.g.
+     2020-12-08T05:55:59.4394737Z.
+    :vartype expiry_time: ~datetime.datetime
+    :ivar download_url: The URL to download the generated report.
+    :vartype download_url: str
+    :ivar download_file_properties: The properties in downloaded file.
+    :vartype download_file_properties: ~azure.mgmt.costmanagement.models.MCAPriceSheetProperties
+    """
+
+    _validation = {
+        "expiry_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "expiry_time": {"key": "expiryTime", "type": "iso-8601"},
+        "download_url": {"key": "downloadUrl", "type": "str"},
+        "download_file_properties": {"key": "downloadFileProperties", "type": "MCAPriceSheetProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        download_url: Optional[str] = None,
+        download_file_properties: Optional["_models.MCAPriceSheetProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword download_url: The URL to download the generated report.
+        :paramtype download_url: str
+        :keyword download_file_properties: The properties in downloaded file.
+        :paramtype download_file_properties: ~azure.mgmt.costmanagement.models.MCAPriceSheetProperties
+        """
+        super().__init__(**kwargs)
+        self.expiry_time: Optional[datetime.datetime] = None
+        self.download_url = download_url
+        self.download_file_properties = download_file_properties
+
+
 class ProxyResource(Resource):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have
     tags and a location.
@@ -3730,27 +5819,11 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class QueryAggregation(_serialization.Model):
     """The aggregation expression to be used in the query.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the column to aggregate. Required.
     :vartype name: str
@@ -3809,11 +5882,11 @@ class QueryColumn(_serialization.Model):
 class QueryComparisonExpression(_serialization.Model):
     """The comparison expression to be used in the query.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the column to use in comparison. Required.
     :vartype name: str
-    :ivar operator: The operator to use for comparison. Required. Known values are: "In" and "In".
+    :ivar operator: The operator to use for comparison. Required. "In"
     :vartype operator: str or ~azure.mgmt.costmanagement.models.QueryOperatorType
     :ivar values: Array of values to use for comparison. Required.
     :vartype values: list[str]
@@ -3832,13 +5905,12 @@ class QueryComparisonExpression(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, operator: Union[str, "_models.QueryOperatorType"], values: List[str], **kwargs: Any
+        self, *, name: str, operator: Union[str, "_models.QueryOperatorType"], values: list[str], **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the column to use in comparison. Required.
         :paramtype name: str
-        :keyword operator: The operator to use for comparison. Required. Known values are: "In" and
-         "In".
+        :keyword operator: The operator to use for comparison. Required. "In"
         :paramtype operator: str or ~azure.mgmt.costmanagement.models.QueryOperatorType
         :keyword values: Array of values to use for comparison. Required.
         :paramtype values: list[str]
@@ -3852,7 +5924,8 @@ class QueryComparisonExpression(_serialization.Model):
 class QueryDataset(_serialization.Model):
     """The definition of data present in the query.
 
-    :ivar granularity: The granularity of rows in the query. "Daily"
+    :ivar granularity: The granularity of rows in the query. Known values are: "Daily" and
+     "Monthly".
     :vartype granularity: str or ~azure.mgmt.costmanagement.models.GranularityType
     :ivar configuration: Has configuration information for the data in the export. The
      configuration will be ignored if aggregation and grouping are provided.
@@ -3886,13 +5959,14 @@ class QueryDataset(_serialization.Model):
         *,
         granularity: Optional[Union[str, "_models.GranularityType"]] = None,
         configuration: Optional["_models.QueryDatasetConfiguration"] = None,
-        aggregation: Optional[Dict[str, "_models.QueryAggregation"]] = None,
-        grouping: Optional[List["_models.QueryGrouping"]] = None,
+        aggregation: Optional[dict[str, "_models.QueryAggregation"]] = None,
+        grouping: Optional[list["_models.QueryGrouping"]] = None,
         filter: Optional["_models.QueryFilter"] = None,  # pylint: disable=redefined-builtin
         **kwargs: Any
     ) -> None:
         """
-        :keyword granularity: The granularity of rows in the query. "Daily"
+        :keyword granularity: The granularity of rows in the query. Known values are: "Daily" and
+         "Monthly".
         :paramtype granularity: str or ~azure.mgmt.costmanagement.models.GranularityType
         :keyword configuration: Has configuration information for the data in the export. The
          configuration will be ignored if aggregation and grouping are provided.
@@ -3928,7 +6002,7 @@ class QueryDatasetConfiguration(_serialization.Model):
         "columns": {"key": "columns", "type": "[str]"},
     }
 
-    def __init__(self, *, columns: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, columns: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword columns: Array of column names to be included in the query. Any valid query column
          name is allowed. If not provided, then query includes all columns.
@@ -3941,14 +6015,15 @@ class QueryDatasetConfiguration(_serialization.Model):
 class QueryDefinition(_serialization.Model):
     """The definition of a query.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar type: The type of the query. Required. Known values are: "Usage", "ActualCost", and
-     "AmortizedCost".
+    :ivar type: The type of the query. Required. Known values are: "Usage", "ActualCost",
+     "AmortizedCost", "FocusCost", "PriceSheet", "ReservationTransactions",
+     "ReservationRecommendations", and "ReservationDetails".
     :vartype type: str or ~azure.mgmt.costmanagement.models.ExportType
     :ivar timeframe: The time frame for pulling data for the query. If custom, then a specific time
      period must be provided. Required. Known values are: "MonthToDate", "BillingMonthToDate",
-     "TheLastMonth", "TheLastBillingMonth", "WeekToDate", and "Custom".
+     "TheLastMonth", "TheLastBillingMonth", "WeekToDate", "Custom", and "TheCurrentMonth".
     :vartype timeframe: str or ~azure.mgmt.costmanagement.models.TimeframeType
     :ivar time_period: Has time period for pulling data for the query.
     :vartype time_period: ~azure.mgmt.costmanagement.models.QueryTimePeriod
@@ -3979,12 +6054,13 @@ class QueryDefinition(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword type: The type of the query. Required. Known values are: "Usage", "ActualCost", and
-         "AmortizedCost".
+        :keyword type: The type of the query. Required. Known values are: "Usage", "ActualCost",
+         "AmortizedCost", "FocusCost", "PriceSheet", "ReservationTransactions",
+         "ReservationRecommendations", and "ReservationDetails".
         :paramtype type: str or ~azure.mgmt.costmanagement.models.ExportType
         :keyword timeframe: The time frame for pulling data for the query. If custom, then a specific
          time period must be provided. Required. Known values are: "MonthToDate", "BillingMonthToDate",
-         "TheLastMonth", "TheLastBillingMonth", "WeekToDate", and "Custom".
+         "TheLastMonth", "TheLastBillingMonth", "WeekToDate", "Custom", and "TheCurrentMonth".
         :paramtype timeframe: str or ~azure.mgmt.costmanagement.models.TimeframeType
         :keyword time_period: Has time period for pulling data for the query.
         :paramtype time_period: ~azure.mgmt.costmanagement.models.QueryTimePeriod
@@ -4026,8 +6102,8 @@ class QueryFilter(_serialization.Model):
     def __init__(
         self,
         *,
-        and_property: Optional[List["_models.QueryFilter"]] = None,
-        or_property: Optional[List["_models.QueryFilter"]] = None,
+        and_property: Optional[list["_models.QueryFilter"]] = None,
+        or_property: Optional[list["_models.QueryFilter"]] = None,
         dimensions: Optional["_models.QueryComparisonExpression"] = None,
         tags: Optional["_models.QueryComparisonExpression"] = None,
         **kwargs: Any
@@ -4052,7 +6128,7 @@ class QueryFilter(_serialization.Model):
 class QueryGrouping(_serialization.Model):
     """The group by expression to be used in the query.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Has type of the column to group. Required. Known values are: "TagKey" and
      "Dimension".
@@ -4138,8 +6214,8 @@ class QueryResult(CostManagementResource):
         self,
         *,
         next_link: Optional[str] = None,
-        columns: Optional[List["_models.QueryColumn"]] = None,
-        rows: Optional[List[List[Any]]] = None,
+        columns: Optional[list["_models.QueryColumn"]] = None,
+        rows: Optional[list[list[Any]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4159,7 +6235,7 @@ class QueryResult(CostManagementResource):
 class QueryTimePeriod(_serialization.Model):
     """The start and end date for pulling data for the query.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar from_property: The start date to pull data from. Required.
     :vartype from_property: ~datetime.datetime
@@ -4220,13 +6296,13 @@ class RecommendationUsageDetails(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.usage_grain = usage_grain
-        self.charges = None
+        self.charges: Optional[list[float]] = None
 
 
 class ReportConfigAggregation(_serialization.Model):
     """The aggregation expression to be used in the report.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the column to aggregate. Required.
     :vartype name: str
@@ -4259,12 +6335,12 @@ class ReportConfigAggregation(_serialization.Model):
 class ReportConfigComparisonExpression(_serialization.Model):
     """The comparison expression to be used in the report.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the column to use in comparison. Required.
     :vartype name: str
-    :ivar operator: The operator to use for comparison. Required. Known values are: "In",
-     "Contains", and "In".
+    :ivar operator: The operator to use for comparison. Required. Known values are: "In" and
+     "Contains".
     :vartype operator: str or ~azure.mgmt.costmanagement.models.OperatorType
     :ivar values: Array of values to use for comparison. Required.
     :vartype values: list[str]
@@ -4283,13 +6359,13 @@ class ReportConfigComparisonExpression(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, operator: Union[str, "_models.OperatorType"], values: List[str], **kwargs: Any
+        self, *, name: str, operator: Union[str, "_models.OperatorType"], values: list[str], **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the column to use in comparison. Required.
         :paramtype name: str
-        :keyword operator: The operator to use for comparison. Required. Known values are: "In",
-         "Contains", and "In".
+        :keyword operator: The operator to use for comparison. Required. Known values are: "In" and
+         "Contains".
         :paramtype operator: str or ~azure.mgmt.costmanagement.models.OperatorType
         :keyword values: Array of values to use for comparison. Required.
         :paramtype values: list[str]
@@ -4340,9 +6416,9 @@ class ReportConfigDataset(_serialization.Model):
         *,
         granularity: Optional[Union[str, "_models.ReportGranularityType"]] = None,
         configuration: Optional["_models.ReportConfigDatasetConfiguration"] = None,
-        aggregation: Optional[Dict[str, "_models.ReportConfigAggregation"]] = None,
-        grouping: Optional[List["_models.ReportConfigGrouping"]] = None,
-        sorting: Optional[List["_models.ReportConfigSorting"]] = None,
+        aggregation: Optional[dict[str, "_models.ReportConfigAggregation"]] = None,
+        grouping: Optional[list["_models.ReportConfigGrouping"]] = None,
+        sorting: Optional[list["_models.ReportConfigSorting"]] = None,
         filter: Optional["_models.ReportConfigFilter"] = None,  # pylint: disable=redefined-builtin
         **kwargs: Any
     ) -> None:
@@ -4386,7 +6462,7 @@ class ReportConfigDatasetConfiguration(_serialization.Model):
         "columns": {"key": "columns", "type": "[str]"},
     }
 
-    def __init__(self, *, columns: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, columns: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword columns: Array of column names to be included in the report. Any valid report column
          name is allowed. If not provided, then report includes all columns.
@@ -4424,8 +6500,8 @@ class ReportConfigFilter(_serialization.Model):
     def __init__(
         self,
         *,
-        and_property: Optional[List["_models.ReportConfigFilter"]] = None,
-        or_property: Optional[List["_models.ReportConfigFilter"]] = None,
+        and_property: Optional[list["_models.ReportConfigFilter"]] = None,
+        or_property: Optional[list["_models.ReportConfigFilter"]] = None,
         dimensions: Optional["_models.ReportConfigComparisonExpression"] = None,
         tags: Optional["_models.ReportConfigComparisonExpression"] = None,
         **kwargs: Any
@@ -4450,7 +6526,7 @@ class ReportConfigFilter(_serialization.Model):
 class ReportConfigGrouping(_serialization.Model):
     """The group by expression to be used in the report.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Has type of the column to group. Required. Known values are: "TagKey" and
      "Dimension".
@@ -4487,7 +6563,7 @@ class ReportConfigGrouping(_serialization.Model):
 class ReportConfigSorting(_serialization.Model):
     """The order by expression to be used in the report.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar direction: Direction of sort. Known values are: "Ascending" and "Descending".
     :vartype direction: str or ~azure.mgmt.costmanagement.models.ReportConfigSortingType
@@ -4521,7 +6597,7 @@ class ReportConfigSorting(_serialization.Model):
 class ReportConfigTimePeriod(_serialization.Model):
     """The start and end date for pulling data for the report.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar from_property: The start date to pull data from. Required.
     :vartype from_property: ~datetime.datetime
@@ -4551,12 +6627,12 @@ class ReportConfigTimePeriod(_serialization.Model):
         self.to = to
 
 
-class SavingsPlanUtilizationSummary(BenefitUtilizationSummary):  # pylint: disable=too-many-instance-attributes
+class SavingsPlanUtilizationSummary(BenefitUtilizationSummary):
     """Savings plan utilization summary resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -4583,14 +6659,14 @@ class SavingsPlanUtilizationSummary(BenefitUtilizationSummary):  # pylint: disab
     :vartype usage_date: ~datetime.datetime
     :ivar avg_utilization_percentage: This is the average hourly utilization for each date range
      that corresponds to given grain (Daily, Monthly). Suppose the API call is for usageDate >
-     2022-10-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
+     2025-03-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
      benefit id for each day. For a single day, the avgUtilizationPercentage value will be equal to
      the average of the set of values where the set contains 24 utilization percentage entries one
      for each hour in a specific day.
     :vartype avg_utilization_percentage: float
     :ivar min_utilization_percentage: This is the minimum hourly utilization for each date range
      that corresponds to given grain (Daily, Monthly). Suppose the API call is for usageDate >
-     2022-10-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
+     2025-03-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
      benefit id for each day. For a single day, the minUtilizationPercentage value will be equal to
      the smallest in the set of values where the set contains 24 utilization percentage entries one
      for each hour in a specific day. If on the day 2022-10-18, the lowest utilization percentage
@@ -4598,7 +6674,7 @@ class SavingsPlanUtilizationSummary(BenefitUtilizationSummary):  # pylint: disab
     :vartype min_utilization_percentage: float
     :ivar max_utilization_percentage: This is the maximum hourly utilization for each date range
      that corresponds to given grain (Daily, Monthly). Suppose the API call is for usageDate >
-     2022-10-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
+     2025-03-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
      benefit id for each day. For a single day, the maxUtilizationPercentage value will be equal to
      the largest in the set of values where the set contains 24 utilization percentage entries one
      for each hour in a specific day. If on the day 2022-10-18, the largest utilization percentage
@@ -4643,14 +6719,14 @@ class SavingsPlanUtilizationSummary(BenefitUtilizationSummary):  # pylint: disab
         """
         super().__init__(**kwargs)
         self.kind: str = "SavingsPlan"
-        self.arm_sku_name = None
-        self.benefit_id = None
-        self.benefit_order_id = None
+        self.arm_sku_name: Optional[str] = None
+        self.benefit_id: Optional[str] = None
+        self.benefit_order_id: Optional[str] = None
         self.benefit_type = benefit_type
-        self.usage_date = None
-        self.avg_utilization_percentage = None
-        self.min_utilization_percentage = None
-        self.max_utilization_percentage = None
+        self.usage_date: Optional[datetime.datetime] = None
+        self.avg_utilization_percentage: Optional[float] = None
+        self.min_utilization_percentage: Optional[float] = None
+        self.max_utilization_percentage: Optional[float] = None
 
 
 class SavingsPlanUtilizationSummaryProperties(BenefitUtilizationSummaryProperties):
@@ -4672,14 +6748,14 @@ class SavingsPlanUtilizationSummaryProperties(BenefitUtilizationSummaryPropertie
     :vartype usage_date: ~datetime.datetime
     :ivar avg_utilization_percentage: This is the average hourly utilization for each date range
      that corresponds to given grain (Daily, Monthly). Suppose the API call is for usageDate >
-     2022-10-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
+     2025-03-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
      benefit id for each day. For a single day, the avgUtilizationPercentage value will be equal to
      the average of the set of values where the set contains 24 utilization percentage entries one
      for each hour in a specific day.
     :vartype avg_utilization_percentage: float
     :ivar min_utilization_percentage: This is the minimum hourly utilization for each date range
      that corresponds to given grain (Daily, Monthly). Suppose the API call is for usageDate >
-     2022-10-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
+     2025-03-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
      benefit id for each day. For a single day, the minUtilizationPercentage value will be equal to
      the smallest in the set of values where the set contains 24 utilization percentage entries one
      for each hour in a specific day. If on the day 2022-10-18, the lowest utilization percentage
@@ -4687,7 +6763,7 @@ class SavingsPlanUtilizationSummaryProperties(BenefitUtilizationSummaryPropertie
     :vartype min_utilization_percentage: float
     :ivar max_utilization_percentage: This is the maximum hourly utilization for each date range
      that corresponds to given grain (Daily, Monthly). Suppose the API call is for usageDate >
-     2022-10-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
+     2025-03-01 and usageDate < 2022-10-31 at a daily granularity. There will be one record per
      benefit id for each day. For a single day, the maxUtilizationPercentage value will be equal to
      the largest in the set of values where the set contains 24 utilization percentage entries one
      for each hour in a specific day. If on the day 2022-10-18, the largest utilization percentage
@@ -4723,9 +6799,9 @@ class SavingsPlanUtilizationSummaryProperties(BenefitUtilizationSummaryPropertie
         :paramtype benefit_type: str or ~azure.mgmt.costmanagement.models.BenefitKind
         """
         super().__init__(benefit_type=benefit_type, **kwargs)
-        self.avg_utilization_percentage = None
-        self.min_utilization_percentage = None
-        self.max_utilization_percentage = None
+        self.avg_utilization_percentage: Optional[float] = None
+        self.min_utilization_percentage: Optional[float] = None
+        self.max_utilization_percentage: Optional[float] = None
 
 
 class ScheduledActionProxyResource(ProxyResource):
@@ -4775,12 +6851,12 @@ class ScheduledActionProxyResource(ProxyResource):
         :paramtype kind: str or ~azure.mgmt.costmanagement.models.ScheduledActionKind
         """
         super().__init__(**kwargs)
-        self.e_tag = None
+        self.e_tag: Optional[str] = None
         self.kind = kind
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
-class ScheduledAction(ScheduledActionProxyResource):  # pylint: disable=too-many-instance-attributes
+class ScheduledAction(ScheduledActionProxyResource):
     """Scheduled action definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4813,10 +6889,11 @@ class ScheduledAction(ScheduledActionProxyResource):  # pylint: disable=too-many
     :vartype notification_email: str
     :ivar schedule: Schedule of the scheduled action.
     :vartype schedule: ~azure.mgmt.costmanagement.models.ScheduleProperties
-    :ivar scope: Cost Management scope like 'subscriptions/{subscriptionId}' for subscription
-     scope, 'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup
-     scope, 'providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account
-     scope,
+    :ivar scope: For private scheduled action(Create or Update), scope will be empty.\\ :code:`<br
+     />` For shared scheduled action(Create or Update By Scope), Cost Management scope can be
+     'subscriptions/{subscriptionId}' for subscription scope,
+     'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup scope,
+     'providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account scope,
      'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}' for
      Department scope,
      'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
@@ -4891,10 +6968,11 @@ class ScheduledAction(ScheduledActionProxyResource):  # pylint: disable=too-many
         :paramtype notification_email: str
         :keyword schedule: Schedule of the scheduled action.
         :paramtype schedule: ~azure.mgmt.costmanagement.models.ScheduleProperties
-        :keyword scope: Cost Management scope like 'subscriptions/{subscriptionId}' for subscription
-         scope, 'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup
-         scope, 'providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account
-         scope,
+        :keyword scope: For private scheduled action(Create or Update), scope will be empty.\\
+         :code:`<br />` For shared scheduled action(Create or Update By Scope), Cost Management scope
+         can be 'subscriptions/{subscriptionId}' for subscription scope,
+         'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup scope,
+         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for Billing Account scope,
          'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}' for
          Department scope,
          'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
@@ -4950,14 +7028,14 @@ class ScheduledActionListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.ScheduledAction"]] = None
+        self.next_link: Optional[str] = None
 
 
 class ScheduleProperties(_serialization.Model):
     """The properties of the schedule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar frequency: Frequency of the schedule. Required. Known values are: "Daily", "Weekly", and
      "Monthly".
@@ -5003,8 +7081,8 @@ class ScheduleProperties(_serialization.Model):
         start_date: datetime.datetime,
         end_date: datetime.datetime,
         hour_of_day: Optional[int] = None,
-        days_of_week: Optional[List[Union[str, "_models.DaysOfWeek"]]] = None,
-        weeks_of_month: Optional[List[Union[str, "_models.WeeksOfMonth"]]] = None,
+        days_of_week: Optional[list[Union[str, "_models.DaysOfWeek"]]] = None,
+        weeks_of_month: Optional[list[Union[str, "_models.WeeksOfMonth"]]] = None,
         day_of_month: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -5039,14 +7117,79 @@ class ScheduleProperties(_serialization.Model):
         self.end_date = end_date
 
 
-class SharedScopeBenefitRecommendationProperties(
-    BenefitRecommendationProperties
-):  # pylint: disable=too-many-instance-attributes
+class Setting(ProxyResource):
+    """Setting definition.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TagInheritanceSetting
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar kind: Specifies the kind of settings. Required. "taginheritance"
+    :vartype kind: str or ~azure.mgmt.costmanagement.models.SettingsKind
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+    }
+
+    _subtype_map = {"kind": {"taginheritance": "TagInheritanceSetting"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
+
+
+class SettingsListResult(_serialization.Model):
+    """Setting list result. It contains a list of settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of settings.
+    :vartype value: list[~azure.mgmt.costmanagement.models.Setting]
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Setting]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value: Optional[list["_models.Setting"]] = None
+
+
+class SharedScopeBenefitRecommendationProperties(BenefitRecommendationProperties):  # pylint: disable=name-too-long
     """The properties of the benefit recommendation when scope is 'Shared'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar first_consumption_date: The first usage date used for looking back for computing the
      recommendations.
@@ -5150,14 +7293,12 @@ class SharedScopeBenefitRecommendationProperties(
         self.scope: str = "Shared"
 
 
-class SingleScopeBenefitRecommendationProperties(
-    BenefitRecommendationProperties
-):  # pylint: disable=too-many-instance-attributes
+class SingleScopeBenefitRecommendationProperties(BenefitRecommendationProperties):  # pylint: disable=name-too-long
     """The properties of the benefit recommendations when scope is 'Single'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar first_consumption_date: The first usage date used for looking back for computing the
      recommendations.
@@ -5269,8 +7410,59 @@ class SingleScopeBenefitRecommendationProperties(
             **kwargs
         )
         self.scope: str = "Single"
-        self.subscription_id = None
-        self.resource_group = None
+        self.subscription_id: Optional[str] = None
+        self.resource_group: Optional[str] = None
+
+
+class SourceCostAllocationResource(CostAllocationResource):
+    """Source resources for cost allocation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar resource_type: Type of resources contained in this cost allocation rule. Required. Known
+     values are: "Dimension" and "Tag".
+    :vartype resource_type: str or ~azure.mgmt.costmanagement.models.CostAllocationResourceType
+    :ivar name: If resource type is dimension, this must be either ResourceGroupName or
+     SubscriptionId. If resource type is tag, this must be a valid Azure tag. Required.
+    :vartype name: str
+    :ivar values: Source Resources for cost allocation. This list cannot contain more than 25
+     values. Required.
+    :vartype values: list[str]
+    """
+
+    _validation = {
+        "resource_type": {"required": True},
+        "name": {"required": True},
+        "values": {"required": True},
+    }
+
+    _attribute_map = {
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_type: Union[str, "_models.CostAllocationResourceType"],
+        name: str,
+        values: list[str],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_type: Type of resources contained in this cost allocation rule. Required.
+         Known values are: "Dimension" and "Tag".
+        :paramtype resource_type: str or ~azure.mgmt.costmanagement.models.CostAllocationResourceType
+        :keyword name: If resource type is dimension, this must be either ResourceGroupName or
+         SubscriptionId. If resource type is tag, this must be a valid Azure tag. Required.
+        :paramtype name: str
+        :keyword values: Source Resources for cost allocation. This list cannot contain more than 25
+         values. Required.
+        :paramtype values: list[str]
+        """
+        super().__init__(resource_type=resource_type, name=name, **kwargs)
+        self.values = values
 
 
 class Status(_serialization.Model):
@@ -5295,6 +7487,48 @@ class Status(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.status = status
+
+
+class SystemAssignedServiceIdentity(_serialization.Model):
+    """Managed service identity (either system assigned, or none).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (either system assigned, or none). Required. Known
+     values are: "None" and "SystemAssigned".
+    :vartype type: str or ~azure.mgmt.costmanagement.models.SystemAssignedServiceIdentityType
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, type: Union[str, "_models.SystemAssignedServiceIdentityType"], **kwargs: Any) -> None:
+        """
+        :keyword type: Type of managed service identity (either system assigned, or none). Required.
+         Known values are: "None" and "SystemAssigned".
+        :paramtype type: str or ~azure.mgmt.costmanagement.models.SystemAssignedServiceIdentityType
+        """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
+        self.type = type
 
 
 class SystemData(_serialization.Model):
@@ -5361,7 +7595,150 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class View(CostManagementProxyResource):  # pylint: disable=too-many-instance-attributes
+class TagInheritanceProperties(_serialization.Model):
+    """The properties of the tag inheritance setting.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar prefer_container_tags: This property defines the behavior when an inherited tag being
+     applied matches a lower scope tag (Eg. Subscription tag matches the resource tag). If set to
+     true - when tags match, the highest scope tags will be applied. Billing profile is the highest
+     scope,  followed by invoice sections, subscriptions and resource groups (allows overriding of
+     lower scope tag values). If set to false - when tags match, the lowest scope tags will be
+     applied. So, if a resource has the same tag as a subscription tag, the resource tag will be
+     applied (does not allow overriding of lower scope tag values). Required.
+    :vartype prefer_container_tags: bool
+    """
+
+    _validation = {
+        "prefer_container_tags": {"required": True},
+    }
+
+    _attribute_map = {
+        "prefer_container_tags": {"key": "preferContainerTags", "type": "bool"},
+    }
+
+    def __init__(self, *, prefer_container_tags: bool, **kwargs: Any) -> None:
+        """
+        :keyword prefer_container_tags: This property defines the behavior when an inherited tag being
+         applied matches a lower scope tag (Eg. Subscription tag matches the resource tag). If set to
+         true - when tags match, the highest scope tags will be applied. Billing profile is the highest
+         scope,  followed by invoice sections, subscriptions and resource groups (allows overriding of
+         lower scope tag values). If set to false - when tags match, the lowest scope tags will be
+         applied. So, if a resource has the same tag as a subscription tag, the resource tag will be
+         applied (does not allow overriding of lower scope tag values). Required.
+        :paramtype prefer_container_tags: bool
+        """
+        super().__init__(**kwargs)
+        self.prefer_container_tags = prefer_container_tags
+
+
+class TagInheritanceSetting(Setting):
+    """Tag Inheritance Setting definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar kind: Specifies the kind of settings. Required. "taginheritance"
+    :vartype kind: str or ~azure.mgmt.costmanagement.models.SettingsKind
+    :ivar properties: The properties of the tag inheritance setting.
+    :vartype properties: ~azure.mgmt.costmanagement.models.TagInheritanceProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "properties": {"key": "properties", "type": "TagInheritanceProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.TagInheritanceProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The properties of the tag inheritance setting.
+        :paramtype properties: ~azure.mgmt.costmanagement.models.TagInheritanceProperties
+        """
+        super().__init__(**kwargs)
+        self.kind: str = "taginheritance"
+        self.properties = properties
+
+
+class TargetCostAllocationResource(CostAllocationResource):
+    """Target resources for cost allocation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar resource_type: Type of resources contained in this cost allocation rule. Required. Known
+     values are: "Dimension" and "Tag".
+    :vartype resource_type: str or ~azure.mgmt.costmanagement.models.CostAllocationResourceType
+    :ivar name: If resource type is dimension, this must be either ResourceGroupName or
+     SubscriptionId. If resource type is tag, this must be a valid Azure tag. Required.
+    :vartype name: str
+    :ivar values: Target resources for cost allocation. This list cannot contain more than 25
+     values. Required.
+    :vartype values: list[~azure.mgmt.costmanagement.models.CostAllocationProportion]
+    :ivar policy_type: Method of cost allocation for the rule. Required. "FixedProportion"
+    :vartype policy_type: str or ~azure.mgmt.costmanagement.models.CostAllocationPolicyType
+    """
+
+    _validation = {
+        "resource_type": {"required": True},
+        "name": {"required": True},
+        "values": {"required": True},
+        "policy_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "values": {"key": "values", "type": "[CostAllocationProportion]"},
+        "policy_type": {"key": "policyType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_type: Union[str, "_models.CostAllocationResourceType"],
+        name: str,
+        values: list["_models.CostAllocationProportion"],
+        policy_type: Union[str, "_models.CostAllocationPolicyType"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_type: Type of resources contained in this cost allocation rule. Required.
+         Known values are: "Dimension" and "Tag".
+        :paramtype resource_type: str or ~azure.mgmt.costmanagement.models.CostAllocationResourceType
+        :keyword name: If resource type is dimension, this must be either ResourceGroupName or
+         SubscriptionId. If resource type is tag, this must be a valid Azure tag. Required.
+        :paramtype name: str
+        :keyword values: Target resources for cost allocation. This list cannot contain more than 25
+         values. Required.
+        :paramtype values: list[~azure.mgmt.costmanagement.models.CostAllocationProportion]
+        :keyword policy_type: Method of cost allocation for the rule. Required. "FixedProportion"
+        :paramtype policy_type: str or ~azure.mgmt.costmanagement.models.CostAllocationPolicyType
+        """
+        super().__init__(resource_type=resource_type, name=name, **kwargs)
+        self.values = values
+        self.policy_type = policy_type
+
+
+class View(CostManagementProxyResource):
     """States and configurations of Cost Analysis.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5436,7 +7813,6 @@ class View(CostManagementProxyResource):  # pylint: disable=too-many-instance-at
         "name": {"readonly": True},
         "type": {"readonly": True},
         "created_on": {"readonly": True},
-        "modified_on": {"readonly": True},
         "currency": {"readonly": True},
     }
 
@@ -5469,12 +7845,13 @@ class View(CostManagementProxyResource):  # pylint: disable=too-many-instance-at
         e_tag: Optional[str] = None,
         display_name: Optional[str] = None,
         scope: Optional[str] = None,
+        modified_on: Optional[datetime.datetime] = None,
         date_range: Optional[str] = None,
         chart: Optional[Union[str, "_models.ChartType"]] = None,
         accumulated: Optional[Union[str, "_models.AccumulatedType"]] = None,
         metric: Optional[Union[str, "_models.MetricType"]] = None,
-        kpis: Optional[List["_models.KpiProperties"]] = None,
-        pivots: Optional[List["_models.PivotProperties"]] = None,
+        kpis: Optional[list["_models.KpiProperties"]] = None,
+        pivots: Optional[list["_models.PivotProperties"]] = None,
         type_properties_query_type: Optional[Union[str, "_models.ReportType"]] = None,
         timeframe: Optional[Union[str, "_models.ReportTimeframeType"]] = None,
         time_period: Optional["_models.ReportConfigTimePeriod"] = None,
@@ -5506,6 +7883,8 @@ class View(CostManagementProxyResource):  # pylint: disable=too-many-instance-at
          '/providers/Microsoft.CostManagement/externalSubscriptions/{externalSubscriptionName}' for
          ExternalSubscription scope.
         :paramtype scope: str
+        :keyword modified_on: Date when the user last modified this view.
+        :paramtype modified_on: ~datetime.datetime
         :keyword date_range: Date range of the current view.
         :paramtype date_range: str
         :keyword chart: Chart type of the main view in Cost Analysis. Required. Known values are:
@@ -5538,10 +7917,10 @@ class View(CostManagementProxyResource):  # pylint: disable=too-many-instance-at
         super().__init__(e_tag=e_tag, **kwargs)
         self.display_name = display_name
         self.scope = scope
-        self.created_on = None
-        self.modified_on = None
+        self.created_on: Optional[datetime.datetime] = None
+        self.modified_on = modified_on
         self.date_range = date_range
-        self.currency = None
+        self.currency: Optional[str] = None
         self.chart = chart
         self.accumulated = accumulated
         self.metric = metric
@@ -5578,5 +7957,5 @@ class ViewListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.View"]] = None
+        self.next_link: Optional[str] = None

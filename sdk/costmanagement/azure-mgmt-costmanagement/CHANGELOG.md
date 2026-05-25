@@ -1,5 +1,9 @@
 # Release History
 
+## 4.1.0 (2026-05-25)
+
+skip changelog generation
+
 ## 4.0.1 (2023-07-19)
 
 ### Bugs Fixed
