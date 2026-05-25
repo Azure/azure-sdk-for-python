@@ -64,11 +64,11 @@ _DPG_README = "README.md"
 # can't start mid-identifier (e.g. ``foo r"""..."""`` is still matched, but
 # ``barf"""..."""`` is not — though that wouldn't be valid Python anyway).
 _TRIPLE_QUOTED_RE = re.compile(
-    r'(?<!\w)'
-    r'(?P<prefix>(?:[bB][rR]?|[rR][bBfF]?|[fF][rR]?|[uU])?)'
+    r"(?<!\w)"
+    r"(?P<prefix>(?:[bB][rR]?|[rR][bBfF]?|[fF][rR]?|[uU])?)"
     r'(?P<quote>"""|\'\'\')'
-    r'(?P<body>.*?)'
-    r'(?P=quote)',
+    r"(?P<body>.*?)"
+    r"(?P=quote)",
     re.DOTALL,
 )
 # Process one escape at a time. The first alternative consumes a *valid*
