@@ -158,10 +158,24 @@ class TestScheduleSchema:
             load_schedule(test_path)
         assert "'type' must be specified when scheduling a remote job with updates." in e.value.messages[0]
 
-    def test_load_invalid_schedule_pipeline_file_not_found_error_simplified(self):
-        test_path = "./tests/test_configs/schedule/invalid/hello_cron_schedule_with_pipeline_file_not_found.yml"
+    def test_load_invalid_schedule_pipeline_file_not_found_error_simplified(self, tmp_path):
+        test_path = tmp_path / "invalid_pipeline_schedule.yml"
+        test_path.write_text(
+            """
+$schema: https://azuremlschemas.azureedge.net/latest/schedule.schema.json
+name: weekly_retrain_2022_cron_pipeline_file_not_found
+trigger:
+  type: cron
+  expression: "15 10 * * 1"
+create_job:
+  type: pipeline
+  job: ../pipeline.yml
+""".strip(),
+            encoding="utf-8",
+        )
+
         with pytest.raises(ValidationError) as e:
-            load_schedule(test_path)
+            load_schedule(str(test_path))
 
         error_message = str(e.value.messages)
         assert "No such file or directory" in error_message

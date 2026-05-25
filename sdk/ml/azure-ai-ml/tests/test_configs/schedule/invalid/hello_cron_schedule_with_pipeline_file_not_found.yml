@@ -1,8 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/latest/schedule.schema.json
-name: weekly_retrain_2022_cron_pipeline_file_not_found
-trigger:
-  type: cron
-  expression: "15 10 * * 1"
-create_job:
-  type: pipeline
-  job: ../pipeline.yml
