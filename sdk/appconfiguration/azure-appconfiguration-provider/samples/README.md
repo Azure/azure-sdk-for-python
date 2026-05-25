@@ -46,7 +46,7 @@ pip install azure.appconfiguration.provider
 
 | File | Description |
 |-------------|-------------|
-| aad_sample.py | demos connecting to app configuration with Azure Active Directory |
+| entra_id_sample.py | demos connecting to app configuration with Entra ID |
 | connection_string_sample.py | demos connecting to app configuration with a Connection String |
 | key_vault_reference_sample.py | demos resolving key vault references with App Configuration |
 
