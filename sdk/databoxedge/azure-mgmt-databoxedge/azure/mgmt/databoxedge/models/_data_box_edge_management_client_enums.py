@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access level allowed for this remote application type."""
+
+    NONE = "None"
+    READ_ONLY = "ReadOnly"
+    READ_WRITE = "ReadWrite"
+    FULL_ACCESS = "FullAccess"
+
+
 class AccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of storage accessed on the storage account."""
 
@@ -67,6 +76,14 @@ class ClientPermissionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     READ_WRITE = "ReadWrite"
 
 
+class ClusterWitnessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster Witness Type."""
+
+    NONE = "None"
+    CLOUD = "Cloud"
+    FILE_SHARE = "FileShare"
+
+
 class ContainerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current status of the container."""
 
@@ -87,7 +104,7 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DataBoxEdgeDeviceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The etag for the devices."""
+    """The kind of the device."""
 
     AZURE_DATA_BOX_GATEWAY = "AzureDataBoxGateway"
     AZURE_STACK_EDGE = "AzureStackEdge"
@@ -112,6 +129,13 @@ class DataPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CLOUD = "Cloud"
     LOCAL = "Local"
+
+
+class DataResidencyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DataResidencyType enum."""
+
+    GEO_ZONE_REPLICATION = "GeoZoneReplication"
+    ZONE_REPLICATION = "ZoneReplication"
 
 
 class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -154,6 +178,14 @@ class HostPlatformType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     KUBERNETES_CLUSTER = "KubernetesCluster"
     LINUX_VM = "LinuxVM"
+
+
+class InstallationImpact(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Impact of Installing an updateType."""
+
+    NONE = "None"
+    DEVICE_REBOOTED = "DeviceRebooted"
+    KUBERNETES_WORKLOADS_DOWN = "KubernetesWorkloadsDown"
 
 
 class InstallRebootBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -353,6 +385,22 @@ class PosixComplianceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
 
 
+class ProactiveDiagnosticsConsent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Proactive diagnostic collection consent flag."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class RemoteApplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Remote application type."""
+
+    POWERSHELL = "Powershell"
+    WAC = "WAC"
+    LOCAL_UI = "LocalUI"
+    ALL_APPLICATIONS = "AllApplications"
+
+
 class ResourceMoveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Denotes whether move operation is in progress."""
 
@@ -448,6 +496,10 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RCA_LARGE = "RCA_Large"
     RDC = "RDC"
     MANAGEMENT = "Management"
+    EP2_64_MX1_W = "EP2_64_Mx1_W"
+    EP2_128_GPU1_MX1_W = "EP2_128_GPU1_Mx1_W"
+    EP2_256_GPU2_MX1 = "EP2_256_GPU2_Mx1"
+    EDGE_MR_TCP = "EdgeMR_TCP"
 
 
 class SkuSignupOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -25,7 +25,7 @@ class TestDataBoxEdgeManagementOrdersOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.orders.list_by_data_box_edge_device(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestDataBoxEdgeManagementOrdersOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.orders.get(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -73,6 +73,7 @@ class TestDataBoxEdgeManagementOrdersOperationsAsync(AzureMgmtRecordedTestCase):
                         {"carrierName": "str", "serialNumber": "str", "trackingId": "str", "trackingUrl": "str"}
                     ],
                     "id": "str",
+                    "kind": "str",
                     "name": "str",
                     "orderHistory": [
                         {
@@ -88,6 +89,7 @@ class TestDataBoxEdgeManagementOrdersOperationsAsync(AzureMgmtRecordedTestCase):
                             "updateDateTime": "2020-02-20 00:00:00",
                         }
                     ],
+                    "orderId": "str",
                     "returnTrackingInfo": [
                         {"carrierName": "str", "serialNumber": "str", "trackingId": "str", "trackingUrl": "str"}
                     ],
@@ -112,7 +114,7 @@ class TestDataBoxEdgeManagementOrdersOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2021-02-01-preview",
+                api_version="2023-12-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -126,7 +128,7 @@ class TestDataBoxEdgeManagementOrdersOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.orders.begin_delete(
                 device_name="str",
                 resource_group_name=resource_group.name,
-                api_version="2021-02-01-preview",
+                api_version="2023-12-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -139,7 +141,7 @@ class TestDataBoxEdgeManagementOrdersOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.orders.list_dc_access_code(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself

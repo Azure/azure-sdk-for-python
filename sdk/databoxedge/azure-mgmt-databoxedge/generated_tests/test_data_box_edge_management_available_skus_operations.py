@@ -22,7 +22,7 @@ class TestDataBoxEdgeManagementAvailableSkusOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_available_skus_list(self, resource_group):
         response = self.client.available_skus.list(
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -67,7 +67,7 @@ class Addon(ARMBaseModel):
     :vartype type: str
     :ivar kind: Addon type. Required. Known values are: "IotEdge" and "ArcForKubernetes".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.AddonType
-    :ivar system_data: Addon type.
+    :ivar system_data: Metadata pertaining to creation and last modification of Addon.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     """
 
@@ -120,7 +120,7 @@ class AddonList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Addon"]] = None
+        self.value: Optional[list["_models.Addon"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -208,7 +208,7 @@ class Alert(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: Alert generated in the resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of Alert.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar title: Alert title.
     :vartype title: str
@@ -265,7 +265,7 @@ class Alert(ARMBaseModel):
         self.recommendation: Optional[str] = None
         self.severity: Optional[Union[str, "_models.AlertSeverity"]] = None
         self.error_details: Optional["_models.AlertErrorDetails"] = None
-        self.detailed_information: Optional[Dict[str, str]] = None
+        self.detailed_information: Optional[dict[str, str]] = None
 
 
 class AlertErrorDetails(_serialization.Model):
@@ -325,7 +325,7 @@ class AlertList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Alert"]] = None
+        self.value: Optional[list["_models.Alert"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -344,7 +344,7 @@ class ArcAddon(Addon):
     :vartype type: str
     :ivar kind: Addon type. Required. Known values are: "IotEdge" and "ArcForKubernetes".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.AddonType
-    :ivar system_data: Addon type.
+    :ivar system_data: Metadata pertaining to creation and last modification of Addon.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar subscription_id: Arc resource subscription Id. Required.
     :vartype subscription_id: str
@@ -566,7 +566,7 @@ class BandwidthSchedule(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: Bandwidth object related to ASE resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of BandwidthSchedule.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar start: The start time of the schedule in UTC. Required.
     :vartype start: str
@@ -601,7 +601,7 @@ class BandwidthSchedule(ARMBaseModel):
     }
 
     def __init__(
-        self, *, start: str, stop: str, rate_in_mbps: int, days: List[Union[str, "_models.DayOfWeek"]], **kwargs: Any
+        self, *, start: str, stop: str, rate_in_mbps: int, days: list[Union[str, "_models.DayOfWeek"]], **kwargs: Any
     ) -> None:
         """
         :keyword start: The start time of the schedule in UTC. Required.
@@ -645,7 +645,7 @@ class BandwidthSchedulesList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.BandwidthSchedule"]] = None
+        self.value: Optional[list["_models.BandwidthSchedule"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -705,7 +705,7 @@ class Role(ARMBaseModel):
     :ivar kind: Role type. Required. Known values are: "IOT", "ASA", "Functions", "Cognitive",
      "MEC", "CloudEdgeManagement", and "Kubernetes".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.RoleTypes
-    :ivar system_data: Role configured on ASE resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of Role.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     """
 
@@ -742,7 +742,12 @@ class Role(ARMBaseModel):
 
 
 class CloudEdgeManagementRole(Role):
-    """CloudEdgeManagementRole role.
+    """The preview of Virtual Machine Cloud Management from the Azure supports deploying and managing
+    VMs on your Azure Stack Edge device from Azure Portal. For more information, refer to:
+    https://docs.microsoft.com/en-us/azure/databox-online/azure-stack-edge-gpu-virtual-machine-overview
+    By using this feature, you agree to the preview legal terms. See the
+    https://azure.microsoft.com/en-us/support/legal/preview-supplemental-terms/ for additional
+    details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -757,7 +762,7 @@ class CloudEdgeManagementRole(Role):
     :ivar kind: Role type. Required. Known values are: "IOT", "ASA", "Functions", "Cognitive",
      "MEC", "CloudEdgeManagement", and "Kubernetes".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.RoleTypes
-    :ivar system_data: Role configured on ASE resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of Role.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar local_management_status: Local Edge Management Status. Known values are: "Enabled" and
      "Disabled".
@@ -825,7 +830,7 @@ class CloudErrorBody(_serialization.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
+        details: Optional[list["_models.CloudErrorBody"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -842,6 +847,230 @@ class CloudErrorBody(_serialization.Model):
         self.code = code
         self.message = message
         self.details = details
+
+
+class ClusterCapacityViewData(_serialization.Model):
+    """Cluster Compute Data.
+
+    :ivar fqdn: The FQDN of the cluster.
+    :vartype fqdn: str
+    :ivar gpu_capacity: The cluster's GPU capacity.
+    :vartype gpu_capacity: ~azure.mgmt.databoxedge.models.ClusterGpuCapacity
+    :ivar memory_capacity: The cluster's memory capacity.
+    :vartype memory_capacity: ~azure.mgmt.databoxedge.models.ClusterMemoryCapacity
+    :ivar last_refreshed_time: The last time at which the ClusterCapacityViewData was set.
+    :vartype last_refreshed_time: ~datetime.datetime
+    :ivar total_provisioned_non_hpn_cores: The total # of vCPUs provisioned by non-HPN VM per
+     appliance.
+    :vartype total_provisioned_non_hpn_cores: int
+    """
+
+    _attribute_map = {
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "gpu_capacity": {"key": "gpuCapacity", "type": "ClusterGpuCapacity"},
+        "memory_capacity": {"key": "memoryCapacity", "type": "ClusterMemoryCapacity"},
+        "last_refreshed_time": {"key": "lastRefreshedTime", "type": "iso-8601"},
+        "total_provisioned_non_hpn_cores": {"key": "totalProvisionedNonHpnCores", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        fqdn: Optional[str] = None,
+        gpu_capacity: Optional["_models.ClusterGpuCapacity"] = None,
+        memory_capacity: Optional["_models.ClusterMemoryCapacity"] = None,
+        last_refreshed_time: Optional[datetime.datetime] = None,
+        total_provisioned_non_hpn_cores: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword fqdn: The FQDN of the cluster.
+        :paramtype fqdn: str
+        :keyword gpu_capacity: The cluster's GPU capacity.
+        :paramtype gpu_capacity: ~azure.mgmt.databoxedge.models.ClusterGpuCapacity
+        :keyword memory_capacity: The cluster's memory capacity.
+        :paramtype memory_capacity: ~azure.mgmt.databoxedge.models.ClusterMemoryCapacity
+        :keyword last_refreshed_time: The last time at which the ClusterCapacityViewData was set.
+        :paramtype last_refreshed_time: ~datetime.datetime
+        :keyword total_provisioned_non_hpn_cores: The total # of vCPUs provisioned by non-HPN VM per
+         appliance.
+        :paramtype total_provisioned_non_hpn_cores: int
+        """
+        super().__init__(**kwargs)
+        self.fqdn = fqdn
+        self.gpu_capacity = gpu_capacity
+        self.memory_capacity = memory_capacity
+        self.last_refreshed_time = last_refreshed_time
+        self.total_provisioned_non_hpn_cores = total_provisioned_non_hpn_cores
+
+
+class ClusterGpuCapacity(_serialization.Model):
+    """Cluster GPU Data.
+
+    :ivar gpu_type: The cluster GPU Type.
+    :vartype gpu_type: str
+    :ivar gpu_used_units_count: The used GPU units count in the cluster.
+    :vartype gpu_used_units_count: int
+    :ivar gpu_free_units_count: The free GPU units count in the cluster.
+    :vartype gpu_free_units_count: int
+    :ivar gpu_reserved_for_failover_units_count: The GPU units count reserved for failover in the
+     cluster.
+    :vartype gpu_reserved_for_failover_units_count: int
+    :ivar gpu_total_units_count: The total GPU units count in the cluster.
+    :vartype gpu_total_units_count: int
+    """
+
+    _attribute_map = {
+        "gpu_type": {"key": "gpuType", "type": "str"},
+        "gpu_used_units_count": {"key": "gpuUsedUnitsCount", "type": "int"},
+        "gpu_free_units_count": {"key": "gpuFreeUnitsCount", "type": "int"},
+        "gpu_reserved_for_failover_units_count": {"key": "gpuReservedForFailoverUnitsCount", "type": "int"},
+        "gpu_total_units_count": {"key": "gpuTotalUnitsCount", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        gpu_type: Optional[str] = None,
+        gpu_used_units_count: Optional[int] = None,
+        gpu_free_units_count: Optional[int] = None,
+        gpu_reserved_for_failover_units_count: Optional[int] = None,
+        gpu_total_units_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword gpu_type: The cluster GPU Type.
+        :paramtype gpu_type: str
+        :keyword gpu_used_units_count: The used GPU units count in the cluster.
+        :paramtype gpu_used_units_count: int
+        :keyword gpu_free_units_count: The free GPU units count in the cluster.
+        :paramtype gpu_free_units_count: int
+        :keyword gpu_reserved_for_failover_units_count: The GPU units count reserved for failover in
+         the cluster.
+        :paramtype gpu_reserved_for_failover_units_count: int
+        :keyword gpu_total_units_count: The total GPU units count in the cluster.
+        :paramtype gpu_total_units_count: int
+        """
+        super().__init__(**kwargs)
+        self.gpu_type = gpu_type
+        self.gpu_used_units_count = gpu_used_units_count
+        self.gpu_free_units_count = gpu_free_units_count
+        self.gpu_reserved_for_failover_units_count = gpu_reserved_for_failover_units_count
+        self.gpu_total_units_count = gpu_total_units_count
+
+
+class ClusterMemoryCapacity(_serialization.Model):
+    """NodeCapacityInfo defines the required information to determine the placement of a VM.
+
+    :ivar cluster_free_memory_mb: The free memory in the cluster in MB.
+    :vartype cluster_free_memory_mb: float
+    :ivar cluster_used_memory_mb: The used memory in the cluster in MB.
+    :vartype cluster_used_memory_mb: float
+    :ivar cluster_failover_memory_mb: The failover memory in the cluster in MB.
+    :vartype cluster_failover_memory_mb: float
+    :ivar cluster_fragmentation_memory_mb: The fragmentation memory in the cluster in MB.
+    :vartype cluster_fragmentation_memory_mb: float
+    :ivar cluster_hyperv_reserve_memory_mb: The memory reserved for Hyper-V in the cluster in MB.
+    :vartype cluster_hyperv_reserve_memory_mb: float
+    :ivar cluster_infra_vm_memory_mb: The memory of the Infra VM in the cluster in MB.
+    :vartype cluster_infra_vm_memory_mb: float
+    :ivar cluster_total_memory_mb: The total memory in the cluster in MB.
+    :vartype cluster_total_memory_mb: float
+    :ivar cluster_non_failover_vm_mb: The non-failover memory in the cluster in MB.
+    :vartype cluster_non_failover_vm_mb: float
+    :ivar cluster_memory_used_by_vms_mb: The memory used by VMs in the cluster in MB.
+    :vartype cluster_memory_used_by_vms_mb: float
+    """
+
+    _attribute_map = {
+        "cluster_free_memory_mb": {"key": "clusterFreeMemoryMb", "type": "float"},
+        "cluster_used_memory_mb": {"key": "clusterUsedMemoryMb", "type": "float"},
+        "cluster_failover_memory_mb": {"key": "clusterFailoverMemoryMb", "type": "float"},
+        "cluster_fragmentation_memory_mb": {"key": "clusterFragmentationMemoryMb", "type": "float"},
+        "cluster_hyperv_reserve_memory_mb": {"key": "clusterHypervReserveMemoryMb", "type": "float"},
+        "cluster_infra_vm_memory_mb": {"key": "clusterInfraVmMemoryMb", "type": "float"},
+        "cluster_total_memory_mb": {"key": "clusterTotalMemoryMb", "type": "float"},
+        "cluster_non_failover_vm_mb": {"key": "clusterNonFailoverVmMb", "type": "float"},
+        "cluster_memory_used_by_vms_mb": {"key": "clusterMemoryUsedByVmsMb", "type": "float"},
+    }
+
+    def __init__(
+        self,
+        *,
+        cluster_free_memory_mb: Optional[float] = None,
+        cluster_used_memory_mb: Optional[float] = None,
+        cluster_failover_memory_mb: Optional[float] = None,
+        cluster_fragmentation_memory_mb: Optional[float] = None,
+        cluster_hyperv_reserve_memory_mb: Optional[float] = None,
+        cluster_infra_vm_memory_mb: Optional[float] = None,
+        cluster_total_memory_mb: Optional[float] = None,
+        cluster_non_failover_vm_mb: Optional[float] = None,
+        cluster_memory_used_by_vms_mb: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword cluster_free_memory_mb: The free memory in the cluster in MB.
+        :paramtype cluster_free_memory_mb: float
+        :keyword cluster_used_memory_mb: The used memory in the cluster in MB.
+        :paramtype cluster_used_memory_mb: float
+        :keyword cluster_failover_memory_mb: The failover memory in the cluster in MB.
+        :paramtype cluster_failover_memory_mb: float
+        :keyword cluster_fragmentation_memory_mb: The fragmentation memory in the cluster in MB.
+        :paramtype cluster_fragmentation_memory_mb: float
+        :keyword cluster_hyperv_reserve_memory_mb: The memory reserved for Hyper-V in the cluster in
+         MB.
+        :paramtype cluster_hyperv_reserve_memory_mb: float
+        :keyword cluster_infra_vm_memory_mb: The memory of the Infra VM in the cluster in MB.
+        :paramtype cluster_infra_vm_memory_mb: float
+        :keyword cluster_total_memory_mb: The total memory in the cluster in MB.
+        :paramtype cluster_total_memory_mb: float
+        :keyword cluster_non_failover_vm_mb: The non-failover memory in the cluster in MB.
+        :paramtype cluster_non_failover_vm_mb: float
+        :keyword cluster_memory_used_by_vms_mb: The memory used by VMs in the cluster in MB.
+        :paramtype cluster_memory_used_by_vms_mb: float
+        """
+        super().__init__(**kwargs)
+        self.cluster_free_memory_mb = cluster_free_memory_mb
+        self.cluster_used_memory_mb = cluster_used_memory_mb
+        self.cluster_failover_memory_mb = cluster_failover_memory_mb
+        self.cluster_fragmentation_memory_mb = cluster_fragmentation_memory_mb
+        self.cluster_hyperv_reserve_memory_mb = cluster_hyperv_reserve_memory_mb
+        self.cluster_infra_vm_memory_mb = cluster_infra_vm_memory_mb
+        self.cluster_total_memory_mb = cluster_total_memory_mb
+        self.cluster_non_failover_vm_mb = cluster_non_failover_vm_mb
+        self.cluster_memory_used_by_vms_mb = cluster_memory_used_by_vms_mb
+
+
+class ClusterStorageViewData(_serialization.Model):
+    """Cluster Storage Data.
+
+    :ivar cluster_total_storage_mb: Total storage on the cluster in MB.
+    :vartype cluster_total_storage_mb: float
+    :ivar cluster_free_storage_mb: The available or free storage on the cluster in MB.
+    :vartype cluster_free_storage_mb: float
+    """
+
+    _attribute_map = {
+        "cluster_total_storage_mb": {"key": "clusterTotalStorageMb", "type": "float"},
+        "cluster_free_storage_mb": {"key": "clusterFreeStorageMb", "type": "float"},
+    }
+
+    def __init__(
+        self,
+        *,
+        cluster_total_storage_mb: Optional[float] = None,
+        cluster_free_storage_mb: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword cluster_total_storage_mb: Total storage on the cluster in MB.
+        :paramtype cluster_total_storage_mb: float
+        :keyword cluster_free_storage_mb: The available or free storage on the cluster in MB.
+        :paramtype cluster_free_storage_mb: float
+        """
+        super().__init__(**kwargs)
+        self.cluster_total_storage_mb = cluster_total_storage_mb
+        self.cluster_free_storage_mb = cluster_free_storage_mb
 
 
 class CniConfig(_serialization.Model):
@@ -945,7 +1174,7 @@ class ContactDetails(_serialization.Model):
     }
 
     def __init__(
-        self, *, contact_person: str, company_name: str, phone: str, email_list: List[str], **kwargs: Any
+        self, *, contact_person: str, company_name: str, phone: str, email_list: list[str], **kwargs: Any
     ) -> None:
         """
         :keyword contact_person: The contact person name. Required.
@@ -977,7 +1206,7 @@ class Container(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: Container in DataBoxEdge Resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of Container.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar container_status: Current status of the container. Known values are: "OK", "Offline",
      "Unknown", "Updating", and "NeedsAttention".
@@ -1051,7 +1280,7 @@ class ContainerList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Container"]] = None
+        self.value: Optional[list["_models.Container"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -1082,11 +1311,13 @@ class DataBoxEdgeDevice(ARMBaseModel):
     :vartype etag: str
     :ivar identity: Msi identity of the resource.
     :vartype identity: ~azure.mgmt.databoxedge.models.ResourceIdentity
-    :ivar kind: The etag for the devices. Known values are: "AzureDataBoxGateway",
-     "AzureStackEdge", "AzureStackHub", and "AzureModularDataCentre".
+    :ivar kind: The kind of the device. Known values are: "AzureDataBoxGateway", "AzureStackEdge",
+     "AzureStackHub", and "AzureModularDataCentre".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceKind
     :ivar system_data: DataBoxEdge Resource.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :ivar system_data_properties_system_data: DataBoxEdge Device Properties.
+    :vartype system_data_properties_system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar data_box_edge_device_status: The status of the Data Box Edge/Gateway device. Known values
      are: "ReadyToSetup", "Online", "Offline", "NeedsAttention", "Disconnected",
      "PartiallyDisconnected", and "Maintenance".
@@ -1122,6 +1353,10 @@ class DataBoxEdgeDevice(ARMBaseModel):
     :vartype resource_move_details: ~azure.mgmt.databoxedge.models.ResourceMoveDetails
     :ivar edge_profile: The details of Edge Profile for this resource.
     :vartype edge_profile: ~azure.mgmt.databoxedge.models.EdgeProfile
+    :ivar data_residency: The details of data-residency related properties for this resource.
+    :vartype data_residency: ~azure.mgmt.databoxedge.models.DataResidency
+    :ivar kubernetes_workload_profile: Kubernetes Workload Profile.
+    :vartype kubernetes_workload_profile: str
     """
 
     _validation = {
@@ -1131,6 +1366,8 @@ class DataBoxEdgeDevice(ARMBaseModel):
         "location": {"required": True},
         "kind": {"readonly": True},
         "system_data": {"readonly": True},
+        "system_data_properties_system_data": {"readonly": True},
+        "data_box_edge_device_status": {"readonly": True},
         "serial_number": {"readonly": True},
         "description": {"readonly": True},
         "model_description": {"readonly": True},
@@ -1146,6 +1383,7 @@ class DataBoxEdgeDevice(ARMBaseModel):
         "node_count": {"readonly": True},
         "resource_move_details": {"readonly": True},
         "edge_profile": {"readonly": True},
+        "kubernetes_workload_profile": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1159,6 +1397,7 @@ class DataBoxEdgeDevice(ARMBaseModel):
         "identity": {"key": "identity", "type": "ResourceIdentity"},
         "kind": {"key": "kind", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "system_data_properties_system_data": {"key": "properties.systemData", "type": "SystemData"},
         "data_box_edge_device_status": {"key": "properties.dataBoxEdgeDeviceStatus", "type": "str"},
         "serial_number": {"key": "properties.serialNumber", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
@@ -1175,17 +1414,19 @@ class DataBoxEdgeDevice(ARMBaseModel):
         "node_count": {"key": "properties.nodeCount", "type": "int"},
         "resource_move_details": {"key": "properties.resourceMoveDetails", "type": "ResourceMoveDetails"},
         "edge_profile": {"key": "properties.edgeProfile", "type": "EdgeProfile"},
+        "data_residency": {"key": "properties.dataResidency", "type": "DataResidency"},
+        "kubernetes_workload_profile": {"key": "properties.kubernetesWorkloadProfile", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.Sku"] = None,
         etag: Optional[str] = None,
         identity: Optional["_models.ResourceIdentity"] = None,
-        data_box_edge_device_status: Optional[Union[str, "_models.DataBoxEdgeDeviceStatus"]] = None,
+        data_residency: Optional["_models.DataResidency"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1203,11 +1444,8 @@ class DataBoxEdgeDevice(ARMBaseModel):
         :paramtype etag: str
         :keyword identity: Msi identity of the resource.
         :paramtype identity: ~azure.mgmt.databoxedge.models.ResourceIdentity
-        :keyword data_box_edge_device_status: The status of the Data Box Edge/Gateway device. Known
-         values are: "ReadyToSetup", "Online", "Offline", "NeedsAttention", "Disconnected",
-         "PartiallyDisconnected", and "Maintenance".
-        :paramtype data_box_edge_device_status: str or
-         ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceStatus
+        :keyword data_residency: The details of data-residency related properties for this resource.
+        :paramtype data_residency: ~azure.mgmt.databoxedge.models.DataResidency
         """
         super().__init__(**kwargs)
         self.location = location
@@ -1217,7 +1455,8 @@ class DataBoxEdgeDevice(ARMBaseModel):
         self.identity = identity
         self.kind: Optional[Union[str, "_models.DataBoxEdgeDeviceKind"]] = None
         self.system_data: Optional["_models.SystemData"] = None
-        self.data_box_edge_device_status = data_box_edge_device_status
+        self.system_data_properties_system_data: Optional["_models.SystemData"] = None
+        self.data_box_edge_device_status: Optional[Union[str, "_models.DataBoxEdgeDeviceStatus"]] = None
         self.serial_number: Optional[str] = None
         self.description: Optional[str] = None
         self.model_description: Optional[str] = None
@@ -1229,10 +1468,12 @@ class DataBoxEdgeDevice(ARMBaseModel):
         self.device_local_capacity: Optional[int] = None
         self.time_zone: Optional[str] = None
         self.device_hcs_version: Optional[str] = None
-        self.configured_role_types: Optional[List[Union[str, "_models.RoleTypes"]]] = None
+        self.configured_role_types: Optional[list[Union[str, "_models.RoleTypes"]]] = None
         self.node_count: Optional[int] = None
         self.resource_move_details: Optional["_models.ResourceMoveDetails"] = None
         self.edge_profile: Optional["_models.EdgeProfile"] = None
+        self.data_residency = data_residency
+        self.kubernetes_workload_profile: Optional[str] = None
 
 
 class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
@@ -1246,6 +1487,8 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of DataBoxEdgeDevice.
+    :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar encryption_key_thumbprint: The digital signature of encrypted certificate.
     :vartype encryption_key_thumbprint: str
     :ivar encryption_key: The public part of the encryption certificate. Client uses this to
@@ -1270,20 +1513,42 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
     :ivar device_secrets: Device secrets, will be returned only with ODataFilter
      $expand=deviceSecrets.
     :vartype device_secrets: dict[str, ~azure.mgmt.databoxedge.models.Secret]
+    :ivar cluster_witness_type: Cluster Witness Type. Known values are: "None", "Cloud", and
+     "FileShare".
+    :vartype cluster_witness_type: str or ~azure.mgmt.databoxedge.models.ClusterWitnessType
+    :ivar file_share_witness_location: The witness location of file share.
+    :vartype file_share_witness_location: str
+    :ivar file_share_witness_username: The username of file share.
+    :vartype file_share_witness_username: str
+    :ivar cloud_witness_storage_account_name: The Cloud Witness Storage account name.
+    :vartype cloud_witness_storage_account_name: str
+    :ivar cloud_witness_container_name: The Container for cloud witness in the storage account.
+    :vartype cloud_witness_container_name: str
+    :ivar cloud_witness_storage_endpoint: The Azure service endpoint of the cloud witness storage
+     account.
+    :vartype cloud_witness_storage_endpoint: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "resource_key": {"readonly": True},
         "device_secrets": {"readonly": True},
+        "cluster_witness_type": {"readonly": True},
+        "file_share_witness_location": {"readonly": True},
+        "file_share_witness_username": {"readonly": True},
+        "cloud_witness_storage_account_name": {"readonly": True},
+        "cloud_witness_container_name": {"readonly": True},
+        "cloud_witness_storage_endpoint": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "encryption_key_thumbprint": {"key": "properties.encryptionKeyThumbprint", "type": "str"},
         "encryption_key": {"key": "properties.encryptionKey", "type": "str"},
         "resource_key": {"key": "properties.resourceKey", "type": "str"},
@@ -1293,6 +1558,12 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
         "channel_integrity_key_version": {"key": "properties.channelIntegrityKeyVersion", "type": "str"},
         "key_vault_sync_status": {"key": "properties.keyVaultSyncStatus", "type": "str"},
         "device_secrets": {"key": "properties.deviceSecrets", "type": "{Secret}"},
+        "cluster_witness_type": {"key": "properties.clusterWitnessType", "type": "str"},
+        "file_share_witness_location": {"key": "properties.fileShareWitnessLocation", "type": "str"},
+        "file_share_witness_username": {"key": "properties.fileShareWitnessUsername", "type": "str"},
+        "cloud_witness_storage_account_name": {"key": "properties.cloudWitnessStorageAccountName", "type": "str"},
+        "cloud_witness_container_name": {"key": "properties.cloudWitnessContainerName", "type": "str"},
+        "cloud_witness_storage_endpoint": {"key": "properties.cloudWitnessStorageEndpoint", "type": "str"},
     }
 
     def __init__(
@@ -1329,6 +1600,7 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
         :paramtype key_vault_sync_status: str or ~azure.mgmt.databoxedge.models.KeyVaultSyncStatus
         """
         super().__init__(**kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
         self.encryption_key_thumbprint = encryption_key_thumbprint
         self.encryption_key = encryption_key
         self.resource_key: Optional[str] = None
@@ -1337,7 +1609,13 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
         self.channel_integrity_key_name = channel_integrity_key_name
         self.channel_integrity_key_version = channel_integrity_key_version
         self.key_vault_sync_status = key_vault_sync_status
-        self.device_secrets: Optional[Dict[str, "_models.Secret"]] = None
+        self.device_secrets: Optional[dict[str, "_models.Secret"]] = None
+        self.cluster_witness_type: Optional[Union[str, "_models.ClusterWitnessType"]] = None
+        self.file_share_witness_location: Optional[str] = None
+        self.file_share_witness_username: Optional[str] = None
+        self.cloud_witness_storage_account_name: Optional[str] = None
+        self.cloud_witness_container_name: Optional[str] = None
+        self.cloud_witness_storage_endpoint: Optional[str] = None
 
 
 class DataBoxEdgeDeviceExtendedInfoPatch(_serialization.Model):
@@ -1427,7 +1705,7 @@ class DataBoxEdgeDeviceList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.DataBoxEdgeDevice"]] = None
+        self.value: Optional[list["_models.DataBoxEdgeDevice"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -1451,7 +1729,7 @@ class DataBoxEdgeDevicePatch(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ResourceIdentity"] = None,
         edge_profile: Optional["_models.EdgeProfilePatch"] = None,
         **kwargs: Any
@@ -1491,7 +1769,7 @@ class DataBoxEdgeMoveRequest(_serialization.Model):
         "resources": {"key": "resources", "type": "[str]"},
     }
 
-    def __init__(self, *, target_resource_group: str, resources: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, target_resource_group: str, resources: list[str], **kwargs: Any) -> None:
         """
         :keyword target_resource_group: Target resource group ARMId. Required.
         :paramtype target_resource_group: str
@@ -1514,7 +1792,8 @@ class DataBoxEdgeSku(_serialization.Model):
      "TEA_1Node_Heater", "TEA_1Node_UPS_Heater", "TEA_4Node_Heater", "TEA_4Node_UPS_Heater", "TMA",
      "TDC", "TCA_Small", "GPU", "TCA_Large", "EdgeP_Base", "EdgeP_High", "EdgePR_Base",
      "EdgePR_Base_UPS", "EP2_64_1VPU_W", "EP2_128_1T4_Mx1_W", "EP2_256_2T4_W", "EdgeMR_Mini",
-     "RCA_Small", "RCA_Large", "RDC", and "Management".
+     "RCA_Small", "RCA_Large", "RDC", "Management", "EP2_64_Mx1_W", "EP2_128_GPU1_Mx1_W",
+     "EP2_256_GPU2_Mx1", and "EdgeMR_TCP".
     :vartype name: str or ~azure.mgmt.databoxedge.models.SkuName
     :ivar kind: The Sku kind.
     :vartype kind: str
@@ -1592,15 +1871,15 @@ class DataBoxEdgeSku(_serialization.Model):
         self.tier: Optional[Union[str, "_models.SkuTier"]] = None
         self.size: Optional[str] = None
         self.family: Optional[str] = None
-        self.locations: Optional[List[str]] = None
-        self.api_versions: Optional[List[str]] = None
-        self.location_info: Optional[List["_models.SkuLocationInfo"]] = None
-        self.costs: Optional[List["_models.SkuCost"]] = None
+        self.locations: Optional[list[str]] = None
+        self.api_versions: Optional[list[str]] = None
+        self.location_info: Optional[list["_models.SkuLocationInfo"]] = None
+        self.costs: Optional[list["_models.SkuCost"]] = None
         self.signup_option: Optional[Union[str, "_models.SkuSignupOption"]] = None
         self.version: Optional[Union[str, "_models.SkuVersion"]] = None
         self.availability: Optional[Union[str, "_models.SkuAvailability"]] = None
-        self.shipment_types: Optional[List[Union[str, "_models.ShipmentType"]]] = None
-        self.capabilities: Optional[List["_models.SkuCapability"]] = None
+        self.shipment_types: Optional[list[Union[str, "_models.ShipmentType"]]] = None
+        self.capabilities: Optional[list["_models.SkuCapability"]] = None
 
 
 class DataBoxEdgeSkuList(_serialization.Model):
@@ -1627,8 +1906,31 @@ class DataBoxEdgeSkuList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.DataBoxEdgeSku"]] = None
+        self.value: Optional[list["_models.DataBoxEdgeSku"]] = None
         self.next_link: Optional[str] = None
+
+
+class DataResidency(_serialization.Model):
+    """Wraps data-residency related information for edge-resource and this should be used with ARM
+    layer.
+
+    :ivar type: DataResidencyType enum. Known values are: "GeoZoneReplication" and
+     "ZoneReplication".
+    :vartype type: str or ~azure.mgmt.databoxedge.models.DataResidencyType
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, type: Optional[Union[str, "_models.DataResidencyType"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword type: DataResidencyType enum. Known values are: "GeoZoneReplication" and
+         "ZoneReplication".
+        :paramtype type: str or ~azure.mgmt.databoxedge.models.DataResidencyType
+        """
+        super().__init__(**kwargs)
+        self.type = type
 
 
 class DCAccessCode(_serialization.Model):
@@ -1649,6 +1951,226 @@ class DCAccessCode(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.auth_code = auth_code
+
+
+class DeviceCapacityInfo(ARMBaseModel):
+    """Object for Capturing DeviceCapacityInfo.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to device capacity info.
+    :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :ivar time_stamp: Timestamp of request in UTC.
+    :vartype time_stamp: ~datetime.datetime
+    :ivar cluster_storage_capacity_info: Cluster capacity data for storage resources (CSV).
+    :vartype cluster_storage_capacity_info: ~azure.mgmt.databoxedge.models.ClusterStorageViewData
+    :ivar cluster_compute_capacity_info: Cluster capacity data for compute resources (Memory and
+     GPU).
+    :vartype cluster_compute_capacity_info: ~azure.mgmt.databoxedge.models.ClusterCapacityViewData
+    :ivar node_capacity_infos: The dictionary of individual node names and node capacities in the
+     cluster.
+    :vartype node_capacity_infos: dict[str, ~azure.mgmt.databoxedge.models.HostCapacity]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "time_stamp": {"key": "properties.timeStamp", "type": "iso-8601"},
+        "cluster_storage_capacity_info": {
+            "key": "properties.clusterStorageCapacityInfo",
+            "type": "ClusterStorageViewData",
+        },
+        "cluster_compute_capacity_info": {
+            "key": "properties.clusterComputeCapacityInfo",
+            "type": "ClusterCapacityViewData",
+        },
+        "node_capacity_infos": {"key": "properties.nodeCapacityInfos", "type": "{HostCapacity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        time_stamp: Optional[datetime.datetime] = None,
+        cluster_storage_capacity_info: Optional["_models.ClusterStorageViewData"] = None,
+        cluster_compute_capacity_info: Optional["_models.ClusterCapacityViewData"] = None,
+        node_capacity_infos: Optional[dict[str, "_models.HostCapacity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword time_stamp: Timestamp of request in UTC.
+        :paramtype time_stamp: ~datetime.datetime
+        :keyword cluster_storage_capacity_info: Cluster capacity data for storage resources (CSV).
+        :paramtype cluster_storage_capacity_info: ~azure.mgmt.databoxedge.models.ClusterStorageViewData
+        :keyword cluster_compute_capacity_info: Cluster capacity data for compute resources (Memory and
+         GPU).
+        :paramtype cluster_compute_capacity_info:
+         ~azure.mgmt.databoxedge.models.ClusterCapacityViewData
+        :keyword node_capacity_infos: The dictionary of individual node names and node capacities in
+         the cluster.
+        :paramtype node_capacity_infos: dict[str, ~azure.mgmt.databoxedge.models.HostCapacity]
+        """
+        super().__init__(**kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
+        self.time_stamp = time_stamp
+        self.cluster_storage_capacity_info = cluster_storage_capacity_info
+        self.cluster_compute_capacity_info = cluster_compute_capacity_info
+        self.node_capacity_infos = node_capacity_infos
+
+
+class DeviceCapacityRequestInfo(_serialization.Model):
+    """Object for Capturing DeviceCapacityRequestInfo.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar vm_placement_query: Array containing the sizes of the VMs for checking if its feasible to
+     create them on the appliance. Required.
+    :vartype vm_placement_query: list[list[str]]
+    :ivar vm_placement_results: Array of the VMs of the sizes in VmSizes can be provisioned on the
+     appliance.
+    :vartype vm_placement_results: list[~azure.mgmt.databoxedge.models.VmPlacementRequestResult]
+    """
+
+    _validation = {
+        "vm_placement_query": {"required": True},
+    }
+
+    _attribute_map = {
+        "vm_placement_query": {"key": "properties.vmPlacementQuery", "type": "[[str]]"},
+        "vm_placement_results": {"key": "properties.vmPlacementResults", "type": "[VmPlacementRequestResult]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        vm_placement_query: list[list[str]],
+        vm_placement_results: Optional[list["_models.VmPlacementRequestResult"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword vm_placement_query: Array containing the sizes of the VMs for checking if its feasible
+         to create them on the appliance. Required.
+        :paramtype vm_placement_query: list[list[str]]
+        :keyword vm_placement_results: Array of the VMs of the sizes in VmSizes can be provisioned on
+         the appliance.
+        :paramtype vm_placement_results: list[~azure.mgmt.databoxedge.models.VmPlacementRequestResult]
+        """
+        super().__init__(**kwargs)
+        self.vm_placement_query = vm_placement_query
+        self.vm_placement_results = vm_placement_results
+
+
+class DiagnosticProactiveLogCollectionSettings(ARMBaseModel):
+    """The diagnostic proactive log collection settings of a device.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of
+     DiagnosticProactiveLogCollectionSettings.
+    :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :ivar user_consent: Proactive diagnostic collection consent flag. Required. Known values are:
+     "Enabled" and "Disabled".
+    :vartype user_consent: str or ~azure.mgmt.databoxedge.models.ProactiveDiagnosticsConsent
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "user_consent": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "user_consent": {"key": "properties.userConsent", "type": "str"},
+    }
+
+    def __init__(self, *, user_consent: Union[str, "_models.ProactiveDiagnosticsConsent"], **kwargs: Any) -> None:
+        """
+        :keyword user_consent: Proactive diagnostic collection consent flag. Required. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype user_consent: str or ~azure.mgmt.databoxedge.models.ProactiveDiagnosticsConsent
+        """
+        super().__init__(**kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
+        self.user_consent = user_consent
+
+
+class DiagnosticRemoteSupportSettings(ARMBaseModel):
+    """The remote support settings of a device.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :ivar system_data: Represents resource creation and updation time.
+    :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :ivar remote_support_settings_list: Remote support settings list according to the
+     RemoteApplicationType.
+    :vartype remote_support_settings_list:
+     list[~azure.mgmt.databoxedge.models.RemoteSupportSettings]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "remote_support_settings_list": {
+            "key": "properties.remoteSupportSettingsList",
+            "type": "[RemoteSupportSettings]",
+        },
+    }
+
+    def __init__(
+        self, *, remote_support_settings_list: Optional[list["_models.RemoteSupportSettings"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword remote_support_settings_list: Remote support settings list according to the
+         RemoteApplicationType.
+        :paramtype remote_support_settings_list:
+         list[~azure.mgmt.databoxedge.models.RemoteSupportSettings]
+        """
+        super().__init__(**kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
+        self.remote_support_settings_list = remote_support_settings_list
 
 
 class EdgeProfile(_serialization.Model):
@@ -1743,7 +2265,7 @@ class EdgeProfileSubscription(_serialization.Model):
         location_placement_id: Optional[str] = None,
         quota_id: Optional[str] = None,
         serialized_details: Optional[str] = None,
-        registered_features: Optional[List["_models.SubscriptionRegisteredFeatures"]] = None,
+        registered_features: Optional[list["_models.SubscriptionRegisteredFeatures"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1847,26 +2369,26 @@ class Trigger(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: Trigger in DataBoxEdge Resource.
-    :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar kind: Trigger Kind. Required. Known values are: "FileEvent" and "PeriodicTimerEvent".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.TriggerEventType
+    :ivar system_data: Metadata pertaining to creation and last modification of Trigger.
+    :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "system_data": {"readonly": True},
         "kind": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
         "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     _subtype_map = {"kind": {"FileEvent": "FileEventTrigger", "PeriodicTimerEvent": "PeriodicTimerEventTrigger"}}
@@ -1874,8 +2396,8 @@ class Trigger(ARMBaseModel):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
         self.kind: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class FileEventTrigger(Trigger):
@@ -1891,10 +2413,10 @@ class FileEventTrigger(Trigger):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: Trigger in DataBoxEdge Resource.
-    :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar kind: Trigger Kind. Required. Known values are: "FileEvent" and "PeriodicTimerEvent".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.TriggerEventType
+    :ivar system_data: Metadata pertaining to creation and last modification of Trigger.
+    :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar source_info: File event source details. Required.
     :vartype source_info: ~azure.mgmt.databoxedge.models.FileSourceInfo
     :ivar sink_info: Role sink info. Required.
@@ -1909,8 +2431,8 @@ class FileEventTrigger(Trigger):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "system_data": {"readonly": True},
         "kind": {"required": True},
+        "system_data": {"readonly": True},
         "source_info": {"required": True},
         "sink_info": {"required": True},
         "custom_context_tag": {"max_length": 192},
@@ -1920,8 +2442,8 @@ class FileEventTrigger(Trigger):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
         "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "source_info": {"key": "properties.sourceInfo", "type": "FileSourceInfo"},
         "sink_info": {"key": "properties.sinkInfo", "type": "RoleSinkInfo"},
         "custom_context_tag": {"key": "properties.customContextTag", "type": "str"},
@@ -1981,11 +2503,11 @@ class FileSourceInfo(_serialization.Model):
 class GenerateCertResponse(_serialization.Model):
     """Used in activation key generation flow.
 
-    :ivar public_key: Gets or sets base64 encoded certificate raw data,
-     this is the public part needed to be uploaded to cert vault.
+    :ivar public_key: Gets or sets base64 encoded certificate raw data, this is the public part
+     needed to be uploaded to cert vault.
     :vartype public_key: str
-    :ivar private_key: Gets or sets base64 encoded private part of the certificate,
-     needed to form the activation key.
+    :ivar private_key: Gets or sets base64 encoded private part of the certificate, needed to form
+     the activation key.
     :vartype private_key: str
     :ivar expiry_time_in_utc: Gets or sets expiry time in UTC.
     :vartype expiry_time_in_utc: str
@@ -2006,11 +2528,11 @@ class GenerateCertResponse(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword public_key: Gets or sets base64 encoded certificate raw data,
-         this is the public part needed to be uploaded to cert vault.
+        :keyword public_key: Gets or sets base64 encoded certificate raw data, this is the public part
+         needed to be uploaded to cert vault.
         :paramtype public_key: str
-        :keyword private_key: Gets or sets base64 encoded private part of the certificate,
-         needed to form the activation key.
+        :keyword private_key: Gets or sets base64 encoded private part of the certificate, needed to
+         form the activation key.
         :paramtype private_key: str
         :keyword expiry_time_in_utc: Gets or sets expiry time in UTC.
         :paramtype expiry_time_in_utc: str
@@ -2019,6 +2541,70 @@ class GenerateCertResponse(_serialization.Model):
         self.public_key = public_key
         self.private_key = private_key
         self.expiry_time_in_utc = expiry_time_in_utc
+
+
+class HostCapacity(_serialization.Model):
+    """Host Capacity Data.
+
+    :ivar host_name: The name of the host.
+    :vartype host_name: str
+    :ivar effective_available_memory_mb_on_host: The available memory on the host accounting for VM
+     placement size and any host VM reservations.
+    :vartype effective_available_memory_mb_on_host: int
+    :ivar available_gpu_count: The available amount of GPUs on the host to use after accounting for
+     GPUS used by reservations on the host.
+    :vartype available_gpu_count: int
+    :ivar vm_used_memory: The VM used memory per VmId.
+    :vartype vm_used_memory: dict[str, ~azure.mgmt.databoxedge.models.VmMemory]
+    :ivar gpu_type: The GPU type of the VM.
+    :vartype gpu_type: str
+    :ivar numa_nodes_data: The numa nodes information for Hpn VMs.
+    :vartype numa_nodes_data: list[~azure.mgmt.databoxedge.models.NumaNodeData]
+    """
+
+    _attribute_map = {
+        "host_name": {"key": "hostName", "type": "str"},
+        "effective_available_memory_mb_on_host": {"key": "effectiveAvailableMemoryMbOnHost", "type": "int"},
+        "available_gpu_count": {"key": "availableGpuCount", "type": "int"},
+        "vm_used_memory": {"key": "vmUsedMemory", "type": "{VmMemory}"},
+        "gpu_type": {"key": "gpuType", "type": "str"},
+        "numa_nodes_data": {"key": "numaNodesData", "type": "[NumaNodeData]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        host_name: Optional[str] = None,
+        effective_available_memory_mb_on_host: Optional[int] = None,
+        available_gpu_count: Optional[int] = None,
+        vm_used_memory: Optional[dict[str, "_models.VmMemory"]] = None,
+        gpu_type: Optional[str] = None,
+        numa_nodes_data: Optional[list["_models.NumaNodeData"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword host_name: The name of the host.
+        :paramtype host_name: str
+        :keyword effective_available_memory_mb_on_host: The available memory on the host accounting for
+         VM placement size and any host VM reservations.
+        :paramtype effective_available_memory_mb_on_host: int
+        :keyword available_gpu_count: The available amount of GPUs on the host to use after accounting
+         for GPUS used by reservations on the host.
+        :paramtype available_gpu_count: int
+        :keyword vm_used_memory: The VM used memory per VmId.
+        :paramtype vm_used_memory: dict[str, ~azure.mgmt.databoxedge.models.VmMemory]
+        :keyword gpu_type: The GPU type of the VM.
+        :paramtype gpu_type: str
+        :keyword numa_nodes_data: The numa nodes information for Hpn VMs.
+        :paramtype numa_nodes_data: list[~azure.mgmt.databoxedge.models.NumaNodeData]
+        """
+        super().__init__(**kwargs)
+        self.host_name = host_name
+        self.effective_available_memory_mb_on_host = effective_available_memory_mb_on_host
+        self.available_gpu_count = available_gpu_count
+        self.vm_used_memory = vm_used_memory
+        self.gpu_type = gpu_type
+        self.numa_nodes_data = numa_nodes_data
 
 
 class ImageRepositoryCredential(_serialization.Model):
@@ -2082,7 +2668,7 @@ class IoTAddon(Addon):
     :vartype type: str
     :ivar kind: Addon type. Required. Known values are: "IotEdge" and "ArcForKubernetes".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.AddonType
-    :ivar system_data: Addon type.
+    :ivar system_data: Metadata pertaining to creation and last modification of Addon.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar io_t_device_details: IoT device metadata to which appliance needs to be connected.
      Required.
@@ -2272,7 +2858,7 @@ class IoTRole(Role):
     :ivar kind: Role type. Required. Known values are: "IOT", "ASA", "Functions", "Cognitive",
      "MEC", "CloudEdgeManagement", and "Kubernetes".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.RoleTypes
-    :ivar system_data: Role configured on ASE resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of Role.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar host_platform: Host OS supported by the IoT role. Known values are: "Windows" and
      "Linux".
@@ -2327,7 +2913,7 @@ class IoTRole(Role):
         host_platform: Optional[Union[str, "_models.PlatformType"]] = None,
         io_t_device_details: Optional["_models.IoTDeviceInfo"] = None,
         io_t_edge_device_details: Optional["_models.IoTDeviceInfo"] = None,
-        share_mappings: Optional[List["_models.MountPointMap"]] = None,
+        share_mappings: Optional[list["_models.MountPointMap"]] = None,
         io_t_edge_agent_info: Optional["_models.IoTEdgeAgentInfo"] = None,
         compute_resource: Optional["_models.ComputeResource"] = None,
         role_status: Optional[Union[str, "_models.RoleStatus"]] = None,
@@ -2568,7 +3154,7 @@ class JobErrorDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.error_details: Optional[List["_models.JobErrorItem"]] = None
+        self.error_details: Optional[list["_models.JobErrorItem"]] = None
         self.code: Optional[str] = None
         self.message: Optional[str] = None
 
@@ -2601,7 +3187,7 @@ class JobErrorItem(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.recommendations: Optional[List[str]] = None
+        self.recommendations: Optional[list[str]] = None
         self.code: Optional[str] = None
         self.message: Optional[str] = None
 
@@ -2640,7 +3226,7 @@ class KubernetesClusterInfo(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.etcd_info: Optional["_models.EtcdInfo"] = None
-        self.nodes: Optional[List["_models.NodeInfo"]] = None
+        self.nodes: Optional[list["_models.NodeInfo"]] = None
         self.version = version
 
 
@@ -2675,7 +3261,22 @@ class KubernetesIPConfiguration(_serialization.Model):
 
 
 class KubernetesRole(Role):
-    """Kubernetes role.
+    """The limited preview of Kubernetes Cluster Management from the Azure supports:
+
+
+    #. Using a simple turn-key option in Azure Portal, deploy a Kubernetes cluster on your Azure
+    Stack Edge device.
+    #. Configure Kubernetes cluster running on your device with Arc enabled Kubernetes with a click
+    of a button in the Azure Portal.
+       Azure Arc enables organizations to view, manage, and govern their on-premises Kubernetes
+    clusters using the Azure Portal, command line tools, and APIs.
+    #. Easily configure Persistent Volumes using SMB and NFS shares for storing container data.
+       For more information, refer to the document here:
+    https://databoxupdatepackages.blob.core.windows.net/documentation/Microsoft-Azure-Stack-Edge-K8-Cloud-Management-20210323.pdf
+       Or Demo:
+    https://databoxupdatepackages.blob.core.windows.net/documentation/Microsoft-Azure-Stack-Edge-K8S-Cloud-Management-20210323.mp4
+       By using this feature, you agree to the preview legal terms. See the
+    https://azure.microsoft.com/en-us/support/legal/preview-supplemental-terms/.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2690,7 +3291,7 @@ class KubernetesRole(Role):
     :ivar kind: Role type. Required. Known values are: "IOT", "ASA", "Functions", "Cognitive",
      "MEC", "CloudEdgeManagement", and "Kubernetes".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.RoleTypes
-    :ivar system_data: Role configured on ASE resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of Role.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar host_platform: Host OS supported by the Kubernetes role. Known values are: "Windows" and
      "Linux".
@@ -2894,13 +3495,13 @@ class KubernetesRoleStorage(_serialization.Model):
         "endpoints": {"key": "endpoints", "type": "[MountPointMap]"},
     }
 
-    def __init__(self, *, endpoints: Optional[List["_models.MountPointMap"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, endpoints: Optional[list["_models.MountPointMap"]] = None, **kwargs: Any) -> None:
         """
         :keyword endpoints: Mount points of shares in role(s).
         :paramtype endpoints: list[~azure.mgmt.databoxedge.models.MountPointMap]
         """
         super().__init__(**kwargs)
-        self.storage_classes: Optional[List["_models.KubernetesRoleStorageClassInfo"]] = None
+        self.storage_classes: Optional[list["_models.KubernetesRoleStorageClassInfo"]] = None
         self.endpoints = endpoints
 
 
@@ -2947,6 +3548,8 @@ class LoadBalancerConfig(_serialization.Model):
     :vartype type: str
     :ivar version: Load balancer version.
     :vartype version: str
+    :ivar ip_range: Load balancer ipconfig.
+    :vartype ip_range: list[str]
     """
 
     _validation = {
@@ -2957,13 +3560,18 @@ class LoadBalancerConfig(_serialization.Model):
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
         "version": {"key": "version", "type": "str"},
+        "ip_range": {"key": "ipRange", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, ip_range: Optional[list[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword ip_range: Load balancer ipconfig.
+        :paramtype ip_range: list[str]
+        """
         super().__init__(**kwargs)
         self.type: Optional[str] = None
         self.version: Optional[str] = None
+        self.ip_range = ip_range
 
 
 class MECRole(Role):
@@ -2982,7 +3590,7 @@ class MECRole(Role):
     :ivar kind: Role type. Required. Known values are: "IOT", "ASA", "Functions", "Cognitive",
      "MEC", "CloudEdgeManagement", and "Kubernetes".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.RoleTypes
-    :ivar system_data: Role configured on ASE resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of Role.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar connection_string: Activation key of the MEC.
     :vartype connection_string: ~azure.mgmt.databoxedge.models.AsymmetricEncryptedSecret
@@ -3073,7 +3681,7 @@ class MetricConfiguration(_serialization.Model):
         self,
         *,
         resource_id: str,
-        counter_sets: List["_models.MetricCounterSet"],
+        counter_sets: list["_models.MetricCounterSet"],
         mdm_account: Optional[str] = None,
         metric_name_space: Optional[str] = None,
         **kwargs: Any
@@ -3127,8 +3735,8 @@ class MetricCounter(_serialization.Model):
         *,
         name: str,
         instance: Optional[str] = None,
-        dimension_filter: Optional[List["_models.MetricDimension"]] = None,
-        additional_dimensions: Optional[List["_models.MetricDimension"]] = None,
+        dimension_filter: Optional[list["_models.MetricDimension"]] = None,
+        additional_dimensions: Optional[list["_models.MetricDimension"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3165,7 +3773,7 @@ class MetricCounterSet(_serialization.Model):
         "counters": {"key": "counters", "type": "[MetricCounter]"},
     }
 
-    def __init__(self, *, counters: List["_models.MetricCounter"], **kwargs: Any) -> None:
+    def __init__(self, *, counters: list["_models.MetricCounter"], **kwargs: Any) -> None:
         """
         :keyword counters: The counters that should be collected in this set. Required.
         :paramtype counters: list[~azure.mgmt.databoxedge.models.MetricCounter]
@@ -3298,12 +3906,12 @@ class MetricSpecificationV1(_serialization.Model):
         display_description: Optional[str] = None,
         unit: Optional[Union[str, "_models.MetricUnit"]] = None,
         aggregation_type: Optional[Union[str, "_models.MetricAggregationType"]] = None,
-        dimensions: Optional[List["_models.MetricDimensionV1"]] = None,
+        dimensions: Optional[list["_models.MetricDimensionV1"]] = None,
         fill_gap_with_zero: Optional[bool] = None,
         category: Optional[Union[str, "_models.MetricCategory"]] = None,
         resource_id_dimension_name_override: Optional[str] = None,
-        supported_time_grain_types: Optional[List[Union[str, "_models.TimeGrain"]]] = None,
-        supported_aggregation_types: Optional[List[Union[str, "_models.MetricAggregationType"]]] = None,
+        supported_time_grain_types: Optional[list[Union[str, "_models.TimeGrain"]]] = None,
+        supported_aggregation_types: Optional[list[Union[str, "_models.MetricAggregationType"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3360,7 +3968,8 @@ class MonitoringMetricConfiguration(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: MonitoringConfiguration on ASE device.
+    :ivar system_data: Metadata pertaining to creation and last modification of
+     MonitoringConfiguration.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar metric_configurations: The metrics configuration details. Required.
     :vartype metric_configurations: list[~azure.mgmt.databoxedge.models.MetricConfiguration]
@@ -3382,7 +3991,7 @@ class MonitoringMetricConfiguration(ARMBaseModel):
         "metric_configurations": {"key": "properties.metricConfigurations", "type": "[MetricConfiguration]"},
     }
 
-    def __init__(self, *, metric_configurations: List["_models.MetricConfiguration"], **kwargs: Any) -> None:
+    def __init__(self, *, metric_configurations: list["_models.MetricConfiguration"], **kwargs: Any) -> None:
         """
         :keyword metric_configurations: The metrics configuration details. Required.
         :paramtype metric_configurations: list[~azure.mgmt.databoxedge.models.MetricConfiguration]
@@ -3416,7 +4025,7 @@ class MonitoringMetricConfigurationList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.MonitoringMetricConfiguration"]] = None
+        self.value: Optional[list["_models.MonitoringMetricConfiguration"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -3573,7 +4182,7 @@ class NetworkAdapter(_serialization.Model):
         self.ipv4_configuration: Optional["_models.Ipv4Config"] = None
         self.ipv6_configuration: Optional["_models.Ipv6Config"] = None
         self.ipv6_link_local_address: Optional[str] = None
-        self.dns_servers: Optional[List[str]] = None
+        self.dns_servers: Optional[list[str]] = None
 
 
 class NetworkAdapterPosition(_serialization.Model):
@@ -3615,7 +4224,7 @@ class NetworkSettings(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: NetworkSettings on ASE device.
+    :ivar system_data: Metadata pertaining to creation and last modification of NetworkSettings.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar network_adapters: The network adapter list on the device.
     :vartype network_adapters: list[~azure.mgmt.databoxedge.models.NetworkAdapter]
@@ -3641,14 +4250,13 @@ class NetworkSettings(ARMBaseModel):
         """ """
         super().__init__(**kwargs)
         self.system_data: Optional["_models.SystemData"] = None
-        self.network_adapters: Optional[List["_models.NetworkAdapter"]] = None
+        self.network_adapters: Optional[list["_models.NetworkAdapter"]] = None
 
 
 class Node(ARMBaseModel):
-    """Represents a single node in a Data box Edge/Gateway device
-    Gateway devices, standalone Edge devices and a single node cluster Edge device will all have 1
-    node
-    Multi-node Edge devices will have more than 1 nodes.
+    """Represents a single node in a Data box Edge/Gateway device Gateway devices, standalone Edge
+    devices and a single node cluster Edge device will all have 1 node Multi-node Edge devices will
+    have more than 1 nodes.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3739,7 +4347,7 @@ class NodeInfo(_serialization.Model):
     }
 
     def __init__(
-        self, *, ip_configuration: Optional[List["_models.KubernetesIPConfiguration"]] = None, **kwargs: Any
+        self, *, ip_configuration: Optional[list["_models.KubernetesIPConfiguration"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword ip_configuration: IP Configuration of the Kubernetes node.
@@ -3764,6 +4372,7 @@ class NodeList(_serialization.Model):
 
     _validation = {
         "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3771,14 +4380,79 @@ class NodeList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value: Optional[list["_models.Node"]] = None
+        self.next_link: Optional[str] = None
+
+
+class NumaNodeData(_serialization.Model):
+    """NUMA node data.
+
+    :ivar numa_node_index: The NUMA node index.
+    :vartype numa_node_index: int
+    :ivar total_memory_in_mb: The total memory on the NUMA node.
+    :vartype total_memory_in_mb: int
+    :ivar logical_core_count_per_core: The logical cores per core count.
+    :vartype logical_core_count_per_core: int
+    :ivar effective_available_memory_in_mb: The effective available memory on the NUMA node in MB.
+    :vartype effective_available_memory_in_mb: int
+    :ivar free_v_cpu_indexes_for_hpn: The free VCPU indices for the Hpn VMs.
+    :vartype free_v_cpu_indexes_for_hpn: list[int]
+    :ivar v_cpu_indexes_for_hpn: The VCPU indices for Hpn VMs.
+    :vartype v_cpu_indexes_for_hpn: list[int]
+    :ivar v_cpu_indexes_for_root: The VCPU indices for the root.
+    :vartype v_cpu_indexes_for_root: list[int]
+    """
+
+    _attribute_map = {
+        "numa_node_index": {"key": "numaNodeIndex", "type": "int"},
+        "total_memory_in_mb": {"key": "totalMemoryInMb", "type": "int"},
+        "logical_core_count_per_core": {"key": "logicalCoreCountPerCore", "type": "int"},
+        "effective_available_memory_in_mb": {"key": "effectiveAvailableMemoryInMb", "type": "int"},
+        "free_v_cpu_indexes_for_hpn": {"key": "freeVCpuIndexesForHpn", "type": "[int]"},
+        "v_cpu_indexes_for_hpn": {"key": "vCpuIndexesForHpn", "type": "[int]"},
+        "v_cpu_indexes_for_root": {"key": "vCpuIndexesForRoot", "type": "[int]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        numa_node_index: Optional[int] = None,
+        total_memory_in_mb: Optional[int] = None,
+        logical_core_count_per_core: Optional[int] = None,
+        effective_available_memory_in_mb: Optional[int] = None,
+        free_v_cpu_indexes_for_hpn: Optional[list[int]] = None,
+        v_cpu_indexes_for_hpn: Optional[list[int]] = None,
+        v_cpu_indexes_for_root: Optional[list[int]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword next_link: Link to the next set of results.
-        :paramtype next_link: str
+        :keyword numa_node_index: The NUMA node index.
+        :paramtype numa_node_index: int
+        :keyword total_memory_in_mb: The total memory on the NUMA node.
+        :paramtype total_memory_in_mb: int
+        :keyword logical_core_count_per_core: The logical cores per core count.
+        :paramtype logical_core_count_per_core: int
+        :keyword effective_available_memory_in_mb: The effective available memory on the NUMA node in
+         MB.
+        :paramtype effective_available_memory_in_mb: int
+        :keyword free_v_cpu_indexes_for_hpn: The free VCPU indices for the Hpn VMs.
+        :paramtype free_v_cpu_indexes_for_hpn: list[int]
+        :keyword v_cpu_indexes_for_hpn: The VCPU indices for Hpn VMs.
+        :paramtype v_cpu_indexes_for_hpn: list[int]
+        :keyword v_cpu_indexes_for_root: The VCPU indices for the root.
+        :paramtype v_cpu_indexes_for_root: list[int]
         """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Node"]] = None
-        self.next_link = next_link
+        self.numa_node_index = numa_node_index
+        self.total_memory_in_mb = total_memory_in_mb
+        self.logical_core_count_per_core = logical_core_count_per_core
+        self.effective_available_memory_in_mb = effective_available_memory_in_mb
+        self.free_v_cpu_indexes_for_hpn = free_v_cpu_indexes_for_hpn
+        self.v_cpu_indexes_for_hpn = v_cpu_indexes_for_hpn
+        self.v_cpu_indexes_for_root = v_cpu_indexes_for_root
 
 
 class Operation(_serialization.Model):
@@ -3786,21 +4460,21 @@ class Operation(_serialization.Model):
 
     :ivar name: Name of the operation.
     :vartype name: str
+    :ivar is_data_action: Is data action.
+    :vartype is_data_action: bool
     :ivar display: Properties displayed for the operation.
     :vartype display: ~azure.mgmt.databoxedge.models.OperationDisplay
     :ivar origin: Origin of the operation.
     :vartype origin: str
-    :ivar is_data_action: Indicates whether the operation is a data action.
-    :vartype is_data_action: bool
     :ivar service_specification: Service specification.
     :vartype service_specification: ~azure.mgmt.databoxedge.models.ServiceSpecification
     """
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
         "display": {"key": "display", "type": "OperationDisplay"},
         "origin": {"key": "origin", "type": "str"},
-        "is_data_action": {"key": "isDataAction", "type": "bool"},
         "service_specification": {"key": "properties.serviceSpecification", "type": "ServiceSpecification"},
     }
 
@@ -3808,29 +4482,29 @@ class Operation(_serialization.Model):
         self,
         *,
         name: Optional[str] = None,
+        is_data_action: Optional[bool] = None,
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        is_data_action: Optional[bool] = None,
         service_specification: Optional["_models.ServiceSpecification"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
+        :keyword is_data_action: Is data action.
+        :paramtype is_data_action: bool
         :keyword display: Properties displayed for the operation.
         :paramtype display: ~azure.mgmt.databoxedge.models.OperationDisplay
         :keyword origin: Origin of the operation.
         :paramtype origin: str
-        :keyword is_data_action: Indicates whether the operation is a data action.
-        :paramtype is_data_action: bool
         :keyword service_specification: Service specification.
         :paramtype service_specification: ~azure.mgmt.databoxedge.models.ServiceSpecification
         """
         super().__init__(**kwargs)
         self.name = name
+        self.is_data_action = is_data_action
         self.display = display
         self.origin = origin
-        self.is_data_action = is_data_action
         self.service_specification = service_specification
 
 
@@ -3900,7 +4574,7 @@ class OperationsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Operation"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Operation"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The value. Required.
         :paramtype value: list[~azure.mgmt.databoxedge.models.Operation]
@@ -3923,8 +4597,12 @@ class Order(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: Order configured on ASE resource.
+    :ivar kind: It specify the order api version.
+    :vartype kind: str
+    :ivar system_data: Metadata pertaining to creation and last modification of Order.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :ivar order_id: It specify the order resource id.
+    :vartype order_id: str
     :ivar contact_information: The contact details.
     :vartype contact_information: ~azure.mgmt.databoxedge.models.ContactDetails
     :ivar shipping_address: The shipping address.
@@ -3950,7 +4628,9 @@ class Order(ARMBaseModel):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "kind": {"readonly": True},
         "system_data": {"readonly": True},
+        "order_id": {"readonly": True},
         "current_status": {"readonly": True},
         "order_history": {"readonly": True},
         "serial_number": {"readonly": True},
@@ -3962,7 +4642,9 @@ class Order(ARMBaseModel):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "order_id": {"key": "properties.orderId", "type": "str"},
         "contact_information": {"key": "properties.contactInformation", "type": "ContactDetails"},
         "shipping_address": {"key": "properties.shippingAddress", "type": "Address"},
         "current_status": {"key": "properties.currentStatus", "type": "OrderStatus"},
@@ -3991,14 +4673,16 @@ class Order(ARMBaseModel):
         :paramtype shipment_type: str or ~azure.mgmt.databoxedge.models.ShipmentType
         """
         super().__init__(**kwargs)
+        self.kind: Optional[str] = None
         self.system_data: Optional["_models.SystemData"] = None
+        self.order_id: Optional[str] = None
         self.contact_information = contact_information
         self.shipping_address = shipping_address
         self.current_status: Optional["_models.OrderStatus"] = None
-        self.order_history: Optional[List["_models.OrderStatus"]] = None
+        self.order_history: Optional[list["_models.OrderStatus"]] = None
         self.serial_number: Optional[str] = None
-        self.delivery_tracking_info: Optional[List["_models.TrackingInfo"]] = None
-        self.return_tracking_info: Optional[List["_models.TrackingInfo"]] = None
+        self.delivery_tracking_info: Optional[list["_models.TrackingInfo"]] = None
+        self.return_tracking_info: Optional[list["_models.TrackingInfo"]] = None
         self.shipment_type = shipment_type
 
 
@@ -4026,7 +4710,7 @@ class OrderList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Order"]] = None
+        self.value: Optional[list["_models.Order"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -4049,8 +4733,8 @@ class OrderStatus(_serialization.Model):
     :vartype comments: str
     :ivar tracking_information: Tracking information related to the state in the ordering flow.
     :vartype tracking_information: ~azure.mgmt.databoxedge.models.TrackingInfo
-    :ivar additional_order_details: Dictionary to hold generic information which is not stored
-     by the already existing properties.
+    :ivar additional_order_details: Dictionary to hold generic information which is not stored by
+     the already existing properties.
     :vartype additional_order_details: dict[str, str]
     """
 
@@ -4087,7 +4771,7 @@ class OrderStatus(_serialization.Model):
         self.update_date_time: Optional[datetime.datetime] = None
         self.comments = comments
         self.tracking_information: Optional["_models.TrackingInfo"] = None
-        self.additional_order_details: Optional[Dict[str, str]] = None
+        self.additional_order_details: Optional[dict[str, str]] = None
 
 
 class PeriodicTimerEventTrigger(Trigger):
@@ -4103,10 +4787,10 @@ class PeriodicTimerEventTrigger(Trigger):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: Trigger in DataBoxEdge Resource.
-    :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar kind: Trigger Kind. Required. Known values are: "FileEvent" and "PeriodicTimerEvent".
     :vartype kind: str or ~azure.mgmt.databoxedge.models.TriggerEventType
+    :ivar system_data: Metadata pertaining to creation and last modification of Trigger.
+    :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar source_info: Periodic timer details. Required.
     :vartype source_info: ~azure.mgmt.databoxedge.models.PeriodicTimerSourceInfo
     :ivar sink_info: Role Sink information. Required.
@@ -4121,8 +4805,8 @@ class PeriodicTimerEventTrigger(Trigger):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "system_data": {"readonly": True},
         "kind": {"required": True},
+        "system_data": {"readonly": True},
         "source_info": {"required": True},
         "sink_info": {"required": True},
         "custom_context_tag": {"max_length": 192},
@@ -4132,8 +4816,8 @@ class PeriodicTimerEventTrigger(Trigger):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
         "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "source_info": {"key": "properties.sourceInfo", "type": "PeriodicTimerSourceInfo"},
         "sink_info": {"key": "properties.sinkInfo", "type": "RoleSinkInfo"},
         "custom_context_tag": {"key": "properties.customContextTag", "type": "str"},
@@ -4271,6 +4955,49 @@ class RefreshDetails(_serialization.Model):
         self.last_job = last_job
 
 
+class RemoteSupportSettings(_serialization.Model):
+    """RemoteApplicationType for which remote support settings is being modified.
+
+    :ivar remote_application_type: Remote application type. Known values are: "Powershell", "WAC",
+     "LocalUI", and "AllApplications".
+    :vartype remote_application_type: str or ~azure.mgmt.databoxedge.models.RemoteApplicationType
+    :ivar access_level: Access level allowed for this remote application type. Known values are:
+     "None", "ReadOnly", "ReadWrite", and "FullAccess".
+    :vartype access_level: str or ~azure.mgmt.databoxedge.models.AccessLevel
+    :ivar expiration_time_stamp_in_utc: Expiration time stamp.
+    :vartype expiration_time_stamp_in_utc: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "remote_application_type": {"key": "remoteApplicationType", "type": "str"},
+        "access_level": {"key": "accessLevel", "type": "str"},
+        "expiration_time_stamp_in_utc": {"key": "expirationTimeStampInUTC", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        remote_application_type: Optional[Union[str, "_models.RemoteApplicationType"]] = None,
+        access_level: Optional[Union[str, "_models.AccessLevel"]] = None,
+        expiration_time_stamp_in_utc: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword remote_application_type: Remote application type. Known values are: "Powershell",
+         "WAC", "LocalUI", and "AllApplications".
+        :paramtype remote_application_type: str or ~azure.mgmt.databoxedge.models.RemoteApplicationType
+        :keyword access_level: Access level allowed for this remote application type. Known values are:
+         "None", "ReadOnly", "ReadWrite", and "FullAccess".
+        :paramtype access_level: str or ~azure.mgmt.databoxedge.models.AccessLevel
+        :keyword expiration_time_stamp_in_utc: Expiration time stamp.
+        :paramtype expiration_time_stamp_in_utc: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.remote_application_type = remote_application_type
+        self.access_level = access_level
+        self.expiration_time_stamp_in_utc = expiration_time_stamp_in_utc
+
+
 class ResourceIdentity(_serialization.Model):
     """Msi identity details of the resource.
 
@@ -4342,34 +5069,6 @@ class ResourceMoveDetails(_serialization.Model):
         self.operation_in_progress_lock_timeout_in_utc = operation_in_progress_lock_timeout_in_utc
 
 
-class ResourceTypeSku(_serialization.Model):
-    """Resource type Sku object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar resource_type: The resource type.
-    :vartype resource_type: str
-    :ivar skus: The skus.
-    :vartype skus: list[~azure.mgmt.databoxedge.models.SkuInformation]
-    """
-
-    _validation = {
-        "resource_type": {"readonly": True},
-        "skus": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "resource_type": {"key": "resourceType", "type": "str"},
-        "skus": {"key": "skus", "type": "[SkuInformation]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.resource_type: Optional[str] = None
-        self.skus: Optional[List["_models.SkuInformation"]] = None
-
-
 class RoleList(_serialization.Model):
     """Collection of all the roles on the Data Box Edge device.
 
@@ -4394,7 +5093,7 @@ class RoleList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Role"]] = None
+        self.value: Optional[list["_models.Role"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -4516,7 +5215,7 @@ class ServiceSpecification(_serialization.Model):
     }
 
     def __init__(
-        self, *, metric_specifications: Optional[List["_models.MetricSpecificationV1"]] = None, **kwargs: Any
+        self, *, metric_specifications: Optional[list["_models.MetricSpecificationV1"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword metric_specifications: Metric specification as defined by shoebox.
@@ -4539,7 +5238,7 @@ class Share(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: Share on ASE device.
+    :ivar system_data: Metadata pertaining to creation and last modification of Share.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar description: Description for the share.
     :vartype description: str
@@ -4604,8 +5303,8 @@ class Share(ARMBaseModel):
         access_protocol: Union[str, "_models.ShareAccessProtocol"],
         description: Optional[str] = None,
         azure_container_info: Optional["_models.AzureContainerInfo"] = None,
-        user_access_rights: Optional[List["_models.UserAccessRight"]] = None,
-        client_access_rights: Optional[List["_models.ClientAccessRight"]] = None,
+        user_access_rights: Optional[list["_models.UserAccessRight"]] = None,
+        client_access_rights: Optional[list["_models.ClientAccessRight"]] = None,
         refresh_details: Optional["_models.RefreshDetails"] = None,
         data_policy: Optional[Union[str, "_models.DataPolicy"]] = None,
         **kwargs: Any
@@ -4645,7 +5344,7 @@ class Share(ARMBaseModel):
         self.user_access_rights = user_access_rights
         self.client_access_rights = client_access_rights
         self.refresh_details = refresh_details
-        self.share_mappings: Optional[List["_models.MountPointMap"]] = None
+        self.share_mappings: Optional[list["_models.MountPointMap"]] = None
         self.data_policy = data_policy
 
 
@@ -4709,7 +5408,7 @@ class ShareList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Share"]] = None
+        self.value: Optional[list["_models.Share"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -4720,7 +5419,8 @@ class Sku(_serialization.Model):
      "TEA_1Node_Heater", "TEA_1Node_UPS_Heater", "TEA_4Node_Heater", "TEA_4Node_UPS_Heater", "TMA",
      "TDC", "TCA_Small", "GPU", "TCA_Large", "EdgeP_Base", "EdgeP_High", "EdgePR_Base",
      "EdgePR_Base_UPS", "EP2_64_1VPU_W", "EP2_128_1T4_Mx1_W", "EP2_256_2T4_W", "EdgeMR_Mini",
-     "RCA_Small", "RCA_Large", "RDC", and "Management".
+     "RCA_Small", "RCA_Large", "RDC", "Management", "EP2_64_Mx1_W", "EP2_128_GPU1_Mx1_W",
+     "EP2_256_GPU2_Mx1", and "EdgeMR_TCP".
     :vartype name: str or ~azure.mgmt.databoxedge.models.SkuName
     :ivar tier: The SKU tier. This is based on the SKU name. "Standard"
     :vartype tier: str or ~azure.mgmt.databoxedge.models.SkuTier
@@ -4743,7 +5443,8 @@ class Sku(_serialization.Model):
          "TEA_1Node_Heater", "TEA_1Node_UPS_Heater", "TEA_4Node_Heater", "TEA_4Node_UPS_Heater", "TMA",
          "TDC", "TCA_Small", "GPU", "TCA_Large", "EdgeP_Base", "EdgeP_High", "EdgePR_Base",
          "EdgePR_Base_UPS", "EP2_64_1VPU_W", "EP2_128_1T4_Mx1_W", "EP2_256_2T4_W", "EdgeMR_Mini",
-         "RCA_Small", "RCA_Large", "RDC", and "Management".
+         "RCA_Small", "RCA_Large", "RDC", "Management", "EP2_64_Mx1_W", "EP2_128_GPU1_Mx1_W",
+         "EP2_256_GPU2_Mx1", and "EdgeMR_TCP".
         :paramtype name: str or ~azure.mgmt.databoxedge.models.SkuName
         :keyword tier: The SKU tier. This is based on the SKU name. "Standard"
         :paramtype tier: str or ~azure.mgmt.databoxedge.models.SkuTier
@@ -4814,97 +5515,6 @@ class SkuCost(_serialization.Model):
         self.extended_unit: Optional[str] = None
 
 
-class SkuInformation(_serialization.Model):
-    """Sku information.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The sku name.
-    :vartype name: str
-    :ivar tier: The sku tier.
-    :vartype tier: str
-    :ivar kind: The sku kind.
-    :vartype kind: str
-    :ivar family: The Sku family.
-    :vartype family: str
-    :ivar costs: The pricing info of the Sku.
-    :vartype costs: list[~azure.mgmt.databoxedge.models.SkuCost]
-    :ivar locations: The locations where Sku is available.
-    :vartype locations: list[str]
-    :ivar location_info: The locations where Sku is available with zones and sites info.
-    :vartype location_info: list[~azure.mgmt.databoxedge.models.SkuLocationInfo]
-    :ivar required_quota_ids: The required quotaIds for the sku to be available.
-    :vartype required_quota_ids: list[str]
-    :ivar required_features: The required features for the sku to be available.
-    :vartype required_features: list[str]
-    """
-
-    _validation = {
-        "name": {"readonly": True},
-        "tier": {"readonly": True},
-        "kind": {"readonly": True},
-        "family": {"readonly": True},
-        "costs": {"readonly": True},
-        "locations": {"readonly": True},
-        "location_info": {"readonly": True},
-        "required_quota_ids": {"readonly": True},
-        "required_features": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "tier": {"key": "tier", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "family": {"key": "family", "type": "str"},
-        "costs": {"key": "costs", "type": "[SkuCost]"},
-        "locations": {"key": "locations", "type": "[str]"},
-        "location_info": {"key": "locationInfo", "type": "[SkuLocationInfo]"},
-        "required_quota_ids": {"key": "requiredQuotaIds", "type": "[str]"},
-        "required_features": {"key": "requiredFeatures", "type": "[str]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.name: Optional[str] = None
-        self.tier: Optional[str] = None
-        self.kind: Optional[str] = None
-        self.family: Optional[str] = None
-        self.costs: Optional[List["_models.SkuCost"]] = None
-        self.locations: Optional[List[str]] = None
-        self.location_info: Optional[List["_models.SkuLocationInfo"]] = None
-        self.required_quota_ids: Optional[List[str]] = None
-        self.required_features: Optional[List[str]] = None
-
-
-class SkuInformationList(_serialization.Model):
-    """List of SKU Information objects.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: List of ResourceTypeSku objects.
-    :vartype value: list[~azure.mgmt.databoxedge.models.ResourceTypeSku]
-    :ivar next_link: Links to the next set of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ResourceTypeSku]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value: Optional[List["_models.ResourceTypeSku"]] = None
-        self.next_link: Optional[str] = None
-
-
 class SkuLocationInfo(_serialization.Model):
     """The location info.
 
@@ -4934,8 +5544,8 @@ class SkuLocationInfo(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.location: Optional[str] = None
-        self.zones: Optional[List[str]] = None
-        self.sites: Optional[List[str]] = None
+        self.zones: Optional[list[str]] = None
+        self.sites: Optional[list[str]] = None
 
 
 class StorageAccount(ARMBaseModel):
@@ -4951,7 +5561,7 @@ class StorageAccount(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: StorageAccount object on ASE device.
+    :ivar system_data: Metadata pertaining to creation and last modification of StorageAccount.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar description: Description for the storage Account.
     :vartype description: str
@@ -5037,7 +5647,8 @@ class StorageAccountCredential(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: StorageAccountCredential object.
+    :ivar system_data: Metadata pertaining to creation and last modification of
+     StorageAccountCredential.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar alias: Alias for the storage account. Required.
     :vartype alias: str
@@ -5155,7 +5766,7 @@ class StorageAccountCredentialList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.StorageAccountCredential"]] = None
+        self.value: Optional[list["_models.StorageAccountCredential"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -5183,7 +5794,7 @@ class StorageAccountList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.StorageAccount"]] = None
+        self.value: Optional[list["_models.StorageAccount"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -5250,7 +5861,7 @@ class SystemData(_serialization.Model):
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.databoxedge.models.CreatedByType
-    :ivar last_modified_at: The type of identity that last modified the resource.
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
@@ -5287,7 +5898,7 @@ class SystemData(_serialization.Model):
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
          values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.databoxedge.models.CreatedByType
-        :keyword last_modified_at: The type of identity that last modified the resource.
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
         super().__init__(**kwargs)
@@ -5369,8 +5980,68 @@ class TriggerList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Trigger"]] = None
+        self.value: Optional[list["_models.Trigger"]] = None
         self.next_link: Optional[str] = None
+
+
+class TriggerSupportPackageRequest(ARMBaseModel):
+    """The request object for trigger support package.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :ivar minimum_time_stamp: MinimumTimeStamp from where logs need to be collected.
+    :vartype minimum_time_stamp: ~datetime.datetime
+    :ivar maximum_time_stamp: Start of the timespan of the log collection.
+    :vartype maximum_time_stamp: ~datetime.datetime
+    :ivar include: Type of files, which need to be included in the logs This will contain the type
+     of logs (Default/DefaultWithDumps/None/All/DefaultWithArchived) or a comma separated list of
+     log types that are required.
+    :vartype include: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "minimum_time_stamp": {"key": "properties.minimumTimeStamp", "type": "iso-8601"},
+        "maximum_time_stamp": {"key": "properties.maximumTimeStamp", "type": "iso-8601"},
+        "include": {"key": "properties.include", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        minimum_time_stamp: Optional[datetime.datetime] = None,
+        maximum_time_stamp: Optional[datetime.datetime] = None,
+        include: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword minimum_time_stamp: MinimumTimeStamp from where logs need to be collected.
+        :paramtype minimum_time_stamp: ~datetime.datetime
+        :keyword maximum_time_stamp: Start of the timespan of the log collection.
+        :paramtype maximum_time_stamp: ~datetime.datetime
+        :keyword include: Type of files, which need to be included in the logs This will contain the
+         type of logs (Default/DefaultWithDumps/None/All/DefaultWithArchived) or a comma separated list
+         of log types that are required.
+        :paramtype include: str
+        """
+        super().__init__(**kwargs)
+        self.minimum_time_stamp = minimum_time_stamp
+        self.maximum_time_stamp = maximum_time_stamp
+        self.include = include
 
 
 class UpdateDetails(_serialization.Model):
@@ -5385,11 +6056,16 @@ class UpdateDetails(_serialization.Model):
     :vartype update_type: str or ~azure.mgmt.databoxedge.models.UpdateType
     :ivar target_version: Target Version number.
     :vartype target_version: str
+    :ivar friendly_version_number: Friendly Version Number.
+    :vartype friendly_version_number: str
     :ivar estimated_install_time_in_mins: Estimated Install Time for the update.
     :vartype estimated_install_time_in_mins: int
     :ivar reboot_behavior: Indicates if updates are available and at least one of the updates needs
      a reboot. Known values are: "NeverReboots", "RequiresReboot", and "RequestReboot".
     :vartype reboot_behavior: str or ~azure.mgmt.databoxedge.models.InstallRebootBehavior
+    :ivar installation_impact: Impact of Installing an updateType. Known values are: "None",
+     "DeviceRebooted", and "KubernetesWorkloadsDown".
+    :vartype installation_impact: str or ~azure.mgmt.databoxedge.models.InstallationImpact
     :ivar status: Status of the update. Known values are: "DownloadPending", "DownloadStarted",
      "DownloadCompleted", "InstallStarted", and "InstallCompleted".
     :vartype status: str or ~azure.mgmt.databoxedge.models.UpdateStatus
@@ -5400,8 +6076,10 @@ class UpdateDetails(_serialization.Model):
         "update_size": {"key": "updateSize", "type": "float"},
         "update_type": {"key": "updateType", "type": "str"},
         "target_version": {"key": "targetVersion", "type": "str"},
+        "friendly_version_number": {"key": "friendlyVersionNumber", "type": "str"},
         "estimated_install_time_in_mins": {"key": "estimatedInstallTimeInMins", "type": "int"},
         "reboot_behavior": {"key": "rebootBehavior", "type": "str"},
+        "installation_impact": {"key": "installationImpact", "type": "str"},
         "status": {"key": "status", "type": "str"},
     }
 
@@ -5412,8 +6090,10 @@ class UpdateDetails(_serialization.Model):
         update_size: Optional[float] = None,
         update_type: Optional[Union[str, "_models.UpdateType"]] = None,
         target_version: Optional[str] = None,
+        friendly_version_number: Optional[str] = None,
         estimated_install_time_in_mins: Optional[int] = None,
         reboot_behavior: Optional[Union[str, "_models.InstallRebootBehavior"]] = None,
+        installation_impact: Optional[Union[str, "_models.InstallationImpact"]] = None,
         status: Optional[Union[str, "_models.UpdateStatus"]] = None,
         **kwargs: Any
     ) -> None:
@@ -5427,11 +6107,16 @@ class UpdateDetails(_serialization.Model):
         :paramtype update_type: str or ~azure.mgmt.databoxedge.models.UpdateType
         :keyword target_version: Target Version number.
         :paramtype target_version: str
+        :keyword friendly_version_number: Friendly Version Number.
+        :paramtype friendly_version_number: str
         :keyword estimated_install_time_in_mins: Estimated Install Time for the update.
         :paramtype estimated_install_time_in_mins: int
         :keyword reboot_behavior: Indicates if updates are available and at least one of the updates
          needs a reboot. Known values are: "NeverReboots", "RequiresReboot", and "RequestReboot".
         :paramtype reboot_behavior: str or ~azure.mgmt.databoxedge.models.InstallRebootBehavior
+        :keyword installation_impact: Impact of Installing an updateType. Known values are: "None",
+         "DeviceRebooted", and "KubernetesWorkloadsDown".
+        :paramtype installation_impact: str or ~azure.mgmt.databoxedge.models.InstallationImpact
         :keyword status: Status of the update. Known values are: "DownloadPending", "DownloadStarted",
          "DownloadCompleted", "InstallStarted", and "InstallCompleted".
         :paramtype status: str or ~azure.mgmt.databoxedge.models.UpdateStatus
@@ -5441,8 +6126,10 @@ class UpdateDetails(_serialization.Model):
         self.update_size = update_size
         self.update_type = update_type
         self.target_version = target_version
+        self.friendly_version_number = friendly_version_number
         self.estimated_install_time_in_mins = estimated_install_time_in_mins
         self.reboot_behavior = reboot_behavior
+        self.installation_impact = installation_impact
         self.status = status
 
 
@@ -5539,7 +6226,7 @@ class UpdateSummary(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: UpdateSummary Result.
+    :ivar system_data: Metadata pertaining to creation and last modification of UpdateSummary.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar device_version_number: The current version of the device in format: 1.2.17312.13.",.
     :vartype device_version_number: str
@@ -5550,6 +6237,8 @@ class UpdateSummary(ARMBaseModel):
     :ivar last_completed_scan_job_date_time: The time when the last scan job was completed
      (success/cancelled/failed) on the appliance.
     :vartype last_completed_scan_job_date_time: ~datetime.datetime
+    :ivar last_successful_scan_job_time: Time when the last scan job is successfully completed.
+    :vartype last_successful_scan_job_time: ~datetime.datetime
     :ivar last_completed_download_job_date_time: The time when the last Download job was completed
      (success/cancelled/failed) on the appliance.
     :vartype last_completed_download_job_date_time: ~datetime.datetime
@@ -5559,6 +6248,9 @@ class UpdateSummary(ARMBaseModel):
     :ivar last_download_job_status: JobStatus of the last ran download job. Known values are:
      "Invalid", "Running", "Succeeded", "Failed", "Canceled", "Paused", and "Scheduled".
     :vartype last_download_job_status: str or ~azure.mgmt.databoxedge.models.JobStatus
+    :ivar last_successful_install_job_date_time: The time when the Last Install job was completed
+     successfully on the appliance.
+    :vartype last_successful_install_job_date_time: ~datetime.datetime
     :ivar last_completed_install_job_date_time: The time when the last Install job was completed
      (success/cancelled/failed) on the appliance.
     :vartype last_completed_install_job_date_time: ~datetime.datetime
@@ -5636,12 +6328,17 @@ class UpdateSummary(ARMBaseModel):
         "friendly_device_version_name": {"key": "properties.friendlyDeviceVersionName", "type": "str"},
         "device_last_scanned_date_time": {"key": "properties.deviceLastScannedDateTime", "type": "iso-8601"},
         "last_completed_scan_job_date_time": {"key": "properties.lastCompletedScanJobDateTime", "type": "iso-8601"},
+        "last_successful_scan_job_time": {"key": "properties.lastSuccessfulScanJobTime", "type": "iso-8601"},
         "last_completed_download_job_date_time": {
             "key": "properties.lastCompletedDownloadJobDateTime",
             "type": "iso-8601",
         },
         "last_completed_download_job_id": {"key": "properties.lastCompletedDownloadJobId", "type": "str"},
         "last_download_job_status": {"key": "properties.lastDownloadJobStatus", "type": "str"},
+        "last_successful_install_job_date_time": {
+            "key": "properties.lastSuccessfulInstallJobDateTime",
+            "type": "iso-8601",
+        },
         "last_completed_install_job_date_time": {
             "key": "properties.lastCompletedInstallJobDateTime",
             "type": "iso-8601",
@@ -5682,6 +6379,8 @@ class UpdateSummary(ARMBaseModel):
         friendly_device_version_name: Optional[str] = None,
         device_last_scanned_date_time: Optional[datetime.datetime] = None,
         last_completed_scan_job_date_time: Optional[datetime.datetime] = None,
+        last_successful_scan_job_time: Optional[datetime.datetime] = None,
+        last_successful_install_job_date_time: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5694,6 +6393,11 @@ class UpdateSummary(ARMBaseModel):
         :keyword last_completed_scan_job_date_time: The time when the last scan job was completed
          (success/cancelled/failed) on the appliance.
         :paramtype last_completed_scan_job_date_time: ~datetime.datetime
+        :keyword last_successful_scan_job_time: Time when the last scan job is successfully completed.
+        :paramtype last_successful_scan_job_time: ~datetime.datetime
+        :keyword last_successful_install_job_date_time: The time when the Last Install job was
+         completed successfully on the appliance.
+        :paramtype last_successful_install_job_date_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
         self.system_data: Optional["_models.SystemData"] = None
@@ -5701,9 +6405,11 @@ class UpdateSummary(ARMBaseModel):
         self.friendly_device_version_name = friendly_device_version_name
         self.device_last_scanned_date_time = device_last_scanned_date_time
         self.last_completed_scan_job_date_time = last_completed_scan_job_date_time
+        self.last_successful_scan_job_time = last_successful_scan_job_time
         self.last_completed_download_job_date_time: Optional[datetime.datetime] = None
         self.last_completed_download_job_id: Optional[str] = None
         self.last_download_job_status: Optional[Union[str, "_models.JobStatus"]] = None
+        self.last_successful_install_job_date_time = last_successful_install_job_date_time
         self.last_completed_install_job_date_time: Optional[datetime.datetime] = None
         self.last_completed_install_job_id: Optional[str] = None
         self.last_install_job_status: Optional[Union[str, "_models.JobStatus"]] = None
@@ -5716,8 +6422,8 @@ class UpdateSummary(ARMBaseModel):
         self.in_progress_install_job_id: Optional[str] = None
         self.in_progress_download_job_started_date_time: Optional[datetime.datetime] = None
         self.in_progress_install_job_started_date_time: Optional[datetime.datetime] = None
-        self.update_titles: Optional[List[str]] = None
-        self.updates: Optional[List["_models.UpdateDetails"]] = None
+        self.update_titles: Optional[list[str]] = None
+        self.updates: Optional[list["_models.UpdateDetails"]] = None
         self.total_update_size_in_bytes: Optional[float] = None
         self.total_time_in_minutes: Optional[int] = None
 
@@ -5830,20 +6536,23 @@ class User(ARMBaseModel):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    All required parameters must be populated in order to send to server.
+
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
     :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
-    :ivar system_data: User in DataBoxEdge Resource.
+    :ivar system_data: Metadata pertaining to creation and last modification of User.
     :vartype system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar encrypted_password: The password details.
     :vartype encrypted_password: ~azure.mgmt.databoxedge.models.AsymmetricEncryptedSecret
     :ivar share_access_rights: List of shares that the user has rights on. This field should not be
      specified during user creation.
     :vartype share_access_rights: list[~azure.mgmt.databoxedge.models.ShareAccessRight]
-    :ivar user_type: Type of the user. Known values are: "Share", "LocalManagement", and "ARM".
+    :ivar user_type: Type of the user. Required. Known values are: "Share", "LocalManagement", and
+     "ARM".
     :vartype user_type: str or ~azure.mgmt.databoxedge.models.UserType
     """
 
@@ -5853,6 +6562,7 @@ class User(ARMBaseModel):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "share_access_rights": {"readonly": True},
+        "user_type": {"required": True},
     }
 
     _attribute_map = {
@@ -5868,20 +6578,21 @@ class User(ARMBaseModel):
     def __init__(
         self,
         *,
+        user_type: Union[str, "_models.UserType"],
         encrypted_password: Optional["_models.AsymmetricEncryptedSecret"] = None,
-        user_type: Optional[Union[str, "_models.UserType"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword encrypted_password: The password details.
         :paramtype encrypted_password: ~azure.mgmt.databoxedge.models.AsymmetricEncryptedSecret
-        :keyword user_type: Type of the user. Known values are: "Share", "LocalManagement", and "ARM".
+        :keyword user_type: Type of the user. Required. Known values are: "Share", "LocalManagement",
+         and "ARM".
         :paramtype user_type: str or ~azure.mgmt.databoxedge.models.UserType
         """
         super().__init__(**kwargs)
         self.system_data: Optional["_models.SystemData"] = None
         self.encrypted_password = encrypted_password
-        self.share_access_rights: Optional[List["_models.ShareAccessRight"]] = None
+        self.share_access_rights: Optional[list["_models.ShareAccessRight"]] = None
         self.user_type = user_type
 
 
@@ -5944,5 +6655,83 @@ class UserList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.User"]] = None
+        self.value: Optional[list["_models.User"]] = None
         self.next_link: Optional[str] = None
+
+
+class VmMemory(_serialization.Model):
+    """VmMemory Data.
+
+    :ivar startup_memory_mb: The total amount of RAM in the virtual machine, as seen by the guest
+     operating system. For a virtual machine with dynamic memory enabled, this represents the
+     initial memory available at startup.
+    :vartype startup_memory_mb: int
+    :ivar current_memory_usage_mb: The current memory used by the virtual machine.
+    :vartype current_memory_usage_mb: int
+    """
+
+    _attribute_map = {
+        "startup_memory_mb": {"key": "startupMemoryMB", "type": "int"},
+        "current_memory_usage_mb": {"key": "currentMemoryUsageMB", "type": "int"},
+    }
+
+    def __init__(
+        self, *, startup_memory_mb: Optional[int] = None, current_memory_usage_mb: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword startup_memory_mb: The total amount of RAM in the virtual machine, as seen by the
+         guest  operating system. For a virtual machine with dynamic memory enabled, this represents the
+         initial memory available at startup.
+        :paramtype startup_memory_mb: int
+        :keyword current_memory_usage_mb: The current memory used by the virtual machine.
+        :paramtype current_memory_usage_mb: int
+        """
+        super().__init__(**kwargs)
+        self.startup_memory_mb = startup_memory_mb
+        self.current_memory_usage_mb = current_memory_usage_mb
+
+
+class VmPlacementRequestResult(_serialization.Model):
+    """List of VM sizes being checked for creation on appliance along with corresponding result.
+
+    :ivar vm_size: List of VM sizes being checked.
+    :vartype vm_size: list[str]
+    :ivar is_feasible: Boolean value indicating if the VM(s) in VmSize can be created.
+    :vartype is_feasible: bool
+    :ivar message_code: MessageCode indicating reason for success or failure.
+    :vartype message_code: str
+    :ivar message: Localized message to be displayed to the user to explain the check result.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "vm_size": {"key": "vmSize", "type": "[str]"},
+        "is_feasible": {"key": "isFeasible", "type": "bool"},
+        "message_code": {"key": "messageCode", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        vm_size: Optional[list[str]] = None,
+        is_feasible: Optional[bool] = None,
+        message_code: Optional[str] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword vm_size: List of VM sizes being checked.
+        :paramtype vm_size: list[str]
+        :keyword is_feasible: Boolean value indicating if the VM(s) in VmSize can be created.
+        :paramtype is_feasible: bool
+        :keyword message_code: MessageCode indicating reason for success or failure.
+        :paramtype message_code: str
+        :keyword message: Localized message to be displayed to the user to explain the check result.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.vm_size = vm_size
+        self.is_feasible = is_feasible
+        self.message_code = message_code
+        self.message = message

@@ -22,7 +22,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_devices_list_by_subscription(self, resource_group):
         response = self.client.devices.list_by_subscription(
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
     def test_devices_list_by_resource_group(self, resource_group):
         response = self.client.devices.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.devices.get(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -53,8 +53,8 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_devices_begin_create_or_update(self, resource_group):
-        response = self.client.devices.begin_create_or_update(
+    def test_devices_create_or_update(self, resource_group):
+        response = self.client.devices.create_or_update(
             device_name="str",
             resource_group_name=resource_group.name,
             data_box_edge_device={
@@ -62,6 +62,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
                 "configuredRoleTypes": ["str"],
                 "culture": "str",
                 "dataBoxEdgeDeviceStatus": "str",
+                "dataResidency": {"type": "str"},
                 "description": "str",
                 "deviceHcsVersion": "str",
                 "deviceLocalCapacity": 0,
@@ -87,6 +88,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
                 "id": "str",
                 "identity": {"principalId": "str", "tenantId": "str", "type": "str"},
                 "kind": "str",
+                "kubernetesWorkloadProfile": "str",
                 "modelDescription": "str",
                 "name": "str",
                 "nodeCount": 0,
@@ -108,8 +110,8 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
                 "timeZone": "str",
                 "type": "str",
             },
-            api_version="2021-02-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
+            api_version="2023-12-01",
+        )
 
         # please add some check logic here by yourself
         # ...
@@ -120,7 +122,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.devices.begin_delete(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -137,7 +139,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
                 "identity": {"principalId": "str", "tenantId": "str", "type": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -149,7 +151,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.devices.begin_download_updates(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -161,7 +163,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.devices.generate_certificate(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -173,7 +175,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.devices.get_extended_information(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -185,7 +187,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.devices.begin_install_updates(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -197,7 +199,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.devices.get_network_settings(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -209,7 +211,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.devices.begin_scan_for_updates(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -231,7 +233,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -250,7 +252,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
                 "clientSecretStoreUrl": "str",
                 "syncStatus": "str",
             },
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -262,7 +264,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
         response = self.client.devices.get_update_summary(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -275,7 +277,7 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
             device_name="str",
             resource_group_name=resource_group.name,
             parameters={"certificate": "str", "authenticationType": "str"},
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself

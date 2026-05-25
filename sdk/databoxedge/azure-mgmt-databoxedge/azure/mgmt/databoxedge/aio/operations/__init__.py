@@ -17,6 +17,9 @@ from ._available_skus_operations import AvailableSkusOperations  # type: ignore
 from ._devices_operations import DevicesOperations  # type: ignore
 from ._alerts_operations import AlertsOperations  # type: ignore
 from ._bandwidth_schedules_operations import BandwidthSchedulesOperations  # type: ignore
+from ._device_capacity_check_operations import DeviceCapacityCheckOperations  # type: ignore
+from ._device_capacity_info_operations import DeviceCapacityInfoOperations  # type: ignore
+from ._diagnostic_settings_operations import DiagnosticSettingsOperations  # type: ignore
 from ._jobs_operations import JobsOperations  # type: ignore
 from ._nodes_operations import NodesOperations  # type: ignore
 from ._operations_status_operations import OperationsStatusOperations  # type: ignore
@@ -29,6 +32,7 @@ from ._storage_account_credentials_operations import StorageAccountCredentialsOp
 from ._storage_accounts_operations import StorageAccountsOperations  # type: ignore
 from ._containers_operations import ContainersOperations  # type: ignore
 from ._triggers_operations import TriggersOperations  # type: ignore
+from ._support_packages_operations import SupportPackagesOperations  # type: ignore
 from ._users_operations import UsersOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -41,6 +45,9 @@ __all__ = [
     "DevicesOperations",
     "AlertsOperations",
     "BandwidthSchedulesOperations",
+    "DeviceCapacityCheckOperations",
+    "DeviceCapacityInfoOperations",
+    "DiagnosticSettingsOperations",
     "JobsOperations",
     "NodesOperations",
     "OperationsStatusOperations",
@@ -53,6 +60,7 @@ __all__ = [
     "StorageAccountsOperations",
     "ContainersOperations",
     "TriggersOperations",
+    "SupportPackagesOperations",
     "UsersOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

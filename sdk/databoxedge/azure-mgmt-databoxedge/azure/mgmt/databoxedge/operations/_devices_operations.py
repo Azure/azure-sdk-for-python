@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -36,7 +36,8 @@ from .._configuration import DataBoxEdgeManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -48,7 +49,7 @@ def build_list_by_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -78,7 +79,7 @@ def build_list_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -108,7 +109,7 @@ def build_get_request(device_name: str, resource_group_name: str, subscription_i
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -139,7 +140,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -173,7 +174,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -204,7 +205,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -238,7 +239,7 @@ def build_download_updates_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -269,7 +270,7 @@ def build_generate_certificate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -300,7 +301,7 @@ def build_get_extended_information_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -331,7 +332,7 @@ def build_install_updates_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -362,7 +363,7 @@ def build_get_network_settings_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -393,7 +394,7 @@ def build_scan_for_updates_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -424,7 +425,7 @@ def build_create_or_update_security_settings_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -458,7 +459,7 @@ def build_update_extended_information_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -492,7 +493,7 @@ def build_get_update_summary_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -523,7 +524,7 @@ def build_upload_certificate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -791,13 +792,79 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    def _create_or_update_initial(
+    @overload
+    def create_or_update(
+        self,
+        device_name: str,
+        resource_group_name: str,
+        data_box_edge_device: _models.DataBoxEdgeDevice,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DataBoxEdgeDevice:
+        """Creates or updates a Data Box Edge/Data Box Gateway resource.
+
+        :param device_name: The device name. Required.
+        :type device_name: str
+        :param resource_group_name: The resource group name. Required.
+        :type resource_group_name: str
+        :param data_box_edge_device: The resource object. Required.
+        :type data_box_edge_device: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DataBoxEdgeDevice or the result of cls(response)
+        :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        device_name: str,
+        resource_group_name: str,
+        data_box_edge_device: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DataBoxEdgeDevice:
+        """Creates or updates a Data Box Edge/Data Box Gateway resource.
+
+        :param device_name: The device name. Required.
+        :type device_name: str
+        :param resource_group_name: The resource group name. Required.
+        :type resource_group_name: str
+        :param data_box_edge_device: The resource object. Required.
+        :type data_box_edge_device: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DataBoxEdgeDevice or the result of cls(response)
+        :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_or_update(
         self,
         device_name: str,
         resource_group_name: str,
         data_box_edge_device: Union[_models.DataBoxEdgeDevice, IO[bytes]],
         **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> _models.DataBoxEdgeDevice:
+        """Creates or updates a Data Box Edge/Data Box Gateway resource.
+
+        :param device_name: The device name. Required.
+        :type device_name: str
+        :param resource_group_name: The resource group name. Required.
+        :type resource_group_name: str
+        :param data_box_edge_device: The resource object. Is either a DataBoxEdgeDevice type or a
+         IO[bytes] type. Required.
+        :type data_box_edge_device: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice or IO[bytes]
+        :return: DataBoxEdgeDevice or the result of cls(response)
+        :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -811,7 +878,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DataBoxEdgeDevice] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -834,8 +901,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         )
         _request.url = self._client.format_url(_request.url)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -843,142 +909,15 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = self._deserialize("DataBoxEdgeDevice", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @overload
-    def begin_create_or_update(
-        self,
-        device_name: str,
-        resource_group_name: str,
-        data_box_edge_device: _models.DataBoxEdgeDevice,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DataBoxEdgeDevice]:
-        """Creates or updates a Data Box Edge/Data Box Gateway resource.
-
-        :param device_name: The device name. Required.
-        :type device_name: str
-        :param resource_group_name: The resource group name. Required.
-        :type resource_group_name: str
-        :param data_box_edge_device: The resource object. Required.
-        :type data_box_edge_device: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns either DataBoxEdgeDevice or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.DataBoxEdgeDevice]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        device_name: str,
-        resource_group_name: str,
-        data_box_edge_device: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DataBoxEdgeDevice]:
-        """Creates or updates a Data Box Edge/Data Box Gateway resource.
-
-        :param device_name: The device name. Required.
-        :type device_name: str
-        :param resource_group_name: The resource group name. Required.
-        :type resource_group_name: str
-        :param data_box_edge_device: The resource object. Required.
-        :type data_box_edge_device: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns either DataBoxEdgeDevice or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.DataBoxEdgeDevice]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_create_or_update(
-        self,
-        device_name: str,
-        resource_group_name: str,
-        data_box_edge_device: Union[_models.DataBoxEdgeDevice, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.DataBoxEdgeDevice]:
-        """Creates or updates a Data Box Edge/Data Box Gateway resource.
-
-        :param device_name: The device name. Required.
-        :type device_name: str
-        :param resource_group_name: The resource group name. Required.
-        :type resource_group_name: str
-        :param data_box_edge_device: The resource object. Is either a DataBoxEdgeDevice type or a
-         IO[bytes] type. Required.
-        :type data_box_edge_device: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice or IO[bytes]
-        :return: An instance of LROPoller that returns either DataBoxEdgeDevice or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.DataBoxEdgeDevice]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DataBoxEdgeDevice] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                device_name=device_name,
-                resource_group_name=resource_group_name,
-                data_box_edge_device=data_box_edge_device,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("DataBoxEdgeDevice", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.DataBoxEdgeDevice].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.DataBoxEdgeDevice](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
 
     def _delete_initial(self, device_name: str, resource_group_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {

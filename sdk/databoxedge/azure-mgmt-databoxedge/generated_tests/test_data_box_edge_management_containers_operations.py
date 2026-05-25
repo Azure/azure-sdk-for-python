@@ -25,7 +25,7 @@ class TestDataBoxEdgeManagementContainersOperations(AzureMgmtRecordedTestCase):
             device_name="str",
             storage_account_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestDataBoxEdgeManagementContainersOperations(AzureMgmtRecordedTestCase):
             storage_account_name="str",
             container_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestDataBoxEdgeManagementContainersOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestDataBoxEdgeManagementContainersOperations(AzureMgmtRecordedTestCase):
             storage_account_name="str",
             container_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -103,7 +103,7 @@ class TestDataBoxEdgeManagementContainersOperations(AzureMgmtRecordedTestCase):
             storage_account_name="str",
             container_name="str",
             resource_group_name=resource_group.name,
-            api_version="2021-02-01-preview",
+            api_version="2023-12-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

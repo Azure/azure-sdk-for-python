@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -42,7 +42,8 @@ from ...operations._users_operations import (
 from .._configuration import DataBoxEdgeManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class UsersOperations:
@@ -68,7 +69,7 @@ class UsersOperations:
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, device_name: str, resource_group_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, device_name: str, resource_group_name: str, filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.User"]:
         """Gets all the users registered on a Data Box Edge/Data Box Gateway device.
 
@@ -76,10 +77,9 @@ class UsersOperations:
         :type device_name: str
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
-        :param expand: Specify $expand=details to populate additional fields related to the resource or
-         Specify $skipToken=\\ :code:`<token>` to populate the next page in the list. Default value is
-         None.
-        :type expand: str
+        :param filter: Specify $filter='Type eq :code:`<type>`' to filter on user type property.
+         Default value is None.
+        :type filter: str
         :return: An iterator like instance of either User or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.User]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -105,7 +105,7 @@ class UsersOperations:
                     device_name=device_name,
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
-                    expand=expand,
+                    filter=filter,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
