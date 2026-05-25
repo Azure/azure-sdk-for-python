@@ -32,8 +32,14 @@ class ScheduleSchema(ResourceSchema):
     properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
 
 
+class ScheduleCreateJobField(TypeSensitiveUnionField):
+    # Keep legacy dump behavior so full scheduled jobs continue to serialize via CreateJobFileRefField.
+    def _serialize(self, value, attr, obj, **kwargs):
+        return UnionField._serialize(self, value, attr, obj, **kwargs)
+
+
 class JobScheduleSchema(ScheduleSchema):
-    create_job = TypeSensitiveUnionField(
+    create_job = ScheduleCreateJobField(
         {
             "pipeline": [NestedField(PipelineCreateJobSchema)],
             "command": [NestedField(CommandCreateJobSchema)],
