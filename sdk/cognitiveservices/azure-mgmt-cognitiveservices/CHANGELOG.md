@@ -49,7 +49,6 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `RaiPolicyProperties` deleted or renamed its instance variable `custom_topics`
   - Deleted or renamed enum value `RoutingMode.ACCURACY`
   - Deleted or renamed model `CustomTopicConfig`
