@@ -187,9 +187,7 @@ def main(generate_input, generate_output):
                 try:
                     sanitize_generated_docstrings(sdk_code_path)
                 except Exception as e:
-                    _LOGGER.warning(
-                        f"Fail to sanitize generated docstrings for {package_name} in {readme_or_tsp}: {e}"
-                    )
+                    _LOGGER.warning(f"Fail to sanitize generated docstrings for {package_name} in {readme_or_tsp}: {e}")
                 if package_name not in result:
                     package_entry = {}
                     package_entry["packageName"] = package_name
