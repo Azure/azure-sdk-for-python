@@ -35,7 +35,7 @@ class ScheduleSchema(ResourceSchema):
 class ScheduleCreateJobField(TypeSensitiveUnionField):
     # Keep legacy dump behavior so full scheduled jobs continue to serialize via CreateJobFileRefField.
     def _serialize(self, value, attr, obj, **kwargs):
-        return UnionField._serialize(self, value, attr, obj, **kwargs)
+        return super(TypeSensitiveUnionField, self)._serialize(value, attr, obj, **kwargs)
 
 
 class JobScheduleSchema(ScheduleSchema):
