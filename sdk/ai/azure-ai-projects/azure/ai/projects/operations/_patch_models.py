@@ -16,7 +16,7 @@ import time
 from pathlib import Path
 from typing import Any, Optional, Union
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import BetaModelsOperations as BetaModelsOperationsGenerated
@@ -51,8 +51,13 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         Foundry deployments rather than the SDK-modeled ``ModelPendingUploadResponse``
         shape (``blobReference`` / ``pendingUploadId``). Tolerate both wire
         shapes so callers don't have to.
+
+        :param response: The pending-upload response from the service.
+        :type response: ~azure.ai.projects.models.ModelPendingUploadResponse or dict
+        :return: A tuple of ``(sas_uri, container_blob_uri, pending_upload_id)``.
+        :rtype: tuple[str, str, str or None]
         """
-        payload = response.as_dict() if hasattr(response, "as_dict") else dict(response)
+        payload = dict(response) if isinstance(response, dict) else response.as_dict()
 
         blob_ref = payload.get("blobReferenceForConsumption") or payload.get("blobReference") or {}
         sas_uri = (blob_ref.get("credential") or {}).get("sasUri")
@@ -65,7 +70,14 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
 
     @staticmethod
     def _resolve_azcopy(azcopy_path: Optional[str] = None) -> str:
-        """Locate the ``azcopy`` executable or raise ``RuntimeError``."""
+        """Locate the ``azcopy`` executable or raise ``RuntimeError``.
+
+        :param azcopy_path: Optional explicit path to the azcopy executable.
+            Defaults to ``shutil.which("azcopy")``.
+        :type azcopy_path: str or None
+        :return: Absolute path to the resolved azcopy executable.
+        :rtype: str
+        """
         azcopy = azcopy_path or shutil.which("azcopy")
         if not azcopy:
             raise RuntimeError(
@@ -90,6 +102,23 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
 
         Returns the resolved ``Path`` for ``source``. Raises ``ValueError`` for
         bad inputs and ``RuntimeError`` if ``azcopy`` cannot be located.
+
+        :keyword name: Name of the model to register.
+        :paramtype name: str
+        :keyword version: Version identifier for the model.
+        :paramtype version: str
+        :keyword source: Local file or directory containing the model weights.
+        :paramtype source: str or os.PathLike[str]
+        :keyword azcopy_path: Optional explicit path to the azcopy executable.
+        :paramtype azcopy_path: str or None
+        :keyword wait_for_commit: Whether to poll for commit completion.
+        :paramtype wait_for_commit: bool
+        :keyword polling_timeout: Total seconds to poll for commit completion.
+        :paramtype polling_timeout: float
+        :keyword polling_interval: Seconds between poll attempts.
+        :paramtype polling_interval: float
+        :return: The resolved ``Path`` for ``source``.
+        :rtype: pathlib.Path
         """
         if not isinstance(name, str) or not name.strip():
             raise ValueError("`name` must be a non-empty string.")
@@ -116,7 +145,15 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
 
     @staticmethod
     def _run_azcopy(source: Path, sas_uri: str, *, azcopy_path: Optional[str] = None) -> None:
-        """Shell out to ``azcopy copy`` to upload ``source`` to the SAS container."""
+        """Shell out to ``azcopy copy`` to upload ``source`` to the SAS container.
+
+        :param source: Local file or directory to upload.
+        :type source: pathlib.Path
+        :param sas_uri: SAS URI for the destination container.
+        :type sas_uri: str
+        :keyword azcopy_path: Optional explicit path to the azcopy executable.
+        :paramtype azcopy_path: str or None
+        """
         azcopy = BetaModelsOperations._resolve_azcopy(azcopy_path)
 
         if source.is_dir():
