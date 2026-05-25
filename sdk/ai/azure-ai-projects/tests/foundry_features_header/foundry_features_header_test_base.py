@@ -49,6 +49,27 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "agents": "HostedAgents=V1Preview,WorkflowAgents=V1Preview,AgentEndpoints=V1Preview,CodeAgents=V1Preview,ExternalAgents=V1Preview,AgentsOptimization=V1Preview",
 }
 
+# Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and
+# therefore cannot be exercised by the generic header-injection test (which
+# captures the first outgoing HttpRequest).
+#
+# Multi-step orchestrator helpers (validate locally -> HTTP -> external process
+# -> HTTP -> poll) fall into this bucket: they perform local input validation
+# and/or external side effects (e.g. subprocess calls) before the first HTTP
+# request, so synthetic placeholder arguments cause them to abort with a
+# TypeError/ValueError/RuntimeError before any request is ever sent.
+#
+# The header-injection invariant is still enforced for these methods because
+# every nested HTTP call they make is routed through other public sub-client
+# methods that ARE covered by this test (e.g. .beta.models.create internally
+# calls .beta.models.pending_upload and .beta.models.pending_create_version,
+# both of which are tested separately and pass).
+#
+# Format: { "<sub_client_name>": frozenset({"<method_name>", ...}) }
+EXCLUDED_BETA_METHODS: dict[str, frozenset] = {
+    "models": frozenset({"create"}),  # multi-step helper: validate -> pending_upload -> azcopy -> pending_create_version -> poll get
+}
+
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.
 # Used by both test_foundry_features_header_optional.py (sync) and
 # test_foundry_features_header_optional_async.py (async).
