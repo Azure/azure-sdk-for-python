@@ -257,6 +257,37 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert result == [{"id": "1"}], \
             "Should return documents after state reset"
 
+    def test_execution_context_reattaches_internal_capture_each_loop_iteration(self):
+        """`_fetch_items_helper_no_retries` must reattach capture dict every iteration.
+
+        `__QueryFeed` pops `_internal_response_headers_capture` from options, so
+        the execution-context loop must set it back before each fetch call.
+        This test drives the empty-page-with-continuation path (two iterations)
+        and asserts both iterations receive the same capture dict object.
+        """
+        mock_client = MockClient()
+        context = _DefaultQueryExecutionContext(mock_client, {}, lambda _opts: ([], {}))
+
+        seen_capture_presence = []
+        fetch_call_count = [0]
+
+        def mock_fetch_function(options):
+            fetch_call_count[0] += 1
+            capture = options.pop("_internal_response_headers_capture", None)
+            seen_capture_presence.append(capture is context._internal_response_headers_capture)
+            if fetch_call_count[0] == 1:
+                # Force a second loop iteration (empty page + continuation).
+                return ([], {HttpHeaders.Continuation: "token-for-second-iteration"})
+            return ([{"id": "doc-final"}], {})
+
+        result = context._fetch_items_helper_no_retries(mock_fetch_function)
+
+        assert fetch_call_count[0] == 2, "Expected two fetch iterations"
+        assert seen_capture_presence == [True, True], (
+            "Capture dict must be attached on every iteration, not just the first"
+        )
+        assert result == [{"id": "doc-final"}]
+
     @patch('azure.cosmos._retry_utility.Execute')
     def test_retry_with_410_resets_state_and_succeeds(self, mock_execute):
         """
@@ -712,6 +743,46 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             "Should pass collection_link for targeted refresh"
         assert mock_client.last_refresh_previous_map == fake_routing_map, \
             "Should pass previous routing map for targeted refresh"
+        assert result == expected_docs
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_targeted_refresh_normalizes_resource_link_for_cache_lookup(self, mock_execute):
+        """
+        Test that previous-routing-map lookup normalizes resource links before
+        cache lookup so slash-variant links still use incremental refresh.
+        """
+        mock_client = MockClient()
+        fake_routing_map = {"etag": "fake-etag", "ranges": ["range1"]}
+        mock_client._routing_map_provider._collection_routing_map_by_item[
+            "dbs/testdb/colls/testcoll"
+        ] = fake_routing_map
+
+        expected_docs = [{"id": "success"}]
+        call_count = [0]
+
+        def execute_side_effect(*args, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                raise create_410_partition_split_error()
+            return expected_docs
+
+        mock_execute.side_effect = execute_side_effect
+
+        def mock_fetch_function(options):
+            return (expected_docs, {})
+
+        resource_link = "/dbs/testdb/colls/testcoll/"
+        context = _DefaultQueryExecutionContext(
+            mock_client, {}, mock_fetch_function, resource_link=resource_link
+        )
+        result = context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 2, "Should have retried once after 410"
+        assert mock_client.refresh_routing_map_provider_call_count == 1
+        assert mock_client.last_refresh_collection_link == resource_link, \
+            "Should pass collection_link for targeted refresh"
+        assert mock_client.last_refresh_previous_map == fake_routing_map, \
+            "Should normalize slash-variant resource link for cache lookup"
         assert result == expected_docs
 
     @patch('azure.cosmos._retry_utility.Execute')
@@ -1178,6 +1249,42 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         # Sanity check on the result tuple shape.
         assert result == [{"id": "1"}]
         assert headers is canned_headers
+
+    def test_queryfeed_full_pk_no_overlap_fallback_preserves_partition_key_header(self):
+        """Full-PK no-overlap fallback must retain legacy PartitionKey header on __Post."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+        client._routing_map_provider.get_overlapping_ranges.return_value = []
+
+        seen_partition_key_headers = []
+
+        def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            seen_partition_key_headers.append(req_headers.get(HttpHeaders.PartitionKey))
+            return {"Documents": [{"id": "doc-1"}]}, {}
+
+        container_properties = {"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2}}
+        options = {"partitionKey": ["mypk"]}
+
+        with patch(
+            "azure.cosmos._cosmos_client_connection.base.GetHeaders",
+            return_value={HttpHeaders.PartitionKey: '["mypk"]'},
+        ):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    docs, _headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query="SELECT * FROM c",
+                        options=options,
+                        container_properties=container_properties,
+                    )
+
+        assert docs == [{"id": "doc-1"}]
+        assert seen_partition_key_headers == ['["mypk"]'], (
+            "When full-PK routing finds no overlaps and falls back to __Post, "
+            "the legacy PartitionKey header must be preserved."
+        )
 
     def test_queryfeed_feed_range_legacy_inbound_single_partition_honors_and_emits_legacy(self):
         """Legacy inbound continuation is honored when feed_range currently maps to one partition."""

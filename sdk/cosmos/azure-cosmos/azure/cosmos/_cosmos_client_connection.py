@@ -3382,11 +3382,19 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_value = options["partitionKey"]
             partition_key_obj = _build_partition_key_from_properties(container_properties)
             if not partition_key_obj._is_prefix_partition_key(partition_key_value):
-                # Once we route full-PK queries through feed-range pagination,
-                # avoid sending the legacy partition-key header on the same request.
-                req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
                 # Full-PK returns a single-value inclusive range; normalize to
                 # [min, max) before routing-map overlap resolution.
+                #
+                # NOTE: do NOT pop the PartitionKey header here. The pop is
+                # deferred to the `if pagination_state is not None:` block
+                # below, i.e. until we've confirmed the new feed-range
+                # routing path is actually taking over. If routing comes back
+                # with zero overlaps (stale cache, mid-split, etc.) we fall
+                # through to the regular __Post path, and that fallthrough
+                # must still carry the legacy PK header — otherwise the
+                # backend gets a request with no partition scoping and either
+                # raises BAD_REQUEST (cross-partition disabled) or silently
+                # runs an unscoped cross-partition query (wrong results).
                 feed_range_epk = partition_key_obj._get_epk_range_for_partition_key(
                     partition_key_value
                 ).to_normalized_range()
@@ -3501,6 +3509,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     )
 
             if pagination_state is not None:
+                if is_full_pk_scope:
+                    # Drop the legacy partition-key header now that the
+                    # feed-range routing path is taking over. The inner POSTs
+                    # in the loop set PartitionKeyRangeID / StartEpkString /
+                    # EndEpkString explicitly; sending both routing styles on
+                    # one request is undefined on the service side.
+                    req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
                 results: dict[str, Any] = {}
                 feedrange_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
                 consecutive_no_progress_pages = 0
@@ -3527,8 +3542,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     _capture_internal_headers(feedrange_response_headers)
                     raise error
 
-                # NOTE: Keep this feed_range pagination loop in sync with
-                # ``azure/cosmos/aio/_cosmos_client_connection_async.py::__QueryFeed``.
+                # This feed_range pagination loop is duplicated nearly
+                # verbatim in the async sibling file. Any change here must
+                # be applied to the twin in the same commit; prefer landing
+                # shared behavior in _routing/feed_range_continuation.py
+                # rather than inline.
                 while pagination_state.can_issue_request():
                     head_feedrange = pagination_state.head_range
                     if head_feedrange is None:

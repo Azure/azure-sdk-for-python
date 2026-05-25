@@ -26,7 +26,7 @@ Async parity lives in ``test_query_feed_range_multipartition_async.py``.
 import time
 import unittest
 import uuid
-from typing import Iterable, List, Optional, Tuple
+from typing import Any, Iterable, List, Optional, Tuple
 
 import pytest
 
@@ -115,6 +115,20 @@ def _ids_via_per_partition_scan(container, partition_ranges: Iterable[Tuple[str,
         for item in container.query_items(query="SELECT c.id FROM c", feed_range=fr):
             ground_truth.add(item["id"])
     return ground_truth
+
+
+def _values_via_per_partition_scan(container, partition_ranges: Iterable[Tuple[str, str]]):
+    """Ground-truth list of ``c["value"]`` numerics inside the union of the
+    given physical partition ranges. Each partition is queried independently,
+    so this baseline is computed without going through the multi-overlap
+    aggregate-merge path — making it valid input for ``min()`` / ``max()`` /
+    ``sum()`` comparisons against a crossing-feed_range aggregate query."""
+    values: List[Any] = []
+    for (mn, mx) in partition_ranges:
+        fr = _crossing_feed_range(mn, mx)
+        for value in container.query_items(query='SELECT VALUE c["value"] FROM c', feed_range=fr):
+            values.append(value)
+    return values
 
 
 def _drain_pages(pager) -> Tuple[List[List[dict]], List[str]]:
@@ -481,6 +495,120 @@ class TestFeedRangeMultiPartition:
         assert merged_rows[0] == expected_count, (
             "merged COUNT result mismatch for two-partition crossing feed_range; "
             f"returned={merged_rows[0]}, expected={expected_count}")
+        assert pager.continuation_token in (None, "", b""), (
+            f"expected empty continuation after draining aggregate query; got "
+            f"{pager.continuation_token!r}")
+
+    def test_two_partition_feed_range_min_aggregate_pagination(self):
+        """Run a VALUE MIN aggregate through a two-partition crossing feed_range.
+
+        Guards the comparison-merge branch of ``_merge_query_results`` (which
+        uses ``min()`` rather than the additive path that COUNT/SUM take) and
+        confirms ``_classify_aggregate_partial`` resolves the MIN function
+        name end-to-end on the multi-overlap path.
+        """
+        container = _get_container()
+        partitions = _sorted_partition_ranges(container)
+        if len(partitions) < 2:
+            pytest.skip("Need a container with ≥ 2 physical partitions")
+
+        chosen = None
+        for i in range(len(partitions) - 1):
+            p0, p1 = partitions[i], partitions[i + 1]
+            if (_count_in_range(container, p0[0], p0[1]) >= MIN_DOCS_PER_PARTITION
+                    and _count_in_range(container, p1[0], p1[1]) >= MIN_DOCS_PER_PARTITION):
+                chosen = (p0, p1)
+                break
+        if chosen is None:
+            pytest.skip("No adjacent partition pair both populated with ≥ "
+                        f"{MIN_DOCS_PER_PARTITION} docs")
+        (p0_min, _), (_, p1_max) = chosen
+        crossing = _crossing_feed_range(p0_min, p1_max)
+
+        # Ground truth from independent per-partition scans, not aggregate path.
+        expected_values = _values_via_per_partition_scan(container, [chosen[0], chosen[1]])
+        expected_min = min(expected_values)
+
+        pager = container.query_items(
+            query='SELECT VALUE MIN(c["value"]) FROM c',
+            feed_range=crossing,
+            max_item_count=1,
+        ).by_page()
+
+        pages: List[List[object]] = []
+        merged_rows: List[object] = []
+        for page in pager:
+            items = list(page)
+            pages.append(items)
+            merged_rows.extend(items)
+
+        oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > 1]
+        assert not oversized, (
+            "aggregate page-size limit violated (max_item_count=1); "
+            f"page sizes={[len(p) for p in pages]}, oversized={oversized}.")
+        assert len(merged_rows) == 1, (
+            "aggregate merge leaked partial fragments or dropped final value; "
+            f"expected one merged row, got {len(merged_rows)} rows: {merged_rows}")
+        assert merged_rows[0] == expected_min, (
+            "merged MIN result mismatch for two-partition crossing feed_range; "
+            f"returned={merged_rows[0]}, expected={expected_min}")
+        assert pager.continuation_token in (None, "", b""), (
+            f"expected empty continuation after draining aggregate query; got "
+            f"{pager.continuation_token!r}")
+
+    def test_two_partition_feed_range_max_aggregate_pagination(self):
+        """Run a VALUE MAX aggregate through a two-partition crossing feed_range.
+
+        Sister test to the MIN case above. Guards the comparison-merge branch
+        from the opposite direction (``max()`` rather than ``min()``) so a
+        future change to ``_merge_query_results`` cannot silently invert the
+        comparison on one aggregate while leaving the other green.
+        """
+        container = _get_container()
+        partitions = _sorted_partition_ranges(container)
+        if len(partitions) < 2:
+            pytest.skip("Need a container with ≥ 2 physical partitions")
+
+        chosen = None
+        for i in range(len(partitions) - 1):
+            p0, p1 = partitions[i], partitions[i + 1]
+            if (_count_in_range(container, p0[0], p0[1]) >= MIN_DOCS_PER_PARTITION
+                    and _count_in_range(container, p1[0], p1[1]) >= MIN_DOCS_PER_PARTITION):
+                chosen = (p0, p1)
+                break
+        if chosen is None:
+            pytest.skip("No adjacent partition pair both populated with ≥ "
+                        f"{MIN_DOCS_PER_PARTITION} docs")
+        (p0_min, _), (_, p1_max) = chosen
+        crossing = _crossing_feed_range(p0_min, p1_max)
+
+        # Ground truth from independent per-partition scans, not aggregate path.
+        expected_values = _values_via_per_partition_scan(container, [chosen[0], chosen[1]])
+        expected_max = max(expected_values)
+
+        pager = container.query_items(
+            query='SELECT VALUE MAX(c["value"]) FROM c',
+            feed_range=crossing,
+            max_item_count=1,
+        ).by_page()
+
+        pages: List[List[object]] = []
+        merged_rows: List[object] = []
+        for page in pager:
+            items = list(page)
+            pages.append(items)
+            merged_rows.extend(items)
+
+        oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > 1]
+        assert not oversized, (
+            "aggregate page-size limit violated (max_item_count=1); "
+            f"page sizes={[len(p) for p in pages]}, oversized={oversized}.")
+        assert len(merged_rows) == 1, (
+            "aggregate merge leaked partial fragments or dropped final value; "
+            f"expected one merged row, got {len(merged_rows)} rows: {merged_rows}")
+        assert merged_rows[0] == expected_max, (
+            "merged MAX result mismatch for two-partition crossing feed_range; "
+            f"returned={merged_rows[0]}, expected={expected_max}")
         assert pager.continuation_token in (None, "", b""), (
             f"expected empty continuation after draining aggregate query; got "
             f"{pager.continuation_token!r}")

@@ -269,6 +269,37 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert result == [{"id": "1"}], \
             "Should return documents after state reset"
 
+    async def test_execution_context_reattaches_internal_capture_each_loop_iteration_async(self):
+        """Async parity for capture-dict reattachment each loop iteration.
+
+        Async `__QueryFeed` also pops `_internal_response_headers_capture` from
+        options. This verifies the async execution-context loop reattaches it on
+        each fetch call, including the second iteration after an empty page with
+        continuation.
+        """
+        mock_client = MockClient()
+        context = _DefaultQueryExecutionContext(mock_client, {}, lambda _opts: ([], {}))
+
+        seen_capture_presence = []
+        fetch_call_count = [0]
+
+        async def mock_fetch_function(options):
+            fetch_call_count[0] += 1
+            capture = options.pop("_internal_response_headers_capture", None)
+            seen_capture_presence.append(capture is context._internal_response_headers_capture)
+            if fetch_call_count[0] == 1:
+                # Force a second loop iteration (empty page + continuation).
+                return ([], {HttpHeaders.Continuation: "token-for-second-iteration"})
+            return ([{"id": "doc-final"}], {})
+
+        result = await context._fetch_items_helper_no_retries(mock_fetch_function)
+
+        assert fetch_call_count[0] == 2, "Expected two fetch iterations"
+        assert seen_capture_presence == [True, True], (
+            "Capture dict must be attached on every iteration, not just the first"
+        )
+        assert result == [{"id": "doc-final"}]
+
     @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
     async def test_retry_with_410_resets_state_and_succeeds_async(self, mock_execute):
         """
@@ -723,6 +754,46 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert result == expected_docs
 
     @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
+    async def test_targeted_refresh_normalizes_resource_link_for_cache_lookup_async(self, mock_execute):
+        """
+        Test that previous-routing-map lookup normalizes resource links before
+        cache lookup so slash-variant links still use incremental refresh.
+        """
+        mock_client = MockClient()
+        fake_routing_map = {"etag": "fake-etag", "ranges": ["range1"]}
+        mock_client._routing_map_provider._collection_routing_map_by_item[
+            "dbs/testdb/colls/testcoll"
+        ] = fake_routing_map
+
+        expected_docs = [{"id": "success"}]
+        call_count = [0]
+
+        async def execute_side_effect(*args, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                raise create_410_partition_split_error()
+            return expected_docs
+
+        mock_execute.side_effect = execute_side_effect
+
+        async def mock_fetch_function(options):
+            return (expected_docs, {})
+
+        resource_link = "/dbs/testdb/colls/testcoll/"
+        context = _DefaultQueryExecutionContext(
+            mock_client, {}, mock_fetch_function, resource_link=resource_link
+        )
+        result = await context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 2, "Should have retried once after 410"
+        assert mock_client.refresh_routing_map_provider_call_count == 1
+        assert mock_client.last_refresh_collection_link == resource_link, \
+            "Should pass collection_link for targeted refresh"
+        assert mock_client.last_refresh_previous_map == fake_routing_map, \
+            "Should normalize slash-variant resource link for cache lookup"
+        assert result == expected_docs
+
+    @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
     async def test_global_refresh_fallback_without_resource_link_async(self, mock_execute):
         """
         Test that when no resource_link is provided, the 410 retry falls back
@@ -1072,6 +1143,102 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
 
         # Sanity check: async no-query branch returns just the body list.
         assert result == [{"id": "1"}]
+
+    async def test_batch_sets_retry_write_on_request_object_async(self):
+        """Async _Batch should propagate retry_write policy to request params (sync parity)."""
+        client = self._create_minimal_connection()
+        client.connection_policy = MagicMock(RetryNonIdempotentWrites=True)
+
+        request_obj_mock = MagicMock(
+            set_excluded_location_from_options=MagicMock(),
+            set_retry_write=MagicMock(),
+            set_availability_strategy=MagicMock(),
+            headers={},
+            operation_type="Batch",
+        )
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
+
+        options = {"retry_write": 2, "partitionKey": ["mypk"]}
+        batch_operations = [{"operationType": "Create", "resourceBody": {"id": "1", "pk": "mypk"}}]
+
+        with patch("azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders", return_value={}):
+            with patch(
+                "azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async",
+                side_effect=_noop_set_session,
+            ):
+                with patch(
+                    "azure.cosmos.aio._cosmos_client_connection_async._request_object.RequestObject",
+                    return_value=request_obj_mock,
+                ):
+                    with patch.object(
+                        client,
+                        "_CosmosClientConnection__Post",
+                        new=AsyncMock(return_value=([], {})),
+                    ) as mock_post:
+                        result = await client._Batch(
+                            batch_operations=batch_operations,
+                            path="/dbs/db/colls/c1/docs",
+                            collection_id="rid-c1",
+                            options=options,
+                        )
+
+        request_obj_mock.set_excluded_location_from_options.assert_called_once_with(options)
+        request_obj_mock.set_retry_write.assert_called_once_with(
+            options, client.connection_policy.RetryNonIdempotentWrites
+        )
+        request_obj_mock.set_availability_strategy.assert_called_once_with(
+            options, client.availability_strategy
+        )
+        assert mock_post.await_count == 1
+        assert result == ([], {})
+
+    async def test_queryfeed_full_pk_no_overlap_fallback_preserves_partition_key_header_async(self):
+        """Async full-PK no-overlap fallback must retain legacy PartitionKey header on __Post."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(return_value=[])
+
+        seen_partition_key_headers = []
+
+        async def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            seen_partition_key_headers.append(req_headers.get(HttpHeaders.PartitionKey))
+            return {"Documents": [{"id": "doc-1"}]}, {}
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
+
+        container_properties = {"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2}}
+        options = {"partitionKey": ["mypk"]}
+
+        with patch(
+            "azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders",
+            return_value={HttpHeaders.PartitionKey: '["mypk"]'},
+        ):
+            with patch(
+                "azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async",
+                side_effect=_noop_set_session,
+            ):
+                with patch.object(
+                    client,
+                    "_CosmosClientConnection__Post",
+                    side_effect=post_side_effect,
+                ):
+                    docs, _headers = await client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query="SELECT * FROM c",
+                        options=options,
+                        container_property=container_properties,
+                    )
+
+        assert docs == [{"id": "doc-1"}]
+        assert seen_partition_key_headers == ['["mypk"]'], (
+            "When async full-PK routing finds no overlaps and falls back to __Post, "
+            "the legacy PartitionKey header must be preserved."
+        )
 
     async def test_queryfeed_feed_range_legacy_inbound_single_partition_honors_and_emits_legacy_async(self):
         """Async: legacy inbound continuation is honored when feed_range maps to one partition."""

@@ -28,7 +28,7 @@ import copy
 import logging
 
 from ...aio import _retry_utility_async
-from ... import http_constants, exceptions
+from ... import http_constants, exceptions, _base
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -124,9 +124,13 @@ class _QueryExecutionContextBase(object):
         new_options = copy.deepcopy(self._options)
         # Clear stale values from prior pages before issuing a new fetch.
         self._internal_response_headers_capture.clear()
-        new_options["_internal_response_headers_capture"] = self._internal_response_headers_capture
         while self._continuation or not self._has_started:
             new_options["continuation"] = self._continuation
+            # Reattach on every iteration: __QueryFeed pops this key off
+            # `options`, so without re-setting it here later loop iterations
+            # (empty-page-with-continuation case) would lose the capture and
+            # the 410 retry layer would resume from stale headers.
+            new_options["_internal_response_headers_capture"] = self._internal_response_headers_capture
 
             response_headers = {}
             (fetched_items, response_headers) = await fetch_function(new_options)
@@ -197,7 +201,24 @@ class _QueryExecutionContextBase(object):
                         if routing_map_provider is not None:
                             routing_map_cache = getattr(routing_map_provider, "_collection_routing_map_by_item", {})
                             if isinstance(routing_map_cache, dict):
-                                previous_routing_map = routing_map_cache.get(collection_link)
+                                # The cache is keyed by the normalized resource id,
+                                # not the raw collection_link. Normalize via
+                                # _base.GetResourceIdOrFullNameFromLink and fall back
+                                # to the raw link only if normalization throws.
+                                # Without this the .get() almost always returns None
+                                # and the refresh below silently degrades to a full
+                                # repopulation on every 410.
+                                lookup_key = collection_link
+                                try:
+                                    lookup_key = _base.GetResourceIdOrFullNameFromLink(collection_link)
+                                except (AttributeError, IndexError, TypeError, ValueError):
+                                    _LOGGER.debug(
+                                        "Partition split retry (async): could not normalize "
+                                        "collection_link '%s'; using raw value for "
+                                        "previous-routing-map lookup.",
+                                        collection_link,
+                                    )
+                                previous_routing_map = routing_map_cache.get(lookup_key)
                         await self._client.refresh_routing_map_provider(
                             collection_link,
                             previous_routing_map,

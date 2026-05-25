@@ -122,14 +122,24 @@ def _get_select_value_aggregate_function(query: Optional[Union[str, dict[str, An
 
 
 def _find_top_level_aggregate_function(projection: str) -> Optional[str]:
-    """Return an aggregate function name only when it appears at the top level.
+    """Return an aggregate function name only when the projection is a bare aggregate call.
 
-    This prevents nested projection expressions (for example ARRAY(SELECT VALUE
-    COUNT(...))) from being misclassified as outer VALUE aggregates.
+    A bare call is exactly one top-level aggregate function and nothing
+    else: ``COUNT(1)``, ``SUM(c.amount)``, ``MIN(c["score"])`` qualify;
+    compound shapes like ``SUM(c.x) + 1``, ``1 + SUM(c.x)``,
+    ``SUM(c.x) - SUM(c.y)``, or ``-MIN(c.x)`` return ``None``.
 
-    :param projection: SELECT VALUE projection text to inspect.
+    Compound projections cannot be merged across partitions with the
+    aggregate-merge rules without introducing silent arithmetic errors,
+    so returning ``None`` here forces the caller onto the standard
+    list-concat path. The unsupported shape then surfaces as a visibly
+    multi-row result instead of a silently wrong scalar.
+
+    :param projection: SELECT VALUE projection text (uppercased,
+        whitespace-normalized, outer parentheses already unwrapped).
     :type projection: str
-    :returns: Aggregate function name when matched at top level; otherwise ``None``.
+    :returns: Aggregate function name when the projection is a bare
+        aggregate call; otherwise ``None``.
     :rtype: Optional[str]
     """
     aggregate_fns = {"COUNT", "SUM", "MIN", "MAX", "AVG"}
@@ -157,11 +167,44 @@ def _find_top_level_aggregate_function(projection: str) -> Optional[str]:
             token = projection[start:index]
 
             if token in aggregate_fns:
-                lookahead = index
-                while lookahead < length and projection[lookahead].isspace():
-                    lookahead += 1
-                if lookahead < length and projection[lookahead] == "(":
+                # Confirm the token is immediately followed (modulo whitespace)
+                # by '(' so we are looking at a function call, not a column
+                # named SUM/COUNT/etc.
+                open_paren = index
+                while open_paren < length and projection[open_paren].isspace():
+                    open_paren += 1
+                if open_paren >= length or projection[open_paren] != "(":
+                    continue
+
+                # Walk to the matching close-paren tracking depth so nested
+                # parens inside the argument list do not confuse us.
+                call_depth = 0
+                close_paren = -1
+                cursor = open_paren
+                while cursor < length:
+                    inner = projection[cursor]
+                    if inner == "(":
+                        call_depth += 1
+                    elif inner == ")":
+                        call_depth -= 1
+                        if call_depth == 0:
+                            close_paren = cursor
+                            break
+                    cursor += 1
+                if close_paren < 0:
+                    # Unbalanced parentheses in a normalized projection means
+                    # we cannot reason about the shape safely.
+                    return None
+
+                # Classify only when the bare aggregate call spans the whole
+                # projection. Any non-whitespace prefix or suffix is a compound
+                # expression whose per-partition partials cannot be merged with
+                # the aggregate-merge rules.
+                prefix_clean = projection[:start].strip() == ""
+                suffix_clean = projection[close_paren + 1:].strip() == ""
+                if prefix_clean and suffix_clean:
                     return token
+                return None
             continue
 
         index += 1

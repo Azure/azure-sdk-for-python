@@ -1030,6 +1030,49 @@ class TestSelectValueProjectionParser:
         query = "SELECT c.count FROM c WHERE c.count IN (SELECT VALUE COUNT(1) FROM c)"
         assert _get_select_value_aggregate_function(query) is None
 
+    # --- compound-aggregate tightening ------------------------------------
+    # Per-partition aggregate fragments cannot be merged correctly when the
+    # projection wraps the aggregate in outer arithmetic; the merger would
+    # silently produce e.g. ``total + N`` instead of ``total + 1`` for
+    # ``SELECT VALUE SUM(c.x) + 1 FROM c``. The parser refuses to classify
+    # these so the caller falls back to standard list-concat merge, surfacing
+    # the unsupported shape as a visibly multi-row result rather than silent
+    # bad arithmetic.
+
+    def test_compound_aggregate_with_suffix_constant_returns_none(self):
+        query = "SELECT VALUE SUM(c.amount) + 1 FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+
+    def test_compound_aggregate_with_prefix_constant_returns_none(self):
+        query = "SELECT VALUE 1 + SUM(c.amount) FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+
+    def test_compound_aggregate_with_multiple_top_level_aggregates_returns_none(self):
+        query = "SELECT VALUE SUM(c.x) - SUM(c.y) FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+
+    def test_compound_aggregate_with_suffix_multiplier_returns_none(self):
+        query = "SELECT VALUE SUM(c.amount) * 2 FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+
+    def test_compound_aggregate_with_unary_negation_returns_none(self):
+        query = "SELECT VALUE -MIN(c.x) FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+
+    def test_bare_aggregate_over_inner_expression_still_classifies(self):
+        # SUM over an inner arithmetic expression is still a single bare
+        # aggregate call. Per-partition partials remain mergeable because
+        # SUM distributes over addition: Σ(x+1) = Σx + N·1 across the whole
+        # set, which equals Σ_p (Σ_partition(x+1)).
+        query = "SELECT VALUE SUM(c.x + 1) FROM c"
+        assert _get_select_value_aggregate_function(query) == "SUM"
+
+    def test_bare_aggregate_with_surrounding_whitespace_still_classifies(self):
+        # _extract_outer_select_value_projection strips the projection slice;
+        # this guards against future regressions if that ever changes.
+        query = "SELECT VALUE   COUNT(1)   FROM c"
+        assert _get_select_value_aggregate_function(query) == "COUNT"
+
 
 class TestAggregateClassificationHeuristics:
     def test_block_comment_prefix_does_not_drive_outer_select_value_detection(self):
