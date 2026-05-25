@@ -136,9 +136,9 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         kid = key_attributes.id
         assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
         assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
-        assert key_attributes.properties.key_size == size, (
-            f"key_size should be {size}, but is {key_attributes.properties.key_size}"
-        )
+        assert (
+            key_attributes.properties.key_size == size
+        ), f"key_size should be {size}, but is {key_attributes.properties.key_size}"
         assert (
             key_attributes.properties.created_on and key_attributes.properties.updated_on
         ), "Missing required date attributes."
