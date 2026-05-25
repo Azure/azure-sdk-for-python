@@ -184,8 +184,12 @@ def main(generate_input, generate_output):
                 # generated docstrings to avoid SyntaxWarning on Python 3.12+.
                 # See https://github.com/Azure/azure-sdk-for-python/issues/47011
                 # and https://github.com/microsoft/typespec/issues/10784.
-                sanitize_generated_docstrings(sdk_code_path)
-                if package_name not in result:
+                try:
+                    sanitize_generated_docstrings(sdk_code_path)
+                except Exception as e:
+                    _LOGGER.warning(
+                        f"Fail to sanitize generated docstrings for {package_name} in {readme_or_tsp}: {e}"
+                    )
                     package_entry = {}
                     package_entry["packageName"] = package_name
                     package_entry["path"] = [folder_name]
