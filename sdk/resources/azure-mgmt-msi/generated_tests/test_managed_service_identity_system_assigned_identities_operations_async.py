@@ -6,22 +6,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.msi import ManagedIdentityClient
+from azure.mgmt.msi.aio import ManagedServiceIdentityClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestManagedIdentityOperations(AzureMgmtRecordedTestCase):
+class TestManagedServiceIdentitySystemAssignedIdentitiesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ManagedIdentityClient)
+        self.client = self.create_mgmt_client(ManagedServiceIdentityClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_operations_list(self, resource_group):
-        response = self.client.operations.list()
-        result = [r for r in response]
+    @recorded_by_proxy_async
+    async def test_system_assigned_identities_get_by_scope(self, resource_group):
+        response = await self.client.system_assigned_identities.get_by_scope(
+            scope="str",
+        )
+
         # please add some check logic here by yourself
         # ...

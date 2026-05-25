@@ -48,7 +48,7 @@ from ...operations._operations import (
     build_user_assigned_identities_list_by_subscription_request,
     build_user_assigned_identities_update_request,
 )
-from .._configuration import ManagedIdentityClientConfiguration
+from .._configuration import ManagedServiceIdentityClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -62,14 +62,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.msi.aio.ManagedIdentityClient`'s
+        :class:`~azure.mgmt.msi.aio.ManagedServiceIdentityClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedIdentityClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ManagedServiceIdentityClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -172,14 +174,16 @@ class SystemAssignedIdentitiesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.msi.aio.ManagedIdentityClient`'s
+        :class:`~azure.mgmt.msi.aio.ManagedServiceIdentityClient`'s
         :attr:`system_assigned_identities` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedIdentityClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ManagedServiceIdentityClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -255,14 +259,16 @@ class FederatedIdentityCredentialsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.msi.aio.ManagedIdentityClient`'s
+        :class:`~azure.mgmt.msi.aio.ManagedServiceIdentityClient`'s
         :attr:`federated_identity_credentials` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedIdentityClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ManagedServiceIdentityClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -730,14 +736,16 @@ class UserAssignedIdentitiesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.msi.aio.ManagedIdentityClient`'s
+        :class:`~azure.mgmt.msi.aio.ManagedServiceIdentityClient`'s
         :attr:`user_assigned_identities` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ManagedIdentityClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ManagedServiceIdentityClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

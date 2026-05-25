@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.msi import ManagedIdentityClient
+from azure.mgmt.msi import ManagedServiceIdentityClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.msi import ManagedIdentityClient
 
 
 def main():
-    client = ManagedIdentityClient(
+    client = ManagedServiceIdentityClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

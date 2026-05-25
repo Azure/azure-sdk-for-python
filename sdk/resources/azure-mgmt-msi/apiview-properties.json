@@ -46,5 +46,5 @@
         "azure.mgmt.msi.operations.UserAssignedIdentitiesOperations.list_by_subscription": "Microsoft.ManagedIdentity.Identities.listBySubscription",
         "azure.mgmt.msi.aio.operations.UserAssignedIdentitiesOperations.list_by_subscription": "Microsoft.ManagedIdentity.Identities.listBySubscription"
     },
-    "CrossLanguageVersion": "54a26e7e73ed"
+    "CrossLanguageVersion": "75700dd7a51c"
 }
