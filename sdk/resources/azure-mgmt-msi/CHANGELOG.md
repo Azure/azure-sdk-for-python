@@ -4,23 +4,15 @@
 
 ### Features Added
 
-  - Model `Identity` added property `properties`
-  - Model `IdentityUpdate` added property `properties`
   - Added model `CloudError`
   - Added model `ExtensionResource`
-  - Added model `UserAssignedIdentityProperties`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed client `ManagedServiceIdentityClient`
-  - Model `Identity` deleted or renamed its instance variable `tenant_id`
-  - Model `Identity` deleted or renamed its instance variable `principal_id`
-  - Model `Identity` deleted or renamed its instance variable `client_id`
-  - Model `Identity` deleted or renamed its instance variable `isolation_scope`
-  - Model `IdentityUpdate` deleted or renamed its instance variable `tenant_id`
-  - Model `IdentityUpdate` deleted or renamed its instance variable `principal_id`
-  - Model `IdentityUpdate` deleted or renamed its instance variable `client_id`
-  - Model `IdentityUpdate` deleted or renamed its instance variable `isolation_scope`
+  - Model `Identity` moved instance variable `tenant_id`, `principal_id`, `client_id` and `isolation_scope` under property `properties` whose type is `UserAssignedIdentityProperties`
+  - Model `IdentityUpdate` moved instance variable `tenant_id`, `principal_id`, `client_id` and `isolation_scope` under property `properties` whose type is `UserAssignedIdentityProperties`
   - Method `FederatedIdentityCredentialsOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
 
 ## 8.0.0b1 (2025-08-15)
