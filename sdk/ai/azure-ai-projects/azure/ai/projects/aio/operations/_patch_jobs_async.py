@@ -35,6 +35,7 @@ from ...operations._job_helper import (
     _FAILED_JOB_STATUS,
     _FINALIZING_RUN_MARKER,
     _MAX_CONCURRENCY,
+    _MAX_WORKER,
     _NAMED_OUTPUTS_DIR,
     _ARTIFACTS_DIR,
     _DEFAULT_ARTIFACT_STORE_OUTPUT_NAME,
@@ -84,12 +85,8 @@ class JobsOperations(_GeneratedJobsOps):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self._datasets = DatasetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self._models = _GeneratedModelsOps(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self._datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self._models = _GeneratedModelsOps(self._client, self._config, self._serialize, self._deserialize)
 
     @distributed_trace_async
     async def validate(
@@ -159,7 +156,11 @@ class JobsOperations(_GeneratedJobsOps):
                     version,
                 )
                 result = await self._datasets.upload_folder(
-                    name=dataset_name, version=version, folder=str(local_path)
+                    name=dataset_name,
+                    version=version,
+                    folder=str(local_path),
+                    max_workers=_MAX_WORKER,
+                    max_concurrency=_MAX_CONCURRENCY,
                 )
             else:
                 _logger.debug(
@@ -169,32 +170,22 @@ class JobsOperations(_GeneratedJobsOps):
                     version,
                 )
                 result = await self._datasets.upload_file(
-                    name=dataset_name, version=version, file_path=str(local_path)
+                    name=dataset_name, version=version, file_path=str(local_path), max_concurrency=_MAX_CONCURRENCY
                 )
             if not result.id:
-                raise ValueError(
-                    f"Dataset upload succeeded but the service did not return a URI for '{local_path}'."
-                )
-            _logger.debug(
-                "[JobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri
-            )
+                raise ValueError(f"Dataset upload succeeded but the service did not return a URI for '{local_path}'.")
+            _logger.debug("[JobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri)
             return result.id
 
         parsed = urlparse(uri)
         if parsed.scheme and not parsed.netloc:
             raw = uri[len("azureai:") :] if uri.startswith("azureai:") else uri
             ds_name, ds_version = raw.split(":", 1)
-            _logger.debug(
-                "[JobsOperations] Resolving name:version '%s' to dataset URI.", uri
-            )
+            _logger.debug("[JobsOperations] Resolving name:version '%s' to dataset URI.", uri)
             result = await self._datasets.get(name=ds_name, version=ds_version)
             if not result.id:
-                raise ValueError(
-                    f"Dataset '{uri}' was fetched but the service did not return a URI."
-                )
-            _logger.debug(
-                "[JobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri
-            )
+                raise ValueError(f"Dataset '{uri}' was fetched but the service did not return a URI.")
+            _logger.debug("[JobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri)
             return result.id
 
         # Already a datastore / remote URI — pass through unchanged.
@@ -211,9 +202,7 @@ class JobsOperations(_GeneratedJobsOps):
         if not isinstance(job.code, str):
             return
         dataset_name = f"{name}-code"
-        job.code = await self._resolve_asset_uri(
-            job.code, dataset_name, base_path=job._base_path
-        )
+        job.code = await self._resolve_asset_uri(job.code, dataset_name, base_path=job._base_path)
 
     async def _resolve_input_paths(self, name: str, job: CommandJob) -> None:
         """Resolve local paths in ``inputs`` to datastore URIs.
@@ -232,9 +221,7 @@ class JobsOperations(_GeneratedJobsOps):
             if not isinstance(job_input.path, str):
                 continue
             dataset_name = f"{name}-{input_key}"
-            job_input.path = await self._resolve_asset_uri(
-                job_input.path, dataset_name, base_path=base_path
-            )
+            job_input.path = await self._resolve_asset_uri(job_input.path, dataset_name, base_path=base_path)
 
     async def _resolve_local_paths(self, name: str, job: CommandJob) -> None:
         """Resolve all local paths in the job body to datastore URIs.
@@ -272,10 +259,7 @@ class JobsOperations(_GeneratedJobsOps):
             try:
                 await _base()
             except BadStatus:
-                if (
-                    _pm._pipeline_response
-                    and _pm._pipeline_response.http_response.status_code == 404
-                ):
+                if _pm._pipeline_response and _pm._pipeline_response.http_response.status_code == 404:
                     _pm._status = "Succeeded"
                 else:
                     raise
@@ -384,9 +368,7 @@ class JobsOperations(_GeneratedJobsOps):
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         raw_result = await super().begin_delete(  # type: ignore[func-returns-value]
             name=name,
@@ -413,9 +395,7 @@ class JobsOperations(_GeneratedJobsOps):
         else:
             polling_method = polling
 
-        return AsyncLROPoller[None](
-            self._client, raw_result, lambda _: None, polling_method
-        )
+        return AsyncLROPoller[None](self._client, raw_result, lambda _: None, polling_method)
 
     @distributed_trace_async
     async def begin_cancel(self, name: str, **kwargs: Any) -> AsyncLROPoller[None]:  # type: ignore[override]
@@ -434,9 +414,7 @@ class JobsOperations(_GeneratedJobsOps):
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         raw_result = await super().begin_cancel(  # type: ignore[func-returns-value]
             name=name,
@@ -462,9 +440,7 @@ class JobsOperations(_GeneratedJobsOps):
         else:
             polling_method = polling
 
-        return AsyncLROPoller[None](
-            self._client, raw_result, lambda _: None, polling_method
-        )
+        return AsyncLROPoller[None](self._client, raw_result, lambda _: None, polling_method)
 
     @distributed_trace_async
     async def show_services(  # type: ignore[override]
@@ -487,15 +463,10 @@ class JobsOperations(_GeneratedJobsOps):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
-        result = await super().show_services(
-            name=name, run_id=name, node_id=node_index, **kwargs
-        )
+        result = await super().show_services(name=name, run_id=name, node_id=node_index, **kwargs)
         if not result or not result.instances:
             return None
-        return {
-            k: ServiceInstance._from_rest_object(v, node_index)
-            for k, v in result.instances.items()
-        }
+        return {k: ServiceInstance._from_rest_object(v, node_index) for k, v in result.instances.items()}
 
     @distributed_trace_async
     async def stream(self, name: str, **kwargs: Any) -> None:  # type: ignore[override]
@@ -538,9 +509,7 @@ class JobsOperations(_GeneratedJobsOps):
 
             fileout.flush()
             log_files: Dict[str, str] = details.log_files or {}
-            available_logs = _get_sorted_streamable_logs(
-                log_files.keys(), processed_logs
-            )
+            available_logs = _get_sorted_streamable_logs(log_files.keys(), processed_logs)
             last_content = ""
             for current_log in available_logs:
                 last_content = _download_log_text(log_files[current_log])
@@ -555,9 +524,7 @@ class JobsOperations(_GeneratedJobsOps):
         # Final flush: capture any log lines written between the last poll and the
         # job reaching a terminal state (e.g. on cancel or quick completion).
         final_log_files: Dict[str, str] = details.log_files or {}
-        for current_log in _get_sorted_streamable_logs(
-            final_log_files.keys(), processed_logs
-        ):
+        for current_log in _get_sorted_streamable_logs(final_log_files.keys(), processed_logs):
             final_content = _download_log_text(final_log_files[current_log])
             _incremental_print(final_content, processed_logs, current_log, fileout)
 
@@ -583,16 +550,10 @@ class JobsOperations(_GeneratedJobsOps):
                 if details.error is not None
                 else "Detailed error not set on the run. Please check the logs for details."
             )
-            error_text = (
-                json.dumps(error_payload, indent=4)
-                if isinstance(error_payload, dict)
-                else error_payload
-            )
+            error_text = json.dumps(error_payload, indent=4) if isinstance(error_payload, dict) else error_payload
             raise RuntimeError("Exception : \n {} ".format(error_text))
 
-    async def _resolve_output_to_blob_ref(
-        self, output_name: str, output: _Output
-    ) -> BlobReference:
+    async def _resolve_output_to_blob_ref(self, output_name: str, output: _Output) -> BlobReference:
         """Resolve a job ``Output`` to a :class:`~azure.ai.projects.models.BlobReference`.
 
         :param output_name: The output name.
@@ -605,23 +566,17 @@ class JobsOperations(_GeneratedJobsOps):
         _validate_output_for_download(output_name, output)
         assert output.asset_name is not None and output.asset_version is not None
         if output.type == AssetTypes.SAFETENSORS_MODEL:
-            model_version = await self._models.get(
-                name=output.asset_name, version=output.asset_version
-            )
+            model_version = await self._models.get(name=output.asset_name, version=output.asset_version)
             credential = await self._models.get_credentials(
                 name=output.asset_name,
                 version=output.asset_version,
                 body=_ModelCredentialRequest(blob_uri=model_version.blob_uri),
             )
         else:
-            credential = await self._datasets.get_credentials(
-                name=output.asset_name, version=output.asset_version
-            )
+            credential = await self._datasets.get_credentials(name=output.asset_name, version=output.asset_version)
         return credential.blob_reference
 
-    async def _download_blob_reference(
-        self, blob_ref: BlobReference, destination: Path
-    ) -> Tuple[int, int]:
+    async def _download_blob_reference(self, blob_ref: BlobReference, destination: Path) -> Tuple[int, int]:
         """Download every blob under ``blob_ref`` into ``destination``.
 
         :param blob_ref: The blob reference to download.
@@ -642,14 +597,10 @@ class JobsOperations(_GeneratedJobsOps):
 
         destination.mkdir(parents=True, exist_ok=True)
 
-        async with AsyncContainerClient.from_container_url(
-            container_url=sas_uri
-        ) as container_client:
+        async with AsyncContainerClient.from_container_url(container_url=sas_uri) as container_client:
             list_prefix = (prefix + "/") if prefix else ""
             blobs = []
-            async for blob in container_client.list_blobs(
-                name_starts_with=list_prefix or None, include=["metadata"]
-            ):
+            async for blob in container_client.list_blobs(name_starts_with=list_prefix or None, include=["metadata"]):
                 blobs.append(blob)
             all_names = {b.name for b in blobs}
 
@@ -673,9 +624,7 @@ class JobsOperations(_GeneratedJobsOps):
                     blob_name,
                     local_path,
                 )
-                downloader = await container_client.download_blob(
-                    blob=blob_name, max_concurrency=_MAX_CONCURRENCY
-                )
+                downloader = await container_client.download_blob(blob=blob_name, max_concurrency=_MAX_CONCURRENCY)
                 with open(local_path, "wb") as fh:
                     await downloader.readinto(fh)
                 file_count += 1
@@ -734,9 +683,7 @@ class JobsOperations(_GeneratedJobsOps):
                     f"Job '{name}' has no output named '{output_name}'. "
                     f"Available outputs: {sorted(outputs.keys())}."
                 )
-            await self._download_named_output(
-                name, output_name, outputs[output_name], dest_root
-            )
+            await self._download_named_output(name, output_name, outputs[output_name], dest_root)
             return
 
         if all:
@@ -786,9 +733,7 @@ class JobsOperations(_GeneratedJobsOps):
             job_name,
             destination,
         )
-        file_count, total_bytes = await self._download_blob_reference(
-            blob_ref, destination
-        )
+        file_count, total_bytes = await self._download_blob_reference(blob_ref, destination)
         _logger.info(
             "[JobsOperations] Downloaded %d file(s) (%.2f MB) for output '%s'.",
             file_count,
@@ -813,9 +758,7 @@ class JobsOperations(_GeneratedJobsOps):
         run = await super()._get_run(name=name, run_id=name, **kwargs)
         experiment_id = run.experiment_id
         if not experiment_id:
-            raise ValueError(
-                f"Job '{name}' run is missing 'experimentId'; cannot list artifacts."
-            )
+            raise ValueError(f"Job '{name}' run is missing 'experimentId'; cannot list artifacts.")
 
         # Async pagination: collect artifact paths
         paths: List[str] = []
@@ -835,9 +778,7 @@ class JobsOperations(_GeneratedJobsOps):
                 break
 
         if not paths:
-            _logger.info(
-                "[JobsOperations] Job '%s' has no default artifacts to download.", name
-            )
+            _logger.info("[JobsOperations] Job '%s' has no default artifacts to download.", name)
             return
 
         prefixes = _group_paths_by_prefix(paths)
@@ -884,9 +825,7 @@ class JobsOperations(_GeneratedJobsOps):
             try:
                 local_path = _safe_join(artifacts_root, path)
             except ValueError as exc:
-                _logger.warning(
-                    "[JobsOperations] Skipping unsafe artifact path '%s': %s", path, exc
-                )
+                _logger.warning("[JobsOperations] Skipping unsafe artifact path '%s': %s", path, exc)
                 continue
             work.setdefault(local_path, content_uri)
 
@@ -904,9 +843,7 @@ class JobsOperations(_GeneratedJobsOps):
         total_bytes = 0
         with ThreadPoolExecutor(max_workers=workers) as executor:
             futures = {
-                executor.submit(
-                    _download_artifact_to_path, uri, local_path, _MAX_CONCURRENCY
-                ): local_path
+                executor.submit(_download_artifact_to_path, uri, local_path, _MAX_CONCURRENCY): local_path
                 for local_path, uri in work.items()
             }
             for future in as_completed(futures):

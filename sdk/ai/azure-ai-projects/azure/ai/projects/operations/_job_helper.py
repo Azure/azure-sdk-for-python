@@ -32,9 +32,7 @@ from ..models._enums import AssetTypes
 from ..models._models import Output as _Output
 from ..models._patch_jobs import CommandJob, ValidationResult
 
-_TERMINAL_JOB_STATUSES = frozenset(
-    {"completed", "failed", "canceled", "notresponding", "paused", "unknown"}
-)
+_TERMINAL_JOB_STATUSES = frozenset({"completed", "failed", "canceled", "notresponding", "paused", "unknown"})
 
 _IN_PROGRESS_JOB_STATUSES = frozenset(
     {
@@ -60,13 +58,16 @@ _POLLING_INTERVAL_MIN = int(os.environ.get("AZUREML_RUN_POLLING_INTERVAL_MIN", 2
 
 _POLLING_INTERVAL_MAX = int(os.environ.get("AZUREML_RUN_POLLING_INTERVAL_MAX", 60))
 
-_COMMON_RUNTIME_STREAM_LOG_PATTERN = re.compile(
-    r"user_logs/std_log[\D]*[0]*(?:_ps)?\.txt"
-)
+_COMMON_RUNTIME_STREAM_LOG_PATTERN = re.compile(r"user_logs/std_log[\D]*[0]*(?:_ps)?\.txt")
 
 _COMMAND_JOB_LOG_PATTERN = re.compile(r"azureml-logs/[\d]{2}.+\.txt")
 
-_MAX_CONCURRENCY = 8
+_MAX_CONCURRENCY = 16
+# Use the machine's CPU count for parallel file uploads (works on Windows, macOS, and Linux).
+# Falls back to 1 (sequential) if os.cpu_count() returns None (undetermined). Capped at 16
+# because each worker uses _MAX_CONCURRENCY parallel connections, so 16 workers × 16 connections
+# = 256 max concurrent connections - preventing Azure Storage throttling and excessive memory usage.
+_MAX_WORKER = min(os.cpu_count() or 1, 16)
 
 _NAMED_OUTPUTS_DIR = "named-outputs"
 
@@ -153,9 +154,7 @@ def _update_hash(path: Path, sha: "hashlib._Hash") -> None:
             sha.update(chunk)
 
 
-def _collect_files(
-    directory: Path, ignore_patterns: List[str]
-) -> List[Tuple[Path, str]]:
+def _collect_files(directory: Path, ignore_patterns: List[str]) -> List[Tuple[Path, str]]:
     """Collect all files in a directory, respecting gitignore patterns and resolving symlinks.
 
     :param directory: The directory to collect files from.
@@ -215,9 +214,7 @@ def _is_folder_marker(blob: Any, all_names: Set[str]) -> bool:
     if blob.metadata and blob.metadata.get("hdi_isfolder", "").lower() == "true":
         return True
     prefix_token = blob.name + "/"
-    return any(
-        other != blob.name and other.startswith(prefix_token) for other in all_names
-    )
+    return any(other != blob.name and other.startswith(prefix_token) for other in all_names)
 
 
 def _ensure_dir(p: Path) -> None:
@@ -325,10 +322,7 @@ def _validate_command_job(job: CommandJob) -> ValidationResult:
             "'command' is required and cannot be empty for a CommandJob.",
             error_code="MISSING_FIELD",
         )
-    if (
-        not job.environment_image_reference
-        or not job.environment_image_reference.strip()
-    ):
+    if not job.environment_image_reference or not job.environment_image_reference.strip():
         result.append_error(
             "environment_image_reference",
             "'environment_image_reference' is required and cannot be empty for a CommandJob.",
@@ -365,18 +359,14 @@ def _validate_command_job(job: CommandJob) -> ValidationResult:
         for key, job_input in job.inputs.items():
             path_value = getattr(job_input, "path", None)
             if isinstance(path_value, str) and _path_looks_local(path_value):
-                _check_local_path(
-                    result, path_value, f"inputs.{key}.path", base_path=job._base_path
-                )
+                _check_local_path(result, path_value, f"inputs.{key}.path", base_path=job._base_path)
 
     # Outputs: verify any local-looking paths exist.
     if job.outputs:
         for key, job_output in job.outputs.items():
             path_value = getattr(job_output, "path", None)
             if isinstance(path_value, str) and _path_looks_local(path_value):
-                _check_local_path(
-                    result, path_value, f"outputs.{key}.path", base_path=job._base_path
-                )
+                _check_local_path(result, path_value, f"outputs.{key}.path", base_path=job._base_path)
 
     return result
 
@@ -451,9 +441,7 @@ def _wait_before_polling(current_seconds: float) -> int:
     """
     if current_seconds < 0:
         raise ValueError("current_seconds must be positive")
-    duration = int(
-        _POLLING_INTERVAL_MAX / (1.0 + 100 * math.exp(-current_seconds / 20.0))
-    )
+    duration = int(_POLLING_INTERVAL_MAX / (1.0 + 100 * math.exp(-current_seconds / 20.0)))
     return max(_POLLING_INTERVAL_MIN, duration)
 
 
@@ -472,9 +460,7 @@ def _download_log_text(
     """
     _, read_timeout = timeout
     try:
-        with urllib.request.urlopen(  # nosec B310
-            url, timeout=read_timeout
-        ) as response:
+        with urllib.request.urlopen(url, timeout=read_timeout) as response:  # nosec B310
             charset = response.headers.get_content_charset() or "utf-8"
             return response.read().decode(charset, errors="replace")
     except urllib.error.HTTPError as exc:
@@ -503,9 +489,7 @@ def _safe_join(dest: Path, rel: str) -> Path:
     try:
         candidate.relative_to(dest_root)
     except ValueError as exc:
-        raise ValueError(
-            f"Artifact path '{rel}' escapes the destination directory."
-        ) from exc
+        raise ValueError(f"Artifact path '{rel}' escapes the destination directory.") from exc
     return candidate
 
 
