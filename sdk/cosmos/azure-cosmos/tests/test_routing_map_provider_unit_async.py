@@ -230,13 +230,24 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
 
         cache = PartitionKeyRangeCache(client)
 
-        with self.assertRaises(CosmosHttpResponseError) as ctx:
-            await cache._fetch_routing_map(
-                collection_link="dbs/db1/colls/coll1",
-                collection_id="dbs/db1/colls/coll1",
-                previous_routing_map=None,
-                feed_options={}
-            )
+        # Patch asyncio.sleep so the retry loop's jittered backoffs (up to
+        # ~1.5s deterministic upper bound across the two pre-final attempts)
+        # do not slow this unit test down. Mirrors the pattern used by the
+        # other retry-path tests in this file.
+        async def _no_sleep(_seconds):
+            return None
+
+        with patch(
+            'azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep',
+            new=_no_sleep,
+        ):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                await cache._fetch_routing_map(
+                    collection_link="dbs/db1/colls/coll1",
+                    collection_id="dbs/db1/colls/coll1",
+                    previous_routing_map=None,
+                    feed_options={}
+                )
         self.assertEqual(ctx.exception.status_code, 503)
 
 

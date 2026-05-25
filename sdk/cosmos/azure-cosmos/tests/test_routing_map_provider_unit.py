@@ -315,13 +315,18 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
 
         cache = PartitionKeyRangeCache(client)
 
-        with self.assertRaises(CosmosHttpResponseError) as ctx:
-            cache._fetch_routing_map(
-                collection_link="dbs/db1/colls/coll1",
-                collection_id="dbs/db1/colls/coll1",
-                previous_routing_map=None,  # Full load
-                feed_options={}
-            )
+        # Patch time.sleep so the retry loop's jittered backoffs (up to
+        # ~1.5s deterministic upper bound across the two pre-final attempts)
+        # do not slow this unit test down. Mirrors the pattern used by the
+        # other retry-path tests in this file.
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                cache._fetch_routing_map(
+                    collection_link="dbs/db1/colls/coll1",
+                    collection_id="dbs/db1/colls/coll1",
+                    previous_routing_map=None,  # Full load
+                    feed_options={}
+                )
         self.assertEqual(ctx.exception.status_code, 503)
 
 
