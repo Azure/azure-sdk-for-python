@@ -55,7 +55,6 @@
   - Deleted or renamed model `RaiExternalSafetyProvider`
   - Deleted or renamed model `RaiExternalSafetyProviderProperties`
   - Deleted or renamed model `RaiTopicConfig`
-  - Method `OutboundRulesOperations.begin_post` changed return type from `AsyncLROPoller[OutboundRuleListResult]` to `AsyncLROPoller[AsyncItemPaged[_models.OutboundRuleBasicResource]]`
   - Method `OutboundRulesOperations.begin_post` changed return type from `LROPoller[OutboundRuleListResult]` to `LROPoller[ItemPaged[_models.OutboundRuleBasicResource]]`
   - Method `RaiExternalSafetyProviderOperations.create_or_update` changed return type from `Union[RaiExternalSafetyProviderSchema, RaiExternalSafetyProvider]` to `RaiExternalSafetyProviderSchema`
 
