@@ -2,7 +2,26 @@
 
 ## 7.2.0 (2026-05-25)
 
-skip changelog generation
+### Features Added
+
+  - Model `Identity` added property `properties`
+  - Model `IdentityUpdate` added property `properties`
+  - Added model `CloudError`
+  - Added model `ExtensionResource`
+  - Added model `UserAssignedIdentityProperties`
+
+### Breaking Changes
+
+  - Deleted or renamed client `ManagedServiceIdentityClient`
+  - Model `Identity` deleted or renamed its instance variable `tenant_id`
+  - Model `Identity` deleted or renamed its instance variable `principal_id`
+  - Model `Identity` deleted or renamed its instance variable `client_id`
+  - Model `Identity` deleted or renamed its instance variable `isolation_scope`
+  - Model `IdentityUpdate` deleted or renamed its instance variable `tenant_id`
+  - Model `IdentityUpdate` deleted or renamed its instance variable `principal_id`
+  - Model `IdentityUpdate` deleted or renamed its instance variable `client_id`
+  - Model `IdentityUpdate` deleted or renamed its instance variable `isolation_scope`
+  - Method `FederatedIdentityCredentialsOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
 
 ## 8.0.0b1 (2025-08-15)
 
