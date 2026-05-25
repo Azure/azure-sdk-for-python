@@ -57,12 +57,18 @@ _DPG_README = "README.md"
 # ``\\X`` it no longer matches.
 # ---------------------------------------------------------------------------
 
-# Match a non-raw, non-byte triple-quoted string. Generated docstrings are
-# always triple-quoted. The lookbehind ensures we don't match a string that
-# is preceded by an `r`/`R`/`b`/`B` prefix (raw / byte literals must be
-# left alone, e.g. ``r"""\W"""``).
+# Match a triple-quoted string literal at a token boundary, capturing the
+# full Python string prefix. Per PEP, valid Python 3 string prefixes are:
+# (empty), u, U, b, B, f, F, r, R, br, bR, Br, BR, rb, rB, Rb, RB,
+# fr, fR, Fr, FR, rf, rF, Rf, RF. We anchor with ``(?<!\w)`` so the prefix
+# can't start mid-identifier (e.g. ``foo r"""..."""`` is still matched, but
+# ``barf"""..."""`` is not — though that wouldn't be valid Python anyway).
 _TRIPLE_QUOTED_RE = re.compile(
-    r'(?<![rRbB])(?P<prefix>[uUfF]?)(?P<quote>"""|\'\'\')(?P<body>.*?)(?P=quote)',
+    r'(?<!\w)'
+    r'(?P<prefix>(?:[bB][rR]?|[rR][bBfF]?|[fF][rR]?|[uU])?)'
+    r'(?P<quote>"""|\'\'\')'
+    r'(?P<body>.*?)'
+    r'(?P=quote)',
     re.DOTALL,
 )
 # Process one escape at a time. The first alternative consumes a *valid*
@@ -82,11 +88,15 @@ def _process_escape(match: "re.Match") -> str:
 
 
 def _fix_triple_quoted(match: "re.Match") -> str:
+    prefix = match.group("prefix")
+    # Raw (r/R) and byte (b/B) string literals must be left untouched.
+    if prefix and ("r" in prefix.lower() or "b" in prefix.lower()):
+        return match.group(0)
     body = match.group("body")
     fixed = _ESCAPE_PROCESSOR.sub(_process_escape, body)
     if fixed == body:
         return match.group(0)
-    return f"{match.group('prefix')}{match.group('quote')}{fixed}{match.group('quote')}"
+    return f"{prefix}{match.group('quote')}{fixed}{match.group('quote')}"
 
 
 def sanitize_generated_docstrings(sdk_code_path: str) -> None:

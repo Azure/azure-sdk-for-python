@@ -1,4 +1,3 @@
-import tempfile
 from pathlib import Path
 
 from packaging_tools.generate_utils import (
@@ -43,6 +42,33 @@ def test_leaves_byte_strings_alone():
     # Our regex deliberately doesn't include b/B in the allowed prefix so they're skipped.
     src = 'b"""[\\W_]"""'
     assert _run(src) == src
+
+
+def test_leaves_raw_fstring_alone_rf_prefix():
+    # Regression: ``rf"""..."""`` was previously sanitized because the
+    # lookbehind only saw ``f`` immediately before the quote.
+    src = 'rf"""[\\W_]"""'
+    assert _run(src) == src
+
+
+def test_leaves_raw_fstring_alone_fr_prefix():
+    src = 'fr"""[\\W_]"""'
+    assert _run(src) == src
+
+
+def test_leaves_raw_byte_string_alone_rb_prefix():
+    src = 'rb"""[\\W_]"""'
+    assert _run(src) == src
+
+
+def test_leaves_raw_byte_string_alone_br_prefix():
+    src = 'br"""[\\W_]"""'
+    assert _run(src) == src
+
+
+def test_leaves_raw_byte_string_alone_mixed_case_prefix():
+    for src in ('Rb"""[\\W_]"""', 'bR"""[\\W_]"""', 'rF"""[\\W_]"""', 'Fr"""[\\W_]"""'):
+        assert _run(src) == src
 
 
 def test_leaves_single_quoted_strings_alone():
