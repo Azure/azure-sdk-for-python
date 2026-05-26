@@ -2,7 +2,991 @@
 
 ## 2.0.0b3 (2026-05-26)
 
-skip changelog generation
+### Features Added
+
+  - Model `AADDataConnector` added property `properties`
+  - Model `AATPDataConnector` added property `properties`
+  - Model `ASCDataConnector` added property `properties`
+  - Model `AccountEntity` added property `properties`
+  - Model `ActionRequest` added property `properties`
+  - Model `ActionResponse` added property `properties`
+  - Enum `AlertProperty` added member `SUB_TECHNIQUES`
+  - Enum `AlertRuleKind` added member `ML_BEHAVIOR_ANALYTICS`
+  - Enum `AlertRuleKind` added member `NRT`
+  - Enum `AlertRuleKind` added member `THREAT_INTELLIGENCE`
+  - Enum `AutomationRulePropertyArrayConditionSupportedArrayType` added member `INCIDENT_LABELS`
+  - Enum `AutomationRulePropertyConditionSupportedProperty` added member `INCIDENT_ALERT_TITLE`
+  - Enum `AutomationRulePropertyConditionSupportedProperty` added member `INCIDENT_CUSTOM_DETECTION_RULE_IDS`
+  - Model `AzureResourceEntity` added property `properties`
+  - Model `CloudApplicationEntity` added property `properties`
+  - Enum `DataConnectorKind` added member `AMAZON_WEB_SERVICES_S3`
+  - Enum `DataConnectorKind` added member `API_POLLING`
+  - Enum `DataConnectorKind` added member `DYNAMICS365`
+  - Enum `DataConnectorKind` added member `GCP`
+  - Enum `DataConnectorKind` added member `GENERIC_UI`
+  - Enum `DataConnectorKind` added member `IOT`
+  - Enum `DataConnectorKind` added member `MICROSOFT_PURVIEW_INFORMATION_PROTECTION`
+  - Enum `DataConnectorKind` added member `MICROSOFT_THREAT_PROTECTION`
+  - Enum `DataConnectorKind` added member `OFFICE365_PROJECT`
+  - Enum `DataConnectorKind` added member `OFFICE_ATP`
+  - Enum `DataConnectorKind` added member `OFFICE_IRM`
+  - Enum `DataConnectorKind` added member `OFFICE_POWER_BI`
+  - Enum `DataConnectorKind` added member `PURVIEW_AUDIT`
+  - Enum `DataConnectorKind` added member `THREAT_INTELLIGENCE_TAXII`
+  - Model `DnsEntity` added property `properties`
+  - Enum `EntityKindEnum` added member `NIC`
+  - Model `FileEntity` added property `properties`
+  - Model `FileHashEntity` added property `properties`
+  - Model `HostEntity` added property `properties`
+  - Model `HuntingBookmark` added property `properties`
+  - Model `IncidentAdditionalData` added property `techniques`
+  - Model `IncidentAdditionalData` added property `merged_incident_number`
+  - Model `IncidentAdditionalData` added property `merged_incident_url`
+  - Model `IoTDeviceEntity` added property `properties`
+  - Model `IoTDeviceEntityProperties` added property `owners`
+  - Model `IoTDeviceEntityProperties` added property `nic_entity_ids`
+  - Model `IoTDeviceEntityProperties` added property `site`
+  - Model `IoTDeviceEntityProperties` added property `zone`
+  - Model `IoTDeviceEntityProperties` added property `sensor`
+  - Model `IoTDeviceEntityProperties` added property `device_sub_type`
+  - Model `IoTDeviceEntityProperties` added property `importance`
+  - Model `IoTDeviceEntityProperties` added property `purdue_layer`
+  - Model `IoTDeviceEntityProperties` added property `is_authorized`
+  - Model `IoTDeviceEntityProperties` added property `is_programming`
+  - Model `IoTDeviceEntityProperties` added property `is_scanner`
+  - Model `IpEntity` added property `properties`
+  - Enum `Kind` added member `CUSTOM_DETECTION`
+  - Model `MCASDataConnector` added property `properties`
+  - Model `MDATPDataConnector` added property `properties`
+  - Model `MSTIDataConnector` added property `properties`
+  - Model `MailClusterEntity` added property `properties`
+  - Model `MailMessageEntity` added property `properties`
+  - Model `MailboxEntity` added property `properties`
+  - Model `MalwareEntity` added property `properties`
+  - Model `MetadataModel` added property `properties`
+  - Model `MetadataPatch` added property `properties`
+  - Model `MicrosoftSecurityIncidentCreationAlertRule` added property `properties`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` added property `properties`
+  - Enum `MicrosoftSecurityProductName` added member `MICROSOFT_DEFENDER_ADVANCED_THREAT_PROTECTION`
+  - Enum `MicrosoftSecurityProductName` added member `OFFICE365_ADVANCED_THREAT_PROTECTION`
+  - Model `OfficeDataConnector` added property `properties`
+  - Enum `Operator` added member `AFTER_ABSOLUTE`
+  - Enum `Operator` added member `AFTER_RELATIVE`
+  - Enum `Operator` added member `ARRAY_CONTAINS`
+  - Enum `Operator` added member `ARRAY_NOT_CONTAINS`
+  - Enum `Operator` added member `BEFORE_ABSOLUTE`
+  - Enum `Operator` added member `BEFORE_RELATIVE`
+  - Enum `Operator` added member `EQUALS`
+  - Enum `Operator` added member `GREATER_THAN`
+  - Enum `Operator` added member `GREATER_THAN_EQUAL`
+  - Enum `Operator` added member `IS_FALSE`
+  - Enum `Operator` added member `IS_NULL`
+  - Enum `Operator` added member `IS_TRUE`
+  - Enum `Operator` added member `LESS_THAN`
+  - Enum `Operator` added member `LESS_THAN_EQUAL`
+  - Enum `Operator` added member `NOT_EQUALS`
+  - Enum `Operator` added member `ON_OR_AFTER_ABSOLUTE`
+  - Enum `Operator` added member `ON_OR_AFTER_RELATIVE`
+  - Enum `Operator` added member `ON_OR_BEFORE_ABSOLUTE`
+  - Enum `Operator` added member `ON_OR_BEFORE_RELATIVE`
+  - Enum `Operator` added member `STRING_CONTAINS`
+  - Enum `Operator` added member `STRING_ENDS_WITH`
+  - Enum `Operator` added member `STRING_IS_EMPTY`
+  - Enum `Operator` added member `STRING_NOT_CONTAINS`
+  - Enum `Operator` added member `STRING_NOT_ENDS_WITH`
+  - Enum `Operator` added member `STRING_NOT_STARTS_WITH`
+  - Enum `Operator` added member `STRING_STARTS_WITH`
+  - Model `PackageModel` added property `properties`
+  - Model `PremiumMicrosoftDefenderForThreatIntelligence` added property `properties`
+  - Model `ProcessEntity` added property `properties`
+  - Model `ProductPackageModel` added property `properties`
+  - Model `ProductTemplateModel` added property `properties`
+  - Enum `ProvisioningState` added member `ACCEPTED`
+  - Model `RegistryKeyEntity` added property `properties`
+  - Model `RegistryValueEntity` added property `properties`
+  - Model `ScheduledAlertRule` added property `properties`
+  - Model `ScheduledAlertRuleCommonProperties` added property `sentinel_entities_mappings`
+  - Model `ScheduledAlertRuleProperties` added property `sub_techniques`
+  - Model `ScheduledAlertRuleProperties` added property `sentinel_entities_mappings`
+  - Model `SecurityAlert` added property `properties`
+  - Model `SecurityGroupEntity` added property `properties`
+  - Enum `State` added member `ACTIVE`
+  - Enum `State` added member `COMPLETED_BY_SYSTEM`
+  - Enum `State` added member `COMPLETED_BY_USER`
+  - Enum `State` added member `DISMISSED`
+  - Enum `State` added member `IN_PROGRESS`
+  - Model `SubmissionMailEntity` added property `properties`
+  - Model `TIDataConnector` added property `properties`
+  - Model `TemplateModel` added property `properties`
+  - Model `ThreatIntelligenceIndicatorModel` added property `properties`
+  - Model `UrlEntity` added property `properties`
+  - Added model `AADCheckRequirements`
+  - Added model `AADCheckRequirementsProperties`
+  - Added model `AATPCheckRequirements`
+  - Added model `AATPCheckRequirementsProperties`
+  - Added model `ASCCheckRequirements`
+  - Added model `ASCCheckRequirementsProperties`
+  - Added model `ActivityCustomEntityQuery`
+  - Added model `ActivityEntityQueriesProperties`
+  - Added model `ActivityEntityQueriesPropertiesQueryDefinitions`
+  - Added model `ActivityEntityQuery`
+  - Added model `ActivityEntityQueryTemplate`
+  - Added model `ActivityEntityQueryTemplateProperties`
+  - Added model `ActivityEntityQueryTemplatePropertiesQueryDefinitions`
+  - Added model `ActivityTimelineItem`
+  - Added model `AlertRuleTemplateWithMitreProperties`
+  - Added model `AnalyticsRuleRunTrigger`
+  - Added model `AnalyticsRuleRunTriggerProperties`
+  - Added model `Anomalies`
+  - Added model `AnomaliesSettingsProperties`
+  - Added model `AnomalyTimelineItem`
+  - Added model `ApiPollingParameters`
+  - Added model `AssignmentItem`
+  - Added model `AttackPattern`
+  - Added model `Availability`
+  - Added model `AwsCloudTrailCheckRequirements`
+  - Added model `AwsS3CheckRequirements`
+  - Added model `AwsS3DataConnector`
+  - Added model `AwsS3DataConnectorDataTypes`
+  - Added model `AwsS3DataConnectorDataTypesLogs`
+  - Added model `AwsS3DataConnectorProperties`
+  - Added model `BillingStatistic`
+  - Added enum `BillingStatisticKind`
+  - Added model `BookmarkEntityMappings`
+  - Added model `BookmarkExpandParameters`
+  - Added model `BookmarkExpandResponse`
+  - Added model `BookmarkExpandResponseValue`
+  - Added model `BookmarkTimelineItem`
+  - Added model `CloudError`
+  - Added model `CodelessApiPollingDataConnector`
+  - Added model `CodelessConnectorPollingAuthProperties`
+  - Added model `CodelessConnectorPollingConfigProperties`
+  - Added model `CodelessConnectorPollingPagingProperties`
+  - Added model `CodelessConnectorPollingRequestProperties`
+  - Added model `CodelessConnectorPollingResponseProperties`
+  - Added model `CodelessParameters`
+  - Added model `CodelessUiConnectorConfigProperties`
+  - Added model `CodelessUiConnectorConfigPropertiesConnectivityCriteriaItem`
+  - Added model `CodelessUiConnectorConfigPropertiesDataTypesItem`
+  - Added model `CodelessUiConnectorConfigPropertiesGraphQueriesItem`
+  - Added model `CodelessUiConnectorConfigPropertiesInstructionStepsItem`
+  - Added model `CodelessUiConnectorConfigPropertiesSampleQueriesItem`
+  - Added model `CodelessUiDataConnector`
+  - Added model `ConditionClause`
+  - Added model `ConditionProperties`
+  - Added enum `ConnectAuthKind`
+  - Added model `ConnectedEntity`
+  - Added enum `Connective`
+  - Added model `ConnectivityCriteria`
+  - Added enum `ConnectivityType`
+  - Added model `ConnectorInstructionModelBase`
+  - Added model `CountQuery`
+  - Added model `CustomEntityQuery`
+  - Added enum `CustomEntityQueryKind`
+  - Added model `Customs`
+  - Added model `CustomsPermission`
+  - Added enum `DataConnectorAuthorizationState`
+  - Added model `DataConnectorConnectBody`
+  - Added enum `DataConnectorLicenseState`
+  - Added model `DataConnectorRequirementsState`
+  - Added model `DataConnectorsCheckRequirements`
+  - Added model `DataTypeDefinitions`
+  - Added enum `DeleteStatus`
+  - Added enum `DeviceImportance`
+  - Added model `Dynamics365CheckRequirements`
+  - Added model `Dynamics365CheckRequirementsProperties`
+  - Added model `Dynamics365DataConnector`
+  - Added model `Dynamics365DataConnectorDataTypes`
+  - Added model `Dynamics365DataConnectorDataTypesDynamics365CdsActivities`
+  - Added model `Dynamics365DataConnectorProperties`
+  - Added model `EnrichmentDomainBody`
+  - Added model `EnrichmentDomainWhois`
+  - Added model `EnrichmentDomainWhoisContact`
+  - Added model `EnrichmentDomainWhoisContacts`
+  - Added model `EnrichmentDomainWhoisDetails`
+  - Added model `EnrichmentDomainWhoisRegistrarDetails`
+  - Added model `EnrichmentIpAddressBody`
+  - Added model `EnrichmentIpGeodata`
+  - Added enum `EnrichmentType`
+  - Added model `EntityAnalytics`
+  - Added model `EntityAnalyticsProperties`
+  - Added model `EntityEdges`
+  - Added model `EntityExpandParameters`
+  - Added model `EntityExpandResponse`
+  - Added model `EntityExpandResponseValue`
+  - Added model `EntityFieldMapping`
+  - Added model `EntityGetInsightsParameters`
+  - Added model `EntityGetInsightsResponse`
+  - Added model `EntityInsightItem`
+  - Added model `EntityInsightItemQueryTimeInterval`
+  - Added enum `EntityItemQueryKind`
+  - Added enum `EntityProviders`
+  - Added model `EntityQuery`
+  - Added model `EntityQueryItem`
+  - Added model `EntityQueryItemProperties`
+  - Added model `EntityQueryItemPropertiesDataTypesItem`
+  - Added enum `EntityQueryKind`
+  - Added model `EntityQueryTemplate`
+  - Added enum `EntityQueryTemplateKind`
+  - Added model `EntityTimelineItem`
+  - Added enum `EntityTimelineKind`
+  - Added model `EntityTimelineParameters`
+  - Added model `EntityTimelineResponse`
+  - Added enum `EntityType`
+  - Added model `Error`
+  - Added model `ExpansionEntityQueriesProperties`
+  - Added model `ExpansionEntityQuery`
+  - Added model `ExpansionResultAggregation`
+  - Added model `ExpansionResultsMetadata`
+  - Added model `EyesOn`
+  - Added model `EyesOnSettingsProperties`
+  - Added enum `FileFormat`
+  - Added model `FileImport`
+  - Added enum `FileImportContentType`
+  - Added model `FileImportProperties`
+  - Added enum `FileImportState`
+  - Added model `FileMetadata`
+  - Added model `FusionScenarioExclusionPattern`
+  - Added model `FusionSourceSettings`
+  - Added model `FusionSourceSubTypeSetting`
+  - Added model `FusionSubTypeSeverityFilter`
+  - Added model `FusionSubTypeSeverityFiltersItem`
+  - Added model `FusionTemplateSourceSetting`
+  - Added model `FusionTemplateSourceSubType`
+  - Added model `FusionTemplateSubTypeSeverityFilter`
+  - Added model `GCPAuthProperties`
+  - Added model `GCPDataConnector`
+  - Added model `GCPDataConnectorProperties`
+  - Added model `GCPRequestProperties`
+  - Added enum `GetInsightsError`
+  - Added model `GetInsightsErrorKind`
+  - Added model `GetInsightsResultsMetadata`
+  - Added model `GraphQueries`
+  - Added model `Hunt`
+  - Added model `HuntComment`
+  - Added model `HuntCommentProperties`
+  - Added model `HuntOwner`
+  - Added model `HuntProperties`
+  - Added model `HuntRelation`
+  - Added model `HuntRelationProperties`
+  - Added enum `HypothesisStatus`
+  - Added model `Identity`
+  - Added model `Indicator`
+  - Added model `IndicatorObservablesItem`
+  - Added enum `IngestionMode`
+  - Added model `InsightQueryItem`
+  - Added model `InsightQueryItemProperties`
+  - Added model `InsightQueryItemPropertiesAdditionalQuery`
+  - Added model `InsightQueryItemPropertiesDefaultTimeRange`
+  - Added model `InsightQueryItemPropertiesReferenceTimeRange`
+  - Added model `InsightQueryItemPropertiesTableQuery`
+  - Added model `InsightQueryItemPropertiesTableQueryColumnsDefinitionsItem`
+  - Added model `InsightQueryItemPropertiesTableQueryQueriesDefinitionsItem`
+  - Added model `InsightQueryItemPropertiesTableQueryQueriesDefinitionsPropertiesItemsItem`
+  - Added model `InsightsTableResult`
+  - Added model `InsightsTableResultColumnsItem`
+  - Added model `InstructionSteps`
+  - Added model `InstructionStepsInstructionsItem`
+  - Added model `IoTCheckRequirements`
+  - Added model `IoTCheckRequirementsProperties`
+  - Added model `IoTDataConnector`
+  - Added model `IoTDataConnectorProperties`
+  - Added model `Job`
+  - Added model `JobItem`
+  - Added model `JobProperties`
+  - Added model `LastDataReceivedDataType`
+  - Added model `MCASCheckRequirements`
+  - Added model `MCASCheckRequirementsProperties`
+  - Added model `MDATPCheckRequirements`
+  - Added model `MDATPCheckRequirementsProperties`
+  - Added model `MLBehaviorAnalyticsAlertRule`
+  - Added model `MLBehaviorAnalyticsAlertRuleProperties`
+  - Added model `MLBehaviorAnalyticsAlertRuleTemplate`
+  - Added model `MLBehaviorAnalyticsAlertRuleTemplateProperties`
+  - Added model `MSTICheckRequirements`
+  - Added model `MSTICheckRequirementsProperties`
+  - Added model `MTPCheckRequirementsProperties`
+  - Added model `MTPDataConnector`
+  - Added model `MTPDataConnectorDataTypes`
+  - Added model `MTPDataConnectorDataTypesAlerts`
+  - Added model `MTPDataConnectorDataTypesIncidents`
+  - Added model `MTPDataConnectorProperties`
+  - Added model `MetadataProperties`
+  - Added model `MetadataPropertiesPatch`
+  - Added model `MicrosoftPurviewInformationProtectionCheckRequirements`
+  - Added model `MicrosoftPurviewInformationProtectionCheckRequirementsProperties`
+  - Added model `MicrosoftPurviewInformationProtectionConnectorDataTypes`
+  - Added model `MicrosoftPurviewInformationProtectionConnectorDataTypesLogs`
+  - Added model `MicrosoftPurviewInformationProtectionDataConnector`
+  - Added model `MicrosoftPurviewInformationProtectionDataConnectorProperties`
+  - Added enum `Mode`
+  - Added model `MstiDataConnectorDataTypesMicrosoftEmergingThreatFeed`
+  - Added model `MtpCheckRequirements`
+  - Added model `MtpFilteredProviders`
+  - Added enum `MtpProvider`
+  - Added model `NicEntity`
+  - Added model `NicEntityProperties`
+  - Added model `NrtAlertRule`
+  - Added model `NrtAlertRuleProperties`
+  - Added model `NrtAlertRuleTemplate`
+  - Added model `NrtAlertRuleTemplateProperties`
+  - Added model `Office365ProjectCheckRequirements`
+  - Added model `Office365ProjectCheckRequirementsProperties`
+  - Added model `Office365ProjectConnectorDataTypes`
+  - Added model `Office365ProjectConnectorDataTypesLogs`
+  - Added model `Office365ProjectDataConnector`
+  - Added model `Office365ProjectDataConnectorProperties`
+  - Added model `OfficeATPCheckRequirements`
+  - Added model `OfficeATPCheckRequirementsProperties`
+  - Added model `OfficeATPDataConnector`
+  - Added model `OfficeATPDataConnectorProperties`
+  - Added model `OfficeConsent`
+  - Added model `OfficeConsentProperties`
+  - Added model `OfficeIRMCheckRequirements`
+  - Added model `OfficeIRMCheckRequirementsProperties`
+  - Added model `OfficeIRMDataConnector`
+  - Added model `OfficeIRMDataConnectorProperties`
+  - Added model `OfficePowerBICheckRequirements`
+  - Added model `OfficePowerBICheckRequirementsProperties`
+  - Added model `OfficePowerBIConnectorDataTypes`
+  - Added model `OfficePowerBIConnectorDataTypesLogs`
+  - Added model `OfficePowerBIDataConnector`
+  - Added model `OfficePowerBIDataConnectorProperties`
+  - Added enum `OutputType`
+  - Added enum `PermissionProviderScope`
+  - Added model `Permissions`
+  - Added model `PermissionsCustomsItem`
+  - Added model `PermissionsResourceProviderItem`
+  - Added enum `PollingFrequency`
+  - Added enum `ProviderName`
+  - Added model `ProxyResource`
+  - Added model `PurviewAuditCheckRequirements`
+  - Added model `PurviewAuditCheckRequirementsProperties`
+  - Added model `PurviewAuditConnectorDataTypes`
+  - Added model `PurviewAuditConnectorDataTypesLogs`
+  - Added model `PurviewAuditDataConnector`
+  - Added model `PurviewAuditDataConnectorProperties`
+  - Added model `Query`
+  - Added model `QueryCondition`
+  - Added model `QueryProperties`
+  - Added model `QuerySortBy`
+  - Added model `Recommendation`
+  - Added model `RecommendationPatch`
+  - Added model `RecommendationPatchProperties`
+  - Added model `RecommendationProperties`
+  - Added model `RecommendedSuggestion`
+  - Added model `ReevaluateResponse`
+  - Added model `Relationship`
+  - Added model `RelationshipHint`
+  - Added model `RepositoryAccessObject`
+  - Added model `RequiredPermissions`
+  - Added model `ResourceProvider`
+  - Added model `SampleQueries`
+  - Added model `SapSolutionUsageStatistic`
+  - Added model `SapSolutionUsageStatisticProperties`
+  - Added model `SecurityAlertTimelineItem`
+  - Added model `SentinelEntityMapping`
+  - Added enum `SettingKind`
+  - Added enum `SettingType`
+  - Added model `Settings`
+  - Added enum `SortingDirection`
+  - Added enum `Status`
+  - Added model `TICheckRequirements`
+  - Added model `TICheckRequirementsProperties`
+  - Added model `TIObject`
+  - Added model `TIObjectCommonProperties`
+  - Added enum `TIObjectKind`
+  - Added model `TeamInformation`
+  - Added model `ThreatActor`
+  - Added model `ThreatIntelligenceAlertRule`
+  - Added model `ThreatIntelligenceAlertRuleProperties`
+  - Added model `ThreatIntelligenceAlertRuleTemplate`
+  - Added model `ThreatIntelligenceAlertRuleTemplateProperties`
+  - Added model `ThreatIntelligenceCount`
+  - Added model `TiTaxiiCheckRequirements`
+  - Added model `TiTaxiiCheckRequirementsProperties`
+  - Added model `TiTaxiiDataConnector`
+  - Added model `TiTaxiiDataConnectorDataTypes`
+  - Added model `TiTaxiiDataConnectorDataTypesTaxiiClient`
+  - Added model `TiTaxiiDataConnectorProperties`
+  - Added enum `TiType`
+  - Added model `TimelineAggregation`
+  - Added model `TimelineError`
+  - Added model `TimelineResultsMetadata`
+  - Added model `TriggeredAnalyticsRuleRun`
+  - Added model `TriggeredAnalyticsRuleRunProperties`
+  - Added model `Ueba`
+  - Added enum `UebaDataSources`
+  - Added model `UebaProperties`
+  - Added model `ValidationError`
+  - Added model `WorkspaceManagerAssignment`
+  - Added model `WorkspaceManagerAssignmentProperties`
+  - Added model `WorkspaceManagerConfiguration`
+  - Added model `WorkspaceManagerConfigurationProperties`
+  - Added model `WorkspaceManagerGroup`
+  - Added model `WorkspaceManagerGroupProperties`
+  - Added model `WorkspaceManagerMember`
+  - Added model `WorkspaceManagerMemberProperties`
+  - Model `DataConnectorsOperations` added method `connect`
+  - Model `DataConnectorsOperations` added method `disconnect`
+  - Model `EntitiesOperations` added method `expand`
+  - Model `EntitiesOperations` added method `get_insights`
+  - Model `EntitiesOperations` added method `list`
+  - Model `EntitiesOperations` added method `queries`
+  - Added model `AlertRuleOperations`
+  - Added model `BillingStatisticsOperations`
+  - Added model `BookmarkOperations`
+  - Added model `BookmarkRelationsOperations`
+  - Added model `DataConnectorsCheckRequirementsOperations`
+  - Added model `EntitiesGetTimelineOperations`
+  - Added model `EntitiesRelationsOperations`
+  - Added model `EntityQueriesOperations`
+  - Added model `EntityQueryTemplatesOperations`
+  - Added model `EntityRelationsOperations`
+  - Added model `FileImportsOperations`
+  - Added model `GetOperations`
+  - Added model `GetRecommendationsOperations`
+  - Added model `GetTriggeredAnalyticsRuleRunsOperations`
+  - Added model `HuntCommentsOperations`
+  - Added model `HuntRelationsOperations`
+  - Added model `HuntsOperations`
+  - Added model `OfficeConsentsOperations`
+  - Added model `ProductSettingsOperations`
+  - Added model `ReevaluateOperations`
+  - Added model `ThreatIntelligenceOperations`
+  - Added model `TriggeredAnalyticsRuleRunOperations`
+  - Added model `UpdateOperations`
+  - Added model `WorkspaceManagerAssignmentJobsOperations`
+  - Added model `WorkspaceManagerAssignmentsOperations`
+  - Added model `WorkspaceManagerConfigurationsOperations`
+  - Added model `WorkspaceManagerGroupsOperations`
+  - Added model `WorkspaceManagerMembersOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `SecurityInsights`
+  - Model `AADDataConnector` deleted or renamed its instance variable `tenant_id`
+  - Model `AADDataConnector` deleted or renamed its instance variable `data_types`
+  - Model `AATPDataConnector` deleted or renamed its instance variable `tenant_id`
+  - Model `AATPDataConnector` deleted or renamed its instance variable `data_types`
+  - Model `ASCDataConnector` deleted or renamed its instance variable `data_types`
+  - Model `ASCDataConnector` deleted or renamed its instance variable `subscription_id`
+  - Model `AccountEntity` deleted or renamed its instance variable `additional_data`
+  - Model `AccountEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `AccountEntity` deleted or renamed its instance variable `aad_tenant_id`
+  - Model `AccountEntity` deleted or renamed its instance variable `aad_user_id`
+  - Model `AccountEntity` deleted or renamed its instance variable `account_name`
+  - Model `AccountEntity` deleted or renamed its instance variable `display_name`
+  - Model `AccountEntity` deleted or renamed its instance variable `host_entity_id`
+  - Model `AccountEntity` deleted or renamed its instance variable `is_domain_joined`
+  - Model `AccountEntity` deleted or renamed its instance variable `nt_domain`
+  - Model `AccountEntity` deleted or renamed its instance variable `object_guid`
+  - Model `AccountEntity` deleted or renamed its instance variable `puid`
+  - Model `AccountEntity` deleted or renamed its instance variable `sid`
+  - Model `AccountEntity` deleted or renamed its instance variable `upn_suffix`
+  - Model `AccountEntity` deleted or renamed its instance variable `dns_domain`
+  - Model `ActionRequest` deleted or renamed its instance variable `logic_app_resource_id`
+  - Model `ActionRequest` deleted or renamed its instance variable `trigger_uri`
+  - Model `ActionResponse` deleted or renamed its instance variable `logic_app_resource_id`
+  - Model `ActionResponse` deleted or renamed its instance variable `workflow_id`
+  - Model `AzureResourceEntity` deleted or renamed its instance variable `additional_data`
+  - Model `AzureResourceEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `AzureResourceEntity` deleted or renamed its instance variable `resource_id`
+  - Model `AzureResourceEntity` deleted or renamed its instance variable `subscription_id`
+  - Model `CloudApplicationEntity` deleted or renamed its instance variable `additional_data`
+  - Model `CloudApplicationEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `CloudApplicationEntity` deleted or renamed its instance variable `app_id`
+  - Model `CloudApplicationEntity` deleted or renamed its instance variable `app_name`
+  - Model `CloudApplicationEntity` deleted or renamed its instance variable `instance_name`
+  - Model `DnsEntity` deleted or renamed its instance variable `additional_data`
+  - Model `DnsEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `DnsEntity` deleted or renamed its instance variable `dns_server_ip_entity_id`
+  - Model `DnsEntity` deleted or renamed its instance variable `domain_name`
+  - Model `DnsEntity` deleted or renamed its instance variable `host_ip_address_entity_id`
+  - Model `DnsEntity` deleted or renamed its instance variable `ip_address_entity_ids`
+  - Model `FileEntity` deleted or renamed its instance variable `additional_data`
+  - Model `FileEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `FileEntity` deleted or renamed its instance variable `directory`
+  - Model `FileEntity` deleted or renamed its instance variable `file_hash_entity_ids`
+  - Model `FileEntity` deleted or renamed its instance variable `file_name`
+  - Model `FileEntity` deleted or renamed its instance variable `host_entity_id`
+  - Model `FileHashEntity` deleted or renamed its instance variable `additional_data`
+  - Model `FileHashEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `FileHashEntity` deleted or renamed its instance variable `algorithm`
+  - Model `FileHashEntity` deleted or renamed its instance variable `hash_value`
+  - Model `HostEntity` deleted or renamed its instance variable `additional_data`
+  - Model `HostEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `HostEntity` deleted or renamed its instance variable `azure_id`
+  - Model `HostEntity` deleted or renamed its instance variable `dns_domain`
+  - Model `HostEntity` deleted or renamed its instance variable `host_name`
+  - Model `HostEntity` deleted or renamed its instance variable `is_domain_joined`
+  - Model `HostEntity` deleted or renamed its instance variable `net_bios_name`
+  - Model `HostEntity` deleted or renamed its instance variable `nt_domain`
+  - Model `HostEntity` deleted or renamed its instance variable `oms_agent_id`
+  - Model `HostEntity` deleted or renamed its instance variable `os_family`
+  - Model `HostEntity` deleted or renamed its instance variable `os_version`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `additional_data`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `friendly_name`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `created`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `created_by`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `display_name`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `event_time`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `labels`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `notes`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `query`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `query_result`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `updated`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `updated_by`
+  - Model `HuntingBookmark` deleted or renamed its instance variable `incident_info`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `additional_data`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `device_id`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `device_name`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `source`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `iot_security_agent_id`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `device_type`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `vendor`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `edge_id`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `mac_address`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `model`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `serial_number`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `firmware_version`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `operating_system`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `iot_hub_entity_id`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `host_entity_id`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `ip_address_entity_id`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `threat_intelligence`
+  - Model `IoTDeviceEntity` deleted or renamed its instance variable `protocols`
+  - Model `IpEntity` deleted or renamed its instance variable `additional_data`
+  - Model `IpEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `IpEntity` deleted or renamed its instance variable `address`
+  - Model `IpEntity` deleted or renamed its instance variable `location`
+  - Model `IpEntity` deleted or renamed its instance variable `threat_intelligence`
+  - Model `MCASDataConnector` deleted or renamed its instance variable `tenant_id`
+  - Model `MCASDataConnector` deleted or renamed its instance variable `data_types`
+  - Model `MDATPDataConnector` deleted or renamed its instance variable `tenant_id`
+  - Model `MDATPDataConnector` deleted or renamed its instance variable `data_types`
+  - Model `MSTIDataConnector` deleted or renamed its instance variable `tenant_id`
+  - Model `MSTIDataConnector` deleted or renamed its instance variable `data_types`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `additional_data`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `network_message_ids`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `count_by_delivery_status`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `count_by_threat_type`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `count_by_protection_status`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `threats`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `query`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `query_time`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `mail_count`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `is_volume_anomaly`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `source`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `cluster_source_identifier`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `cluster_source_type`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `cluster_query_start_time`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `cluster_query_end_time`
+  - Model `MailClusterEntity` deleted or renamed its instance variable `cluster_group`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `additional_data`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `file_entity_ids`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `recipient`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `urls`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `threats`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `p1_sender`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `p1_sender_display_name`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `p1_sender_domain`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `sender_ip`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `p2_sender`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `p2_sender_display_name`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `p2_sender_domain`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `receive_date`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `network_message_id`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `internet_message_id`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `subject`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `language`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `threat_detection_methods`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `body_fingerprint_bin1`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `body_fingerprint_bin2`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `body_fingerprint_bin3`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `body_fingerprint_bin4`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `body_fingerprint_bin5`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `antispam_direction`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `delivery_action`
+  - Model `MailMessageEntity` deleted or renamed its instance variable `delivery_location`
+  - Model `MailboxEntity` deleted or renamed its instance variable `additional_data`
+  - Model `MailboxEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `MailboxEntity` deleted or renamed its instance variable `mailbox_primary_address`
+  - Model `MailboxEntity` deleted or renamed its instance variable `display_name`
+  - Model `MailboxEntity` deleted or renamed its instance variable `upn`
+  - Model `MailboxEntity` deleted or renamed its instance variable `external_directory_object_id`
+  - Model `MalwareEntity` deleted or renamed its instance variable `additional_data`
+  - Model `MalwareEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `MalwareEntity` deleted or renamed its instance variable `category`
+  - Model `MalwareEntity` deleted or renamed its instance variable `file_entity_ids`
+  - Model `MalwareEntity` deleted or renamed its instance variable `malware_name`
+  - Model `MalwareEntity` deleted or renamed its instance variable `process_entity_ids`
+  - Model `MetadataModel` deleted or renamed its instance variable `content_id`
+  - Model `MetadataModel` deleted or renamed its instance variable `parent_id`
+  - Model `MetadataModel` deleted or renamed its instance variable `version`
+  - Model `MetadataModel` deleted or renamed its instance variable `kind`
+  - Model `MetadataModel` deleted or renamed its instance variable `source`
+  - Model `MetadataModel` deleted or renamed its instance variable `author`
+  - Model `MetadataModel` deleted or renamed its instance variable `support`
+  - Model `MetadataModel` deleted or renamed its instance variable `dependencies`
+  - Model `MetadataModel` deleted or renamed its instance variable `categories`
+  - Model `MetadataModel` deleted or renamed its instance variable `providers`
+  - Model `MetadataModel` deleted or renamed its instance variable `first_publish_date`
+  - Model `MetadataModel` deleted or renamed its instance variable `last_publish_date`
+  - Model `MetadataModel` deleted or renamed its instance variable `custom_version`
+  - Model `MetadataModel` deleted or renamed its instance variable `content_schema_version`
+  - Model `MetadataModel` deleted or renamed its instance variable `icon`
+  - Model `MetadataModel` deleted or renamed its instance variable `threat_analysis_tactics`
+  - Model `MetadataModel` deleted or renamed its instance variable `threat_analysis_techniques`
+  - Model `MetadataModel` deleted or renamed its instance variable `preview_images`
+  - Model `MetadataModel` deleted or renamed its instance variable `preview_images_dark`
+  - Model `MetadataPatch` deleted or renamed its instance variable `content_id`
+  - Model `MetadataPatch` deleted or renamed its instance variable `parent_id`
+  - Model `MetadataPatch` deleted or renamed its instance variable `version`
+  - Model `MetadataPatch` deleted or renamed its instance variable `kind`
+  - Model `MetadataPatch` deleted or renamed its instance variable `source`
+  - Model `MetadataPatch` deleted or renamed its instance variable `author`
+  - Model `MetadataPatch` deleted or renamed its instance variable `support`
+  - Model `MetadataPatch` deleted or renamed its instance variable `dependencies`
+  - Model `MetadataPatch` deleted or renamed its instance variable `categories`
+  - Model `MetadataPatch` deleted or renamed its instance variable `providers`
+  - Model `MetadataPatch` deleted or renamed its instance variable `first_publish_date`
+  - Model `MetadataPatch` deleted or renamed its instance variable `last_publish_date`
+  - Model `MetadataPatch` deleted or renamed its instance variable `custom_version`
+  - Model `MetadataPatch` deleted or renamed its instance variable `content_schema_version`
+  - Model `MetadataPatch` deleted or renamed its instance variable `icon`
+  - Model `MetadataPatch` deleted or renamed its instance variable `threat_analysis_tactics`
+  - Model `MetadataPatch` deleted or renamed its instance variable `threat_analysis_techniques`
+  - Model `MetadataPatch` deleted or renamed its instance variable `preview_images`
+  - Model `MetadataPatch` deleted or renamed its instance variable `preview_images_dark`
+  - Model `MicrosoftSecurityIncidentCreationAlertRule` deleted or renamed its instance variable `display_names_filter`
+  - Model `MicrosoftSecurityIncidentCreationAlertRule` deleted or renamed its instance variable `display_names_exclude_filter`
+  - Model `MicrosoftSecurityIncidentCreationAlertRule` deleted or renamed its instance variable `product_filter`
+  - Model `MicrosoftSecurityIncidentCreationAlertRule` deleted or renamed its instance variable `severities_filter`
+  - Model `MicrosoftSecurityIncidentCreationAlertRule` deleted or renamed its instance variable `alert_rule_template_name`
+  - Model `MicrosoftSecurityIncidentCreationAlertRule` deleted or renamed its instance variable `description`
+  - Model `MicrosoftSecurityIncidentCreationAlertRule` deleted or renamed its instance variable `display_name`
+  - Model `MicrosoftSecurityIncidentCreationAlertRule` deleted or renamed its instance variable `enabled`
+  - Model `MicrosoftSecurityIncidentCreationAlertRule` deleted or renamed its instance variable `last_modified_utc`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `alert_rules_created_by_template_count`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `created_date_utc`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `description`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `display_name`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `last_updated_date_utc`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `required_data_connectors`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `status`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `display_names_filter`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `display_names_exclude_filter`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `product_filter`
+  - Model `MicrosoftSecurityIncidentCreationAlertRuleTemplate` deleted or renamed its instance variable `severities_filter`
+  - Model `OfficeDataConnector` deleted or renamed its instance variable `tenant_id`
+  - Model `OfficeDataConnector` deleted or renamed its instance variable `data_types`
+  - Deleted or renamed enum value `Operator.AND`
+  - Deleted or renamed enum value `Operator.OR`
+  - Model `PackageModel` deleted or renamed its instance variable `content_id`
+  - Model `PackageModel` deleted or renamed its instance variable `content_product_id`
+  - Model `PackageModel` deleted or renamed its instance variable `content_kind`
+  - Model `PackageModel` deleted or renamed its instance variable `content_schema_version`
+  - Model `PackageModel` deleted or renamed its instance variable `is_new`
+  - Model `PackageModel` deleted or renamed its instance variable `is_preview`
+  - Model `PackageModel` deleted or renamed its instance variable `is_featured`
+  - Model `PackageModel` deleted or renamed its instance variable `is_deprecated`
+  - Model `PackageModel` deleted or renamed its instance variable `version`
+  - Model `PackageModel` deleted or renamed its instance variable `display_name`
+  - Model `PackageModel` deleted or renamed its instance variable `description`
+  - Model `PackageModel` deleted or renamed its instance variable `publisher_display_name`
+  - Model `PackageModel` deleted or renamed its instance variable `source`
+  - Model `PackageModel` deleted or renamed its instance variable `author`
+  - Model `PackageModel` deleted or renamed its instance variable `support`
+  - Model `PackageModel` deleted or renamed its instance variable `dependencies`
+  - Model `PackageModel` deleted or renamed its instance variable `providers`
+  - Model `PackageModel` deleted or renamed its instance variable `first_publish_date`
+  - Model `PackageModel` deleted or renamed its instance variable `last_publish_date`
+  - Model `PackageModel` deleted or renamed its instance variable `categories`
+  - Model `PackageModel` deleted or renamed its instance variable `threat_analysis_tactics`
+  - Model `PackageModel` deleted or renamed its instance variable `threat_analysis_techniques`
+  - Model `PackageModel` deleted or renamed its instance variable `icon`
+  - Model `PremiumMicrosoftDefenderForThreatIntelligence` deleted or renamed its instance variable `tenant_id`
+  - Model `PremiumMicrosoftDefenderForThreatIntelligence` deleted or renamed its instance variable `lookback_period`
+  - Model `PremiumMicrosoftDefenderForThreatIntelligence` deleted or renamed its instance variable `required_skus_present`
+  - Model `PremiumMicrosoftDefenderForThreatIntelligence` deleted or renamed its instance variable `data_types`
+  - Model `ProcessEntity` deleted or renamed its instance variable `additional_data`
+  - Model `ProcessEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `ProcessEntity` deleted or renamed its instance variable `account_entity_id`
+  - Model `ProcessEntity` deleted or renamed its instance variable `command_line`
+  - Model `ProcessEntity` deleted or renamed its instance variable `creation_time_utc`
+  - Model `ProcessEntity` deleted or renamed its instance variable `elevation_token`
+  - Model `ProcessEntity` deleted or renamed its instance variable `host_entity_id`
+  - Model `ProcessEntity` deleted or renamed its instance variable `host_logon_session_entity_id`
+  - Model `ProcessEntity` deleted or renamed its instance variable `image_file_entity_id`
+  - Model `ProcessEntity` deleted or renamed its instance variable `parent_process_entity_id`
+  - Model `ProcessEntity` deleted or renamed its instance variable `process_id`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `content_id`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `content_product_id`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `content_kind`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `content_schema_version`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `is_new`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `is_preview`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `is_featured`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `is_deprecated`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `version`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `display_name`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `description`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `publisher_display_name`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `source`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `author`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `support`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `dependencies`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `providers`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `first_publish_date`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `last_publish_date`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `categories`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `threat_analysis_tactics`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `threat_analysis_techniques`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `icon`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `installed_version`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `metadata_resource_id`
+  - Model `ProductPackageModel` deleted or renamed its instance variable `packaged_content`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `content_id`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `content_product_id`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `package_version`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `version`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `display_name`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `content_kind`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `source`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `author`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `support`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `dependencies`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `categories`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `providers`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `first_publish_date`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `last_publish_date`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `custom_version`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `content_schema_version`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `icon`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `threat_analysis_tactics`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `threat_analysis_techniques`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `preview_images`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `preview_images_dark`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `package_id`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `package_kind`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `package_name`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `is_deprecated`
+  - Model `ProductTemplateModel` deleted or renamed its instance variable `packaged_content`
+  - Deleted or renamed enum value `ProvisioningState.DELETING`
+  - Deleted or renamed enum value `ProvisioningState.NEW`
+  - Deleted or renamed enum value `ProvisioningState.UPLOADING`
+  - Model `RegistryKeyEntity` deleted or renamed its instance variable `additional_data`
+  - Model `RegistryKeyEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `RegistryKeyEntity` deleted or renamed its instance variable `hive`
+  - Model `RegistryKeyEntity` deleted or renamed its instance variable `key`
+  - Model `RegistryValueEntity` deleted or renamed its instance variable `additional_data`
+  - Model `RegistryValueEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `RegistryValueEntity` deleted or renamed its instance variable `key_entity_id`
+  - Model `RegistryValueEntity` deleted or renamed its instance variable `value_data`
+  - Model `RegistryValueEntity` deleted or renamed its instance variable `value_name`
+  - Model `RegistryValueEntity` deleted or renamed its instance variable `value_type`
+  - Model `RepositoryAccessProperties` deleted or renamed its instance variable `kind`
+  - Model `RepositoryAccessProperties` deleted or renamed its instance variable `code`
+  - Model `RepositoryAccessProperties` deleted or renamed its instance variable `state`
+  - Model `RepositoryAccessProperties` deleted or renamed its instance variable `client_id`
+  - Model `RepositoryAccessProperties` deleted or renamed its instance variable `token`
+  - Model `RepositoryAccessProperties` deleted or renamed its instance variable `installation_id`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `query`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `query_frequency`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `query_period`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `severity`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `trigger_operator`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `trigger_threshold`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `event_grouping_settings`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `custom_details`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `entity_mappings`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `alert_details_override`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `alert_rule_template_name`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `template_version`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `description`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `display_name`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `enabled`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `last_modified_utc`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `suppression_duration`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `suppression_enabled`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `tactics`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `techniques`
+  - Model `ScheduledAlertRule` deleted or renamed its instance variable `incident_configuration`
+  - Model `SecurityAlert` deleted or renamed its instance variable `additional_data`
+  - Model `SecurityAlert` deleted or renamed its instance variable `friendly_name`
+  - Model `SecurityAlert` deleted or renamed its instance variable `alert_display_name`
+  - Model `SecurityAlert` deleted or renamed its instance variable `alert_type`
+  - Model `SecurityAlert` deleted or renamed its instance variable `compromised_entity`
+  - Model `SecurityAlert` deleted or renamed its instance variable `confidence_level`
+  - Model `SecurityAlert` deleted or renamed its instance variable `confidence_reasons`
+  - Model `SecurityAlert` deleted or renamed its instance variable `confidence_score`
+  - Model `SecurityAlert` deleted or renamed its instance variable `confidence_score_status`
+  - Model `SecurityAlert` deleted or renamed its instance variable `description`
+  - Model `SecurityAlert` deleted or renamed its instance variable `end_time_utc`
+  - Model `SecurityAlert` deleted or renamed its instance variable `intent`
+  - Model `SecurityAlert` deleted or renamed its instance variable `provider_alert_id`
+  - Model `SecurityAlert` deleted or renamed its instance variable `processing_end_time`
+  - Model `SecurityAlert` deleted or renamed its instance variable `product_component_name`
+  - Model `SecurityAlert` deleted or renamed its instance variable `product_name`
+  - Model `SecurityAlert` deleted or renamed its instance variable `product_version`
+  - Model `SecurityAlert` deleted or renamed its instance variable `remediation_steps`
+  - Model `SecurityAlert` deleted or renamed its instance variable `severity`
+  - Model `SecurityAlert` deleted or renamed its instance variable `start_time_utc`
+  - Model `SecurityAlert` deleted or renamed its instance variable `status`
+  - Model `SecurityAlert` deleted or renamed its instance variable `system_alert_id`
+  - Model `SecurityAlert` deleted or renamed its instance variable `tactics`
+  - Model `SecurityAlert` deleted or renamed its instance variable `time_generated`
+  - Model `SecurityAlert` deleted or renamed its instance variable `vendor_name`
+  - Model `SecurityAlert` deleted or renamed its instance variable `alert_link`
+  - Model `SecurityAlert` deleted or renamed its instance variable `resource_identifiers`
+  - Model `SecurityGroupEntity` deleted or renamed its instance variable `additional_data`
+  - Model `SecurityGroupEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `SecurityGroupEntity` deleted or renamed its instance variable `distinguished_name`
+  - Model `SecurityGroupEntity` deleted or renamed its instance variable `object_guid`
+  - Model `SecurityGroupEntity` deleted or renamed its instance variable `sid`
+  - Deleted or renamed enum value `State.CLOSED`
+  - Deleted or renamed enum value `State.OPEN`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `additional_data`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `network_message_id`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `submission_id`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `submitter`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `submission_date`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `timestamp`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `recipient`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `sender`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `sender_ip`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `subject`
+  - Model `SubmissionMailEntity` deleted or renamed its instance variable `report_type`
+  - Model `TIDataConnector` deleted or renamed its instance variable `tenant_id`
+  - Model `TIDataConnector` deleted or renamed its instance variable `tip_lookback_period`
+  - Model `TIDataConnector` deleted or renamed its instance variable `data_types`
+  - Model `TemplateModel` deleted or renamed its instance variable `content_id`
+  - Model `TemplateModel` deleted or renamed its instance variable `content_product_id`
+  - Model `TemplateModel` deleted or renamed its instance variable `package_version`
+  - Model `TemplateModel` deleted or renamed its instance variable `version`
+  - Model `TemplateModel` deleted or renamed its instance variable `display_name`
+  - Model `TemplateModel` deleted or renamed its instance variable `content_kind`
+  - Model `TemplateModel` deleted or renamed its instance variable `source`
+  - Model `TemplateModel` deleted or renamed its instance variable `author`
+  - Model `TemplateModel` deleted or renamed its instance variable `support`
+  - Model `TemplateModel` deleted or renamed its instance variable `dependencies`
+  - Model `TemplateModel` deleted or renamed its instance variable `categories`
+  - Model `TemplateModel` deleted or renamed its instance variable `providers`
+  - Model `TemplateModel` deleted or renamed its instance variable `first_publish_date`
+  - Model `TemplateModel` deleted or renamed its instance variable `last_publish_date`
+  - Model `TemplateModel` deleted or renamed its instance variable `custom_version`
+  - Model `TemplateModel` deleted or renamed its instance variable `content_schema_version`
+  - Model `TemplateModel` deleted or renamed its instance variable `icon`
+  - Model `TemplateModel` deleted or renamed its instance variable `threat_analysis_tactics`
+  - Model `TemplateModel` deleted or renamed its instance variable `threat_analysis_techniques`
+  - Model `TemplateModel` deleted or renamed its instance variable `preview_images`
+  - Model `TemplateModel` deleted or renamed its instance variable `preview_images_dark`
+  - Model `TemplateModel` deleted or renamed its instance variable `package_id`
+  - Model `TemplateModel` deleted or renamed its instance variable `package_kind`
+  - Model `TemplateModel` deleted or renamed its instance variable `package_name`
+  - Model `TemplateModel` deleted or renamed its instance variable `is_deprecated`
+  - Model `TemplateModel` deleted or renamed its instance variable `main_template`
+  - Model `TemplateModel` deleted or renamed its instance variable `dependant_templates`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `additional_data`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `friendly_name`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `threat_intelligence_tags`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `last_updated_time_utc`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `source`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `display_name`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `description`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `indicator_types`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `pattern`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `pattern_type`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `pattern_version`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `kill_chain_phases`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `parsed_pattern`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `external_id`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `created_by_ref`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `defanged`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `external_last_updated_time_utc`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `external_references`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `granular_markings`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `labels`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `revoked`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `confidence`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `object_marking_refs`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `language`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `threat_types`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `valid_from`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `valid_until`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `created`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `modified`
+  - Model `ThreatIntelligenceIndicatorModel` deleted or renamed its instance variable `extensions`
+  - Model `UrlEntity` deleted or renamed its instance variable `additional_data`
+  - Model `UrlEntity` deleted or renamed its instance variable `friendly_name`
+  - Model `UrlEntity` deleted or renamed its instance variable `url`
+  - Deleted or renamed model `ActionsList`
+  - Deleted or renamed model `AlertRuleTemplatesList`
+  - Deleted or renamed model `AlertRulesList`
+  - Deleted or renamed model `AutomationRulesList`
+  - Deleted or renamed model `BookmarkList`
+  - Deleted or renamed model `DataConnectorDefinitionArmCollectionWrapper`
+  - Deleted or renamed model `DataConnectorList`
+  - Deleted or renamed model `IncidentCommentList`
+  - Deleted or renamed model `IncidentList`
+  - Deleted or renamed model `IncidentTaskList`
+  - Deleted or renamed model `MSTIDataConnectorDataTypesMicrosoftEmergingThreatFeed`
+  - Deleted or renamed model `MetadataList`
+  - Deleted or renamed model `OperationsList`
+  - Deleted or renamed model `PackageList`
+  - Deleted or renamed model `ProductPackageAdditionalProperties`
+  - Deleted or renamed model `ProductPackageList`
+  - Deleted or renamed model `ProductTemplateAdditionalProperties`
+  - Deleted or renamed model `ProductTemplateList`
+  - Deleted or renamed model `RelationList`
+  - Deleted or renamed model `RepoList`
+  - Deleted or renamed model `RestApiPollerRequestPagingCountBaseConfig`
+  - Deleted or renamed model `RestApiPollerRequestPagingLinkHeaderConfig`
+  - Deleted or renamed model `RestApiPollerRequestPagingNextPageUrlConfig`
+  - Deleted or renamed model `RestApiPollerRequestPagingOffsetConfig`
+  - Deleted or renamed model `RestApiPollerRequestPagingTokenConfig`
+  - Deleted or renamed model `SecurityMLAnalyticsSettingsList`
+  - Deleted or renamed model `SourceControlList`
+  - Deleted or renamed model `TemplateAdditionalProperties`
+  - Deleted or renamed model `TemplateBaseProperties`
+  - Deleted or renamed model `TemplateList`
+  - Deleted or renamed model `ThreatIntelligenceInformationList`
+  - Deleted or renamed model `WatchlistItemList`
+  - Deleted or renamed model `WatchlistList`
+  - Method `ContentPackagesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ContentPackagesOperations.list` changed its parameter `search` from `positional_or_keyword` to `keyword_only`
+  - Method `ContentPackagesOperations.list` changed its parameter `count` from `positional_or_keyword` to `keyword_only`
+  - Method `ContentPackagesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ContentTemplatesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ContentTemplatesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ContentTemplatesOperations.list` changed its parameter `search` from `positional_or_keyword` to `keyword_only`
+  - Method `ContentTemplatesOperations.list` changed its parameter `count` from `positional_or_keyword` to `keyword_only`
+  - Method `ContentTemplatesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `IncidentCommentsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `IncidentCommentsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `IncidentRelationsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `IncidentRelationsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `IncidentsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `IncidentsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `MetadataOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductPackagesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductPackagesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductPackagesOperations.list` changed its parameter `search` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductTemplatesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductTemplatesOperations.list` changed its parameter `search` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductTemplatesOperations.list` changed its parameter `count` from `positional_or_keyword` to `keyword_only`
+  - Method `ProductTemplatesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ThreatIntelligenceIndicatorsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ThreatIntelligenceIndicatorsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `WatchlistItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `WatchlistsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `AutomationRulesOperations.delete` changed return type from `JSON` to `Any`
+  - Method `IncidentsOperations.run_playbook` changed return type from `None` to `Any`
 
 ## 1.1.0 (2026-05-26)
 
