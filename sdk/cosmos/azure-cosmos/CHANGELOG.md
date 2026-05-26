@@ -14,6 +14,13 @@
 #### Other Changes
 * Reduced per-client memory overhead when partition-level circuit breaker (PPCB) is enabled by sharing the partition key range routing map cache across CosmosClient instances connected to the same endpoint, and stripping unused fields from cached partition key ranges using compact PKRange namedtuples. See [PR 46297](https://github.com/Azure/azure-sdk-for-python/pull/46297)
 
+### 4.14.7 (2026-05-18)
+
+#### Bugs Fixed
+* Fixed `SELECT VALUE` aggregation classification across partitions: booleans are no longer treated as numeric aggregates, non-aggregate numeric projections are no longer merged, and `MIN`/`MAX` detection is now correct. See [PR 46692](https://github.com/Azure/azure-sdk-for-python/pull/46692)
+* Fixed a bug in `query_items(feed_range=...)` where pagination could return incorrect results after a partition split caused the supplied feed range to overlap multiple physical partitions. See [PR 46692](https://github.com/Azure/azure-sdk-for-python/pull/46692)
+* Fixed bug where unavailable regional endpoints were dropped from the routing list instead of being kept as fallback options. See [PR 45200](https://github.com/Azure/azure-sdk-for-python/pull/45200)
+
 ### 4.16.0b2 (2026-04-04)
 
 #### Bugs Fixed
