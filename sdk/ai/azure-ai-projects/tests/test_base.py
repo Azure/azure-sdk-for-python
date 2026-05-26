@@ -87,6 +87,16 @@ fineTuningServicePreparer = functools.partial(
     azure_ai_projects_azure_aoai_account="sanitized-aoai-account",
 )
 
+# Slim preparer for `.beta.models` samples/tests. These exercise local-file
+# upload + ModelVersion registration; they only need a Foundry project endpoint
+# and the LLM-validation endpoint used by sample tests.
+modelsServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+)
+
 # Fine-tuning job type constants
 SFT_JOB_TYPE: Final[str] = "sft"
 DPO_JOB_TYPE: Final[str] = "dpo"
@@ -204,6 +214,12 @@ class TestBase(AzureRecordedTestCase):
         "dataset_name_4": f"test-dataset-name-{random.randint(0, 99999):05d}",
         "dataset_version": 1,
         "connection_name": "balapvbyostoragecanary",
+    }
+
+    test_models_params = {
+        "model_name_1": f"test-model-name-{random.randint(0, 99999):05d}",
+        "model_name_2": f"test-model-name-{random.randint(0, 99999):05d}",
+        "model_version": "1",
     }
 
     test_files_params = {

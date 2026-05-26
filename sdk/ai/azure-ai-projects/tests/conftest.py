@@ -134,6 +134,82 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Pattern 2: "Eval Run for <agent_name> -<timestamp>" (agent name already sanitized)
     add_general_regex_sanitizer(regex=r"sanitized-agent-name -\d{10}", value="sanitized-agent-name -SANITIZED-TS")
 
+    # Sanitize per-recording random model name used by `.beta.models` sample tests.
+    # Live re-recordings need a unique `<name>/<version>` namespace (Foundry's
+    # asset store reserves it permanently after `delete`), so we use a random
+    # suffix at recording time and normalize it here so playback URLs match.
+    add_general_regex_sanitizer(regex=r"recsmplmdl[a-f0-9]+", value="recsmplmdl00000000")
+
+    # Sanitize Foundry project-managed Azure Storage account hostnames returned
+    # by `.beta.models.pending_upload` (shape: `sa<14 hex chars>.blob.core.windows.net`).
+    add_general_regex_sanitizer(
+        regex=r"sa[a-z0-9]{14,}\.blob\.core\.windows\.net",
+        value="sanitized-storage-account.blob.core.windows.net",
+    )
+
+    # Sanitize the per-pending-upload container name returned by Foundry
+    # (shape: `<prefix>-pr-<uuid>`).
+    add_general_regex_sanitizer(
+        regex=r"/[a-z0-9-]+-pr-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+        value="/sanitized-pending-upload-container",
+    )
+
+    # Sanitize SAS-token query strings returned by `.beta.models.pending_upload`
+    # (signed URLs to a Foundry-managed Storage container). Match conservatively
+    # on the `sig=` parameter which is unique to SAS tokens and isn't used by
+    # regular Azure API URLs.
+    add_general_regex_sanitizer(
+        regex=r"sig=[A-Za-z0-9%]+",
+        value="sig=sanitized-sas-sig",
+    )
+    add_general_regex_sanitizer(
+        regex=r"skoid=[A-Fa-f0-9\-]+",
+        value="skoid=00000000-0000-0000-0000-000000000000",
+    )
+    add_general_regex_sanitizer(
+        regex=r"sktid=[A-Fa-f0-9\-]+",
+        value="sktid=00000000-0000-0000-0000-000000000000",
+    )
+
+    # Sanitize `/workspaces/<name>` URL segments (some Foundry asset-store URLs
+    # reference the underlying ML workspace by name, which leaks the project
+    # resource name).
+    add_general_regex_sanitizer(
+        regex=r"/workspaces/([-\w\._\(\)]+)",
+        value=sanitized_values["account_name"],
+        group_for_replace="1",
+    )
+
+    # Sanitize Foundry `azureai://` asset URIs whose `accounts/<name>` and
+    # `projects/<name>` segments embed the project resource name.
+    add_general_regex_sanitizer(
+        regex=r"azureai://accounts/([^/]+)/projects/([^/]+)",
+        value=f"azureai://accounts/{sanitized_values['account_name']}/projects/{sanitized_values['project_name']}",
+    )
+
+    # Sanitize the live Foundry project's account/project names anywhere they
+    # appear in URLs, headers, or bodies. Derived from the live endpoint shape
+    # `https://<account>.services.ai.azure.com/api/projects/<project>` so we
+    # cover trailing leaks like `<workspace>@<project>@AML/...` asset IDs and
+    # `publisherId` fields that aren't matched by URL-segment sanitizers.
+    _live_endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT") or os.environ.get("foundry_project_endpoint")
+    if _live_endpoint:
+        _ep_match = re.match(
+            r"https?://(?P<account>[^.]+)\.[^/]+/api/projects/(?P<project>[^/?#]+)",
+            _live_endpoint,
+        )
+        if _ep_match:
+            _live_account = _ep_match.group("account")
+            _live_project = _ep_match.group("project")
+            # Order matters: the longer (account) name often contains the shorter
+            # (project) name as a prefix; replace the longer one first.
+            for _name, _placeholder in (
+                (_live_account, sanitized_values["account_name"]),
+                (_live_project, sanitized_values["project_name"]),
+            ):
+                add_general_regex_sanitizer(regex=re.escape(_name), value=_placeholder)
+                add_body_string_sanitizer(target=_name, value=_placeholder)
+
     # Sanitize image-generation deployment name from live env when present.
     # This value is commonly emitted in request headers (for example
     # `x-ms-oai-image-generation-deployment`) and may come from either

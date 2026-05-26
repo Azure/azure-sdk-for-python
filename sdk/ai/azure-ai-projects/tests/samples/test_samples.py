@@ -6,7 +6,7 @@
 import pytest
 import os
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
-from test_base import servicePreparer, fineTuningServicePreparer
+from test_base import servicePreparer, fineTuningServicePreparer, modelsServicePreparer
 from sample_executor import (
     AdditionalSampleTestDetail,
     SyncSampleExecutor,
@@ -149,6 +149,40 @@ class TestSamples(AzureRecordedTestCase):
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "models",
+            samples_to_test=[
+                # `sample_models_basic.py` uses the `create()` helper which shells out
+                # to AzCopy. AzCopy traffic isn't captured by the test proxy, so the
+                # sample can't be replayed from a recording. Live re-recording is still
+                # exercised via the standalone tests in `tests/models/`.
+                "sample_models_create_and_poll.py",
+            ],
+        ),
+    )
+    @modelsServicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_models_samples(self, sample_path: str, **kwargs) -> None:
+        import secrets  # local import to avoid module-level dep
+
+        env_vars = get_sample_env_vars(kwargs)
+        # Foundry permanently reserves a `<name>/<version>` asset namespace even
+        # after `models.delete`, so every live re-recording needs a unique name.
+        # Sanitize back to a stable value in conftest so playback URLs match.
+        suffix = secrets.token_hex(4) if self.is_live else "00000000"
+        env_vars["MODEL_NAME"] = f"recsmplmdl{suffix}"
+        env_vars["MODEL_VERSION"] = "1"
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        executor.execute()
+        # `validate_print_calls_by_llm` is intentionally not called: it requires
+        # an Azure OpenAI connection on the Foundry project, which the canary
+        # project used for `.beta.models` recordings does not have. The sample
+        # is still validated end-to-end by `executor.execute()` (any exception
+        # fails the test).
 
     @servicePreparer()
     # @additionalSampleTests(
