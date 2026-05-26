@@ -75,5 +75,6 @@
         "azure.mgmt.trafficmanager.aio.operations.TrafficManagerUserMetricsKeysOperations.create_or_update": "Microsoft.Network.UserMetricsModels.createOrUpdate",
         "azure.mgmt.trafficmanager.operations.TrafficManagerUserMetricsKeysOperations.delete": "Microsoft.Network.UserMetricsModels.delete",
         "azure.mgmt.trafficmanager.aio.operations.TrafficManagerUserMetricsKeysOperations.delete": "Microsoft.Network.UserMetricsModels.delete"
-    }
+    },
+    "CrossLanguageVersion": "59af86e7fca0"
 }

@@ -10,20 +10,19 @@ name = "azure-mgmt-trafficmanager"
 authors = [
     { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Azure Traffic Manager Management Client Library for Python"
+description = "Microsoft Azure Trafficmanager Management Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = [
     "azure",
     "azure sdk",
