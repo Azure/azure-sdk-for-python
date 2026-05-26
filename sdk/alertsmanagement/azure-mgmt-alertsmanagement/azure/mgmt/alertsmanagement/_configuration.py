@@ -26,28 +26,30 @@ class AlertsManagementClientConfiguration:  # pylint: disable=too-many-instance-
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
-    :type subscription_id: str
+    :param scope: scope here is resourceId for which alert is created. Required.
+    :type scope: str
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-05-25-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
-        self,
-        credential: "TokenCredential",
-        subscription_id: str,
-        cloud_setting: Optional["AzureClouds"] = None,
-        **kwargs: Any
+        self, credential: "TokenCredential", scope: str, cloud_setting: Optional["AzureClouds"] = None, **kwargs: Any
     ) -> None:
+        api_version: str = kwargs.pop("api_version", "2025-05-25-preview")
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
+        if scope is None:
+            raise ValueError("Parameter 'scope' must not be None.")
 
         self.credential = credential
-        self.subscription_id = subscription_id
+        self.scope = scope
         self.cloud_setting = cloud_setting
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-alertsmanagement/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

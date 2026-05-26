@@ -22,7 +22,7 @@ class TestAlertsManagementOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2019-05-05-preview",
+            api_version="2025-05-25-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

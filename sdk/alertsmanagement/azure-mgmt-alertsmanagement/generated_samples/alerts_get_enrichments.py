@@ -16,7 +16,7 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
     pip install azure-identity
     pip install azure-mgmt-alertsmanagement
 # USAGE
-    python smart_detector_alert_rule_list_by_resource_group.py
+    python alerts_get_enrichments.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +28,16 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
 def main():
     client = AlertsManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="b368ca2f-e298-46b7-b0ab-012281956afa",
+        scope="subscriptions/72fa99ef-9c84-4a7c-b343-ec62da107d81",
     )
 
-    response = client.smart_detector_alert_rules.list_by_resource_group(
-        resource_group_name="MyAlertRules",
+    response = client.alerts.get_enrichments(
+        alert_id="66114d64-d9d9-478b-95c9-b789d6502101",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/stable/2019-06-01/examples/SmartDetectorAlertRule_ListByResourceGroup.json
+# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/preview/2025-05-25-preview/examples/Alerts_GetEnrichments.json
 if __name__ == "__main__":
     main()

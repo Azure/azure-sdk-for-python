@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,221 +18,148 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]
 
 
-class ActionRuleProperties(_serialization.Model):
-    """Action rule properties defining scope, conditions, suppression logic for action rule.
+class ActionStatus(_serialization.Model):
+    """Action status.
+
+    :ivar is_suppressed: Value indicating whether alert is suppressed.
+    :vartype is_suppressed: bool
+    """
+
+    _attribute_map = {
+        "is_suppressed": {"key": "isSuppressed", "type": "bool"},
+    }
+
+    def __init__(self, *, is_suppressed: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword is_suppressed: Value indicating whether alert is suppressed.
+        :paramtype is_suppressed: bool
+        """
+        super().__init__(**kwargs)
+        self.is_suppressed = is_suppressed
+
+
+class BaseDetails(_serialization.Model):
+    """Base details class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ActionGroup, Diagnostics, Suppression
-
-    Variables are only populated by the server, and will be ignored when sending a request.
+    ActionSuppressedDetails, ActionTriggeredDetails, PropertyChangeDetails
 
     All required parameters must be populated in order to send to server.
 
-    :ivar scope: scope on which action rule will apply.
-    :vartype scope: ~azure.mgmt.alertsmanagement.models.Scope
-    :ivar conditions: conditions on which alerts will be filtered.
-    :vartype conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-    :ivar description: Description of action rule.
-    :vartype description: str
-    :ivar created_at: Creation time of action rule. Date-Time in ISO-8601 format.
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_at: Last updated time of action rule. Date-Time in ISO-8601 format.
-    :vartype last_modified_at: ~datetime.datetime
-    :ivar created_by: Created by user name.
-    :vartype created_by: str
-    :ivar last_modified_by: Last modified by user name.
-    :vartype last_modified_by: str
-    :ivar status: Indicates if the given action rule is enabled or disabled. Known values are:
-     "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-    :ivar type: Indicates type of action rule. Required. Known values are: "Suppression",
-     "ActionGroup", and "Diagnostics".
-    :vartype type: str or ~azure.mgmt.alertsmanagement.models.ActionRuleType
+    :ivar type: Type of modification details. Required. Known values are: "PropertyChange",
+     "ActionsSuppressed", and "ActionsTriggered".
+    :vartype type: str or ~azure.mgmt.alertsmanagement.models.AlertModificationType
     """
 
     _validation = {
-        "created_at": {"readonly": True},
-        "last_modified_at": {"readonly": True},
-        "created_by": {"readonly": True},
-        "last_modified_by": {"readonly": True},
         "type": {"required": True},
     }
 
     _attribute_map = {
-        "scope": {"key": "scope", "type": "Scope"},
-        "conditions": {"key": "conditions", "type": "Conditions"},
-        "description": {"key": "description", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
-        "created_by": {"key": "createdBy", "type": "str"},
-        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
-        "status": {"key": "status", "type": "str"},
         "type": {"key": "type", "type": "str"},
     }
 
-    _subtype_map = {"type": {"ActionGroup": "ActionGroup", "Diagnostics": "Diagnostics", "Suppression": "Suppression"}}
+    _subtype_map = {
+        "type": {
+            "ActionsSuppressed": "ActionSuppressedDetails",
+            "ActionsTriggered": "ActionTriggeredDetails",
+            "PropertyChange": "PropertyChangeDetails",
+        }
+    }
 
-    def __init__(
-        self,
-        *,
-        scope: Optional["_models.Scope"] = None,
-        conditions: Optional["_models.Conditions"] = None,
-        description: Optional[str] = None,
-        status: Optional[Union[str, "_models.ActionRuleStatus"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword scope: scope on which action rule will apply.
-        :paramtype scope: ~azure.mgmt.alertsmanagement.models.Scope
-        :keyword conditions: conditions on which alerts will be filtered.
-        :paramtype conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-        :keyword description: Description of action rule.
-        :paramtype description: str
-        :keyword status: Indicates if the given action rule is enabled or disabled. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.scope = scope
-        self.conditions = conditions
-        self.description = description
-        self.created_at: Optional[datetime.datetime] = None
-        self.last_modified_at: Optional[datetime.datetime] = None
-        self.created_by: Optional[str] = None
-        self.last_modified_by: Optional[str] = None
-        self.status = status
         self.type: Optional[str] = None
 
 
-class ActionGroup(ActionRuleProperties):
-    """Action rule with action group configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
+class ActionSuppressedDetails(BaseDetails):
+    """ActionSuppressedDetails.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar scope: scope on which action rule will apply.
-    :vartype scope: ~azure.mgmt.alertsmanagement.models.Scope
-    :ivar conditions: conditions on which alerts will be filtered.
-    :vartype conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-    :ivar description: Description of action rule.
-    :vartype description: str
-    :ivar created_at: Creation time of action rule. Date-Time in ISO-8601 format.
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_at: Last updated time of action rule. Date-Time in ISO-8601 format.
-    :vartype last_modified_at: ~datetime.datetime
-    :ivar created_by: Created by user name.
-    :vartype created_by: str
-    :ivar last_modified_by: Last modified by user name.
-    :vartype last_modified_by: str
-    :ivar status: Indicates if the given action rule is enabled or disabled. Known values are:
-     "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-    :ivar type: Indicates type of action rule. Required. Known values are: "Suppression",
-     "ActionGroup", and "Diagnostics".
-    :vartype type: str or ~azure.mgmt.alertsmanagement.models.ActionRuleType
-    :ivar action_group_id: Action group to trigger if action rule matches. Required.
-    :vartype action_group_id: str
+    :ivar type: Type of modification details. Required. Known values are: "PropertyChange",
+     "ActionsSuppressed", and "ActionsTriggered".
+    :vartype type: str or ~azure.mgmt.alertsmanagement.models.AlertModificationType
+    :ivar suppression_action_rules: List of suppression action rules.
+    :vartype suppression_action_rules: list[str]
+    :ivar suppressed_action_groups: List of suppressed action groups.
+    :vartype suppressed_action_groups: list[~azure.mgmt.alertsmanagement.models.TriggeredRule]
     """
 
     _validation = {
-        "created_at": {"readonly": True},
-        "last_modified_at": {"readonly": True},
-        "created_by": {"readonly": True},
-        "last_modified_by": {"readonly": True},
         "type": {"required": True},
-        "action_group_id": {"required": True},
     }
 
     _attribute_map = {
-        "scope": {"key": "scope", "type": "Scope"},
-        "conditions": {"key": "conditions", "type": "Conditions"},
-        "description": {"key": "description", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
-        "created_by": {"key": "createdBy", "type": "str"},
-        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
-        "status": {"key": "status", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "action_group_id": {"key": "actionGroupId", "type": "str"},
+        "suppression_action_rules": {"key": "suppressionActionRules", "type": "[str]"},
+        "suppressed_action_groups": {"key": "suppressedActionGroups", "type": "[TriggeredRule]"},
     }
 
     def __init__(
         self,
         *,
-        action_group_id: str,
-        scope: Optional["_models.Scope"] = None,
-        conditions: Optional["_models.Conditions"] = None,
-        description: Optional[str] = None,
-        status: Optional[Union[str, "_models.ActionRuleStatus"]] = None,
+        suppression_action_rules: Optional[list[str]] = None,
+        suppressed_action_groups: Optional[list["_models.TriggeredRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword scope: scope on which action rule will apply.
-        :paramtype scope: ~azure.mgmt.alertsmanagement.models.Scope
-        :keyword conditions: conditions on which alerts will be filtered.
-        :paramtype conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-        :keyword description: Description of action rule.
-        :paramtype description: str
-        :keyword status: Indicates if the given action rule is enabled or disabled. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-        :keyword action_group_id: Action group to trigger if action rule matches. Required.
-        :paramtype action_group_id: str
-        """
-        super().__init__(scope=scope, conditions=conditions, description=description, status=status, **kwargs)
-        self.type: str = "ActionGroup"
-        self.action_group_id = action_group_id
-
-
-class ActionGroupsInformation(_serialization.Model):
-    """The Action Groups information, used by the alert rule.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar custom_email_subject: An optional custom email subject to use in email notifications.
-    :vartype custom_email_subject: str
-    :ivar custom_webhook_payload: An optional custom web-hook payload to use in web-hook
-     notifications.
-    :vartype custom_webhook_payload: str
-    :ivar group_ids: The Action Group resource IDs. Required.
-    :vartype group_ids: list[str]
-    """
-
-    _validation = {
-        "group_ids": {"required": True},
-    }
-
-    _attribute_map = {
-        "custom_email_subject": {"key": "customEmailSubject", "type": "str"},
-        "custom_webhook_payload": {"key": "customWebhookPayload", "type": "str"},
-        "group_ids": {"key": "groupIds", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        group_ids: list[str],
-        custom_email_subject: Optional[str] = None,
-        custom_webhook_payload: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword custom_email_subject: An optional custom email subject to use in email notifications.
-        :paramtype custom_email_subject: str
-        :keyword custom_webhook_payload: An optional custom web-hook payload to use in web-hook
-         notifications.
-        :paramtype custom_webhook_payload: str
-        :keyword group_ids: The Action Group resource IDs. Required.
-        :paramtype group_ids: list[str]
+        :keyword suppression_action_rules: List of suppression action rules.
+        :paramtype suppression_action_rules: list[str]
+        :keyword suppressed_action_groups: List of suppressed action groups.
+        :paramtype suppressed_action_groups: list[~azure.mgmt.alertsmanagement.models.TriggeredRule]
         """
         super().__init__(**kwargs)
-        self.custom_email_subject = custom_email_subject
-        self.custom_webhook_payload = custom_webhook_payload
-        self.group_ids = group_ids
+        self.type: str = "ActionsSuppressed"
+        self.suppression_action_rules = suppression_action_rules
+        self.suppressed_action_groups = suppressed_action_groups
 
 
-class Resource(_serialization.Model):
+class ActionTriggeredDetails(BaseDetails):
+    """ActionTriggeredDetails.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: Type of modification details. Required. Known values are: "PropertyChange",
+     "ActionsSuppressed", and "ActionsTriggered".
+    :vartype type: str or ~azure.mgmt.alertsmanagement.models.AlertModificationType
+    :ivar action_group: The action group that was triggered.
+    :vartype action_group: ~azure.mgmt.alertsmanagement.models.TriggeredRule
+    :ivar notification_result: The result of the notification delivery.
+    :vartype notification_result: ~azure.mgmt.alertsmanagement.models.NotificationResult
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "action_group": {"key": "actionGroup", "type": "TriggeredRule"},
+        "notification_result": {"key": "notificationResult", "type": "NotificationResult"},
+    }
+
+    def __init__(
+        self,
+        *,
+        action_group: Optional["_models.TriggeredRule"] = None,
+        notification_result: Optional["_models.NotificationResult"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword action_group: The action group that was triggered.
+        :paramtype action_group: ~azure.mgmt.alertsmanagement.models.TriggeredRule
+        :keyword notification_result: The result of the notification delivery.
+        :paramtype notification_result: ~azure.mgmt.alertsmanagement.models.NotificationResult
+        """
+        super().__init__(**kwargs)
+        self.type: str = "ActionsTriggered"
+        self.action_group = action_group
+        self.notification_result = notification_result
+
+
+class ProxyResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -265,158 +192,7 @@ class Resource(_serialization.Model):
         self.name: Optional[str] = None
 
 
-class ManagedResource(Resource):
-    """An azure managed resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "type": {"readonly": True},
-        "name": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.location = location
-        self.tags = tags
-
-
-class ActionRule(ManagedResource):
-    """Action rule object containing target scope, conditions and suppression logic.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: action rule properties.
-    :vartype properties: ~azure.mgmt.alertsmanagement.models.ActionRuleProperties
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "type": {"readonly": True},
-        "name": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "properties": {"key": "properties", "type": "ActionRuleProperties"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.ActionRuleProperties"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword properties: action rule properties.
-        :paramtype properties: ~azure.mgmt.alertsmanagement.models.ActionRuleProperties
-        """
-        super().__init__(location=location, tags=tags, **kwargs)
-        self.properties = properties
-
-
-class ActionRulesList(_serialization.Model):
-    """List of action rules.
-
-    :ivar next_link: URL to fetch the next set of action rules.
-    :vartype next_link: str
-    :ivar value: List of action rules.
-    :vartype value: list[~azure.mgmt.alertsmanagement.models.ActionRule]
-    """
-
-    _attribute_map = {
-        "next_link": {"key": "nextLink", "type": "str"},
-        "value": {"key": "value", "type": "[ActionRule]"},
-    }
-
-    def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[list["_models.ActionRule"]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword next_link: URL to fetch the next set of action rules.
-        :paramtype next_link: str
-        :keyword value: List of action rules.
-        :paramtype value: list[~azure.mgmt.alertsmanagement.models.ActionRule]
-        """
-        super().__init__(**kwargs)
-        self.next_link = next_link
-        self.value = value
-
-
-class ActionStatus(_serialization.Model):
-    """Action status.
-
-    :ivar is_suppressed: Value indicating whether alert is suppressed.
-    :vartype is_suppressed: bool
-    """
-
-    _attribute_map = {
-        "is_suppressed": {"key": "isSuppressed", "type": "bool"},
-    }
-
-    def __init__(self, *, is_suppressed: Optional[bool] = None, **kwargs: Any) -> None:
-        """
-        :keyword is_suppressed: Value indicating whether alert is suppressed.
-        :paramtype is_suppressed: bool
-        """
-        super().__init__(**kwargs)
-        self.is_suppressed = is_suppressed
-
-
-class Alert(Resource):
+class Alert(ProxyResource):
     """An alert created in alert management service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -453,7 +229,241 @@ class Alert(Resource):
         self.properties = properties
 
 
-class AlertModification(Resource):
+class AlertEnrichmentItem(_serialization.Model):
+    """Alert enrichment item.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    PrometheusEnrichmentItem
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar title: The enrichment title. Required.
+    :vartype title: str
+    :ivar description: The enrichment description. Required.
+    :vartype description: str
+    :ivar status: The status of the evaluation of the enrichment. Required. Known values are:
+     "Succeeded" and "Failed".
+    :vartype status: str or ~azure.mgmt.alertsmanagement.models.Status
+    :ivar error_message: The error message. Will be present only if the status is 'Failed'.
+    :vartype error_message: str
+    :ivar type: The enrichment type. Required. Known values are: "PrometheusInstantQuery" and
+     "PrometheusRangeQuery".
+    :vartype type: str or ~azure.mgmt.alertsmanagement.models.Type
+    """
+
+    _validation = {
+        "title": {"required": True},
+        "description": {"required": True},
+        "status": {"required": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "title": {"key": "title", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    _subtype_map = {"type": {"PrometheusEnrichmentItem": "PrometheusEnrichmentItem"}}
+
+    def __init__(
+        self,
+        *,
+        title: str,
+        description: str,
+        status: Union[str, "_models.Status"],
+        error_message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword title: The enrichment title. Required.
+        :paramtype title: str
+        :keyword description: The enrichment description. Required.
+        :paramtype description: str
+        :keyword status: The status of the evaluation of the enrichment. Required. Known values are:
+         "Succeeded" and "Failed".
+        :paramtype status: str or ~azure.mgmt.alertsmanagement.models.Status
+        :keyword error_message: The error message. Will be present only if the status is 'Failed'.
+        :paramtype error_message: str
+        """
+        super().__init__(**kwargs)
+        self.title = title
+        self.description = description
+        self.status = status
+        self.error_message = error_message
+        self.type: Optional[str] = None
+
+
+class AlertEnrichmentProperties(_serialization.Model):
+    """Properties of the alert enrichment item.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar alert_id: Unique Id (GUID) of the alert for which the enrichments are being retrieved.
+    :vartype alert_id: str
+    :ivar enrichments: Enrichment details.
+    :vartype enrichments: list[~azure.mgmt.alertsmanagement.models.AlertEnrichmentItem]
+    """
+
+    _validation = {
+        "alert_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "alert_id": {"key": "alertId", "type": "str"},
+        "enrichments": {"key": "enrichments", "type": "[AlertEnrichmentItem]"},
+    }
+
+    def __init__(self, *, enrichments: Optional[list["_models.AlertEnrichmentItem"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword enrichments: Enrichment details.
+        :paramtype enrichments: list[~azure.mgmt.alertsmanagement.models.AlertEnrichmentItem]
+        """
+        super().__init__(**kwargs)
+        self.alert_id: Optional[str] = None
+        self.enrichments = enrichments
+
+
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.alertsmanagement.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+
+
+class ProxyResourceAutoGenerated(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.alertsmanagement.models.SystemData
+    """
+
+
+class AlertEnrichmentResponse(ProxyResourceAutoGenerated):
+    """The alert's enrichments.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.alertsmanagement.models.SystemData
+    :ivar properties: Properties of the alert enrichment item.
+    :vartype properties: ~azure.mgmt.alertsmanagement.models.AlertEnrichmentProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "AlertEnrichmentProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.AlertEnrichmentProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Properties of the alert enrichment item.
+        :paramtype properties: ~azure.mgmt.alertsmanagement.models.AlertEnrichmentProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class AlertEnrichmentsList(_serialization.Model):
+    """List the alert's enrichments.
+
+    :ivar value: List the alert's enrichments.
+    :vartype value: list[~azure.mgmt.alertsmanagement.models.AlertEnrichmentResponse]
+    :ivar next_link: Request URL that can be used to query next page.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[AlertEnrichmentResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.AlertEnrichmentResponse"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List the alert's enrichments.
+        :paramtype value: list[~azure.mgmt.alertsmanagement.models.AlertEnrichmentResponse]
+        :keyword next_link: Request URL that can be used to query next page.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class AlertModification(ProxyResource):
     """Alert Modification details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -464,7 +474,7 @@ class AlertModification(Resource):
     :vartype type: str
     :ivar name: Azure resource name.
     :vartype name: str
-    :ivar properties: Properties of the alert modification item.
+    :ivar properties: Alert modification history properties.
     :vartype properties: ~azure.mgmt.alertsmanagement.models.AlertModificationProperties
     """
 
@@ -483,7 +493,7 @@ class AlertModification(Resource):
 
     def __init__(self, *, properties: Optional["_models.AlertModificationProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword properties: Properties of the alert modification item.
+        :keyword properties: Alert modification history properties.
         :paramtype properties: ~azure.mgmt.alertsmanagement.models.AlertModificationProperties
         """
         super().__init__(**kwargs)
@@ -494,8 +504,8 @@ class AlertModificationItem(_serialization.Model):
     """Alert modification item.
 
     :ivar modification_event: Reason for the modification. Known values are: "AlertCreated",
-     "StateChange", "MonitorConditionChange", "SeverityChange", "ActionRuleTriggered",
-     "ActionRuleSuppressed", "ActionsTriggered", "ActionsSuppressed", and "ActionsFailed".
+     "StateChange", "SeverityChange", "MonitorConditionChange", "ActionsTriggered", and
+     "ActionsSuppressed".
     :vartype modification_event: str or ~azure.mgmt.alertsmanagement.models.AlertModificationEvent
     :ivar old_value: Old value.
     :vartype old_value: str
@@ -509,6 +519,8 @@ class AlertModificationItem(_serialization.Model):
     :vartype comments: str
     :ivar description: Description of the modification.
     :vartype description: str
+    :ivar details: Base details class.
+    :vartype details: ~azure.mgmt.alertsmanagement.models.BaseDetails
     """
 
     _attribute_map = {
@@ -519,6 +531,7 @@ class AlertModificationItem(_serialization.Model):
         "modified_by": {"key": "modifiedBy", "type": "str"},
         "comments": {"key": "comments", "type": "str"},
         "description": {"key": "description", "type": "str"},
+        "details": {"key": "details", "type": "BaseDetails"},
     }
 
     def __init__(
@@ -531,12 +544,13 @@ class AlertModificationItem(_serialization.Model):
         modified_by: Optional[str] = None,
         comments: Optional[str] = None,
         description: Optional[str] = None,
+        details: Optional["_models.BaseDetails"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword modification_event: Reason for the modification. Known values are: "AlertCreated",
-         "StateChange", "MonitorConditionChange", "SeverityChange", "ActionRuleTriggered",
-         "ActionRuleSuppressed", "ActionsTriggered", "ActionsSuppressed", and "ActionsFailed".
+         "StateChange", "SeverityChange", "MonitorConditionChange", "ActionsTriggered", and
+         "ActionsSuppressed".
         :paramtype modification_event: str or
          ~azure.mgmt.alertsmanagement.models.AlertModificationEvent
         :keyword old_value: Old value.
@@ -551,6 +565,8 @@ class AlertModificationItem(_serialization.Model):
         :paramtype comments: str
         :keyword description: Description of the modification.
         :paramtype description: str
+        :keyword details: Base details class.
+        :paramtype details: ~azure.mgmt.alertsmanagement.models.BaseDetails
         """
         super().__init__(**kwargs)
         self.modification_event = modification_event
@@ -560,16 +576,17 @@ class AlertModificationItem(_serialization.Model):
         self.modified_by = modified_by
         self.comments = comments
         self.description = description
+        self.details = details
 
 
 class AlertModificationProperties(_serialization.Model):
-    """Properties of the alert modification item.
+    """Alert modification history properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar alert_id: Unique Id of the alert for which the history is being retrieved.
+    :ivar alert_id: Unique identifier of the alert.
     :vartype alert_id: str
-    :ivar modifications: Modification details.
+    :ivar modifications: Array of alert modification events.
     :vartype modifications: list[~azure.mgmt.alertsmanagement.models.AlertModificationItem]
     """
 
@@ -584,7 +601,7 @@ class AlertModificationProperties(_serialization.Model):
 
     def __init__(self, *, modifications: Optional[list["_models.AlertModificationItem"]] = None, **kwargs: Any) -> None:
         """
-        :keyword modifications: Modification details.
+        :keyword modifications: Array of alert modification events.
         :paramtype modifications: list[~azure.mgmt.alertsmanagement.models.AlertModificationItem]
         """
         super().__init__(**kwargs)
@@ -604,6 +621,8 @@ class AlertProperties(_serialization.Model):
     :vartype context: JSON
     :ivar egress_config: Config which would be used for displaying the data in portal.
     :vartype egress_config: JSON
+    :ivar custom_properties: Custom properties that can hold any user defined key-value pairs.
+    :vartype custom_properties: dict[str, str]
     """
 
     _validation = {
@@ -615,289 +634,27 @@ class AlertProperties(_serialization.Model):
         "essentials": {"key": "essentials", "type": "Essentials"},
         "context": {"key": "context", "type": "object"},
         "egress_config": {"key": "egressConfig", "type": "object"},
+        "custom_properties": {"key": "customProperties", "type": "{str}"},
     }
 
-    def __init__(self, *, essentials: Optional["_models.Essentials"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        essentials: Optional["_models.Essentials"] = None,
+        custom_properties: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword essentials: This object contains consistent fields across different monitor services.
         :paramtype essentials: ~azure.mgmt.alertsmanagement.models.Essentials
+        :keyword custom_properties: Custom properties that can hold any user defined key-value pairs.
+        :paramtype custom_properties: dict[str, str]
         """
         super().__init__(**kwargs)
         self.essentials = essentials
         self.context: Optional[JSON] = None
         self.egress_config: Optional[JSON] = None
-
-
-class AzureResource(_serialization.Model):
-    """An Azure resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar location: The resource location.
-    :vartype location: str
-    :ivar tags: The resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "type": {"readonly": True},
-        "name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, location: str = "global", tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: The resource location.
-        :paramtype location: str
-        :keyword tags: The resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.type: Optional[str] = None
-        self.name: Optional[str] = None
-        self.location = location
-        self.tags = tags
-
-
-class AlertRule(AzureResource):
-    """The alert rule information.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar location: The resource location.
-    :vartype location: str
-    :ivar tags: The resource tags.
-    :vartype tags: dict[str, str]
-    :ivar description: The alert rule description.
-    :vartype description: str
-    :ivar state: The alert rule state. Known values are: "Enabled" and "Disabled".
-    :vartype state: str or ~azure.mgmt.alertsmanagement.models.AlertRuleState
-    :ivar severity: The alert rule severity. Known values are: "Sev0", "Sev1", "Sev2", "Sev3", and
-     "Sev4".
-    :vartype severity: str or ~azure.mgmt.alertsmanagement.models.Severity
-    :ivar frequency: The alert rule frequency in ISO8601 format. The time granularity must be in
-     minutes and minimum value is 5 minutes.
-    :vartype frequency: ~datetime.timedelta
-    :ivar detector: The alert rule's detector.
-    :vartype detector: ~azure.mgmt.alertsmanagement.models.Detector
-    :ivar scope: The alert rule resources scope.
-    :vartype scope: list[str]
-    :ivar action_groups: The alert rule actions.
-    :vartype action_groups: ~azure.mgmt.alertsmanagement.models.ActionGroupsInformation
-    :ivar throttling: The alert rule throttling information.
-    :vartype throttling: ~azure.mgmt.alertsmanagement.models.ThrottlingInformation
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "type": {"readonly": True},
-        "name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "description": {"key": "properties.description", "type": "str"},
-        "state": {"key": "properties.state", "type": "str"},
-        "severity": {"key": "properties.severity", "type": "str"},
-        "frequency": {"key": "properties.frequency", "type": "duration"},
-        "detector": {"key": "properties.detector", "type": "Detector"},
-        "scope": {"key": "properties.scope", "type": "[str]"},
-        "action_groups": {"key": "properties.actionGroups", "type": "ActionGroupsInformation"},
-        "throttling": {"key": "properties.throttling", "type": "ThrottlingInformation"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str = "global",
-        tags: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        state: Optional[Union[str, "_models.AlertRuleState"]] = None,
-        severity: Optional[Union[str, "_models.Severity"]] = None,
-        frequency: Optional[datetime.timedelta] = None,
-        detector: Optional["_models.Detector"] = None,
-        scope: Optional[list[str]] = None,
-        action_groups: Optional["_models.ActionGroupsInformation"] = None,
-        throttling: Optional["_models.ThrottlingInformation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: The resource location.
-        :paramtype location: str
-        :keyword tags: The resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword description: The alert rule description.
-        :paramtype description: str
-        :keyword state: The alert rule state. Known values are: "Enabled" and "Disabled".
-        :paramtype state: str or ~azure.mgmt.alertsmanagement.models.AlertRuleState
-        :keyword severity: The alert rule severity. Known values are: "Sev0", "Sev1", "Sev2", "Sev3",
-         and "Sev4".
-        :paramtype severity: str or ~azure.mgmt.alertsmanagement.models.Severity
-        :keyword frequency: The alert rule frequency in ISO8601 format. The time granularity must be in
-         minutes and minimum value is 5 minutes.
-        :paramtype frequency: ~datetime.timedelta
-        :keyword detector: The alert rule's detector.
-        :paramtype detector: ~azure.mgmt.alertsmanagement.models.Detector
-        :keyword scope: The alert rule resources scope.
-        :paramtype scope: list[str]
-        :keyword action_groups: The alert rule actions.
-        :paramtype action_groups: ~azure.mgmt.alertsmanagement.models.ActionGroupsInformation
-        :keyword throttling: The alert rule throttling information.
-        :paramtype throttling: ~azure.mgmt.alertsmanagement.models.ThrottlingInformation
-        """
-        super().__init__(location=location, tags=tags, **kwargs)
-        self.description = description
-        self.state = state
-        self.severity = severity
-        self.frequency = frequency
-        self.detector = detector
-        self.scope = scope
-        self.action_groups = action_groups
-        self.throttling = throttling
-
-
-class AlertRulePatchObject(_serialization.Model):
-    """The alert rule patch information.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource ID.
-    :vartype id: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar tags: The resource tags.
-    :vartype tags: dict[str, str]
-    :ivar description: The alert rule description.
-    :vartype description: str
-    :ivar state: The alert rule state. Known values are: "Enabled" and "Disabled".
-    :vartype state: str or ~azure.mgmt.alertsmanagement.models.AlertRuleState
-    :ivar severity: The alert rule severity. Known values are: "Sev0", "Sev1", "Sev2", "Sev3", and
-     "Sev4".
-    :vartype severity: str or ~azure.mgmt.alertsmanagement.models.Severity
-    :ivar frequency: The alert rule frequency in ISO8601 format. The time granularity must be in
-     minutes and minimum value is 5 minutes.
-    :vartype frequency: ~datetime.timedelta
-    :ivar action_groups: The alert rule actions.
-    :vartype action_groups: ~azure.mgmt.alertsmanagement.models.ActionGroupsInformation
-    :ivar throttling: The alert rule throttling information.
-    :vartype throttling: ~azure.mgmt.alertsmanagement.models.ThrottlingInformation
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "type": {"readonly": True},
-        "name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "description": {"key": "properties.description", "type": "str"},
-        "state": {"key": "properties.state", "type": "str"},
-        "severity": {"key": "properties.severity", "type": "str"},
-        "frequency": {"key": "properties.frequency", "type": "duration"},
-        "action_groups": {"key": "properties.actionGroups", "type": "ActionGroupsInformation"},
-        "throttling": {"key": "properties.throttling", "type": "ThrottlingInformation"},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        state: Optional[Union[str, "_models.AlertRuleState"]] = None,
-        severity: Optional[Union[str, "_models.Severity"]] = None,
-        frequency: Optional[datetime.timedelta] = None,
-        action_groups: Optional["_models.ActionGroupsInformation"] = None,
-        throttling: Optional["_models.ThrottlingInformation"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: The resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword description: The alert rule description.
-        :paramtype description: str
-        :keyword state: The alert rule state. Known values are: "Enabled" and "Disabled".
-        :paramtype state: str or ~azure.mgmt.alertsmanagement.models.AlertRuleState
-        :keyword severity: The alert rule severity. Known values are: "Sev0", "Sev1", "Sev2", "Sev3",
-         and "Sev4".
-        :paramtype severity: str or ~azure.mgmt.alertsmanagement.models.Severity
-        :keyword frequency: The alert rule frequency in ISO8601 format. The time granularity must be in
-         minutes and minimum value is 5 minutes.
-        :paramtype frequency: ~datetime.timedelta
-        :keyword action_groups: The alert rule actions.
-        :paramtype action_groups: ~azure.mgmt.alertsmanagement.models.ActionGroupsInformation
-        :keyword throttling: The alert rule throttling information.
-        :paramtype throttling: ~azure.mgmt.alertsmanagement.models.ThrottlingInformation
-        """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.type: Optional[str] = None
-        self.name: Optional[str] = None
-        self.tags = tags
-        self.description = description
-        self.state = state
-        self.severity = severity
-        self.frequency = frequency
-        self.action_groups = action_groups
-        self.throttling = throttling
-
-
-class AlertRulesList(_serialization.Model):
-    """List of Smart Detector alert rules.
-
-    :ivar value: List of Smart Detector alert rules.
-    :vartype value: list[~azure.mgmt.alertsmanagement.models.AlertRule]
-    :ivar next_link: The URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[AlertRule]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[list["_models.AlertRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: List of Smart Detector alert rules.
-        :paramtype value: list[~azure.mgmt.alertsmanagement.models.AlertRule]
-        :keyword next_link: The URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.custom_properties = custom_properties
 
 
 class AlertsList(_serialization.Model):
@@ -926,6 +683,26 @@ class AlertsList(_serialization.Model):
         super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
+
+
+class AlertsManagementErrorResponse(_serialization.Model):
+    """An error response from the service.
+
+    :ivar error: Details of error response.
+    :vartype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBody
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorResponseBody"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorResponseBody"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: Details of error response.
+        :paramtype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBody
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class AlertsMetaData(_serialization.Model):
@@ -977,7 +754,7 @@ class AlertsMetaDataProperties(_serialization.Model):
         self.metadata_identifier: Optional[str] = None
 
 
-class AlertsSummary(Resource):
+class AlertsSummary(ProxyResource):
     """Summary of alerts based on the input filters and 'groupby' parameters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1126,318 +903,93 @@ class Comments(_serialization.Model):
         self.comments = comments
 
 
-class Condition(_serialization.Model):
-    """condition to trigger an action rule.
-
-    :ivar operator: operator for a given condition. Known values are: "Equals", "NotEquals",
-     "Contains", and "DoesNotContain".
-    :vartype operator: str or ~azure.mgmt.alertsmanagement.models.Operator
-    :ivar values: list of values to match for a given condition.
-    :vartype values: list[str]
-    """
-
-    _attribute_map = {
-        "operator": {"key": "operator", "type": "str"},
-        "values": {"key": "values", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        operator: Optional[Union[str, "_models.Operator"]] = None,
-        values: Optional[list[str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword operator: operator for a given condition. Known values are: "Equals", "NotEquals",
-         "Contains", and "DoesNotContain".
-        :paramtype operator: str or ~azure.mgmt.alertsmanagement.models.Operator
-        :keyword values: list of values to match for a given condition.
-        :paramtype values: list[str]
-        """
-        super().__init__(**kwargs)
-        self.operator = operator
-        self.values = values
-
-
-class Conditions(_serialization.Model):
-    """Conditions in alert instance to be matched for a given action rule. Default value is all.
-    Multiple values could be provided with comma separation.
-
-    :ivar severity: filter alerts by severity.
-    :vartype severity: ~azure.mgmt.alertsmanagement.models.Condition
-    :ivar monitor_service: filter alerts by monitor service.
-    :vartype monitor_service: ~azure.mgmt.alertsmanagement.models.Condition
-    :ivar monitor_condition: filter alerts by monitor condition.
-    :vartype monitor_condition: ~azure.mgmt.alertsmanagement.models.Condition
-    :ivar target_resource_type: filter alerts by target resource type.
-    :vartype target_resource_type: ~azure.mgmt.alertsmanagement.models.Condition
-    :ivar alert_rule_id: filter alerts by alert rule id.
-    :vartype alert_rule_id: ~azure.mgmt.alertsmanagement.models.Condition
-    :ivar alert_rule_name: filter alerts by alert rule name.
-    :vartype alert_rule_name: ~azure.mgmt.alertsmanagement.models.Condition
-    :ivar description: filter alerts by alert rule description.
-    :vartype description: ~azure.mgmt.alertsmanagement.models.Condition
-    :ivar alert_context: filter alerts by alert context (payload).
-    :vartype alert_context: ~azure.mgmt.alertsmanagement.models.Condition
-    """
-
-    _attribute_map = {
-        "severity": {"key": "severity", "type": "Condition"},
-        "monitor_service": {"key": "monitorService", "type": "Condition"},
-        "monitor_condition": {"key": "monitorCondition", "type": "Condition"},
-        "target_resource_type": {"key": "targetResourceType", "type": "Condition"},
-        "alert_rule_id": {"key": "alertRuleId", "type": "Condition"},
-        "alert_rule_name": {"key": "alertRuleName", "type": "Condition"},
-        "description": {"key": "description", "type": "Condition"},
-        "alert_context": {"key": "alertContext", "type": "Condition"},
-    }
-
-    def __init__(
-        self,
-        *,
-        severity: Optional["_models.Condition"] = None,
-        monitor_service: Optional["_models.Condition"] = None,
-        monitor_condition: Optional["_models.Condition"] = None,
-        target_resource_type: Optional["_models.Condition"] = None,
-        alert_rule_id: Optional["_models.Condition"] = None,
-        alert_rule_name: Optional["_models.Condition"] = None,
-        description: Optional["_models.Condition"] = None,
-        alert_context: Optional["_models.Condition"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword severity: filter alerts by severity.
-        :paramtype severity: ~azure.mgmt.alertsmanagement.models.Condition
-        :keyword monitor_service: filter alerts by monitor service.
-        :paramtype monitor_service: ~azure.mgmt.alertsmanagement.models.Condition
-        :keyword monitor_condition: filter alerts by monitor condition.
-        :paramtype monitor_condition: ~azure.mgmt.alertsmanagement.models.Condition
-        :keyword target_resource_type: filter alerts by target resource type.
-        :paramtype target_resource_type: ~azure.mgmt.alertsmanagement.models.Condition
-        :keyword alert_rule_id: filter alerts by alert rule id.
-        :paramtype alert_rule_id: ~azure.mgmt.alertsmanagement.models.Condition
-        :keyword alert_rule_name: filter alerts by alert rule name.
-        :paramtype alert_rule_name: ~azure.mgmt.alertsmanagement.models.Condition
-        :keyword description: filter alerts by alert rule description.
-        :paramtype description: ~azure.mgmt.alertsmanagement.models.Condition
-        :keyword alert_context: filter alerts by alert context (payload).
-        :paramtype alert_context: ~azure.mgmt.alertsmanagement.models.Condition
-        """
-        super().__init__(**kwargs)
-        self.severity = severity
-        self.monitor_service = monitor_service
-        self.monitor_condition = monitor_condition
-        self.target_resource_type = target_resource_type
-        self.alert_rule_id = alert_rule_id
-        self.alert_rule_name = alert_rule_name
-        self.description = description
-        self.alert_context = alert_context
-
-
-class Detector(_serialization.Model):
-    """The detector information. By default this is not populated, unless it's specified in
-    expandDetector.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: The detector id. Required.
-    :vartype id: str
-    :ivar parameters: The detector's parameters.'.
-    :vartype parameters: dict[str, JSON]
-    :ivar name: The Smart Detector name. By default this is not populated, unless it's specified in
-     expandDetector.
-    :vartype name: str
-    :ivar description: The Smart Detector description. By default this is not populated, unless
-     it's specified in expandDetector.
-    :vartype description: str
-    :ivar supported_resource_types: The Smart Detector supported resource types. By default this is
-     not populated, unless it's specified in expandDetector.
-    :vartype supported_resource_types: list[str]
-    :ivar image_paths: The Smart Detector image path. By default this is not populated, unless it's
-     specified in expandDetector.
-    :vartype image_paths: list[str]
-    """
-
-    _validation = {
-        "id": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "parameters": {"key": "parameters", "type": "{object}"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "supported_resource_types": {"key": "supportedResourceTypes", "type": "[str]"},
-        "image_paths": {"key": "imagePaths", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        parameters: Optional[dict[str, JSON]] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        supported_resource_types: Optional[list[str]] = None,
-        image_paths: Optional[list[str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword id: The detector id. Required.
-        :paramtype id: str
-        :keyword parameters: The detector's parameters.'.
-        :paramtype parameters: dict[str, JSON]
-        :keyword name: The Smart Detector name. By default this is not populated, unless it's specified
-         in expandDetector.
-        :paramtype name: str
-        :keyword description: The Smart Detector description. By default this is not populated, unless
-         it's specified in expandDetector.
-        :paramtype description: str
-        :keyword supported_resource_types: The Smart Detector supported resource types. By default this
-         is not populated, unless it's specified in expandDetector.
-        :paramtype supported_resource_types: list[str]
-        :keyword image_paths: The Smart Detector image path. By default this is not populated, unless
-         it's specified in expandDetector.
-        :paramtype image_paths: list[str]
-        """
-        super().__init__(**kwargs)
-        self.id = id
-        self.parameters = parameters
-        self.name = name
-        self.description = description
-        self.supported_resource_types = supported_resource_types
-        self.image_paths = image_paths
-
-
-class Diagnostics(ActionRuleProperties):
-    """Action rule with diagnostics configuration.
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar scope: scope on which action rule will apply.
-    :vartype scope: ~azure.mgmt.alertsmanagement.models.Scope
-    :ivar conditions: conditions on which alerts will be filtered.
-    :vartype conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-    :ivar description: Description of action rule.
-    :vartype description: str
-    :ivar created_at: Creation time of action rule. Date-Time in ISO-8601 format.
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_at: Last updated time of action rule. Date-Time in ISO-8601 format.
-    :vartype last_modified_at: ~datetime.datetime
-    :ivar created_by: Created by user name.
-    :vartype created_by: str
-    :ivar last_modified_by: Last modified by user name.
-    :vartype last_modified_by: str
-    :ivar status: Indicates if the given action rule is enabled or disabled. Known values are:
-     "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-    :ivar type: Indicates type of action rule. Required. Known values are: "Suppression",
-     "ActionGroup", and "Diagnostics".
-    :vartype type: str or ~azure.mgmt.alertsmanagement.models.ActionRuleType
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
     """
 
     _validation = {
-        "created_at": {"readonly": True},
-        "last_modified_at": {"readonly": True},
-        "created_by": {"readonly": True},
-        "last_modified_by": {"readonly": True},
-        "type": {"required": True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        "scope": {"key": "scope", "type": "Scope"},
-        "conditions": {"key": "conditions", "type": "Conditions"},
-        "description": {"key": "description", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
-        "created_by": {"key": "createdBy", "type": "str"},
-        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
-        "status": {"key": "status", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        scope: Optional["_models.Scope"] = None,
-        conditions: Optional["_models.Conditions"] = None,
-        description: Optional[str] = None,
-        status: Optional[Union[str, "_models.ActionRuleStatus"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword scope: scope on which action rule will apply.
-        :paramtype scope: ~azure.mgmt.alertsmanagement.models.Scope
-        :keyword conditions: conditions on which alerts will be filtered.
-        :paramtype conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-        :keyword description: Description of action rule.
-        :paramtype description: str
-        :keyword status: Indicates if the given action rule is enabled or disabled. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-        """
-        super().__init__(scope=scope, conditions=conditions, description=description, status=status, **kwargs)
-        self.type: str = "Diagnostics"
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.alertsmanagement.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.alertsmanagement.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
-    """An error response from the service.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
-    :ivar error: Details of error response.
-    :vartype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBody
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.alertsmanagement.models.ErrorDetail
     """
 
     _attribute_map = {
-        "error": {"key": "error", "type": "ErrorResponseBody"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponseBody"] = None, **kwargs: Any) -> None:
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
-        :keyword error: Details of error response.
-        :paramtype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBody
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseAutoGenerated(_serialization.Model):
-    """An error response from the service.
-
-    :ivar error: Details of error response.
-    :vartype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorResponseBodyAutoGenerated"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorResponseBodyAutoGenerated"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error: Details of error response.
-        :paramtype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseAutoGenerated2(_serialization.Model):
-    """An error response from the service.
-
-    :ivar error: Details of error response.
-    :vartype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated2
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorResponseBodyAutoGenerated2"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorResponseBodyAutoGenerated2"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error: Details of error response.
-        :paramtype error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated2
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.alertsmanagement.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
@@ -1489,98 +1041,6 @@ class ErrorResponseBody(_serialization.Model):
         self.details = details
 
 
-class ErrorResponseBodyAutoGenerated(_serialization.Model):
-    """Details of error response.
-
-    :ivar code: Error code, intended to be consumed programmatically.
-    :vartype code: str
-    :ivar message: Description of the error, intended for display in user interface.
-    :vartype message: str
-    :ivar target: Target of the particular error, for example name of the property.
-    :vartype target: str
-    :ivar details: A list of additional details about the error.
-    :vartype details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated]
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorResponseBodyAutoGenerated]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[list["_models.ErrorResponseBodyAutoGenerated"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword code: Error code, intended to be consumed programmatically.
-        :paramtype code: str
-        :keyword message: Description of the error, intended for display in user interface.
-        :paramtype message: str
-        :keyword target: Target of the particular error, for example name of the property.
-        :paramtype target: str
-        :keyword details: A list of additional details about the error.
-        :paramtype details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated]
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
-
-
-class ErrorResponseBodyAutoGenerated2(_serialization.Model):
-    """Details of error response.
-
-    :ivar code: Error code, intended to be consumed programmatically.
-    :vartype code: str
-    :ivar message: Description of the error, intended for display in user interface.
-    :vartype message: str
-    :ivar target: Target of the particular error, for example name of the property.
-    :vartype target: str
-    :ivar details: A list of additional details about the error.
-    :vartype details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated2]
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorResponseBodyAutoGenerated2]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[list["_models.ErrorResponseBodyAutoGenerated2"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword code: Error code, intended to be consumed programmatically.
-        :paramtype code: str
-        :keyword message: Description of the error, intended for display in user interface.
-        :paramtype message: str
-        :keyword target: Target of the particular error, for example name of the property.
-        :paramtype target: str
-        :keyword details: A list of additional details about the error.
-        :paramtype details: list[~azure.mgmt.alertsmanagement.models.ErrorResponseBodyAutoGenerated2]
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
-
-
 class Essentials(_serialization.Model):
     """This object contains consistent fields across different monitor services.
 
@@ -1595,9 +1055,9 @@ class Essentials(_serialization.Model):
     :ivar alert_state: Alert object state, which can be modified by the user. Known values are:
      "New", "Acknowledged", and "Closed".
     :vartype alert_state: str or ~azure.mgmt.alertsmanagement.models.AlertState
-    :ivar monitor_condition: Condition of the rule at the monitor service. It represents whether
-     the underlying conditions have crossed the defined alert rule thresholds. Known values are:
-     "Fired" and "Resolved".
+    :ivar monitor_condition: Can be 'Fired' or 'Resolved', which represents whether the underlying
+     conditions have crossed the defined alert rule thresholds. Known values are: "Fired" and
+     "Resolved".
     :vartype monitor_condition: str or ~azure.mgmt.alertsmanagement.models.MonitorCondition
     :ivar target_resource: Target ARM resource, on which alert got created.
     :vartype target_resource: str
@@ -1610,7 +1070,8 @@ class Essentials(_serialization.Model):
     :ivar monitor_service: Monitor service on which the rule(monitor) is set. Known values are:
      "Application Insights", "ActivityLog Administrative", "ActivityLog Security", "ActivityLog
      Recommendation", "ActivityLog Policy", "ActivityLog Autoscale", "Log Analytics", "Nagios",
-     "Platform", "SCOM", "ServiceHealth", "SmartDetector", "VM Insights", and "Zabbix".
+     "Platform", "SCOM", "ServiceHealth", "SmartDetector", "VM Insights", "Zabbix", and "Resource
+     Health".
     :vartype monitor_service: str or ~azure.mgmt.alertsmanagement.models.MonitorService
     :ivar alert_rule: Rule(monitor) which fired alert instance. Depending on the monitor service,
      this would be ARM id or name of the rule.
@@ -1786,6 +1247,42 @@ class MonitorServiceList(AlertsMetaDataProperties):
         self.data = data
 
 
+class NotificationResult(_serialization.Model):
+    """NotificationResult.
+
+    :ivar status_url: URL endpoint for checking notification delivery status. Only populated when
+     status is 'Inline'.
+    :vartype status_url: str
+    :ivar status: The status of the notification. Known values are: "None", "Inline", "Throttled",
+     "Failed", "ThrottledByAlertRule", and "ThrottledBySubscription".
+    :vartype status: str or ~azure.mgmt.alertsmanagement.models.ResultStatus
+    """
+
+    _attribute_map = {
+        "status_url": {"key": "statusURL", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status_url: Optional[str] = None,
+        status: Optional[Union[str, "_models.ResultStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword status_url: URL endpoint for checking notification delivery status. Only populated
+         when status is 'Inline'.
+        :paramtype status_url: str
+        :keyword status: The status of the notification. Known values are: "None", "Inline",
+         "Throttled", "Failed", "ThrottledByAlertRule", and "ThrottledBySubscription".
+        :paramtype status: str or ~azure.mgmt.alertsmanagement.models.ResultStatus
+        """
+        super().__init__(**kwargs)
+        self.status_url = status_url
+        self.status = status
+
+
 class Operation(_serialization.Model):
     """Operation provided by provider.
 
@@ -1903,636 +1400,475 @@ class OperationsList(_serialization.Model):
         self.value = value
 
 
-class PatchObject(_serialization.Model):
-    """Data contract for patch.
+class PrometheusEnrichmentItem(AlertEnrichmentItem):
+    """Prometheus enrichment object.
 
-    :ivar tags: tags to be updated.
-    :vartype tags: JSON
-    :ivar status: Indicates if the given action rule is enabled or disabled. Known values are:
-     "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-    """
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    PrometheusInstantQuery, PrometheusRangeQuery
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "object"},
-        "status": {"key": "properties.status", "type": "str"},
-    }
+    All required parameters must be populated in order to send to server.
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[JSON] = None,
-        status: Optional[Union[str, "_models.ActionRuleStatus"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: tags to be updated.
-        :paramtype tags: JSON
-        :keyword status: Indicates if the given action rule is enabled or disabled. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.status = status
-
-
-class Scope(_serialization.Model):
-    """Target scope for a given action rule. By default scope will be the subscription. User can also
-    provide list of resource groups or list of resources from the scope subscription as well.
-
-    :ivar scope_type: type of target scope. Known values are: "ResourceGroup", "Resource", and
-     "Subscription".
-    :vartype scope_type: str or ~azure.mgmt.alertsmanagement.models.ScopeType
-    :ivar values: list of ARM IDs of the given scope type which will be the target of the given
-     action rule.
-    :vartype values: list[str]
-    """
-
-    _attribute_map = {
-        "scope_type": {"key": "scopeType", "type": "str"},
-        "values": {"key": "values", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        scope_type: Optional[Union[str, "_models.ScopeType"]] = None,
-        values: Optional[list[str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword scope_type: type of target scope. Known values are: "ResourceGroup", "Resource", and
-         "Subscription".
-        :paramtype scope_type: str or ~azure.mgmt.alertsmanagement.models.ScopeType
-        :keyword values: list of ARM IDs of the given scope type which will be the target of the given
-         action rule.
-        :paramtype values: list[str]
-        """
-        super().__init__(**kwargs)
-        self.scope_type = scope_type
-        self.values = values
-
-
-class SmartDetectorErrorResponse(_serialization.Model):
-    """Describe the format of an Error response.
-
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
-    :vartype message: str
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-    }
-
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword code: Error code.
-        :paramtype code: str
-        :keyword message: Error message indicating why the operation failed.
-        :paramtype message: str
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-
-
-class SmartGroup(Resource):
-    """Set of related alerts grouped together smartly by AMS.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar alerts_count: Total number of alerts in smart group.
-    :vartype alerts_count: int
-    :ivar smart_group_state: Smart group state. Known values are: "New", "Acknowledged", and
-     "Closed".
-    :vartype smart_group_state: str or ~azure.mgmt.alertsmanagement.models.State
-    :ivar severity: Severity of smart group is the highest(Sev0 >... > Sev4) severity of all the
-     alerts in the group. Known values are: "Sev0", "Sev1", "Sev2", "Sev3", and "Sev4".
-    :vartype severity: str or ~azure.mgmt.alertsmanagement.models.Severity
-    :ivar start_date_time: Creation time of smart group. Date-Time in ISO-8601 format.
-    :vartype start_date_time: ~datetime.datetime
-    :ivar last_modified_date_time: Last updated time of smart group. Date-Time in ISO-8601 format.
-    :vartype last_modified_date_time: ~datetime.datetime
-    :ivar last_modified_user_name: Last modified by user name.
-    :vartype last_modified_user_name: str
-    :ivar resources: Summary of target resources in the smart group.
-    :vartype resources: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :ivar resource_types: Summary of target resource types in the smart group.
-    :vartype resource_types: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :ivar resource_groups: Summary of target resource groups in the smart group.
-    :vartype resource_groups:
-     list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :ivar monitor_services: Summary of monitorServices in the smart group.
-    :vartype monitor_services:
-     list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :ivar monitor_conditions: Summary of monitorConditions in the smart group.
-    :vartype monitor_conditions:
-     list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :ivar alert_states: Summary of alertStates in the smart group.
-    :vartype alert_states: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :ivar alert_severities: Summary of alertSeverities in the smart group.
-    :vartype alert_severities:
-     list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-    :ivar next_link: The URI to fetch the next page of alerts. Call ListNext() with this URI to
-     fetch the next page alerts.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "type": {"readonly": True},
-        "name": {"readonly": True},
-        "smart_group_state": {"readonly": True},
-        "severity": {"readonly": True},
-        "start_date_time": {"readonly": True},
-        "last_modified_date_time": {"readonly": True},
-        "last_modified_user_name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "alerts_count": {"key": "properties.alertsCount", "type": "int"},
-        "smart_group_state": {"key": "properties.smartGroupState", "type": "str"},
-        "severity": {"key": "properties.severity", "type": "str"},
-        "start_date_time": {"key": "properties.startDateTime", "type": "iso-8601"},
-        "last_modified_date_time": {"key": "properties.lastModifiedDateTime", "type": "iso-8601"},
-        "last_modified_user_name": {"key": "properties.lastModifiedUserName", "type": "str"},
-        "resources": {"key": "properties.resources", "type": "[SmartGroupAggregatedProperty]"},
-        "resource_types": {"key": "properties.resourceTypes", "type": "[SmartGroupAggregatedProperty]"},
-        "resource_groups": {"key": "properties.resourceGroups", "type": "[SmartGroupAggregatedProperty]"},
-        "monitor_services": {"key": "properties.monitorServices", "type": "[SmartGroupAggregatedProperty]"},
-        "monitor_conditions": {"key": "properties.monitorConditions", "type": "[SmartGroupAggregatedProperty]"},
-        "alert_states": {"key": "properties.alertStates", "type": "[SmartGroupAggregatedProperty]"},
-        "alert_severities": {"key": "properties.alertSeverities", "type": "[SmartGroupAggregatedProperty]"},
-        "next_link": {"key": "properties.nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        alerts_count: Optional[int] = None,
-        resources: Optional[list["_models.SmartGroupAggregatedProperty"]] = None,
-        resource_types: Optional[list["_models.SmartGroupAggregatedProperty"]] = None,
-        resource_groups: Optional[list["_models.SmartGroupAggregatedProperty"]] = None,
-        monitor_services: Optional[list["_models.SmartGroupAggregatedProperty"]] = None,
-        monitor_conditions: Optional[list["_models.SmartGroupAggregatedProperty"]] = None,
-        alert_states: Optional[list["_models.SmartGroupAggregatedProperty"]] = None,
-        alert_severities: Optional[list["_models.SmartGroupAggregatedProperty"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword alerts_count: Total number of alerts in smart group.
-        :paramtype alerts_count: int
-        :keyword resources: Summary of target resources in the smart group.
-        :paramtype resources: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-        :keyword resource_types: Summary of target resource types in the smart group.
-        :paramtype resource_types:
-         list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-        :keyword resource_groups: Summary of target resource groups in the smart group.
-        :paramtype resource_groups:
-         list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-        :keyword monitor_services: Summary of monitorServices in the smart group.
-        :paramtype monitor_services:
-         list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-        :keyword monitor_conditions: Summary of monitorConditions in the smart group.
-        :paramtype monitor_conditions:
-         list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-        :keyword alert_states: Summary of alertStates in the smart group.
-        :paramtype alert_states: list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-        :keyword alert_severities: Summary of alertSeverities in the smart group.
-        :paramtype alert_severities:
-         list[~azure.mgmt.alertsmanagement.models.SmartGroupAggregatedProperty]
-        :keyword next_link: The URI to fetch the next page of alerts. Call ListNext() with this URI to
-         fetch the next page alerts.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.alerts_count = alerts_count
-        self.smart_group_state: Optional[Union[str, "_models.State"]] = None
-        self.severity: Optional[Union[str, "_models.Severity"]] = None
-        self.start_date_time: Optional[datetime.datetime] = None
-        self.last_modified_date_time: Optional[datetime.datetime] = None
-        self.last_modified_user_name: Optional[str] = None
-        self.resources = resources
-        self.resource_types = resource_types
-        self.resource_groups = resource_groups
-        self.monitor_services = monitor_services
-        self.monitor_conditions = monitor_conditions
-        self.alert_states = alert_states
-        self.alert_severities = alert_severities
-        self.next_link = next_link
-
-
-class SmartGroupAggregatedProperty(_serialization.Model):
-    """Aggregated property of each type.
-
-    :ivar name: Name of the type.
-    :vartype name: str
-    :ivar count: Total number of items of type.
-    :vartype count: int
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "count": {"key": "count", "type": "int"},
-    }
-
-    def __init__(self, *, name: Optional[str] = None, count: Optional[int] = None, **kwargs: Any) -> None:
-        """
-        :keyword name: Name of the type.
-        :paramtype name: str
-        :keyword count: Total number of items of type.
-        :paramtype count: int
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.count = count
-
-
-class SmartGroupModification(Resource):
-    """Alert Modification details.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar properties: Properties of the smartGroup modification item.
-    :vartype properties: ~azure.mgmt.alertsmanagement.models.SmartGroupModificationProperties
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "type": {"readonly": True},
-        "name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "properties": {"key": "properties", "type": "SmartGroupModificationProperties"},
-    }
-
-    def __init__(
-        self, *, properties: Optional["_models.SmartGroupModificationProperties"] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword properties: Properties of the smartGroup modification item.
-        :paramtype properties: ~azure.mgmt.alertsmanagement.models.SmartGroupModificationProperties
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
-
-
-class SmartGroupModificationItem(_serialization.Model):
-    """smartGroup modification item.
-
-    :ivar modification_event: Reason for the modification. Known values are: "SmartGroupCreated",
-     "StateChange", "AlertAdded", and "AlertRemoved".
-    :vartype modification_event: str or
-     ~azure.mgmt.alertsmanagement.models.SmartGroupModificationEvent
-    :ivar old_value: Old value.
-    :vartype old_value: str
-    :ivar new_value: New value.
-    :vartype new_value: str
-    :ivar modified_at: Modified date and time.
-    :vartype modified_at: str
-    :ivar modified_by: Modified user details (Principal client name).
-    :vartype modified_by: str
-    :ivar comments: Modification comments.
-    :vartype comments: str
-    :ivar description: Description of the modification.
+    :ivar title: The enrichment title. Required.
+    :vartype title: str
+    :ivar description: The enrichment description. Required.
     :vartype description: str
+    :ivar status: The status of the evaluation of the enrichment. Required. Known values are:
+     "Succeeded" and "Failed".
+    :vartype status: str or ~azure.mgmt.alertsmanagement.models.Status
+    :ivar error_message: The error message. Will be present only if the status is 'Failed'.
+    :vartype error_message: str
+    :ivar type: The enrichment type. Required. Known values are: "PrometheusInstantQuery" and
+     "PrometheusRangeQuery".
+    :vartype type: str or ~azure.mgmt.alertsmanagement.models.Type
+    :ivar link_to_api: Link to Prometheus query API (Url format). Required.
+    :vartype link_to_api: str
+    :ivar datasources: An array of the azure monitor workspace resource ids. Required.
+    :vartype datasources: list[str]
+    :ivar grafana_explore_path: Partial link to the Grafana explore API. Required.
+    :vartype grafana_explore_path: str
+    :ivar query: The Prometheus expression query. Required.
+    :vartype query: str
     """
 
+    _validation = {
+        "title": {"required": True},
+        "description": {"required": True},
+        "status": {"required": True},
+        "type": {"required": True},
+        "link_to_api": {"required": True},
+        "datasources": {"required": True},
+        "grafana_explore_path": {"required": True},
+        "query": {"required": True},
+    }
+
     _attribute_map = {
-        "modification_event": {"key": "modificationEvent", "type": "str"},
+        "title": {"key": "title", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "link_to_api": {"key": "linkToApi", "type": "str"},
+        "datasources": {"key": "datasources", "type": "[str]"},
+        "grafana_explore_path": {"key": "grafanaExplorePath", "type": "str"},
+        "query": {"key": "query", "type": "str"},
+    }
+
+    _subtype_map = {
+        "type": {"PrometheusInstantQuery": "PrometheusInstantQuery", "PrometheusRangeQuery": "PrometheusRangeQuery"}
+    }
+
+    def __init__(
+        self,
+        *,
+        title: str,
+        description: str,
+        status: Union[str, "_models.Status"],
+        link_to_api: str,
+        datasources: list[str],
+        grafana_explore_path: str,
+        query: str,
+        error_message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword title: The enrichment title. Required.
+        :paramtype title: str
+        :keyword description: The enrichment description. Required.
+        :paramtype description: str
+        :keyword status: The status of the evaluation of the enrichment. Required. Known values are:
+         "Succeeded" and "Failed".
+        :paramtype status: str or ~azure.mgmt.alertsmanagement.models.Status
+        :keyword error_message: The error message. Will be present only if the status is 'Failed'.
+        :paramtype error_message: str
+        :keyword link_to_api: Link to Prometheus query API (Url format). Required.
+        :paramtype link_to_api: str
+        :keyword datasources: An array of the azure monitor workspace resource ids. Required.
+        :paramtype datasources: list[str]
+        :keyword grafana_explore_path: Partial link to the Grafana explore API. Required.
+        :paramtype grafana_explore_path: str
+        :keyword query: The Prometheus expression query. Required.
+        :paramtype query: str
+        """
+        super().__init__(title=title, description=description, status=status, error_message=error_message, **kwargs)
+        self.type: str = "PrometheusEnrichmentItem"
+        self.link_to_api = link_to_api
+        self.datasources = datasources
+        self.grafana_explore_path = grafana_explore_path
+        self.query = query
+
+
+class PrometheusInstantQuery(PrometheusEnrichmentItem):
+    """Prometheus instant query enrichment object.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar title: The enrichment title. Required.
+    :vartype title: str
+    :ivar description: The enrichment description. Required.
+    :vartype description: str
+    :ivar status: The status of the evaluation of the enrichment. Required. Known values are:
+     "Succeeded" and "Failed".
+    :vartype status: str or ~azure.mgmt.alertsmanagement.models.Status
+    :ivar error_message: The error message. Will be present only if the status is 'Failed'.
+    :vartype error_message: str
+    :ivar type: The enrichment type. Required. Known values are: "PrometheusInstantQuery" and
+     "PrometheusRangeQuery".
+    :vartype type: str or ~azure.mgmt.alertsmanagement.models.Type
+    :ivar link_to_api: Link to Prometheus query API (Url format). Required.
+    :vartype link_to_api: str
+    :ivar datasources: An array of the azure monitor workspace resource ids. Required.
+    :vartype datasources: list[str]
+    :ivar grafana_explore_path: Partial link to the Grafana explore API. Required.
+    :vartype grafana_explore_path: str
+    :ivar query: The Prometheus expression query. Required.
+    :vartype query: str
+    :ivar time: The date and the time of the evaluation. Required.
+    :vartype time: str
+    """
+
+    _validation = {
+        "title": {"required": True},
+        "description": {"required": True},
+        "status": {"required": True},
+        "type": {"required": True},
+        "link_to_api": {"required": True},
+        "datasources": {"required": True},
+        "grafana_explore_path": {"required": True},
+        "query": {"required": True},
+        "time": {"required": True},
+    }
+
+    _attribute_map = {
+        "title": {"key": "title", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "link_to_api": {"key": "linkToApi", "type": "str"},
+        "datasources": {"key": "datasources", "type": "[str]"},
+        "grafana_explore_path": {"key": "grafanaExplorePath", "type": "str"},
+        "query": {"key": "query", "type": "str"},
+        "time": {"key": "time", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        title: str,
+        description: str,
+        status: Union[str, "_models.Status"],
+        link_to_api: str,
+        datasources: list[str],
+        grafana_explore_path: str,
+        query: str,
+        time: str,
+        error_message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword title: The enrichment title. Required.
+        :paramtype title: str
+        :keyword description: The enrichment description. Required.
+        :paramtype description: str
+        :keyword status: The status of the evaluation of the enrichment. Required. Known values are:
+         "Succeeded" and "Failed".
+        :paramtype status: str or ~azure.mgmt.alertsmanagement.models.Status
+        :keyword error_message: The error message. Will be present only if the status is 'Failed'.
+        :paramtype error_message: str
+        :keyword link_to_api: Link to Prometheus query API (Url format). Required.
+        :paramtype link_to_api: str
+        :keyword datasources: An array of the azure monitor workspace resource ids. Required.
+        :paramtype datasources: list[str]
+        :keyword grafana_explore_path: Partial link to the Grafana explore API. Required.
+        :paramtype grafana_explore_path: str
+        :keyword query: The Prometheus expression query. Required.
+        :paramtype query: str
+        :keyword time: The date and the time of the evaluation. Required.
+        :paramtype time: str
+        """
+        super().__init__(
+            title=title,
+            description=description,
+            status=status,
+            error_message=error_message,
+            link_to_api=link_to_api,
+            datasources=datasources,
+            grafana_explore_path=grafana_explore_path,
+            query=query,
+            **kwargs
+        )
+        self.type: str = "PrometheusInstantQuery"
+        self.time = time
+
+
+class PrometheusRangeQuery(PrometheusEnrichmentItem):
+    """Prometheus instant query enrichment object.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar title: The enrichment title. Required.
+    :vartype title: str
+    :ivar description: The enrichment description. Required.
+    :vartype description: str
+    :ivar status: The status of the evaluation of the enrichment. Required. Known values are:
+     "Succeeded" and "Failed".
+    :vartype status: str or ~azure.mgmt.alertsmanagement.models.Status
+    :ivar error_message: The error message. Will be present only if the status is 'Failed'.
+    :vartype error_message: str
+    :ivar type: The enrichment type. Required. Known values are: "PrometheusInstantQuery" and
+     "PrometheusRangeQuery".
+    :vartype type: str or ~azure.mgmt.alertsmanagement.models.Type
+    :ivar link_to_api: Link to Prometheus query API (Url format). Required.
+    :vartype link_to_api: str
+    :ivar datasources: An array of the azure monitor workspace resource ids. Required.
+    :vartype datasources: list[str]
+    :ivar grafana_explore_path: Partial link to the Grafana explore API. Required.
+    :vartype grafana_explore_path: str
+    :ivar query: The Prometheus expression query. Required.
+    :vartype query: str
+    :ivar start: The start evaluation date and time in ISO8601 format. Required.
+    :vartype start: ~datetime.datetime
+    :ivar end: The end evaluation date and time in ISO8601 format. Required.
+    :vartype end: ~datetime.datetime
+    :ivar step: Query resolution step width in ISO8601 format. Required.
+    :vartype step: str
+    """
+
+    _validation = {
+        "title": {"required": True},
+        "description": {"required": True},
+        "status": {"required": True},
+        "type": {"required": True},
+        "link_to_api": {"required": True},
+        "datasources": {"required": True},
+        "grafana_explore_path": {"required": True},
+        "query": {"required": True},
+        "start": {"required": True},
+        "end": {"required": True},
+        "step": {"required": True},
+    }
+
+    _attribute_map = {
+        "title": {"key": "title", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "link_to_api": {"key": "linkToApi", "type": "str"},
+        "datasources": {"key": "datasources", "type": "[str]"},
+        "grafana_explore_path": {"key": "grafanaExplorePath", "type": "str"},
+        "query": {"key": "query", "type": "str"},
+        "start": {"key": "start", "type": "iso-8601"},
+        "end": {"key": "end", "type": "iso-8601"},
+        "step": {"key": "step", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        title: str,
+        description: str,
+        status: Union[str, "_models.Status"],
+        link_to_api: str,
+        datasources: list[str],
+        grafana_explore_path: str,
+        query: str,
+        start: datetime.datetime,
+        end: datetime.datetime,
+        step: str,
+        error_message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword title: The enrichment title. Required.
+        :paramtype title: str
+        :keyword description: The enrichment description. Required.
+        :paramtype description: str
+        :keyword status: The status of the evaluation of the enrichment. Required. Known values are:
+         "Succeeded" and "Failed".
+        :paramtype status: str or ~azure.mgmt.alertsmanagement.models.Status
+        :keyword error_message: The error message. Will be present only if the status is 'Failed'.
+        :paramtype error_message: str
+        :keyword link_to_api: Link to Prometheus query API (Url format). Required.
+        :paramtype link_to_api: str
+        :keyword datasources: An array of the azure monitor workspace resource ids. Required.
+        :paramtype datasources: list[str]
+        :keyword grafana_explore_path: Partial link to the Grafana explore API. Required.
+        :paramtype grafana_explore_path: str
+        :keyword query: The Prometheus expression query. Required.
+        :paramtype query: str
+        :keyword start: The start evaluation date and time in ISO8601 format. Required.
+        :paramtype start: ~datetime.datetime
+        :keyword end: The end evaluation date and time in ISO8601 format. Required.
+        :paramtype end: ~datetime.datetime
+        :keyword step: Query resolution step width in ISO8601 format. Required.
+        :paramtype step: str
+        """
+        super().__init__(
+            title=title,
+            description=description,
+            status=status,
+            error_message=error_message,
+            link_to_api=link_to_api,
+            datasources=datasources,
+            grafana_explore_path=grafana_explore_path,
+            query=query,
+            **kwargs
+        )
+        self.type: str = "PrometheusRangeQuery"
+        self.start = start
+        self.end = end
+        self.step = step
+
+
+class PropertyChangeDetails(BaseDetails):
+    """PropertyChangeDetails.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: Type of modification details. Required. Known values are: "PropertyChange",
+     "ActionsSuppressed", and "ActionsTriggered".
+    :vartype type: str or ~azure.mgmt.alertsmanagement.models.AlertModificationType
+    :ivar old_value: The value before the change.
+    :vartype old_value: str
+    :ivar new_value: The value after the change.
+    :vartype new_value: str
+    :ivar comment: The comment.
+    :vartype comment: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
         "old_value": {"key": "oldValue", "type": "str"},
         "new_value": {"key": "newValue", "type": "str"},
-        "modified_at": {"key": "modifiedAt", "type": "str"},
-        "modified_by": {"key": "modifiedBy", "type": "str"},
-        "comments": {"key": "comments", "type": "str"},
-        "description": {"key": "description", "type": "str"},
+        "comment": {"key": "comment", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        modification_event: Optional[Union[str, "_models.SmartGroupModificationEvent"]] = None,
         old_value: Optional[str] = None,
         new_value: Optional[str] = None,
-        modified_at: Optional[str] = None,
-        modified_by: Optional[str] = None,
-        comments: Optional[str] = None,
-        description: Optional[str] = None,
+        comment: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword modification_event: Reason for the modification. Known values are:
-         "SmartGroupCreated", "StateChange", "AlertAdded", and "AlertRemoved".
-        :paramtype modification_event: str or
-         ~azure.mgmt.alertsmanagement.models.SmartGroupModificationEvent
-        :keyword old_value: Old value.
+        :keyword old_value: The value before the change.
         :paramtype old_value: str
-        :keyword new_value: New value.
+        :keyword new_value: The value after the change.
         :paramtype new_value: str
-        :keyword modified_at: Modified date and time.
-        :paramtype modified_at: str
-        :keyword modified_by: Modified user details (Principal client name).
-        :paramtype modified_by: str
-        :keyword comments: Modification comments.
-        :paramtype comments: str
-        :keyword description: Description of the modification.
-        :paramtype description: str
+        :keyword comment: The comment.
+        :paramtype comment: str
         """
         super().__init__(**kwargs)
-        self.modification_event = modification_event
+        self.type: str = "PropertyChange"
         self.old_value = old_value
         self.new_value = new_value
-        self.modified_at = modified_at
-        self.modified_by = modified_by
-        self.comments = comments
-        self.description = description
+        self.comment = comment
 
 
-class SmartGroupModificationProperties(_serialization.Model):
-    """Properties of the smartGroup modification item.
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar smart_group_id: Unique Id of the smartGroup for which the history is being retrieved.
-    :vartype smart_group_id: str
-    :ivar modifications: Modification details.
-    :vartype modifications: list[~azure.mgmt.alertsmanagement.models.SmartGroupModificationItem]
-    :ivar next_link: URL to fetch the next set of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "smart_group_id": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "smart_group_id": {"key": "smartGroupId", "type": "str"},
-        "modifications": {"key": "modifications", "type": "[SmartGroupModificationItem]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        modifications: Optional[list["_models.SmartGroupModificationItem"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword modifications: Modification details.
-        :paramtype modifications: list[~azure.mgmt.alertsmanagement.models.SmartGroupModificationItem]
-        :keyword next_link: URL to fetch the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.smart_group_id: Optional[str] = None
-        self.modifications = modifications
-        self.next_link = next_link
-
-
-class SmartGroupsList(_serialization.Model):
-    """List the alerts.
-
-    :ivar next_link: URL to fetch the next set of alerts.
-    :vartype next_link: str
-    :ivar value: List of alerts.
-    :vartype value: list[~azure.mgmt.alertsmanagement.models.SmartGroup]
-    """
-
-    _attribute_map = {
-        "next_link": {"key": "nextLink", "type": "str"},
-        "value": {"key": "value", "type": "[SmartGroup]"},
-    }
-
-    def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[list["_models.SmartGroup"]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword next_link: URL to fetch the next set of alerts.
-        :paramtype next_link: str
-        :keyword value: List of alerts.
-        :paramtype value: list[~azure.mgmt.alertsmanagement.models.SmartGroup]
-        """
-        super().__init__(**kwargs)
-        self.next_link = next_link
-        self.value = value
-
-
-class Suppression(ActionRuleProperties):
-    """Action rule with suppression configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar scope: scope on which action rule will apply.
-    :vartype scope: ~azure.mgmt.alertsmanagement.models.Scope
-    :ivar conditions: conditions on which alerts will be filtered.
-    :vartype conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-    :ivar description: Description of action rule.
-    :vartype description: str
-    :ivar created_at: Creation time of action rule. Date-Time in ISO-8601 format.
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_at: Last updated time of action rule. Date-Time in ISO-8601 format.
-    :vartype last_modified_at: ~datetime.datetime
-    :ivar created_by: Created by user name.
+    :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar last_modified_by: Last modified by user name.
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.alertsmanagement.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar status: Indicates if the given action rule is enabled or disabled. Known values are:
-     "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-    :ivar type: Indicates type of action rule. Required. Known values are: "Suppression",
-     "ActionGroup", and "Diagnostics".
-    :vartype type: str or ~azure.mgmt.alertsmanagement.models.ActionRuleType
-    :ivar suppression_config: suppression configuration for the action rule. Required.
-    :vartype suppression_config: ~azure.mgmt.alertsmanagement.models.SuppressionConfig
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.alertsmanagement.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
-    _validation = {
-        "created_at": {"readonly": True},
-        "last_modified_at": {"readonly": True},
-        "created_by": {"readonly": True},
-        "last_modified_by": {"readonly": True},
-        "type": {"required": True},
-        "suppression_config": {"required": True},
-    }
-
     _attribute_map = {
-        "scope": {"key": "scope", "type": "Scope"},
-        "conditions": {"key": "conditions", "type": "Conditions"},
-        "description": {"key": "description", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
         "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
         "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "suppression_config": {"key": "suppressionConfig", "type": "SuppressionConfig"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        suppression_config: "_models.SuppressionConfig",
-        scope: Optional["_models.Scope"] = None,
-        conditions: Optional["_models.Conditions"] = None,
-        description: Optional[str] = None,
-        status: Optional[Union[str, "_models.ActionRuleStatus"]] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword scope: scope on which action rule will apply.
-        :paramtype scope: ~azure.mgmt.alertsmanagement.models.Scope
-        :keyword conditions: conditions on which alerts will be filtered.
-        :paramtype conditions: ~azure.mgmt.alertsmanagement.models.Conditions
-        :keyword description: Description of action rule.
-        :paramtype description: str
-        :keyword status: Indicates if the given action rule is enabled or disabled. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
-        :keyword suppression_config: suppression configuration for the action rule. Required.
-        :paramtype suppression_config: ~azure.mgmt.alertsmanagement.models.SuppressionConfig
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.alertsmanagement.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.alertsmanagement.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
         """
-        super().__init__(scope=scope, conditions=conditions, description=description, status=status, **kwargs)
-        self.type: str = "Suppression"
-        self.suppression_config = suppression_config
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
-class SuppressionConfig(_serialization.Model):
-    """Suppression logic for a given action rule.
+class TriggeredRule(_serialization.Model):
+    """TriggeredRule.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar recurrence_type: Specifies when the suppression should be applied. Required. Known values
-     are: "Always", "Once", "Daily", "Weekly", and "Monthly".
-    :vartype recurrence_type: str or ~azure.mgmt.alertsmanagement.models.SuppressionType
-    :ivar schedule: suppression schedule configuration.
-    :vartype schedule: ~azure.mgmt.alertsmanagement.models.SuppressionSchedule
+    :ivar action_group_id: The action group ID.
+    :vartype action_group_id: str
+    :ivar rule_id: The rule ID.
+    :vartype rule_id: str
+    :ivar rule_type: The rule type. Known values are: "AlertRule" and "ActionRule".
+    :vartype rule_type: str or ~azure.mgmt.alertsmanagement.models.RuleType
     """
 
-    _validation = {
-        "recurrence_type": {"required": True},
-    }
-
     _attribute_map = {
-        "recurrence_type": {"key": "recurrenceType", "type": "str"},
-        "schedule": {"key": "schedule", "type": "SuppressionSchedule"},
+        "action_group_id": {"key": "actionGroupId", "type": "str"},
+        "rule_id": {"key": "ruleId", "type": "str"},
+        "rule_type": {"key": "ruleType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        recurrence_type: Union[str, "_models.SuppressionType"],
-        schedule: Optional["_models.SuppressionSchedule"] = None,
+        action_group_id: Optional[str] = None,
+        rule_id: Optional[str] = None,
+        rule_type: Optional[Union[str, "_models.RuleType"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword recurrence_type: Specifies when the suppression should be applied. Required. Known
-         values are: "Always", "Once", "Daily", "Weekly", and "Monthly".
-        :paramtype recurrence_type: str or ~azure.mgmt.alertsmanagement.models.SuppressionType
-        :keyword schedule: suppression schedule configuration.
-        :paramtype schedule: ~azure.mgmt.alertsmanagement.models.SuppressionSchedule
+        :keyword action_group_id: The action group ID.
+        :paramtype action_group_id: str
+        :keyword rule_id: The rule ID.
+        :paramtype rule_id: str
+        :keyword rule_type: The rule type. Known values are: "AlertRule" and "ActionRule".
+        :paramtype rule_type: str or ~azure.mgmt.alertsmanagement.models.RuleType
         """
         super().__init__(**kwargs)
-        self.recurrence_type = recurrence_type
-        self.schedule = schedule
-
-
-class SuppressionSchedule(_serialization.Model):
-    """Schedule for a given suppression configuration.
-
-    :ivar start_date: Start date for suppression.
-    :vartype start_date: str
-    :ivar end_date: End date for suppression.
-    :vartype end_date: str
-    :ivar start_time: Start time for suppression.
-    :vartype start_time: str
-    :ivar end_time: End date for suppression.
-    :vartype end_time: str
-    :ivar recurrence_values: Specifies the values for recurrence pattern.
-    :vartype recurrence_values: list[int]
-    """
-
-    _attribute_map = {
-        "start_date": {"key": "startDate", "type": "str"},
-        "end_date": {"key": "endDate", "type": "str"},
-        "start_time": {"key": "startTime", "type": "str"},
-        "end_time": {"key": "endTime", "type": "str"},
-        "recurrence_values": {"key": "recurrenceValues", "type": "[int]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        start_time: Optional[str] = None,
-        end_time: Optional[str] = None,
-        recurrence_values: Optional[list[int]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword start_date: Start date for suppression.
-        :paramtype start_date: str
-        :keyword end_date: End date for suppression.
-        :paramtype end_date: str
-        :keyword start_time: Start time for suppression.
-        :paramtype start_time: str
-        :keyword end_time: End date for suppression.
-        :paramtype end_time: str
-        :keyword recurrence_values: Specifies the values for recurrence pattern.
-        :paramtype recurrence_values: list[int]
-        """
-        super().__init__(**kwargs)
-        self.start_date = start_date
-        self.end_date = end_date
-        self.start_time = start_time
-        self.end_time = end_time
-        self.recurrence_values = recurrence_values
-
-
-class ThrottlingInformation(_serialization.Model):
-    """Optional throttling information for the alert rule.
-
-    :ivar duration: The required duration (in ISO8601 format) to wait before notifying on the alert
-     rule again. The time granularity must be in minutes and minimum value is 0 minutes.
-    :vartype duration: ~datetime.timedelta
-    """
-
-    _attribute_map = {
-        "duration": {"key": "duration", "type": "duration"},
-    }
-
-    def __init__(self, *, duration: Optional[datetime.timedelta] = None, **kwargs: Any) -> None:
-        """
-        :keyword duration: The required duration (in ISO8601 format) to wait before notifying on the
-         alert rule again. The time granularity must be in minutes and minimum value is 0 minutes.
-        :paramtype duration: ~datetime.timedelta
-        """
-        super().__init__(**kwargs)
-        self.duration = duration
+        self.action_group_id = action_group_id
+        self.rule_id = rule_id
+        self.rule_type = rule_type

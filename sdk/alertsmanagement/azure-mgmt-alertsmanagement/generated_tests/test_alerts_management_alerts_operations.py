@@ -20,10 +20,54 @@ class TestAlertsManagementAlertsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_alerts_get_all_tenant(self, resource_group):
+        response = self.client.alerts.get_all_tenant(
+            api_version="2025-05-25-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_alerts_get_by_id_tenant(self, resource_group):
+        response = self.client.alerts.get_by_id_tenant(
+            alert_id="str",
+            api_version="2025-05-25-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_alerts_get_history_tenant(self, resource_group):
+        response = self.client.alerts.get_history_tenant(
+            alert_id="str",
+            api_version="2025-05-25-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_alerts_change_state_tenant(self, resource_group):
+        response = self.client.alerts.change_state_tenant(
+            alert_id="str",
+            new_state="str",
+            api_version="2025-05-25-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_alerts_meta_data(self, resource_group):
         response = self.client.alerts.meta_data(
             identifier="str",
-            api_version="2019-05-05-preview",
+            api_version="2025-05-25-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +77,7 @@ class TestAlertsManagementAlertsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_alerts_get_all(self, resource_group):
         response = self.client.alerts.get_all(
-            api_version="2019-05-05-preview",
+            api_version="2025-05-25-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -44,7 +88,7 @@ class TestAlertsManagementAlertsOperations(AzureMgmtRecordedTestCase):
     def test_alerts_get_by_id(self, resource_group):
         response = self.client.alerts.get_by_id(
             alert_id="str",
-            api_version="2019-05-05-preview",
+            api_version="2025-05-25-preview",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +100,7 @@ class TestAlertsManagementAlertsOperations(AzureMgmtRecordedTestCase):
         response = self.client.alerts.change_state(
             alert_id="str",
             new_state="str",
-            api_version="2019-05-05-preview",
+            api_version="2025-05-25-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +111,7 @@ class TestAlertsManagementAlertsOperations(AzureMgmtRecordedTestCase):
     def test_alerts_get_history(self, resource_group):
         response = self.client.alerts.get_history(
             alert_id="str",
-            api_version="2019-05-05-preview",
+            api_version="2025-05-25-preview",
         )
 
         # please add some check logic here by yourself
@@ -78,8 +122,19 @@ class TestAlertsManagementAlertsOperations(AzureMgmtRecordedTestCase):
     def test_alerts_get_summary(self, resource_group):
         response = self.client.alerts.get_summary(
             groupby="str",
-            api_version="2019-05-05-preview",
+            api_version="2025-05-25-preview",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_alerts_get_enrichments(self, resource_group):
+        response = self.client.alerts.get_enrichments(
+            alert_id="str",
+            api_version="2025-05-25-preview",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

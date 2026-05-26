@@ -28,15 +28,15 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
 def main():
     client = AlertsManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="9e261de7-c804-4b9d-9ebf-6f50fe350a9a",
+        scope="subscriptions/3b540246-808d-4331-99aa-917b808a9166/resourcegroups/servicedeskresourcegroup/providers/microsoft.insights/components/servicedeskappinsight",
     )
 
-    response = client.alerts.get_by_id(
+    response = client.alerts.get_by_id_tenant(
         alert_id="66114d64-d9d9-478b-95c9-b789d6502100",
     )
     print(response)
 
 
-# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/preview/2019-05-05-preview/examples/Alerts_GetById.json
+# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/preview/2025-05-25-preview/examples/Alerts_GetById.json
 if __name__ == "__main__":
     main()

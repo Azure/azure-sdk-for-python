@@ -10,40 +10,23 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionRuleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates if the given action rule is enabled or disabled."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-
-class ActionRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates type of action rule."""
-
-    SUPPRESSION = "Suppression"
-    ACTION_GROUP = "ActionGroup"
-    DIAGNOSTICS = "Diagnostics"
-
-
 class AlertModificationEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reason for the modification."""
 
     ALERT_CREATED = "AlertCreated"
     STATE_CHANGE = "StateChange"
-    MONITOR_CONDITION_CHANGE = "MonitorConditionChange"
     SEVERITY_CHANGE = "SeverityChange"
-    ACTION_RULE_TRIGGERED = "ActionRuleTriggered"
-    ACTION_RULE_SUPPRESSED = "ActionRuleSuppressed"
+    MONITOR_CONDITION_CHANGE = "MonitorConditionChange"
     ACTIONS_TRIGGERED = "ActionsTriggered"
     ACTIONS_SUPPRESSED = "ActionsSuppressed"
-    ACTIONS_FAILED = "ActionsFailed"
 
 
-class AlertRuleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The alert rule state."""
+class AlertModificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of modification details."""
 
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
+    PROPERTY_CHANGE = "PropertyChange"
+    ACTIONS_SUPPRESSED = "ActionsSuppressed"
+    ACTIONS_TRIGGERED = "ActionsTriggered"
 
 
 class AlertsSortByFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -78,6 +61,22 @@ class AlertState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEW = "New"
     ACKNOWLEDGED = "Acknowledged"
     CLOSED = "Closed"
+
+
+class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ApiVersion."""
+
+    TWO_THOUSAND_NINETEEN03_01 = "2019-03-01"
+    TWO_THOUSAND_TWENTY_FIVE05_25_PREVIEW = "2025-05-25-preview"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 
 class Identifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -116,23 +115,25 @@ class MonitorService(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SMART_DETECTOR = "SmartDetector"
     VM_INSIGHTS = "VM Insights"
     ZABBIX = "Zabbix"
+    RESOURCE_HEALTH = "Resource Health"
 
 
-class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """operator for a given condition."""
+class ResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the notification."""
 
-    EQUALS = "Equals"
-    NOT_EQUALS = "NotEquals"
-    CONTAINS = "Contains"
-    DOES_NOT_CONTAIN = "DoesNotContain"
+    NONE = "None"
+    INLINE = "Inline"
+    THROTTLED = "Throttled"
+    FAILED = "Failed"
+    THROTTLED_BY_ALERT_RULE = "ThrottledByAlertRule"
+    THROTTLED_BY_SUBSCRIPTION = "ThrottledBySubscription"
 
 
-class ScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """type of target scope."""
+class RuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The rule type."""
 
-    RESOURCE_GROUP = "ResourceGroup"
-    RESOURCE = "Resource"
-    SUBSCRIPTION = "Subscription"
+    ALERT_RULE = "AlertRule"
+    ACTION_RULE = "ActionRule"
 
 
 class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -153,25 +154,6 @@ class SignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNKNOWN = "Unknown"
 
 
-class SmartGroupModificationEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Reason for the modification."""
-
-    SMART_GROUP_CREATED = "SmartGroupCreated"
-    STATE_CHANGE = "StateChange"
-    ALERT_ADDED = "AlertAdded"
-    ALERT_REMOVED = "AlertRemoved"
-
-
-class SmartGroupsSortByFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SmartGroupsSortByFields."""
-
-    ALERTS_COUNT = "alertsCount"
-    STATE = "state"
-    SEVERITY = "severity"
-    START_DATE_TIME = "startDateTime"
-    LAST_MODIFIED_DATE_TIME = "lastModifiedDateTime"
-
-
 class SortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SortOrder."""
 
@@ -179,22 +161,11 @@ class SortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DESC = "desc"
 
 
-class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Smart group state."""
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the evaluation of the enrichment."""
 
-    NEW = "New"
-    ACKNOWLEDGED = "Acknowledged"
-    CLOSED = "Closed"
-
-
-class SuppressionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies when the suppression should be applied."""
-
-    ALWAYS = "Always"
-    ONCE = "Once"
-    DAILY = "Daily"
-    WEEKLY = "Weekly"
-    MONTHLY = "Monthly"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
 
 
 class TimeRange(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -204,3 +175,10 @@ class TimeRange(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ONE_D = "1d"
     SEVEN_D = "7d"
     THIRTY_D = "30d"
+
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The enrichment type."""
+
+    PROMETHEUS_INSTANT_QUERY = "PrometheusInstantQuery"
+    PROMETHEUS_RANGE_QUERY = "PrometheusRangeQuery"

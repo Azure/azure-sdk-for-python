@@ -28,14 +28,14 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
 def main():
     client = AlertsManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="1e3ff1c0-771a-4119-a03b-be82a51e232d",
+        scope="subscriptions/3b540246-808d-4331-99aa-917b808a9166",
     )
 
-    response = client.alerts.get_all()
+    response = client.alerts.get_all_tenant()
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/preview/2019-05-05-preview/examples/Alerts_List.json
+# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/preview/2025-05-25-preview/examples/Alerts_List.json
 if __name__ == "__main__":
     main()

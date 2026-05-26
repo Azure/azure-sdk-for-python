@@ -20,48 +20,38 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from .. import models as _models
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AlertsManagementClientConfiguration
-from .operations import (
-    ActionRulesOperations,
-    AlertsOperations,
-    Operations,
-    SmartDetectorAlertRulesOperations,
-    SmartGroupsOperations,
-)
+from .operations import AlertsOperations, Operations
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AlertsManagementClient:  # pylint: disable=client-accepts-api-version-keyword
+class AlertsManagementClient:
     """AlertsManagement Client.
 
-    :ivar action_rules: ActionRulesOperations operations
-    :vartype action_rules: azure.mgmt.alertsmanagement.aio.operations.ActionRulesOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.alertsmanagement.aio.operations.Operations
     :ivar alerts: AlertsOperations operations
     :vartype alerts: azure.mgmt.alertsmanagement.aio.operations.AlertsOperations
-    :ivar smart_groups: SmartGroupsOperations operations
-    :vartype smart_groups: azure.mgmt.alertsmanagement.aio.operations.SmartGroupsOperations
-    :ivar smart_detector_alert_rules: SmartDetectorAlertRulesOperations operations
-    :vartype smart_detector_alert_rules:
-     azure.mgmt.alertsmanagement.aio.operations.SmartDetectorAlertRulesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.alertsmanagement.aio.operations.Operations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
-    :type subscription_id: str
+    :param scope: scope here is resourceId for which alert is created. Required.
+    :type scope: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-05-25-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
-        subscription_id: str,
+        scope: str,
         base_url: Optional[str] = None,
         *,
         cloud_setting: Optional["AzureClouds"] = None,
@@ -74,7 +64,7 @@ class AlertsManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = AlertsManagementClientConfiguration(
             credential=credential,
-            subscription_id=subscription_id,
+            scope=scope,
             cloud_setting=cloud_setting,
             credential_scopes=credential_scopes,
             **kwargs
@@ -106,13 +96,8 @@ class AlertsManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.action_rules = ActionRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.alerts = AlertsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.smart_groups = SmartGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.smart_detector_alert_rules = SmartDetectorAlertRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

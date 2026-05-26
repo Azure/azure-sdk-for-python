@@ -12,22 +12,16 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._action_rules_operations import ActionRulesOperations  # type: ignore
-from ._operations import Operations  # type: ignore
 from ._alerts_operations import AlertsOperations  # type: ignore
-from ._smart_groups_operations import SmartGroupsOperations  # type: ignore
-from ._smart_detector_alert_rules_operations import SmartDetectorAlertRulesOperations  # type: ignore
+from ._operations import Operations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ActionRulesOperations",
-    "Operations",
     "AlertsOperations",
-    "SmartGroupsOperations",
-    "SmartDetectorAlertRulesOperations",
+    "Operations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
