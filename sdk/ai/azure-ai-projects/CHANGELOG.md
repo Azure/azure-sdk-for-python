@@ -54,7 +54,7 @@ Breaking changes in beta classes:
 * Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
 * Added `.beta.models` samples under `samples/models/`:
   * `sample_models_basic.py` — synchronous end-to-end registration via the `create` helper (uses `azcopy`), followed by `get`, `list_versions`, `list`, `get_credentials`, `update`, and `delete`.
-  * `sample_models_without_patch.py` — alternative synchronous registration that hand-rolls the spec's three-step flow (`pending_upload` → upload via `azure-storage-blob` → `pending_create_version` + poll), without taking a dependency on `azcopy`.
+  * `sample_models_create_and_poll.py` — alternative synchronous registration that hand-rolls the spec's three-step flow (`pending_upload` → upload via `azure-storage-blob` → `pending_create_version` + poll), without taking a dependency on `azcopy`.
   * `sample_models_basic_async.py` — asynchronous version of the same three-step flow using `azure.ai.projects.aio.AIProjectClient` and `azure.storage.blob.aio.ContainerClient`.
 
 ## 2.1.0 (2026-04-20)

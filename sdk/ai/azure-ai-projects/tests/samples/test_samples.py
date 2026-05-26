@@ -159,7 +159,7 @@ class TestSamples(AzureRecordedTestCase):
                 # to AzCopy. AzCopy traffic isn't captured by the test proxy, so the
                 # sample can't be replayed from a recording. Live re-recording is still
                 # exercised via the standalone tests in `tests/models/`.
-                "sample_models_without_patch.py",
+                "sample_models_create_and_poll.py",
             ],
         ),
     )

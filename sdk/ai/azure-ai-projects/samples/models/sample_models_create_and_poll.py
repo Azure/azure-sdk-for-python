@@ -24,7 +24,7 @@ DESCRIPTION:
     integrate the upload step with their own progress reporting / retry logic.
 
 USAGE:
-    python sample_models_pending_upload.py
+    python sample_models_create_and_poll.py
 
     Before running the sample:
 
