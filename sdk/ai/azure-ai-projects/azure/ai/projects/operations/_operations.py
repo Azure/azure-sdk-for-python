@@ -12327,7 +12327,7 @@ class BetaMemoryStoresOperations:
                 raise TypeError("missing required argument: scope")
             body = {"scope": scope}
             body = {k: v for k, v in body.items() if v is not None}
-        
+
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):

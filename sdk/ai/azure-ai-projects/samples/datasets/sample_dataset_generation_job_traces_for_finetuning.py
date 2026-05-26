@@ -97,7 +97,9 @@ with (
     # ------------------------------------------------------------------
     # 1. Submit a fine-tuning data generation job that reads agent traces.
     # ------------------------------------------------------------------
-    print(f"Create a fine-tuning data generation job from traces for agent `{agent_name}` (window: {traces_window_days} day(s)).")
+    print(
+        f"Create a fine-tuning data generation job from traces for agent `{agent_name}` (window: {traces_window_days} day(s))."
+    )
     job = DataGenerationJob(
         inputs=DataGenerationJobInputs(
             name=f"traces-finetuning-{run_id}",

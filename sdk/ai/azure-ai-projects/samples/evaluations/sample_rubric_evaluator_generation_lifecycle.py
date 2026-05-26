@@ -79,8 +79,7 @@ job_body = {
             "type": "Prompt",
             "description": "Inline application overview.",
             "prompt": (
-                "You are evaluating a simple Q&A assistant that answers factual "
-                "questions clearly and concisely."
+                "You are evaluating a simple Q&A assistant that answers factual " "questions clearly and concisely."
             ),
         }
     ],
