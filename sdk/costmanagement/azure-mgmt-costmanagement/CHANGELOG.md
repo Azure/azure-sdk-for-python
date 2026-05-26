@@ -1,5 +1,157 @@
 # Release History
 
+## 5.0.0b1 (2026-05-26)
+
+### Features Added
+
+  - Client `CostManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `CostManagementClient` added method `send_request`
+  - Client `CostManagementClient` added operation group `budgets`
+  - Client `CostManagementClient` added operation group `settings`
+  - Client `CostManagementClient` added operation group `cost_allocation_rules`
+  - Client `CostManagementClient` added operation group `generate_benefit_utilization_summaries_report`
+  - Model `Alert` added property `system_data`
+  - Model `BenefitRecommendationModel` added property `system_data`
+  - Model `BenefitResource` added property `system_data`
+  - Model `BenefitUtilizationSummary` added property `system_data`
+  - Model `CommonExportProperties` added property `data_overwrite_behavior`
+  - Model `CommonExportProperties` added property `compression_mode`
+  - Model `CommonExportProperties` added property `export_description`
+  - Model `CommonExportProperties` added property `system_suspension_context`
+  - Model `CostDetailsOperationResults` added property `manifest`
+  - Model `Export` added property `properties`
+  - Model `Export` added property `identity`
+  - Model `Export` added property `location`
+  - Model `Export` added property `system_data`
+  - Model `ExportDatasetConfiguration` added property `data_version`
+  - Model `ExportDatasetConfiguration` added property `filters`
+  - Model `ExportDeliveryDestination` added property `type`
+  - Model `ExportProperties` added property `data_overwrite_behavior`
+  - Model `ExportProperties` added property `compression_mode`
+  - Model `ExportProperties` added property `export_description`
+  - Model `ExportProperties` added property `system_suspension_context`
+  - Enum `ExportType` added member `FOCUS_COST`
+  - Enum `ExportType` added member `PRICE_SHEET`
+  - Enum `ExportType` added member `RESERVATION_DETAILS`
+  - Enum `ExportType` added member `RESERVATION_RECOMMENDATIONS`
+  - Enum `ExportType` added member `RESERVATION_TRANSACTIONS`
+  - Model `ForecastResult` added property `properties`
+  - Enum `FormatType` added member `PARQUET`
+  - Model `GenerateDetailedCostReportOperationResult` added property `properties`
+  - Model `GenerateDetailedCostReportOperationResult` added property `system_data`
+  - Model `GenerateDetailedCostReportOperationStatuses` added property `properties`
+  - Model `GenerateDetailedCostReportOperationStatuses` added property `system_data`
+  - Enum `GranularityType` added member `MONTHLY`
+  - Model `IncludedQuantityUtilizationSummary` added property `properties`
+  - Model `IncludedQuantityUtilizationSummary` added property `system_data`
+  - Model `OperationStatus` added property `properties`
+  - Model `ProxyResource` added property `system_data`
+  - Model `QueryResult` added property `properties`
+  - Model `Resource` added property `system_data`
+  - Model `SavingsPlanUtilizationSummary` added property `properties`
+  - Model `SavingsPlanUtilizationSummary` added property `system_data`
+  - Enum `TimeframeType` added member `THE_CURRENT_MONTH`
+  - Model `View` added property `system_data`
+  - Added model `ArmErrorResponse`
+  - Added model `AsyncOperationStatusProperties`
+  - Added model `BenefitUtilizationSummariesOperationStatus`
+  - Added model `BenefitUtilizationSummariesRequest`
+  - Added enum `BenefitUtilizationSummaryReportSchema`
+  - Added model `Budget`
+  - Added model `BudgetComparisonExpression`
+  - Added model `BudgetFilter`
+  - Added model `BudgetFilterProperties`
+  - Added enum `BudgetNotificationOperatorType`
+  - Added enum `BudgetOperatorType`
+  - Added model `BudgetProperties`
+  - Added model `BudgetTimePeriod`
+  - Added enum `CategoryType`
+  - Added enum `CompressionModeType`
+  - Added enum `CostAllocationPolicyType`
+  - Added model `CostAllocationProportion`
+  - Added model `CostAllocationResource`
+  - Added enum `CostAllocationResourceType`
+  - Added model `CostAllocationRuleCheckNameAvailabilityRequest`
+  - Added model `CostAllocationRuleCheckNameAvailabilityResponse`
+  - Added model `CostAllocationRuleDefinition`
+  - Added model `CostAllocationRuleDetails`
+  - Added model `CostAllocationRuleProperties`
+  - Added enum `CultureCode`
+  - Added model `CurrentSpend`
+  - Added enum `DataOverwriteBehaviorType`
+  - Added enum `DestinationType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ExportRunRequest`
+  - Added model `ExportSuspensionContext`
+  - Added model `ExtensionResource`
+  - Added enum `FilterItemNames`
+  - Added model `FilterItems`
+  - Added model `ForecastSpend`
+  - Added enum `Frequency`
+  - Added model `MCAPriceSheetProperties`
+  - Added model `Notification`
+  - Added model `PricesheetDownloadProperties`
+  - Added enum `Reason`
+  - Added model `ReportConfigDefinition`
+  - Added model `RequestContext`
+  - Added enum `RuleStatus`
+  - Added model `Setting`
+  - Added enum `SettingType`
+  - Added enum `SettingsKind`
+  - Added model `SettingsListResult`
+  - Added model `SourceCostAllocationResource`
+  - Added model `SystemAssignedServiceIdentity`
+  - Added enum `SystemAssignedServiceIdentityType`
+  - Added model `TagInheritanceProperties`
+  - Added model `TagInheritanceSetting`
+  - Added model `TargetCostAllocationResource`
+  - Added enum `ThresholdType`
+  - Added enum `TimeGrainType`
+  - Operation group `PriceSheetOperations` added method `begin_download_by_billing_account`
+  - Operation group `PriceSheetOperations` added method `begin_download_by_invoice`
+  - Added operation group `BudgetsOperations`
+  - Added operation group `CostAllocationRulesOperations`
+  - Added operation group `GenerateBenefitUtilizationSummariesReportOperations`
+  - Added operation group `SettingsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `CostDetailsOperationResults` moved instance variable `manifest_version`, `data_format`, `byte_count`, `blob_count`, `compress_data`, `blobs`, `request_scope` and `request_body` under property `manifest` whose type is `ReportManifest`
+  - Model `DismissAlertPayload` moved instance variable `definition`, `description`, `source`, `details`, `cost_entity_id`, `status`, `creation_time`, `close_time`, `modification_time`, `status_modification_user_name` and `status_modification_time` under property `properties` whose type is `AlertProperties`
+  - Model `Export` moved instance variable `format`, `delivery_info`, `definition`, `run_history`, `partition_data`, `next_run_time_estimate` and `schedule` under property `properties` whose type is `ExportProperties`
+  - Model `ForecastComparisonExpression` renamed its instance variable `values` to `values_property`
+  - Model `ForecastResult` moved instance variable `next_link`, `columns` and `rows` under property `properties` whose type is `ForecastProperties`
+  - Model `GenerateDetailedCostReportOperationResult` moved instance variable `expiry_time`, `valid_till` and `download_url` under property `properties` whose type is `DownloadURL`
+  - Model `GenerateDetailedCostReportOperationStatuses` moved instance variable `expiry_time`, `valid_till` and `download_url` under property `properties` whose type is `DownloadURL`
+  - Model `IncludedQuantityUtilizationSummary` moved instance variable `arm_sku_name`, `benefit_id`, `benefit_order_id`, `benefit_type`, `usage_date` and `utilization_percentage` under property `properties` whose type is `IncludedQuantityUtilizationSummaryProperties`
+  - Model `OperationStatus` moved instance variable `report_url` and `valid_until` under property `properties` whose type is `ReportURL`
+  - Model `QueryComparisonExpression` renamed its instance variable `values` to `values_property`
+  - Model `QueryResult` moved instance variable `next_link`, `columns` and `rows` under property `properties` whose type is `QueryProperties`
+  - Model `ReportConfigComparisonExpression` renamed its instance variable `values` to `values_property`
+  - Model `SavingsPlanUtilizationSummary` moved instance variable `arm_sku_name`, `benefit_id`, `benefit_order_id`, `benefit_type`, `usage_date`, `avg_utilization_percentage`, `min_utilization_percentage` and `max_utilization_percentage` under property `properties` whose type is `SavingsPlanUtilizationSummaryProperties`
+  - Method `BenefitRecommendationsOperations.list` changed its parameter `orderby`/`expand` from `positional_or_keyword` to `keyword_only`
+  - Method `BenefitUtilizationSummariesOperations.list_by_billing_account_id` changed its parameter `grain_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `BenefitUtilizationSummariesOperations.list_by_billing_profile_id` changed its parameter `grain_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `BenefitUtilizationSummariesOperations.list_by_savings_plan_id` changed its parameter `grain_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `BenefitUtilizationSummariesOperations.list_by_savings_plan_order` changed its parameter `grain_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `DimensionsOperations.by_external_cloud_provider_type` changed its parameter `expand`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `DimensionsOperations.list` changed its parameter `expand`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ExportsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ExportsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `GenerateReservationDetailsReportOperations.begin_by_billing_account_id` changed its parameter `start_date`/`end_date` from `positional_or_keyword` to `keyword_only`
+  - Method `GenerateReservationDetailsReportOperations.begin_by_billing_profile_id` changed its parameter `start_date`/`end_date` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `PriceSheetOperations.begin_download`
+  - Method `ScheduledActionsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `ScheduledActionsOperations.create_or_update_by_scope` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `PriceSheetOperations.begin_download_by_billing_profile` changed return type from `LROPoller[DownloadURL]` to `LROPoller[PricesheetDownloadProperties]`
+
+### Other Changes
+
+  - Deleted model `ScheduledActionProxyResource` which actually was not used by SDK users
+
 ## 4.0.1 (2023-07-19)
 
 ### Bugs Fixed

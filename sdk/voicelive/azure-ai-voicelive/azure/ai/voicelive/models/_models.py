@@ -512,8 +512,8 @@ class AudioNoiseReduction(_Model):
 class AvatarConfig(_Model):
     """Configuration for avatar streaming and behavior during the session.
 
-    :ivar type: Type of avatar to use. Known values are: "video-avatar" and "photo-avatar".
-    :vartype type: str or ~azure.ai.voicelive.models.AvatarConfigTypes
+    :ivar avatar_type: Type of avatar to use. Known values are: "video-avatar" and "photo-avatar".
+    :vartype avatar_type: str or ~azure.ai.voicelive.models.AvatarConfigTypes
     :ivar ice_servers: Optional list of ICE servers to use for WebRTC connection establishment.
     :vartype ice_servers: list[~azure.ai.voicelive.models.IceServer]
     :ivar character: The character name or ID used for the avatar. Required.
@@ -537,8 +537,8 @@ class AvatarConfig(_Model):
     :vartype output_audit_audio: bool
     """
 
-    type: Optional[Union[str, "_models.AvatarConfigTypes"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    avatar_type: Optional[Union[str, "_models.AvatarConfigTypes"]] = rest_field(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of avatar to use. Known values are: \"video-avatar\" and \"photo-avatar\"."""
     ice_servers: Optional[list["_models.IceServer"]] = rest_field(
@@ -575,7 +575,7 @@ class AvatarConfig(_Model):
         *,
         character: str,
         customized: bool,
-        type: Optional[Union[str, "_models.AvatarConfigTypes"]] = None,
+        avatar_type: Optional[Union[str, "_models.AvatarConfigTypes"]] = None,
         ice_servers: Optional[list["_models.IceServer"]] = None,
         style: Optional[str] = None,
         model: Optional[Union[str, "_models.PhotoAvatarBaseModes"]] = None,

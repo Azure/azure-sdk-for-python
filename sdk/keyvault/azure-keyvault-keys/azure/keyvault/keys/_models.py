@@ -317,6 +317,21 @@ class KeyProperties(object):
                 return KeyAttestation._from_generated(attestation=attestation)  # pylint:disable=protected-access
         return None
 
+    @property
+    def key_size(self) -> Optional[int]:
+        """The key size in bits (e.g. 128, 192, or 256 for AES).
+
+        Available for oct (symmetric) keys when using API version 2026-01-01-preview or later.
+        Returns None for RSA keys, EC keys, and older API versions.
+
+        :returns: The key size in bits, or None when not applicable.
+        :rtype: int or None
+        """
+        # key_size was added in 2026-01-01-preview
+        if self._attributes:
+            return getattr(self._attributes, "key_size", None)
+        return None
+
 
 class KeyReleasePolicy(object):
     """The policy rules under which a key can be exported.
