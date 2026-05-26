@@ -11,19 +11,16 @@
   - Model `SerialPort` added property `system_data`
   - Added model `CloudError`
   - Added enum `CreatedByType`
-  - Added model `DisableSerialConsoleResultProperties`
-  - Added model `EnableSerialConsoleResultProperties`
-  - Added model `SerialConsoleStatusProperties`
   - Added enum `SerialPortConnectionState`
   - Added model `SystemData`
 
 ### Breaking Changes
 
-  - Model `DisableSerialConsoleResult` deleted or renamed its instance variable `disabled`
-  - Model `EnableSerialConsoleResult` deleted or renamed its instance variable `disabled`
-  - Model `SerialConsoleStatus` deleted or renamed its instance variable `disabled`
+  - Model `DisableSerialConsoleResult` moved instance variable `disabled` under property `properties` whose type is `DisableSerialConsoleResultProperties`
+  - Model `EnableSerialConsoleResult` moved instance variable `disabled` under property `properties` whose type is `EnableSerialConsoleResultProperties`
+  - Model `SerialConsoleStatus` moved instance variable `disabled` under property `properties` whose type is `SerialConsoleStatusProperties`
   - Deleted or renamed method `SerialPortsOperations.delete`
-  - Deleted or renamed model `MicrosoftSerialConsoleClientOperationsMixin`
+  - Renamed operation group `MicrosoftSerialConsoleClientOperationsMixin` to `_MicrosoftSerialConsoleClientOperationsMixin`
   - Method `MicrosoftSerialConsoleClient.disable_console` changed return type from `Union[DisableSerialConsoleResult, GetSerialConsoleSubscriptionNotFound]` to `DisableSerialConsoleResult`
   - Method `MicrosoftSerialConsoleClient.enable_console` changed return type from `Union[EnableSerialConsoleResult, GetSerialConsoleSubscriptionNotFound]` to `EnableSerialConsoleResult`
   - Method `MicrosoftSerialConsoleClient.get_console_status` changed return type from `Union[SerialConsoleStatus, GetSerialConsoleSubscriptionNotFound]` to `SerialConsoleStatus`
