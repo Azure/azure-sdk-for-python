@@ -26,7 +26,7 @@
   - Method `LabsOperations.list` changed its parameter `include_budget` from `positional_or_keyword` to `keyword_only`
   - Method `LabsOperations.list_all` changed its parameter `include_budget`/`include_deleted` from `positional_or_keyword` to `keyword_only`
   - Method `StudentsOperations.list` changed its parameter `include_deleted` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed model `EducationManagementClientOperationsMixin`
+  - Renamed operation group `EducationManagementClientOperationsMixin` to `_EducationManagementClientOperationsMixin`
 
 ### Other Changes
 
