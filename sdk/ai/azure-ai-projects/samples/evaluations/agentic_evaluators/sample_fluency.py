@@ -64,23 +64,13 @@ def main() -> None:
         )
 
         testing_criteria = [
-<<<<<<< HEAD
             TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
                 name="fluency",
                 evaluator_name="builtin.fluency",
-                initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+                initialization_parameters={"model": f"{model_deployment_name}"},
                 data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
             )
-=======
-            {
-                "type": "azure_ai_evaluator",
-                "name": "fluency",
-                "evaluator_name": "builtin.fluency",
-                "initialization_parameters": {"model": f"{model_deployment_name}"},
-                "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-            }
->>>>>>> 9039617475e21ccf8fca87827ac19743c066a011
         ]
 
         print("Creating Evaluation")
