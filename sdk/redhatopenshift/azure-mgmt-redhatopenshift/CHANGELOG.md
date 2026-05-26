@@ -1,5 +1,31 @@
 # Release History
 
+## 4.0.0b1 (2026-05-26)
+
+### Features Added
+
+  - Client `AzureRedHatOpenShiftClient` added method `send_request`
+  - Model `OpenShiftClusterUpdate` added property `properties`
+  - Added model `CloudError`
+
+### Breaking Changes
+
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `cluster_profile`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `console_profile`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `service_principal_profile`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `platform_workload_identity_profile`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `network_profile`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `master_profile`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `worker_profiles`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `worker_profiles_status`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `apiserver_profile`
+  - Model `OpenShiftClusterUpdate` deleted or renamed its instance variable `ingress_profiles`
+  - Deleted or renamed model `OpenShiftClusterList`
+  - Deleted or renamed model `OpenShiftVersionList`
+  - Deleted or renamed model `OperationList`
+  - Deleted or renamed model `PlatformWorkloadIdentityRoleSetList`
+
 ## 3.0.0 (2026-02-06)
 
 ### Features Added
