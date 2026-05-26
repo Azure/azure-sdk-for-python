@@ -38,10 +38,6 @@
   - Added model `SelfServeExemptionSettings`
   - Added model `Variable`
   - Added model `VariableValue`
-  - Added operation group `PolicyEnrollmentsOperations`
-  - Added operation group `PolicyExemptionsOperations`
-  - Added operation group `VariableValuesOperations`
-  - Added operation group `VariablesOperations`
 
 ### Breaking Changes
 
