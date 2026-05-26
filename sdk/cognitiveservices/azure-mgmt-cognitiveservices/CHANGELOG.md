@@ -1,6 +1,6 @@
 # Release History
 
-## 15.0.0b2 (2026-05-22)
+## 15.0.0b2 (2026-05-26)
 
 ### Features Added
 
@@ -40,12 +40,12 @@
   - Added enum `VmPriority`
   - Added model `Workbench`
   - Added model `WorkbenchProperties`
-  - Operation group `AccountsOperations` added method `evaluate_deployment_policies`
-  - Added operation group `ComputesOperations`
-  - Added operation group `ManagedComputeCapacitiesOperations`
-  - Added operation group `ManagedComputeDeploymentsOperations`
-  - Added operation group `ManagedComputeUsagesOperationGroupOperations`
-  - Added operation group `WorkbenchesOperations`
+  - Model `AccountsOperations` added method `evaluate_deployment_policies`
+  - Added model `ComputesOperations`
+  - Added model `ManagedComputeCapacitiesOperations`
+  - Added model `ManagedComputeDeploymentsOperations`
+  - Added model `ManagedComputeUsagesOperationGroupOperations`
+  - Added model `WorkbenchesOperations`
 
 ### Breaking Changes
 
@@ -55,6 +55,7 @@
   - Deleted or renamed model `RaiExternalSafetyProvider`
   - Deleted or renamed model `RaiExternalSafetyProviderProperties`
   - Deleted or renamed model `RaiTopicConfig`
+  - Method `OutboundRulesOperations.begin_post` changed return type from `AsyncLROPoller[OutboundRuleListResult]` to `AsyncLROPoller[AsyncItemPaged[_models.OutboundRuleBasicResource]]`
   - Method `OutboundRulesOperations.begin_post` changed return type from `LROPoller[OutboundRuleListResult]` to `LROPoller[ItemPaged[_models.OutboundRuleBasicResource]]`
   - Method `RaiExternalSafetyProviderOperations.create_or_update` changed return type from `Union[RaiExternalSafetyProviderSchema, RaiExternalSafetyProvider]` to `RaiExternalSafetyProviderSchema`
 
