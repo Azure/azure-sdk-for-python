@@ -40,34 +40,21 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
     @classmethod
     def _make_regional_endpoint(cls, region):
-        """Build a regional ``RegionalRoutingContext`` whose primary URL is the
-        per-region locational form (e.g. ``https://acct-westus.documents...``).
+        """Return a per-region locational endpoint (e.g. ``acct-westus...``).
 
-        IMPORTANT: do NOT reuse ``RegionalRoutingContext(host)`` across regions.
-        ``LocationCache.is_default_endpoint_regional()`` returns ``True`` when
-        any value in ``account_read_regional_routing_contexts_by_location``
-        has the same primary as the client's default endpoint, and when that
-        happens the next ``update_location_cache()`` call (e.g. one triggered
-        by a background refresh or by a side-effect pkranges fetch that the
-        mocks let through) hits the
-        ``elif self.is_default_endpoint_regional(): self.effective_preferred_locations = []``
-        branch, wipes ``effective_preferred_locations`` and collapses
-        ``read_regional_routing_contexts`` back to the single fallback endpoint.
-        That silently turns this test into a 1-retry test and makes
-        ``ServiceResponseRetryPolicy.total_retries`` resolve to 1 regardless
-        of how many regions the test thinks it configured.
+        Each region must have its own endpoint URL. If every region shares
+        the default endpoint, ``LocationCache.is_default_endpoint_regional``
+        becomes True and the next ``update_location_cache`` call clears
+        ``effective_preferred_locations`` and shrinks
+        ``read_regional_routing_contexts`` to a single fallback, turning
+        multi-region tests into one-shot tests.
         """
         return RegionalRoutingContext(
             _location_cache.LocationCache.GetLocationalEndpoint(cls.host, region)
         )
 
     def _setup_read_regions(self, location_cache, regions):
-        """Configure the read side of the location cache with N distinct regions.
-
-        Each region gets a distinct ``RegionalRoutingContext`` so that
-        ``update_location_cache()``-triggered recomputation preserves the
-        intended N-region topology (see ``_make_regional_endpoint``).
-        """
+        """Populate the read side of the location cache with N distinct regions."""
         endpoints_by_region = {r: self._make_regional_endpoint(r) for r in regions}
         location_cache.account_read_locations = list(regions)
         location_cache.account_read_regional_routing_contexts_by_location = endpoints_by_region
@@ -75,12 +62,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         location_cache.effective_preferred_locations = list(regions)
 
     def _setup_write_regions(self, location_cache, regions):
-        """Configure the write side of the location cache with N distinct regions.
-
-        Mirrors ``_setup_read_regions`` (distinct per-region endpoints) for
-        symmetry and to avoid future tests tripping the same
-        ``is_default_endpoint_regional`` snare on the write path.
-        """
+        """Populate the write side of the location cache with N distinct regions."""
         endpoints_by_region = {r: self._make_regional_endpoint(r) for r in regions}
         location_cache.account_write_locations = list(regions)
         location_cache.account_write_regional_routing_contexts_by_location = endpoints_by_region

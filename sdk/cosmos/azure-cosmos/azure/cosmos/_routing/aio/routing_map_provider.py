@@ -419,12 +419,8 @@ class PartitionKeyRangeCache(object):
 
                 raise
             except (_OverlapDetected, _GapDetected):
-                # Reset ``current_previous_map`` to ``None`` so the next
-                # iteration runs the full-load path: we do not want to keep
-                # retrying an incremental fetch against the same inconsistent
-                # base. ``_handle_transient_snapshot_retry_decision`` returns
-                # the backoff or raises a 503 once the attempt budget is
-                # exhausted.
+                # Reset to ``None`` so the next attempt runs a full refresh
+                # instead of merging onto the same inconsistent base.
                 inconsistency_attempt_count += 1
                 backoff = _handle_transient_snapshot_retry_decision(
                     retry_attempt_count=inconsistency_attempt_count,

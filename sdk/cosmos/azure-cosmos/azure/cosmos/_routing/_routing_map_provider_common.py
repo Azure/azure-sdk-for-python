@@ -33,11 +33,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .. import _base, http_constants
 from ..exceptions import CosmosHttpResponseError
-# ``_OverlapDetected`` and ``_GapDetected`` are imported (but not referenced
-# inside this module) so that provider modules and tests can import them from
-# this single module instead of reaching into ``collection_routing_map``
-# directly. Pylint reports ``unused-import`` on the ``from`` line as a whole
-# (not on the individual names), so the disable must live on that line.
+# Re-exported here so provider modules and tests import these from one place
+# rather than reaching into ``collection_routing_map`` directly.
 from .collection_routing_map import (  # pylint: disable=unused-import
     CollectionRoutingMap,
     _build_routing_map_from_ranges,
@@ -56,28 +53,20 @@ logger = logging.getLogger(__name__)
 
 PAGE_SIZE_CHANGE_FEED = "-1"  # Return all available changes
 
-# Maximum retry attempts for transient full-load /pkranges inconsistencies
-# (overlap OR gap) before surfacing a transient HTTP 503. Centralised here so
-# the sync and async providers share one source of truth.
+# Retry budget for transient ``/pkranges`` snapshot inconsistencies (overlap
+# or gap) before the caller surfaces a 503. Shared by sync and async providers.
 _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS = 3
-# Initial backoff between inconsistency retries; doubles each attempt. With
-# ``_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS = 3``, attempt 3 raises 503 before
-# sleeping, so only the post-attempt-1 and post-attempt-2 backoffs are slept --
-# deterministic worst case is the sum of the first two schedule entries
-# (``_TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS`` and that value
-# doubled); expected wall time is half of that under full jitter.
-_TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS = 0.5
+# Initial backoff (seconds) before the next retry; doubles each attempt and
+# is jittered uniformly in ``[0, upper_bound]``. With MAX_ATTEMPTS=3 the
+# worst-case cumulative sleep is 0 + 0.1 + 0.2 = 0.3s per surfaced 503.
+_TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS = 0.1
 
 
 def _jittered_backoff(backoff_seconds: float) -> float:
-    """Return a uniformly-jittered backoff in the range ``[0, backoff_seconds]``.
+    """Return a uniformly-distributed sleep in ``[0, backoff_seconds]``.
 
-    Implements the "full jitter" strategy so concurrent retriers in different
-    processes do not retry in lockstep against the same gateway node.
-
-    :param float backoff_seconds: Deterministic upper bound for the backoff,
-        in seconds. Must be non-negative.
-    :return: A uniformly-distributed sleep value in ``[0, backoff_seconds]``.
+    :param float backoff_seconds: Non-negative upper bound for the backoff.
+    :return: A random sleep value in ``[0, backoff_seconds]``.
     :rtype: float
     """
     return random.uniform(0, backoff_seconds)
@@ -89,44 +78,32 @@ def _handle_transient_snapshot_retry_decision(
     collection_link: str,
     logger: logging.Logger,  # pylint: disable=redefined-outer-name
 ) -> float:
-    """Decide what to do after the full-load builder reported a transient
-    snapshot inconsistency (overlap or gap).
+    """Return the next backoff to sleep, or raise 503 once the budget is exhausted.
 
-    Returns a jittered backoff for the caller to sleep before the next
-    attempt; raises :class:`CosmosHttpResponseError` (HTTP 503) once
-    ``_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS`` is reached. Under the default
-    budget the final attempt raises 503 before sleeping, so only the first
-    ``_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS - 1`` attempts produce a sleep
-    (deterministic upper bounds doubling from
-    ``_TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS``). The caller
-    performs the actual sleep (``time.sleep`` vs ``await asyncio.sleep``),
-    which is the only line that differs between the sync and async
-    providers.
+    Called after the routing-map builder reports a transient overlap or gap.
+    The caller performs the actual sleep (``time.sleep`` vs ``await
+    asyncio.sleep``) -- the only line that differs between sync and async.
 
-    :keyword int retry_attempt_count: Attempts so far, including the one
-        that just failed. Pass ``1`` after the first failure.
+    :keyword int retry_attempt_count: Attempts so far, including the failed
+        one. Pass ``1`` after the first failure.
     :keyword str collection_link: Used in log messages and the 503 body.
     :keyword logging.Logger logger: Caller's module-level logger.
     :return: Jittered backoff seconds in ``[0, deterministic_upper_bound]``.
     :rtype: float
-    :raises CosmosHttpResponseError: When the attempt budget is exhausted.
+    :raises CosmosHttpResponseError: When the retry budget is exhausted.
     """
     if retry_attempt_count >= _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS:
         logger.error(
-            "Full-load routing-map fetch for collection '%s' detected a "
-            "transient snapshot inconsistency (overlap or gap) on every "
-            "one of %d attempt(s). Surfacing as transient HTTP 503 so the "
-            "caller's retry policy can take over.",
+            "Routing-map fetch for collection '%s' returned overlapping or "
+            "gapped ranges on %d attempt(s). Surfacing as HTTP 503.",
             collection_link,
             retry_attempt_count,
         )
         raise CosmosHttpResponseError(
             status_code=http_constants.StatusCodes.SERVICE_UNAVAILABLE,
             message=(
-                "Failed to build routing map for collection '{}': transient "
-                "snapshot inconsistency (overlap or gap) persisted across {} "
-                "full-load attempt(s). Surfaced as a retryable transient "
-                "error so the upstream retry policy can take over."
+                "Routing-map fetch for collection '{}' returned overlapping "
+                "or gapped ranges on {} attempt(s)."
             ).format(collection_link, retry_attempt_count),
         )
 
@@ -135,14 +112,12 @@ def _handle_transient_snapshot_retry_decision(
     )
     jittered_backoff = _jittered_backoff(deterministic_backoff)
     logger.warning(
-        "Full-load routing-map fetch for collection '%s' detected a transient "
-        "snapshot inconsistency (overlap or gap) (attempt %d/%d). Sleeping "
-        "%.2fs (jittered from upper bound %.2fs) and retrying.",
+        "Routing-map fetch for collection '%s' returned overlapping or "
+        "gapped ranges (attempt %d/%d). Sleeping %.2fs and retrying.",
         collection_link,
         retry_attempt_count,
         _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
         jittered_backoff,
-        deterministic_backoff,
     )
     return jittered_backoff
 
@@ -362,19 +337,15 @@ def process_fetched_ranges(
     try:
         result = previous_routing_map.try_combine(range_tuples, effective_etag)
     except ValueError as overlap_error:
-        # Convert the overlap ``ValueError`` from ``try_combine`` into
-        # ``_IncrementalMergeFailed`` so the caller retries the incremental
-        # fetch and ultimately falls back to the full-load path (which has
-        # its own ``_OverlapDetected`` retry + 503 safety net). Narrow to
-        # the literal ``"Ranges overlap"`` prefix (kept stable in
-        # ``is_complete_set_of_range`` and pinned by the regression tests)
-        # so any future unrelated ``ValueError`` surfaces as a real bug.
+        # Convert the overlap ``ValueError`` to ``_IncrementalMergeFailed`` so
+        # the caller retries and falls back to a full refresh. Narrow the
+        # match to the ``"Ranges overlap"`` prefix so any unrelated
+        # ``ValueError`` still surfaces as a real bug.
         if not str(overlap_error).startswith("Ranges overlap"):
             raise
         logger.warning(
             "Incremental merge for collection '%s' produced overlapping ranges: %s. "
-            "Converting to _IncrementalMergeFailed so the caller retries / "
-            "falls back to a full refresh.",
+            "Falling back to a full refresh.",
             collection_link, str(overlap_error),
         )
         raise _IncrementalMergeFailed() from overlap_error

@@ -298,12 +298,9 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         self.assertEqual(result.change_feed_etag, '"etag-new"', "ETag should be updated")
 
     def test_fetch_routing_map_empty_full_load_raises_503_after_budget(self):
-        """When a full load (no previous map) repeatedly returns zero ranges,
-        ``_fetch_routing_map`` should retry up to the overlap budget and then
-        surface ``CosmosHttpResponseError(status_code=503)`` rather than
-        returning ``None``. Empty ranges hit the same ``_GapDetected`` path as
-        a gap in the key space; without retry-then-503 the empty result
-        would later crash ``SmartRoutingMapProvider`` with ``AssertionError``."""
+        """A full load that repeatedly returns zero ranges should retry up
+        to the budget and then raise ``CosmosHttpResponseError(503)``
+        instead of returning ``None``."""
         client = MagicMock()
 
         def read_pk_ranges_empty(collection_link, options, response_hook=None, **kwargs):
@@ -315,10 +312,8 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
 
         cache = PartitionKeyRangeCache(client)
 
-        # Patch time.sleep so the retry loop's jittered backoffs (up to
-        # ~1.5s deterministic upper bound across the two pre-final attempts)
-        # do not slow this unit test down. Mirrors the pattern used by the
-        # other retry-path tests in this file.
+        # Patch ``time.sleep`` so the retry loop's backoffs do not slow
+        # this unit test down.
         with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
             with self.assertRaises(CosmosHttpResponseError) as ctx:
                 cache._fetch_routing_map(
@@ -642,55 +637,35 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
     # Helper-level retry-policy unit tests.
     #
     # These target only the pure helper that computes retry backoff / 503
-    # escalation (no cache object, no fetch loop). They pin the contract that
-    # backoff stays within the deterministic upper bound and that jitter is
-    # actually applied so concurrent retriers do not retry in lockstep.
+    # escalation (no cache object, no fetch loop). They check that backoff
+    # stays within the deterministic upper bound and that jitter is applied.
     # ==========================================================================
 
     def test_overlap_retry_backoff_is_within_deterministic_upper_bound(self):
-        """For each non-terminal attempt, the returned backoff must lie inside
-        ``[0, deterministic_bound]`` where the deterministic bound is the
-        documented exponential schedule (0.5s, 1.0s, 2.0s). This is what
-        guarantees we never exceed the advertised worst-case wall time."""
-        # Build a fresh logger so we don't compete for handlers with the real one.
+        """Each non-terminal attempt's backoff must lie in
+        ``[0, deterministic_bound]`` (the exponential schedule: 0.5s, 1.0s)."""
         test_logger = logging.getLogger(__name__ + ".jitter_bounds_test")
 
-        # _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS is 3, so non-terminal attempts are 1 and 2.
-        # (Attempt 3 raises 503; that branch is exercised by the e2e test below.)
+        # _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS is 3, so non-terminal
+        # attempts are 1 and 2; attempt 3 raises 503.
         for attempt_index, expected_upper_bound in [(1, 0.5), (2, 1.0)]:
-            for _ in range(50):  # 50 draws per attempt -- catches an
-                                 # accidentally-constant return value as well.
+            for _ in range(50):
                 backoff = _handle_transient_snapshot_retry_decision(
                     retry_attempt_count=attempt_index,
                     collection_link="dbs/db1/colls/coll1",
                     logger=test_logger,
                 )
-                self.assertGreaterEqual(
-                    backoff, 0.0,
-                    "Jittered backoff must be non-negative (random.uniform "
-                    "with low=0 invariant)."
-                )
+                self.assertGreaterEqual(backoff, 0.0)
                 self.assertLessEqual(
                     backoff, expected_upper_bound,
-                    "Jittered backoff for attempt {} must not exceed the "
-                    "deterministic upper bound {}s; got {}s. This would "
-                    "violate the worst-case wall-time contract documented "
-                    "on _handle_transient_snapshot_retry_decision.".format(
+                    "Backoff for attempt {} exceeded upper bound {}s; got {}s.".format(
                         attempt_index, expected_upper_bound, backoff,
                     )
                 )
 
     def test_overlap_retry_backoff_actually_varies_between_calls(self):
-        """Two consecutive calls for the same attempt index must not return
-        the same value with overwhelming probability -- otherwise jitter has
-        regressed to a fixed backoff and concurrent retriers in different
-        Cosmos clients will land back on the same gateway node in lockstep.
-
-        We draw N samples and assert at least two distinct values. The
-        probability of all-identical draws from ``random.uniform(0, 0.5)`` is
-        effectively zero in 50 draws, so this is not a flake risk; but if a
-        future refactor accidentally returns the deterministic backoff, this
-        test fires loudly."""
+        """Consecutive calls for the same attempt index must produce varying
+        values; otherwise jitter has regressed to a fixed backoff."""
         test_logger = logging.getLogger(__name__ + ".jitter_variance_test")
         samples = [
             _handle_transient_snapshot_retry_decision(
@@ -702,21 +677,12 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         ]
         self.assertGreater(
             len(set(samples)), 1,
-            "Overlap-retry backoff produced identical values across 50 draws "
-            "-- jitter has likely regressed. Each draw should be an "
-            "independent random.uniform(0, deterministic_bound) sample."
+            "Overlap-retry backoff returned identical values across 50 draws."
         )
 
     def test_overlap_retry_raises_503_at_attempt_budget_exhaustion(self):
-        """At the documented attempt budget (_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS),
-        the helper must raise CosmosHttpResponseError(503) -- not return a
-        backoff. This is the only branch that surfaces an exception to the
-        caller, and it is what lets the upstream Cosmos retry policy take
-        over instead of the SDK silently giving up.
-
-        Also exercised end-to-end by
-        ``test_fetch_routing_map_surfaces_503_after_persistent_overlap``,
-        but this is the focused unit-level guard."""
+        """Once the attempt budget is reached, the helper raises 503 instead
+        of returning a backoff."""
         test_logger = logging.getLogger(__name__ + ".jitter_budget_test")
         with self.assertRaises(CosmosHttpResponseError) as ctx:
             _handle_transient_snapshot_retry_decision(
@@ -732,17 +698,15 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
     # ==========================================================================
     # Provider retry-loop behavior tests (mocked integration path).
     #
-    # These exercise the sync provider's full fetch/retry loop with mocked
-    # /pkranges payloads. They verify the full path contract: transient
-    # inconsistencies either recover on retry or surface typed HTTP 503, and
-    # never leak raw ``ValueError("Ranges overlap")`` to callers.
+    # These exercise the sync provider's fetch/retry loop with mocked
+    # ``/pkranges`` payloads: transient inconsistencies either recover on
+    # retry or surface as HTTP 503; ``ValueError("Ranges overlap")`` never
+    # leaks to callers.
     # ==========================================================================
 
     def test_fetch_routing_map_recovers_after_transient_overlap(self):
-        """When the gateway returns an inconsistent paginated /pkranges snapshot
-        once and a consistent one on retry, the sync cache should populate
-        cleanly on the second attempt — the customer sees no crash, no missing
-        rows, just a brief stall."""
+        """An inconsistent ``/pkranges`` snapshot followed by a consistent
+        one should populate the cache cleanly on the second attempt."""
         # First call: stale parent + children missing parent reference.
         bad_payload = [
             {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
@@ -794,11 +758,8 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
 
     def test_fetch_routing_map_surfaces_503_after_persistent_overlap(self):
-        """If the gateway keeps returning inconsistent snapshots across every
-        retry attempt on the sync provider, the cache must NOT silently return
-        empty results from get_overlapping_ranges (correctness bug). It must
-        surface a typed transient HTTP error so the upstream retry policy can
-        decide what to do."""
+        """Persistent inconsistent snapshots across every retry must surface
+        as HTTP 503, not as empty results from ``get_overlapping_ranges``."""
         bad_payload = [
             {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
             {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
@@ -887,10 +848,8 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
 
     def test_fetch_routing_map_surfaces_503_after_persistent_gap(self):
-        """Mirror of the overlap-503 test for the gap side: a persistent gap
-        across the retry budget must surface as ``CosmosHttpResponseError(503)``
-        rather than as an ``AssertionError("code bug: ...")`` from
-        ``SmartRoutingMapProvider``."""
+        """A persistent gap across the retry budget must surface as
+        ``CosmosHttpResponseError(503)``."""
         bad_payload = [
             {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
             {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
@@ -922,18 +881,10 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         )
 
     def test_incremental_overlap_converts_to_incremental_merge_failed(self):
-        """Sync parity with
-        ``test_incremental_overlap_converts_to_incremental_merge_failed_async``:
-
-        If the incremental-merge path produces overlapping ranges (e.g. the
-        delta contains a range whose key span overlaps an existing cached
-        range without either side declaring the other a parent), the
-        ``ValueError("Ranges overlap")`` raised by ``try_combine`` must NOT
-        escape to the caller. It must convert to ``_IncrementalMergeFailed``
-        so the standard fallback path takes over (retry incremental once,
-        then full-load -- which has its own ``_OverlapDetected`` handler).
-        This is what guarantees the customer never observes a bare
-        ``ValueError`` from any of the validator's call sites."""
+        """An overlap raised during incremental merge must convert to
+        ``_IncrementalMergeFailed`` so the standard fallback (retry
+        incremental, then full refresh) takes over; a bare ``ValueError``
+        must never escape to the caller."""
 
         # Existing cached map: '0' covers ['', '80'] and '1' covers ['80', 'FF'].
         previous_map = CollectionRoutingMap.CompleteRoutingMap(
@@ -967,15 +918,9 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
             )
 
     def test_fetch_routing_map_mixed_overlap_and_gap_signals_share_retry_budget(self):
-        """The transient-snapshot retry budget is a single counter shared by
-        BOTH ``_OverlapDetected`` and ``_GapDetected`` signals -- it is not
-        per-signal-type. If the gateway alternates between overlap snapshots
-        and gap snapshots across attempts, the SDK must still surface a 503
-        after the same ``_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS`` budget.
-
-        Without this guarantee an alternating gateway could starve the
-        retry policy indefinitely (overlap, gap, overlap, gap, ...), masking
-        a real partition-routing problem as a slow stall."""
+        """``_OverlapDetected`` and ``_GapDetected`` share one retry counter.
+        Alternating snapshots must still raise 503 once the budget is
+        exhausted; the budget is not per-signal-type."""
         # Overlap payload: stale parent '10' coexists with its children that
         # lack a ``parents`` reference. Triggers ``_OverlapDetected``.
         overlap_payload = [
@@ -1026,13 +971,9 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         )
 
     def test_fetch_routing_map_preserves_existing_cache_entry_when_force_refresh_surfaces_503(self):
-        """A 503 raised by ``_fetch_routing_map`` during a forced refresh must
-        NOT corrupt the existing cached routing map. The SDK commonly issues
-        ``force_refresh=True`` during 410/Gone recovery paths; if that refresh
-        itself fails transiently we want subsequent reads to keep returning the
-        previously-cached map (a slightly stale answer is far better than a
-        cache wiped out by a transient gateway hiccup, which would make
-        every future query pay the full reload cost)."""
+        """A 503 raised by ``_fetch_routing_map`` during a forced refresh
+        must not corrupt the cached routing map. Subsequent reads should
+        still see the previously-cached entry."""
         # Pre-populate the shared cache with a known-good routing map.
         cached_map = _make_complete_routing_map("dbs/db1/colls/coll1", '"etag-cached"')
         cache = PartitionKeyRangeCache(MagicMock())

@@ -220,20 +220,15 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.change_feed_etag, '"etag-new"', "ETag should be updated")
 
     async def test_fetch_routing_map_empty_full_load_raises_503_after_budget_async(self):
-        """When a full load (no previous map) repeatedly returns zero ranges,
-        ``_fetch_routing_map`` should retry up to the overlap budget and then
-        surface ``CosmosHttpResponseError(status_code=503)`` rather than
-        returning ``None``. Empty ranges hit the same ``_GapDetected`` path as
-        a gap in the key space; without retry-then-503 the empty result
-        would later crash ``SmartRoutingMapProvider`` with ``AssertionError``."""
+        """A full load that repeatedly returns zero ranges should retry up
+        to the budget and then raise ``CosmosHttpResponseError(503)``
+        instead of returning ``None``."""
         client = _make_mock_async_client(ranges=[], response_etag='"etag"')
 
         cache = PartitionKeyRangeCache(client)
 
-        # Patch asyncio.sleep so the retry loop's jittered backoffs (up to
-        # ~1.5s deterministic upper bound across the two pre-final attempts)
-        # do not slow this unit test down. Mirrors the pattern used by the
-        # other retry-path tests in this file.
+        # Patch ``asyncio.sleep`` so the retry loop's backoffs do not slow
+        # this unit test down.
         async def _no_sleep(_seconds):
             return None
 
@@ -514,17 +509,15 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
     # ==========================================================================
     # Provider retry-loop behavior tests (mocked integration path).
     #
-    # These cover integration between builder signaling (overlap/gap) and the
-    # async provider fetch/retry loop. With mocked /pkranges payloads we verify
-    # the full path contract: transient inconsistencies either recover on retry
-    # or surface typed HTTP 503, and never leak raw ``ValueError`` failures.
+    # These exercise the async provider's fetch/retry loop with mocked
+    # ``/pkranges`` payloads: transient inconsistencies either recover on
+    # retry or surface as HTTP 503; ``ValueError("Ranges overlap")`` never
+    # leaks to callers.
     # ==========================================================================
 
     async def test_fetch_routing_map_recovers_after_transient_overlap_async(self):
-        """When the gateway returns an inconsistent paginated /pkranges snapshot
-        once and a consistent one on retry, the cache should populate cleanly
-        with the consistent data on the second attempt — the customer sees no
-        crash, no missing rows, just a brief stall."""
+        """An inconsistent ``/pkranges`` snapshot followed by a consistent
+        one should populate the cache cleanly on the second attempt."""
         # First call: stale parent + children missing parent reference → triggers _OverlapDetected.
         bad_payload = [
             {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
@@ -590,11 +583,8 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
 
     async def test_fetch_routing_map_surfaces_503_after_persistent_overlap_async(self):
-        """If the gateway keeps returning inconsistent snapshots through every
-        retry attempt, the cache should NOT silently return empty results from
-        get_overlapping_ranges (which would be a correctness bug masquerading
-        as zero data). It must surface a typed transient HTTP error so the
-        upstream retry policy can decide what to do."""
+        """Persistent inconsistent snapshots across every retry must surface
+        as HTTP 503, not as empty results from ``get_overlapping_ranges``."""
         bad_payload = [
             {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
             {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
@@ -645,12 +635,8 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_fetch_routing_map_recovers_after_transient_gap_async(self):
-        """Mirror of the overlap-recovery test for the gap side: when the
-        gateway returns a snapshot with a hole in the key space once and a
-        consistent one on retry, the async cache should populate cleanly on
-        the second attempt rather than letting the empty result reach
-        ``SmartRoutingMapProvider`` (which would crash with
-        ``AssertionError``)."""
+        """A gap snapshot followed by a consistent one should populate the
+        cache cleanly on the second attempt."""
         bad_payload = [
             {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
             {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
@@ -704,10 +690,8 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
 
     async def test_fetch_routing_map_surfaces_503_after_persistent_gap_async(self):
-        """Mirror of the overlap-503 test for the gap side: a persistent gap
-        across the retry budget must surface as ``CosmosHttpResponseError(503)``
-        rather than as an ``AssertionError("code bug: ...")`` from
-        ``SmartRoutingMapProvider``."""
+        """A persistent gap across the retry budget must surface as
+        ``CosmosHttpResponseError(503)``."""
         bad_payload = [
             {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
             {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
@@ -747,15 +731,10 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS)
 
     async def test_incremental_overlap_converts_to_incremental_merge_failed_async(self):
-        """If the incremental-merge path produces overlapping ranges (e.g. the
-        delta contains a range whose key span overlaps an existing cached
-        range without either side declaring the other a parent), the
-        ``ValueError("Ranges overlap")`` raised by ``try_combine`` must NOT
-        escape to the caller. It must convert to ``_IncrementalMergeFailed``
-        so the standard fallback path takes over (retry incremental once,
-        then full-load — which has its own ``_OverlapDetected`` handler).
-        This is what guarantees the customer never observes a bare
-        ``ValueError`` from any of the validator's call sites."""
+        """An overlap raised during incremental merge must convert to
+        ``_IncrementalMergeFailed`` so the standard fallback (retry
+        incremental, then full refresh) takes over; a bare ``ValueError``
+        must never escape to the caller."""
 
         # Existing cached map: '0' covers ['', '80'] and '1' covers ['80', 'FF'].
         previous_map = CollectionRoutingMap.CompleteRoutingMap(
@@ -789,23 +768,9 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
             )
 
     async def test_fetch_routing_map_mixed_overlap_and_gap_signals_share_retry_budget_async(self):
-        """Async mirror of
-        ``test_fetch_routing_map_mixed_overlap_and_gap_signals_share_retry_budget``.
-
-        The transient-snapshot retry budget is a single counter shared by
-        BOTH ``_OverlapDetected`` and ``_GapDetected`` signals -- it is not
-        per-signal-type. If the gateway alternates between overlap snapshots
-        and gap snapshots across attempts, the SDK must still surface a 503
-        after the same ``_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS`` budget.
-
-        Async coverage is independent of the sync test because the async
-        ``_fetch_routing_map`` has its own ``except (_OverlapDetected,
-        _GapDetected)`` block and increments its own
-        ``inconsistency_attempt_count`` local under ``async with`` lock
-        scoping -- a future refactor that, for example, reset the counter
-        on signal-type change, or that lost the counter across an
-        ``await`` boundary, would only be caught by exercising the async
-        codepath end-to-end."""
+        """``_OverlapDetected`` and ``_GapDetected`` share one retry counter.
+        Alternating snapshots must still raise 503 once the budget is
+        exhausted; the budget is not per-signal-type."""
         # Overlap payload: stale parent '10' coexists with its children that
         # lack a ``parents`` reference. Triggers ``_OverlapDetected``.
         overlap_payload = [
@@ -867,22 +832,9 @@ class TestRoutingMapProviderUnitAsync(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_fetch_routing_map_preserves_existing_cache_entry_when_force_refresh_surfaces_503_async(self):
-        """Async mirror of
-        ``test_fetch_routing_map_preserves_existing_cache_entry_when_force_refresh_surfaces_503``.
-
-        A 503 raised by ``_fetch_routing_map`` during a forced refresh must
-        NOT corrupt the existing cached routing map. The SDK commonly issues
-        ``force_refresh=True`` during 410/Gone recovery paths; if that refresh
-        itself fails transiently we want subsequent reads to keep returning
-        the previously-cached map (a slightly stale answer is far better than
-        a cache wiped out by a transient gateway hiccup).
-
-        Async coverage is independent of the sync test because the async
-        ``get_routing_map`` writes to the cache from inside an ``async with``
-        block. If a future refactor moved the write before the inner
-        ``try``/``except``, or if exception unwinding through the async
-        context manager somehow cleared the entry, only the async-level
-        end-to-end test would catch it."""
+        """A 503 raised by ``_fetch_routing_map`` during a forced refresh
+        must not corrupt the cached routing map. Subsequent reads should
+        still see the previously-cached entry."""
         # Pre-populate the shared cache with a known-good routing map.
         cached_map = _make_complete_routing_map("dbs/db1/colls/coll1", '"etag-cached"')
         cache = PartitionKeyRangeCache(MagicMock())

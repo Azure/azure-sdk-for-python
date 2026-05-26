@@ -11,7 +11,7 @@ from aiohttp.client_exceptions import (ClientConnectionError, ClientConnectionRe
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import test_config
-from azure.cosmos import DatabaseAccount
+from azure.cosmos import DatabaseAccount, _location_cache
 from azure.cosmos._location_cache import RegionalRoutingContext
 from azure.cosmos._request_object import RequestObject
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, _global_endpoint_manager_async
@@ -28,7 +28,6 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    REGIONAL_ENDPOINT = RegionalRoutingContext(host)
 
     @classmethod
     def setUpClass(cls):
@@ -60,20 +59,37 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pass
         gem.refresh_task = None
 
+    @classmethod
+    def _make_regional_endpoint(cls, region):
+        """Return a per-region locational endpoint (e.g. ``acct-westus...``).
+
+        Each region must have its own endpoint URL. If every region shares
+        the default endpoint, ``LocationCache.is_default_endpoint_regional``
+        becomes True and the next ``update_location_cache`` call clears
+        ``effective_preferred_locations`` and shrinks
+        ``read_regional_routing_contexts`` to a single fallback, turning
+        multi-region tests into one-shot tests. Cancelling the background
+        refresh task is not enough on its own: foreground refreshes can fire
+        from the pkranges side-call that the IgnoreQuery mocks let through.
+        """
+        return RegionalRoutingContext(
+            _location_cache.LocationCache.GetLocationalEndpoint(cls.host, region)
+        )
+
     def _setup_read_regions(self, location_cache, regions):
-        """Set all read region attributes consistently so update_location_cache() recalculates correctly."""
-        location_cache.account_read_locations = regions
-        location_cache.account_read_regional_routing_contexts_by_location = {
-            r: self.REGIONAL_ENDPOINT for r in regions}
-        location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT] * len(regions)
-        location_cache.effective_preferred_locations = regions
+        """Populate the read side of the location cache with N distinct regions."""
+        endpoints_by_region = {r: self._make_regional_endpoint(r) for r in regions}
+        location_cache.account_read_locations = list(regions)
+        location_cache.account_read_regional_routing_contexts_by_location = endpoints_by_region
+        location_cache.read_regional_routing_contexts = [endpoints_by_region[r] for r in regions]
+        location_cache.effective_preferred_locations = list(regions)
 
     def _setup_write_regions(self, location_cache, regions):
-        """Set all write region attributes consistently so update_location_cache() recalculates correctly."""
-        location_cache.account_write_locations = regions
-        location_cache.account_write_regional_routing_contexts_by_location = {
-            r: self.REGIONAL_ENDPOINT for r in regions}
-        location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT] * len(regions)
+        """Populate the write side of the location cache with N distinct regions."""
+        endpoints_by_region = {r: self._make_regional_endpoint(r) for r in regions}
+        location_cache.account_write_locations = list(regions)
+        location_cache.account_write_regional_routing_contexts_by_location = endpoints_by_region
+        location_cache.write_regional_routing_contexts = [endpoints_by_region[r] for r in regions]
 
     async def test_service_request_retry_policy_async(self):
         # ServiceRequestErrors will always retry, and will retry once per preferred region
