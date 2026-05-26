@@ -318,6 +318,64 @@ class TestCandidateIdParam:
         assert config.source.startswith("local:")
         assert config.instructions == "Local fallback."
 
+    def test_header_auto_detected(self, monkeypatch):
+        """X-Optimization-Candidate-Id header is auto-extracted."""
+        resolved = {
+            "instructions": "From header.",
+            "model": "gpt-4o",
+        }
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved if cid == "hdr-123" else None,
+        )
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config._get_candidate_id_from_request",
+            lambda: "hdr-123",
+        )
+        config = load_config()
+        assert config.source == "api:candidate:hdr-123"
+        assert config.candidate_id == "hdr-123"
+
+    def test_param_overrides_header(self, monkeypatch):
+        """Explicit candidate_id param takes precedence over header."""
+        resolved = {
+            "instructions": "From param.",
+            "model": "gpt-4o",
+        }
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved if cid == "explicit" else None,
+        )
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config._get_candidate_id_from_request",
+            lambda: "from-header",
+        )
+        config = load_config(candidate_id="explicit")
+        assert config.source == "api:candidate:explicit"
+        assert config.candidate_id == "explicit"
+
+    def test_header_overrides_env_var(self, monkeypatch):
+        """Header takes precedence over env var when no param is given."""
+        resolved = {
+            "instructions": "From header.",
+            "model": "gpt-4o",
+        }
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "env-id")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved if cid == "hdr-id" else None,
+        )
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config._get_candidate_id_from_request",
+            lambda: "hdr-id",
+        )
+        config = load_config()
+        assert config.source == "api:candidate:hdr-id"
+        assert config.candidate_id == "hdr-id"
+
 
 # ── Local directory (Priority 3) ────────────────────────────────────
 

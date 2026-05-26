@@ -45,6 +45,29 @@ from azure.ai.agentserver.optimization._resolver import resolve_candidate
 
 logger = logging.getLogger("azure.ai.agentserver.optimization")
 
+# Header name used by the optimization service to pass candidate ID per request.
+OPTIMIZATION_CANDIDATE_HEADER = "x-optimization-candidate-id"
+
+
+def _get_candidate_id_from_request() -> str | None:
+    """Try to extract the candidate ID from the current HTTP request header.
+
+    Supports Flask/Quart (``flask.request``) and FastAPI/Starlette
+    (``starlette.requests.Request`` via contextvars).  Returns ``None``
+    when no framework is detected or the header is absent.
+    """
+    # Flask / Quart — thread-local request proxy
+    try:
+        from flask import request as flask_request  # type: ignore[import-untyped]
+
+        value = flask_request.headers.get(OPTIMIZATION_CANDIDATE_HEADER, "").strip()
+        if value:
+            return value
+    except Exception:  # noqa: BLE001
+        pass
+
+    return None
+
 
 def load_config(
     *,
@@ -59,12 +82,12 @@ def load_config(
     1. **Inline JSON** — ``OPTIMIZATION_CONFIG`` env var contains the
        full config as a JSON string.  Used by temporary agent versions
        during evaluation; this path is being deprecated.
-    2. **Resolver API** — *candidate_id* parameter (e.g. from the
-       ``X-Optimization-Candidate-Id`` request header) or
-       ``OPTIMIZATION_CANDIDATE_ID`` env var, combined with
-       ``OPTIMIZATION_RESOLVE_ENDPOINT``.  The endpoint should be the
-       full job-scoped URL.  Fetches the candidate config from the
-       remote optimization service and persists it to the local directory.
+    2. **Resolver API** — candidate ID is resolved from (in order):
+       *candidate_id* parameter, the ``X-Optimization-Candidate-Id``
+       request header (auto-detected from Flask/Quart), or the
+       ``OPTIMIZATION_CANDIDATE_ID`` env var.  Combined with
+       ``OPTIMIZATION_RESOLVE_ENDPOINT`` to fetch the candidate config
+       from the remote optimization service and persist it locally.
     3. **Local directory** — reads from
        ``<config_dir>/<candidate_id>/`` (or ``<config_dir>/baseline/``
        as fallback).  Defaults to ``.agent_configs/`` relative to the
@@ -78,12 +101,11 @@ def load_config(
         falls back to the ``OPTIMIZATION_LOCAL_DIR`` env var, then
         to ``.agent_configs/`` next to the main script.
     :paramtype config_dir: str | Path | None
-    :keyword candidate_id: Candidate identifier, typically from the
-        ``X-Optimization-Candidate-Id`` request header.  When provided,
-        takes precedence over the ``OPTIMIZATION_CANDIDATE_ID`` env var.
-        This enables a single deployed agent version to serve multiple
-        optimization candidates by resolving configs dynamically per
-        request.
+    :keyword candidate_id: Candidate identifier.  When ``None`` (the default),
+        the value is automatically extracted from the
+        ``X-Optimization-Candidate-Id`` request header (Flask/Quart) or
+        the ``OPTIMIZATION_CANDIDATE_ID`` env var.  Explicit values
+        take precedence over both auto-detection sources.
     :paramtype candidate_id: str | None
     :keyword required: If ``True`` (default), raise ``ValueError`` when no
         config source is found.  Set to ``False`` during initial
@@ -148,10 +170,10 @@ def _load_config_inner(
             logger.warning("Bad %s env var: %s", env_var, exc)
 
     # ── Priority 2: Candidate ID → resolver API ──────────────────────
-    # candidate_id parameter (e.g. from request header) takes precedence
-    # over the env var.
+    # Resolution: explicit param > request header > env var.
     resolved_candidate_id = (
         (candidate_id or "").strip()
+        or _get_candidate_id_from_request()
         or os.environ.get(OptimizationConfig.ENV_CANDIDATE_ID, "").strip()
     )
     endpoint = (
