@@ -156,6 +156,15 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
                 "sample_human_evaluations.py",  # Requires real Foundry App Insights connection string + emits OTel events; not suitable for recorded playback
+                "sample_multiturn_conversation_evaluation.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_multiturn_conversation_simulation.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_multiturn_trace_evaluation_agent_filter.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_multiturn_trace_evaluation_by_id.py",  # PR #47034: new multi-turn sample, recording not yet available
+                "sample_rubric_evaluator_generation_all_sources.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_generation_lifecycle.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_generation_basic.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_manual.py",  # PR #47057: recording not yet available
+                "sample_rubric_evaluator_generation_iterate.py",  # PR #47057: recording not yet available
             ],
         ),
     )

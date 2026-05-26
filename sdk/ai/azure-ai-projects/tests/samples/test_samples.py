@@ -85,6 +85,7 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents",
             samples_to_skip=[
+                "sample_external_agents_crud.py",  # Skipped until recordings are available.
                 "sample_workflow_multi_agent.py",  # No issue to run.  Just postpone recording.
                 "sample_workflow_multi_agent_with_mcp_approval.py",  # No issue to run.  Just postpone recording.
             ],
@@ -149,14 +150,32 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm()
 
+    @servicePreparer()
+    # @additionalSampleTests(
+    #     [
+    #         AdditionalSampleTestDetail(
+    #             test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
+    #             sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
+    #             env_vars={
+    #                 "POLL_INTERVAL_SECONDS": "60",
+    #             },
+    #         ),
+    #     ]
+    # )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
             "datasets",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_dataset_generation_job_simpleqna_with_prompt_source.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_traces_for_finetuning.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_simpleqna_for_finetuning.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_traces_for_evaluation.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_simpleqna_with_agent_source.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_simpleqna_with_file_source.py",  # PR #47067: recording not yet available
+            ],
         ),
     )
-    @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_datasets_samples(self, sample_path: str, **kwargs) -> None:

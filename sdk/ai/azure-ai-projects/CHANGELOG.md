@@ -1,16 +1,26 @@
 # Release History
 
-## 2.3.0 (Unreleased)
+## 2.2.0 (Unreleased)
 
 ### Features Added
 
-* New Agent tool `FabricIQPreviewTool`.
-* New Agent tool `ToolboxSearchPreviewTool`.
-* New optional string properties `description` and `name` added to Agent tools which did not have them before.
+* Support integration of external Agents (in preview). See new `ExternalAgentDefinition` class.
+* New Agent tool in preview `FabricIQPreviewTool`.
+* New Agent tool in preview `ToolboxSearchPreviewTool`.
+* New optional string properties `description` and `name` added to Agent tools classes which did not have them before.
+* New optional `tool_configs` added to Agent tool classes.
 * New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
-* New evaluator generation job operations on `.beta.evaluators`: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
-* New methods on `.beta.agents` sub-client for code-based hosted agents: `update_agent_from_code()`, `create_agent_version_from_code()`, `download_agent_version_code()`, `download_agent_code()`.
+* New `.beta.models` sub-client to handle AI model weights: `list_versions`, `list`, `get`, `delete`, `update`, `pending_create_version`, `pending_upload`, `get_credentials`.
+* New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `list_runs`, `dispatch`.
+* New methods on `.beta.evaluators` for evaluator generation jobs: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
+* New methods on `.beta.agents` for code-based hosted agents: `create_version_from_code`, `download_code`.
+* New methods on `.beta.agents` for optimization jobs: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `list_optimization_candidates`.
+* New methods on `.beta.memory_stores` to handle individual memory items:`.beta.memory_stores`: `get_memory`, `delete_memory`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
+* New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
+* New optional `blueprint_reference` parameters on `agents.create_version` method.
+* New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
+
 
 ### Breaking Changes
 
@@ -23,10 +33,11 @@ Breaking changes in beta classes:
 * Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
 * Renamed class `AgentEndpoint` to `AgentEndpointConfig`.
 * Renamed class `DeleteSkillResponse` to `DeleteSkillResult`.
-* Renamed class `PendingUploadResponse` to `PendingUploadResult`.
 * Renamed class `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
 * Renamed class `SessionFileWriteResponse` to `SessionFileWriteResult`.
 * Renamed class `SkillObject` to `SkillDetails`.
+* Renamed class `Target` to `EvaluationTarget`.
+* Renamed class `TargetConfig` to `RedTeamTargetConfig`.
 * Removed class `FabricIQPreviewToolParameters`.
 * Removed class `WorkIQPreviewToolParameters`.
 
