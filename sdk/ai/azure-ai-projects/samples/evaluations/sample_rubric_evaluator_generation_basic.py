@@ -101,8 +101,7 @@ with (
             "evaluator_name": evaluator_name,
             "evaluator_display_name": "Reservation Quality (Generated)",
             "evaluator_description": (
-                "Quality evaluator generated from a prompt describing a "
-                "restaurant reservation assistant."
+                "Quality evaluator generated from a prompt describing a " "restaurant reservation assistant."
             ),
             "sources": [
                 {
@@ -212,8 +211,7 @@ with (
                         item={
                             "query": "Book a table for 4 tomorrow at 7 PM.",
                             "response": (
-                                "Booked - table for 4 tomorrow at 7:00 PM. A confirmation "
-                                "SMS is on its way."
+                                "Booked - table for 4 tomorrow at 7:00 PM. A confirmation " "SMS is on its way."
                             ),
                         }
                     ),
