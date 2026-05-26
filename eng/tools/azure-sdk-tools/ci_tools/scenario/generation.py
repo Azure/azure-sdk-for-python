@@ -15,7 +15,7 @@ from ci_tools.functions import (
     pip_uninstall,
     get_pip_command,
 )
-from ci_tools.build import cleanup_build_artifacts, create_package
+from ci_tools.build import build_whl_locally, cleanup_build_artifacts, create_package
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import get_package_from_repo_or_folder, find_whl, get_pip_list_output, pytest
 from .managed_virtual_env import ManagedVirtualEnv
@@ -350,7 +350,7 @@ def build_whl_for_req(req: str, package_path: str, wheel_dir: Optional[str]) -> 
                     os.mkdir(temp_dir)
 
             logging.info("Building wheel for package {}".format(parsed.name))
-            create_package(req_pkg_path, temp_dir, enable_sdist=False)
+            build_whl_locally(req_pkg_path, temp_dir)
 
             whl_path = os.path.join(temp_dir, find_whl(temp_dir, parsed.name, parsed.version))
 
