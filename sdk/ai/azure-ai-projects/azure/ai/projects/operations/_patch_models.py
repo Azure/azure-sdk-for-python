@@ -14,7 +14,7 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union, overload
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
@@ -188,6 +188,44 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
                 f"azcopy exited with code {completed.returncode}.\n"
                 f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}"
             )
+
+    @overload
+    def create(
+        self,
+        *,
+        name: str,
+        version: str,
+        source: Union[str, "os.PathLike[str]"],
+        weight_type: Optional[str] = None,
+        base_model: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional["dict[str, str]"] = None,
+        azcopy_path: Optional[str] = None,
+        wait_for_commit: Literal[True] = True,
+        polling_timeout: float = 300.0,
+        polling_interval: float = 2.0,
+        **kwargs: Any,
+    ) -> ModelVersion:
+        ...
+
+    @overload
+    def create(
+        self,
+        *,
+        name: str,
+        version: str,
+        source: Union[str, "os.PathLike[str]"],
+        weight_type: Optional[str] = None,
+        base_model: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional["dict[str, str]"] = None,
+        azcopy_path: Optional[str] = None,
+        wait_for_commit: Literal[False],
+        polling_timeout: float = 300.0,
+        polling_interval: float = 2.0,
+        **kwargs: Any,
+    ) -> None:
+        ...
 
     @distributed_trace
     def create(

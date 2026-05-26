@@ -12,7 +12,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union, overload
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -154,6 +154,42 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
                 with f.open("rb") as fp:
                     await container_client.upload_blob(name=rel, data=fp, overwrite=True)
                 logger.debug("[create] uploaded %s (%d bytes)", rel, f.stat().st_size)
+
+    @overload
+    async def create(
+        self,
+        *,
+        name: str,
+        version: str,
+        source: Union[str, "os.PathLike[str]"],
+        weight_type: Optional[str] = None,
+        base_model: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional["dict[str, str]"] = None,
+        wait_for_commit: Literal[True] = True,
+        polling_timeout: float = 300.0,
+        polling_interval: float = 2.0,
+        **kwargs: Any,
+    ) -> ModelVersion:
+        ...
+
+    @overload
+    async def create(
+        self,
+        *,
+        name: str,
+        version: str,
+        source: Union[str, "os.PathLike[str]"],
+        weight_type: Optional[str] = None,
+        base_model: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional["dict[str, str]"] = None,
+        wait_for_commit: Literal[False],
+        polling_timeout: float = 300.0,
+        polling_interval: float = 2.0,
+        **kwargs: Any,
+    ) -> None:
+        ...
 
     @distributed_trace_async
     async def create(
