@@ -6,7 +6,6 @@ import uuid
 import pytest
 
 import test_config
-from azure.cosmos import CosmosClient
 
 
 @pytest.mark.cosmosEmulator
@@ -24,7 +23,9 @@ class TestRegionalRoutingContext(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
+        # Pure data-plane test: uses pre-existing single-partition container,
+        # no control-plane operations. Full AAD migration via create_data_client().
+        cls.client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_database.get_container_client(cls.TEST_CONTAINER_ID)
 
