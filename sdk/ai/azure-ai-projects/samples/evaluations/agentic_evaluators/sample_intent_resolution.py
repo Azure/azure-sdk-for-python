@@ -69,12 +69,21 @@ def main() -> None:
         )
 
         testing_criteria = [
+<<<<<<< HEAD
             TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
                 name="intent_resolution",
                 evaluator_name="builtin.intent_resolution",
                 initialization_parameters={"deployment_name": f"{model_deployment_name}"},
                 data_mapping={
+=======
+            {
+                "type": "azure_ai_evaluator",
+                "name": "intent_resolution",
+                "evaluator_name": "builtin.intent_resolution",
+                "initialization_parameters": {"model": f"{model_deployment_name}"},
+                "data_mapping": {
+>>>>>>> 9039617475e21ccf8fca87827ac19743c066a011
                     "query": "{{item.query}}",
                     "response": "{{item.response}}",
                     "tool_definitions": "{{item.tool_definitions}}",
