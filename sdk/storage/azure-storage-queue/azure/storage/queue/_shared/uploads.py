@@ -112,7 +112,12 @@ def upload_substream_blocks(
                 executor.submit(with_current_context(uploader.process_substream_block), u)
                 for u in islice(upload_tasks, 0, max_concurrency)
             ]
-            range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
+            range_ids = _parallel_uploads(
+                executor,
+                uploader.process_substream_block,
+                upload_tasks,
+                running_futures,
+            )
     else:
         range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
     if any(range_ids):
@@ -165,7 +170,10 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             # Buffer until we either reach the end of the stream or get a whole chunk.
             while True:
                 if self.total_size:
-                    read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
+                    read_size = min(
+                        self.chunk_size - len(data),
+                        self.total_size - (index + len(data)),
+                    )
                 temp = self.stream.read(read_size)
                 if not isinstance(temp, bytes):
                     raise TypeError("Blob data should be of type bytes.")
