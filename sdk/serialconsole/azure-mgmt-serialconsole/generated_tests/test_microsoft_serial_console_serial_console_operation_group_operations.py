@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestMicrosoftSerialConsole(AzureMgmtRecordedTestCase):
+class TestMicrosoftSerialConsoleSerialConsoleOperationGroupOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(MicrosoftSerialConsoleClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_console_status(self, resource_group):
-        response = self.client.get_console_status(
+    def test_serial_console_operation_group_disable_console(self, resource_group):
+        response = self.client.serial_console_operation_group.disable_console(
             default="str",
         )
 
@@ -30,8 +30,10 @@ class TestMicrosoftSerialConsole(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_operations(self, resource_group):
-        response = self.client.list_operations()
+    def test_serial_console_operation_group_enable_console(self, resource_group):
+        response = self.client.serial_console_operation_group.enable_console(
+            default="str",
+        )
 
         # please add some check logic here by yourself
         # ...
