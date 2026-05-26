@@ -12,15 +12,16 @@
   - Model `SapMonitor` added property `system_data`
   - Model `TrackedResource` added property `system_data`
   - Added enum `CreatedByType`
-  - Added model `ProviderInstanceProperties`
   - Added model `SystemData`
 
 ### Breaking Changes
 
-  - Model `ProviderInstance` deleted or renamed its instance variable `type_properties_type`
-  - Model `ProviderInstance` deleted or renamed its instance variable `metadata`
-  - Model `ProviderInstance` deleted or renamed its instance variable `provisioning_state`
-  - Deleted or renamed model `OperationList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ProviderInstance` moved instance variable `type_properties_type`, `metadata` and `provisioning_state` under property `properties` whose type is `ProviderInstanceProperties`
+
+### Other Changes
+
+  - Deleted model `OperationList` which actually was not used by SDK users
 
 ## 1.0.1 (2026-05-15)
 
