@@ -1730,40 +1730,22 @@ class PolicyLogInfo(_serialization.Model):
     :vartype policy_definition_reference_id: str
     :ivar policy_set_definition_name: The policy set definition name.
     :vartype policy_set_definition_name: str
-    :ivar policy_set_definition_display_name: The policy set definition display name.
-    :vartype policy_set_definition_display_name: str
     :ivar policy_set_definition_version: The policy set definition version.
     :vartype policy_set_definition_version: str
-    :ivar policy_set_definition_category: The policy set definition category.
-    :vartype policy_set_definition_category: str
     :ivar policy_definition_name: The policy definition name.
     :vartype policy_definition_name: str
-    :ivar policy_definition_display_name: The policy definition display name.
-    :vartype policy_definition_display_name: str
     :ivar policy_definition_version: The policy definition version.
     :vartype policy_definition_version: str
     :ivar policy_definition_effect: The policy definition action.
     :vartype policy_definition_effect: str
-    :ivar policy_definition_group_names: An array of policy definition group names.
-    :vartype policy_definition_group_names: list[str]
     :ivar policy_assignment_id: The policy assignment Id.
     :vartype policy_assignment_id: str
     :ivar policy_assignment_name: The policy assignment name.
     :vartype policy_assignment_name: str
-    :ivar policy_assignment_display_name: The policy assignment display name.
-    :vartype policy_assignment_display_name: str
     :ivar policy_assignment_version: The policy assignment version.
     :vartype policy_assignment_version: str
     :ivar policy_assignment_scope: The policy assignment scope.
     :vartype policy_assignment_scope: str
-    :ivar resource_location: The resource location.
-    :vartype resource_location: str
-    :ivar ancestors: The management group ancestors.
-    :vartype ancestors: str
-    :ivar compliance_reason_code: The policy compliance reason code.
-    :vartype compliance_reason_code: str
-    :ivar policy_exemption_ids: An array of policy exemption Ids.
-    :vartype policy_exemption_ids: list[str]
     """
 
     _attribute_map = {
@@ -1771,23 +1753,14 @@ class PolicyLogInfo(_serialization.Model):
         "policy_set_definition_id": {"key": "policySetDefinitionId", "type": "str"},
         "policy_definition_reference_id": {"key": "policyDefinitionReferenceId", "type": "str"},
         "policy_set_definition_name": {"key": "policySetDefinitionName", "type": "str"},
-        "policy_set_definition_display_name": {"key": "policySetDefinitionDisplayName", "type": "str"},
         "policy_set_definition_version": {"key": "policySetDefinitionVersion", "type": "str"},
-        "policy_set_definition_category": {"key": "policySetDefinitionCategory", "type": "str"},
         "policy_definition_name": {"key": "policyDefinitionName", "type": "str"},
-        "policy_definition_display_name": {"key": "policyDefinitionDisplayName", "type": "str"},
         "policy_definition_version": {"key": "policyDefinitionVersion", "type": "str"},
         "policy_definition_effect": {"key": "policyDefinitionEffect", "type": "str"},
-        "policy_definition_group_names": {"key": "policyDefinitionGroupNames", "type": "[str]"},
         "policy_assignment_id": {"key": "policyAssignmentId", "type": "str"},
         "policy_assignment_name": {"key": "policyAssignmentName", "type": "str"},
-        "policy_assignment_display_name": {"key": "policyAssignmentDisplayName", "type": "str"},
         "policy_assignment_version": {"key": "policyAssignmentVersion", "type": "str"},
         "policy_assignment_scope": {"key": "policyAssignmentScope", "type": "str"},
-        "resource_location": {"key": "resourceLocation", "type": "str"},
-        "ancestors": {"key": "ancestors", "type": "str"},
-        "compliance_reason_code": {"key": "complianceReasonCode", "type": "str"},
-        "policy_exemption_ids": {"key": "policyExemptionIds", "type": "[str]"},
     }
 
     def __init__(
@@ -1797,23 +1770,14 @@ class PolicyLogInfo(_serialization.Model):
         policy_set_definition_id: Optional[str] = None,
         policy_definition_reference_id: Optional[str] = None,
         policy_set_definition_name: Optional[str] = None,
-        policy_set_definition_display_name: Optional[str] = None,
         policy_set_definition_version: Optional[str] = None,
-        policy_set_definition_category: Optional[str] = None,
         policy_definition_name: Optional[str] = None,
-        policy_definition_display_name: Optional[str] = None,
         policy_definition_version: Optional[str] = None,
         policy_definition_effect: Optional[str] = None,
-        policy_definition_group_names: Optional[list[str]] = None,
         policy_assignment_id: Optional[str] = None,
         policy_assignment_name: Optional[str] = None,
-        policy_assignment_display_name: Optional[str] = None,
         policy_assignment_version: Optional[str] = None,
         policy_assignment_scope: Optional[str] = None,
-        resource_location: Optional[str] = None,
-        ancestors: Optional[str] = None,
-        compliance_reason_code: Optional[str] = None,
-        policy_exemption_ids: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1825,63 +1789,36 @@ class PolicyLogInfo(_serialization.Model):
         :paramtype policy_definition_reference_id: str
         :keyword policy_set_definition_name: The policy set definition name.
         :paramtype policy_set_definition_name: str
-        :keyword policy_set_definition_display_name: The policy set definition display name.
-        :paramtype policy_set_definition_display_name: str
         :keyword policy_set_definition_version: The policy set definition version.
         :paramtype policy_set_definition_version: str
-        :keyword policy_set_definition_category: The policy set definition category.
-        :paramtype policy_set_definition_category: str
         :keyword policy_definition_name: The policy definition name.
         :paramtype policy_definition_name: str
-        :keyword policy_definition_display_name: The policy definition display name.
-        :paramtype policy_definition_display_name: str
         :keyword policy_definition_version: The policy definition version.
         :paramtype policy_definition_version: str
         :keyword policy_definition_effect: The policy definition action.
         :paramtype policy_definition_effect: str
-        :keyword policy_definition_group_names: An array of policy definition group names.
-        :paramtype policy_definition_group_names: list[str]
         :keyword policy_assignment_id: The policy assignment Id.
         :paramtype policy_assignment_id: str
         :keyword policy_assignment_name: The policy assignment name.
         :paramtype policy_assignment_name: str
-        :keyword policy_assignment_display_name: The policy assignment display name.
-        :paramtype policy_assignment_display_name: str
         :keyword policy_assignment_version: The policy assignment version.
         :paramtype policy_assignment_version: str
         :keyword policy_assignment_scope: The policy assignment scope.
         :paramtype policy_assignment_scope: str
-        :keyword resource_location: The resource location.
-        :paramtype resource_location: str
-        :keyword ancestors: The management group ancestors.
-        :paramtype ancestors: str
-        :keyword compliance_reason_code: The policy compliance reason code.
-        :paramtype compliance_reason_code: str
-        :keyword policy_exemption_ids: An array of policy exemption Ids.
-        :paramtype policy_exemption_ids: list[str]
         """
         super().__init__(**kwargs)
         self.policy_definition_id = policy_definition_id
         self.policy_set_definition_id = policy_set_definition_id
         self.policy_definition_reference_id = policy_definition_reference_id
         self.policy_set_definition_name = policy_set_definition_name
-        self.policy_set_definition_display_name = policy_set_definition_display_name
         self.policy_set_definition_version = policy_set_definition_version
-        self.policy_set_definition_category = policy_set_definition_category
         self.policy_definition_name = policy_definition_name
-        self.policy_definition_display_name = policy_definition_display_name
         self.policy_definition_version = policy_definition_version
         self.policy_definition_effect = policy_definition_effect
-        self.policy_definition_group_names = policy_definition_group_names
         self.policy_assignment_id = policy_assignment_id
         self.policy_assignment_name = policy_assignment_name
-        self.policy_assignment_display_name = policy_assignment_display_name
         self.policy_assignment_version = policy_assignment_version
         self.policy_assignment_scope = policy_assignment_scope
-        self.resource_location = resource_location
-        self.ancestors = ancestors
-        self.compliance_reason_code = compliance_reason_code
-        self.policy_exemption_ids = policy_exemption_ids
 
 
 class PolicySetDefinition(ProxyResource):

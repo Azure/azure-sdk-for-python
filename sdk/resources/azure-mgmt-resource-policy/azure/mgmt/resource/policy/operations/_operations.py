@@ -54,7 +54,7 @@ def build_policy_assignments_get_request(
     path_format_arguments = {
         "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
         "policyAssignmentName": _SERIALIZER.url(
-            "policy_assignment_name", policy_assignment_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_assignment_name", policy_assignment_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -86,7 +86,7 @@ def build_policy_assignments_create_request(scope: str, policy_assignment_name: 
     path_format_arguments = {
         "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
         "policyAssignmentName": _SERIALIZER.url(
-            "policy_assignment_name", policy_assignment_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_assignment_name", policy_assignment_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -118,7 +118,7 @@ def build_policy_assignments_update_request(scope: str, policy_assignment_name: 
     path_format_arguments = {
         "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
         "policyAssignmentName": _SERIALIZER.url(
-            "policy_assignment_name", policy_assignment_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_assignment_name", policy_assignment_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -149,7 +149,7 @@ def build_policy_assignments_delete_request(scope: str, policy_assignment_name: 
     path_format_arguments = {
         "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
         "policyAssignmentName": _SERIALIZER.url(
-            "policy_assignment_name", policy_assignment_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_assignment_name", policy_assignment_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -487,7 +487,7 @@ def build_policy_definition_versions_list_built_in_request(  # pylint: disable=n
     )
     path_format_arguments = {
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -520,7 +520,7 @@ def build_policy_definition_versions_get_built_in_request(  # pylint: disable=na
     )
     path_format_arguments = {
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -588,7 +588,7 @@ def build_policy_definition_versions_list_by_management_group_request(  # pylint
             "management_group_name", management_group_name, "str", max_length=90, min_length=1
         ),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -624,7 +624,7 @@ def build_policy_definition_versions_get_at_management_group_request(  # pylint:
             "management_group_name", management_group_name, "str", max_length=90, min_length=1
         ),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -662,7 +662,7 @@ def build_policy_definition_versions_create_or_update_at_management_group_reques
             "management_group_name", management_group_name, "str", max_length=90, min_length=1
         ),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -701,7 +701,7 @@ def build_policy_definition_versions_delete_at_management_group_request(  # pyli
             "management_group_name", management_group_name, "str", max_length=90, min_length=1
         ),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -764,7 +764,7 @@ def build_policy_definition_versions_list_request(  # pylint: disable=name-too-l
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -798,7 +798,7 @@ def build_policy_definition_versions_get_request(  # pylint: disable=name-too-lo
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -834,7 +834,7 @@ def build_policy_definition_versions_create_or_update_request(  # pylint: disabl
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -871,7 +871,7 @@ def build_policy_definition_versions_delete_request(  # pylint: disable=name-too
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -925,10 +925,7 @@ def build_policy_set_definition_versions_list_built_in_request(  # pylint: disab
     )
     path_format_arguments = {
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -963,10 +960,7 @@ def build_policy_set_definition_versions_get_built_in_request(  # pylint: disabl
     )
     path_format_arguments = {
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -1041,10 +1035,7 @@ def build_policy_set_definition_versions_list_by_management_group_request(  # py
             "management_group_name", management_group_name, "str", max_length=90, min_length=1
         ),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1087,10 +1078,7 @@ def build_policy_set_definition_versions_get_at_management_group_request(  # pyl
             "management_group_name", management_group_name, "str", max_length=90, min_length=1
         ),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -1130,10 +1118,7 @@ def build_policy_set_definition_versions_create_or_update_at_management_group_re
             "management_group_name", management_group_name, "str", max_length=90, min_length=1
         ),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -1172,10 +1157,7 @@ def build_policy_set_definition_versions_delete_at_management_group_request(  # 
             "management_group_name", management_group_name, "str", max_length=90, min_length=1
         ),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -1244,10 +1226,7 @@ def build_policy_set_definition_versions_list_request(  # pylint: disable=name-t
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1288,10 +1267,7 @@ def build_policy_set_definition_versions_get_request(  # pylint: disable=name-to
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -1329,10 +1305,7 @@ def build_policy_set_definition_versions_create_or_update_request(  # pylint: di
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -1369,10 +1342,7 @@ def build_policy_set_definition_versions_delete_request(  # pylint: disable=name
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
         "policyDefinitionVersion": _SERIALIZER.url(
             "policy_definition_version", policy_definition_version, "str", pattern=r"^\d+\.\d+\.\d+$"
@@ -1428,7 +1398,7 @@ def build_policy_definitions_get_built_in_request(  # pylint: disable=name-too-l
     _url = kwargs.pop("template_url", "/providers/Microsoft.Authorization/policyDefinitions/{policyDefinitionName}")
     path_format_arguments = {
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1493,7 +1463,7 @@ def build_policy_definitions_get_at_management_group_request(  # pylint: disable
     path_format_arguments = {
         "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1526,7 +1496,7 @@ def build_policy_definitions_create_or_update_at_management_group_request(  # py
     path_format_arguments = {
         "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1560,7 +1530,7 @@ def build_policy_definitions_delete_at_management_group_request(  # pylint: disa
     path_format_arguments = {
         "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1624,7 +1594,7 @@ def build_policy_definitions_get_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1657,7 +1627,7 @@ def build_policy_definitions_create_or_update_request(  # pylint: disable=name-t
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1691,7 +1661,7 @@ def build_policy_definitions_delete_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyDefinitionName": _SERIALIZER.url(
-            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$"
+            "policy_definition_name", policy_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1748,10 +1718,7 @@ def build_policy_set_definitions_get_built_in_request(  # pylint: disable=name-t
     )
     path_format_arguments = {
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1825,10 +1792,7 @@ def build_policy_set_definitions_get_at_management_group_request(  # pylint: dis
     path_format_arguments = {
         "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1863,10 +1827,7 @@ def build_policy_set_definitions_create_or_update_at_management_group_request(  
     path_format_arguments = {
         "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1900,10 +1861,7 @@ def build_policy_set_definitions_delete_at_management_group_request(  # pylint: 
     path_format_arguments = {
         "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -1974,10 +1932,7 @@ def build_policy_set_definitions_get_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -2012,10 +1967,7 @@ def build_policy_set_definitions_create_or_update_request(  # pylint: disable=na
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
@@ -2049,10 +2001,7 @@ def build_policy_set_definitions_delete_request(  # pylint: disable=name-too-lon
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policySetDefinitionName": _SERIALIZER.url(
-            "policy_set_definition_name",
-            policy_set_definition_name,
-            "str",
-            pattern=r"^[^<>*%&:\?.+/]*[^<>*%&:\?.+/ ]+$",
+            "policy_set_definition_name", policy_set_definition_name, "str", pattern=r"^[^<>%&:\?/]*[^<>%&:\?/ ]+$"
         ),
     }
 
