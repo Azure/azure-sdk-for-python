@@ -11,13 +11,9 @@
   - Client `DataBoxEdgeManagementClient` added operation group `support_packages`
   - Client `DataBoxEdgeManagementClient` added operation group `device_capacity_info`
   - Model `DataBoxEdgeDeviceExtendedInfo` added property `system_data`
-  - Model `DataBoxEdgeDevicePatch` added property `properties`
-  - Model `EdgeProfileSubscription` added property `properties`
-  - Model `FileEventTrigger` added property `properties`
   - Model `Job` added property `system_data`
   - Model `LoadBalancerConfig` added property `ip_range`
   - Model `Order` added property `kind`
-  - Model `PeriodicTimerEventTrigger` added property `properties`
   - Enum `SkuName` added member `EDGE_MR_TCP`
   - Enum `SkuName` added member `EP2_128_GPU1_MX1_W`
   - Enum `SkuName` added member `EP2_256_GPU2_MX1`
@@ -31,8 +27,6 @@
   - Added model `ClusterMemoryCapacity`
   - Added model `ClusterStorageViewData`
   - Added enum `ClusterWitnessType`
-  - Added model `DCAccessCodeProperties`
-  - Added model `DataBoxEdgeDevicePropertiesPatch`
   - Added model `DataResidency`
   - Added enum `DataResidencyType`
   - Added model `DeviceCapacityInfo`
@@ -42,73 +36,44 @@
   - Added model `DiagnosticProactiveLogCollectionSettings`
   - Added model `DiagnosticRemoteSupportSettings`
   - Added model `DiagnosticRemoteSupportSettingsProperties`
-  - Added model `FileTriggerProperties`
   - Added model `HostCapacity`
   - Added enum `InstallationImpact`
   - Added model `NumaNodeData`
-  - Added model `PeriodicTimerProperties`
   - Added enum `ProactiveDiagnosticsConsent`
   - Added model `ProactiveLogCollectionSettingsProperties`
   - Added model `ProxyResource`
-  - Added model `RawCertificateData`
   - Added enum `RemoteApplicationType`
   - Added model `RemoteSupportSettings`
   - Added model `Resource`
-  - Added model `SubscriptionProperties`
   - Added model `SupportPackageRequestProperties`
   - Added model `TrackedResource`
   - Added model `TriggerSupportPackageRequest`
   - Added model `VmMemory`
   - Added model `VmPlacementRequestResult`
-  - Model `DevicesOperations` added method `create_or_update`
-  - Model `UsersOperations` added parameter `filter` in method `list_by_data_box_edge_device`
-  - Added model `DeviceCapacityCheckOperations`
-  - Added model `DeviceCapacityInfoOperations`
-  - Added model `DiagnosticSettingsOperations`
-  - Added model `SupportPackagesOperations`
+  - Operation group `DevicesOperations` added method `create_or_update`
+  - Added operation group `DeviceCapacityCheckOperations`
+  - Added operation group `DeviceCapacityInfoOperations`
+  - Added operation group `DiagnosticSettingsOperations`
+  - Added operation group `SupportPackagesOperations`
 
 ### Breaking Changes
 
-  - Model `DCAccessCode` deleted or renamed its instance variable `auth_code`
-  - Model `DataBoxEdgeDevicePatch` deleted or renamed its instance variable `edge_profile`
-  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `tenant_id`
-  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `location_placement_id`
-  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `quota_id`
-  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `serialized_details`
-  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `registered_features`
-  - Model `FileEventTrigger` deleted or renamed its instance variable `source_info`
-  - Model `FileEventTrigger` deleted or renamed its instance variable `sink_info`
-  - Model `FileEventTrigger` deleted or renamed its instance variable `custom_context_tag`
-  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `source_info`
-  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `sink_info`
-  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `custom_context_tag`
-  - Model `UploadCertificateRequest` deleted or renamed its instance variable `authentication_type`
-  - Model `UploadCertificateRequest` deleted or renamed its instance variable `certificate`
-  - Deleted or renamed model `AddonList`
-  - Deleted or renamed model `AlertList`
-  - Deleted or renamed model `BandwidthSchedulesList`
-  - Deleted or renamed model `ContainerList`
-  - Deleted or renamed model `DataBoxEdgeDeviceList`
-  - Deleted or renamed model `DataBoxEdgeMoveRequest`
-  - Deleted or renamed model `DataBoxEdgeSkuList`
-  - Deleted or renamed model `MonitoringMetricConfigurationList`
-  - Deleted or renamed model `NodeList`
-  - Deleted or renamed model `OperationsList`
-  - Deleted or renamed model `OrderList`
-  - Deleted or renamed model `ResourceTypeSku`
-  - Deleted or renamed model `RoleList`
-  - Deleted or renamed model `ShareList`
-  - Deleted or renamed model `SkuInformation`
-  - Deleted or renamed model `SkuInformationList`
-  - Deleted or renamed model `StorageAccountCredentialList`
-  - Deleted or renamed model `StorageAccountList`
-  - Deleted or renamed model `TriggerList`
-  - Deleted or renamed model `UserList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `DCAccessCode` moved instance variable `auth_code` under property `properties` whose type is `DCAccessCodeProperties`
+  - Model `DataBoxEdgeDevicePatch` moved instance variable `edge_profile` under property `properties` whose type is `DataBoxEdgeDevicePropertiesPatch`
+  - Model `EdgeProfileSubscription` moved instance variable `tenant_id`, `location_placement_id`, `quota_id`, `serialized_details` and `registered_features` under property `properties` whose type is `SubscriptionProperties`
+  - Model `FileEventTrigger` moved instance variable `source_info`, `sink_info` and `custom_context_tag` under property `properties` whose type is `FileTriggerProperties`
+  - Model `PeriodicTimerEventTrigger` moved instance variable `source_info`, `sink_info` and `custom_context_tag` under property `properties` whose type is `PeriodicTimerProperties`
+  - Model `UploadCertificateRequest` moved instance variable `authentication_type` and `certificate` under property `properties` whose type is `RawCertificateData`
   - Method `DevicesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `DevicesOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Deleted or renamed method `DevicesOperations.begin_create_or_update`
-  - Method `UsersOperations.list_by_data_box_edge_device` deleted or renamed its parameter `expand` of kind `positional_or_keyword`
-  - Method `UsersOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'expand', 'kwargs']` to `['self', 'device_name', 'resource_group_name', 'filter', 'kwargs']`
+  - Method `UsersOperations.list_by_data_box_edge_device` renamed its parameter `expand` to `filter`
+
+### Other Changes
+
+  - Deleted model `AddonList`/`AlertList`/`BandwidthSchedulesList`/`ContainerList`/`DataBoxEdgeDeviceList`/`DataBoxEdgeSkuList`/`MonitoringMetricConfigurationList`/`NodeList`/`OperationsList`/`OrderList`/`RoleList`/`ShareList`/`SkuInformationList`/`StorageAccountCredentialList`/`StorageAccountList`/`TriggerList`/`UserList` which actually were not used by SDK users
+  - Deleted model `DataBoxEdgeMoveRequest`/`ResourceTypeSku`/`SkuInformation` which actually were not used by SDK users
 
 ## 3.0.0b1 (2025-08-06)
 
