@@ -321,7 +321,7 @@ def _reformat_tool_calls_results(response, logger=None):
             if logger:
                 logger.warning(
                     f"Empty agent response extracted, likely due to input schema change. "
-                    f"Falling back to using the original response: {response}"
+                    f"Falling back to using the original response"
                 )
             return response
         return "\n".join(agent_response)
@@ -331,7 +331,7 @@ def _reformat_tool_calls_results(response, logger=None):
         # This is a fallback to ensure that the evaluation can still proceed.
         # See comments on reformat_conversation_history for more details.
         if logger:
-            logger.warning(f"Agent response could not be parsed, falling back to original response: {response}")
+            logger.warning(f"Agent response could not be parsed, falling back to original response")
         return response
 
 
