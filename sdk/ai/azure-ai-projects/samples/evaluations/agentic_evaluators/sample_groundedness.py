@@ -75,12 +75,21 @@ def main() -> None:  # pylint: disable=too-many-locals
         )
 
         testing_criteria = [
+<<<<<<< HEAD
             TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
                 name="groundedness",
                 evaluator_name="builtin.groundedness",
                 initialization_parameters={"deployment_name": f"{model_deployment_name}"},
                 data_mapping={
+=======
+            {
+                "type": "azure_ai_evaluator",
+                "name": "groundedness",
+                "evaluator_name": "builtin.groundedness",
+                "initialization_parameters": {"model": f"{model_deployment_name}"},
+                "data_mapping": {
+>>>>>>> 9039617475e21ccf8fca87827ac19743c066a011
                     "context": "{{item.context}}",
                     "query": "{{item.query}}",
                     "response": "{{item.response}}",
