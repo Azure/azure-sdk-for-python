@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2021-12-01-preview",
+  "apiVersions": {
+    "Microsoft.Education": "2021-12-01-preview"
+  },
+  "commit": "d0beff06ece5e53277d93233b70d46b703346576",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/education/resource-manager/Microsoft.Education/Education",
+  "emitterVersion": "0.62.1"
+}
