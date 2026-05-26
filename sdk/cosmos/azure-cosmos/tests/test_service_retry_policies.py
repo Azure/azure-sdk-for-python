@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
 import uuid
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import pytest
@@ -12,6 +13,8 @@ from azure.cosmos import (CosmosClient, _retry_utility, DatabaseAccount, _global
                           _location_cache)
 from azure.cosmos._location_cache import RegionalRoutingContext
 from azure.cosmos._request_object import RequestObject
+from azure.cosmos.documents import _OperationType
+from azure.cosmos.http_constants import HttpHeaders
 
 
 @pytest.mark.cosmosEmulator
@@ -317,3 +320,33 @@ class TestServiceRetryPolicies(unittest.TestCase):
         db_acc._EnableMultipleWritableLocations = multi_write
         db_acc.ConsistencyPolicy = {"defaultConsistencyLevel": "Session"}
         return db_acc
+
+
+@pytest.mark.cosmosEmulator
+class TestServiceRetryPolicyHelpers(unittest.TestCase):
+    def test_is_read_retryable_request_uses_operation_type_fallback(self):
+        request = SimpleNamespace(headers={})
+        request_params = SimpleNamespace(operation_type=_OperationType.Read)
+        assert _retry_utility._is_read_retryable_request(request, request_params) is True
+
+    def test_is_read_retryable_request_write_without_header_is_not_retryable(self):
+        request = SimpleNamespace(headers={})
+        request_params = SimpleNamespace(operation_type=_OperationType.Create)
+        assert _retry_utility._is_read_retryable_request(request, request_params) is False
+
+    def test_is_read_retryable_request_matches_thin_client_header(self):
+        # Thin-client proxy sets the operation type as a request header; the
+        # helper must recognise reads from that header even when request_params
+        # is not threaded through (older call paths).
+        request = SimpleNamespace(
+            headers={HttpHeaders.ThinClientProxyOperationType: _OperationType.Read}
+        )
+        assert _retry_utility._is_read_retryable_request(request, None) is True
+
+    def test_is_read_retryable_request_with_no_request_uses_params_only(self):
+        # ConnectionRetryPolicy.send pops request_params from context options;
+        # confirm the helper still classifies correctly when only request_params
+        # is available (request is None).
+        request_params = SimpleNamespace(operation_type=_OperationType.Read)
+        assert _retry_utility._is_read_retryable_request(None, request_params) is True
+

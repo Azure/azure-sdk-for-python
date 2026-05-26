@@ -28,11 +28,7 @@ import logging
 from typing import Dict, Any, Optional, List, TYPE_CHECKING
 from azure.core.utils import CaseInsensitiveDict
 from .. import _base, http_constants
-from .collection_routing_map import (
-    CollectionRoutingMap,
-    _OverlapDetected,
-    _GapDetected,
-)
+from .collection_routing_map import CollectionRoutingMap
 from ..exceptions import CosmosHttpResponseError
 from ._routing_map_provider_common import (
     _resolve_endpoint,
@@ -42,6 +38,8 @@ from ._routing_map_provider_common import (
     determine_refresh_action,
     get_smart_overlapping_ranges,
     _IncrementalMergeFailed,
+    _OverlapDetected,
+    _GapDetected,
     _handle_transient_snapshot_retry_decision,
 )
 
