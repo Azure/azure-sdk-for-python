@@ -1370,6 +1370,206 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn(inflight_key, provider._inflight_fetches,
                          "Successful fetch should free the in-flight slot")
 
+    async def test_cold_cache_caller_joins_incremental_refresh_in_flight_async(self):
+        """A cold-cache caller should join an in-flight incremental refresh.
+
+        Symmetric counterpart to
+        ``test_force_refresh_caller_joins_cold_cache_fetch_async``: there the
+        first caller drove a full load and a force-refresh caller joined. Here
+        the first caller drives an *incremental* refresh and a cold-cache
+        caller (no force_refresh, no previous_routing_map) joins. The
+        in-flight key is per-collection — not per-refresh-mode — so callers
+        of either shape must coalesce onto the single task.
+        """
+        original_ranges = self.partition_key_ranges
+        # Mock a topology delta so we can tell the incremental refresh result
+        # apart from the initial-load result: range '0' split into '5' + '6'.
+        split_ranges = [
+            {'id': '5', 'minInclusive': '', 'maxExclusive': '05C1B9CD673398', 'parents': ['0']},
+            {'id': '6', 'minInclusive': '05C1B9CD673398', 'maxExclusive': '05C1C9CD673398', 'parents': ['0']},
+        ]
+        fetch_gate = asyncio.Event()
+        call_count = {'count': 0}
+        seen_headers: list = []
+
+        class TopologyChangingClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                attempt = call_count['count']
+                seen_headers.append(dict(kwargs.get('headers', {})))
+
+                async def _gen():
+                    if attempt == 1:
+                        # Initial load — no gate, returns immediately so the
+                        # cache is warm for the incremental scenario below.
+                        TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"warm-etag"')
+                        for r in original_ranges:
+                            yield r
+                        return
+                    # Second call is the incremental refresh — park on the
+                    # gate so we can land caller B while it is in flight.
+                    await fetch_gate.wait()
+                    TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"incremental-etag"')
+                    for r in split_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(TopologyChangingClient())
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        # === Step 1: warm the cache so an incremental refresh is possible.
+        warm_map = await provider.get_routing_map(collection_link, feed_options={})
+        self.assertEqual(call_count['count'], 1)
+        self.assertIs(
+            provider._collection_routing_map_by_item.get(collection_id),  # pylint: disable=protected-access
+            warm_map,
+        )
+
+        # === Step 2: caller A starts an incremental refresh. With
+        # ``force_refresh=True`` and ``previous_routing_map`` matching the
+        # cached map's ETag, ``determine_refresh_action`` returns the
+        # cached map as the base — i.e. an incremental fetch, not a full load.
+        caller_a = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link, feed_options={},
+                force_refresh=True, previous_routing_map=warm_map,
+            )
+        )
+        # Poll until A has registered the in-flight task. Polling (vs.
+        # ``await asyncio.sleep(0)``) protects against future ``await``s
+        # being added on the registration path.
+        for _ in range(100):
+            if provider._inflight_fetches:  # pylint: disable=protected-access
+                break
+            await asyncio.sleep(0.01)
+        self.assertTrue(
+            provider._inflight_fetches,  # pylint: disable=protected-access
+            "Incremental-refresh caller should register an in-flight task",
+        )
+
+        # === Step 3: empty the cache while the incremental refresh is gated.
+        # This forces caller B onto the slow path so it actually tries to join
+        # the in-flight task instead of short-circuiting on the fast path.
+        # ``clear_cache`` uses in-place ``.clear()`` so the dict identity is
+        # preserved and caller A's task can still publish into it.
+        provider.clear_cache()
+        self.assertIsNone(
+            provider._collection_routing_map_by_item.get(collection_id),  # pylint: disable=protected-access
+        )
+
+        # === Step 4: caller B arrives cold (no args). Cache is empty, so the
+        # fast path misses; B enters ``_register_or_join_inflight_fetch``,
+        # finds A's incremental task already there, and joins it.
+        caller_b = asyncio.create_task(
+            provider.get_routing_map(collection_link, feed_options={})
+        )
+        # Yield so B can reach the join site before the gate opens.
+        await asyncio.sleep(0.01)
+
+        # === Step 5: release the gate. A's incremental task completes and
+        # both callers wake up with the merged routing map.
+        fetch_gate.set()
+        result_a, result_b = await asyncio.gather(caller_a, caller_b)
+
+        # === Step 6: contract checks.
+        # Exactly two fetches total: the warm-up (call 1) and the shared
+        # incremental refresh (call 2). B did NOT trigger a third.
+        self.assertEqual(
+            call_count['count'], 2,
+            "Cold-cache caller must join the incremental task, not start a new fetch",
+        )
+        self.assertIsNotNone(result_a)
+        self.assertIs(
+            result_a, result_b,
+            "Both callers should receive the same routing map object",
+        )
+        # The post-split map has 6 ranges (original 5 minus '0' plus '5' + '6').
+        self.assertEqual(len(list(result_a._orderedPartitionKeyRanges)), 6)  # pylint: disable=protected-access
+        # The in-flight task ran in incremental mode — confirmed by the
+        # ``If-None-Match`` header on the second request, which
+        # ``prepare_fetch_options_and_headers`` sets only when a previous
+        # routing map is supplied.
+        self.assertIn(http_constants.HttpHeaders.IfNoneMatch, seen_headers[1])
+        self.assertEqual(
+            seen_headers[1][http_constants.HttpHeaders.IfNoneMatch],
+            warm_map.change_feed_etag,
+        )
+
+    async def test_stale_completed_task_in_inflight_dict_is_dropped_async(self):
+        """A stale completed task in the in-flight dict must be dropped, not awaited.
+
+        The ``finally`` block in ``_fetch_and_publish`` pops the slot before
+        the task transitions to ``done``, so under normal scheduling no
+        completed task is ever observable in ``_inflight_fetches``. The one
+        realistic way an orphan ends up there is a previous event loop being
+        closed mid-fetch whose ``id()`` is then reused by the current loop.
+        ``_register_or_join_inflight_fetch`` defensively drops any such
+        ``done`` entry and starts a fresh fetch on the live loop.
+
+        This test injects a completed task directly into the dict to exercise
+        that drop path — there's no other way to reach it because the
+        ``finally`` would have evicted any real task before it could be seen
+        as ``done``.
+        """
+        original_ranges = self.partition_key_ranges
+        call_count = {'count': 0}
+
+        class CountingClient:
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count['count'] += 1
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"fresh-etag"')
+
+                async def _gen():
+                    for r in original_ranges:
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(CountingClient())
+        collection_link = "dbs/db/colls/container"
+        collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
+        inflight_key = (id(asyncio.get_running_loop()), collection_id)
+
+        # === Step 1: inject an orphan completed task into the in-flight slot
+        # to simulate the loop-id-reuse edge case. Returning a sentinel
+        # routing map (not ``None``) makes the test fail loudly if the drop
+        # path is silently skipped — the caller would observe this sentinel
+        # rather than the real ranges.
+        stale_sentinel = MagicMock(name="stale-routing-map")
+
+        async def _stale_coro():
+            return stale_sentinel
+
+        stale_task = asyncio.create_task(_stale_coro())
+        await stale_task
+        self.assertTrue(stale_task.done(), "Stale task must be done before injection")
+        provider._inflight_fetches[inflight_key] = stale_task  # pylint: disable=protected-access
+
+        # === Step 2: a fresh caller arrives. ``_register_or_join_inflight_fetch``
+        # must (a) not return the stale ``done`` task, (b) evict it from the
+        # dict, and (c) schedule a brand-new fetch on the live loop.
+        result = await provider.get_routing_map(collection_link, feed_options={})
+
+        # === Step 3: contract checks.
+        # A real network round trip happened — proof the stale task was
+        # dropped rather than awaited.
+        self.assertEqual(call_count['count'], 1,
+                         "Stale completed task must trigger a fresh fetch")
+        # The caller received the freshly-fetched map, not the injected
+        # sentinel from the stale task.
+        self.assertIsNotNone(result)
+        self.assertIsNot(result, stale_sentinel,
+                         "Caller must not receive the stale task's result")
+        # The cache holds the freshly-fetched map.
+        cached = provider._collection_routing_map_by_item.get(collection_id)  # pylint: disable=protected-access
+        self.assertIs(result, cached)
+        self.assertEqual(len(list(result._orderedPartitionKeyRanges)), len(original_ranges))  # pylint: disable=protected-access
+        # And the slot is empty after the successful fetch — the ``finally``
+        # cleanup in ``_fetch_and_publish`` ran on the new task too.
+        self.assertNotIn(inflight_key, provider._inflight_fetches)  # pylint: disable=protected-access
+
 
 if __name__ == "__main__":
     unittest.main()
