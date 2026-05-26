@@ -250,6 +250,75 @@ class TestCandidateResolver:
         assert config.model == "local-model"
 
 
+class TestCandidateIdParam:
+    """candidate_id parameter overrides OPTIMIZATION_CANDIDATE_ID env var."""
+
+    def test_param_overrides_env_var(self, monkeypatch):
+        """candidate_id kwarg takes precedence over the env var."""
+        resolved = {
+            "instructions": "From param.",
+            "model": "gpt-4o",
+            "temperature": 0.5,
+        }
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "env-id")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved if cid == "param-id" else None,
+        )
+        config = load_config(candidate_id="param-id")
+        assert config.source == "api:candidate:param-id"
+        assert config.candidate_id == "param-id"
+
+    def test_param_without_env_var(self, monkeypatch):
+        """candidate_id kwarg works even without env var set."""
+        resolved = {
+            "instructions": "Resolved.",
+            "model": "gpt-4o",
+        }
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved,
+        )
+        config = load_config(candidate_id="header-id")
+        assert config.source == "api:candidate:header-id"
+        assert config.candidate_id == "header-id"
+
+    def test_falls_back_to_env_var(self, monkeypatch):
+        """When candidate_id param is None, falls back to env var."""
+        resolved = {
+            "instructions": "From env.",
+            "model": "gpt-4o",
+        }
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "env-cand")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved if cid == "env-cand" else None,
+        )
+        config = load_config()
+        assert config.source == "api:candidate:env-cand"
+        assert config.candidate_id == "env-cand"
+
+    def test_param_with_local_dir_fallback(self, monkeypatch, tmp_path):
+        """candidate_id param is used for local dir lookup when resolver fails."""
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: None,
+        )
+        candidate_dir = tmp_path / "my-candidate"
+        candidate_dir.mkdir()
+        (candidate_dir / "metadata.yaml").write_text("model: local-m\n")
+        (candidate_dir / "instructions.md").write_text("Local fallback.")
+
+        config = load_config(candidate_id="my-candidate")
+        assert config.source.startswith("local:")
+        assert config.instructions == "Local fallback."
+
+
 # ── Local directory (Priority 3) ────────────────────────────────────
 
 
