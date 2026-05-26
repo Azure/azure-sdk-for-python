@@ -38,13 +38,14 @@
   - Added model `SelfServeExemptionSettings`
   - Added model `Variable`
   - Added model `VariableValue`
-  - Added model `PolicyEnrollmentsOperations`
-  - Added model `PolicyExemptionsOperations`
-  - Added model `VariableValuesOperations`
-  - Added model `VariablesOperations`
+  - Added operation group `PolicyEnrollmentsOperations`
+  - Added operation group `PolicyExemptionsOperations`
+  - Added operation group `VariableValuesOperations`
+  - Added operation group `VariablesOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `PolicyLogInfo` deleted or renamed its instance variable `policy_set_definition_display_name`
   - Model `PolicyLogInfo` deleted or renamed its instance variable `policy_set_definition_category`
   - Model `PolicyLogInfo` deleted or renamed its instance variable `policy_definition_display_name`
