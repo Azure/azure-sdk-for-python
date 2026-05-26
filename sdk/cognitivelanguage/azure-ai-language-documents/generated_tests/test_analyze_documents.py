@@ -10,38 +10,94 @@ from devtools_testutils import recorded_by_proxy
 from testpreparer import AnalyzeDocumentsClientTestBase, AnalyzeDocumentsPreparer
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
 class TestAnalyzeDocuments(AnalyzeDocumentsClientTestBase):
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy
     def test_get_job_state(self, analyzedocuments_endpoint):
         client = self.create_client(endpoint=analyzedocuments_endpoint)
-        response = client.get_job_state(
-            job_id="str",
+
+        poller = client.begin_submit_job(
+            body={
+                "displayName": "Document Analysis.",
+                "analysisInput": {
+                    "documents": [
+                        {
+                            "language": "en",
+                            "id": "1",
+                            "source": {
+                                "location": "<location of the input document>"
+                            },
+                            "target": {
+                                "location": "<location of the output document>"
+                            },
+                        }
+                    ]
+                },
+                "tasks": [
+                    {
+                        "kind": "PiiEntityRecognition",
+                        "parameters": {
+                            "redactionPolicies": [
+                                {
+                                    "policyName": "defaultPolicy",
+                                    "policyKind": "EntityMask",
+                                    "isDefault": True,
+                                }
+                            ]
+                        },
+                    }
+                ],
+            }
         )
 
-        # please add some check logic here by yourself
-        # ...
+        job_id = poller.details["job_id"]
+        response = client.get_job_state(job_id=job_id)
+
+        assert response is not None
+        assert response.job_id == job_id
+        assert response.status is not None
 
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy
     def test_begin_submit_job(self, analyzedocuments_endpoint):
         client = self.create_client(endpoint=analyzedocuments_endpoint)
-        response = client.begin_submit_job(
+
+        poller = client.begin_submit_job(
             body={
+                "displayName": "Document Analysis.",
                 "analysisInput": {
                     "documents": [
-                        {"id": "str", "source": "document_location", "target": "document_location", "language": "str"}
+                        {
+                            "language": "en",
+                            "id": "1",
+                            "source": {
+                                "location": "<location of the input document>"
+                            },
+                            "target": {
+                                "location": "<location of the output document>"
+                            },
+                        }
                     ]
                 },
-                "tasks": ["analyze_documents_operation_action"],
-                "defaultLanguage": "str",
-                "displayName": "str",
+                "tasks": [
+                    {
+                        "kind": "PiiEntityRecognition",
+                        "parameters": {
+                            "redactionPolicies": [
+                                {
+                                    "policyName": "defaultPolicy",
+                                    "policyKind": "EntityMask",
+                                    "isDefault": True,
+                                }
+                            ]
+                        },
+                    }
+                ],
             },
-        ).result()  # call '.result()' to poll until service return final result
+        )
 
-        # please add some check logic here by yourself
-        # ...
+        assert poller is not None
+        assert poller.details["job_id"]
 
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy

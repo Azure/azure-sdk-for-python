@@ -275,7 +275,7 @@ class AbstractiveSummarizationTaskParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeDocumentsDocumentError(_Model):
+class AnalyzeDocumentsError(_Model):
     """Contains the error object with errors encountered for the processed document.
 
     :ivar id: Document Id. Required.
@@ -449,17 +449,17 @@ class AnalyzeDocumentsResult(_Model):
     """Contains the result object for the processed document.
 
     :ivar errors: Errors by document id. Required.
-    :vartype errors: list[~azure.ai.language.documents.models.AnalyzeDocumentsDocumentError]
+    :vartype errors: list[~azure.ai.language.documents.models.AnalyzeDocumentsError]
     :ivar statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
     :vartype statistics: ~azure.ai.language.documents.models.OperationStatistics
     :ivar model_version: This field indicates which model is used for analysis. Required.
     :vartype model_version: str
     :ivar documents: Response by document. Required.
-    :vartype documents: list[~azure.ai.language.documents.models.DocumentAnalysisDocumentResult]
+    :vartype documents: list[~azure.ai.language.documents.models.DocumentAnalysisResult]
     """
 
-    errors: list["_models.AnalyzeDocumentsDocumentError"] = rest_field(
+    errors: list["_models.AnalyzeDocumentsError"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Errors by document id. Required."""
@@ -470,7 +470,7 @@ class AnalyzeDocumentsResult(_Model):
      request payload."""
     model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
     """This field indicates which model is used for analysis. Required."""
-    documents: list["_models.DocumentAnalysisDocumentResult"] = rest_field(
+    documents: list["_models.DocumentAnalysisResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Response by document. Required."""
@@ -479,9 +479,9 @@ class AnalyzeDocumentsResult(_Model):
     def __init__(
         self,
         *,
-        errors: list["_models.AnalyzeDocumentsDocumentError"],
+        errors: list["_models.AnalyzeDocumentsError"],
         model_version: str,
-        documents: list["_models.DocumentAnalysisDocumentResult"],
+        documents: list["_models.DocumentAnalysisResult"],
         statistics: Optional["_models.OperationStatistics"] = None,
     ) -> None: ...
 
@@ -957,7 +957,7 @@ class ConfidenceScoreThresholdOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentAnalysisDocumentResult(_Model):
+class DocumentAnalysisResult(_Model):
     """Contains the result object for the processed document.
 
     :ivar id: Unique, non-empty document identifier. Required.
