@@ -9,18 +9,22 @@ DESCRIPTION:
     application as OpenTelemetry custom events that land in the `customEvents`
     Application Insights table connected to your Microsoft Foundry project.
 
-    Human evaluations capture signals that automated evaluators struggle with --
-    tone, user satisfaction, factual nuance -- typically as a thumbs up/down
-    (binary) or a 5-point rating (likert_5) provided by an end user of your
-    application.
+    Human evaluations capture signals that automated evaluators struggle with,
+    such as tone, user satisfaction, and factual nuance. The helpers below emit
+    the `gen_ai.evaluation.result` event shape used by Microsoft Foundry:
 
-    The sample defines a small `emit_human_evaluation_event(...)` helper that
-    assembles and emits OTel-compliant events that carry additional metadata
-    for compatibility with Microsoft Azure services. The event is emitted via 
-    Python `logging`, which `azure.monitor.opentelemetry.configure_azure_monitor` 
-    routes through OpenTelemetry to Application Insights.
+    * `emit_boolean_evaluation(...)` emits binary scores such as thumbs up/down.
+    * `emit_5_point_ordinal_evaluation(...)` emits 1-5 ordered scores such as a
+      Likert or star rating.
 
-    NOTE: Human evaluations is in preview, and carries the risk of breaking changes.
+    Both public helpers call the shared `_emit_human_evaluation(...)` helper so
+    the OpenTelemetry and Microsoft-specific attribute mapping stays consistent.
+    This sample covers human evaluations submitted by end users of your
+    application and correlates evaluation events to OpenAI Responses API response
+    IDs when a response ID is provided.
+
+    NOTE: Human evaluations are in preview and carry the risk of breaking
+    changes.
 
 USAGE:
     python sample_human_evaluations.py
@@ -37,68 +41,70 @@ USAGE:
 
 import json
 import logging
-import uuid
-from typing import Literal, Mapping, Optional, TypedDict
+from typing import Literal, Mapping, Optional
 
 # NOTE: Azure SDK / Application Insights imports (azure-identity,
 # azure-monitor-opentelemetry, azure-ai-projects, python-dotenv) are
 # intentionally deferred into the `if __name__ == "__main__":` block at the
 # bottom of this file. They are only needed when running the sample directly;
-# the `emit_human_evaluation_event` helper itself depends only on the
-# standard library and `typing`, which keeps the helper importable in test
-# environments that do not (or cannot) install the full OTel stack.
+# the helper functions themselves depend only on the standard library and
+# `typing`, which keeps them importable in test environments that do not install
+# the full OTel stack.
 
 # `configure_azure_monitor` (called in __main__) installs an OpenTelemetry
-# LoggingHandler on the root logger, so any standard Python `logging` call
-# below this point flows through OTel to Application Insights as a log record.
-# The `microsoft.custom_event.name` attribute is what routes the record to
-# the `customEvents` table.
+# LoggingHandler on the root logger, so any standard Python `logging` call below
+# this point flows through OTel to Application Insights as a log record. The
+# `microsoft.custom_event.name` attribute routes the record to the
+# `customEvents` table.
 logger = logging.getLogger("human_evaluations")
 logger.setLevel(logging.INFO)
 
+EvaluationType = Literal["boolean", "ordinal"]
+DesirableDirection = Literal["increase", "decrease"]
 
-class _KindDefaults(TypedDict):
-    min_value: float
-    max_value: float
-    threshold: float
-    desirable_direction: str
-    type: str
-
-
-_KIND_DEFAULTS: dict[str, _KindDefaults] = {
-    "binary": {
-        "min_value": 0.0,
-        "max_value": 1.0,
-        "threshold": 1.0,
-        "desirable_direction": "increase",
-        "type": "boolean",
-    },
-    "likert_5": {
-        "min_value": 1.0,
-        "max_value": 5.0,
-        "threshold": 3.0,
-        "desirable_direction": "increase",
-        "type": "ordinal",
-    },
-}
-
-
-# When identifying the end user, populate either or both of:
-#   enduser_id        → the signed-in user's identity (e.g., AAD object id,
-#                       email). This is PII and lands in App Insights as
-#                       `user_AuthenticatedId`.
-#   enduser_pseudo_id → a random, non-identifying id you generated (e.g., a
-#                       browser cookie or device id). Use when the user is
-#                       anonymous or you don't want to log PII. Lands in
-#                       App Insights as `user_Id`.
-# Signed-in users often have both: `enduser_id` says who they are, and
-# `enduser_pseudo_id` lets you correlate them with their earlier anonymous
-# activity from the same browser/device.
-def emit_human_evaluation_event(
+def _validate_score(
     *,
-    evaluation_name: str,
     score_value: float,
-    kind: Literal["binary", "likert_5"],
+    min_value: float,
+    max_value: float,
+    evaluation_type: EvaluationType,
+) -> float:
+    score_value = float(score_value)
+    if not (min_value <= score_value <= max_value):
+        raise ValueError(
+            f"score_value {score_value} is outside the allowed range "
+            f"[{min_value}, {max_value}] for evaluation type '{evaluation_type}'."
+        )
+    if score_value != int(score_value):
+        raise ValueError(
+            f"score_value {score_value} must be a double-encoded integer value "
+            f"for evaluation type '{evaluation_type}'."
+        )
+    return score_value
+
+
+def _get_score_label(
+    *,
+    score_value: float,
+    threshold: float,
+    desirable_direction: DesirableDirection,
+) -> Literal["pass", "fail"]:
+    if desirable_direction == "increase":
+        return "pass" if score_value >= threshold else "fail"
+    if desirable_direction == "decrease":
+        return "pass" if score_value <= threshold else "fail"
+    raise ValueError(f"Unsupported desirable_direction: {desirable_direction!r}.")
+
+
+def _emit_human_evaluation(
+    *,
+    evaluation_metric_name: str,
+    score_value: float,
+    evaluation_type: EvaluationType,
+    min_value: float,
+    max_value: float,
+    threshold: float,
+    desirable_direction: DesirableDirection,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
     project_resource_id: Optional[str] = None,
@@ -107,125 +113,160 @@ def emit_human_evaluation_event(
     tags: Optional[Mapping[str, str]] = None,
     evaluation_id: Optional[str] = None,
 ) -> None:
-    """Emit a single `gen_ai.evaluation.result` human evaluation event.
+    score_value = _validate_score(
+        score_value=score_value,
+        min_value=min_value,
+        max_value=max_value,
+        evaluation_type=evaluation_type,
+    )
+    score_label = _get_score_label(
+        score_value=score_value,
+        threshold=threshold,
+        desirable_direction=desirable_direction,
+    )
 
-    The helper takes care of all the bookkeeping (deriving min/max/
-    threshold/type from `kind`, deriving the pass/fail label from the score,
-    JSON-encoding `internal_properties`, generating a correlation id, etc.).
-
-    Args:
-        evaluation_name: The metric being evaluated. Free-form, but pick a
-            consistent snake_case name per metric.
-            Examples: "task_completion", "relevance", "helpfulness".
-        score_value: The numeric score the user gave. Must be a whole number
-            (no fractional part), expressed as a float.
-            For kind="binary": 0.0 (thumbs down) or 1.0 (thumbs up).
-            For kind="likert_5": 1.0, 2.0, 3.0, 4.0, or 5.0.
-        kind: The evaluation shape. "binary" for thumbs up/down; "likert_5"
-            for a 1-5 star rating.
-        explanation: Optional free-form text the user provided to justify
-            their score.
-            Example: "The agent answered the question accurately."
-        response_id: Optional id of the agent response being evaluated.
-            Typically the id of an OpenAI Responses API response. Used to
-            correlate the evaluation back to the response it judged.
-            Example: "resp_64904952b20872620069f8d600779c81908f58b0a3be090ef0".
-        project_resource_id: Optional Azure resource id of the Foundry
-            project the evaluation belongs to. Required by Microsoft systems
-            when you want the evaluation linked to a specific project.
-            Example: "/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.CognitiveServices/accounts/<acct>/projects/<proj>".
-        enduser_id: Optional signed-in user identity (e.g., Entra ID object
-            id, email). This is PII and lands in App Insights as
-            `user_AuthenticatedId`.
-            Examples: "alice@contoso.com", "241964ad-a8db-4318-9f2e-5a7dc1f05349".
-        enduser_pseudo_id: Optional random, non-identifying id you generated
-            (e.g., a browser cookie or device id). Use when the user is
-            anonymous or you don't want to log PII. Lands in App Insights
-            as `user_Id`.
-            Example: "sess_QdH5CAWJgqVT4rOr0qtumf".
-        tags: Optional extra metadata to attach to the event. Each key is
-            emitted as `microsoft.human_evaluation.tags.<key>` so you can
-            slice on it later in App Insights.
-            Example: {"subscription_tier": "basic_plan", "feature": "chat"}.
-        evaluation_id: Optional stable id for this specific evaluation event,
-            useful if you want to update or correlate it later. Defaults to a
-            fresh uuid4.
-            Example: "69d937a7-32e2-412e-97c9-119e2d282723".
-    """
-    if kind not in _KIND_DEFAULTS:
-        raise ValueError(f"Unsupported kind '{kind}'. Use 'binary' or 'likert_5'.")
-    defaults = _KIND_DEFAULTS[kind]
-
-    if not defaults["min_value"] <= score_value <= defaults["max_value"]:
-        raise ValueError(
-            f"score_value {score_value} is outside the allowed range "
-            f"[{defaults['min_value']}, {defaults['max_value']}] for kind '{kind}'."
-        )
-
-    # Ensure scores are whole numbers
-    if score_value != int(score_value):
-        raise ValueError(
-            f"score_value {score_value} must be a whole number (no fractional part) "
-            f"for kind '{kind}'."
-        )
-
-    # Per spec, the score is at or above the threshold = "pass", below = "fail".
-    # (Binary: 1.0 -> pass, 0.0 -> fail. Likert-5: >=3.0 -> pass, <3.0 -> fail.)
-    score_label = "pass" if score_value >= defaults["threshold"] else "fail"
-
-    # `internal_properties` carries Microsoft-specific attributes. It MUST be a
-    # JSON-encoded string (not a nested object) to match how downstream systems
-    # like Azure Monitor and Foundry consume it.
     internal_properties = {
-        "gen_ai.evaluation.threshold": str(defaults["threshold"]),
-        "gen_ai.evaluation.min_value": str(defaults["min_value"]),
-        "gen_ai.evaluation.max_value": str(defaults["max_value"]),
-        "gen_ai.evaluation.desirable_direction": defaults["desirable_direction"],
-        "gen_ai.evaluation.type": defaults["type"],
-        "microsoft.human_evaluation.source": "end_user",
-        "microsoft.human_evaluation.kind": kind,
+        "gen_ai.evaluation.threshold": str(threshold),
+        "gen_ai.evaluation.min_value": str(min_value),
+        "gen_ai.evaluation.max_value": str(max_value),
+        "gen_ai.evaluation.desirable_direction": desirable_direction,
+        "gen_ai.evaluation.type": evaluation_type,
     }
-    if project_resource_id:
+    if project_resource_id is not None:
         internal_properties["gen_ai.azure_ai_project.id"] = project_resource_id
-    if response_id:
-        internal_properties["gen_ai.response.id.type"] = "responses"
 
-    # Top-level event attributes follow the OTel `gen_ai.evaluation.result`
-    # event shape (except internal_properties). `microsoft.custom_event.name` 
-    # is what routes the record to the `customEvents` App Insights table.
     attributes = {
         "microsoft.custom_event.name": "gen_ai.evaluation.result",
-        "gen_ai.evaluation.name": evaluation_name,
+        "gen_ai.evaluation.name": evaluation_metric_name,
         "gen_ai.evaluation.score.value": score_value,
         "gen_ai.evaluation.score.label": score_label,
+        "microsoft.human_evaluation.source": "end_user",
         "internal_properties": json.dumps(internal_properties),
     }
     if explanation is not None:
         attributes["gen_ai.evaluation.explanation"] = explanation
     if response_id is not None:
         attributes["gen_ai.response.id"] = response_id
+        attributes["microsoft.gen_ai.response.id.type"] = "responses"
     if enduser_id is not None:
         attributes["enduser.id"] = enduser_id
     if enduser_pseudo_id is not None:
         attributes["enduser.pseudo.id"] = enduser_pseudo_id
-
-    # Some attributes are customer-defined and can be put in top-level with "microsoft" prefix
     if tags:
         for tag_name, tag_value in tags.items():
-            attributes[f"microsoft.human_evaluation.tags.{tag_name}"] = tag_value
-    if evaluation_id:
-        attributes["microsoft.human_evaluation.id"] = evaluation_id
+            attributes[f"microsoft.evaluation.tags.{tag_name}"] = tag_value
+    if evaluation_id is not None:
+        attributes["microsoft.evaluation.id"] = evaluation_id
 
     logger.info("gen_ai.evaluation.result", extra=attributes)
+
+
+def emit_boolean_evaluation(
+    *,
+    evaluation_metric_name: str,
+    passed: bool,
+    explanation: Optional[str] = None,
+    response_id: Optional[str] = None,
+    project_resource_id: Optional[str] = None,
+    enduser_id: Optional[str] = None,
+    enduser_pseudo_id: Optional[str] = None,
+    tags: Optional[Mapping[str, str]] = None,
+    evaluation_id: Optional[str] = None,
+) -> None:
+    """Emit a boolean human evaluation event.
+
+    Boolean evaluations are typically represented as thumbs up/down, yes/no, or
+    pass/fail controls. `passed=True` emits a score of `1.0`; `passed=False`
+    emits a score of `0.0`.
+
+    Args:
+        evaluation_metric_name: Name of the evaluated metric, such as
+            `"task_completion"` or `"helpfulness"`.
+        passed: Whether the human evaluation passed.
+        explanation: Optional free-form explanation from the end user.
+        response_id: Optional OpenAI Responses API response ID being evaluated.
+        project_resource_id: Optional ARM resource ID for the Foundry project.
+        enduser_id: Optional signed-in end-user ID. This may contain PII and maps
+            to `user_AuthenticatedId` in Application Insights.
+        enduser_pseudo_id: Optional pseudonymous end-user ID. This maps to
+            `user_Id` in Application Insights.
+        tags: Optional metadata emitted as `microsoft.evaluation.tags.<key>`.
+        evaluation_id: Optional ID for the evaluation event itself.
+    """
+    _emit_human_evaluation(
+        evaluation_metric_name=evaluation_metric_name,
+        score_value=1.0 if passed else 0.0,
+        evaluation_type="boolean",
+        min_value=0.0,
+        max_value=1.0,
+        threshold=1.0,
+        desirable_direction="increase",
+        explanation=explanation,
+        response_id=response_id,
+        project_resource_id=project_resource_id,
+        enduser_id=enduser_id,
+        enduser_pseudo_id=enduser_pseudo_id,
+        tags=tags,
+        evaluation_id=evaluation_id,
+    )
+
+
+def emit_5_point_ordinal_evaluation(
+    *,
+    evaluation_metric_name: str,
+    score_value: float,
+    explanation: Optional[str] = None,
+    response_id: Optional[str] = None,
+    project_resource_id: Optional[str] = None,
+    enduser_id: Optional[str] = None,
+    enduser_pseudo_id: Optional[str] = None,
+    tags: Optional[Mapping[str, str]] = None,
+    evaluation_id: Optional[str] = None,
+) -> None:
+    """Emit a 5-point ordinal human evaluation event.
+
+    Ordinal 5-point evaluations use integer scores from `1.0` through `5.0`;
+    scores at or above `3.0` are emitted with a `pass` label.
+
+    Args:
+        evaluation_metric_name: Name of the evaluated metric, such as
+            `"relevance"` or `"helpfulness"`.
+        score_value: Integer score from `1.0` through `5.0`.
+        explanation: Optional free-form explanation from the end user.
+        response_id: Optional OpenAI Responses API response ID being evaluated.
+        project_resource_id: Optional ARM resource ID for the Foundry project.
+        enduser_id: Optional signed-in end-user ID. This may contain PII and maps
+            to `user_AuthenticatedId` in Application Insights.
+        enduser_pseudo_id: Optional pseudonymous end-user ID. This maps to
+            `user_Id` in Application Insights.
+        tags: Optional metadata emitted as `microsoft.evaluation.tags.<key>`.
+        evaluation_id: Optional ID for the evaluation event itself.
+    """
+    _emit_human_evaluation(
+        evaluation_metric_name=evaluation_metric_name,
+        score_value=score_value,
+        evaluation_type="ordinal",
+        min_value=1.0,
+        max_value=5.0,
+        threshold=3.0,
+        desirable_direction="increase",
+        explanation=explanation,
+        response_id=response_id,
+        project_resource_id=project_resource_id,
+        enduser_id=enduser_id,
+        enduser_pseudo_id=enduser_pseudo_id,
+        tags=tags,
+        evaluation_id=evaluation_id,
+    )
 
 
 if __name__ == "__main__":
     import os
 
-    from dotenv import load_dotenv
+    from azure.ai.projects import AIProjectClient
     from azure.identity import DefaultAzureCredential
     from azure.monitor.opentelemetry import configure_azure_monitor
-    from azure.ai.projects import AIProjectClient
+    from dotenv import load_dotenv
 
     load_dotenv()
 
@@ -242,48 +283,37 @@ if __name__ == "__main__":
 
         configure_azure_monitor(connection_string=connection_string)
 
-        # Optional: Derive the Foundry Project's resource id from any connection. The
-        # endpoint URL alone only gives us the account + project names, but every
-        # Connection's `id` is a full ARM path of the form:
-        #   /subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.CognitiveServices/accounts/<acct>/projects/<proj>/connections/<name>
-        # We just strip the trailing /connections/<name> to get the project id.
+        # Optional: derive the Foundry Project's resource id from any connection.
+        # The endpoint URL alone only gives us the account + project names, but
+        # every Connection's `id` is a full ARM path ending with /connections/<name>.
         any_connection = next(iter(project_client.connections.list()), None)
-        project_resource_id = (
-            any_connection.id.rsplit("/connections/", 1)[0] if any_connection else None
-        )
+        project_resource_id = any_connection.id.rsplit("/connections/", 1)[0] if any_connection else None
 
-        # The two examples below differ in evaluation kind (binary vs likert_5)
-        # AND in how the end user is identified, just to show both styles. In your
-        # own app, those two choices are independent. You can also pass both
-        # `enduser_id` and `enduser_pseudo_id` together -- typical for a
-        # signed-in user whose browser you've been tracking with a cookie.
-
-        # Example 1: A signed-in end user gives a thumbs up on the agent's task
-        # completion.
-        emit_human_evaluation_event(
-            evaluation_name="task_completion",
-            score_value=1.0,
-            kind="binary",
+        # Example 1: an anonymous end user gives a thumbs up on task completion.
+        emit_boolean_evaluation(
+            evaluation_metric_name="task_completion",
+            passed=True,
             explanation="The agent provided accurate weather information as requested.",
             response_id="resp_64904952b20872620069f8d600779c81908f58b0a3be090ef0",
             project_resource_id=project_resource_id,
-            enduser_id="241964ad-a8db-4318-9f2e-5a7dc1f05349",
+            enduser_pseudo_id="sess_123456",
             tags={"subscription_tier": "basic_plan"},
-            evaluation_id="986ee25a-2db1-423c-8e3c-a2774a4d2da2",
+            evaluation_id="0b27be45-cd65-4671-ab08-c3eafd4c9613",
         )
-        print("Emitted binary human evaluation event.")
+        print("Emitted boolean human evaluation event.")
 
-        # Example 2: An anonymous end user rates the agent's response 4 out of 5
-        # stars for relevance.
-        emit_human_evaluation_event(
-            evaluation_name="relevance",
+        # Example 2: a signed-in end user rates relevance on a 5-point scale.
+        emit_5_point_ordinal_evaluation(
+            evaluation_metric_name="relevance",
             score_value=4.0,
-            kind="likert_5",
-            explanation="The agent's response is relevant to the query.",
-            response_id="resp_1234567890abcdef",
+            explanation=(
+                "The agent's response is relevant to the query, providing useful "
+                "information that addresses the user's intent."
+            ),
+            response_id="resp_64904952b20872620069f8d600779c81908f58b0a3be090ef0",
             project_resource_id=project_resource_id,
-            enduser_pseudo_id="sess_QdH5CAWJgqVT4rOr0qtumf",
-            tags={"subscription_tier": "free_plan"},
-            evaluation_id="87e1fa43-46fc-4ddc-aaa6-c9af716fb47b"
+            enduser_id="oid:241964ad-a8db-4318-9f2e-5a7dc1f05349",
+            tags={"department": "marketing"},
+            evaluation_id="69d937a7-32e2-412e-97c9-119e2d282723",
         )
-        print("Emitted likert_5 human evaluation event.")
+        print("Emitted 5-point ordinal human evaluation event.")
