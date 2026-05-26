@@ -86,11 +86,6 @@ with (
         description="Sample model registered from sample_models_basic.py",
         tags={"source": "sample_models_basic.py"},
     )
-    if model is None:
-        raise RuntimeError(
-            f"`create` returned None for `{model_name}`@`{model_version}` "
-            "(use `wait_for_commit=True` to receive the committed ModelVersion)."
-        )
     print(f"Created (name: {model.name}, version: {model.version}, blob_uri: {model.blob_uri})")
 
     print(f"Get a specific model version `{model_name}`@`{model_version}`:")
