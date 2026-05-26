@@ -146,7 +146,6 @@
   - Deleted or renamed method `PriceSheetOperations.begin_download`
   - Method `ScheduledActionsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
   - Method `ScheduledActionsOperations.create_or_update_by_scope` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
-  - Method `PriceSheetOperations.begin_download_by_billing_profile` changed return type from `AsyncLROPoller[DownloadURL]` to `AsyncLROPoller[PricesheetDownloadProperties]`
   - Method `PriceSheetOperations.begin_download_by_billing_profile` changed return type from `LROPoller[DownloadURL]` to `LROPoller[PricesheetDownloadProperties]`
 
 ### Other Changes
