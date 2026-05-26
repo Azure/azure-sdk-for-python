@@ -35,7 +35,6 @@
   - Enum `ExportType` added member `RESERVATION_DETAILS`
   - Enum `ExportType` added member `RESERVATION_RECOMMENDATIONS`
   - Enum `ExportType` added member `RESERVATION_TRANSACTIONS`
-  - Model `ForecastComparisonExpression` added property `values_property`
   - Model `ForecastResult` added property `properties`
   - Enum `FormatType` added member `PARQUET`
   - Model `GenerateDetailedCostReportOperationResult` added property `properties`
@@ -47,9 +46,7 @@
   - Model `IncludedQuantityUtilizationSummary` added property `system_data`
   - Model `OperationStatus` added property `properties`
   - Model `ProxyResource` added property `system_data`
-  - Model `QueryComparisonExpression` added property `values_property`
   - Model `QueryResult` added property `properties`
-  - Model `ReportConfigComparisonExpression` added property `values_property`
   - Model `Resource` added property `system_data`
   - Model `SavingsPlanUtilizationSummary` added property `properties`
   - Model `SavingsPlanUtilizationSummary` added property `system_data`
@@ -90,17 +87,13 @@
   - Added model `ExtensionResource`
   - Added enum `FilterItemNames`
   - Added model `FilterItems`
-  - Added model `ForecastProperties`
   - Added model `ForecastSpend`
   - Added enum `Frequency`
   - Added model `MCAPriceSheetProperties`
   - Added model `Notification`
   - Added model `PricesheetDownloadProperties`
-  - Added model `QueryProperties`
   - Added enum `Reason`
   - Added model `ReportConfigDefinition`
-  - Added model `ReportManifest`
-  - Added model `ReportURL`
   - Added model `RequestContext`
   - Added enum `RuleStatus`
   - Added model `Setting`
@@ -115,98 +108,50 @@
   - Added model `TargetCostAllocationResource`
   - Added enum `ThresholdType`
   - Added enum `TimeGrainType`
-  - Model `PriceSheetOperations` added method `begin_download_by_billing_account`
-  - Model `PriceSheetOperations` added method `begin_download_by_invoice`
-  - Model `ScheduledActionsOperations` added parameter `etag` in method `create_or_update`
-  - Model `ScheduledActionsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ScheduledActionsOperations` added parameter `etag` in method `create_or_update_by_scope`
-  - Model `ScheduledActionsOperations` added parameter `match_condition` in method `create_or_update_by_scope`
-  - Added model `BudgetsOperations`
-  - Added model `CostAllocationRulesOperations`
-  - Added model `GenerateBenefitUtilizationSummariesReportOperations`
-  - Added model `SettingsOperations`
+  - Operation group `PriceSheetOperations` added method `begin_download_by_billing_account`
+  - Operation group `PriceSheetOperations` added method `begin_download_by_invoice`
+  - Added operation group `BudgetsOperations`
+  - Added operation group `CostAllocationRulesOperations`
+  - Added operation group `GenerateBenefitUtilizationSummariesReportOperations`
+  - Added operation group `SettingsOperations`
 
 ### Breaking Changes
 
-  - Model `CostDetailsOperationResults` deleted or renamed its instance variable `manifest_version`
-  - Model `CostDetailsOperationResults` deleted or renamed its instance variable `data_format`
-  - Model `CostDetailsOperationResults` deleted or renamed its instance variable `byte_count`
-  - Model `CostDetailsOperationResults` deleted or renamed its instance variable `blob_count`
-  - Model `CostDetailsOperationResults` deleted or renamed its instance variable `compress_data`
-  - Model `CostDetailsOperationResults` deleted or renamed its instance variable `blobs`
-  - Model `CostDetailsOperationResults` deleted or renamed its instance variable `request_scope`
-  - Model `CostDetailsOperationResults` deleted or renamed its instance variable `request_body`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `definition`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `description`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `source`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `details`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `cost_entity_id`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `status`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `creation_time`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `close_time`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `modification_time`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `status_modification_user_name`
-  - Model `DismissAlertPayload` deleted or renamed its instance variable `status_modification_time`
-  - Model `Export` deleted or renamed its instance variable `format`
-  - Model `Export` deleted or renamed its instance variable `delivery_info`
-  - Model `Export` deleted or renamed its instance variable `definition`
-  - Model `Export` deleted or renamed its instance variable `run_history`
-  - Model `Export` deleted or renamed its instance variable `partition_data`
-  - Model `Export` deleted or renamed its instance variable `next_run_time_estimate`
-  - Model `Export` deleted or renamed its instance variable `schedule`
-  - Model `ForecastComparisonExpression` deleted or renamed its instance variable `values`
-  - Model `ForecastResult` deleted or renamed its instance variable `next_link`
-  - Model `ForecastResult` deleted or renamed its instance variable `columns`
-  - Model `ForecastResult` deleted or renamed its instance variable `rows`
-  - Model `GenerateDetailedCostReportOperationResult` deleted or renamed its instance variable `expiry_time`
-  - Model `GenerateDetailedCostReportOperationResult` deleted or renamed its instance variable `valid_till`
-  - Model `GenerateDetailedCostReportOperationResult` deleted or renamed its instance variable `download_url`
-  - Model `GenerateDetailedCostReportOperationStatuses` deleted or renamed its instance variable `expiry_time`
-  - Model `GenerateDetailedCostReportOperationStatuses` deleted or renamed its instance variable `valid_till`
-  - Model `GenerateDetailedCostReportOperationStatuses` deleted or renamed its instance variable `download_url`
-  - Model `IncludedQuantityUtilizationSummary` deleted or renamed its instance variable `arm_sku_name`
-  - Model `IncludedQuantityUtilizationSummary` deleted or renamed its instance variable `benefit_id`
-  - Model `IncludedQuantityUtilizationSummary` deleted or renamed its instance variable `benefit_order_id`
-  - Model `IncludedQuantityUtilizationSummary` deleted or renamed its instance variable `benefit_type`
-  - Model `IncludedQuantityUtilizationSummary` deleted or renamed its instance variable `usage_date`
-  - Model `IncludedQuantityUtilizationSummary` deleted or renamed its instance variable `utilization_percentage`
-  - Model `OperationStatus` deleted or renamed its instance variable `report_url`
-  - Model `OperationStatus` deleted or renamed its instance variable `valid_until`
-  - Model `QueryComparisonExpression` deleted or renamed its instance variable `values`
-  - Model `QueryResult` deleted or renamed its instance variable `next_link`
-  - Model `QueryResult` deleted or renamed its instance variable `columns`
-  - Model `QueryResult` deleted or renamed its instance variable `rows`
-  - Model `ReportConfigComparisonExpression` deleted or renamed its instance variable `values`
-  - Model `SavingsPlanUtilizationSummary` deleted or renamed its instance variable `arm_sku_name`
-  - Model `SavingsPlanUtilizationSummary` deleted or renamed its instance variable `benefit_id`
-  - Model `SavingsPlanUtilizationSummary` deleted or renamed its instance variable `benefit_order_id`
-  - Model `SavingsPlanUtilizationSummary` deleted or renamed its instance variable `benefit_type`
-  - Model `SavingsPlanUtilizationSummary` deleted or renamed its instance variable `usage_date`
-  - Model `SavingsPlanUtilizationSummary` deleted or renamed its instance variable `avg_utilization_percentage`
-  - Model `SavingsPlanUtilizationSummary` deleted or renamed its instance variable `min_utilization_percentage`
-  - Model `SavingsPlanUtilizationSummary` deleted or renamed its instance variable `max_utilization_percentage`
-  - Deleted or renamed model `ScheduledActionProxyResource`
-  - Method `BenefitRecommendationsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
-  - Method `BenefitRecommendationsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `CostDetailsOperationResults` moved instance variable `manifest_version`, `data_format`, `byte_count`, `blob_count`, `compress_data`, `blobs`, `request_scope` and `request_body` under property `manifest` whose type is `ReportManifest`
+  - Model `DismissAlertPayload` moved instance variable `definition`, `description`, `source`, `details`, `cost_entity_id`, `status`, `creation_time`, `close_time`, `modification_time`, `status_modification_user_name` and `status_modification_time` under property `properties` whose type is `AlertProperties`
+  - Model `Export` moved instance variable `format`, `delivery_info`, `definition`, `run_history`, `partition_data`, `next_run_time_estimate` and `schedule` under property `properties` whose type is `ExportProperties`
+  - Model `ForecastComparisonExpression` renamed its instance variable `values` to `values_property`
+  - Model `ForecastResult` moved instance variable `next_link`, `columns` and `rows` under property `properties` whose type is `ForecastProperties`
+  - Model `GenerateDetailedCostReportOperationResult` moved instance variable `expiry_time`, `valid_till` and `download_url` under property `properties` whose type is `DownloadURL`
+  - Model `GenerateDetailedCostReportOperationStatuses` moved instance variable `expiry_time`, `valid_till` and `download_url` under property `properties` whose type is `DownloadURL`
+  - Model `IncludedQuantityUtilizationSummary` moved instance variable `arm_sku_name`, `benefit_id`, `benefit_order_id`, `benefit_type`, `usage_date` and `utilization_percentage` under property `properties` whose type is `IncludedQuantityUtilizationSummaryProperties`
+  - Model `OperationStatus` moved instance variable `report_url` and `valid_until` under property `properties` whose type is `ReportURL`
+  - Model `QueryComparisonExpression` renamed its instance variable `values` to `values_property`
+  - Model `QueryResult` moved instance variable `next_link`, `columns` and `rows` under property `properties` whose type is `QueryProperties`
+  - Model `ReportConfigComparisonExpression` renamed its instance variable `values` to `values_property`
+  - Model `SavingsPlanUtilizationSummary` moved instance variable `arm_sku_name`, `benefit_id`, `benefit_order_id`, `benefit_type`, `usage_date`, `avg_utilization_percentage`, `min_utilization_percentage` and `max_utilization_percentage` under property `properties` whose type is `SavingsPlanUtilizationSummaryProperties`
+  - Method `BenefitRecommendationsOperations.list` changed its parameter `orderby`/`expand` from `positional_or_keyword` to `keyword_only`
   - Method `BenefitUtilizationSummariesOperations.list_by_billing_account_id` changed its parameter `grain_parameter` from `positional_or_keyword` to `keyword_only`
   - Method `BenefitUtilizationSummariesOperations.list_by_billing_profile_id` changed its parameter `grain_parameter` from `positional_or_keyword` to `keyword_only`
   - Method `BenefitUtilizationSummariesOperations.list_by_savings_plan_id` changed its parameter `grain_parameter` from `positional_or_keyword` to `keyword_only`
   - Method `BenefitUtilizationSummariesOperations.list_by_savings_plan_order` changed its parameter `grain_parameter` from `positional_or_keyword` to `keyword_only`
-  - Method `DimensionsOperations.by_external_cloud_provider_type` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `DimensionsOperations.by_external_cloud_provider_type` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
-  - Method `DimensionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `DimensionsOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `DimensionsOperations.by_external_cloud_provider_type` changed its parameter `expand`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `DimensionsOperations.list` changed its parameter `expand`/`skiptoken` from `positional_or_keyword` to `keyword_only`
   - Method `ExportsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ExportsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `GenerateReservationDetailsReportOperations.begin_by_billing_account_id` changed its parameter `start_date` from `positional_or_keyword` to `keyword_only`
-  - Method `GenerateReservationDetailsReportOperations.begin_by_billing_account_id` changed its parameter `end_date` from `positional_or_keyword` to `keyword_only`
-  - Method `GenerateReservationDetailsReportOperations.begin_by_billing_profile_id` changed its parameter `start_date` from `positional_or_keyword` to `keyword_only`
-  - Method `GenerateReservationDetailsReportOperations.begin_by_billing_profile_id` changed its parameter `end_date` from `positional_or_keyword` to `keyword_only`
+  - Method `GenerateReservationDetailsReportOperations.begin_by_billing_account_id` changed its parameter `start_date`/`end_date` from `positional_or_keyword` to `keyword_only`
+  - Method `GenerateReservationDetailsReportOperations.begin_by_billing_profile_id` changed its parameter `start_date`/`end_date` from `positional_or_keyword` to `keyword_only`
   - Deleted or renamed method `PriceSheetOperations.begin_download`
-  - Method `ScheduledActionsOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ScheduledActionsOperations.create_or_update_by_scope` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ScheduledActionsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `ScheduledActionsOperations.create_or_update_by_scope` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
   - Method `PriceSheetOperations.begin_download_by_billing_profile` changed return type from `AsyncLROPoller[DownloadURL]` to `AsyncLROPoller[PricesheetDownloadProperties]`
   - Method `PriceSheetOperations.begin_download_by_billing_profile` changed return type from `LROPoller[DownloadURL]` to `LROPoller[PricesheetDownloadProperties]`
+
+### Other Changes
+
+  - Deleted model `ScheduledActionProxyResource` which actually was not used by SDK users
 
 ## 4.0.1 (2023-07-19)
 
