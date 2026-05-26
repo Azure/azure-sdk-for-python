@@ -59,7 +59,12 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import JobStatus, TestingCriterionAzureAIEvaluator
+from azure.ai.projects.models import (
+    EvaluatorCategory,
+    JobStatus,
+    RubricBasedEvaluatorDefinition,
+    TestingCriterionAzureAIEvaluator,
+)
 
 load_dotenv()
 
@@ -147,11 +152,14 @@ with (
 
     # On success, the evaluator is automatically saved as version 1.
     evaluator = job.result
+    assert evaluator is not None, "succeeded job must have a result"
+    definition = evaluator.definition
+    assert isinstance(definition, RubricBasedEvaluatorDefinition)
     print(f"Generated evaluator: name=`{evaluator.name}` version=`{evaluator.version}`.")
-    print(f"Categories: {[c.value for c in evaluator.categories]}")
-    print(f"Pass threshold: {evaluator.definition.pass_threshold}")
-    print(f"Dimensions ({len(evaluator.definition.dimensions)}):")
-    for dim in evaluator.definition.dimensions:
+    print(f"Categories: {[c.value if isinstance(c, EvaluatorCategory) else c for c in evaluator.categories]}")
+    print(f"Pass threshold: {definition.pass_threshold}")
+    print(f"Dimensions ({len(definition.dimensions)}):")
+    for dim in definition.dimensions:
         # Quality evaluators always include a non-editable `general_quality`
         # residual dimension with always_applicable=True.
         marker = " [ALWAYS-ON]" if dim.always_applicable else ""

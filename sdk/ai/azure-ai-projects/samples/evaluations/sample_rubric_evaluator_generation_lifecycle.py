@@ -131,6 +131,7 @@ with (
         )
 
     evaluator = job.result
+    assert evaluator is not None, "succeeded job must have a result"
     print(f"Generated evaluator: name=`{evaluator.name}` version=`{evaluator.version}`.")
 
     # ------------------------------------------------------------------
@@ -142,9 +143,10 @@ with (
     if not recent:
         print("  (no jobs returned)")
     for entry in recent:
+        entry_evaluator_name = entry.inputs.evaluator_name if entry.inputs is not None else "<unknown>"
         print(
             f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` "
-            f"evaluator_name=`{entry.inputs.evaluator_name}`"
+            f"evaluator_name=`{entry_evaluator_name}`"
         )
 
     # ------------------------------------------------------------------

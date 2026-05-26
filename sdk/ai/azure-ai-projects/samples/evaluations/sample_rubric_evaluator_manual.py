@@ -62,6 +62,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorCategory,
     EvaluatorDefinitionType,
+    RubricBasedEvaluatorDefinition,
     TestingCriterionAzureAIEvaluator,
 )
 
@@ -134,9 +135,11 @@ with (
         },
     )
     print(f"Created evaluator `{evaluator.name}` version `{evaluator.version}`.")
-    print(f"Categories: {[c.value for c in evaluator.categories]}")
-    print(f"Dimensions ({len(evaluator.definition.dimensions)}):")
-    for dim in evaluator.definition.dimensions:
+    definition = evaluator.definition
+    assert isinstance(definition, RubricBasedEvaluatorDefinition)
+    print(f"Categories: {[c.value if isinstance(c, EvaluatorCategory) else c for c in evaluator.categories]}")
+    print(f"Dimensions ({len(definition.dimensions)}):")
+    for dim in definition.dimensions:
         marker = " [ALWAYS-ON]" if dim.always_applicable else ""
         print(f"  - {dim.id} (weight={dim.weight}){marker}")
 

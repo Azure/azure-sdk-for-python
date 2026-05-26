@@ -58,7 +58,7 @@ from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import JobStatus
+from azure.ai.projects.models import EvaluatorCategory, JobStatus, RubricBasedEvaluatorDefinition
 
 load_dotenv()
 
@@ -165,11 +165,16 @@ with (
         )
     else:
         evaluator = multi_job.result
+        assert evaluator is not None, "succeeded job must have a result"
+        definition = evaluator.definition
+        assert isinstance(definition, RubricBasedEvaluatorDefinition)
         multi_evaluator_version = evaluator.version or ""
         print(f"Generated evaluator: name=`{evaluator.name}` version=`{evaluator.version}`.")
-        print(f"Categories: {[c.value for c in evaluator.categories]}")
-        print(f"Dimensions ({len(evaluator.definition.dimensions)}):")
-        for dim in evaluator.definition.dimensions:
+        print(
+            f"Categories: {[c.value if isinstance(c, EvaluatorCategory) else c for c in evaluator.categories]}"
+        )
+        print(f"Dimensions ({len(definition.dimensions)}):")
+        for dim in definition.dimensions:
             marker = " [ALWAYS-ON]" if dim.always_applicable else ""
             print(f"  - {dim.id} (weight={dim.weight}){marker}")
 
@@ -230,11 +235,16 @@ with (
             )
         else:
             evaluator = traces_job.result
+            assert evaluator is not None, "succeeded job must have a result"
+            definition = evaluator.definition
+            assert isinstance(definition, RubricBasedEvaluatorDefinition)
             traces_evaluator_version = evaluator.version or ""
             print(f"Generated evaluator: name=`{evaluator.name}` version=`{evaluator.version}`.")
-            print(f"Categories: {[c.value for c in evaluator.categories]}")
-            print(f"Dimensions ({len(evaluator.definition.dimensions)}):")
-            for dim in evaluator.definition.dimensions:
+            print(
+                f"Categories: {[c.value if isinstance(c, EvaluatorCategory) else c for c in evaluator.categories]}"
+            )
+            print(f"Dimensions ({len(definition.dimensions)}):")
+            for dim in definition.dimensions:
                 marker = " [ALWAYS-ON]" if dim.always_applicable else ""
                 print(f"  - {dim.id} (weight={dim.weight}){marker}")
 

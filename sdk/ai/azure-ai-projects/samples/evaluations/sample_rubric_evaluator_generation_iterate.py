@@ -48,7 +48,12 @@ from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvaluatorDefinitionType, JobStatus
+from azure.ai.projects.models import (
+    EvaluatorCategory,
+    EvaluatorDefinitionType,
+    JobStatus,
+    RubricBasedEvaluatorDefinition,
+)
 
 load_dotenv()
 
@@ -118,9 +123,12 @@ with (
         )
 
     v1 = job.result
+    assert v1 is not None, "succeeded job must have a result"
+    v1_definition = v1.definition
+    assert isinstance(v1_definition, RubricBasedEvaluatorDefinition)
     print(f"v1 created: version=`{v1.version}`.")
-    print(f"v1 dimensions ({len(v1.definition.dimensions)}):")
-    for dim in v1.definition.dimensions:
+    print(f"v1 dimensions ({len(v1_definition.dimensions)}):")
+    for dim in v1_definition.dimensions:
         marker = " [ALWAYS-ON]" if dim.always_applicable else ""
         print(f"  - {dim.id} (weight={dim.weight}){marker}")
 
@@ -134,8 +142,8 @@ with (
     #   * Drop the lowest-weight editable dimension as redundant.
     #   * Add a new custom dimension specific to this assistant.
     print("Apply human edits:")
-    editable = [d for d in v1.definition.dimensions if not d.always_applicable]
-    always_on = [d for d in v1.definition.dimensions if d.always_applicable]
+    editable = [d for d in v1_definition.dimensions if not d.always_applicable]
+    always_on = [d for d in v1_definition.dimensions if d.always_applicable]
 
     edited_dimensions = []
     if editable:
@@ -185,19 +193,21 @@ with (
         name=evaluator_name,
         evaluator_version={
             "name": evaluator_name,
-            "categories": [c.value for c in v1.categories],
+            "categories": [c.value if isinstance(c, EvaluatorCategory) else c for c in v1.categories],
             "display_name": v1.display_name,
             "description": (v1.description or "") + " (edited)",
             "definition": {
                 "type": EvaluatorDefinitionType.RUBRIC,
                 "dimensions": edited_dimensions,
-                "pass_threshold": v1.definition.pass_threshold or 0.6,
+                "pass_threshold": v1_definition.pass_threshold or 0.6,
             },
         },
     )
+    v2_definition = v2.definition
+    assert isinstance(v2_definition, RubricBasedEvaluatorDefinition)
     print(f"v2 created: version=`{v2.version}`.")
-    print(f"v2 dimensions ({len(v2.definition.dimensions)}):")
-    for dim in v2.definition.dimensions:
+    print(f"v2 dimensions ({len(v2_definition.dimensions)}):")
+    for dim in v2_definition.dimensions:
         marker = " [ALWAYS-ON]" if dim.always_applicable else ""
         print(f"  - {dim.id} (weight={dim.weight}){marker}")
 
@@ -206,7 +216,9 @@ with (
     # ------------------------------------------------------------------
     print(f"List all versions for evaluator `{evaluator_name}`:")
     for ver in project_client.beta.evaluators.list_versions(name=evaluator_name):
-        print(f"  - version=`{ver.version}` dimensions={len(ver.definition.dimensions)}")
+        ver_definition = ver.definition
+        assert isinstance(ver_definition, RubricBasedEvaluatorDefinition)
+        print(f"  - version=`{ver.version}` dimensions={len(ver_definition.dimensions)}")
 
     # ------------------------------------------------------------------
     # 5. Clean up.
