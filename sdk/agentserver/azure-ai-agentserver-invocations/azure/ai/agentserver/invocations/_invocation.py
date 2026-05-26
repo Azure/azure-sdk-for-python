@@ -17,17 +17,12 @@ from typing import Any, Optional
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from starlette.requests import Request
-from starlette.responses import JSONResponse, Response, StreamingResponse
+from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
     create_error_response,
-    detach_context,
-    end_span,
-    record_error,
-    set_current_span,
-    trace_stream,
 )
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     CHAT_ISOLATION_KEY,
@@ -348,63 +343,6 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     # Span attribute helper
     # ------------------------------------------------------------------
 
-    @staticmethod
-    def _safe_set_attrs(span: Any, attrs: dict[str, str]) -> None:
-        if span is None:
-            return
-        try:
-            for key, value in attrs.items():
-                span.set_attribute(key, value)
-        except Exception:  # pylint: disable=broad-exception-caught
-            logger.debug("Failed to set span attributes: %s", list(attrs.keys()), exc_info=True)
-
-    # ------------------------------------------------------------------
-    # Streaming response helpers
-    # ------------------------------------------------------------------
-
-    def _wrap_streaming_response(
-        self,
-        response: StreamingResponse,
-        otel_span: Any,
-    ) -> StreamingResponse:
-        """Wrap a streaming response's body iterator with span lifecycle and context.
-
-        Two layers of wrapping are applied:
-
-        1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
-           the OTel span covers the full streaming duration and is ended
-           when iteration completes.
-        2. **Outer (context):** A second async generator re-attaches the span
-           as the current context for the duration of streaming, so that
-           child spans created by user handler code (e.g. Agent Framework)
-           are correctly parented under this span.
-
-        :param response: The ``StreamingResponse`` returned by the user handler.
-        :type response: ~starlette.responses.StreamingResponse
-        :param otel_span: The OTel span (or *None* when tracing is disabled).
-        :type otel_span: any
-        :return: The same response object, with its body_iterator replaced.
-        :rtype: ~starlette.responses.StreamingResponse
-        """
-        if otel_span is None:
-            return response
-
-        # Inner wrap: trace_stream ends the span when iteration completes.
-        traced = trace_stream(response.body_iterator, otel_span)
-
-        # Outer wrap: re-attach span as current context during streaming
-        # so child spans are correctly parented.
-        async def _iter_with_context():  # type: ignore[return-value]
-            token = set_current_span(otel_span)
-            try:
-                async for chunk in traced:
-                    yield chunk
-            finally:
-                detach_context(token)
-
-        response.body_iterator = _iter_with_context()
-        return response
-
     # ------------------------------------------------------------------
     # Endpoint handlers
     # ------------------------------------------------------------------
@@ -438,88 +376,65 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         request.state.user_isolation_key = request.headers.get(USER_ISOLATION_KEY, "")
         request.state.chat_isolation_key = request.headers.get(CHAT_ISOLATION_KEY, "")
 
-        with self.request_span(
-            request.headers, invocation_id, "invoke_agent",
-            operation_name="invoke_agent", session_id=session_id,
-            end_on_exit=False,
-        ) as otel_span:
-            self._safe_set_attrs(otel_span, {
-                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
-            })
+        # Incoming baggage and trace context are already attached by
+        # BaggageMiddleware and the Starlette OTel instrumentor.
+        # Add protocol-specific baggage entries for this invocation.
+        ctx = _otel_context.get_current()
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
+        )
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id", session_id, context=ctx,
+        )
+        baggage_token = _otel_context.attach(ctx)
 
-            # Propagate invocation/session IDs as W3C baggage so downstream
-            # services receive them automatically via the baggage header.
-            ctx = _otel_context.get_current()
-            ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
+        # Set structured logging context (concurrency-safe via contextvars)
+        _ensure_log_filter()
+        inv_token = _invocation_id_var.set(invocation_id)
+        session_token = _session_id_var.set(session_id)
+        try:
+            response = await self._dispatch_invoke(request)
+            response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
+            response.headers[InvocationConstants.SESSION_ID_HEADER] = session_id
+        except NotImplementedError as exc:
+            logger.error("Invocation %s failed: %s", invocation_id, exc)
+            return create_error_response(
+                "not_implemented",
+                str(exc),
+                status_code=501,
+                headers=_apply_error_source_headers(
+                    {
+                        InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
+                        InvocationConstants.SESSION_ID_HEADER: session_id,
+                    },
+                    _ERROR_SOURCE_UPSTREAM,
+                ),
             )
-            ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.session_id", session_id, context=ctx,
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            error_source, error_detail = _classify_error(exc)
+            logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
+            return create_error_response(
+                "internal_error",
+                "Internal server error",
+                status_code=500,
+                headers=_apply_error_source_headers(
+                    {
+                        InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
+                        InvocationConstants.SESSION_ID_HEADER: session_id,
+                    },
+                    error_source,
+                    error_detail,
+                ),
             )
-            baggage_token = _otel_context.attach(ctx)
-
-            # Set structured logging context (concurrency-safe via contextvars)
-            _ensure_log_filter()
-            inv_token = _invocation_id_var.set(invocation_id)
-            session_token = _session_id_var.set(session_id)
+        finally:
+            _invocation_id_var.reset(inv_token)
+            _session_id_var.reset(session_token)
             try:
-                response = await self._dispatch_invoke(request)
-                response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
-                response.headers[InvocationConstants.SESSION_ID_HEADER] = session_id
-            except NotImplementedError as exc:
-                self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "not_implemented",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
-                })
-                end_span(otel_span, exc=exc)
-                logger.error("Invocation %s failed: %s", invocation_id, exc)
-                return create_error_response(
-                    "not_implemented",
-                    str(exc),
-                    status_code=501,
-                    headers=_apply_error_source_headers(
-                        {
-                            InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
-                            InvocationConstants.SESSION_ID_HEADER: session_id,
-                        },
-                        _ERROR_SOURCE_UPSTREAM,
-                    ),
-                )
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                error_source, error_detail = _classify_error(exc)
-                self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
-                })
-                end_span(otel_span, exc=exc)
-                logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
-                return create_error_response(
-                    "internal_error",
-                    "Internal server error",
-                    status_code=500,
-                    headers=_apply_error_source_headers(
-                        {
-                            InvocationConstants.INVOCATION_ID_HEADER: invocation_id,
-                            InvocationConstants.SESSION_ID_HEADER: session_id,
-                        },
-                        error_source,
-                        error_detail,
-                    ),
-                )
-            finally:
-                _invocation_id_var.reset(inv_token)
-                _session_id_var.reset(session_token)
-                try:
-                    _otel_context.detach(baggage_token)
-                except ValueError:
-                    pass
+                _otel_context.detach(baggage_token)
+            except ValueError:
+                pass
 
-            if isinstance(response, StreamingResponse):
-                return self._wrap_streaming_response(response, otel_span)
-
-            end_span(otel_span)
-            return response
+        return response
 
     async def _traced_invocation_endpoint(
         self,
@@ -534,42 +449,29 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         raw_session_id = request.query_params.get("agent_session_id", "")
         session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
 
-        with self.request_span(
-            request.headers, invocation_id, span_operation,
-            operation_name=span_operation, session_id=session_id,
-        ) as _otel_span:
-            self._safe_set_attrs(_otel_span, {
-                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
-            })
-            _ensure_log_filter()
-            inv_token = _invocation_id_var.set(invocation_id)
-            session_token = _session_id_var.set(session_id)
-            try:
-                response = await dispatch(request)
-                response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
-                return response
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                error_source, error_detail = _classify_error(exc)
-                self._safe_set_attrs(_otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
-                })
-                record_error(_otel_span, exc)
-                logger.error("Error in %s %s: %s", span_operation, invocation_id, exc, exc_info=True)
-                return create_error_response(
-                    "internal_error",
-                    "Internal server error",
-                    status_code=500,
-                    headers=_apply_error_source_headers(
-                        {InvocationConstants.INVOCATION_ID_HEADER: invocation_id},
-                        error_source,
-                        error_detail,
-                    ),
-                )
-            finally:
-                _invocation_id_var.reset(inv_token)
-                _session_id_var.reset(session_token)
+        _ensure_log_filter()
+        inv_token = _invocation_id_var.set(invocation_id)
+        session_token = _session_id_var.set(session_id)
+        try:
+            response = await dispatch(request)
+            response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
+            return response
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            error_source, error_detail = _classify_error(exc)
+            logger.error("Error in %s %s: %s", span_operation, invocation_id, exc, exc_info=True)
+            return create_error_response(
+                "internal_error",
+                "Internal server error",
+                status_code=500,
+                headers=_apply_error_source_headers(
+                    {InvocationConstants.INVOCATION_ID_HEADER: invocation_id},
+                    error_source,
+                    error_detail,
+                ),
+            )
+        finally:
+            _invocation_id_var.reset(inv_token)
+            _session_id_var.reset(session_token)
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:
         return await self._traced_invocation_endpoint(
