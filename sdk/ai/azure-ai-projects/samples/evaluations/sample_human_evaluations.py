@@ -297,7 +297,7 @@ if __name__ == "__main__":
             response_id="resp_64904952b20872620069f8d600779c81908f58b0a3be090ef0",
             project_resource_id=project_resource_id,
             enduser_pseudo_id="sess_123456",
-            tags={"subscription_tier": "basic_plan"},
+            tags={"subscription_tier": "free_plan"},
             evaluation_id="0b27be45-cd65-4671-ab08-c3eafd4c9613",
         )
         print("Emitted boolean human evaluation event.")
