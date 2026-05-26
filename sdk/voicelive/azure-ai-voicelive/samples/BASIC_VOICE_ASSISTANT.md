@@ -16,13 +16,14 @@ This sample demonstrates a complete voice assistant implementation using the Azu
 
 - Python 3.9+
 - Microphone and speakers/headphones
-- Azure AI VoiceLive API key and endpoint
+- Azure AI VoiceLive endpoint
+- An Entra ID identity with access to Azure AI VoiceLive, or a VoiceLive API key
 
 ## Installation
 
 1. **Install the SDK**:
    ```bash
-   pip install azure-ai-voicelive python-dotenv
+    pip install azure-ai-voicelive azure-identity python-dotenv
    ```
 
 2. **Install PyAudio** (required for audio capture/playback):
@@ -46,14 +47,20 @@ This sample demonstrates a complete voice assistant implementation using the Azu
 
 ## Configuration
 
-Create a `.env` file with your credentials:
+Create a `.env` file. By default, the sample uses Entra ID via `DefaultAzureCredential`:
 
 ```bash
-AZURE_VOICELIVE_API_KEY=your-api-key
 AZURE_VOICELIVE_ENDPOINT=your-endpoint
 AZURE_VOICELIVE_MODEL=gpt-realtime
 AZURE_VOICELIVE_VOICE=en-US-AvaNeural
 AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful AI assistant. Respond naturally and conversationally.
+```
+
+To use API key authentication instead, add:
+
+```bash
+AZURE_VOICELIVE_USE_API_KEY=true
+AZURE_VOICELIVE_API_KEY=your-api-key
 ```
 
 ## Running the Sample
@@ -70,6 +77,12 @@ python basic_voice_assistant_async.py \
     --voice en-US-AvaNeural \
     --instructions "You are a helpful assistant" \
     --verbose
+```
+
+Use API key authentication only when you want it explicitly:
+
+```bash
+python basic_voice_assistant_async.py --use-api-key
 ```
 
 ## How It Works
@@ -162,6 +175,10 @@ Main application class that coordinates WebSocket connection, session management
 - **WebSocket errors**: Verify endpoint and credentials
 - **API errors**: Check model availability and account permissions
 - **Network timeouts**: Check firewall settings and network connectivity
+
+### Authentication Issues
+- **Default auth failures**: Confirm `DefaultAzureCredential` can get a token and your identity can access the VoiceLive resource
+- **API key auth failures**: Set `AZURE_VOICELIVE_USE_API_KEY=true` and verify `AZURE_VOICELIVE_API_KEY`
 
 ### PyAudio Installation Issues
 - **Linux**: `sudo apt-get install -y portaudio19-dev libasound2-dev`

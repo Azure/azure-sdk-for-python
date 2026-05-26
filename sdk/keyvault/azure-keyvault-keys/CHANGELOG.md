@@ -1,10 +1,8 @@
 # Release History
 
-## 4.11.1 (Unreleased)
+## 4.11.2 (Unreleased)
 
 ### Features Added
-
-- Added support for service API version `2025-07-01` [#46716](https://github.com/Azure/azure-sdk-for-python/pull/46716)
 
 ### Breaking Changes
 
@@ -12,7 +10,16 @@
 
 ### Other Changes
 
+## 4.11.1 (2026-05-18)
+
+### Features Added
+
+- Added support for service API version `2025-07-01` [#46716](https://github.com/Azure/azure-sdk-for-python/pull/46716)
+
+### Other Changes
+
 - Key Vault API version `2025-07-01` is now the default
+- Updated minimum `cryptography` version to 44.0.2
 
 ## 4.11.0 (2025-06-16)
 

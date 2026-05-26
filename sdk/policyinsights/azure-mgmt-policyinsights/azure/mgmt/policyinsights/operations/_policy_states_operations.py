@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Callable, Dict, Iterator, Literal, Optional, TypeVar, Union, cast
+from typing import Any, Callable, Iterator, Literal, Optional, TypeVar, Union, cast
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -35,7 +35,8 @@ from .._configuration import PolicyInsightsClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -61,7 +62,7 @@ def build_list_query_results_for_management_group_request(  # pylint: disable=na
     management_groups_namespace: Literal["Microsoft.Management"] = kwargs.pop(
         "management_groups_namespace", "Microsoft.Management"
     )
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,7 +107,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -144,7 +145,7 @@ def build_summarize_for_management_group_request(  # pylint: disable=name-too-lo
     management_groups_namespace: Literal["Microsoft.Management"] = kwargs.pop(
         "management_groups_namespace", "Microsoft.Management"
     )
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -196,7 +197,7 @@ def build_list_query_results_for_subscription_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -240,7 +241,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -275,7 +276,7 @@ def build_summarize_for_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -327,7 +328,7 @@ def build_list_query_results_for_resource_group_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -372,7 +373,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -408,7 +409,7 @@ def build_summarize_for_resource_group_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -461,7 +462,7 @@ def build_list_query_results_for_resource_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -507,7 +508,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -542,7 +543,7 @@ def build_summarize_for_resource_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -582,7 +583,7 @@ def build_trigger_subscription_evaluation_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -611,7 +612,7 @@ def build_trigger_resource_group_evaluation_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -656,7 +657,7 @@ def build_list_query_results_for_policy_set_definition_request(  # pylint: disab
     authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
         "authorization_namespace", "Microsoft.Authorization"
     )
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -702,7 +703,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -741,7 +742,7 @@ def build_summarize_for_policy_set_definition_request(  # pylint: disable=name-t
     authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
         "authorization_namespace", "Microsoft.Authorization"
     )
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -798,7 +799,7 @@ def build_list_query_results_for_policy_definition_request(  # pylint: disable=n
     authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
         "authorization_namespace", "Microsoft.Authorization"
     )
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -844,7 +845,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -883,7 +884,7 @@ def build_summarize_for_policy_definition_request(  # pylint: disable=name-too-l
     authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
         "authorization_namespace", "Microsoft.Authorization"
     )
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -940,7 +941,7 @@ def build_list_query_results_for_subscription_level_policy_assignment_request(  
     authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
         "authorization_namespace", "Microsoft.Authorization"
     )
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -986,7 +987,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1025,7 +1026,7 @@ def build_summarize_for_subscription_level_policy_assignment_request(  # pylint:
     authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
         "authorization_namespace", "Microsoft.Authorization"
     )
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1083,7 +1084,7 @@ def build_list_query_results_for_resource_group_level_policy_assignment_request(
     authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
         "authorization_namespace", "Microsoft.Authorization"
     )
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1130,7 +1131,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1170,7 +1171,7 @@ def build_summarize_for_resource_group_level_policy_assignment_request(  # pylin
     authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
         "authorization_namespace", "Microsoft.Authorization"
     )
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1254,7 +1255,7 @@ class PolicyStatesOperations:
         management_groups_namespace: Literal["Microsoft.Management"] = kwargs.pop(
             "management_groups_namespace", "Microsoft.Management"
         )
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1351,7 +1352,10 @@ class PolicyStatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.QueryFailure,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1395,7 +1399,7 @@ class PolicyStatesOperations:
         management_groups_namespace: Literal["Microsoft.Management"] = kwargs.pop(
             "management_groups_namespace", "Microsoft.Management"
         )
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
@@ -1431,7 +1435,10 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.QueryFailure,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SummarizeResults", pipeline_response.http_response)
@@ -1466,7 +1473,7 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1562,7 +1569,10 @@ class PolicyStatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.QueryFailure,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1603,7 +1613,7 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
@@ -1638,7 +1648,10 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.QueryFailure,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SummarizeResults", pipeline_response.http_response)
@@ -1676,7 +1689,7 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1773,7 +1786,10 @@ class PolicyStatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.QueryFailure,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1817,7 +1833,7 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
@@ -1853,7 +1869,10 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.QueryFailure,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SummarizeResults", pipeline_response.http_response)
@@ -1888,7 +1907,7 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1989,7 +2008,10 @@ class PolicyStatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.QueryFailure,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2030,7 +2052,7 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
@@ -2065,7 +2087,10 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.QueryFailure,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SummarizeResults", pipeline_response.http_response)
@@ -2087,7 +2112,7 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_trigger_subscription_evaluation_request(
@@ -2112,7 +2137,10 @@ class PolicyStatesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.QueryFailure,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -2135,7 +2163,7 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2187,7 +2215,7 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_trigger_resource_group_evaluation_request(
@@ -2213,7 +2241,10 @@ class PolicyStatesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.QueryFailure,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -2240,7 +2271,7 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2310,7 +2341,7 @@ class PolicyStatesOperations:
         authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
             "authorization_namespace", "Microsoft.Authorization"
         )
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2408,7 +2439,10 @@ class PolicyStatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.QueryFailure,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2455,7 +2489,7 @@ class PolicyStatesOperations:
         authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
             "authorization_namespace", "Microsoft.Authorization"
         )
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
@@ -2492,7 +2526,10 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.QueryFailure,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SummarizeResults", pipeline_response.http_response)
@@ -2533,7 +2570,7 @@ class PolicyStatesOperations:
         authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
             "authorization_namespace", "Microsoft.Authorization"
         )
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2631,7 +2668,10 @@ class PolicyStatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.QueryFailure,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2678,7 +2718,7 @@ class PolicyStatesOperations:
         authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
             "authorization_namespace", "Microsoft.Authorization"
         )
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
@@ -2715,7 +2755,10 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.QueryFailure,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SummarizeResults", pipeline_response.http_response)
@@ -2756,7 +2799,7 @@ class PolicyStatesOperations:
         authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
             "authorization_namespace", "Microsoft.Authorization"
         )
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2854,7 +2897,10 @@ class PolicyStatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.QueryFailure,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2901,7 +2947,7 @@ class PolicyStatesOperations:
         authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
             "authorization_namespace", "Microsoft.Authorization"
         )
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
@@ -2938,7 +2984,10 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.QueryFailure,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SummarizeResults", pipeline_response.http_response)
@@ -2982,7 +3031,7 @@ class PolicyStatesOperations:
         authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
             "authorization_namespace", "Microsoft.Authorization"
         )
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -3081,7 +3130,10 @@ class PolicyStatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.QueryFailure,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3131,7 +3183,7 @@ class PolicyStatesOperations:
         authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
             "authorization_namespace", "Microsoft.Authorization"
         )
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
@@ -3169,7 +3221,10 @@ class PolicyStatesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.QueryFailure, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.QueryFailure,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SummarizeResults", pipeline_response.http_response)

@@ -54,7 +54,7 @@ def build_text_translation_get_supported_languages_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -86,7 +86,7 @@ def build_text_translation_translate_request(*, client_trace_id: Optional[str] =
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -112,7 +112,7 @@ def build_text_translation_transliterate_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -218,6 +218,7 @@ class _TextTranslationClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -243,7 +244,7 @@ class _TextTranslationClientOperationsMixin(
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GetSupportedLanguagesResult, response.json())
 
@@ -334,7 +335,7 @@ class _TextTranslationClientOperationsMixin(
     @api_version_validation(
         method_added_on="2025-10-01-preview",
         params_added_on={"2025-10-01-preview": ["client_trace_id", "api_version", "content_type", "accept"]},
-        api_versions_list=["2025-10-01-preview"],
+        api_versions_list=["2025-10-01-preview", "2026-06-06"],
     )
     def translate(
         self,
@@ -391,6 +392,7 @@ class _TextTranslationClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -417,7 +419,7 @@ class _TextTranslationClientOperationsMixin(
         response_headers["x-metered-usage"] = self._deserialize("int", response.headers.get("x-metered-usage"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TranslationResult, response.json())
 
@@ -563,7 +565,7 @@ class _TextTranslationClientOperationsMixin(
                 "accept",
             ]
         },
-        api_versions_list=["2025-10-01-preview"],
+        api_versions_list=["2025-10-01-preview", "2026-06-06"],
     )
     def transliterate(
         self,
@@ -638,6 +640,7 @@ class _TextTranslationClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -662,7 +665,7 @@ class _TextTranslationClientOperationsMixin(
         response_headers["X-RequestId"] = self._deserialize("str", response.headers.get("X-RequestId"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TransliterateResult, response.json())
 
