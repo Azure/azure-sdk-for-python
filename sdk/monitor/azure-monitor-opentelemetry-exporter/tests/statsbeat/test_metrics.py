@@ -716,6 +716,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             False,
         )
         metric._feature = _StatsbeatFeature.NONE
+        _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = _StatsbeatFeature.NONE
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
         self.assertEqual(attributes["type"], _FEATURE_TYPES.INSTRUMENTATION)
@@ -747,6 +748,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             False,
         )
         metric._feature = _StatsbeatFeature.NONE
+        _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = _StatsbeatFeature.NONE
         self.assertEqual(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"], 0)
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_instrumentations") as instrumentations:
             instrumentations.return_value = 0
