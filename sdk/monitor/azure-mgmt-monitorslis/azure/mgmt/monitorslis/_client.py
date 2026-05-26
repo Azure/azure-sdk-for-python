@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
 
 from azure.core.pipeline import policies
@@ -16,15 +15,11 @@ from azure.core.settings import settings
 from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
+from typing_extensions import Self
 
 from ._configuration import MonitorSlisMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import SlisOperations
-
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
