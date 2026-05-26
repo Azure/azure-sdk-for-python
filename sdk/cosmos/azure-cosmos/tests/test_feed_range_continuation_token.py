@@ -1096,6 +1096,60 @@ class TestAggregateClassificationHeuristics:
         stripped = _strip_sql_block_comments(query)
         assert "/* COUNT(1) */" in stripped
 
+    def test_value_aggregate_detected_with_trailing_line_comment(self):
+        # line comments used to leak into the projection
+        # because the scanner only stripped /* ... */ block comments. After
+        # whitespace normalization the trailing "-- text" became a non-empty
+        # suffix of the bare-aggregate call and the detector returned None,
+        # silently demoting per-partition merge to list concatenation.
+        query = "SELECT VALUE COUNT(1) -- counts all items\nFROM c"
+        assert _get_select_value_aggregate_function(query) == "COUNT"
+
+    def test_value_aggregate_detected_with_leading_line_comment(self):
+        # A leading "-- header" would, pre-fix, prevent the normalized query
+        # from starting with SELECT VALUE and the detector would bail out
+        # before reaching the projection scan.
+        query = "-- header line\nSELECT VALUE SUM(c.amount) FROM c"
+        assert _get_select_value_aggregate_function(query) == "SUM"
+
+    def test_value_aggregate_detected_with_line_comment_at_end_of_string(self):
+        # No trailing newline after the line comment: the scanner has to
+        # treat end-of-string as the end of the comment span.
+        query = "SELECT VALUE MIN(c.score) FROM c -- trailing, no newline"
+        assert _get_select_value_aggregate_function(query) == "MIN"
+
+    def test_line_comment_inside_string_literal_is_not_stripped(self):
+        # The naive `re.sub(r'--[^\n]*', ' ', text)` fix corrupts string
+        # literals like 'a--b' (it strips "--b'", leaving an unterminated
+        # quote). The quote-aware scanner must leave literal content alone.
+        query = "SELECT VALUE COUNT(1) FROM c WHERE c.code = 'a--b'"
+        stripped = _strip_sql_block_comments(query)
+        assert "'a--b'" in stripped
+        assert _get_select_value_aggregate_function(query) == "COUNT"
+
+    def test_mixed_block_and_line_comments_are_both_stripped(self):
+        query = (
+            "SELECT VALUE /* block */ AVG(c.latency) -- line comment\n"
+            "FROM c"
+        )
+        assert _get_select_value_aggregate_function(query) == "AVG"
+
+    def test_unclosed_block_comment_does_not_leak_trailing_character(self):
+        # Regression: the inner /* ... */ scan used to exit one character
+        # short on an unclosed comment (index pointed at the last char
+        # instead of past it), so the outer loop re-processed that
+        # character and leaked it into the output — e.g.
+        #   _strip_sql_comments("hello /* unclosed") -> "hello  d"
+        # The clamp `index = min(length, index + 2)` consumes the
+        # unterminated comment span all the way to end-of-string.
+        stripped = _strip_sql_block_comments("hello /* unclosed")
+        assert stripped == "hello  "
+        # And the detector returns None (no aggregate visible) rather
+        # than getting confused by the leaked character.
+        assert _get_select_value_aggregate_function(
+            "SELECT VALUE COUNT(1) /* unterminated"
+        ) is None
+
     def test_value_projection_with_property_named_count_is_not_aggregate(self):
         query = "SELECT VALUE c.COUNT FROM c"
         assert _get_select_value_aggregate_function(query) is None

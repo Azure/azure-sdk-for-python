@@ -35,17 +35,19 @@ def _extract_query_text(query: Optional[Union[str, dict[str, Any]]]) -> Optional
     return None
 
 
-def _strip_sql_block_comments(query_text: str) -> str:
-    """Return ``query_text`` with ``/* ... */`` comment spans removed.
+def _strip_sql_comments(query_text: str) -> str:
+    """Return ``query_text`` with SQL comment spans removed.
 
-    The aggregate detector is a lightweight scanner, so this helper keeps the
-    same lightweight approach and removes only block comments before scanning.
-    Quoted strings are preserved so comment-like text inside literals does not
-    get stripped.
+    Strips both ``/* ... */`` block comments and ``-- ...`` line comments
+    (the latter run from the ``--`` delimiter to the next ``\\n`` or
+    end-of-string). The aggregate detector is a lightweight scanner, so
+    this helper keeps the same lightweight approach. Quoted strings are
+    preserved so comment-like text inside literals (for example
+    ``'a--b'`` or ``'/* x */'``) does not get stripped.
 
     :param query_text: Raw query text.
     :type query_text: str
-    :returns: Query text with block comments removed.
+    :returns: Query text with block and line comments removed.
     :rtype: str
     """
     out: list[str] = []
@@ -78,16 +80,43 @@ def _strip_sql_block_comments(query_text: str) -> str:
             index += 2
             while index + 1 < length and not (query_text[index] == "*" and query_text[index + 1] == "/"):
                 index += 1
-            if index + 1 < length:
-                index += 2
+            # Advance past the closing "*/"; for an unclosed comment the
+            # inner loop stops with index at the last character, so clamp
+            # to end-of-string. Without the clamp the outer loop would
+            # re-process that last character and leak it into the output.
+            index = min(length, index + 2)
             # Preserve token separation where a comment was removed.
             out.append(" ")
+            continue
+
+        if ch == "-" and index + 1 < length and query_text[index + 1] == "-":
+            # Line comment runs to the next newline (or end-of-string).
+            # Preserve the newline itself so whitespace normalization
+            # downstream still sees a token boundary; if there is no
+            # newline, fall through with an inserted space for the same
+            # reason.
+            index += 2
+            while index < length and query_text[index] != "\n":
+                index += 1
+            if index < length:
+                # Keep the newline so " ".join(text.split()) still produces a
+                # boundary between tokens that surrounded the comment.
+                out.append("\n")
+                index += 1
+            else:
+                out.append(" ")
             continue
 
         out.append(ch)
         index += 1
 
     return "".join(out)
+
+
+# Backward-compatible alias: the function used to only strip block comments;
+# it now strips both block and line comments. Kept for callers/tests that
+# imported the old name.
+_strip_sql_block_comments = _strip_sql_comments
 
 
 def _get_select_value_aggregate_function(query: Optional[Union[str, dict[str, Any]]]) -> Optional[str]:
@@ -107,7 +136,7 @@ def _get_select_value_aggregate_function(query: Optional[Union[str, dict[str, An
     if not query_text:
         return None
 
-    without_comments = _strip_sql_block_comments(query_text)
+    without_comments = _strip_sql_comments(query_text)
     normalized = " ".join(without_comments.upper().split())
     projection = _extract_outer_select_value_projection(normalized)
     if projection is None:
@@ -119,6 +148,35 @@ def _get_select_value_aggregate_function(query: Optional[Union[str, dict[str, An
         return None
 
     return _find_top_level_aggregate_function(projection)
+
+
+def _find_matching_close_paren(text: str, open_paren: int) -> int:
+    """Return the index of the ``)`` that closes the ``(`` at ``open_paren``.
+
+    Tracks nested parenthesis depth so inner parens in the argument list
+    do not confuse the scan. Returns ``-1`` when no matching close paren
+    is found before the end of ``text``.
+
+    :param text: String being scanned.
+    :type text: str
+    :param open_paren: Index of the opening ``(``.
+    :type open_paren: int
+    :returns: Index of the matching ``)``, or ``-1`` if unbalanced.
+    :rtype: int
+    """
+    call_depth = 0
+    cursor = open_paren
+    length = len(text)
+    while cursor < length:
+        inner = text[cursor]
+        if inner == "(":
+            call_depth += 1
+        elif inner == ")":
+            call_depth -= 1
+            if call_depth == 0:
+                return cursor
+        cursor += 1
+    return -1
 
 
 def _find_top_level_aggregate_function(projection: str) -> Optional[str]:
@@ -159,55 +217,43 @@ def _find_top_level_aggregate_function(projection: str) -> Optional[str]:
             index += 1
             continue
 
-        if depth == 0 and (ch.isalpha() or ch == "_"):
-            start = index
+        if depth != 0 or not (ch.isalpha() or ch == "_"):
             index += 1
-            while index < length and (projection[index].isalnum() or projection[index] == "_"):
-                index += 1
-            token = projection[start:index]
-
-            if token in aggregate_fns:
-                # Confirm the token is immediately followed (modulo whitespace)
-                # by '(' so we are looking at a function call, not a column
-                # named SUM/COUNT/etc.
-                open_paren = index
-                while open_paren < length and projection[open_paren].isspace():
-                    open_paren += 1
-                if open_paren >= length or projection[open_paren] != "(":
-                    continue
-
-                # Walk to the matching close-paren tracking depth so nested
-                # parens inside the argument list do not confuse us.
-                call_depth = 0
-                close_paren = -1
-                cursor = open_paren
-                while cursor < length:
-                    inner = projection[cursor]
-                    if inner == "(":
-                        call_depth += 1
-                    elif inner == ")":
-                        call_depth -= 1
-                        if call_depth == 0:
-                            close_paren = cursor
-                            break
-                    cursor += 1
-                if close_paren < 0:
-                    # Unbalanced parentheses in a normalized projection means
-                    # we cannot reason about the shape safely.
-                    return None
-
-                # Classify only when the bare aggregate call spans the whole
-                # projection. Any non-whitespace prefix or suffix is a compound
-                # expression whose per-partition partials cannot be merged with
-                # the aggregate-merge rules.
-                prefix_clean = projection[:start].strip() == ""
-                suffix_clean = projection[close_paren + 1:].strip() == ""
-                if prefix_clean and suffix_clean:
-                    return token
-                return None
             continue
 
+        start = index
         index += 1
+        while index < length and (projection[index].isalnum() or projection[index] == "_"):
+            index += 1
+        token = projection[start:index]
+
+        if token not in aggregate_fns:
+            continue
+
+        # Confirm the token is immediately followed (modulo whitespace)
+        # by '(' so we are looking at a function call, not a column
+        # named SUM/COUNT/etc.
+        open_paren = index
+        while open_paren < length and projection[open_paren].isspace():
+            open_paren += 1
+        if open_paren >= length or projection[open_paren] != "(":
+            continue
+
+        close_paren = _find_matching_close_paren(projection, open_paren)
+        if close_paren < 0:
+            # Unbalanced parentheses in a normalized projection means
+            # we cannot reason about the shape safely.
+            return None
+
+        # Classify only when the bare aggregate call spans the whole
+        # projection. Any non-whitespace prefix or suffix is a compound
+        # expression whose per-partition partials cannot be merged with
+        # the aggregate-merge rules.
+        prefix_clean = projection[:start].strip() == ""
+        suffix_clean = projection[close_paren + 1:].strip() == ""
+        if prefix_clean and suffix_clean:
+            return token
+        return None
 
     return None
 
