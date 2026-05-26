@@ -34,8 +34,7 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry project.
     2) FOUNDRY_MODEL_NAME - Required. The name of the model the generation job
-       will use (e.g. `gpt-4o`, `gpt-4.1`). The generation runs inline server
-       side, so no deployment in your project is required.
+       will use (e.g. `gpt-4o`, `gpt-4.1`).
     3) FOUNDRY_AGENT_NAME - Optional. Name of an agent registered in the project.
        Enables the `Agent` source and the `traces`-source job.
     4) FOUNDRY_REFERENCE_DATASET_NAME - Optional. Name of an uploaded dataset.
@@ -44,8 +43,8 @@ USAGE:
        Enables the `Dataset` source.
     6) FOUNDRY_TRACES_WINDOW_DAYS - Optional. Look-back window in days for the
        `traces` source. Defaults to 7.
-    7) POLL_INTERVAL_SECONDS - Optional. Number of seconds to sleep between
-       generation job status polls. Defaults to 10.
+    7) POLL_INTERVAL_SECONDS - Optional. Seconds to sleep between status polls.
+       Defaults to 10.
 """
 
 import os
@@ -58,7 +57,7 @@ from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvaluatorCategory, JobStatus, RubricBasedEvaluatorDefinition
+from azure.ai.projects.models import JobStatus, RubricBasedEvaluatorDefinition
 
 load_dotenv()
 
@@ -92,11 +91,7 @@ with (
         api_version="2025-11-15-preview",
     ) as project_client,
 ):
-
-    # ------------------------------------------------------------------
     # 1. Combined Prompt + Agent + Dataset generation job.
-    # ------------------------------------------------------------------
-    print("Build sources for the combined generation job:")
     multi_sources: List[Dict[str, Any]] = [
         {
             "type": "Prompt",
@@ -111,7 +106,6 @@ with (
         }
     ]
     if agent_name:
-        print(f"  Including Agent source: `{agent_name}`.")
         multi_sources.append(
             {
                 "type": "Agent",
@@ -120,10 +114,9 @@ with (
             }
         )
     else:
-        print("  Skipping Agent source (FOUNDRY_AGENT_NAME not set).")
+        print("Skipping Agent source (FOUNDRY_AGENT_NAME not set).")
 
     if dataset_name and dataset_version:
-        print(f"  Including Dataset source: `{dataset_name}` v`{dataset_version}`.")
         multi_sources.append(
             {
                 "type": "Dataset",
@@ -133,9 +126,8 @@ with (
             }
         )
     else:
-        print("  Skipping Dataset source (FOUNDRY_REFERENCE_DATASET_NAME / _VERSION not set).")
+        print("Skipping Dataset source (FOUNDRY_REFERENCE_DATASET_NAME / _VERSION not set).")
 
-    print(f"Create combined generation job for evaluator `{multi_name}`.")
     multi_job = project_client.beta.evaluators.create_generation_job(
         job={
             "model": model_name,
@@ -147,48 +139,33 @@ with (
         },
         operation_id=f"rubric-multi-{short}",
     )
-    print(f"Created generation job `{multi_job.id}` (status: `{cast(JobStatus, multi_job.status).value}`).")
 
-    print(f"Poll job `{multi_job.id}` until it reaches a terminal state.", end="", flush=True)
+    print(f"Waiting for multi-source job `{multi_job.id}` to complete...")
     while multi_job.status not in TERMINAL_STATUSES:
         time.sleep(poll_interval_seconds)
         multi_job = project_client.beta.evaluators.get_generation_job(multi_job.id)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final job status: `{cast(JobStatus, multi_job.status).value}`.")
 
     if multi_job.status != JobStatus.SUCCEEDED:
         message = multi_job.error.message if multi_job.error is not None else "<no error message>"
-        print(
-            f"Combined job `{multi_job.id}` ended with status "
-            f"`{cast(JobStatus, multi_job.status).value}`: {message}"
-        )
+        print(f"Multi-source job ended with status `{cast(JobStatus, multi_job.status).value}`: {message}")
     else:
+        # `isinstance` narrows the discriminated `definition` to the rubric subtype.
         evaluator = multi_job.result
-        assert evaluator is not None, "succeeded job must have a result"
+        assert evaluator is not None
         definition = evaluator.definition
         assert isinstance(definition, RubricBasedEvaluatorDefinition)
         multi_evaluator_version = evaluator.version or ""
-        print(f"Generated evaluator: name=`{evaluator.name}` version=`{evaluator.version}`.")
         print(
-            f"Categories: {[c.value if isinstance(c, EvaluatorCategory) else c for c in evaluator.categories]}"
+            f"Multi-source evaluator `{evaluator.name}` v{evaluator.version}: "
+            f"{len(definition.dimensions)} dimensions."
         )
-        print(f"Dimensions ({len(definition.dimensions)}):")
-        for dim in definition.dimensions:
-            marker = " [ALWAYS-ON]" if dim.always_applicable else ""
-            print(f"  - {dim.id} (weight={dim.weight}){marker}")
 
-    # ------------------------------------------------------------------
     # 2. Separate `traces` + Agent companion generation job.
-    # ------------------------------------------------------------------
-    # The traces source requires a companion source because the service
-    # rejects sources arrays consisting only of traces. The Agent source
-    # is the typical companion.
+    # The traces source requires a companion source because the service rejects
+    # sources arrays consisting only of traces. The Agent source is the typical companion.
     if not agent_name:
-        print("Skip traces job: requires FOUNDRY_AGENT_NAME for both the traces source and companion.")
+        print("Skipping traces job (requires FOUNDRY_AGENT_NAME for both the traces source and companion).")
     else:
-        print(f"Create traces-source generation job for evaluator `{traces_name}`.")
-        print(f"  agent=`{agent_name}` look-back window: {traces_window_days} days")
         now = int(time.time())
         start_time = now - traces_window_days * 24 * 3600
         end_time = now + 600  # small padding for clock skew
@@ -217,44 +194,29 @@ with (
             },
             operation_id=f"rubric-traces-{short}",
         )
-        print(f"Created generation job `{traces_job.id}` (status: `{cast(JobStatus, traces_job.status).value}`).")
 
-        print(f"Poll job `{traces_job.id}` until it reaches a terminal state.", end="", flush=True)
+        print(f"Waiting for traces job `{traces_job.id}` to complete...")
         while traces_job.status not in TERMINAL_STATUSES:
             time.sleep(poll_interval_seconds)
             traces_job = project_client.beta.evaluators.get_generation_job(traces_job.id)
-            print(".", end="", flush=True)
-        print()
-        print(f"Final job status: `{cast(JobStatus, traces_job.status).value}`.")
 
         if traces_job.status != JobStatus.SUCCEEDED:
             message = traces_job.error.message if traces_job.error is not None else "<no error message>"
-            print(
-                f"Traces job `{traces_job.id}` ended with status "
-                f"`{cast(JobStatus, traces_job.status).value}`: {message}"
-            )
+            print(f"Traces job ended with status `{cast(JobStatus, traces_job.status).value}`: {message}")
         else:
             evaluator = traces_job.result
-            assert evaluator is not None, "succeeded job must have a result"
+            assert evaluator is not None
             definition = evaluator.definition
             assert isinstance(definition, RubricBasedEvaluatorDefinition)
             traces_evaluator_version = evaluator.version or ""
-            print(f"Generated evaluator: name=`{evaluator.name}` version=`{evaluator.version}`.")
             print(
-                f"Categories: {[c.value if isinstance(c, EvaluatorCategory) else c for c in evaluator.categories]}"
+                f"Traces evaluator `{evaluator.name}` v{evaluator.version}: "
+                f"{len(definition.dimensions)} dimensions."
             )
-            print(f"Dimensions ({len(definition.dimensions)}):")
-            for dim in definition.dimensions:
-                marker = " [ALWAYS-ON]" if dim.always_applicable else ""
-                print(f"  - {dim.id} (weight={dim.weight}){marker}")
 
-    # ------------------------------------------------------------------
-    # 3. Clean up.
-    # ------------------------------------------------------------------
-    # `delete_version` cascades to delete the generation job record as well.
+    # 3. Clean up. `delete_version` cascades to delete the generation job record.
+    print("Cleaning up.")
     if multi_evaluator_version:
-        print(f"Delete evaluator `{multi_name}` version `{multi_evaluator_version}`.")
         project_client.beta.evaluators.delete_version(name=multi_name, version=multi_evaluator_version)
     if traces_evaluator_version:
-        print(f"Delete evaluator `{traces_name}` version `{traces_evaluator_version}`.")
         project_client.beta.evaluators.delete_version(name=traces_name, version=traces_evaluator_version)

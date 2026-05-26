@@ -12,14 +12,13 @@ DESCRIPTION:
     weighting or add custom dimensions. The sample:
 
       1. Generates v1 of an evaluator from a single `Prompt` source.
-      2. Inspects the dimensions the service produced.
-      3. Edits the dimensions locally - boosts the highest-weight editable
+      2. Edits the dimensions locally - boosts the highest-weight editable
          dimension to 10, drops the lowest-weight editable dimension, and
          adds a new custom dimension. The non-editable `general_quality`
          ALWAYS-ON dimension is preserved verbatim.
-      4. Saves the edited definition as v2 with `create_version`.
-      5. Calls `list_versions` to enumerate v1 and v2.
-      6. Cleans up by deleting both versions.
+      3. Saves the edited definition as v2 with `create_version`.
+      4. Calls `list_versions` to enumerate v1 and v2.
+      5. Cleans up by deleting both versions.
 
 USAGE:
     python sample_rubric_evaluator_generation_iterate.py
@@ -32,10 +31,9 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry project.
     2) FOUNDRY_MODEL_NAME - Required. The name of the model the generation job
-       will use (e.g. `gpt-4o`, `gpt-4.1`). The generation runs inline server
-       side, so no deployment in your project is required.
-    3) POLL_INTERVAL_SECONDS - Optional. Number of seconds to sleep between status
-       polls for the generation job. Defaults to 10.
+       will use (e.g. `gpt-4o`, `gpt-4.1`).
+    3) POLL_INTERVAL_SECONDS - Optional. Seconds to sleep between status polls.
+       Defaults to 10.
 """
 
 import os
@@ -79,11 +77,7 @@ with (
         api_version="2025-11-15-preview",
     ) as project_client,
 ):
-
-    # ------------------------------------------------------------------
     # 1. Generate v1 of the evaluator from a single `Prompt` source.
-    # ------------------------------------------------------------------
-    print(f"Create generation job for evaluator `{evaluator_name}` (v1).")
     job = project_client.beta.evaluators.create_generation_job(
         job={
             "model": model_name,
@@ -106,42 +100,30 @@ with (
         },
         operation_id=f"rubric-iterate-{short}",
     )
-    print(f"Created generation job `{job.id}` (status: `{cast(JobStatus, job.status).value}`).")
 
-    print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
+    print(f"Waiting for job `{job.id}` to complete...")
     while job.status not in TERMINAL_STATUSES:
         time.sleep(poll_interval_seconds)
         job = project_client.beta.evaluators.get_generation_job(job.id)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final job status: `{cast(JobStatus, job.status).value}`.")
 
     if job.status != JobStatus.SUCCEEDED:
         message = job.error.message if job.error is not None else "<no error message>"
-        raise RuntimeError(
-            f"Generation job `{job.id}` ended with status `{cast(JobStatus, job.status).value}`: {message}"
-        )
+        raise RuntimeError(f"Generation job ended with status `{cast(JobStatus, job.status).value}`: {message}")
 
+    # `isinstance` narrows the discriminated `definition` to the rubric subtype.
     v1 = job.result
-    assert v1 is not None, "succeeded job must have a result"
+    assert v1 is not None
     v1_definition = v1.definition
     assert isinstance(v1_definition, RubricBasedEvaluatorDefinition)
-    print(f"v1 created: version=`{v1.version}`.")
-    print(f"v1 dimensions ({len(v1_definition.dimensions)}):")
-    for dim in v1_definition.dimensions:
-        marker = " [ALWAYS-ON]" if dim.always_applicable else ""
-        print(f"  - {dim.id} (weight={dim.weight}){marker}")
+    print(f"v1 created with {len(v1_definition.dimensions)} dimensions: {', '.join(d.id for d in v1_definition.dimensions)}")
 
-    # ------------------------------------------------------------------
     # 2. Edit dimensions locally.
-    # ------------------------------------------------------------------
     # Domain-expert edits:
     #   * Always preserve the ALWAYS-ON `general_quality` residual dimension
     #     exactly as-is (id, weight, description, always_applicable).
     #   * Boost the most important editable dimension to weight 10.
     #   * Drop the lowest-weight editable dimension as redundant.
     #   * Add a new custom dimension specific to this assistant.
-    print("Apply human edits:")
     editable = [d for d in v1_definition.dimensions if not d.always_applicable]
     always_on = [d for d in v1_definition.dimensions if d.always_applicable]
 
@@ -149,8 +131,6 @@ with (
     if editable:
         top = max(editable, key=lambda d: d.weight)
         lowest = min(editable, key=lambda d: d.weight)
-        print(f"  Boost `{top.id}` weight {top.weight} -> 10.")
-        print(f"  Drop `{lowest.id}` (weight={lowest.weight}).")
         for dim in editable:
             if dim.id == lowest.id:
                 continue
@@ -162,20 +142,19 @@ with (
                 }
             )
 
-    new_dimension = {
-        "id": "wait_time_expectations_set",
-        "description": (
-            "Sets clear expectations about wait time, table readiness, or confirmation "
-            "delivery so the user knows what happens next."
-        ),
-        "weight": 4,
-    }
-    edited_dimensions.append(new_dimension)
-    print(f"  Add new dimension `{new_dimension['id']}` (weight={new_dimension['weight']}).")
+    edited_dimensions.append(
+        {
+            "id": "wait_time_expectations_set",
+            "description": (
+                "Sets clear expectations about wait time, table readiness, or confirmation "
+                "delivery so the user knows what happens next."
+            ),
+            "weight": 4,
+        }
+    )
 
     # Preserve every ALWAYS-ON dimension verbatim. These are non-editable.
     for dim in always_on:
-        print(f"  Preserve ALWAYS-ON dimension `{dim.id}` (weight={dim.weight}) verbatim.")
         edited_dimensions.append(
             {
                 "id": dim.id,
@@ -185,14 +164,12 @@ with (
             }
         )
 
-    # ------------------------------------------------------------------
     # 3. Save the edited definition as v2.
-    # ------------------------------------------------------------------
-    print(f"Save edited definition as v2 of `{evaluator_name}`.")
     v2 = project_client.beta.evaluators.create_version(
         name=evaluator_name,
         evaluator_version={
             "name": evaluator_name,
+            # Narrow each category to its enum value (the categories list is Union[str, EvaluatorCategory]).
             "categories": [c.value if isinstance(c, EvaluatorCategory) else c for c in v1.categories],
             "display_name": v1.display_name,
             "description": (v1.description or "") + " (edited)",
@@ -205,26 +182,17 @@ with (
     )
     v2_definition = v2.definition
     assert isinstance(v2_definition, RubricBasedEvaluatorDefinition)
-    print(f"v2 created: version=`{v2.version}`.")
-    print(f"v2 dimensions ({len(v2_definition.dimensions)}):")
-    for dim in v2_definition.dimensions:
-        marker = " [ALWAYS-ON]" if dim.always_applicable else ""
-        print(f"  - {dim.id} (weight={dim.weight}){marker}")
+    print(f"v2 created with {len(v2_definition.dimensions)} dimensions: {', '.join(d.id for d in v2_definition.dimensions)}")
 
-    # ------------------------------------------------------------------
     # 4. List all versions of the evaluator.
-    # ------------------------------------------------------------------
-    print(f"List all versions for evaluator `{evaluator_name}`:")
+    print(f"All versions of `{evaluator_name}`:")
     for ver in project_client.beta.evaluators.list_versions(name=evaluator_name):
         ver_definition = ver.definition
         assert isinstance(ver_definition, RubricBasedEvaluatorDefinition)
-        print(f"  - version=`{ver.version}` dimensions={len(ver_definition.dimensions)}")
+        print(f"  - v{ver.version}: {len(ver_definition.dimensions)} dimensions")
 
-    # ------------------------------------------------------------------
-    # 5. Clean up.
-    # ------------------------------------------------------------------
-    # Delete the highest version first to avoid any version-ordering issues.
+    # 5. Clean up. Delete the highest version first to avoid any ordering issues.
+    print("Cleaning up.")
     for version in (v2.version, v1.version):
         if version:
-            print(f"Delete evaluator `{evaluator_name}` version `{version}`.")
             project_client.beta.evaluators.delete_version(name=evaluator_name, version=version)
