@@ -1,0 +1,774 @@
+Package:       azure-mgmt-alertsmanagement
+Short name:    alertsmanagement
+Branch:        sdk-azure-mgmt-alertsmanagement
+REST repo:     C:\dev\worktrees\spec-azure-mgmt-alertsmanagement
+SDK repo:      C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement
+Spec folder:   specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement
+
+============================================================
+Step 1: Clean REST repo -> checkout origin/main
+============================================================
+
+  $ git checkout . && git clean -fd && git checkout origin/main && git pull origin main
+Updating 090fd0dc3e..d0beff06ec
+Fast-forward
+ specification/loadtestservice/data-plane/playwright/tspconfig.yaml | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+  [stderr] Updated 0 paths from the index
+  [stderr] Previous HEAD position was 44a12ed5a9 refactor(alertsmanagement): migrate to unified folder structure (#38560)
+  [stderr] HEAD is now at 090fd0dc3e Mitigate Python SDK breaking changes for azure-mgmt-resource-policy (#43501)
+  [stderr] From https://github.com/Azure/azure-rest-api-specs
+  [stderr]  * branch                  main       -> FETCH_HEAD
+  [stderr]    090fd0dc3e..d0beff06ec  main       -> origin/main
+
+  $ git log -1 --format=%H -- specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/
+7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a
+HeadSha: 7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a (latest commit touching specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/)
+
+============================================================
+Step 2: Clean SDK repo -> ensure migration branch
+============================================================
+
+  $ git checkout . && git clean -fd
+  [stderr] Updated 0 paths from the index
+
+  $ git rev-parse --abbrev-ref HEAD
+sdk-azure-mgmt-alertsmanagement
+Already on branch 'sdk-azure-mgmt-alertsmanagement'
+
+============================================================
+Cache check: searching for 'generated from typespec:7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a'
+============================================================
+
+  $ git log --oneline --grep="generated from typespec:7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a"
+
+============================================================
+Step 2.5: Resolve apiVersion
+============================================================
+TypeSpec versions in main.tsp: ['2025-05-25-preview']
+Swagger API versions: 2025-05-25-preview
+Resolved apiVersion: 2025-05-25-preview (source: swagger)
+
+============================================================
+Step 3: Create generate_input_typespec.json
+============================================================
+{
+  "specFolder": "C:/dev/worktrees/spec-azure-mgmt-alertsmanagement",
+  "headSha": "7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a",
+  "runMode": "auto-release",
+  "repoHttpsUrl": "https://github.com/Azure/azure-rest-api-specs",
+  "enableChangelog": false,
+  "relatedTypeSpecProjectFolder": [
+    "specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement"
+  ],
+  "apiVersion": "2025-05-25-preview"
+}
+
+============================================================
+Step 4: Install tsp-client dependencies
+============================================================
+Installing tsp-client npm dependencies...
+
+  $ npm ci
+added 149 packages, and audited 150 packages in 7s
+
+28 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+============================================================
+Step 5: Clear root node_modules
+============================================================
+No root node_modules found, skipping.
+
+============================================================
+Step 6: Run sdk_generator
+============================================================
+
+  $ call "C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Scripts\activate.bat" && sdk_generator .venv/generate_input_typespec.json .venv/generate_output.json
+2026-05-26 15:14:51 [INFO] [CODEGEN](specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement)codegen begin
+2026-05-26 15:14:51 [INFO] delete all outdated generated SDK files successfully
+2026-05-26 15:14:51 [INFO] delete outdated generated_samples successfully
+2026-05-26 15:14:51 [INFO] delete outdated generated_tests successfully
+2026-05-26 15:14:51 [INFO] install dependencies only for the first run
+2026-05-26 15:16:06 [INFO] generation cmd: npx --no --prefix eng/common/tsp-client tsp-client init --update-if-exists --tsp-config C:\dev\worktrees\spec-azure-mgmt-alertsmanagement\specification\alertsmanagement\resource-manager\Microsoft.AlertsManagement\AlertsManagement --local-spec-repo C:\dev\worktrees\spec-azure-mgmt-alertsmanagement\specification\alertsmanagement\resource-manager\Microsoft.AlertsManagement\AlertsManagement --commit 7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a --repo Azure/azure-rest-api-specs --skip-install --debug
+2026-05-26 15:16:20 [INFO] code generation cost time: 89 seconds
+2026-05-26 15:16:21 [INFO] [CODEGEN](specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement)codegen end and new package 'sdk/alertsmanagement/azure-mgmt-alertsmanagement' generated
+2026-05-26 15:16:22 [INFO] find single api version:"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")"2025-05-25-preview")
+2026-05-26 15:16:23 [INFO] format sdk\alertsmanagement\azure-mgmt-alertsmanagement\generated_samples successfully
+2026-05-26 15:16:25 [INFO] format sdk\alertsmanagement\azure-mgmt-alertsmanagement\generated_tests successfully
+Obtaining file:///C:/dev/worktrees/sdk-azure-mgmt-alertsmanagement/sdk/alertsmanagement/azure-mgmt-alertsmanagement
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: isodate>=0.6.1 in .\.venv\Lib\site-packages (from azure-mgmt-alertsmanagement==1.0.0b1) (0.7.2)
+Requirement already satisfied: azure-mgmt-core>=1.6.0 in .\.venv\Lib\site-packages (from azure-mgmt-alertsmanagement==1.0.0b1) (1.6.0)
+Requirement already satisfied: typing-extensions>=4.6.0 in .\.venv\Lib\site-packages (from azure-mgmt-alertsmanagement==1.0.0b1) (4.15.0)
+Requirement already satisfied: azure-core>=1.32.0 in .\.venv\Lib\site-packages (from azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==1.0.0b1) (1.41.0)
+Requirement already satisfied: requests>=2.21.0 in .\.venv\Lib\site-packages (from azure-core>=1.32.0->azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==1.0.0b1) (2.34.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in .\.venv\Lib\site-packages (from requests>=2.21.0->azure-core>=1.32.0->azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==1.0.0b1) (3.4.7)
+Requirement already satisfied: idna<4,>=2.5 in .\.venv\Lib\site-packages (from requests>=2.21.0->azure-core>=1.32.0->azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==1.0.0b1) (3.16)
+Requirement already satisfied: urllib3<3,>=1.26 in .\.venv\Lib\site-packages (from requests>=2.21.0->azure-core>=1.32.0->azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==1.0.0b1) (2.7.0)
+Requirement already satisfied: certifi>=2023.5.7 in .\.venv\Lib\site-packages (from requests>=2.21.0->azure-core>=1.32.0->azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==1.0.0b1) (2026.5.20)
+Building wheels for collected packages: azure-mgmt-alertsmanagement
+  Building editable for azure-mgmt-alertsmanagement (pyproject.toml): started
+  Building editable for azure-mgmt-alertsmanagement (pyproject.toml): finished with status 'done'
+  Created wheel for azure-mgmt-alertsmanagement: filename=azure_mgmt_alertsmanagement-1.0.0b1-0.editable-py3-none-any.whl size=6774 sha256=c8b04e88480d74f4b24d4fc4450ffc2b288fcd5bcaa62b1d677fdac8eebe5ff5
+  Stored in directory: C:\Users\yuchaoyan\AppData\Local\Temp\pip-ephem-wheel-cache-nfmureia\wheels\aa\93\43\ce6ea934e684f543cd35f37fde2d003800240432fe5db7fb27
+Successfully built azure-mgmt-alertsmanagement
+Installing collected packages: azure-mgmt-alertsmanagement
+  Attempting uninstall: azure-mgmt-alertsmanagement
+    Found existing installation: azure-mgmt-alertsmanagement 2.0.0b3
+    Uninstalling azure-mgmt-alertsmanagement-2.0.0b3:
+      Successfully uninstalled azure-mgmt-alertsmanagement-2.0.0b3
+Successfully installed azure-mgmt-alertsmanagement-1.0.0b1
+2026-05-26 15:16:38 [INFO] changelog generation cost time: 0 seconds
+2026-05-26 15:16:38 [INFO] [PACKAGE](azure-mgmt-alertsmanagement)[CHANGELOG]:skip changelog generation
+2026-05-26 15:16:38 [WARNING] Generated changelog content for azure-mgmt-alertsmanagement seems invalid. And we still update CHANGELOG.md so that you could know where to update manually.
+2026-05-26 15:16:38 [INFO] Using current date '2026-05-26' as release date
+2026-05-26 15:16:38 [WARNING] Changelog content for azure-mgmt-alertsmanagement seems invalid and we cannot calculate the next version based on it. But we will still update _version.py and CHANGELOG.md so that you could know where to update manually.
+2026-05-26 15:16:38 [INFO] Updated version line in CHANGELOG.md to: ## 2.0.0b3 (2026-05-26)
+2026-05-26 15:16:38 [INFO] Removing duplicate version section for 2.0.0b3 (lines 7-10)
+2026-05-26 15:16:38 [INFO] Metadata json:
+ {
+  "apiVersion": "2025-05-25-preview",
+  "apiVersions": {
+    "Microsoft.AlertsManagement": "2025-05-25-preview"
+  },
+  "commit": "7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement",
+  "emitterVersion": "0.62.1"
+}
+2026-05-26 15:16:38 [INFO] Saved metadata to C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\sdk\alertsmanagement\azure-mgmt-alertsmanagement\_metadata.json
+2026-05-26 15:16:38 [INFO] Building template azure-mgmt-alertsmanagement
+2026-05-26 15:16:38 [INFO] Build default conf for azure-mgmt-alertsmanagement
+2026-05-26 15:16:38 [INFO] Skipping template CHANGELOG.md
+2026-05-26 15:16:38 [INFO] Skipping template LICENSE
+2026-05-26 15:16:38 [INFO] Skipping template MANIFEST.in
+2026-05-26 15:16:38 [INFO] Skipping template setup.py
+2026-05-26 15:16:38 [INFO] Template done azure-mgmt-alertsmanagement
+2026-05-26 15:16:38 [INFO] Update azure-mgmt-alertsmanagement\pyproject.toml successfully
+2026-05-26 15:16:38 [INFO] Building template azure-mgmt-alertsmanagement
+2026-05-26 15:16:38 [INFO] Build default conf for azure-mgmt-alertsmanagement
+2026-05-26 15:16:38 [INFO] Skipping template CHANGELOG.md
+2026-05-26 15:16:38 [INFO] Skipping template LICENSE
+2026-05-26 15:16:38 [INFO] Skipping template MANIFEST.in
+2026-05-26 15:16:38 [INFO] Skipping template setup.py
+2026-05-26 15:16:38 [INFO] Template done azure-mgmt-alertsmanagement
+2026-05-26 15:16:38 [INFO] packaging_tools --build-conf successfully
+2026-05-26 15:16:38 [INFO] Check azure-mgmt-alertsmanagement\pyproject.toml for classifiers successfully
+2026-05-26 15:16:38 [INFO]  replace "MyService" with "Alertsmanagement" successfully 
+2026-05-26 15:16:38 [INFO] Updated pyproject.toml with required azure-sdk-build configurations
+2026-05-26 15:16:38 [INFO] Skip ApiView generation for package that does not run in pipeline.
+2026-05-26 15:16:38 [WARNING] Fail to check generated files for azure-mgmt-alertsmanagement: 'dict' object has no attribute 'name'
+running egg_info
+writing azure_mgmt_alertsmanagement.egg-info\PKG-INFO
+writing dependency_links to azure_mgmt_alertsmanagement.egg-info\dependency_links.txt
+writing requirements to azure_mgmt_alertsmanagement.egg-info\requires.txt
+writing top-level names to azure_mgmt_alertsmanagement.egg-info\top_level.txt
+reading manifest file 'azure_mgmt_alertsmanagement.egg-info\SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'azure_mgmt_alertsmanagement.egg-info\SOURCES.txt'
+running sdist
+running egg_info
+writing azure_mgmt_alertsmanagement.egg-info\PKG-INFO
+writing dependency_links to azure_mgmt_alertsmanagement.egg-info\dependency_links.txt
+writing requirements to azure_mgmt_alertsmanagement.egg-info\requires.txt
+writing top-level names to azure_mgmt_alertsmanagement.egg-info\top_level.txt
+reading manifest file 'azure_mgmt_alertsmanagement.egg-info\SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'azure_mgmt_alertsmanagement.egg-info\SOURCES.txt'
+running check
+creating azure_mgmt_alertsmanagement-2.0.0b3
+creating azure_mgmt_alertsmanagement-2.0.0b3\azure
+creating azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt
+creating azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement
+creating azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\_utils
+creating azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\aio
+creating azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\aio\operations
+creating azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\models
+creating azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\operations
+creating azure_mgmt_alertsmanagement-2.0.0b3\azure_mgmt_alertsmanagement.egg-info
+creating azure_mgmt_alertsmanagement-2.0.0b3\tests
+copying files to azure_mgmt_alertsmanagement-2.0.0b3...
+copying CHANGELOG.md -> azure_mgmt_alertsmanagement-2.0.0b3
+copying LICENSE -> azure_mgmt_alertsmanagement-2.0.0b3
+copying MANIFEST.in -> azure_mgmt_alertsmanagement-2.0.0b3
+copying README.md -> azure_mgmt_alertsmanagement-2.0.0b3
+copying pyproject.toml -> azure_mgmt_alertsmanagement-2.0.0b3
+copying azure\__init__.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure
+copying azure\mgmt\__init__.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt
+copying azure\mgmt\alertsmanagement\__init__.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\_client.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\_configuration.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\_patch.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\_version.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\py.typed -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\_utils\__init__.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\_utils
+copying azure\mgmt\alertsmanagement\_utils\model_base.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\_utils
+copying azure\mgmt\alertsmanagement\_utils\serialization.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\_utils
+copying azure\mgmt\alertsmanagement\aio\__init__.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\aio
+copying azure\mgmt\alertsmanagement\aio\_client.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\aio
+copying azure\mgmt\alertsmanagement\aio\_configuration.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\aio
+copying azure\mgmt\alertsmanagement\aio\_patch.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\aio
+copying azure\mgmt\alertsmanagement\aio\operations\__init__.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\aio\operations
+copying azure\mgmt\alertsmanagement\aio\operations\_operations.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\aio\operations
+copying azure\mgmt\alertsmanagement\aio\operations\_patch.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\aio\operations
+copying azure\mgmt\alertsmanagement\models\__init__.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\models
+copying azure\mgmt\alertsmanagement\models\_enums.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\models
+copying azure\mgmt\alertsmanagement\models\_models.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\models
+copying azure\mgmt\alertsmanagement\models\_patch.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\models
+copying azure\mgmt\alertsmanagement\operations\__init__.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\operations
+copying azure\mgmt\alertsmanagement\operations\_operations.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\operations
+copying azure\mgmt\alertsmanagement\operations\_patch.py -> azure_mgmt_alertsmanagement-2.0.0b3\azure\mgmt\alertsmanagement\operations
+copying azure_mgmt_alertsmanagement.egg-info\PKG-INFO -> azure_mgmt_alertsmanagement-2.0.0b3\azure_mgmt_alertsmanagement.egg-info
+copying azure_mgmt_alertsmanagement.egg-info\SOURCES.txt -> azure_mgmt_alertsmanagement-2.0.0b3\azure_mgmt_alertsmanagement.egg-info
+copying azure_mgmt_alertsmanagement.egg-info\dependency_links.txt -> azure_mgmt_alertsmanagement-2.0.0b3\azure_mgmt_alertsmanagement.egg-info
+copying azure_mgmt_alertsmanagement.egg-info\requires.txt -> azure_mgmt_alertsmanagement-2.0.0b3\azure_mgmt_alertsmanagement.egg-info
+copying azure_mgmt_alertsmanagement.egg-info\top_level.txt -> azure_mgmt_alertsmanagement-2.0.0b3\azure_mgmt_alertsmanagement.egg-info
+copying tests\disable_test_cli_mgmt_alertsmanagement.py -> azure_mgmt_alertsmanagement-2.0.0b3\tests
+copying azure_mgmt_alertsmanagement.egg-info\SOURCES.txt -> azure_mgmt_alertsmanagement-2.0.0b3\azure_mgmt_alertsmanagement.egg-info
+Writing azure_mgmt_alertsmanagement-2.0.0b3\setup.cfg
+Creating tar archive
+removing 'azure_mgmt_alertsmanagement-2.0.0b3' (and everything under it)
+running egg_info
+writing azure_mgmt_alertsmanagement.egg-info\PKG-INFO
+writing dependency_links to azure_mgmt_alertsmanagement.egg-info\dependency_links.txt
+writing requirements to azure_mgmt_alertsmanagement.egg-info\requires.txt
+writing top-level names to azure_mgmt_alertsmanagement.egg-info\top_level.txt
+reading manifest file 'azure_mgmt_alertsmanagement.egg-info\SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'azure_mgmt_alertsmanagement.egg-info\SOURCES.txt'
+running bdist_wheel
+running build
+running build_py
+creating build\lib\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\_client.py -> build\lib\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\_configuration.py -> build\lib\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\_patch.py -> build\lib\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\_version.py -> build\lib\azure\mgmt\alertsmanagement
+copying azure\mgmt\alertsmanagement\__init__.py -> build\lib\azure\mgmt\alertsmanagement
+creating build\lib\azure\mgmt\alertsmanagement\aio
+copying azure\mgmt\alertsmanagement\aio\_client.py -> build\lib\azure\mgmt\alertsmanagement\aio
+copying azure\mgmt\alertsmanagement\aio\_configuration.py -> build\lib\azure\mgmt\alertsmanagement\aio
+copying azure\mgmt\alertsmanagement\aio\_patch.py -> build\lib\azure\mgmt\alertsmanagement\aio
+copying azure\mgmt\alertsmanagement\aio\__init__.py -> build\lib\azure\mgmt\alertsmanagement\aio
+creating build\lib\azure\mgmt\alertsmanagement\models
+copying azure\mgmt\alertsmanagement\models\_enums.py -> build\lib\azure\mgmt\alertsmanagement\models
+copying azure\mgmt\alertsmanagement\models\_models.py -> build\lib\azure\mgmt\alertsmanagement\models
+copying azure\mgmt\alertsmanagement\models\_patch.py -> build\lib\azure\mgmt\alertsmanagement\models
+copying azure\mgmt\alertsmanagement\models\__init__.py -> build\lib\azure\mgmt\alertsmanagement\models
+creating build\lib\azure\mgmt\alertsmanagement\operations
+copying azure\mgmt\alertsmanagement\operations\_operations.py -> build\lib\azure\mgmt\alertsmanagement\operations
+copying azure\mgmt\alertsmanagement\operations\_patch.py -> build\lib\azure\mgmt\alertsmanagement\operations
+copying azure\mgmt\alertsmanagement\operations\__init__.py -> build\lib\azure\mgmt\alertsmanagement\operations
+creating build\lib\azure\mgmt\alertsmanagement\_utils
+copying azure\mgmt\alertsmanagement\_utils\model_base.py -> build\lib\azure\mgmt\alertsmanagement\_utils
+copying azure\mgmt\alertsmanagement\_utils\serialization.py -> build\lib\azure\mgmt\alertsmanagement\_utils
+copying azure\mgmt\alertsmanagement\_utils\__init__.py -> build\lib\azure\mgmt\alertsmanagement\_utils
+creating build\lib\azure\mgmt\alertsmanagement\aio\operations
+copying azure\mgmt\alertsmanagement\aio\operations\_operations.py -> build\lib\azure\mgmt\alertsmanagement\aio\operations
+copying azure\mgmt\alertsmanagement\aio\operations\_patch.py -> build\lib\azure\mgmt\alertsmanagement\aio\operations
+copying azure\mgmt\alertsmanagement\aio\operations\__init__.py -> build\lib\azure\mgmt\alertsmanagement\aio\operations
+running egg_info
+writing azure_mgmt_alertsmanagement.egg-info\PKG-INFO
+writing dependency_links to azure_mgmt_alertsmanagement.egg-info\dependency_links.txt
+writing requirements to azure_mgmt_alertsmanagement.egg-info\requires.txt
+writing top-level names to azure_mgmt_alertsmanagement.egg-info\top_level.txt
+reading manifest file 'azure_mgmt_alertsmanagement.egg-info\SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'azure_mgmt_alertsmanagement.egg-info\SOURCES.txt'
+copying azure\mgmt\alertsmanagement\py.typed -> build\lib\azure\mgmt\alertsmanagement
+installing to build\bdist.win-amd64\wheel
+running install
+running install_lib
+creating build\bdist.win-amd64\wheel
+creating build\bdist.win-amd64\wheel\azure
+creating build\bdist.win-amd64\wheel\azure\mgmt
+creating build\bdist.win-amd64\wheel\azure\mgmt\alertsmanagement
+creating build\bdist.win-amd64\wheel\azure\mgmt\alertsmanagement\aio
+creating build\bdist.win-amd64\wheel\azure\mgmt\alertsmanagement\aio\operations
+copying build\lib\azure\mgmt\alertsmanagement\aio\operations\_operations.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\aio\operations
+copying build\lib\azure\mgmt\alertsmanagement\aio\operations\_patch.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\aio\operations
+copying build\lib\azure\mgmt\alertsmanagement\aio\operations\__init__.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\aio\operations
+copying build\lib\azure\mgmt\alertsmanagement\aio\_client.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\aio
+copying build\lib\azure\mgmt\alertsmanagement\aio\_configuration.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\aio
+copying build\lib\azure\mgmt\alertsmanagement\aio\_patch.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\aio
+copying build\lib\azure\mgmt\alertsmanagement\aio\__init__.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\aio
+creating build\bdist.win-amd64\wheel\azure\mgmt\alertsmanagement\models
+copying build\lib\azure\mgmt\alertsmanagement\models\_enums.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\models
+copying build\lib\azure\mgmt\alertsmanagement\models\_models.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\models
+copying build\lib\azure\mgmt\alertsmanagement\models\_patch.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\models
+copying build\lib\azure\mgmt\alertsmanagement\models\__init__.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\models
+creating build\bdist.win-amd64\wheel\azure\mgmt\alertsmanagement\operations
+copying build\lib\azure\mgmt\alertsmanagement\operations\_operations.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\operations
+copying build\lib\azure\mgmt\alertsmanagement\operations\_patch.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\operations
+copying build\lib\azure\mgmt\alertsmanagement\operations\__init__.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\operations
+copying build\lib\azure\mgmt\alertsmanagement\py.typed -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement
+copying build\lib\azure\mgmt\alertsmanagement\_client.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement
+copying build\lib\azure\mgmt\alertsmanagement\_configuration.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement
+copying build\lib\azure\mgmt\alertsmanagement\_patch.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement
+creating build\bdist.win-amd64\wheel\azure\mgmt\alertsmanagement\_utils
+copying build\lib\azure\mgmt\alertsmanagement\_utils\model_base.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\_utils
+copying build\lib\azure\mgmt\alertsmanagement\_utils\serialization.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\_utils
+copying build\lib\azure\mgmt\alertsmanagement\_utils\__init__.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement\_utils
+copying build\lib\azure\mgmt\alertsmanagement\_version.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement
+copying build\lib\azure\mgmt\alertsmanagement\__init__.py -> build\bdist.win-amd64\wheel\.\azure\mgmt\alertsmanagement
+running install_egg_info
+Copying azure_mgmt_alertsmanagement.egg-info to build\bdist.win-amd64\wheel\.\azure_mgmt_alertsmanagement-2.0.0b3-py3.13.egg-info
+running install_scripts
+creating build\bdist.win-amd64\wheel\azure_mgmt_alertsmanagement-2.0.0b3.dist-info\WHEEL
+creating 'C:\\dev\\worktrees\\sdk-azure-mgmt-alertsmanagement\\sdk\\alertsmanagement\\azure-mgmt-alertsmanagement\\dist\\.tmp-5vfp9lo_\\azure_mgmt_alertsmanagement-2.0.0b3-py3-none-any.whl' and adding 'build\\bdist.win-amd64\\wheel' to it
+adding 'azure/mgmt/alertsmanagement/__init__.py'
+adding 'azure/mgmt/alertsmanagement/_client.py'
+adding 'azure/mgmt/alertsmanagement/_configuration.py'
+adding 'azure/mgmt/alertsmanagement/_patch.py'
+adding 'azure/mgmt/alertsmanagement/_version.py'
+adding 'azure/mgmt/alertsmanagement/py.typed'
+adding 'azure/mgmt/alertsmanagement/_utils/__init__.py'
+adding 'azure/mgmt/alertsmanagement/_utils/model_base.py'
+adding 'azure/mgmt/alertsmanagement/_utils/serialization.py'
+adding 'azure/mgmt/alertsmanagement/aio/__init__.py'
+adding 'azure/mgmt/alertsmanagement/aio/_client.py'
+adding 'azure/mgmt/alertsmanagement/aio/_configuration.py'
+adding 'azure/mgmt/alertsmanagement/aio/_patch.py'
+adding 'azure/mgmt/alertsmanagement/aio/operations/__init__.py'
+adding 'azure/mgmt/alertsmanagement/aio/operations/_operations.py'
+adding 'azure/mgmt/alertsmanagement/aio/operations/_patch.py'
+adding 'azure/mgmt/alertsmanagement/models/__init__.py'
+adding 'azure/mgmt/alertsmanagement/models/_enums.py'
+adding 'azure/mgmt/alertsmanagement/models/_models.py'
+adding 'azure/mgmt/alertsmanagement/models/_patch.py'
+adding 'azure/mgmt/alertsmanagement/operations/__init__.py'
+adding 'azure/mgmt/alertsmanagement/operations/_operations.py'
+adding 'azure/mgmt/alertsmanagement/operations/_patch.py'
+adding 'azure_mgmt_alertsmanagement-2.0.0b3.dist-info/licenses/LICENSE'
+adding 'azure_mgmt_alertsmanagement-2.0.0b3.dist-info/METADATA'
+adding 'azure_mgmt_alertsmanagement-2.0.0b3.dist-info/WHEEL'
+adding 'azure_mgmt_alertsmanagement-2.0.0b3.dist-info/top_level.txt'
+adding 'azure_mgmt_alertsmanagement-2.0.0b3.dist-info/RECORD'
+removing build\bdist.win-amd64\wheel
+Successfully built azure_mgmt_alertsmanagement-2.0.0b3.tar.gz and azure_mgmt_alertsmanagement-2.0.0b3-py3-none-any.whl
+2026-05-26 15:16:55 [INFO] Built package azure-mgmt-alertsmanagement successfully.
+2026-05-26 15:16:55 [INFO] Processing 1 generated packages...
+2026-05-26 15:16:55 [INFO] Congratulations! Succeed to build package for ['azure-mgmt-alertsmanagement']. And you shall be able to see the generated code when running 'git status'.
+  [stderr] All done! \u2728 \U0001f370 \u2728
+  [stderr] 12 files left unchanged.
+  [stderr] All done! \u2728 \U0001f370 \u2728
+  [stderr] 5 files left unchanged.
+  [stderr] 
+  [stderr] [notice] A new release of pip is available: 26.0.1 -> 26.1.1
+  [stderr] [notice] To update, run: python.exe -m pip install --upgrade pip
+  [stderr] * Creating isolated environment: venv+pip...
+  [stderr] * Installing packages in isolated environment:
+  [stderr]   - setuptools>=77.0.3
+  [stderr]   - wheel
+  [stderr] * Getting build dependencies for sdist...
+  [stderr] warning: no files found matching '*.py' under directory 'samples'
+  [stderr] warning: no files found matching '*.md' under directory 'samples'
+  [stderr] * Building sdist...
+  [stderr] warning: no files found matching '*.py' under directory 'samples'
+  [stderr] warning: no files found matching '*.md' under directory 'samples'
+  [stderr] * Building wheel from sdist
+  [stderr] * Creating isolated environment: venv+pip...
+  [stderr] * Installing packages in isolated environment:
+  [stderr]   - setuptools>=77.0.3
+  [stderr]   - wheel
+  [stderr] * Getting build dependencies for wheel...
+  [stderr] warning: no files found matching '*.py' under directory 'samples'
+  [stderr] warning: no files found matching '*.md' under directory 'samples'
+  [stderr] * Building wheel...
+  [stderr] warning: no files found matching '*.py' under directory 'samples'
+  [stderr] warning: no files found matching '*.md' under directory 'samples'
+
+============================================================
+Step 7: Parse generate_output.json
+============================================================
+path:        sdk/alertsmanagement
+packageName: azure-mgmt-alertsmanagement
+
+============================================================
+Step 8: Run breaking change code report
+============================================================
+
+  $ call "C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Scripts\activate.bat" && azpysdk breaking . --code-report
+Looking in indexes: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/, https://pypi.python.org/simple
+Processing .\azure_mgmt_alertsmanagement-2.0.0b3.tar.gz
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: isodate>=0.6.1 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from azure-mgmt-alertsmanagement==2.0.0b3) (0.7.2)
+Requirement already satisfied: azure-mgmt-core>=1.6.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from azure-mgmt-alertsmanagement==2.0.0b3) (1.6.0)
+Requirement already satisfied: typing-extensions>=4.6.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from azure-mgmt-alertsmanagement==2.0.0b3) (4.15.0)
+Requirement already satisfied: azure-core>=1.32.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==2.0.0b3) (1.41.0)
+Requirement already satisfied: requests>=2.21.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from azure-core>=1.32.0->azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==2.0.0b3) (2.34.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from requests>=2.21.0->azure-core>=1.32.0->azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==2.0.0b3) (3.4.7)
+Requirement already satisfied: idna<4,>=2.5 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from requests>=2.21.0->azure-core>=1.32.0->azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==2.0.0b3) (3.16)
+Requirement already satisfied: urllib3<3,>=1.26 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from requests>=2.21.0->azure-core>=1.32.0->azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==2.0.0b3) (2.7.0)
+Requirement already satisfied: certifi>=2023.5.7 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from requests>=2.21.0->azure-core>=1.32.0->azure-mgmt-core>=1.6.0->azure-mgmt-alertsmanagement==2.0.0b3) (2026.5.20)
+Building wheels for collected packages: azure-mgmt-alertsmanagement
+  Building wheel for azure-mgmt-alertsmanagement (pyproject.toml): started
+  Building wheel for azure-mgmt-alertsmanagement (pyproject.toml): finished with status 'done'
+  Created wheel for azure-mgmt-alertsmanagement: filename=azure_mgmt_alertsmanagement-2.0.0b3-py3-none-any.whl size=79915 sha256=2ea2bc843ef757ae7e76e75f4968f422e6e0292bb067ef5d341ca36862f6856a
+  Stored in directory: c:\users\yuchaoyan\appdata\local\pip\cache\wheels\4e\8c\89\41827c3de57a4674cbd6d739942b522fb56145ae93dbc66797
+Successfully built azure-mgmt-alertsmanagement
+Installing collected packages: azure-mgmt-alertsmanagement
+  Attempting uninstall: azure-mgmt-alertsmanagement
+    Found existing installation: azure-mgmt-alertsmanagement 1.0.0b1
+    Uninstalling azure-mgmt-alertsmanagement-1.0.0b1:
+      Successfully uninstalled azure-mgmt-alertsmanagement-1.0.0b1
+Successfully installed azure-mgmt-alertsmanagement-2.0.0b3
+Looking in indexes: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/, https://pypi.python.org/simple
+Requirement already satisfied: aiohttp in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from -r C:\Users\YUCHAO~1\AppData\Local\Temp\tmppmp0cm5e (line 1)) (3.13.5)
+Requirement already satisfied: aiohappyeyeballs>=2.5.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from aiohttp->-r C:\Users\YUCHAO~1\AppData\Local\Temp\tmppmp0cm5e (line 1)) (2.6.2)
+Requirement already satisfied: aiosignal>=1.4.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from aiohttp->-r C:\Users\YUCHAO~1\AppData\Local\Temp\tmppmp0cm5e (line 1)) (1.4.0)
+Requirement already satisfied: attrs>=17.3.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from aiohttp->-r C:\Users\YUCHAO~1\AppData\Local\Temp\tmppmp0cm5e (line 1)) (26.1.0)
+Requirement already satisfied: frozenlist>=1.1.1 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from aiohttp->-r C:\Users\YUCHAO~1\AppData\Local\Temp\tmppmp0cm5e (line 1)) (1.8.0)
+Requirement already satisfied: multidict<7.0,>=4.5 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from aiohttp->-r C:\Users\YUCHAO~1\AppData\Local\Temp\tmppmp0cm5e (line 1)) (6.7.1)
+Requirement already satisfied: propcache>=0.2.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from aiohttp->-r C:\Users\YUCHAO~1\AppData\Local\Temp\tmppmp0cm5e (line 1)) (0.5.2)
+Requirement already satisfied: yarl<2.0,>=1.17.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from aiohttp->-r C:\Users\YUCHAO~1\AppData\Local\Temp\tmppmp0cm5e (line 1)) (1.24.2)
+Requirement already satisfied: idna>=2.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (from yarl<2.0,>=1.17.0->aiohttp->-r C:\Users\YUCHAO~1\AppData\Local\Temp\tmppmp0cm5e (line 1)) (3.16)
+Looking in indexes: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/, https://pypi.python.org/simple
+Obtaining file:///C:/dev/worktrees/sdk-azure-mgmt-alertsmanagement/scripts/breaking_changes_checker
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: jsondiff==1.2.0 in C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\Lib\site-packages (1.2.0)
+Building wheels for collected packages: breaking-changes-checker
+  Building editable for breaking-changes-checker (pyproject.toml): started
+  Building editable for breaking-changes-checker (pyproject.toml): finished with status 'done'
+  Created wheel for breaking-changes-checker: filename=breaking_changes_checker-0.0.1-0.editable-py3-none-any.whl size=3085 sha256=5fc1e9a3b224afad77c21b648e6772bf40ed622c1ec618c535e00ed30f4f5526
+  Stored in directory: C:\Users\yuchaoyan\AppData\Local\Temp\pip-ephem-wheel-cache-9y7day6p\wheels\c0\6b\47\e6088bf03f142e19f4f8d02c647e1e791dc52f4f87218672b7
+Successfully built breaking-changes-checker
+Installing collected packages: breaking-changes-checker
+  Attempting uninstall: breaking-changes-checker
+    Found existing installation: breaking-changes-checker 0.0.1
+    Uninstalling breaking-changes-checker-0.0.1:
+      Successfully uninstalled breaking-changes-checker-0.0.1
+Successfully installed breaking-changes-checker-0.0.1
+breaking check completed with exit code 0
+  [stderr] 2026-05-26 15:16:57,890 [INFO] azure-sdk-tools: Installing from feed: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+  [stderr] 2026-05-26 15:16:57,891 [INFO] azure-sdk-tools: Running breaking check...
+  [stderr] 2026-05-26 15:16:57,898 [INFO] azure-sdk-tools: Processing azure-mgmt-alertsmanagement for breaking check...
+  [stderr] 2026-05-26 15:16:57,902 [INFO] azure-sdk-tools: Installing dev requirements for C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\sdk\alertsmanagement\azure-mgmt-alertsmanagement
+  [stderr] 
+  [stderr] [notice] A new release of pip is available: 26.0.1 -> 26.1.1
+  [stderr] [notice] To update, run: python.exe -m pip install --upgrade pip
+  [stderr] 
+  [stderr] [notice] A new release of pip is available: 26.0.1 -> 26.1.1
+  [stderr] [notice] To update, run: python.exe -m pip install --upgrade pip
+  [stderr] 2026-05-26 15:17:16,604 [INFO] azure-sdk-tools: Cleaning up build directories and files
+  [stderr] 2026-05-26 15:17:16,606 [INFO] azure-sdk-tools: Installing azure_mgmt_alertsmanagement-2.0.0b3.tar.gz from fresh built package.
+  [stderr] 2026-05-26 15:17:18,285 [INFO] azure-sdk-tools: Executing command from C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\.venv\azure-mgmt-alertsmanagement\.venv_breaking\.staging:['C:\\dev\\worktrees\\sdk-azure-mgmt-alertsmanagement\\.venv\\Scripts\\python.exe', '-m', 'pip', 'install', 'C:\\dev\\worktrees\\sdk-azure-mgmt-alertsmanagement\\.venv\\azure-mgmt-alertsmanagement\\.venv_breaking\\.staging\\azure_mgmt_alertsmanagement-2.0.0b3.tar.gz']
+  [stderr] 
+  [stderr] [notice] A new release of pip is available: 26.0.1 -> 26.1.1
+  [stderr] [notice] To update, run: python.exe -m pip install --upgrade pip
+  [stderr] 2026-05-26 15:17:31,237 [INFO] azure-sdk-tools: Installed azure_mgmt_alertsmanagement-2.0.0b3.tar.gz
+  [stderr] INFO:__main__:Skipping method check for is_suppressed on <class 'azure.mgmt.alertsmanagement.models._models.ActionStatus'>.
+  [stderr] INFO:__main__:Skipping method check for suppressed_action_groups on <class 'azure.mgmt.alertsmanagement.models._models.ActionSuppressedDetails'>.
+  [stderr] INFO:__main__:Skipping method check for suppression_action_rules on <class 'azure.mgmt.alertsmanagement.models._models.ActionSuppressedDetails'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.ActionSuppressedDetails'>.
+  [stderr] INFO:__main__:Skipping method check for action_group on <class 'azure.mgmt.alertsmanagement.models._models.ActionTriggeredDetails'>.
+  [stderr] INFO:__main__:Skipping method check for notification_result on <class 'azure.mgmt.alertsmanagement.models._models.ActionTriggeredDetails'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.ActionTriggeredDetails'>.
+  [stderr] INFO:__main__:Skipping method check for id on <class 'azure.mgmt.alertsmanagement.models._models.Alert'>.
+  [stderr] INFO:__main__:Skipping method check for name on <class 'azure.mgmt.alertsmanagement.models._models.Alert'>.
+  [stderr] INFO:__main__:Skipping method check for properties on <class 'azure.mgmt.alertsmanagement.models._models.Alert'>.
+  [stderr] INFO:__main__:Skipping method check for system_data on <class 'azure.mgmt.alertsmanagement.models._models.Alert'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.Alert'>.
+  [stderr] INFO:__main__:Skipping method check for description on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for error_message on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for status on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for title on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for alert_id on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentProperties'>.
+  [stderr] INFO:__main__:Skipping method check for enrichments on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentProperties'>.
+  [stderr] INFO:__main__:Skipping method check for id on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentResponse'>.
+  [stderr] INFO:__main__:Skipping method check for name on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentResponse'>.
+  [stderr] INFO:__main__:Skipping method check for properties on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentResponse'>.
+  [stderr] INFO:__main__:Skipping method check for system_data on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentResponse'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.AlertEnrichmentResponse'>.
+  [stderr] INFO:__main__:Skipping method check for id on <class 'azure.mgmt.alertsmanagement.models._models.AlertModification'>.
+  [stderr] INFO:__main__:Skipping method check for name on <class 'azure.mgmt.alertsmanagement.models._models.AlertModification'>.
+  [stderr] INFO:__main__:Skipping method check for properties on <class 'azure.mgmt.alertsmanagement.models._models.AlertModification'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.AlertModification'>.
+  [stderr] INFO:__main__:Skipping method check for comments on <class 'azure.mgmt.alertsmanagement.models._models.AlertModificationItem'>.
+  [stderr] INFO:__main__:Skipping method check for description on <class 'azure.mgmt.alertsmanagement.models._models.AlertModificationItem'>.
+  [stderr] INFO:__main__:Skipping method check for details on <class 'azure.mgmt.alertsmanagement.models._models.AlertModificationItem'>.
+  [stderr] INFO:__main__:Skipping method check for modification_event on <class 'azure.mgmt.alertsmanagement.models._models.AlertModificationItem'>.
+  [stderr] INFO:__main__:Skipping method check for modified_at on <class 'azure.mgmt.alertsmanagement.models._models.AlertModificationItem'>.
+  [stderr] INFO:__main__:Skipping method check for modified_by on <class 'azure.mgmt.alertsmanagement.models._models.AlertModificationItem'>.
+  [stderr] INFO:__main__:Skipping method check for new_value on <class 'azure.mgmt.alertsmanagement.models._models.AlertModificationItem'>.
+  [stderr] INFO:__main__:Skipping method check for old_value on <class 'azure.mgmt.alertsmanagement.models._models.AlertModificationItem'>.
+  [stderr] INFO:__main__:Skipping method check for alert_id on <class 'azure.mgmt.alertsmanagement.models._models.AlertModificationProperties'>.
+  [stderr] INFO:__main__:Skipping method check for modifications on <class 'azure.mgmt.alertsmanagement.models._models.AlertModificationProperties'>.
+  [stderr] INFO:__main__:Skipping method check for context on <class 'azure.mgmt.alertsmanagement.models._models.AlertProperties'>.
+  [stderr] INFO:__main__:Skipping method check for custom_properties on <class 'azure.mgmt.alertsmanagement.models._models.AlertProperties'>.
+  [stderr] INFO:__main__:Skipping method check for egress_config on <class 'azure.mgmt.alertsmanagement.models._models.AlertProperties'>.
+  [stderr] INFO:__main__:Skipping method check for essentials on <class 'azure.mgmt.alertsmanagement.models._models.AlertProperties'>.
+  [stderr] INFO:__main__:Skipping method check for error on <class 'azure.mgmt.alertsmanagement.models._models.AlertsManagementErrorResponse'>.
+  [stderr] INFO:__main__:Skipping method check for properties on <class 'azure.mgmt.alertsmanagement.models._models.AlertsMetaData'>.
+  [stderr] INFO:__main__:Skipping method check for metadata_identifier on <class 'azure.mgmt.alertsmanagement.models._models.AlertsMetaDataProperties'>.
+  [stderr] INFO:__main__:Skipping method check for id on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummary'>.
+  [stderr] INFO:__main__:Skipping method check for name on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummary'>.
+  [stderr] INFO:__main__:Skipping method check for properties on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummary'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummary'>.
+  [stderr] INFO:__main__:Skipping method check for groupedby on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummaryGroup'>.
+  [stderr] INFO:__main__:Skipping method check for smart_groups_count on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummaryGroup'>.
+  [stderr] INFO:__main__:Skipping method check for total on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummaryGroup'>.
+  [stderr] INFO:__main__:Skipping method check for values_property on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummaryGroup'>.
+  [stderr] INFO:__main__:Skipping method check for count on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummaryGroupItem'>.
+  [stderr] INFO:__main__:Skipping method check for groupedby on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummaryGroupItem'>.
+  [stderr] INFO:__main__:Skipping method check for name on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummaryGroupItem'>.
+  [stderr] INFO:__main__:Skipping method check for values_property on <class 'azure.mgmt.alertsmanagement.models._models.AlertsSummaryGroupItem'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.BaseDetails'>.
+  [stderr] INFO:__main__:Skipping method check for comments on <class 'azure.mgmt.alertsmanagement.models._models.Comments'>.
+  [stderr] INFO:__main__:Skipping method check for info on <class 'azure.mgmt.alertsmanagement.models._models.ErrorAdditionalInfo'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.ErrorAdditionalInfo'>.
+  [stderr] INFO:__main__:Skipping method check for additional_info on <class 'azure.mgmt.alertsmanagement.models._models.ErrorDetail'>.
+  [stderr] INFO:__main__:Skipping method check for code on <class 'azure.mgmt.alertsmanagement.models._models.ErrorDetail'>.
+  [stderr] INFO:__main__:Skipping method check for details on <class 'azure.mgmt.alertsmanagement.models._models.ErrorDetail'>.
+  [stderr] INFO:__main__:Skipping method check for message on <class 'azure.mgmt.alertsmanagement.models._models.ErrorDetail'>.
+  [stderr] INFO:__main__:Skipping method check for target on <class 'azure.mgmt.alertsmanagement.models._models.ErrorDetail'>.
+  [stderr] INFO:__main__:Skipping method check for error on <class 'azure.mgmt.alertsmanagement.models._models.ErrorResponse'>.
+  [stderr] INFO:__main__:Skipping method check for code on <class 'azure.mgmt.alertsmanagement.models._models.ErrorResponseBody'>.
+  [stderr] INFO:__main__:Skipping method check for details on <class 'azure.mgmt.alertsmanagement.models._models.ErrorResponseBody'>.
+  [stderr] INFO:__main__:Skipping method check for message on <class 'azure.mgmt.alertsmanagement.models._models.ErrorResponseBody'>.
+  [stderr] INFO:__main__:Skipping method check for target on <class 'azure.mgmt.alertsmanagement.models._models.ErrorResponseBody'>.
+  [stderr] INFO:__main__:Skipping method check for action_status on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for alert_rule on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for alert_state on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for description on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for last_modified_date_time on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for last_modified_user_name on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for monitor_condition on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for monitor_condition_resolved_date_time on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for monitor_service on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for severity on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for signal_type on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for smart_group_id on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for smart_grouping_reason on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for source_created_id on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for start_date_time on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for target_resource on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for target_resource_group on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for target_resource_name on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for target_resource_type on <class 'azure.mgmt.alertsmanagement.models._models.Essentials'>.
+  [stderr] INFO:__main__:Skipping method check for display_name on <class 'azure.mgmt.alertsmanagement.models._models.MonitorServiceDetails'>.
+  [stderr] INFO:__main__:Skipping method check for name on <class 'azure.mgmt.alertsmanagement.models._models.MonitorServiceDetails'>.
+  [stderr] INFO:__main__:Skipping method check for data on <class 'azure.mgmt.alertsmanagement.models._models.MonitorServiceList'>.
+  [stderr] INFO:__main__:Skipping method check for metadata_identifier on <class 'azure.mgmt.alertsmanagement.models._models.MonitorServiceList'>.
+  [stderr] INFO:__main__:Skipping method check for status on <class 'azure.mgmt.alertsmanagement.models._models.NotificationResult'>.
+  [stderr] INFO:__main__:Skipping method check for status_url on <class 'azure.mgmt.alertsmanagement.models._models.NotificationResult'>.
+  [stderr] INFO:__main__:Skipping method check for action_type on <class 'azure.mgmt.alertsmanagement.models._models.Operation'>.
+  [stderr] INFO:__main__:Skipping method check for display on <class 'azure.mgmt.alertsmanagement.models._models.Operation'>.
+  [stderr] INFO:__main__:Skipping method check for is_data_action on <class 'azure.mgmt.alertsmanagement.models._models.Operation'>.
+  [stderr] INFO:__main__:Skipping method check for name on <class 'azure.mgmt.alertsmanagement.models._models.Operation'>.
+  [stderr] INFO:__main__:Skipping method check for origin on <class 'azure.mgmt.alertsmanagement.models._models.Operation'>.
+  [stderr] INFO:__main__:Skipping method check for description on <class 'azure.mgmt.alertsmanagement.models._models.OperationDisplay'>.
+  [stderr] INFO:__main__:Skipping method check for operation on <class 'azure.mgmt.alertsmanagement.models._models.OperationDisplay'>.
+  [stderr] INFO:__main__:Skipping method check for provider on <class 'azure.mgmt.alertsmanagement.models._models.OperationDisplay'>.
+  [stderr] INFO:__main__:Skipping method check for resource on <class 'azure.mgmt.alertsmanagement.models._models.OperationDisplay'>.
+  [stderr] INFO:__main__:Skipping method check for datasources on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for description on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for error_message on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for grafana_explore_path on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for link_to_api on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for query on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for status on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for title on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusEnrichmentItem'>.
+  [stderr] INFO:__main__:Skipping method check for datasources on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusInstantQuery'>.
+  [stderr] INFO:__main__:Skipping method check for description on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusInstantQuery'>.
+  [stderr] INFO:__main__:Skipping method check for error_message on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusInstantQuery'>.
+  [stderr] INFO:__main__:Skipping method check for grafana_explore_path on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusInstantQuery'>.
+  [stderr] INFO:__main__:Skipping method check for link_to_api on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusInstantQuery'>.
+  [stderr] INFO:__main__:Skipping method check for query on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusInstantQuery'>.
+  [stderr] INFO:__main__:Skipping method check for status on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusInstantQuery'>.
+  [stderr] INFO:__main__:Skipping method check for time on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusInstantQuery'>.
+  [stderr] INFO:__main__:Skipping method check for title on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusInstantQuery'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusInstantQuery'>.
+  [stderr] INFO:__main__:Skipping method check for datasources on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for description on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for end on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for error_message on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for grafana_explore_path on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for link_to_api on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for query on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for start on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for status on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for step on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for title on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.PrometheusRangeQuery'>.
+  [stderr] INFO:__main__:Skipping method check for comment on <class 'azure.mgmt.alertsmanagement.models._models.PropertyChangeDetails'>.
+  [stderr] INFO:__main__:Skipping method check for new_value on <class 'azure.mgmt.alertsmanagement.models._models.PropertyChangeDetails'>.
+  [stderr] INFO:__main__:Skipping method check for old_value on <class 'azure.mgmt.alertsmanagement.models._models.PropertyChangeDetails'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.PropertyChangeDetails'>.
+  [stderr] INFO:__main__:Skipping method check for id on <class 'azure.mgmt.alertsmanagement.models._models.ProxyResource'>.
+  [stderr] INFO:__main__:Skipping method check for name on <class 'azure.mgmt.alertsmanagement.models._models.ProxyResource'>.
+  [stderr] INFO:__main__:Skipping method check for system_data on <class 'azure.mgmt.alertsmanagement.models._models.ProxyResource'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.ProxyResource'>.
+  [stderr] INFO:__main__:Skipping method check for id on <class 'azure.mgmt.alertsmanagement.models._models.ProxyResourceAutoGenerated'>.
+  [stderr] INFO:__main__:Skipping method check for name on <class 'azure.mgmt.alertsmanagement.models._models.ProxyResourceAutoGenerated'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.ProxyResourceAutoGenerated'>.
+  [stderr] INFO:__main__:Skipping method check for id on <class 'azure.mgmt.alertsmanagement.models._models.Resource'>.
+  [stderr] INFO:__main__:Skipping method check for name on <class 'azure.mgmt.alertsmanagement.models._models.Resource'>.
+  [stderr] INFO:__main__:Skipping method check for system_data on <class 'azure.mgmt.alertsmanagement.models._models.Resource'>.
+  [stderr] INFO:__main__:Skipping method check for type on <class 'azure.mgmt.alertsmanagement.models._models.Resource'>.
+  [stderr] INFO:__main__:Skipping method check for created_at on <class 'azure.mgmt.alertsmanagement.models._models.SystemData'>.
+  [stderr] INFO:__main__:Skipping method check for created_by on <class 'azure.mgmt.alertsmanagement.models._models.SystemData'>.
+  [stderr] INFO:__main__:Skipping method check for created_by_type on <class 'azure.mgmt.alertsmanagement.models._models.SystemData'>.
+  [stderr] INFO:__main__:Skipping method check for last_modified_at on <class 'azure.mgmt.alertsmanagement.models._models.SystemData'>.
+  [stderr] INFO:__main__:Skipping method check for last_modified_by on <class 'azure.mgmt.alertsmanagement.models._models.SystemData'>.
+  [stderr] INFO:__main__:Skipping method check for last_modified_by_type on <class 'azure.mgmt.alertsmanagement.models._models.SystemData'>.
+  [stderr] INFO:__main__:Skipping method check for action_group_id on <class 'azure.mgmt.alertsmanagement.models._models.TriggeredRule'>.
+  [stderr] INFO:__main__:Skipping method check for rule_id on <class 'azure.mgmt.alertsmanagement.models._models.TriggeredRule'>.
+  [stderr] INFO:__main__:Skipping method check for rule_type on <class 'azure.mgmt.alertsmanagement.models._models.TriggeredRule'>.
+  [stderr] INFO:__main__:code_report.json is written.
+
+============================================================
+Step 9: Rename code_report.json -> code_report_typespec.json
+============================================================
+Renamed: C:\dev\worktrees\sdk-azure-mgmt-alertsmanagement\sdk/alertsmanagement\azure-mgmt-alertsmanagement\code_report_typespec.json
+
+============================================================
+Step 10: Git status and commit
+============================================================
+
+  $ git status
+On branch sdk-azure-mgmt-alertsmanagement
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/_metadata.json
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/apiview-properties.json
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/__init__.py
+	renamed:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/_alerts_management_client.py -> sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/_client.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/_configuration.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/_patch.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/_utils/__init__.py
+	new file:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/_utils/model_base.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/_utils/serialization.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/_version.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/__init__.py
+	renamed:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/_alerts_management_client.py -> sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/_client.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/_configuration.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/_patch.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/operations/__init__.py
+	deleted:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/operations/_alerts_operations.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/operations/_operations.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/operations/_patch.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/models/__init__.py
+	renamed:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/models/_alerts_management_client_enums.py -> sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/models/_enums.py
+	new file:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/models/_models.py
+	deleted:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/models/_models_py3.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/models/_patch.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/operations/__init__.py
+	deleted:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/operations/_alerts_operations.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/operations/_operations.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/operations/_patch.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_change_state.py
+	new file:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_change_state_tenant.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_get_by_id.py
+	new file:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_get_by_id_tenant.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_get_enrichments.py
+	new file:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_get_history_tenant.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_history.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_list.py
+	new file:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_list_get_all_tenant.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_meta_data_monitor_service.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_summary.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/operations_list.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/conftest.py
+	deleted:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_action_rules_operations.py
+	deleted:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_action_rules_operations_async.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_alerts_operations.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_alerts_operations_async.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_operations.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_operations_async.py
+	deleted:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_smart_detector_alert_rules_operations.py
+	deleted:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_smart_detector_alert_rules_operations_async.py
+	deleted:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_smart_groups_operations.py
+	deleted:    sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_smart_groups_operations_async.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/pyproject.toml
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/tests/disable_test_cli_mgmt_alertsmanagement.py
+	new file:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/tsp-location.yaml
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/_metadata.json
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/__init__.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/__init__.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/_version.py
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/pyproject.toml
+	modified:   sdk/alertsmanagement/azure-mgmt-alertsmanagement/tsp-location.yaml
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	sdk/alertsmanagement/azure-mgmt-alertsmanagement/code_report_typespec.json
+	tsp_gen.log
+
+  $ git add .
+  [stderr] warning: in the working copy of 'sdk/alertsmanagement/azure-mgmt-alertsmanagement/pyproject.toml', LF will be replaced by CRLF the next time Git touches it
+
+  $ git commit -m "generated from typespec:7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a"
+[sdk-azure-mgmt-alertsmanagement ce5eb8ef64] generated from typespec:7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a
+ 55 files changed, 22862 insertions(+), 5783 deletions(-)
+ rename sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/{_alerts_management_client.py => _client.py} (78%)
+ create mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/_utils/model_base.py
+ rename sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/{_alerts_management_client.py => _client.py} (80%)
+ delete mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/aio/operations/_alerts_operations.py
+ rename sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/models/{_alerts_management_client_enums.py => _enums.py} (59%)
+ create mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/models/_models.py
+ delete mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/models/_models_py3.py
+ delete mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/azure/mgmt/alertsmanagement/operations/_alerts_operations.py
+ create mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/code_report_typespec.json
+ create mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_change_state_tenant.py
+ create mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_get_by_id_tenant.py
+ create mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_get_history_tenant.py
+ create mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_samples/alerts_list_get_all_tenant.py
+ delete mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_action_rules_operations.py
+ delete mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_action_rules_operations_async.py
+ delete mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_smart_detector_alert_rules_operations.py
+ delete mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_smart_detector_alert_rules_operations_async.py
+ delete mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_smart_groups_operations.py
+ delete mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/generated_tests/test_alerts_management_smart_groups_operations_async.py
+ create mode 100644 sdk/alertsmanagement/azure-mgmt-alertsmanagement/tsp-location.yaml
+ create mode 100644 tsp_gen.log
+
+============================================================
+=== SESSION_STATE ===
+typespec_code_report=C:/dev/worktrees/sdk-azure-mgmt-alertsmanagement/sdk/alertsmanagement/azure-mgmt-alertsmanagement/code_report_typespec.json
+head_sha=7089f3d2a4ed7e765d66f5f5e3be0b8b1eed6c1a
+api_version=2025-05-25-preview
+api_version_source=swagger
+============================================================
+
+Done! TypeSpec SDK generated, committed, and pushed.
