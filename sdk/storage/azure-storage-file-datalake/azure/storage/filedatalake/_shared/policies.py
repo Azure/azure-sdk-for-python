@@ -486,6 +486,8 @@ def _validate_content_response(
             # whichever method ends up being called.
             if hasattr(response.http_response, "iter_bytes"):
                 response.http_response.iter_bytes = _make_wrapper(response.http_response.iter_bytes)
+            if hasattr(response.http_response, "iter_raw"):
+                response.http_response.iter_raw = _make_wrapper(response.http_response.iter_raw)
             if hasattr(response.http_response, "stream_download"):
                 response.http_response.stream_download = _make_wrapper(response.http_response.stream_download)
 
