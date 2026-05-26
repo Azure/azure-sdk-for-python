@@ -2,7 +2,48 @@
 
 ## 1.0.0 (2026-05-26)
 
-skip changelog generation
+### Features Added
+
+  - Client `PolicyClient` added method `send_request`
+  - Added model `ExtensionResource`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `PolicyClient.data_policy_manifests`
+  - Deleted or renamed model `Alias`
+  - Deleted or renamed model `AliasPath`
+  - Deleted or renamed model `AliasPathAttributes`
+  - Deleted or renamed model `AliasPathMetadata`
+  - Deleted or renamed model `AliasPathTokenType`
+  - Deleted or renamed model `AliasPattern`
+  - Deleted or renamed model `AliasPatternType`
+  - Deleted or renamed model `AliasType`
+  - Deleted or renamed model `DataEffect`
+  - Deleted or renamed model `DataManifestCustomResourceFunctionDefinition`
+  - Deleted or renamed model `DataPolicyManifest`
+  - Deleted or renamed model `ResourceTypeAliases`
+  - Method `PolicyAssignmentsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyAssignmentsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyAssignmentsOperations.list_for_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyAssignmentsOperations.list_for_resource` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicyAssignmentsOperations.list_for_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `PolicyAssignmentsOperations.create_by_id`
+  - Deleted or renamed method `PolicyAssignmentsOperations.delete_by_id`
+  - Deleted or renamed method `PolicyAssignmentsOperations.get_by_id`
+  - Deleted or renamed method `PolicyAssignmentsOperations.update_by_id`
+  - Method `PolicySetDefinitionVersionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.get_at_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.get_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.list_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionVersionsOperations.list_by_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.get_at_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.get_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.list_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PolicySetDefinitionsOperations.list_by_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed model `DataPolicyManifestsOperations`
 
 ## 1.0.0b2 (2026-02-28)
 
