@@ -157,8 +157,10 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
     serialized = False
     if not storage_error.response:
         raise storage_error
-    # If it is one of those three then it has been serialized prior by the generated layer.
-    if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)):
+    # Preserve generated exceptions for cases where remapping is not needed.
+    # ResourceExistsError is intentionally excluded so ConditionNotMet can be remapped
+    # to ResourceModifiedError based on x-ms-error-code.
+    if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError)):
         serialized = True
     error_code = storage_error.response.headers.get("x-ms-error-code")
     error_message = storage_error.message
