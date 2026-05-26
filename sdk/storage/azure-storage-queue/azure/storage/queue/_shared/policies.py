@@ -482,6 +482,7 @@ def _validate_content_response(
                     if hasattr(iterator, "response"):
                         decoder.response = iterator.response  # type: ignore
                     return decoder
+
                 return wrapped
 
             # Patch response to return response iterator wrapped in structured message decoder.

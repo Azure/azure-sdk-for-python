@@ -133,7 +133,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             audience=audience,
             **kwargs,
         )
-        self._client = AzureQueueStorage(self.url, version=get_api_version(api_version), pipeline=self._pipeline)
+        self._client = AzureQueueStorage(
+            self.url,
+            version=get_api_version(api_version),
+            pipeline=self._pipeline
+        )
         self._configure_encryption(kwargs)
 
     def __enter__(self) -> Self:

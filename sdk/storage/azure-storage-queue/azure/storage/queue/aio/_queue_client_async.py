@@ -146,7 +146,11 @@ class QueueClient(  # type: ignore [misc]
 
         self._message_encode_policy = message_encode_policy or NoEncodePolicy()
         self._message_decode_policy = message_decode_policy or NoDecodePolicy()
-        self._client = AzureQueueStorage(self.url, version=get_api_version(api_version), pipeline=self._pipeline)
+        self._client = AzureQueueStorage(
+            self.url,
+            version=get_api_version(api_version),
+            pipeline=self._pipeline,
+        )
         self._loop = loop
         self._configure_encryption(kwargs)
 
@@ -653,10 +657,12 @@ class QueueClient(  # type: ignore [misc]
                 encryption_version=self.encryption_version,
             )
         except TypeError:
-            warnings.warn("TypeError when calling message_encode_policy.configure. \
+            warnings.warn(
+                "TypeError when calling message_encode_policy.configure. \
                 It is likely missing the encryption_version parameter. \
                 Consider updating your encryption information/implementation. \
-                Retrying without encryption_version.")
+                Retrying without encryption_version."
+            )
             self._message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
@@ -942,10 +948,12 @@ class QueueClient(  # type: ignore [misc]
                     encryption_version=self.encryption_version,
                 )
             except TypeError:
-                warnings.warn("TypeError when calling message_encode_policy.configure. \
+                warnings.warn(
+                    "TypeError when calling message_encode_policy.configure. \
                     It is likely missing the encryption_version parameter. \
                     Consider updating your encryption information/implementation. \
-                    Retrying without encryption_version.")
+                    Retrying without encryption_version."
+                )
                 self._message_encode_policy.configure(
                     self.require_encryption,
                     self.key_encryption_key,
