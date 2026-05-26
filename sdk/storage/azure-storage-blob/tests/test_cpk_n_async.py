@@ -59,11 +59,8 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 sync_credential = self.get_credential(SyncBlobServiceClient, is_async=False)
-                sync_bsc = SyncBlobServiceClient(
-                    account_url=bsc.url,
-                    credential=sync_credential,
-                )
-                sync_bsc.delete_container(self.container_name)
+                with SyncBlobServiceClient(account_url=bsc.url, credential=sync_credential) as sync_bsc:
+                    sync_bsc.delete_container(self.container_name)
             except HttpResponseError:
                 pass
 
