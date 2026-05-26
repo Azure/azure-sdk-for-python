@@ -42,7 +42,7 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Model `PolicyLogInfo` deleted `policy_set_definition_display_name`/`policy_set_definition_category`/`policy_definition_display_name`/`policy_definition_group_names`/`policy_assignment_display_name`/`resource_location`/`ancestors`/`compliance_reason_code`/`policy_exemption_ids` to match real service behavior
+  - Model `PolicyLogInfo` deleted property `policy_set_definition_display_name`/`policy_set_definition_category`/`policy_definition_display_name`/`policy_definition_group_names`/`policy_assignment_display_name`/`resource_location`/`ancestors`/`compliance_reason_code`/`policy_exemption_ids` to match actual service behavior
   - Method `PolicyAssignmentsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `PolicyAssignmentsOperations.get_by_id` deleted or renamed its parameter `expand` of kind `positional_or_keyword`
   - Method `PolicyAssignmentsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
