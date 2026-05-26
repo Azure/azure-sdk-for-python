@@ -687,6 +687,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
 
     # is it optional?
     try:
+        # pylint: disable=unidiomatic-typecheck
         if any(a for a in annotation.__args__ if a == type(None)):  # pyright: ignore
             if len(annotation.__args__) <= 2:  # pyright: ignore
                 if_obj_deserializer = _get_deserialize_callable_from_annotation(
@@ -697,6 +698,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
             # the type is Optional[Union[...]], we need to remove the None type from the Union
             annotation_copy = copy.copy(annotation)
             annotation_copy.__args__ = [a for a in annotation_copy.__args__ if a != type(None)]  # pyright: ignore
+            # pylint: enable=unidiomatic-typecheck
             return _get_deserialize_callable_from_annotation(annotation_copy, module, rf)
     except AttributeError:
         pass

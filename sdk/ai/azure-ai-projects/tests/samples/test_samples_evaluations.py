@@ -95,6 +95,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_fluency.py
     - sample_groundedness.py
     - sample_intent_resolution.py
+    - sample_quality_grader.py
     - sample_relevance.py
     - sample_response_completeness.py
     - sample_task_adherence.py
@@ -178,6 +179,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             "evaluations/agentic_evaluators",
             samples_to_skip=[
                 "sample_intent_resolution.py",  # Evaluator FAILED_EXECUTION: tool_definitions must be a list of dictionaries
+                "sample_quality_grader.py",
                 "sample_task_navigation_efficiency.py",  # Evaluator FAILED_EXECUTION: required 'actions' parameter is missing
                 "sample_tool_call_success.py",  # Sample data evaluates to failure (tool result has DB_CONNECTION_FAILED)
             ],

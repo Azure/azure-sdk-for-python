@@ -83,7 +83,6 @@ def main():
                     "storageaccounts": [
                         {
                             "container": "containername",
-                            "enableSecureChannel": True,
                             "isDefault": True,
                             "key": "storagekey",
                             "name": "mystorage.blob.core.windows.net",
@@ -98,6 +97,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2025-01-15-preview/examples/CreateLinuxHadoopSshPassword.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/CreateLinuxHadoopSshPassword.json
 if __name__ == "__main__":
     main()

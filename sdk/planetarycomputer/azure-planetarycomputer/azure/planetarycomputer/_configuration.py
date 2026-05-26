@@ -22,18 +22,20 @@ class PlanetaryComputerProClientConfiguration:  # pylint: disable=too-many-insta
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: GeoCatalog endpoint, e.g.
+     `https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com
+     <https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com>`_. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2025-04-30-preview" and None. Default value is "2025-04-30-preview". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-15".
+     Default value is "2026-04-15". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-04-30-preview")
+        api_version: str = kwargs.pop("api_version", "2026-04-15")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
