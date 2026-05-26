@@ -6,8 +6,8 @@
 
 """
 DESCRIPTION:
-    End-to-end scenario showing the full lifecycle of rubric evaluator
-    generation jobs. The sample exercises:
+    End-to-end scenario showing the lifecycle of rubric evaluator generation
+    jobs. The sample exercises:
 
       * `create_generation_job` with `operation_id` for idempotent re-submits.
       * `get_generation_job` to poll a single job to completion.
@@ -15,9 +15,8 @@ DESCRIPTION:
       * `delete_generation_job` to remove a finished job record.
       * `delete_version` to remove the persisted evaluator that the job produced.
 
-    `cancel_generation_job` is shown in a comment - cancelling requires catching
-    a job mid-flight (jobs usually finish in under two minutes), so it is not
-    exercised inline.
+    `cancel_generation_job` is not exercised here - cancelling requires catching
+    a job mid-flight and jobs usually finish in under two minutes.
 
     Note: `delete_version` cascades to delete the generation job record as well,
     so `delete_generation_job` may return 404 - that is expected and tolerated
@@ -34,10 +33,9 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry project.
     2) FOUNDRY_MODEL_NAME - Required. The name of the model the generation job
-       will use (e.g. `gpt-4o`, `gpt-4.1`). The generation runs inline server
-       side, so no deployment in your project is required.
-    3) POLL_INTERVAL_SECONDS - Optional. Number of seconds to sleep between status
-       polls for the generation job. Defaults to 10.
+       will use (e.g. `gpt-4o`, `gpt-4.1`).
+    3) POLL_INTERVAL_SECONDS - Optional. Seconds to sleep between status polls.
+       Defaults to 10.
 """
 
 import os
@@ -78,9 +76,7 @@ job_body = {
         {
             "type": "Prompt",
             "description": "Inline application overview.",
-            "prompt": (
-                "You are evaluating a simple Q&A assistant that answers factual " "questions clearly and concisely."
-            ),
+            "prompt": "You are evaluating a simple Q&A assistant that answers factual questions clearly and concisely.",
         }
     ],
 }
@@ -96,77 +92,43 @@ with (
         api_version="2025-11-15-preview",
     ) as project_client,
 ):
-
-    # ------------------------------------------------------------------
-    # 1. Create the generation job.
-    # ------------------------------------------------------------------
-    # `operation_id` makes this call idempotent - re-running with the same id
-    # returns the existing job instead of creating a duplicate. Useful for
-    # retry-safe automation.
-    print(f"Create generation job with operation_id `{operation_id}`.")
+    # 1. Create the generation job. `operation_id` makes the call idempotent -
+    # re-submitting with the same id returns the existing job.
     job = project_client.beta.evaluators.create_generation_job(job=job_body, operation_id=operation_id)
-    print(f"Created generation job `{job.id}` (status: `{cast(JobStatus, job.status).value}`).")
+    print(f"Created generation job `{job.id}`.")
 
-    # Re-issuing the same operation_id returns the SAME job rather than
-    # starting a new one.
     replay = project_client.beta.evaluators.create_generation_job(job=job_body, operation_id=operation_id)
-    assert replay.id == job.id, "operation_id should make create_generation_job idempotent"
-    print(f"Idempotent replay returned the same id `{replay.id}`.")
+    assert replay.id == job.id  # idempotent replay returns the same job
 
-    # ------------------------------------------------------------------
     # 2. Poll the job to completion.
-    # ------------------------------------------------------------------
-    print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
+    print(f"Waiting for job `{job.id}` to complete...")
     while job.status not in TERMINAL_STATUSES:
         time.sleep(poll_interval_seconds)
         job = project_client.beta.evaluators.get_generation_job(job.id)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final job status: `{cast(JobStatus, job.status).value}`.")
+    print(f"Job finished with status `{cast(JobStatus, job.status).value}`.")
 
     if job.status != JobStatus.SUCCEEDED:
         message = job.error.message if job.error is not None else "<no error message>"
-        raise RuntimeError(
-            f"Generation job `{job.id}` ended with status `{cast(JobStatus, job.status).value}`: {message}"
-        )
+        raise RuntimeError(f"Generation job ended with status `{cast(JobStatus, job.status).value}`: {message}")
 
     evaluator = job.result
-    print(f"Generated evaluator: name=`{evaluator.name}` version=`{evaluator.version}`.")
+    assert evaluator is not None
+    print(f"Generated evaluator `{evaluator.name}` version `{evaluator.version}`.")
 
-    # ------------------------------------------------------------------
-    # 3. List recent generation jobs in this project.
-    # ------------------------------------------------------------------
-    # `PageOrder.DESC` returns the most recently created jobs first.
-    print("List the 5 most recent generation jobs in this project:")
-    recent = list(project_client.beta.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC))
-    if not recent:
-        print("  (no jobs returned)")
-    for entry in recent:
-        print(
-            f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` "
-            f"evaluator_name=`{entry.inputs.evaluator_name}`"
-        )
+    # 3. List the 5 most recent generation jobs in this project.
+    print("Recent generation jobs:")
+    for entry in project_client.beta.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC):
+        entry_name = entry.inputs.evaluator_name if entry.inputs is not None else "<unknown>"
+        print(f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` evaluator_name=`{entry_name}`")
 
-    # ------------------------------------------------------------------
-    # 4. Cancel (commented for reference).
-    # ------------------------------------------------------------------
-    # To cancel a job, call `cancel_generation_job` while it is still running.
-    # The job above already completed, so the call is shown here only for
-    # reference.
-    #
+    # 4. Cancel a running job (not exercised here; the job above already completed).
     # cancelled = project_client.beta.evaluators.cancel_generation_job(some_running_job_id)
-    # print(f"Cancelled: id=`{cancelled.id}` status=`{cast(JobStatus, cancelled.status).value}`.")
 
-    # ------------------------------------------------------------------
-    # 5. Clean up.
-    # ------------------------------------------------------------------
-    print(f"Delete evaluator `{evaluator.name}` version `{evaluator.version}`.")
+    # 5. Clean up. `delete_version` cascades to the generation job record, so
+    # the explicit delete below may return 404.
+    print("Cleaning up.")
     project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
-
-    # `delete_version` above cascades to remove the generation job record as
-    # well; tolerate a 404 here.
-    print(f"Delete generation job `{job.id}`.")
     try:
         project_client.beta.evaluators.delete_generation_job(job.id)
     except ResourceNotFoundError:
-        print(f"  Job `{job.id}` was already removed by the delete_version cascade.")
+        pass  # already removed by the delete_version cascade

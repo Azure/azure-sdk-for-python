@@ -13,11 +13,10 @@ DESCRIPTION:
       1. Creates a rubric evaluator with `project_client.beta.evaluators.create_version`,
          supplying scoring dimensions (each with an id, description, and integer
          weight from 1-10) and an optional pass threshold.
-      2. Creates an OpenAI evaluation (`client.evals.create`) referencing the
-         custom evaluator as a testing criterion.
-      3. Runs the evaluation against inline JSONL sample data.
-      4. Polls the evaluation run to completion and prints per-item results.
-      5. Cleans up the evaluation and the evaluator version.
+      2. Creates an OpenAI evaluation referencing the rubric as a testing criterion.
+      3. Runs the evaluation against inline JSONL sample data and prints per-item
+         scores.
+      4. Cleans up the evaluation and the evaluator version.
 
     A rubric evaluator is a collection of independent scoring dimensions. At
     evaluation time, an LLM judge scores each applicable dimension on a 1-5
@@ -40,8 +39,8 @@ USAGE:
        in the overview page of your Microsoft Foundry project.
     2) FOUNDRY_MODEL_NAME - Required. The name of the LLM model deployment that
        the rubric evaluator's judge will use at evaluation time (e.g. `gpt-4o`, `gpt-4.1`).
-    3) POLL_INTERVAL_SECONDS - Optional. Number of seconds to sleep between status
-       polls for the evaluation run. Defaults to 10.
+    3) POLL_INTERVAL_SECONDS - Optional. Seconds to sleep between status polls
+       for the evaluation run. Defaults to 10.
 """
 
 import os
@@ -62,6 +61,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorCategory,
     EvaluatorDefinitionType,
+    RubricBasedEvaluatorDefinition,
     TestingCriterionAzureAIEvaluator,
 )
 
@@ -83,14 +83,10 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
-
-    # ------------------------------------------------------------------
     # 1. Author the rubric evaluator.
-    # ------------------------------------------------------------------
-    # Each dimension is scored independently on a 1-5 scale at evaluation
-    # time. `weight` (1-10) controls how strongly each dimension contributes
-    # to the normalized aggregate score.
-    print(f"Create rubric evaluator `{evaluator_name}`.")
+    # Each dimension is scored independently on a 1-5 scale by an LLM judge at
+    # evaluation time. `weight` (1-10) controls how strongly each dimension
+    # contributes to the normalized aggregate score.
     evaluator = project_client.beta.evaluators.create_version(
         name=evaluator_name,
         evaluator_version={
@@ -126,64 +122,47 @@ with (
                         "weight": 3,
                     },
                 ],
-                # `pass_threshold` sets the normalized 0.0-1.0 pass/fail threshold
-                # (default 0.5). The "any dimension scored 1 -> fail" rule applies
-                # regardless of this threshold.
+                # `pass_threshold` sets the normalized 0.0-1.0 pass/fail threshold (default 0.5).
                 "pass_threshold": 0.6,
             },
         },
     )
-    print(f"Created evaluator `{evaluator.name}` version `{evaluator.version}`.")
-    print(f"Categories: {[c.value for c in evaluator.categories]}")
-    print(f"Dimensions ({len(evaluator.definition.dimensions)}):")
-    for dim in evaluator.definition.dimensions:
-        marker = " [ALWAYS-ON]" if dim.always_applicable else ""
-        print(f"  - {dim.id} (weight={dim.weight}){marker}")
+    # `isinstance` narrows the discriminated `definition` to the rubric subtype.
+    definition = evaluator.definition
+    assert isinstance(definition, RubricBasedEvaluatorDefinition)
+    print(f"Created evaluator `{evaluator.name}` version `{evaluator.version}` with {len(definition.dimensions)} dimensions.")
 
-    # ------------------------------------------------------------------
-    # 2. Create an OpenAI evaluation that uses the rubric as a criterion.
-    # ------------------------------------------------------------------
-    # The eval object describes the shape of the dataset items and the
-    # criteria to score against. The run below supplies inline sample data.
-    data_source_config = DataSourceConfigCustom(
-        type="custom",
-        item_schema={
-            "type": "object",
-            "properties": {
-                "query": {"type": "string"},
-                "response": {"type": "string"},
-            },
-            "required": ["query", "response"],
-        },
-        include_sample_schema=True,
-    )
-
-    testing_criteria = [
-        TestingCriterionAzureAIEvaluator(
-            type="azure_ai_evaluator",
-            name=evaluator_name,
-            evaluator_name=evaluator_name,
-            # The LLM judge for the rubric uses the deployment supplied here.
-            initialization_parameters={"deployment_name": model_name},
-            data_mapping={
-                "query": "{{item.query}}",
-                "response": "{{item.response}}",
-            },
-        )
-    ]
-
-    print("Create the evaluation.")
+    # 2. Create an OpenAI evaluation that uses the rubric as a testing criterion.
     eval_object = openai_client.evals.create(
         name=f"{evaluator_name}-eval",
-        data_source_config=data_source_config,
-        testing_criteria=testing_criteria,
+        data_source_config=DataSourceConfigCustom(
+            type="custom",
+            item_schema={
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "response": {"type": "string"},
+                },
+                "required": ["query", "response"],
+            },
+            include_sample_schema=True,
+        ),
+        testing_criteria=[
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name=evaluator_name,
+                evaluator_name=evaluator_name,
+                # The LLM judge for the rubric uses the deployment supplied here.
+                initialization_parameters={"deployment_name": model_name},
+                data_mapping={
+                    "query": "{{item.query}}",
+                    "response": "{{item.response}}",
+                },
+            )
+        ],
     )
-    print(f"Evaluation created (id: {eval_object.id}).")
 
-    # ------------------------------------------------------------------
     # 3. Run the evaluation against inline JSONL sample data.
-    # ------------------------------------------------------------------
-    print(f"Create an evaluation run for eval `{eval_object.id}`.")
     eval_run = openai_client.evals.runs.create(
         eval_id=eval_object.id,
         name=f"{evaluator_name}-run",
@@ -221,46 +200,26 @@ with (
             ),
         ),
     )
-    print(f"Evaluation run created (id: {eval_run.id}).")
 
-    print(f"Poll run `{eval_run.id}` until it reaches a terminal state.", end="", flush=True)
+    print(f"Waiting for eval run `{eval_run.id}` to complete...")
     while eval_run.status not in TERMINAL_RUN_STATUSES:
         time.sleep(poll_interval_seconds)
         eval_run = openai_client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final eval run status: `{eval_run.status}`.")
+    print(f"Eval run finished with status `{eval_run.status}`. Result counts: {eval_run.result_counts}.")
 
     if eval_run.status == "completed":
-        print(f"Result counts: {eval_run.result_counts}")
-        if eval_run.report_url:
-            print(f"Eval run report URL: {eval_run.report_url}")
-        output_items = list(openai_client.evals.runs.output_items.list(run_id=eval_run.id, eval_id=eval_object.id))
-        print(f"Output items (total: {len(output_items)}):")
-        for idx, item in enumerate(output_items, start=1):
-            results = getattr(item, "results", None) or []
-            parts = []
-            for r in results:
-                # Result entries are returned either as typed objects (Azure AI
-                # evaluators) or as plain dicts (some OpenAI-native evaluators).
-                if isinstance(r, dict):
-                    name = r.get("name", "?")
-                    score = r.get("score", "n/a")
-                    passed = r.get("passed", "n/a")
-                else:
-                    name = getattr(r, "name", "?")
-                    score = getattr(r, "score", "n/a")
-                    passed = getattr(r, "passed", "n/a")
-                parts.append(f"{name}={score} ({passed})")
-            print(f"  item {idx}: status={item.status} | {', '.join(parts)}")
-    else:
-        print("Evaluation run did not complete successfully.")
+        for idx, item in enumerate(
+            openai_client.evals.runs.output_items.list(run_id=eval_run.id, eval_id=eval_object.id), start=1
+        ):
+            # Result entries may be typed objects (Azure AI evaluators) or plain dicts (some OpenAI evaluators).
+            scores = []
+            for r in getattr(item, "results", None) or []:
+                name = r.get("name", "?") if isinstance(r, dict) else getattr(r, "name", "?")
+                score = r.get("score", "n/a") if isinstance(r, dict) else getattr(r, "score", "n/a")
+                scores.append(f"{name}={score}")
+            print(f"  item {idx} ({item.status}): {', '.join(scores)}")
 
-    # ------------------------------------------------------------------
     # 4. Clean up.
-    # ------------------------------------------------------------------
-    print(f"Delete evaluation `{eval_object.id}`.")
+    print("Cleaning up.")
     openai_client.evals.delete(eval_id=eval_object.id)
-
-    print(f"Delete evaluator `{evaluator_name}` version `{evaluator.version}`.")
     project_client.beta.evaluators.delete_version(name=evaluator_name, version=evaluator.version)
