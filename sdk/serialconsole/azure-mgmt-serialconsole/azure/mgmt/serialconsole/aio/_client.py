@@ -19,11 +19,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import MicrosoftSerialConsoleClientConfiguration
-from .operations import (
-    SerialConsoleOperationGroupOperations,
-    SerialPortsOperations,
-    _MicrosoftSerialConsoleClientOperationsMixin,
-)
+from .operations import SerialPortsOperations, _MicrosoftSerialConsoleClientOperationsMixin
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -41,9 +37,6 @@ class MicrosoftSerialConsoleClient(_MicrosoftSerialConsoleClientOperationsMixin)
 
     :ivar serial_ports: SerialPortsOperations operations
     :vartype serial_ports: azure.mgmt.serialconsole.aio.operations.SerialPortsOperations
-    :ivar serial_console_operation_group: SerialConsoleOperationGroupOperations operations
-    :vartype serial_console_operation_group:
-     azure.mgmt.serialconsole.aio.operations.SerialConsoleOperationGroupOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -109,9 +102,6 @@ class MicrosoftSerialConsoleClient(_MicrosoftSerialConsoleClientOperationsMixin)
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.serial_ports = SerialPortsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.serial_console_operation_group = SerialConsoleOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

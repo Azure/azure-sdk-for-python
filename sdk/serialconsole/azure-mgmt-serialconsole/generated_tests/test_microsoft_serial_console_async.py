@@ -36,3 +36,23 @@ class TestMicrosoftSerialConsoleAsync(AzureMgmtRecordedTestCase):
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_disable_console(self, resource_group):
+        response = await self.client.disable_console(
+            default="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_enable_console(self, resource_group):
+        response = await self.client.enable_console(
+            default="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

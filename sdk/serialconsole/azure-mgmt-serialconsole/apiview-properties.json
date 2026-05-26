@@ -33,14 +33,14 @@
         "azure.mgmt.serialconsole.aio.operations.SerialPortsOperations.list_by_subscriptions": "Microsoft.SerialConsole.SerialPorts.listBySubscriptions",
         "azure.mgmt.serialconsole.operations.SerialPortsOperations.connect": "Microsoft.SerialConsole.SerialPorts.connect",
         "azure.mgmt.serialconsole.aio.operations.SerialPortsOperations.connect": "Microsoft.SerialConsole.SerialPorts.connect",
-        "azure.mgmt.serialconsole.operations.SerialConsoleOperationGroupOperations.disable_console": "Microsoft.SerialConsole.SerialConsoleOperationGroup.disableConsole",
-        "azure.mgmt.serialconsole.aio.operations.SerialConsoleOperationGroupOperations.disable_console": "Microsoft.SerialConsole.SerialConsoleOperationGroup.disableConsole",
-        "azure.mgmt.serialconsole.operations.SerialConsoleOperationGroupOperations.enable_console": "Microsoft.SerialConsole.SerialConsoleOperationGroup.enableConsole",
-        "azure.mgmt.serialconsole.aio.operations.SerialConsoleOperationGroupOperations.enable_console": "Microsoft.SerialConsole.SerialConsoleOperationGroup.enableConsole",
         "azure.mgmt.serialconsole.MicrosoftSerialConsoleClient.get_console_status": "Microsoft.SerialConsole.getConsoleStatus",
         "azure.mgmt.serialconsole.aio.MicrosoftSerialConsoleClient.get_console_status": "Microsoft.SerialConsole.getConsoleStatus",
         "azure.mgmt.serialconsole.MicrosoftSerialConsoleClient.list_operations": "Microsoft.SerialConsole.Operations.list",
-        "azure.mgmt.serialconsole.aio.MicrosoftSerialConsoleClient.list_operations": "Microsoft.SerialConsole.Operations.list"
+        "azure.mgmt.serialconsole.aio.MicrosoftSerialConsoleClient.list_operations": "Microsoft.SerialConsole.Operations.list",
+        "azure.mgmt.serialconsole.MicrosoftSerialConsoleClient.disable_console": "Microsoft.SerialConsole.SerialConsoleOperationGroup.disableConsole",
+        "azure.mgmt.serialconsole.aio.MicrosoftSerialConsoleClient.disable_console": "Microsoft.SerialConsole.SerialConsoleOperationGroup.disableConsole",
+        "azure.mgmt.serialconsole.MicrosoftSerialConsoleClient.enable_console": "Microsoft.SerialConsole.SerialConsoleOperationGroup.enableConsole",
+        "azure.mgmt.serialconsole.aio.MicrosoftSerialConsoleClient.enable_console": "Microsoft.SerialConsole.SerialConsoleOperationGroup.enableConsole"
     },
-    "CrossLanguageVersion": "aa1650c0a92f"
+    "CrossLanguageVersion": "5adfdb87c1a4"
 }

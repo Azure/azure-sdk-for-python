@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.serial_console_operation_group.enable_console(
+    response = client.enable_console(
         default="default",
     )
     print(response)

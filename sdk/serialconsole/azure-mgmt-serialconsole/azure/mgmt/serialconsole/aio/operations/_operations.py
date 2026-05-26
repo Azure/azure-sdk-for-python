@@ -33,10 +33,10 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deseria
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
 from ...operations._operations import (
+    build_microsoft_serial_console_disable_console_request,
+    build_microsoft_serial_console_enable_console_request,
     build_microsoft_serial_console_get_console_status_request,
     build_microsoft_serial_console_list_operations_request,
-    build_serial_console_operation_group_disable_console_request,
-    build_serial_console_operation_group_enable_console_request,
     build_serial_ports_connect_request,
     build_serial_ports_create_request,
     build_serial_ports_get_request,
@@ -607,172 +607,6 @@ class SerialPortsOperations:
         return deserialized  # type: ignore
 
 
-class SerialConsoleOperationGroupOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.serialconsole.aio.MicrosoftSerialConsoleClient`'s
-        :attr:`serial_console_operation_group` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MicrosoftSerialConsoleClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def disable_console(self, default: str, **kwargs: Any) -> _models.DisableSerialConsoleResult:
-        """Disable Serial Console for a subscription.
-
-        Disables the Serial Console service for all VMs and VM scale sets in the provided subscription.
-
-        :param default: Default parameter. Leave the value as "default". Required.
-        :type default: str
-        :return: DisableSerialConsoleResult. The DisableSerialConsoleResult is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.serialconsole.models.DisableSerialConsoleResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DisableSerialConsoleResult] = kwargs.pop("cls", None)
-
-        _request = build_serial_console_operation_group_disable_console_request(
-            default=default,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = None
-            if response.status_code == 404:
-                error = _failsafe_deserialize(_models.GetSerialConsoleSubscriptionNotFound, response)
-                raise ResourceNotFoundError(response=response, model=error, error_format=ARMErrorFormat)
-            else:
-                error = _failsafe_deserialize(
-                    _models.CloudError,
-                    response,
-                )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.DisableSerialConsoleResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def enable_console(self, default: str, **kwargs: Any) -> _models.EnableSerialConsoleResult:
-        """Enable Serial Console for a subscription.
-
-        Enables the Serial Console service for all VMs and VM scale sets in the provided subscription.
-
-        :param default: Default parameter. Leave the value as "default". Required.
-        :type default: str
-        :return: EnableSerialConsoleResult. The EnableSerialConsoleResult is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.serialconsole.models.EnableSerialConsoleResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.EnableSerialConsoleResult] = kwargs.pop("cls", None)
-
-        _request = build_serial_console_operation_group_enable_console_request(
-            default=default,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = None
-            if response.status_code == 404:
-                error = _failsafe_deserialize(_models.GetSerialConsoleSubscriptionNotFound, response)
-                raise ResourceNotFoundError(response=response, model=error, error_format=ARMErrorFormat)
-            else:
-                error = _failsafe_deserialize(
-                    _models.CloudError,
-                    response,
-                )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.EnableSerialConsoleResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
 class _MicrosoftSerialConsoleClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], MicrosoftSerialConsoleClientConfiguration]
 ):
@@ -905,6 +739,152 @@ class _MicrosoftSerialConsoleClientOperationsMixin(
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SerialConsoleOperations, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def disable_console(self, default: str, **kwargs: Any) -> _models.DisableSerialConsoleResult:
+        """Disable Serial Console for a subscription.
+
+        Disables the Serial Console service for all VMs and VM scale sets in the provided subscription.
+
+        :param default: Default parameter. Leave the value as "default". Required.
+        :type default: str
+        :return: DisableSerialConsoleResult. The DisableSerialConsoleResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.serialconsole.models.DisableSerialConsoleResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DisableSerialConsoleResult] = kwargs.pop("cls", None)
+
+        _request = build_microsoft_serial_console_disable_console_request(
+            default=default,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = None
+            if response.status_code == 404:
+                error = _failsafe_deserialize(_models.GetSerialConsoleSubscriptionNotFound, response)
+                raise ResourceNotFoundError(response=response, model=error, error_format=ARMErrorFormat)
+            else:
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DisableSerialConsoleResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def enable_console(self, default: str, **kwargs: Any) -> _models.EnableSerialConsoleResult:
+        """Enable Serial Console for a subscription.
+
+        Enables the Serial Console service for all VMs and VM scale sets in the provided subscription.
+
+        :param default: Default parameter. Leave the value as "default". Required.
+        :type default: str
+        :return: EnableSerialConsoleResult. The EnableSerialConsoleResult is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.serialconsole.models.EnableSerialConsoleResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EnableSerialConsoleResult] = kwargs.pop("cls", None)
+
+        _request = build_microsoft_serial_console_enable_console_request(
+            default=default,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = None
+            if response.status_code == 404:
+                error = _failsafe_deserialize(_models.GetSerialConsoleSubscriptionNotFound, response)
+                raise ResourceNotFoundError(response=response, model=error, error_format=ARMErrorFormat)
+            else:
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EnableSerialConsoleResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
