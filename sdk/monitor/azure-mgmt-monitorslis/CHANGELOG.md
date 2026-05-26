@@ -6,6 +6,7 @@
 
   - Enum `SamplingType` added member `AVERAGE`
   - Enum `SamplingType` added member `COUNT`
+  - Added `Condition.values` (`list[str]`) accessor and the `Condition.for_list_operator` classmethod factory that transparently join/split list values on the wire `^^` separator used by the `in` and `notin` operators.
 
 ### Breaking Changes
 
