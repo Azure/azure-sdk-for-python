@@ -16,6 +16,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `DisableSerialConsoleResult` moved instance variable `disabled` under property `properties` whose type is `DisableSerialConsoleResultProperties`
   - Model `EnableSerialConsoleResult` moved instance variable `disabled` under property `properties` whose type is `EnableSerialConsoleResultProperties`
   - Model `SerialConsoleStatus` moved instance variable `disabled` under property `properties` whose type is `SerialConsoleStatusProperties`
