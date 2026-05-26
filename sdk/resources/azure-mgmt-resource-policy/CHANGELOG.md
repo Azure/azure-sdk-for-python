@@ -9,41 +9,13 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed client operation group `PolicyClient.data_policy_manifests`
-  - Deleted or renamed model `Alias`
-  - Deleted or renamed model `AliasPath`
-  - Deleted or renamed model `AliasPathAttributes`
-  - Deleted or renamed model `AliasPathMetadata`
-  - Deleted or renamed model `AliasPathTokenType`
-  - Deleted or renamed model `AliasPattern`
-  - Deleted or renamed model `AliasPatternType`
-  - Deleted or renamed model `AliasType`
-  - Deleted or renamed model `DataEffect`
-  - Deleted or renamed model `DataManifestCustomResourceFunctionDefinition`
-  - Deleted or renamed model `DataPolicyManifest`
-  - Deleted or renamed model `ResourceTypeAliases`
-  - Method `PolicyAssignmentsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicyAssignmentsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicyAssignmentsOperations.list_for_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicyAssignmentsOperations.list_for_resource` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicyAssignmentsOperations.list_for_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `PolicyAssignmentsOperations.create_by_id`
-  - Deleted or renamed method `PolicyAssignmentsOperations.delete_by_id`
-  - Deleted or renamed method `PolicyAssignmentsOperations.get_by_id`
-  - Deleted or renamed method `PolicyAssignmentsOperations.update_by_id`
-  - Method `PolicySetDefinitionVersionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionVersionsOperations.get_at_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionVersionsOperations.get_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionVersionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionVersionsOperations.list_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionVersionsOperations.list_by_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionsOperations.get_at_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionsOperations.get_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionsOperations.list_built_in` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PolicySetDefinitionsOperations.list_by_management_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed model `DataPolicyManifestsOperations`
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Removed operation group `PolicyClient.data_policy_manifests` (`DataPolicyManifestsOperations`); this API is gated by `Versions.v2025_11_01` and is expected to return in a later API upgrade.
+  - Removed related models `Alias`, `AliasPath`, `AliasPathAttributes`, `AliasPathMetadata`, `AliasPathTokenType`, `AliasPattern`, `AliasPatternType`, `AliasType`, `DataEffect`, `DataManifestCustomResourceFunctionDefinition`, `DataPolicyManifest`, and `ResourceTypeAliases`; these are tied to the gated `data_policy_manifests` API and are expected to return in a later API upgrade.
+  - Methods `PolicyAssignmentsOperations.get`, `PolicyAssignmentsOperations.list`, `PolicyAssignmentsOperations.list_for_management_group`, `PolicyAssignmentsOperations.list_for_resource`, and `PolicyAssignmentsOperations.list_for_resource_group` changed parameter `expand` from `positional_or_keyword` to `keyword_only`.
+  - Removed methods `PolicyAssignmentsOperations.create_by_id`, `PolicyAssignmentsOperations.delete_by_id`, `PolicyAssignmentsOperations.get_by_id`, and `PolicyAssignmentsOperations.update_by_id`; this remains visible because the SDK PR predates the mitigation in https://github.com/Azure/azure-rest-api-specs/pull/43501.
+  - Methods `PolicySetDefinitionVersionsOperations.get`, `PolicySetDefinitionVersionsOperations.get_at_management_group`, `PolicySetDefinitionVersionsOperations.get_built_in`, `PolicySetDefinitionVersionsOperations.list`, `PolicySetDefinitionVersionsOperations.list_built_in`, and `PolicySetDefinitionVersionsOperations.list_by_management_group` changed parameter `expand` from `positional_or_keyword` to `keyword_only`.
+  - Methods `PolicySetDefinitionsOperations.get`, `PolicySetDefinitionsOperations.get_at_management_group`, `PolicySetDefinitionsOperations.get_built_in`, `PolicySetDefinitionsOperations.list`, `PolicySetDefinitionsOperations.list_built_in`, and `PolicySetDefinitionsOperations.list_by_management_group` changed parameter `expand` from `positional_or_keyword` to `keyword_only`.
 
 ## 1.0.0b2 (2026-02-28)
 
