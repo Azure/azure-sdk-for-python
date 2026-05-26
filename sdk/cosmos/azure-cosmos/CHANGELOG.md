@@ -4,7 +4,7 @@
 
 #### Features Added
 * Added **preview** support for the optional `embeddingSource` field on entries in `vector_embedding_policy.vectorEmbeddings`, which allows the service to generate vector embeddings from the specified item paths. Requires the embedding-generation service to be enabled on the account. See [46870](https://github.com/Azure/azure-sdk-for-python/pull/46870)
-* Added `aio` extras to the package, allowing users to install async dependencies with `pip install azure-cosmos[aio]`. See [#39457](https://github.com/Azure/azure-sdk-for-python/issues/39457)
+* Added `aio` extras to the package, allowing users to install async dependencies with `pip install azure-cosmos[aio]`. See [PR 47143](https://github.com/Azure/azure-sdk-for-python/pull/47143)
 
 #### Breaking Changes
 
