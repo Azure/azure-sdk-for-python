@@ -1,10 +1,11 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to create and run an evaluation for an Azure AI agent
+    This sample demonstrates how to create and run an evaluation for an Azure AI model
     using the synchronous AIProjectClient.
 
     The OpenAI compatible Evals calls in this sample are made using
@@ -12,7 +13,7 @@ DESCRIPTION:
     for more information.
 
 USAGE:
-    python sample_agent_evaluation.py
+    python sample_model_evaluation.py
 
     Before running the sample:
 
@@ -21,15 +22,14 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_AGENT_NAME - The name of the AI agent to use for evaluation.
-    3) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_INSTANT_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
 import os
 import time
-from typing import Union
 from pprint import pprint
+from typing import Union
 from dotenv import load_dotenv
 from openai.types.evals.create_eval_completions_run_data_source_param import SourceFileContent, SourceFileContentContent
 from openai.types.eval_create_params import DataSourceConfigCustom
@@ -38,67 +38,44 @@ from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    AzureAIModelTargetParam,
     TestingCriterionAzureAIEvaluator,
-    PromptAgentDefinition,
+    ModelSamplingConfigParam,
     TargetCompletionEvalRunDataSource,
-    AzureAIAgentTargetParam,
 )
 
 load_dotenv()
+
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
-    agent = project_client.agents.create_version(
-        agent_name=os.environ["FOUNDRY_AGENT_NAME"],
-        definition=PromptAgentDefinition(
-            model=model_deployment_name,
-            instructions="You are a helpful assistant that answers general questions",
-        ),
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
     data_source_config = DataSourceConfigCustom(
         type="custom",
         item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
         include_sample_schema=True,
     )
     # Notes: for data_mapping:
-    # sample.output_text is the string output of the agent
-    # sample.output_items is the structured JSON output of the agent, including tool calls information
+    # {{sample.output_text}} is the string output of the provide model target for the given input in {{item.query}}
     testing_criteria = [
         TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="violence_detection",
             evaluator_name="builtin.violence",
             data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
-        ),
-        TestingCriterionAzureAIEvaluator(
-            type="azure_ai_evaluator",
-            name="fluency",
-            evaluator_name="builtin.fluency",
-            initialization_parameters={"model": f"{model_deployment_name}"},
-            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
-        ),
-        TestingCriterionAzureAIEvaluator(
-            type="azure_ai_evaluator",
-            name="task_adherence",
-            evaluator_name="builtin.task_adherence",
-            initialization_parameters={"model": f"{model_deployment_name}"},
-            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_items}}"},
-        ),
+        )
     ]
     eval_object = openai_client.evals.create(
-        name="Agent Evaluation",
+        name="Model Evaluation",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
+    model = os.environ["FOUNDRY_INSTANT_MODEL_NAME"]
     data_source = TargetCompletionEvalRunDataSource(
         type="azure_ai_target_completions",
         source=SourceFileContent(
@@ -109,20 +86,23 @@ with (
             ],
         ),
         input_messages={
-            "type": "template",  # type: ignore  # TODO: This is not an option based on our TypeSpec..
+            "type": "template",  # type: ignore
             "template": [
                 {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
             ],
         },
-        target=AzureAIAgentTargetParam(
-            type="azure_ai_agent",
-            name=agent.name,
-            version=agent.version,  # Version is optional. Defaults to latest version if not specified
+        target=AzureAIModelTargetParam(
+            type="azure_ai_model",
+            model=model,
+            sampling_params=ModelSamplingConfigParam(  # Note: model sampling parameters are optional and can differ per model
+                top_p=1.0,
+                max_completion_tokens=2048,
+            ),
         ),
     )
 
     agent_eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
-        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source  # type: ignore
+        eval_id=eval_object.id, name=f"Evaluation Run for Model {model}", data_source=data_source  # type: ignore
     )
     print(f"Evaluation run created (id: {agent_eval_run.id})")
 
@@ -147,6 +127,3 @@ with (
 
     openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
-
-    project_client.agents.delete(agent_name=agent.name)
-    print("Agent deleted")

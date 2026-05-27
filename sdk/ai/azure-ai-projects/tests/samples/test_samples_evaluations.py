@@ -78,6 +78,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     Main evaluation samples (13):
     - sample_agent_evaluation.py
     - sample_model_evaluation.py
+    - sample_model_evaluation_instant_model.py
     - sample_agent_response_evaluation.py
     - sample_agent_response_evaluation_with_function_tool.py
     - sample_evaluations_builtin_with_inline_data.py
