@@ -21,6 +21,13 @@
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
 * New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
 * New convenience method `.beta.models.create()` that wraps the spec's three-step upload-first sequence (`pending_upload` → `azcopy copy` → `pending_create_version`) and polls `get()` until the new `ModelVersion` is observable.
+* New `stop_session` method on `.beta.agents` to stop an active agent session.
+* New `get_candidate_file` and `promote_candidate` methods on `.beta.agents` for optimization candidate management.
+* New optional `force` parameter on `.beta.agents.delete_optimization_job`.
+* New `INVOCATIONS_WS` enum value in `AgentEndpointProtocol` and `AgentProtocol` for WebSocket-based real-time streaming agents.
+* New `EvaluationLevel` enum for specifying turn-level or conversation-level evaluation.
+* New methods on `.beta.skills`: `get`, `list`, `update`, `delete`, `create_from_package` (updated to accept a `name` parameter and return `SkillVersion`).
+* New `ToolboxSkill` and `ToolboxSkillReference` classes for referencing skills from toolboxes.
 
 ### Breaking Changes
 
@@ -40,6 +47,12 @@ Breaking changes in beta classes:
 * Renamed class `TargetConfig` to `RedTeamTargetConfig`.
 * Removed class `FabricIQPreviewToolParameters`.
 * Removed class `WorkIQPreviewToolParameters`.
+* Method `get_session_files` on `.beta.agents` renamed to `list_session_files` (now returns paged results).
+* `ContainerMemoryLimit` enum members renamed: `MEMORY_1GB` → `MEMORY1_GB`, `MEMORY_4GB` → `MEMORY4_GB`, `MEMORY_16GB` → `MEMORY16_GB`, `MEMORY_64GB` → `MEMORY64_GB`.
+* Method `create_from_package` on `.beta.skills` now requires a `name` parameter and returns `SkillVersion` instead of `SkillDetails`.
+* Removed classes: `DatasetDataGenerationJobSource`, `DatasetItem`, `EvalRunOutputItemResult`, `EvaluationCriterion`, `OptimizationAgentSkill`, `SessionDirectoryListResult`.
+* Removed enums: `EvalRunOutputItemResultStatus`, `OptimizationMode`, `OptimizationStrategy`.
+* Removed enum value `DataGenerationJobSourceType.DATASET`.
 
 ### Bugs Fixed
 
