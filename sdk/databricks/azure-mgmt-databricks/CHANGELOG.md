@@ -11,7 +11,6 @@
   - Model `PrivateEndpointConnection` added property `system_data`
   - Model `Resource` added property `system_data`
   - Model `TrackedResource` added property `system_data`
-  - Model `VirtualNetworkPeering` added property `properties`
   - Model `VirtualNetworkPeering` added property `system_data`
   - Added model `AutomaticClusterUpdateDefinition`
   - Added enum `AutomaticClusterUpdateValue`
@@ -26,26 +25,18 @@
   - Added enum `IdentityType`
   - Added enum `InitialType`
   - Added model `ProxyResource`
-  - Added model `VirtualNetworkPeeringPropertiesFormat`
   - Added model `WorkspaceNoPublicIPBooleanParameter`
   - Added model `WorkspacePropertiesAccessConnector`
-  - Model `WorkspacesOperations` added parameter `force_deletion` in method `begin_delete`
+  - Operation group `WorkspacesOperations` added parameter `force_deletion` in method `begin_delete`
 
 ### Breaking Changes
 
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_virtual_network_access`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_forwarded_traffic`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_gateway_transit`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `use_remote_gateways`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `databricks_virtual_network`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `databricks_address_space`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_virtual_network`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_address_space`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `peering_state`
-  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `provisioning_state`
-  - Deleted or renamed model `PrivateEndpointConnectionsList`
-  - Deleted or renamed model `PrivateLinkResourcesList`
-  - Deleted or renamed model `VirtualNetworkPeeringList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `VirtualNetworkPeering` moved instance variable `allow_virtual_network_access`, `allow_forwarded_traffic`, `allow_gateway_transit`, `use_remote_gateways`, `databricks_virtual_network`, `databricks_address_space`, `remote_virtual_network`, `remote_address_space`, `peering_state` and `provisioning_state` under property `properties` whose type is `VirtualNetworkPeeringPropertiesFormat`
+
+### Other Changes
+
+  - Deleted model `PrivateEndpointConnectionsList`/`PrivateLinkResourcesList`/`VirtualNetworkPeeringList` which actually were not used by SDK users
 
 ## 2.0.0 (2023-06-29)
 
