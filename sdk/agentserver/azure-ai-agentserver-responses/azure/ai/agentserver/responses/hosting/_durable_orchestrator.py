@@ -164,7 +164,7 @@ class DurableResponseOrchestrator:
             return
 
         # Build DurabilityContext for the handler.
-        # Note: spec 012 removed `last_snapshot` — the response object is
+        # Note: `last_snapshot` was intentionally removed — the response object is
         # only persisted at `response.created` and at terminal events, so
         # a between-states snapshot is never useful. Handlers build their
         # resumption response from upstream framework state.

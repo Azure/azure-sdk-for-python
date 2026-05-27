@@ -4,9 +4,9 @@
 
 A durable response handler with NO upstream framework — checkpoints are
 managed entirely via ``durability.metadata``. This is the teaching shape
-of the recovery contract from Spec 012; samples that wrap real upstream
-frameworks (Claude, Copilot, LangGraph) layer additional reconciliation
-on top of the same pattern.
+of the recovery contract; samples that wrap real upstream frameworks
+(Claude, Copilot, LangGraph) layer additional reconciliation on top of
+the same pattern.
 
 The handler runs three phases (``analyze`` → ``generate`` → ``refine``)
 and emits one output item per phase. After each phase finishes it stamps
@@ -22,7 +22,7 @@ Demonstrates:
 - Resumption response construction from handler-managed metadata only
   (no upstream SDK).
 - ``ResponseEventStream(response=resumption)`` seeding.
-- Phase 1 / 2 / 3 cancellation composition from Spec 011.
+- Pre-entry / mid-stream / post-stream cancellation handling.
 - ``SIMULATE_SHUTDOWN_MS`` for local mid-stream-shutdown testing.
 
 What this sample does NOT demonstrate (covered by other samples):
@@ -140,8 +140,9 @@ async def handler(
 
     # ── Recovery branch ─────────────────────────────────────────────
     # On recovery, seed the stream with a resumption response derived from
-    # metadata watermarks. The library treats this run's `response.in_progress`
-    # as the client-visible snapshot reset (see Spec 012 / handler guide).
+    # metadata watermarks. The library treats this run's ``response.in_progress``
+    # as the client-visible snapshot reset (see the handler guide's
+    # Durability section).
     if durability.is_recovery:
         stream = ResponseEventStream(
             response_id=context.response_id,
@@ -152,10 +153,12 @@ async def handler(
 
     yield stream.emit_created()  # library tolerates duplicate on recovery
 
-    # ── Phase 1 of cancellation (Spec 011): pre-entry check ────────
+    # ── Pre-entry cancellation check ───────────────────────────────
+    # This sample does NOT enable steerable_conversations, so STEERED
+    # cannot occur. The only pre-entry cancellation reasons here are
+    # CLIENT_CANCELLED and SHUTTING_DOWN, both of which call for
+    # returning without a terminal event.
     if cancellation_signal.is_set():
-        if context.cancellation_reason == CancellationReason.STEERED:
-            yield stream.emit_completed()
         return
 
     yield stream.emit_in_progress()
@@ -191,7 +194,7 @@ async def handler(
         yield text.emit_done()
         yield message.emit_done()
 
-        # ── Phase 2 of cancellation (Spec 011): mid-stream check ───
+        # ── Mid-stream cancellation check ──────────────────────────
         # If we were cancelled mid-phase, do NOT advance the watermark —
         # the phase output is not durably committed from a recovery
         # standpoint, and a recovered attempt should re-run this phase.
@@ -208,7 +211,7 @@ async def handler(
     if shutdown_timer and not shutdown_timer.done():
         shutdown_timer.cancel()
 
-    # ── Phase 3 of cancellation (Spec 011): post-stream ────────────
+    # ── Post-stream cancellation check ──────────────────────────────
     # Shutdown mid-stream: return without terminal so the framework
     # re-invokes us; recovery branch above picks up from the last
     # completed phase.

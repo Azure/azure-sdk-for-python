@@ -69,7 +69,7 @@ class EventStreamValidator:
 
         stage = _EVENT_STAGES.get(event_type)
         if stage is not None:
-            # FR-006 (Spec 012): duplicate terminal events are no-ops.
+            # Recovery contract: duplicate terminal events are no-ops.
             # Once we have observed a terminal event, ignore subsequent
             # ones rather than erroring. This makes the response handler
             # idempotent against "crashed after emit_completed but before
@@ -196,7 +196,7 @@ def _normalize_lifecycle_events(
 
     _validate_response_event_stream(normalized)
 
-    # FR-006 (Spec 012): duplicate terminal events are no-ops. Keep
+    # Recovery contract: duplicate terminal events are no-ops. Keep
     # only the first terminal in the normalized output.
     first_terminal_seen = False
     deduped: list[dict[str, Any]] = []

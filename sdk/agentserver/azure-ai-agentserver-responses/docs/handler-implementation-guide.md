@@ -980,29 +980,6 @@ references for framework-native stores (e.g., a SqliteSaver checkpoint ID).
 checkpoint data. These belong in framework-native stores (SqliteSaver for
 LangGraph, Copilot SDK sessions, external stores for Claude, etc.).
 
-### Simulating Shutdown for Local Testing
-
-Set the `SIMULATE_SHUTDOWN_MS` environment variable to trigger a shutdown
-signal after N milliseconds. This lets you verify crash-recovery behavior
-locally:
-
-```python
-import asyncio, os
-from azure.ai.agentserver.responses import CancellationReason
-
-_SIMULATE_SHUTDOWN_MS = int(os.environ.get("SIMULATE_SHUTDOWN_MS", "0"))
-
-async def _simulate_shutdown(cancellation_signal: asyncio.Event, context: ResponseContext) -> None:
-    await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not cancellation_signal.is_set():
-        context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-        cancellation_signal.set()
-```
-
-Schedule this as `asyncio.create_task(_simulate_shutdown(...))` early in
-your handler. On the next request, the framework re-invokes with
-`entry_mode="recovered"`. See samples 17–21 for complete examples.
-
 ### TextResponse Handlers
 
 `TextResponse` handlers handle cancellation automatically. For streaming
@@ -1328,7 +1305,7 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
 
     yield stream.emit_created()  # library is fine with duplicate on recovery
 
-    # Cancellation (Spec 011) composes with recovery:
+    # Cancellation policy composes with recovery:
     # Phase 1 pre-entry cancel still applies — only emit completed on STEERED.
     if cancellation_signal.is_set():
         if context.cancellation_reason == CancellationReason.STEERED:

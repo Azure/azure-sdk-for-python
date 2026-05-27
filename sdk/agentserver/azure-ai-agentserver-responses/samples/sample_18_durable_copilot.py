@@ -4,34 +4,37 @@
 
 Wraps the **GitHub Copilot Python SDK** (``github-copilot-sdk``) in a
 steerable durable response handler.  The Copilot SDK is the upstream
-framework that owns conversational durability — the response handler is
-the bridge.
+framework that owns conversational durability — this handler is the
+bridge.
 
-This sample implements the recovery contract from Spec 012:
+Recovery model:
 
 - The Copilot session UUID is stamped into ``durability.metadata`` as
-  ``copilot_session_id``.  ``create_session(session_id=…)`` is used to
-  create or reattach.
-- A ``copilot_message_sent`` watermark guards against duplicate
-  ``session.send()`` calls.  On recovery with the watermark set, the
-  handler reattaches to the existing session and does NOT re-send the
-  user message — Copilot already has it and is expected to produce the
-  assistant reply on reattach.
-- On recovery the resumption response is intentionally empty: a partial
-  assistant token stream from a crashed attempt cannot be byte-recovered
-  (LLMs are non-deterministic), so we discard it and let the client
-  redraw on the reset ``response.in_progress``.
+  ``copilot_session_id`` so each turn (and each recovered attempt
+  within a turn) reattaches to the same session via
+  ``client.create_session(session_id=…)``.
+- A ``last_processed_input_item_id`` watermark records which user input
+  item we most-recently sent to Copilot. On a recovered entry, if the
+  watermark already points at the current turn's input, we DO NOT call
+  ``session.send`` again — that would put a duplicate user message in
+  Copilot's session history.
+- On a steered cancellation that fires pre-entry, we still send the
+  user input to Copilot so the message is preserved in the conversation
+  history — otherwise the newer turn that supersedes us would lose
+  context.
+- On crash recovery, we never start a fresh session. Recovery always
+  reattaches to the existing session.
 
-Demonstrates:
+Limitations (honest about what crash recovery cannot do for Copilot):
 
-- Stateful upstream SDK integration (``CopilotClient`` +
-  ``create_session(session_id=…)``).
-- The Spec 012 recovery contract: ``is_recovery`` branch, resumption
-  response, reset ``in_progress``, watermarked side-effecting call.
-- Event-driven streaming via ``session.on(callback)`` + waiting on a
-  ``SessionIdleData`` event for turn completion.
-- ``session.abort()`` on cancellation.
-- Phase 1 / 2 / 3 cancellation composition from Spec 011.
+- Like Claude, the Copilot SDK does not checkpoint within an assistant
+  response. If we crash mid-stream, the partial reply written so far is
+  lost. For workflows where within-turn progress matters, decompose
+  into smaller queries (see ``sample_19``) or use a framework with
+  native node-level checkpointing (see ``sample_21``).
+- The exact behaviour of ``create_session(session_id=<existing>)`` is
+  not spelled out in the SDK docs. This sample assumes reattach. An
+  upstream issue will confirm; the sample may need revision.
 
 Requirements::
 
@@ -56,14 +59,6 @@ Usage::
 
     # Simulate mid-stream shutdown
     SIMULATE_SHUTDOWN_MS=1500 python sample_18_durable_copilot.py
-
-Caveats (live-SDK verification pending — see Spec 012 Q2):
-
-- The exact reattach semantics of ``create_session(session_id=<existing>)``
-  are not spelled out in the SDK docs. This sample assumes that passing
-  a previously-used session UUID reattaches to that session rather than
-  creating a fresh one with the same ID. An upstream issue will confirm
-  this and the sample will be revised if needed.
 """
 
 import asyncio
@@ -97,14 +92,43 @@ app = ResponsesAgentServerHost(options=options)
 _SIMULATE_SHUTDOWN_MS = int(os.environ.get("SIMULATE_SHUTDOWN_MS", "0"))
 
 
+def _ensure_copilot_session_id(durability) -> str:
+    """Return the persistent Copilot session UUID, allocating on first use."""
+    existing = durability.metadata.get("copilot_session_id")
+    if existing:
+        return existing
+    new_id = str(uuid.uuid4())
+    durability.metadata["copilot_session_id"] = new_id
+    return new_id
+
+
+async def _send_input_if_unprocessed(
+    session: Any,
+    context: ResponseContext,
+    durability,
+) -> bool:
+    """Send the user's input to Copilot unless we already did on a prior attempt.
+
+    Returns True if a send happened on this call; False otherwise.
+    Uses ``last_processed_input_item_id`` as the watermark.
+    """
+    input_items = await context.get_input_items()
+    last_input_item_id = getattr(input_items[-1], "id", None) if input_items else None
+    if last_input_item_id is None:
+        return False
+    if durability.metadata.get("last_processed_input_item_id") == last_input_item_id:
+        return False
+
+    input_text = await context.get_input_text()
+    await session.send(input_text)
+    durability.metadata["last_processed_input_item_id"] = last_input_item_id
+    return True
+
+
 def _build_resumption_response(
     context: ResponseContext, request: CreateResponse
 ) -> ResponseObject:
-    """Empty resumption response for the recovered entry.
-
-    Single-turn handler with a non-deterministic LLM upstream — see the
-    matching docstring in ``sample_17`` for the full rationale.
-    """
+    """Empty resumption response — see ``sample_17`` for full rationale."""
     return ResponseObject(
         {
             "id": context.response_id,
@@ -122,9 +146,8 @@ async def handler(
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
 ):
-    """Steerable Copilot SDK conversation with recovery contract."""
+    """Steerable Copilot SDK conversation."""
     durability = context.durability
-    input_text = await context.get_input_text()
 
     # ── Recovery branch ─────────────────────────────────────────────
     if durability.is_recovery:
@@ -137,9 +160,20 @@ async def handler(
 
     yield stream.emit_created()
 
-    # ── Phase 1 of cancellation (Spec 011): pre-entry check ────────
+    # ── Pre-entry cancellation check ───────────────────────────────
+    # On a STEERED pre-entry we still send the user's input to Copilot so
+    # it is preserved in conversation history. For other cancellation
+    # reasons we just return without touching the SDK.
     if cancellation_signal.is_set():
         if context.cancellation_reason == CancellationReason.STEERED:
+            session_id = _ensure_copilot_session_id(durability)
+            async with CopilotClient() as client:
+                async with await client.create_session(
+                    session_id=session_id,
+                    on_permission_request=PermissionHandler.approve_all,
+                    model="gpt-5",
+                ) as session:
+                    await _send_input_if_unprocessed(session, context, durability)
             yield stream.emit_completed()
         return
 
@@ -154,12 +188,7 @@ async def handler(
     text = message.add_text_content()
     yield text.emit_added()
 
-    # Allocate or recover the Copilot session UUID.
-    copilot_session_id = durability.metadata.get("copilot_session_id")
-    if not copilot_session_id:
-        copilot_session_id = str(uuid.uuid4())
-        durability.metadata["copilot_session_id"] = copilot_session_id
-
+    session_id = _ensure_copilot_session_id(durability)
     reply_parts: list[str] = []
     idle_event = asyncio.Event()
 
@@ -171,56 +200,43 @@ async def handler(
             idle_event.set()
 
     async with CopilotClient() as client:
-        # create_session(session_id=…) — passing a custom UUID allows
-        # reattach across attempts per the documented SDK surface.
-        # NOTE (live verification pending — Spec 012 Q2): the exact
-        # behaviour when ``session_id`` matches an existing session is
-        # not spelled out in the SDK docs. This sample assumes reattach
-        # semantics; if upstream clarifies otherwise we revise here.
+        # Reattach to (or create) the named session. Reattach semantics
+        # are upstream-SDK-defined; see the docstring caveat.
         async with await client.create_session(
-            session_id=copilot_session_id,
+            session_id=session_id,
             on_permission_request=PermissionHandler.approve_all,
             model="gpt-5",
         ) as session:
             session.on(on_event)
 
-            # ── Watermark BEFORE the side-effecting upstream call.
-            durability.metadata["copilot_message_sent"] = True
-            await session.send(input_text)
+            # Watermark-gated send — skipped on recovery if input was
+            # already delivered to Copilot.
+            sent_this_attempt = await _send_input_if_unprocessed(session, context, durability)
 
-            # Race: idle (turn done) vs cancellation signal.
-            cancel_task = asyncio.create_task(cancellation_signal.wait())
-            idle_task = asyncio.create_task(idle_event.wait())
-            try:
-                done, _pending = await asyncio.wait(
-                    {cancel_task, idle_task},
-                    return_when=asyncio.FIRST_COMPLETED,
-                )
-                if cancel_task in done and idle_task not in done:
-                    # Cancellation arrived before idle — abort the
-                    # upstream session so it doesn't keep streaming.
-                    await session.abort()
-            finally:
-                for t in (cancel_task, idle_task):
-                    if not t.done():
-                        t.cancel()
+            # Only wait for idle if we actually sent something this attempt.
+            # On recovery-skip we have nothing to wait for; the session
+            # reattach has already given us whatever events the SDK
+            # chose to deliver synchronously.
+            if sent_this_attempt:
+                cancel_task = asyncio.create_task(cancellation_signal.wait())
+                idle_task = asyncio.create_task(idle_event.wait())
+                try:
+                    done, _pending = await asyncio.wait(
+                        {cancel_task, idle_task},
+                        return_when=asyncio.FIRST_COMPLETED,
+                    )
+                    if cancel_task in done and idle_task not in done:
+                        await session.abort()
+                finally:
+                    for t in (cancel_task, idle_task):
+                        if not t.done():
+                            t.cancel()
 
-    # Emit collected reply tokens as deltas (post-collection because
-    # the callback fires inside the session's event loop thread).
     accumulated = ""
     for part in reply_parts:
         accumulated += part
         yield text.emit_delta(part)
 
-    # ── Clear watermark only AFTER the upstream durably committed.
-    # The Copilot session writes the assistant message when SessionIdleData
-    # fires; on cancellation we abort first and the message may or may not
-    # have been committed — leave the watermark in place to force the next
-    # attempt to reattach without re-sending.
-    if idle_event.is_set() and not cancellation_signal.is_set():
-        durability.metadata["copilot_message_sent"] = False
-
-    # Always close builders so the persisted event stream is well-formed.
     yield text.emit_text_done(accumulated.strip())
     yield text.emit_done()
     yield message.emit_done()
@@ -228,7 +244,9 @@ async def handler(
     if shutdown_timer and not shutdown_timer.done():
         shutdown_timer.cancel()
 
-    # ── Phase 3 of cancellation (Spec 011): post-stream ────────────
+    # Mid-stream shutdown: return without terminal so the framework
+    # re-invokes us; the recovery branch reattaches the same session
+    # and the watermark prevents re-sending the input.
     if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:
         return
 
@@ -249,3 +267,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+import asyncio

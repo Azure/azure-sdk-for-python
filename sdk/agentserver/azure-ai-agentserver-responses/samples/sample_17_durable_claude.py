@@ -1,43 +1,67 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Sample 17 — Durable Claude (steerable stateful conversation via Claude Agent SDK).
+"""Sample 17 — Durable Claude (stateful conversation via Claude Agent SDK).
 
-Wraps the **Claude Agent SDK** (``claude-agent-sdk``) in a steerable durable
-response handler.  The SDK is stateful: pass ``session_id`` on the first turn
-and ``resume`` on subsequent turns so Claude retains the full conversation
-history without any external store.
+Wraps the **Claude Agent SDK** (``claude-agent-sdk``) in a steerable
+durable response handler.  The Claude SDK is the upstream framework
+that owns conversational durability — this handler is the bridge.
 
-Demonstrates:
-- Claude Agent SDK integration (``ClaudeSDKClient`` + ``ClaudeAgentOptions``)
-- Stateful session via ``session_id`` / ``resume`` (no manual history store)
-- ``steerable_conversations=True`` for multi-turn steering
-- Three-phase cancellation pattern (pre-entry / mid-stream / post-stream)
-- Mid-stream interrupt via ``client.interrupt()``
-- Shutdown recovery: return without terminal event → framework re-invokes
-  on restart; Claude session resumes from where it left off.
-- Simulating shutdown locally for testing
+Recovery model:
+
+- The Claude session UUID is stamped into ``durability.metadata`` as
+  ``claude_session_id`` so each turn (and each recovered attempt within
+  a turn) resumes the same session.
+- A ``last_processed_input_item_id`` watermark records which user input
+  item we most-recently sent to Claude. On a recovered entry, if the
+  watermark already points at the current turn's input, we DO NOT call
+  ``client.query`` again — that would put a duplicate user message in
+  the session JSONL. Instead we just consume ``client.receive_response``.
+- On a steered cancellation that fires *before* this handler did any
+  work (pre-entry), we still send the user input to Claude so the
+  message is preserved in the conversation history — otherwise the
+  newer turn that supersedes us would lose context.
+- On crash recovery, we never *fork* the Claude session. Forking would
+  create a fresh branch and abandon any progress in the original session
+  that hadn't yet committed. We simply resume the same session.
+
+Limitations (honest about what crash recovery cannot do for Claude):
+
+- The Claude SDK does not checkpoint within an assistant response.
+  If we crash mid-stream, the partial assistant text written so far is
+  lost — Claude commits the assistant message to the session JSONL only
+  on natural completion of ``receive_response``. On recovery, the
+  resumed session sees the user's message but no assistant reply yet.
+  Whether ``receive_response`` then returns continuation, returns an
+  empty stream, or errors is upstream-SDK-defined and not verified
+  here. For workflows where within-turn progress matters, decompose
+  the work into multiple smaller queries (see ``sample_19`` for the
+  per-phase pattern) or use a framework with native node-level
+  checkpointing (see ``sample_21``).
 
 Requirements::
 
     pip install claude-agent-sdk
+    # Node.js available on PATH (the Claude Code CLI is a bundled JS binary).
 
 Usage::
 
     export ANTHROPIC_API_KEY="sk-ant-..."
     python sample_17_durable_claude.py
 
-    # Turn 1
     curl -N -X POST http://localhost:8088/responses \\
         -H "Content-Type: application/json" \\
-        -d '{"model": "claude", "input": "Explain quantum entanglement", "stream": true, "store": true, "background": true}'
+        -d '{"model": "claude", "input": "Explain quantum entanglement",
+             "stream": true, "store": true, "background": true}'
 
-    # Steer (turn 2 supersedes turn 1)
+    # Steer with a follow-up
     curl -N -X POST http://localhost:8088/responses \\
         -H "Content-Type: application/json" \\
-        -d '{"model": "claude", "input": "Actually explain it for a 5-year-old", "stream": true, "store": true, "background": true, "previous_response_id": "<id>"}'
+        -d '{"model": "claude", "input": "Now explain it for a 5-year-old",
+             "stream": true, "store": true, "background": true,
+             "previous_response_id": "<id>"}'
 
-    # Simulate shutdown (set SIMULATE_SHUTDOWN_MS=2000 to trigger after 2s)
-    SIMULATE_SHUTDOWN_MS=2000 python sample_17_durable_claude.py
+    # Simulate mid-stream shutdown
+    SIMULATE_SHUTDOWN_MS=1500 python sample_17_durable_claude.py
 """
 
 import asyncio
@@ -72,20 +96,8 @@ _SIMULATE_SHUTDOWN_MS = int(os.environ.get("SIMULATE_SHUTDOWN_MS", "0"))
 
 
 def _claude_options_for(durability) -> ClaudeAgentOptions:
-    """Build SDK options for this attempt.
-
-    - Fresh session, never seen: ``session_id=<new uuid>``.
-    - Returning to an existing session, no in-flight query: ``resume=…``.
-    - Recovery with a known in-flight query: ``resume=…, fork_session=True``
-      branches from the prior state so the dangling user message in the
-      original session is left alone and our turn moves forward in a
-      clean fork.
-    """
+    """Build SDK options that resume the existing session or open a new one."""
     existing = durability.metadata.get("claude_session_id")
-    in_flight = bool(durability.metadata.get("claude_query_in_flight"))
-
-    if existing and in_flight and durability.is_recovery:
-        return ClaudeAgentOptions(resume=existing, fork_session=True)
     if existing:
         return ClaudeAgentOptions(resume=existing)
     new_id = str(uuid.uuid4())
@@ -93,16 +105,37 @@ def _claude_options_for(durability) -> ClaudeAgentOptions:
     return ClaudeAgentOptions(session_id=new_id)
 
 
+async def _send_input_if_unprocessed(
+    client: ClaudeSDKClient,
+    context: ResponseContext,
+    durability,
+) -> None:
+    """Send this turn's input to Claude unless we already did on a prior attempt.
+
+    Uses ``last_processed_input_item_id`` as the watermark. Updates the
+    watermark BEFORE the streaming receive loop so a crash inside the
+    receive loop doesn't cause a re-send on the next attempt.
+    """
+    input_items = await context.get_input_items()
+    last_input_item_id = getattr(input_items[-1], "id", None) if input_items else None
+    if last_input_item_id is None:
+        return
+    if durability.metadata.get("last_processed_input_item_id") == last_input_item_id:
+        return  # already sent on a prior attempt; let receive_response handle it
+
+    input_text = await context.get_input_text()
+    await client.query(input_text)
+    durability.metadata["last_processed_input_item_id"] = last_input_item_id
+
+
 def _build_resumption_response(
     context: ResponseContext, request: CreateResponse
 ) -> ResponseObject:
-    """Empty resumption response for the recovered entry.
+    """Empty resumption response.
 
     Partial token output from a crashed mid-stream attempt cannot be
-    byte-matched against a re-attempted stream of a non-deterministic
-    LLM, so we discard the partial item and let the client redraw on
-    the reset ``response.in_progress``. The fresh stream we produce
-    below replaces it.
+    byte-matched against a non-deterministic LLM's re-attempt, so we
+    discard it and let the client redraw on the reset ``response.in_progress``.
     """
     return ResponseObject(
         {
@@ -121,9 +154,8 @@ async def handler(
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
 ):
-    """Steerable Claude Agent SDK conversation with recovery contract."""
+    """Steerable Claude Agent SDK conversation."""
     durability = context.durability
-    input_text = await context.get_input_text()
 
     # ── Recovery branch ─────────────────────────────────────────────
     if durability.is_recovery:
@@ -136,9 +168,17 @@ async def handler(
 
     yield stream.emit_created()
 
-    # ── Phase 1 of cancellation (Spec 011): pre-entry check ────────
+    # ── Pre-entry cancellation check ───────────────────────────────
+    # On a STEERED pre-entry we still send the user's input to Claude so
+    # the message is preserved in the conversation history — otherwise
+    # the newer turn that superseded us would lose context for what the
+    # user said. For other cancellation reasons (client cancel, shutdown)
+    # we just return; no input preservation is appropriate.
     if cancellation_signal.is_set():
         if context.cancellation_reason == CancellationReason.STEERED:
+            sdk_options = _claude_options_for(durability)
+            async with ClaudeSDKClient(options=sdk_options) as client:
+                await _send_input_if_unprocessed(client, context, durability)
             yield stream.emit_completed()
         return
 
@@ -157,14 +197,9 @@ async def handler(
     accumulated = ""
 
     async with ClaudeSDKClient(options=sdk_options) as client:
-        # ── Watermark BEFORE the side-effecting upstream call (Spec 012 FR-014).
-        # On recovery the fork above gives us a clean session, so it is
-        # safe to re-issue query() — the dangling user message stays in
-        # the original (non-fork) session and is no longer ours.
-        durability.metadata["claude_query_in_flight"] = True
-        await client.query(input_text)
+        # Watermarked send — skipped on recovery if input was already sent.
+        await _send_input_if_unprocessed(client, context, durability)
 
-        # Background task: wire cancellation_signal -> client.interrupt().
         async def _watch_cancel() -> None:
             await cancellation_signal.wait()
             await client.interrupt()
@@ -180,20 +215,12 @@ async def handler(
                             accumulated += block.text
                             yield text.emit_delta(block.text)
                 elif isinstance(msg, ResultMessage):
-                    # Capture the (possibly forked) session_id so the
-                    # next turn / recovery resumes the right one.
                     sdk_session_id = getattr(msg, "session_id", None)
                     if isinstance(sdk_session_id, str) and sdk_session_id:
                         durability.metadata["claude_session_id"] = sdk_session_id
         finally:
             if not cancel_watcher.done():
                 cancel_watcher.cancel()
-
-    # ── Clear watermark only AFTER the upstream durably committed.
-    # The Claude SDK writes the completed assistant message to the
-    # session JSONL when receive_response() ends naturally.
-    if not cancellation_signal.is_set():
-        durability.metadata["claude_query_in_flight"] = False
 
     # Always close builders so the persisted event stream is well-formed.
     yield text.emit_text_done(accumulated.strip())
@@ -203,10 +230,9 @@ async def handler(
     if shutdown_timer and not shutdown_timer.done():
         shutdown_timer.cancel()
 
-    # ── Phase 3 of cancellation (Spec 011): post-stream ────────────
-    # Shutdown mid-stream: return without terminal so the framework
-    # re-invokes us; the recovery branch above re-streams from a fresh
-    # fork of the Claude session.
+    # Mid-stream shutdown: return without terminal so the framework
+    # re-invokes us; the recovery branch above resumes the same session
+    # and skips re-sending the input via the watermark.
     if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:
         return
 

@@ -154,7 +154,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._events: list[generated_models.ResponseStreamEvent] = []
         self._validator = EventStreamValidator()
 
-        # FR-007 (Spec 012): when seeded with a `response=` payload that
+        # Recovery contract: when seeded with a `response=` payload that
         # already carries output items (e.g. on a recovered entry), the
         # output_index allocator must continue past those items so the
         # next `add_output_item_*` doesn't collide with an existing slot.

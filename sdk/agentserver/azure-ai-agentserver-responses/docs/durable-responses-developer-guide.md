@@ -26,23 +26,46 @@ your response handler in a **durable task**. If the server crashes mid-response:
 
 ## Decision Tree
 
-### Do you need metadata checkpointing?
+### What is `durability.metadata` for?
 
-If your handler does expensive work and you want to resume from where you left
-off (rather than re-running from scratch), use **durability metadata**:
+`durability.metadata` is a **small key-value store of references and
+watermarks** — it is NOT a place to keep your application's checkpoint
+data.
+
+Use it for things like:
+
+- An upstream session UUID (Claude `session_id`, Copilot session id, a
+  LangGraph thread id).
+- A small pointer to your most recently processed input or output (e.g.
+  `last_processed_input_item_id`).
+- A short workflow step counter (`step: 3`) so the recovered handler
+  knows where to resume.
+
+The actual checkpoint *data* — graph state, conversation history,
+generated content, intermediate work — lives in the upstream framework
+or in your own external storage (Redis, Cosmos DB, files on disk). The
+metadata pointer is what lets the recovered handler find that data.
 
 ```python
 @app.response_handler
 async def handler(request, context, cancel):
     durability = context.durability
-    
-    # Resume from last checkpoint
-    step = durability.metadata.get("last_step", 0) if durability else 0
-    
+
+    # Small watermark: which workflow step is next?
+    step = int(durability.metadata.get("workflow_step", 0))
+
     for i in range(step, total_steps):
-        # Do work...
-        durability.metadata["last_step"] = i + 1  # Auto-flushed by framework
+        # Do work — write any bulk data to your upstream store directly,
+        # NOT to durability.metadata.
+        await upstream_store.write_step_result(i, result)
+        durability.metadata["workflow_step"] = i + 1  # auto-flushed
 ```
+
+Why this distinction matters: metadata is persisted alongside the
+durable task — small writes are cheap and fast, but bulk writes will
+hit task-store payload limits and slow down recovery. Treating metadata
+as a checkpoint *index* (not a checkpoint *store*) keeps it fast and
+keeps your actual durable data in the storage system best suited to it.
 
 ### Do you need multi-turn conversations?
 
@@ -179,7 +202,7 @@ This section adds the configuration / API context.
 - `context.durability.is_recovery == True`
 - `context.durability.run_attempt > 0`
 - `context.durability.metadata` carrying whatever watermarks you stamped
-- The cancellation contract from [Spec 011](handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the signal is pre-set with the appropriate `cancellation_reason` on re-entry.
+- The cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the signal is pre-set with the appropriate `cancellation_reason` on re-entry.
 
 ### What you owe on recovered entry
 
@@ -250,25 +273,27 @@ When `background=false` (foreground streaming):
 - The handler is NOT re-invoked (client is already disconnected).
 - Conversation lock still applies (prevents concurrent modifications).
 
-## Composition with Specs 010 and 011
+## Layered Concerns
 
-This guide and the handler guide together implement three layered specs:
+This guide and the handler guide together implement three layered
+concerns:
 
-- **Spec 010 — Responses Durable Background** provides the runtime
-  primitives (`DurabilityContext`, task store wiring, `entry_mode`,
-  steerable conversation orchestration).
-- **Spec 011 — Cancellation Redesign** provides the `CancellationReason`
-  enum and the Phase 1 / 2 / 3 cancellation policy (no `cancelled` from
-  steering or shutdown, no `incomplete` from framework, framework-set
-  `failed` for naive-not-handled cancellation).
-- **Spec 012 — Durable Response Recovery Contract** (this work) provides
-  the multi-attempt reconciliation pattern: resumption response, snapshot
-  reset on `response.in_progress`, watermark-guarded side effects, naive
+- **The durable background runtime** provides the runtime primitives
+  (`DurabilityContext`, task store wiring, `entry_mode`, steerable
+  conversation orchestration).
+- **The cancellation policy** provides the `CancellationReason`
+  enum and the pre-entry / mid-stream / post-stream cancellation rules
+  (no `cancelled` from steering or shutdown, no `incomplete` from
+  framework, framework-set `failed` for naive-not-handled cancellation).
+- **The recovery contract** (this work) provides the multi-attempt
+  reconciliation pattern: resumption response, snapshot reset on
+  `response.in_progress`, watermark-guarded side effects, naive
   fallback.
 
-The three compose cleanly: Spec 010 surfaces the recovery hooks, Spec 011
-provides the cancellation policy that recovered handlers must honour, and
-Spec 012 prescribes how the recovered attempt produces coherent output.
+The three compose cleanly: the runtime surfaces the recovery hooks, the
+cancellation policy is what recovered handlers must honour, and the
+recovery guidance prescribes how the recovered attempt produces coherent
+output.
 
 ## Best Practices
 
@@ -290,7 +315,7 @@ Spec 012 prescribes how the recovered attempt produces coherent output.
    Never bulk data.
 
 5. **Honour the cancellation policy.** Recovery doesn't change the
-   cancellation contract from [Spec 011](handler-implementation-guide.md#cancellation).
+   cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation).
    Phase 1 / Phase 2 / Phase 3 cancellation logic still applies to recovered
    entries.
 

@@ -7,7 +7,7 @@ LangGraph's ``SqliteSaver`` checkpointer is the canonical example of an
 **upstream framework that owns durability** — the SDK does the heavy
 lifting; the response handler is just the bridge.
 
-This sample implements the recovery contract from Spec 012:
+This sample implements the recovery contract:
 
 - ``durability.metadata`` only stores a small ``stable_checkpoint_id``
   watermark — the last graph checkpoint where the handler successfully
@@ -26,8 +26,8 @@ Demonstrates:
 
 - LangGraph native checkpointing (``SqliteSaver`` is the source of truth).
 - ``graph.stream()`` for inter-node cancellation.
-- Spec 012 recovery contract: resumption response + reset ``in_progress``.
-- Spec 011 cancellation policy at Phase 1 / 2 / 3.
+- Recovery contract: resumption response + reset ``in_progress``.
+- Cancellation policy applied at pre-entry / mid-stream / post-stream.
 - Fork-on-steer for new turns that supersede a prior one.
 
 Requirements::

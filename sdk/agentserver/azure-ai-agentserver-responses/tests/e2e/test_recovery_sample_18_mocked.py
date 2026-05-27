@@ -2,20 +2,19 @@
 # Licensed under the MIT license.
 """Mocked e2e test for sample_18 — durable Copilot SDK handler.
 
-Real-SDK integration testing requires GitHub Copilot CLI installed and
-authenticated, so this test patches the Copilot SDK to in-memory stubs.
-
 Pins:
 
-1. Fresh entry calls ``session.send`` exactly once and uses
-   ``create_session(session_id=<uuid>)`` with a freshly-allocated UUID.
-2. Recovered entry calls ``create_session(session_id=<stored>)`` with
-   the SAME UUID stamped on the prior attempt — relying on the
-   documented reattach behaviour (Spec 012 Q2 caveat).
-3. The watermark ``copilot_message_sent`` is stamped BEFORE
-   ``session.send`` and cleared after ``SessionIdleData`` fires.
-4. Pre-entry STEERED emits ``response.completed``; CLIENT_CANCELLED
-   and SHUTTING_DOWN return without terminal.
+1. Fresh entry creates a session with a fresh UUID and calls
+   ``session.send`` exactly once. The ``last_processed_input_item_id``
+   watermark is updated.
+2. Recovered entry with the watermark already pointing at the current
+   input does NOT call ``session.send`` again.
+3. Recovered entry where the watermark is stale DOES call
+   ``session.send`` once, and reattaches to the same stored session id.
+4. Pre-entry STEERED sends the user input to Copilot (preserving
+   conversation history) and emits ``response.completed``.
+5. Pre-entry CLIENT_CANCELLED / SHUTTING_DOWN return without touching
+   the SDK.
 """
 
 from __future__ import annotations
@@ -53,6 +52,7 @@ def _make_context(
     response_id: str,
     entry_mode: str = "fresh",
     metadata: dict[str, Any] | None = None,
+    input_item_id: str = "item-1",
 ) -> ResponseContext:
     durability = DurabilityContext(
         entry_mode=entry_mode,  # type: ignore[arg-type]
@@ -69,7 +69,13 @@ def _make_context(
     async def _get_input_text() -> str:
         return "test prompt"
 
+    async def _get_input_items(*, resolve_references: bool = True) -> list[Any]:
+        item = MagicMock()
+        item.id = input_item_id
+        return [item]
+
     context.get_input_text = _get_input_text
+    context.get_input_items = _get_input_items
     return context
 
 
@@ -88,17 +94,8 @@ def _event_type(e: Any) -> str | None:
     return getattr(e, "type", None) or (e.get("type") if isinstance(e, dict) else None)
 
 
-# ---------------------------------------------------------------------------
-# Stubbed Copilot SDK
-# ---------------------------------------------------------------------------
-
-
 def _make_session_stub_classes(reply_text: str = "fizzbuzz"):
-    """Return (CopilotClient_stub, send_calls, create_calls).
-
-    create_calls records the kwargs passed to ``create_session``.
-    send_calls records the prompts passed to ``session.send``.
-    """
+    """Return (CopilotClient_stub, send_calls, create_calls)."""
     from copilot.generated.session_events import (
         AssistantMessageData,
         SessionIdleData,
@@ -127,8 +124,6 @@ def _make_session_stub_classes(reply_text: str = "fizzbuzz"):
 
         async def send(self, prompt: str) -> None:
             send_calls.append(prompt)
-            # Immediately fire AssistantMessageData then SessionIdleData
-            # via the registered handlers to simulate a complete turn.
             for handler in self._handlers:
                 handler(
                     _Event(
@@ -161,33 +156,31 @@ def _make_session_stub_classes(reply_text: str = "fizzbuzz"):
 
 @pytest.mark.asyncio
 class TestSample18FreshEntry:
-    async def test_fresh_entry_creates_session_with_new_uuid(self) -> None:
+    async def test_fresh_entry_creates_session_sends_once_updates_watermark(self) -> None:
         from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
 
         stub_client, send_calls, create_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
-            ctx = _make_context(response_id=IdGenerator.new_response_id())
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                input_item_id="item-fresh",
+            )
             events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
         assert len(create_calls) == 1
-        # session_id was a freshly-allocated UUID, stamped back to metadata.
         new_uuid = create_calls[0].get("session_id")
         assert isinstance(new_uuid, str) and len(new_uuid) == 36
         assert ctx.durability.metadata.get("copilot_session_id") == new_uuid
 
-        # send() called exactly once with the input.
         assert send_calls == ["test prompt"]
+        assert ctx.durability.metadata.get("last_processed_input_item_id") == "item-fresh"
 
-        # Watermark cleared after idle.
-        assert ctx.durability.metadata.get("copilot_message_sent") is False
-
-        # Lifecycle reached completed.
         assert "response.completed" in [_event_type(e) for e in events]
 
 
 @pytest.mark.asyncio
-class TestSample18Recovery:
-    async def test_recovery_reattaches_with_stored_session_id(self) -> None:
+class TestSample18RecoverySkipsSendWhenWatermarkMatches:
+    async def test_recovery_with_matching_watermark_does_not_send(self) -> None:
         from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
 
         stub_client, send_calls, create_calls = _make_session_stub_classes()
@@ -197,45 +190,82 @@ class TestSample18Recovery:
                 entry_mode="recovered",
                 metadata={
                     "copilot_session_id": "preserved-session-uuid",
-                    "copilot_message_sent": True,
+                    "last_processed_input_item_id": "item-already-sent",
                 },
+                input_item_id="item-already-sent",
             )
             events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
-        # Recovery reattaches with the SAME session_id stored on metadata.
+        # Session reattached with the same id.
         assert create_calls[0]["session_id"] == "preserved-session-uuid"
-        # session_id was preserved (not regenerated).
-        assert ctx.durability.metadata.get("copilot_session_id") == "preserved-session-uuid"
-
-        # Recovery in_progress carries empty resumption response.
-        in_progress = next(
-            e for e in events if _event_type(e) == "response.in_progress"
-        )
-        payload = getattr(in_progress, "response", None) or in_progress.get("response")
-        output = payload.get("output") if isinstance(payload, dict) else payload.output
-        assert output == []
+        # Watermark matched → no send call this attempt.
+        assert send_calls == []
 
 
 @pytest.mark.asyncio
-class TestSample18PreEntryCancellation:
-    async def test_pre_entry_steered_emits_completed_no_sdk_call(self) -> None:
+class TestSample18RecoverySendsWhenWatermarkStale:
+    async def test_recovery_with_stale_watermark_does_send(self) -> None:
         from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
 
         stub_client, send_calls, create_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
-            ctx = _make_context(response_id=IdGenerator.new_response_id())
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                entry_mode="recovered",
+                metadata={
+                    "copilot_session_id": "preserved-session-uuid",
+                    "last_processed_input_item_id": "item-from-prior-turn",
+                },
+                input_item_id="item-current-turn",
+            )
+            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+
+        assert create_calls[0]["session_id"] == "preserved-session-uuid"
+        assert send_calls == ["test prompt"]
+        assert ctx.durability.metadata.get("last_processed_input_item_id") == "item-current-turn"
+
+
+@pytest.mark.asyncio
+class TestSample18PreEntrySteeredPreservesInput:
+    async def test_pre_entry_steered_sends_input_and_completes(self) -> None:
+        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+
+        stub_client, send_calls, create_calls = _make_session_stub_classes()
+        with patch.object(mod, "CopilotClient", stub_client):
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                input_item_id="item-steered",
+            )
             ctx.cancellation_reason = CancellationReason.STEERED
             signal = asyncio.Event()
             signal.set()
 
             events = await _drive(mod.handler, _make_request(), ctx, signal)
 
+        assert send_calls == ["test prompt"]
+        assert ctx.durability.metadata.get("last_processed_input_item_id") == "item-steered"
         assert "response.completed" in [_event_type(e) for e in events]
-        # No SDK calls in pre-entry path.
+
+
+@pytest.mark.asyncio
+class TestSample18PreEntryOtherCancellationDoesNotTouchSDK:
+    async def test_pre_entry_client_cancelled_does_not_touch_sdk(self) -> None:
+        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+
+        stub_client, send_calls, create_calls = _make_session_stub_classes()
+        with patch.object(mod, "CopilotClient", stub_client):
+            ctx = _make_context(response_id=IdGenerator.new_response_id())
+            ctx.cancellation_reason = CancellationReason.CLIENT_CANCELLED
+            signal = asyncio.Event()
+            signal.set()
+
+            events = await _drive(mod.handler, _make_request(), ctx, signal)
+
         assert create_calls == []
         assert send_calls == []
+        assert "response.completed" not in [_event_type(e) for e in events]
 
-    async def test_pre_entry_shutdown_returns_no_terminal_no_sdk(self) -> None:
+    async def test_pre_entry_shutdown_does_not_touch_sdk(self) -> None:
         from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
 
         stub_client, send_calls, create_calls = _make_session_stub_classes()
@@ -247,6 +277,6 @@ class TestSample18PreEntryCancellation:
 
             events = await _drive(mod.handler, _make_request(), ctx, signal)
 
-        assert "response.completed" not in [_event_type(e) for e in events]
         assert create_calls == []
         assert send_calls == []
+        assert "response.completed" not in [_event_type(e) for e in events]

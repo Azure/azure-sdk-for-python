@@ -3,9 +3,8 @@
 """Sample 20 — Durable steering with cancellation × recovery composition.
 
 A steerable durable handler with NO upstream framework. Demonstrates how
-the cancellation policy from Spec 011 and the recovery contract from
-Spec 012 compose when steering, client cancel, and shutdown interleave
-with crash recovery.
+the cancellation policy and the crash recovery contract compose when
+steering, client cancel, and shutdown interleave with crash recovery.
 
 Differences from ``sample_19``:
 
@@ -128,7 +127,7 @@ async def handler(
 
     yield stream.emit_created()
 
-    # ── Phase 1 of cancellation (Spec 011): pre-entry check ────────
+    # ── Pre-entry cancellation check ────────
     # Signal pre-set on entry — this happens when a newer turn was
     # already queued before we even started.
     if cancellation_signal.is_set():
@@ -156,7 +155,7 @@ async def handler(
     input_text = await context.get_input_text()
     accumulated = ""
 
-    # ── Phase 2 of cancellation (Spec 011): mid-stream check ──────
+    # ── Mid-stream cancellation check ──────
     async for token in _simulate_llm_stream(input_text):
         if cancellation_signal.is_set():
             break
@@ -173,7 +172,7 @@ async def handler(
     if shutdown_timer and not shutdown_timer.done():
         shutdown_timer.cancel()
 
-    # ── Phase 3 of cancellation (Spec 011): post-stream ────────────
+    # ── Post-stream cancellation check ────────────
     # Shutdown mid-stream: return without terminal so the framework
     # re-invokes us; recovery branch above re-streams from scratch.
     if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:

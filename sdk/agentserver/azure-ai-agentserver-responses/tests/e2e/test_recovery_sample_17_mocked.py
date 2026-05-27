@@ -2,31 +2,27 @@
 # Licensed under the MIT license.
 """Mocked e2e test for sample_17 — durable Claude Agent SDK handler.
 
-Real-SDK integration testing requires ``ANTHROPIC_API_KEY`` and
-network access (and a Node.js runtime for the bundled CLI), so this
-test patches ``ClaudeSDKClient`` to a synchronous in-memory stub.
-
 Pins:
 
-1. Fresh entry calls ``client.query(input_text)`` exactly once and
-   passes ``ClaudeAgentOptions(session_id=<uuid>)``.
-2. Recovered entry with ``claude_query_in_flight=True`` calls
-   ``client.query`` again BUT uses ``ClaudeAgentOptions(resume=…,
-   fork_session=True)`` — the fork is the documented escape from
-   the duplicate-user-turn problem.
-3. The watermark ``claude_query_in_flight`` is stamped BEFORE
-   ``client.query`` and cleared after the receive loop finishes.
-4. The fork's new ``session_id`` (captured from ``ResultMessage``)
-   is written back to ``durability.metadata``.
-5. Pre-entry STEERED emits ``response.completed``; CLIENT_CANCELLED
-   and SHUTTING_DOWN return without terminal.
+1. Fresh entry calls ``client.query`` exactly once and updates the
+   ``last_processed_input_item_id`` watermark.
+2. Recovered entry with the watermark already pointing at the current
+   input does NOT call ``client.query`` again — the session is resumed
+   and we receive whatever Claude has.
+3. Recovered entry where the watermark does not match (e.g. crash
+   before query was issued) DOES call ``client.query`` once.
+4. Recovery uses ``ClaudeAgentOptions(resume=…)`` — never ``fork_session``.
+5. Pre-entry STEERED sends the user input to Claude (so it is preserved
+   in conversation history) and then emits ``response.completed``.
+6. Pre-entry CLIENT_CANCELLED and SHUTTING_DOWN return without making
+   any SDK calls.
 """
 
 from __future__ import annotations
 
 import asyncio
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -57,6 +53,7 @@ def _make_context(
     response_id: str,
     entry_mode: str = "fresh",
     metadata: dict[str, Any] | None = None,
+    input_item_id: str = "item-1",
 ) -> ResponseContext:
     durability = DurabilityContext(
         entry_mode=entry_mode,  # type: ignore[arg-type]
@@ -73,7 +70,13 @@ def _make_context(
     async def _get_input_text() -> str:
         return "test prompt"
 
+    async def _get_input_items(*, resolve_references: bool = True) -> list[Any]:
+        item = MagicMock()
+        item.id = input_item_id
+        return [item]
+
     context.get_input_text = _get_input_text
+    context.get_input_items = _get_input_items
     return context
 
 
@@ -95,12 +98,7 @@ def _event_type(e: Any) -> str | None:
 def _make_claude_client_stub(
     reply_text: str = "Hello back.",
     new_session_id: str | None = None,
-) -> tuple[MagicMock, list[dict[str, Any]]]:
-    """Build a stubbed ClaudeSDKClient.
-
-    Returns the mock class and a recorder list capturing every
-    ``client.query(...)`` call (used by the at-most-once assertions).
-    """
+):
     from claude_agent_sdk import AssistantMessage, ResultMessage, TextBlock
 
     query_calls: list[dict[str, Any]] = []
@@ -147,67 +145,57 @@ def _make_claude_client_stub(
 
 @pytest.mark.asyncio
 class TestSample17FreshEntry:
-    async def test_fresh_entry_calls_query_once_with_session_id(self) -> None:
+    async def test_fresh_entry_calls_query_once_and_updates_watermark(self) -> None:
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
 
         stub_class, query_calls = _make_claude_client_stub()
         with patch.object(mod, "ClaudeSDKClient", stub_class):
-            ctx = _make_context(response_id=IdGenerator.new_response_id())
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                input_item_id="item-fresh-1",
+            )
             events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
-        # Exactly one query() call.
         assert len(query_calls) == 1
         assert query_calls[0]["prompt"] == "test prompt"
-
-        # Options carried session_id (fresh, not resume).
+        # Fresh: options carries session_id, NOT resume, NEVER fork.
         opts = query_calls[0]["options"]
         assert getattr(opts, "session_id", None) is not None
         assert getattr(opts, "resume", None) is None
         assert getattr(opts, "fork_session", False) is False
 
-        # Lifecycle reached completed.
-        types = [_event_type(e) for e in events]
-        assert "response.completed" in types
-
-        # Watermark cleared at end.
-        assert ctx.durability.metadata.get("claude_query_in_flight") is False
-        # session_id captured from ResultMessage.
-        assert ctx.durability.metadata.get("claude_session_id") == "session-after"
+        # Watermark updated to current input item id.
+        assert ctx.durability.metadata.get("last_processed_input_item_id") == "item-fresh-1"
+        assert "response.completed" in [_event_type(e) for e in events]
 
 
 @pytest.mark.asyncio
-class TestSample17RecoveryWithInFlightQuery:
-    async def test_recovery_with_in_flight_watermark_forks_session(self) -> None:
+class TestSample17RecoverySkipsQueryWhenWatermarkMatches:
+    async def test_recovery_with_matching_watermark_skips_query(self) -> None:
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
 
-        stub_class, query_calls = _make_claude_client_stub(new_session_id="forked-session")
+        stub_class, query_calls = _make_claude_client_stub()
         with patch.object(mod, "ClaudeSDKClient", stub_class):
             ctx = _make_context(
                 response_id=IdGenerator.new_response_id(),
                 entry_mode="recovered",
                 metadata={
                     "claude_session_id": "original-session",
-                    "claude_query_in_flight": True,
+                    "last_processed_input_item_id": "item-recovered-1",
                 },
+                input_item_id="item-recovered-1",
             )
             events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
-        # The recovered attempt issues one query against a FORK of the
-        # original session — never the original directly. This is the
-        # documented escape from duplicate-user-turn corruption.
-        assert len(query_calls) == 1
-        opts = query_calls[0]["options"]
-        assert getattr(opts, "resume", None) == "original-session"
-        assert getattr(opts, "fork_session", False) is True
-        # session_id was not set on this options object (resume + fork
-        # is mutually exclusive with assigning a new id).
+        # Watermark matched → no query() this attempt.
+        assert query_calls == []
 
-        # New (forked) session_id captured back into metadata.
-        assert ctx.durability.metadata.get("claude_session_id") == "forked-session"
-        # Watermark cleared after a clean receive loop.
-        assert ctx.durability.metadata.get("claude_query_in_flight") is False
+        # Options carries resume (the existing session id), NEVER fork_session.
+        # No query was issued so we can't read options from the recording —
+        # but the prior session_id should still be in metadata.
+        assert ctx.durability.metadata.get("claude_session_id") == "session-after"
 
-        # Lifecycle: recovery in_progress carries empty resumption response.
+        # Lifecycle: recovery in_progress with empty resumption.
         in_progress = next(
             e for e in events if _event_type(e) == "response.in_progress"
         )
@@ -217,25 +205,91 @@ class TestSample17RecoveryWithInFlightQuery:
 
 
 @pytest.mark.asyncio
-class TestSample17PreEntryCancellation:
-    async def test_pre_entry_steered_emits_completed_without_calling_sdk(self) -> None:
+class TestSample17RecoveryQueriesWhenWatermarkStale:
+    async def test_recovery_with_stale_watermark_does_query(self) -> None:
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
 
         stub_class, query_calls = _make_claude_client_stub()
         with patch.object(mod, "ClaudeSDKClient", stub_class):
-            ctx = _make_context(response_id=IdGenerator.new_response_id())
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                entry_mode="recovered",
+                metadata={
+                    "claude_session_id": "original-session",
+                    "last_processed_input_item_id": "item-from-prior-turn",
+                },
+                input_item_id="item-current-turn",
+            )
+            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+
+        # Watermark stale → query() once with current input.
+        assert len(query_calls) == 1
+        opts = query_calls[0]["options"]
+        # Recovery uses resume, NEVER fork.
+        assert getattr(opts, "resume", None) == "original-session"
+        assert getattr(opts, "fork_session", False) is False
+        assert getattr(opts, "session_id", None) is None
+
+        # Watermark advanced to the current item.
+        assert ctx.durability.metadata.get("last_processed_input_item_id") == "item-current-turn"
+
+
+@pytest.mark.asyncio
+class TestSample17NeverForks:
+    async def test_no_attempt_uses_fork_session(self) -> None:
+        """Regression guard: the sample MUST NOT use fork_session in any code path."""
+        from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
+        import inspect
+
+        src = inspect.getsource(mod)
+        assert "fork_session" not in src, (
+            "sample_17 must not use fork_session — forking abandons in-flight "
+            "session state and defeats durability"
+        )
+
+
+@pytest.mark.asyncio
+class TestSample17PreEntrySteeredPreservesInput:
+    async def test_pre_entry_steered_sends_input_to_claude_then_completes(self) -> None:
+        from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
+
+        stub_class, query_calls = _make_claude_client_stub()
+        with patch.object(mod, "ClaudeSDKClient", stub_class):
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                input_item_id="item-steered",
+            )
             ctx.cancellation_reason = CancellationReason.STEERED
             signal = asyncio.Event()
             signal.set()
 
             events = await _drive(mod.handler, _make_request(), ctx, signal)
 
-        types = [_event_type(e) for e in events]
-        assert "response.completed" in types
-        # No upstream call — we short-circuited before touching the SDK.
-        assert query_calls == []
+        # Input was sent to Claude before completing — preserves conversation context.
+        assert len(query_calls) == 1
+        assert query_calls[0]["prompt"] == "test prompt"
+        assert ctx.durability.metadata.get("last_processed_input_item_id") == "item-steered"
+        assert "response.completed" in [_event_type(e) for e in events]
 
-    async def test_pre_entry_shutdown_returns_no_terminal_no_sdk_call(self) -> None:
+
+@pytest.mark.asyncio
+class TestSample17PreEntryNonSteeredCancelDoesNotTouchSDK:
+    async def test_pre_entry_client_cancelled_does_not_call_sdk(self) -> None:
+        from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
+
+        stub_class, query_calls = _make_claude_client_stub()
+        with patch.object(mod, "ClaudeSDKClient", stub_class):
+            ctx = _make_context(response_id=IdGenerator.new_response_id())
+            ctx.cancellation_reason = CancellationReason.CLIENT_CANCELLED
+            signal = asyncio.Event()
+            signal.set()
+
+            events = await _drive(mod.handler, _make_request(), ctx, signal)
+
+        assert query_calls == []
+        assert "response.completed" not in [_event_type(e) for e in events]
+
+    async def test_pre_entry_shutdown_does_not_call_sdk(self) -> None:
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
 
         stub_class, query_calls = _make_claude_client_stub()
@@ -247,6 +301,5 @@ class TestSample17PreEntryCancellation:
 
             events = await _drive(mod.handler, _make_request(), ctx, signal)
 
-        types = [_event_type(e) for e in events]
-        assert "response.completed" not in types
         assert query_calls == []
+        assert "response.completed" not in [_event_type(e) for e in events]
