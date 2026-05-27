@@ -8,8 +8,8 @@
   - Added model `FeatureEnableRequest`
   - Added model `VmFamily`
   - Added model `VmFamilyProperties`
-  - Model `FeaturesOperations` added method `begin_disable`
-  - Added model `VmFamiliesOperations`
+  - Operation group `FeaturesOperations` added method `begin_disable`
+  - Added operation group `VmFamiliesOperations`
 
 ## 1.0.0 (2026-04-17)
 
