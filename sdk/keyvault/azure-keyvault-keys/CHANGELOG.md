@@ -1,6 +1,28 @@
 # Release History
 
-## 4.11.1 (2026-05-18)
+## 4.12.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.12.0b1 (2026-05-26)
+
+### Features Added
+
+- Added support for service API version `2026-01-01-preview` [#47116](https://github.com/Azure/azure-sdk-for-python/pull/47116).
+- Added `KeyProperties.key_size` read-only property.
+
+### Other Changes
+
+- Key Vault API version `2026-01-01-preview` is now the default.
+- Python 3.9 is no longer supported. Please use Python version 3.10 or later.
+
+## 4.11.1 (2026-05-19)
 
 ### Features Added
 

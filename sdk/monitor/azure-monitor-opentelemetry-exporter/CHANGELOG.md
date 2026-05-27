@@ -3,6 +3,8 @@
 ## 1.0.0b53 (Unreleased)
 
 ### Features Added
+- Read for global feature sdkstats bitmap and add a 15 second delay timer
+  ([#47031](https://github.com/Azure/azure-sdk-for-python/pull/47031))
 
 ### Breaking Changes
 

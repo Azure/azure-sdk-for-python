@@ -8,20 +8,19 @@ from __future__ import annotations
 
 import asyncio
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator, Awaitable, Callable, Optional
+from typing import TYPE_CHECKING, Any, AsyncIterator, Awaitable, Callable, Optional
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import IndexDocumentsBatch
 from azure.search.documents.aio import SearchClient, SearchIndexingBufferedSender
 from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
-from azure.search.documents.indexes.models import (
-    KnowledgeBase,
-    SearchIndexKnowledgeSource,
-)
 from devtools_testutils import get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
+
+if TYPE_CHECKING:
+    from azure.search.documents.indexes.models import KnowledgeBase, SearchIndexKnowledgeSource
 
 from _search_helpers import (
     HOTEL_DOCUMENT_COUNT,
@@ -67,9 +66,7 @@ async def poll_until(
         if attempt < attempts - 1:
             await asyncio.sleep(interval)
     last_snapshot = snapshots[-1] if snapshots else None
-    raise AssertionError(
-        f"Polling timed out after {attempts} attempts; last snapshot: {last_snapshot!r}"
-    )
+    raise AssertionError(f"Polling timed out after {attempts} attempts; last snapshot: {last_snapshot!r}")
 
 
 # ---------------------------------------------------------------------------
@@ -123,9 +120,7 @@ def live_test() -> Callable:
     """Compose the standard async live-test decorator stack."""
 
     def wrap(fn: Callable) -> Callable:
-        return SearchEnvVarPreparer()(
-            search_decorator()(recorded_by_proxy_async(fn))
-        )
+        return SearchEnvVarPreparer()(search_decorator()(recorded_by_proxy_async(fn)))
 
     return wrap
 
@@ -165,9 +160,7 @@ async def hotel_index(
     index_client = make_index_client(endpoint)
     search_client = make_search_client(endpoint, index_name)
     index_documents = (
-        documents
-        if documents is not None
-        else build_hotel_documents(document_count or HOTEL_DOCUMENT_COUNT)
+        documents if documents is not None else build_hotel_documents(document_count or HOTEL_DOCUMENT_COUNT)
     )
     try:
         await index_client.create_index(build_hotel_index(index_name))
