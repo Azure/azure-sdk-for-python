@@ -115,7 +115,9 @@ with (
     assert v1 is not None
     v1_definition = v1.definition
     assert isinstance(v1_definition, RubricBasedEvaluatorDefinition)
-    print(f"v1 created with {len(v1_definition.dimensions)} dimensions: {', '.join(d.id for d in v1_definition.dimensions)}")
+    print(
+        f"v1 created with {len(v1_definition.dimensions)} dimensions: {', '.join(d.id for d in v1_definition.dimensions)}"
+    )
 
     # 2. Edit dimensions locally.
     # Domain-expert edits:
@@ -182,7 +184,9 @@ with (
     )
     v2_definition = v2.definition
     assert isinstance(v2_definition, RubricBasedEvaluatorDefinition)
-    print(f"v2 created with {len(v2_definition.dimensions)} dimensions: {', '.join(d.id for d in v2_definition.dimensions)}")
+    print(
+        f"v2 created with {len(v2_definition.dimensions)} dimensions: {', '.join(d.id for d in v2_definition.dimensions)}"
+    )
 
     # 4. List all versions of the evaluator.
     print(f"All versions of `{evaluator_name}`:")
