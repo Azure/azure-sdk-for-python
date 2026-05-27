@@ -67,7 +67,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
 
     async def close(self) -> None:
         """Close the credential's transport session."""
-
+        self._cancel_background_refresh_tasks()
         await self._client.__aexit__()
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:

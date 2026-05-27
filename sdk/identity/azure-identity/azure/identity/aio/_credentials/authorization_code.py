@@ -47,7 +47,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
 
     async def close(self) -> None:
         """Close the credential's transport session."""
-
+        self._cancel_background_refresh_tasks()
         if self._client:
             await self._client.__aexit__()
 
