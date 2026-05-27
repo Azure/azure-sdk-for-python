@@ -43,6 +43,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Deleted or renamed client operation group `AlertsManagementClient.alert_processing_rules`
   - Deleted or renamed client operation group `AlertsManagementClient.prometheus_rule_groups`
