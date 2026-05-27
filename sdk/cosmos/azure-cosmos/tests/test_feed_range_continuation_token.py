@@ -970,6 +970,58 @@ class TestAggregateMergeConsistency:
 
         assert "VALUE aggregate classification" in str(excinfo.value)
 
+    def test_value_avg_numeric_fragments_raise_on_merge(self):
+        """Merging SELECT VALUE AVG(...) partials must raise ValueError."""
+        query = "SELECT VALUE AVG(c.score) FROM c"
+
+        assert _classify_aggregate_partial([7.0], query) == _AggregatePartialClassification.VALUE
+        assert _get_select_value_aggregate_function(query) == "AVG"
+        assert _count_page_items_from_partial_result({"Documents": [7.0]}, query) == 0
+
+        with pytest.raises(ValueError) as excinfo:
+            _base._merge_query_results(
+                {"Documents": [7.0]}, {"Documents": [3.0]}, query,
+            )
+
+        assert "VALUE AVG aggregate merge across partitions is not supported client-side." in str(
+            excinfo.value
+        )
+
+    def test_value_avg_merge_error_wrapper_message_is_user_facing(self):
+        """The wrapper must rephrase the inner AVG error and chain the cause."""
+        query = "SELECT VALUE AVG(c.score) FROM c"
+
+        with pytest.raises(ValueError) as inner:
+            _base._merge_query_results(
+                {"Documents": [7.0]}, {"Documents": [3.0]}, query,
+            )
+        merge_error = inner.value
+
+        with pytest.raises(ValueError) as outer:
+            _base._raise_query_merge_value_error(merge_error)
+
+        outer_message = str(outer.value)
+        assert "Unsupported query shape for range-scoped pagination" in outer_message
+        assert "SELECT VALUE AVG(...)" in outer_message
+        assert outer.value.__cause__ is merge_error
+
+    def test_value_avg_wrapper_passes_through_non_avg_value_errors(self):
+        """Non-AVG ValueErrors must be re-raised unchanged."""
+        unrelated = ValueError("some other merge problem")
+        with pytest.raises(ValueError) as outer:
+            _base._raise_query_merge_value_error(unrelated)
+        assert outer.value is unrelated
+
+    def test_value_avg_three_way_merge_also_raises(self):
+        """Three-way AVG merge must raise on the first merge call."""
+        query = "SELECT VALUE AVG(c.score) FROM c"
+
+        with pytest.raises(ValueError):
+            merged = _base._merge_query_results(
+                {"Documents": [7.0]}, {"Documents": [3.0]}, query,
+            )
+            _base._merge_query_results(merged, {"Documents": [11.0]}, query)
+
 
     def test_value_aggregate_detection_allows_space_before_open_paren(self):
         query = "SELECT VALUE COUNT (1) FROM c"

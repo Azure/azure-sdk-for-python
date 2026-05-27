@@ -156,6 +156,54 @@ class TestQueryFeedRange:
         add_all_pk_values_to_set(items, actual_pk_values)
         assert expected_pk_values.issubset(actual_pk_values)
 
+    # SELECT VALUE AVG(...) across a feed_range that covers more than one
+    # physical partition cannot be merged client-side and must raise
+    # ValueError. The single-partition control proves the raise is driven by
+    # the scope, not by the container.
+
+    def test_query_with_avg_aggregate_across_full_feed_range_raises(self, setup):
+        """AVG over a feed_range spanning multiple partitions must raise."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+
+        # Full hash range covers every physical partition of the container.
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        with pytest.raises(ValueError) as excinfo:
+            list(container.query_items(query=query, feed_range=feed_range))
+
+        message = str(excinfo.value)
+        assert "Unsupported query shape for range-scoped pagination" in message
+        assert "SELECT VALUE AVG" in message
+
+    def test_query_with_avg_aggregate_single_partition_feed_range_succeeds(self, setup):
+        """AVG scoped to a single-partition feed_range must still succeed."""
+        # Multi-partition container, but the feed_range maps to one partition.
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = 'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+
+        feed_range = container.feed_range_from_partition_key(PK_VALUES[0])
+        items = list(container.query_items(query=query, feed_range=feed_range))
+
+        # Seed data has value=100 for every document.
+        assert items, "Single-partition AVG must return at least one result row"
+        assert items[0] == 100, f"Expected AVG=100, got {items[0]}"
+
+        # Same expectation on the single-partition container.
+        single_container = get_container(setup, SINGLE_PARTITION_CONTAINER_ID)
+        single_feed_range = single_container.feed_range_from_partition_key(PK_VALUES[0])
+        single_items = list(single_container.query_items(
+            query=query, feed_range=single_feed_range,
+        ))
+        assert single_items, "Single-partition container AVG must return a row"
+        assert single_items[0] == 100
+
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     @pytest.mark.cosmosSplit
     def test_query_with_feed_range_during_partition_split_combined(self, setup, container_id):
