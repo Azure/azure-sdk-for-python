@@ -135,6 +135,8 @@ class _StatsbeatMetrics:
             _StatsbeatMetrics._COMMON_ATTRIBUTES["version"] = _get_version()
 
         self._ikey = instrumentation_key
+        if _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] is not None:
+            set_statsbeat_feature_attribute_bits(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"])
         self._feature = get_statsbeat_feature_attribute_bits()
         if not disable_offline_storage:
             self._feature |= _StatsbeatFeature.DISK_RETRY
@@ -267,6 +269,8 @@ class _StatsbeatMetrics:
             return observations
         # Feature metric
         # Check if any features were enabled during runtime
+        if _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] is not None:
+            set_statsbeat_feature_attribute_bits(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"])
         feature_bits = get_statsbeat_feature_attribute_bits()
         if feature_bits:
             self._feature |= feature_bits
