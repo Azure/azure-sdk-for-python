@@ -409,9 +409,8 @@ class AudioEchoCancellation(_Model):
 
      * `1`: Mono input (default).
      * `2`: Interleaved stereo input where channel 0 is the microphone signal and channel 1 is
-       the echo reference signal.
-     When set to 2, `reference_source` must be `client` and `input_audio_format` must be
-     `pcm16`.
+             the echo reference signal. When set to 2, `reference_source` must be `client` and
+             `input_audio_format` must be `pcm16`.
 
     :vartype channels: int
     """
@@ -433,9 +432,8 @@ class AudioEchoCancellation(_Model):
  
       * `1`: Mono input (default).
       * `2`: Interleaved stereo input where channel 0 is the microphone signal and channel 1 is
-        the echo reference signal.
-      When set to 2, `reference_source` must be `client` and `input_audio_format` must be
-      `pcm16`."""
+                the echo reference signal. When set to 2, `reference_source` must be `client` and
+                `input_audio_format` must be `pcm16`."""
 
     @overload
     def __init__(
@@ -5009,7 +5007,7 @@ class ResponseSession(_Model):
     """The unique identifier for the session."""
 
     @overload
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         model: Optional[str] = None,

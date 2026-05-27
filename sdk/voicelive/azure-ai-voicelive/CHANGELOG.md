@@ -26,6 +26,9 @@
 
 - **Image Input Field Rename**: Renamed `RequestImageContentPart.url` to `image_url`. Update
   image input construction to use `image_url=` instead of `url=`.
+- **Default API Version Update**: Changed the SDK default API version from `2026-04-10` to
+  `2026-06-01-preview`. Pass `api_version="2026-04-10"` explicitly to keep the previous default
+  behavior.
 
 ### Bug Fixes
 
