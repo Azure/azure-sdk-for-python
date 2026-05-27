@@ -1,5 +1,51 @@
 # Release History
 
+## 5.0.0 (2026-05-27)
+
+### Features Added
+
+  - Client `ContainerAppsAPIClient` added method `send_request`
+  - Model `JobExecution` added property `system_data`
+  - Model `MaintenanceConfigurationResource` added property `properties`
+  - Model `Usage` added property `unit`
+  - Added model `ScheduledEntries`
+  - Added enum `SessionPoolIdentityLifeCycle`
+
+### Breaking Changes
+
+  - Method `BaseContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `BaseContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Method `Container.__init__` removed default value `None` from its parameter `args`
+  - Method `Container.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Method `InitContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `InitContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Method `JobExecutionContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `JobExecutionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Model `MaintenanceConfigurationResource` deleted or renamed its instance variable `scheduled_entries`
+  - Method `SessionContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `SessionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Deleted or renamed model `AuthConfigCollection`
+  - Deleted or renamed model `AvailableOperations`
+  - Deleted or renamed model `AvailableWorkloadProfilesCollection`
+  - Deleted or renamed model `CertificateCollection`
+  - Deleted or renamed model `ConnectedEnvironmentCollection`
+  - Deleted or renamed model `ContainerAppCollection`
+  - Deleted or renamed model `DaprComponentsCollection`
+  - Deleted or renamed model `HttpRouteConfigCollection`
+  - Deleted or renamed model `JavaComponentsCollection`
+  - Deleted or renamed model `JobExecutionNamesCollection`
+  - Deleted or renamed model `JobsCollection`
+  - Deleted or renamed model `ListUsagesResult`
+  - Deleted or renamed model `MaintenanceConfigurationCollection`
+  - Deleted or renamed model `ManagedCertificateCollection`
+  - Deleted or renamed model `ManagedEnvironmentsCollection`
+  - Deleted or renamed model `RevisionCollection`
+  - Deleted or renamed model `SessionPoolCollection`
+  - Deleted or renamed model `SourceControlCollection`
+  - Deleted or renamed model `WorkflowEnvelopeCollection`
+  - Deleted or renamed model `WorkloadProfileStatesCollection`
+  - Method `ContainerAppsOperations.list_custom_host_name_analysis` changed its parameter `custom_hostname` from `positional_or_keyword` to `keyword_only`
+
 ## 4.0.0 (2025-10-24)
 
 ### Features Added
