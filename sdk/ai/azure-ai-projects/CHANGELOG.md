@@ -21,6 +21,13 @@
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
 * New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
 * New convenience method `.beta.models.create()` that wraps the spec's three-step upload-first sequence (`pending_upload` → `azcopy copy` → `pending_create_version`) and polls `get()` until the new `ModelVersion` is observable.
+* New methods on `.beta.agents` for session management: `stop_session`, `list_session_files`.
+* New methods on `.beta.agents` for optimization candidate operations: `get_optimization_candidate`, `get_candidate_file`, `promote_candidate`.
+* New methods on `.beta.skills` for skill versioning: `list_skill_versions`, `get_skill_version`, `get_skill_version_content`, `delete_skill_version`.
+* New `EvaluationLevel` enum with values `TURN` and `CONVERSATION`.
+* New `INVOCATIONS_WS` value on `AgentEndpointProtocol` enum for WebSocket-based hosted voice and real-time streaming agents.
+* New `STOPPING` session state for agents.
+* New `ContainerMemoryLimit` enum with memory size values (`1g`, `4g`, `16g`, `64g`).
 
 ### Breaking Changes
 
@@ -40,6 +47,14 @@ Breaking changes in beta classes:
 * Renamed class `TargetConfig` to `RedTeamTargetConfig`.
 * Removed class `FabricIQPreviewToolParameters`.
 * Removed class `WorkIQPreviewToolParameters`.
+* Renamed class `DatasetItem` to `DatasetInfo`.
+* Removed class `DatasetDataGenerationJobSource`.
+* Removed class `EvalRunOutputItemResult`.
+* Removed class `EvaluationCriterion`.
+* Removed class `OptimizationAgentSkill`.
+* Removed enum `EvalRunOutputItemResultStatus`.
+* Removed enum `OptimizationMode`.
+* Removed enum `OptimizationStrategy`.
 
 ### Bugs Fixed
 
