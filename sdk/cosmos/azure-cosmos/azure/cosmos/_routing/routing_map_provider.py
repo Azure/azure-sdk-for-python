@@ -78,25 +78,19 @@ _shared_locks_locks: Dict[str, threading.Lock] = {}
 # only wipes routing-map contents.
 _shared_cache_refcounts: Dict[str, int] = {}
 
-# Process-wide lock guarding the four dicts above for *this* (sync) module.
-# Note: the async module ``aio/routing_map_provider.py`` defines its own
-# independent set of module-level dicts and its own ``_shared_cache_lock`` —
-# state is NOT shared between the sync and async modules. A sync and an async
-# ``CosmosClient`` targeting the same endpoint maintain separate routing-map
-# caches. We use a ``threading.RLock`` (rather than an ``asyncio.Lock`` or a
-# plain ``threading.Lock``) because the critical sections it protects are
-# pure dict reads/writes — no await, no network I/O — so a brief
-# threading-lock acquisition is safe even from a coroutine context (used by
-# the async module's analogous lock). ``RLock`` is required (not ``Lock``)
-# because ``__init__`` holds this lock while indexing into
-# ``_shared_routing_map_cache``, and that indexing can synchronously trigger
-# GC of an older ``PartitionKeyRangeCache`` instance on the same thread
-# (e.g. when ``client`` is a ``MagicMock`` whose ``_mock_set_magics`` drops
-# prior child-mock references; the same shape can fire in production any
-# time GC collects a prior instance during a new instance's ``__init__``).
-# GC runs ``__del__`` -> ``release()``, which re-acquires this same lock on
-# the same thread; with a non-reentrant ``Lock`` that re-acquisition would
-# deadlock the main thread (see ``test_fetch_routing_map_recovers_after_transient_gap``).
+# Process-wide lock guarding the four dicts above. The async module
+# (``aio/routing_map_provider.py``) has its own independent set, so sync
+# and async clients targeting the same endpoint do not share state.
+#
+# Reentrant (``RLock``) because the dict operations inside ``__init__``'s
+# critical section can trigger cyclic GC at a CPython allocation safe-point.
+# If a ``PartitionKeyRangeCache`` participates in a reference cycle (e.g.
+# ``self._document_client`` -> ... -> ``self``), GC may sweep an unreachable
+# cycle on the same thread, run ``__del__`` -> ``release()``, and re-acquire
+# this lock. A plain ``Lock`` would deadlock; an ``RLock`` permits the
+# re-entry. A plain threading lock (rather than ``asyncio.Lock``) is fine
+# because the critical sections are pure dict reads/writes with no await
+# and no network I/O.
 _shared_cache_lock = threading.RLock()
 
 
@@ -133,6 +127,11 @@ class PartitionKeyRangeCache(object):
         # endpoint. Refcount lets us evict the entry when the last sharing
         # client releases it (see ``release``).
         with _shared_cache_lock:
+            # See ``_shared_cache_lock`` module-level comment: the dict ops
+            # below can re-enter this lock via cyclic GC -> ``__del__`` ->
+            # ``release()`` on the same thread, which is why the lock is an
+            # ``RLock``. If this block is ever refactored to move dict ops
+            # outside the lock, revisit whether ``RLock`` is still required.
             if self._endpoint not in _shared_routing_map_cache:
                 _shared_routing_map_cache[self._endpoint] = {}
                 _shared_collection_locks[self._endpoint] = {}
