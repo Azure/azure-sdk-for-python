@@ -1,5 +1,52 @@
 # Release History
 
+## 3.0.0b1 (2026-05-27)
+
+### Features Added
+
+  - Client `AzureDatabricksManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AzureDatabricksManagementClient` added method `send_request`
+  - Model `AccessConnectorProperties` added property `refered_by`
+  - Model `GroupIdInformation` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Model `VirtualNetworkPeering` added property `properties`
+  - Model `VirtualNetworkPeering` added property `system_data`
+  - Added model `AutomaticClusterUpdateDefinition`
+  - Added enum `AutomaticClusterUpdateValue`
+  - Added model `ComplianceSecurityProfileDefinition`
+  - Added enum `ComplianceSecurityProfileValue`
+  - Added enum `ComputeMode`
+  - Added model `DefaultCatalogProperties`
+  - Added enum `DefaultStorageFirewall`
+  - Added model `EnhancedSecurityComplianceDefinition`
+  - Added model `EnhancedSecurityMonitoringDefinition`
+  - Added enum `EnhancedSecurityMonitoringValue`
+  - Added enum `IdentityType`
+  - Added enum `InitialType`
+  - Added model `ProxyResource`
+  - Added model `VirtualNetworkPeeringPropertiesFormat`
+  - Added model `WorkspaceNoPublicIPBooleanParameter`
+  - Added model `WorkspacePropertiesAccessConnector`
+  - Model `WorkspacesOperations` added parameter `force_deletion` in method `begin_delete`
+
+### Breaking Changes
+
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_virtual_network_access`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_forwarded_traffic`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_gateway_transit`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `use_remote_gateways`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `databricks_virtual_network`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `databricks_address_space`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_virtual_network`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_address_space`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `peering_state`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `provisioning_state`
+  - Deleted or renamed model `PrivateEndpointConnectionsList`
+  - Deleted or renamed model `PrivateLinkResourcesList`
+  - Deleted or renamed model `VirtualNetworkPeeringList`
+
 ## 2.0.0 (2023-06-29)
 
 ### Features Added
