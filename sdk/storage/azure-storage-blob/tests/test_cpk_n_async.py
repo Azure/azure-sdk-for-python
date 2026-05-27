@@ -19,6 +19,7 @@ from azure.storage.blob import (
     AccountSasPermissions,
     BlobBlock,
     BlobSasPermissions,
+    BlobServiceClient as SyncBlobServiceClient,
     BlobType,
     ContainerEncryptionScope,
     ContainerSasPermissions,
@@ -56,9 +57,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
     def _teardown(self, bsc):
         if self.is_live:
-            loop = asyncio.get_event_loop()
             try:
-                loop.run_until_complete(bsc.delete_container(self.container_name))
+                sync_credential = self.get_credential(SyncBlobServiceClient, is_async=False)
+                with SyncBlobServiceClient(account_url=bsc.url, credential=sync_credential) as sync_bsc:
+                    sync_bsc.delete_container(self.container_name)
             except HttpResponseError:
                 pass
 

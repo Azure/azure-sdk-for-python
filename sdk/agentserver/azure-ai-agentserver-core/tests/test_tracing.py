@@ -221,6 +221,21 @@ class TestFoundryEnrichmentSpanProcessor:
         assert attrs["gen_ai.agent.name"] == "my-agent"
         assert attrs["gen_ai.agent.id"] == "my-agent:1.0"
 
+    def test_blueprint_id_uses_correct_attribute_key(self) -> None:
+        """agent_blueprint_id must be emitted under microsoft.a365.agent.blueprint.id."""
+        proc = _FoundryEnrichmentSpanProcessor(
+            agent_name="my-agent", agent_version="1.0",
+            agent_id="my-agent:1.0", agent_blueprint_id="bp-abc-123",
+        )
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        with tracer.start_as_current_span("span"):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["microsoft.a365.agent.blueprint.id"] == "bp-abc-123"
+
     def test_none_fields_are_skipped(self) -> None:
         proc = _FoundryEnrichmentSpanProcessor(
             agent_name=None, agent_version=None,
