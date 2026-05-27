@@ -8,7 +8,6 @@ import pytest
 from azure.ai.ml import load_model
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     ModelVersionData,
-    ModelVersionDeploymentTemplateReference,
     ModelVersionDetails,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelVersion, ModelVersionProperties
