@@ -85,3 +85,4 @@ need_azuremgmtcore = true
 title = "EducationManagementClient"
 sample_link = ""
 exclude_folders = ""
+no_sub = true
