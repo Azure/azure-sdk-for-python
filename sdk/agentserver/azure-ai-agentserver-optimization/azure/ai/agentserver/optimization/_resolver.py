@@ -31,7 +31,7 @@ from azure.core.rest import HttpRequest
 
 from azure.ai.agentserver.optimization._models import OptimizationConfig
 
-logger = logging.getLogger("azure.ai.agentserver.optimization")
+logger = logging.getLogger(__name__)
 
 _downloaded: set[str] = set()
 
@@ -44,6 +44,7 @@ def resolve_candidate(
     candidate_id: str,
     endpoint: str,
     local_dir: pathlib.Path | None = None,
+    credential: Any | None = None,
 ) -> dict[str, Any] | None:
     """Resolve a candidate's full config from the optimization service.
 
@@ -60,6 +61,9 @@ def resolve_candidate(
     :type endpoint: str
     :param local_dir: Local directory for persisting config.
     :type local_dir: pathlib.Path | None
+    :param credential: Optional credential for bearer token auth.
+        If omitted, resolver attempts ``DefaultAzureCredential``.
+    :type credential: Any | None
     :return: Candidate config dict, or ``None`` on failure.
     :rtype: dict[str, Any] | None
     """
@@ -73,15 +77,17 @@ def resolve_candidate(
         )
         _downloaded.discard(candidate_id)
 
-    client = _build_client(endpoint)
+    client = _build_client(endpoint, credential)
 
     # ── Step 1: Fetch config ─────────────────────────────────────────
-    config = _api_get_json(
-        client,
-        f"/candidates/{candidate_id}/config",
-        params={"api-version": _API_VERSION},
-    )
-    if config is None:
+    try:
+        config = _api_get_json(
+            client,
+            f"/candidates/{candidate_id}/config",
+            params={"api-version": _API_VERSION},
+        )
+    except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
+        logger.error("Failed to fetch config for candidate %s: %s", candidate_id, exc)
         client.close()
         return None
 
@@ -210,13 +216,18 @@ def _download_skill_files(
     :param candidate_path: Local directory for the candidate.
     :type candidate_path: pathlib.Path
     """
-    manifest = _api_get_json(
-        client,
-        f"/candidates/{candidate_id}",
-        params={"api-version": _API_VERSION},
-    )
-    if manifest is None:
+    try:
+        manifest = _api_get_json(
+            client,
+            f"/candidates/{candidate_id}",
+            params={"api-version": _API_VERSION},
+        )
+    except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
         logger.debug("Could not fetch manifest for candidate %s", candidate_id)
+        return
+
+    if not isinstance(manifest, dict):
+        logger.debug("Manifest response is missing/invalid for candidate %s", candidate_id)
         return
 
     files = manifest.get("files", [])
@@ -237,12 +248,13 @@ def _download_skill_files(
         if not file_path:
             continue
 
-        content = _api_get_text(
-            client,
-            f"/candidates/{candidate_id}/files",
-            params={"path": file_path, "api-version": _API_VERSION},
-        )
-        if content is None:
+        try:
+            content = _api_get_text(
+                client,
+                f"/candidates/{candidate_id}/files",
+                params={"path": file_path, "api-version": _API_VERSION},
+            )
+        except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
             logger.warning("Failed to download skill file: %s", file_path)
             continue
 
@@ -257,6 +269,10 @@ def _download_skill_files(
             logger.warning(
                 "Path traversal detected in skill file path: %r — skipping", file_path
             )
+            continue
+
+        if not isinstance(content, str):
+            logger.warning("Skill file content is invalid for path: %s", file_path)
             continue
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -280,31 +296,37 @@ def _is_skill_file(file_entry: dict) -> bool:
 # ── HTTP helpers (azure.core transport) ──────────────────────────────
 
 
-def _build_client(endpoint: str) -> PipelineClient:
+def _build_client(endpoint: str, credential: Any | None = None) -> PipelineClient:
     """Create a PipelineClient with credential-based auth and retry.
 
     :param endpoint: Base URL for the API.
     :type endpoint: str
+    :param credential: Azure credential for bearer token auth. If None, attempts to use DefaultAzureCredential.
+    :type credential: Any | None
     :return: Configured pipeline client.
     :rtype: PipelineClient
     """
     policies: list = [RetryPolicy()]
-    try:
-        from azure.identity import DefaultAzureCredential
 
-        credential = DefaultAzureCredential()
-        policies.insert(0, BearerTokenCredentialPolicy(credential, _AUTH_SCOPE))
-    except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
-        logger.debug(
-            "azure-identity not available or credentials failed — proceeding without auth"
-        )
+    # Use provided credential or fall back to DefaultAzureCredential
+    auth_credential = credential
+    if auth_credential is None:
+        try:
+            from azure.identity import DefaultAzureCredential  # pylint: disable=import-outside-toplevel
+            auth_credential = DefaultAzureCredential()
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.debug("Could not create DefaultAzureCredential: %s", exc)
+
+    if auth_credential is not None:
+        policies.insert(0, BearerTokenCredentialPolicy(auth_credential, _AUTH_SCOPE))
+
     return PipelineClient(base_url=endpoint, policies=policies)
 
 
 def _api_get_json(
     client: PipelineClient, path: str, params: dict[str, str] | None = None
-) -> dict[str, Any] | None:
-    """GET a JSON endpoint, return parsed dict or None on failure.
+) -> dict[str, Any]:
+    """GET a JSON endpoint; raises on non-2xx or transport failure.
 
     :param client: Azure PipelineClient.
     :type client: PipelineClient
@@ -312,27 +334,21 @@ def _api_get_json(
     :type path: str
     :param params: Query parameters.
     :type params: dict[str, str] | None
-    :return: Parsed response dict or ``None``.
-    :rtype: dict[str, Any] | None
+    :return: Parsed response dict.
+    :rtype: dict[str, Any]
     """
     url = f"{client._base_url.rstrip('/')}{path}"  # pylint: disable=protected-access
     request = HttpRequest("GET", url, params=params)
     logger.debug("GET %s", url)
-    try:
-        response = client.send_request(request)
-        if response.status_code != 200:
-            logger.error("GET %s returned %d", url, response.status_code)
-            return None
-        return response.json()
-    except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
-        logger.error("GET %s failed: %s", url, exc)
-        return None
+    response = client.send_request(request)
+    response.raise_for_status()
+    return response.json()
 
 
 def _api_get_text(
     client: PipelineClient, path: str, params: dict[str, str] | None = None
-) -> str | None:
-    """GET an endpoint, return response body as text or None on failure.
+) -> str:
+    """GET an endpoint; raises on non-2xx or transport failure.
 
     :param client: Azure PipelineClient.
     :type client: PipelineClient
@@ -340,18 +356,12 @@ def _api_get_text(
     :type path: str
     :param params: Query parameters.
     :type params: dict[str, str] | None
-    :return: Response body text or ``None``.
-    :rtype: str | None
+    :return: Response body text.
+    :rtype: str
     """
     url = f"{client._base_url.rstrip('/')}{path}"  # pylint: disable=protected-access
     request = HttpRequest("GET", url, params=params)
     logger.debug("GET %s", url)
-    try:
-        response = client.send_request(request)
-        if response.status_code != 200:
-            logger.error("GET %s returned %d", url, response.status_code)
-            return None
-        return response.text()
-    except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
-        logger.error("GET %s failed: %s", url, exc)
-        return None
+    response = client.send_request(request)
+    response.raise_for_status()
+    return response.text()

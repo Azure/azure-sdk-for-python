@@ -178,7 +178,6 @@ class OptimizationConfig:  # pylint: disable=too-many-instance-attributes
                     pass
                 tool_fn.__doc__ = description
                 logger.debug("Applied optimized description for tool '%s'", tool_name)
-            _patch_input_model_params(tool_fn, func_def, tool_name)
         return tools
 
     def compose_instructions(self) -> str:
@@ -197,40 +196,7 @@ class OptimizationConfig:  # pylint: disable=too-many-instance-attributes
         return "\n".join(lines)
 
 
-# ── Parsing / patching helpers ────────────────────────────────────────
-
-
-def _patch_input_model_params(tool_fn: Any, func_def: dict, tool_name: str) -> None:
-    """Patch parameter descriptions on a tool's input_model.
-
-    :param tool_fn: The tool function to patch.
-    :type tool_fn: Any
-    :param func_def: Function definition dict with parameters schema.
-    :type func_def: dict
-    :param tool_name: Tool name for logging.
-    :type tool_name: str
-    """
-    params_schema = func_def.get("parameters", {})
-    if not isinstance(params_schema, dict):
-        return
-    props = params_schema.get("properties", {})
-    if not isinstance(props, dict):
-        return
-    input_model = getattr(tool_fn, "input_model", None)
-    if not input_model or not hasattr(input_model, "model_fields"):
-        return
-    patched = False
-    for param_name, param_val in props.items():
-        if not isinstance(param_val, dict) or "description" not in param_val:
-            continue
-        if param_name in input_model.model_fields:
-            input_model.model_fields[param_name].description = param_val["description"]
-            patched = True
-    if patched:
-        input_model.model_rebuild(force=True)
-        logger.debug(
-            "Applied optimized parameter descriptions for tool '%s'", tool_name
-        )
+# ── Parsing helpers ────────────────────────────────────────
 
 
 def _parse_skills(raw: list) -> list[Skill]:

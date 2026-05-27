@@ -347,25 +347,15 @@ class TestComposeInstructions:
 
 
 class TestApplyToolDescriptionsEndToEnd:
-    """Integration: load_config → apply_tool_descriptions with parameter patching."""
+    """Integration: load_config → apply_tool_descriptions updates tool docs."""
 
     def test_parameter_patching_e2e(self, monkeypatch):
-        """Full flow: env config → apply → verify parameter descriptions patched."""
+        """Full flow: env config → apply → verify input_model descriptions are unchanged."""
+        from pydantic import BaseModel, Field  # pylint: disable=import-outside-toplevel
 
-        class FakeField:
-            def __init__(self, desc):
-                self.description = desc
-
-        class FakeInputModel:
-            model_fields = {
-                "destination": FakeField("Original dest"),
-                "date": FakeField("Original date"),
-            }
-            _rebuild_called = False
-
-            @classmethod
-            def model_rebuild(cls, force=False):
-                cls._rebuild_called = True
+        class SearchFlightsInput(BaseModel):
+            destination: str = Field(description="Original dest")
+            date: str = Field(description="Original date")
 
         cfg = {
             "instructions": "Agent.",
@@ -390,15 +380,14 @@ class TestApplyToolDescriptionsEndToEnd:
         def search_flights(destination: str, date: str):
             """Original."""
 
-        search_flights.input_model = FakeInputModel  # type: ignore[attr-defined]
+        search_flights.input_model = SearchFlightsInput  # type: ignore[attr-defined]
 
         config = load_config()
         config.apply_tool_descriptions([search_flights])
 
         assert search_flights.__doc__ == "Find flights."
-        assert FakeInputModel.model_fields["destination"].description == "The city to fly to"
-        assert FakeInputModel.model_fields["date"].description == "Original date"
-        assert FakeInputModel._rebuild_called is True
+        assert SearchFlightsInput.model_fields["destination"].description == "Original dest"
+        assert SearchFlightsInput.model_fields["date"].description == "Original date"
 
 
 class TestConfigDirIntegration:

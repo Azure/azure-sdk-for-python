@@ -43,13 +43,14 @@ from azure.ai.agentserver.optimization._models import (
 )
 from azure.ai.agentserver.optimization._resolver import resolve_candidate
 
-logger = logging.getLogger("azure.ai.agentserver.optimization")
+logger = logging.getLogger(__name__)
 
 
 def load_config(
     *,
     config_dir: str | Path | None = None,
     required: bool = True,
+    credential: Any | None = None,
 ) -> OptimizationConfig | None:
     """Load optimization config with graceful fallback.
 
@@ -80,6 +81,9 @@ def load_config(
         config source is found.  Set to ``False`` during initial
         setup or testing.
     :paramtype required: bool
+    :keyword credential: Optional credential for resolver API authentication.
+        If omitted, resolver will attempt ``DefaultAzureCredential``.
+    :paramtype credential: Any | None
     :return: The resolved optimization config, or ``None`` when not found
         and *required* is ``False``.
     :rtype: OptimizationConfig | None
@@ -88,7 +92,7 @@ def load_config(
         valid config.
     """
     try:
-        return _load_config_inner(config_dir=config_dir, required=required)
+        return _load_config_inner(config_dir=config_dir, required=required, credential=credential)
     except ValueError:
         raise
     except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
@@ -100,6 +104,7 @@ def _load_config_inner(
     *,
     config_dir: str | Path | None,
     required: bool,
+    credential: Any | None,
 ) -> OptimizationConfig | None:
     """Internal config loader — may raise on unexpected errors.
 
@@ -107,6 +112,8 @@ def _load_config_inner(
     :paramtype config_dir: str | Path | None
     :keyword required: Whether to raise on missing config.
     :paramtype required: bool
+    :keyword credential: Optional credential for resolver API authentication.
+    :paramtype credential: Any | None
     :return: Resolved config or ``None``.
     :rtype: OptimizationConfig | None
     """
@@ -131,7 +138,7 @@ def _load_config_inner(
                 source=f"env:{env_var}",
             )
         except (json.JSONDecodeError, TypeError) as exc:
-            logger.warning("Bad %s env var: %s", env_var, exc)
+            logger.error("Bad %s env var: %s", env_var, exc)
 
     # ── Priority 2: Candidate ID → resolver API ──────────────────────
     candidate_id = os.environ.get(OptimizationConfig.ENV_CANDIDATE_ID, "").strip()
@@ -141,7 +148,7 @@ def _load_config_inner(
     if candidate_id and endpoint:
         local_dir = _resolve_local_dir(config_dir)
         resolved = resolve_candidate(
-            candidate_id, endpoint=endpoint, local_dir=local_dir
+            candidate_id, endpoint=endpoint, local_dir=local_dir, credential=credential
         )
         if resolved is not None:
             candidate = CandidateConfig.from_dict(resolved)

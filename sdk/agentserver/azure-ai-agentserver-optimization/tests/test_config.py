@@ -205,7 +205,7 @@ class TestCandidateResolver:
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None: resolved,
+            lambda cid, endpoint, local_dir=None, credential=None: resolved,
         )
         config = load_config()
         assert config.source == "api:candidate:cand-123"
@@ -218,7 +218,7 @@ class TestCandidateResolver:
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None: None,
+            lambda cid, endpoint, local_dir=None, credential=None: None,
         )
         config = load_config(required=False)
         assert config is None
@@ -236,7 +236,7 @@ class TestCandidateResolver:
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None: None,
+            lambda cid, endpoint, local_dir=None, credential=None: None,
         )
         # Set up local dir with this candidate
         candidate_dir = tmp_path / "cand-local"
@@ -1064,27 +1064,18 @@ class TestApplyToolDescriptions:
         assert tool.__doc__ == "Patched."
         assert tool.description == "read-only"  # unchanged
 
-    def test_patches_input_model_param_descriptions(self):
-        """Patches parameter descriptions on input_model.model_fields."""
-        class FakeField:
-            def __init__(self, desc):
-                self.description = desc
+    def test_does_not_patch_input_model_param_descriptions(self):
+        """Tool docs are patched, but input_model parameter descriptions are left unchanged."""
+        from pydantic import BaseModel, Field  # pylint: disable=import-outside-toplevel
 
-        class FakeInputModel:
-            model_fields = {
-                "destination": FakeField("Old dest description"),
-                "date": FakeField("Old date description"),
-            }
-            _rebuild_called = False
-
-            @classmethod
-            def model_rebuild(cls, force=False):
-                cls._rebuild_called = True
+        class SearchFlightsInput(BaseModel):
+            destination: str = Field(description="Old dest description")
+            date: str = Field(description="Old date description")
 
         def search_flights(destination: str, date: str):
             """Search."""
 
-        search_flights.input_model = FakeInputModel  # type: ignore[attr-defined]
+        search_flights.input_model = SearchFlightsInput  # type: ignore[attr-defined]
 
         config = self._make_config([
             self._tool_def("search_flights", "Find flights.", parameters={
@@ -1096,9 +1087,8 @@ class TestApplyToolDescriptions:
         ])
         config.apply_tool_descriptions([search_flights])
         assert search_flights.__doc__ == "Find flights."
-        assert FakeInputModel.model_fields["destination"].description == "The travel destination city"
-        assert FakeInputModel.model_fields["date"].description == "Old date description"
-        assert FakeInputModel._rebuild_called is True
+        assert SearchFlightsInput.model_fields["destination"].description == "Old dest description"
+        assert SearchFlightsInput.model_fields["date"].description == "Old date description"
 
     def test_skips_param_patch_when_no_input_model(self):
         """No crash when tool has no input_model attribute."""
@@ -1116,22 +1106,15 @@ class TestApplyToolDescriptions:
 
     def test_skips_unknown_params_in_input_model(self):
         """Parameters not in model_fields are silently ignored."""
-        class FakeField:
-            def __init__(self, desc):
-                self.description = desc
+        from pydantic import BaseModel, Field  # pylint: disable=import-outside-toplevel
 
-        class FakeInputModel:
-            model_fields = {"known": FakeField("Known param")}
-            _rebuild_called = False
-
-            @classmethod
-            def model_rebuild(cls, force=False):
-                cls._rebuild_called = True
+        class MyToolInput(BaseModel):
+            known: str = Field(description="Known param")
 
         def my_tool():
             """Doc."""
 
-        my_tool.input_model = FakeInputModel  # type: ignore[attr-defined]
+        my_tool.input_model = MyToolInput  # type: ignore[attr-defined]
 
         config = self._make_config([
             self._tool_def("my_tool", "New doc.", parameters={
@@ -1140,33 +1123,26 @@ class TestApplyToolDescriptions:
             }),
         ])
         config.apply_tool_descriptions([my_tool])
-        assert FakeInputModel.model_fields["known"].description == "Known param"
-        assert FakeInputModel._rebuild_called is False
+        assert MyToolInput.model_fields["known"].description == "Known param"
 
     def test_no_rebuild_when_no_params_patched(self):
         """model_rebuild is NOT called if no parameters were actually patched."""
-        class FakeField:
-            def __init__(self, desc):
-                self.description = desc
+        from pydantic import BaseModel, Field  # pylint: disable=import-outside-toplevel
 
-        class FakeInputModel:
-            model_fields = {"x": FakeField("X")}
-            _rebuild_called = False
-
-            @classmethod
-            def model_rebuild(cls, force=False):
-                cls._rebuild_called = True
+        class MyToolInput(BaseModel):
+            x: str = Field(description="X")
 
         def my_tool():
             """Doc."""
 
-        my_tool.input_model = FakeInputModel  # type: ignore[attr-defined]
+        my_tool.input_model = MyToolInput  # type: ignore[attr-defined]
 
         config = self._make_config([
             self._tool_def("my_tool", "New."),
         ])
         config.apply_tool_descriptions([my_tool])
-        assert FakeInputModel._rebuild_called is False
+        # No parameters in tool_def properties, so no field patching occurs
+        assert MyToolInput.model_fields["x"].description == "X"
 
     def test_empty_tools_list(self):
         """Passing an empty list is fine."""
@@ -1262,7 +1238,7 @@ class TestPriorityOrdering:
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None: {"instructions": "From resolver."},
+            lambda cid, endpoint, local_dir=None, credential=None: {"instructions": "From resolver."},
         )
         config = load_config()
         assert config.source == "api:candidate:cand-1"
@@ -1299,7 +1275,7 @@ class TestPriorityOrdering:
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None: resolved,
+            lambda cid, endpoint, local_dir=None, credential=None: resolved,
         )
         config = load_config()
         assert config.skills_dir == "/some/path/skills"
@@ -1316,7 +1292,7 @@ class TestPriorityOrdering:
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None: resolved,
+            lambda cid, endpoint, local_dir=None, credential=None: resolved,
         )
         config = load_config()
         assert len(config.tool_definitions) == 1

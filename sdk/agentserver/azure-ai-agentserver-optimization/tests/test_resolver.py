@@ -49,7 +49,7 @@ class TestResolveCandidate:
             patch("azure.ai.agentserver.optimization._resolver._build_client"),
             patch(
                 "azure.ai.agentserver.optimization._resolver._api_get_json",
-                return_value=None,
+                side_effect=RuntimeError("api failure"),
             ),
         ):
             result = resolve_candidate("cand-1", endpoint=ENDPOINT)
@@ -136,7 +136,7 @@ class TestResolveCandidate:
             patch("azure.ai.agentserver.optimization._resolver._build_client"),
             patch(
                 "azure.ai.agentserver.optimization._resolver._api_get_json",
-                return_value=None,
+                side_effect=RuntimeError("api failure"),
             ),
         ):
             resolve_candidate("cand-fail", endpoint=ENDPOINT)
@@ -596,7 +596,7 @@ class TestResolveCandidateWithLocalDir:
         """Endpoint URL trailing slash doesn't break API paths."""
         called_urls: list = []
 
-        def capture_build(endpoint):
+        def capture_build(endpoint, credential=None):
             m = MagicMock()
             m._base_url = endpoint
             return m
