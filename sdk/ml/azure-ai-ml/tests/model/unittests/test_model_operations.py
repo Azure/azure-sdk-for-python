@@ -12,6 +12,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
     ModelVersionProperties as ModelVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml.constants import ListViewType
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
@@ -182,6 +183,31 @@ path: ./model.pkl"""
         mock_model_operation._model_container_operation.list.assert_called_once()
         mock_model_operation.list(name="random_string")
         mock_model_operation._model_versions_operation.list.assert_called_once()
+
+    @patch.object(Model, "_from_rest_object", new=Mock())
+    def test_list_name_forwards_list_view_type_registry_and_workspace(
+        self, mock_model_operation: ModelOperations, mock_model_operation_reg: ModelOperations
+    ) -> None:
+        mock_model_operation._model_versions_operation.list.return_value = [Mock(Model)]
+        mock_model_operation_reg._model_versions_operation.list.return_value = [Mock(Model)]
+
+        list(mock_model_operation.list(name="my-model", stage="Production", list_view_type=ListViewType.ARCHIVED_ONLY))
+        workspace_kwargs = mock_model_operation._model_versions_operation.list.call_args.kwargs
+        assert workspace_kwargs["name"] == "my-model"
+        assert workspace_kwargs["workspace_name"] == mock_model_operation._workspace_name
+        assert workspace_kwargs["list_view_type"] == ListViewType.ARCHIVED_ONLY
+        assert workspace_kwargs["stage"] == "Production"
+
+        list(
+            mock_model_operation_reg.list(
+                name="my-model", stage="Production", list_view_type=ListViewType.ARCHIVED_ONLY
+            )
+        )
+        registry_kwargs = mock_model_operation_reg._model_versions_operation.list.call_args.kwargs
+        assert registry_kwargs["name"] == "my-model"
+        assert registry_kwargs["registry_name"] == mock_model_operation_reg._registry_name
+        assert registry_kwargs["list_view_type"] == ListViewType.ARCHIVED_ONLY
+        assert "stage" not in registry_kwargs
 
     def test_archive_version(self, mock_model_operation: ModelOperations) -> None:
         name = "random_string"

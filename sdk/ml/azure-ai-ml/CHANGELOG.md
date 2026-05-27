@@ -8,6 +8,7 @@
 
 - Fixed cross-tenant registry endpoint resolution for deployment template operations by using the registry discovery API instead of ARM calls.
 - Fixed deployment template update failing with immutable field errors by ensuring `allowedInstanceType` and `allowedEnvironmentVariableOverrides` are properly round-tripped during serialization.
+- Fixed `MLClient.models.list` ignoring the `list_view_type` filter when the client is scoped to a registry. Archived/active filtering on registry models now works as documented.
 
 ### Other Changes
 
