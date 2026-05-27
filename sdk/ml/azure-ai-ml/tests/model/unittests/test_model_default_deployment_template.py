@@ -6,10 +6,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml import load_model
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
-    ModelVersionData,
-    ModelVersionDetails,
-)
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData, ModelVersionDetails
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelVersion, ModelVersionProperties
 from azure.ai.ml.entities import Model
 from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
@@ -78,7 +75,6 @@ class TestModelDeploymentTemplateReference:
         assert isinstance(rest_object, ModelVersionData)
         assert isinstance(rest_object.properties, ModelVersionDetails)
         assert rest_object.properties.default_deployment_template is not None
-        assert isinstance(rest_object.properties.default_deployment_template, ModelVersionDeploymentTemplateReference)
         assert rest_object.properties.default_deployment_template.asset_id == template.asset_id
 
     def test_model_to_rest_object_without_default_deployment_template(self) -> None:

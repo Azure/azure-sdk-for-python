@@ -153,7 +153,7 @@ default_deployment_template:
                 "flavors": {},
                 "modelType": "custom_model",
                 "modelUri": "azureml://datastore/fake_datastore/paths/fake_model_uri",
-                "DeploymentTemplateReference": {
+                "defaultDeploymentTemplate": {
                     "assetId": "azureml://registries/test-registry/deploymenttemplates/template1/versions/1"
                 },
             },

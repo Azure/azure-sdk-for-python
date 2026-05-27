@@ -181,7 +181,11 @@ class IndexOperations(_ScopeDependentOperations):
 
         return Index._from_rest_object(
             self._azure_ai_assets.indexes.create_or_update(
-                name=index.name, version=index.version, body=index._to_rest_object(), **kwargs
+                workspace_name=self._operation_scope.workspace_name,
+                name=index.name,
+                version=index.version,
+                body=index._to_rest_object(),
+                **kwargs,
             )
         )
 
@@ -220,7 +224,9 @@ class IndexOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
 
-        index_version_resource = self._azure_ai_assets.indexes.get(name=name, version=version, **kwargs)
+        index_version_resource = self._azure_ai_assets.indexes.get(
+            workspace_name=self._operation_scope.workspace_name, name=name, version=version, **kwargs
+        )
 
         return Index._from_rest_object(index_version_resource)
 
@@ -250,9 +256,17 @@ class IndexOperations(_ScopeDependentOperations):
             return [Index._from_rest_object(i) for i in rest_indexes]
 
         if name is None:
-            return self._azure_ai_assets.indexes.list_latest(cls=cls, **kwargs)
+            return self._azure_ai_assets.indexes.list_latest(
+                workspace_name=self._operation_scope.workspace_name, cls=cls, **kwargs
+            )
 
-        return self._azure_ai_assets.indexes.list(name, list_view_type=list_view_type, cls=cls, **kwargs)
+        return self._azure_ai_assets.indexes.list(
+            workspace_name=self._operation_scope.workspace_name,
+            name=name,
+            list_view_type=list_view_type,
+            cls=cls,
+            **kwargs,
+        )
 
     def build_index(
         self,

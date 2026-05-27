@@ -185,7 +185,7 @@ class TestDeploymentTemplateWithAcceleratorMaps:
             name="dt1",
             version="1",
             environment="azureml://registries/reg1/environments/env1/versions/1",
-            allowed_instance_types="Standard_ND96isr_H100_v5 Standard_ND96isr_H200_v5",
+            allowed_instance_types=["Standard_ND96isr_H100_v5", "Standard_ND96isr_H200_v5"],
             accelerator_maps=maps,
         )
 
