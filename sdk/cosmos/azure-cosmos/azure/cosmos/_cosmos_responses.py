@@ -11,7 +11,7 @@ from azure.core.utils import CaseInsensitiveDict
 class CosmosItemPaged(ItemPaged[dict[str, Any]]):
     """A custom ItemPaged class that provides access to response headers from query operations.
 
-    This class wraps the standard ItemPaged and provides thread-safe access to the most recent
+    This class wraps the standard ItemPaged and provides access to the most recent
     response headers captured during pagination via a shared dict populated by __QueryFeed.
     """
 
@@ -31,7 +31,7 @@ class CosmosItemPaged(ItemPaged[dict[str, Any]]):
 class CosmosAsyncItemPaged(AsyncItemPaged[dict[str, Any]]):
     """A custom AsyncItemPaged class that provides access to response headers from async query operations.
 
-    This class wraps the standard AsyncItemPaged and provides thread-safe access to the most recent
+    This class wraps the standard AsyncItemPaged and provides access to the most recent
     response headers captured during pagination via a shared dict populated by __QueryFeed.
     """
 

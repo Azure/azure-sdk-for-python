@@ -1191,7 +1191,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_or_container_link, http_constants.ResourceType.Document)
         collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
 
-        # Shared dict for thread-safe header capture — overwritten each page fetch
+        # Shared dict for header capture — overwritten each page fetch
         response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
 
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
