@@ -113,8 +113,8 @@ class Tool(_Model):
 class A2APreviewTool(Tool, discriminator="a2a_preview"):
     """An agent implementing the A2A protocol.
 
-    :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2_A_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.A2_A_PREVIEW
+    :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2A_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.A2A_PREVIEW
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -134,8 +134,8 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
     :vartype project_connection_id: str
     """
 
-    type: Literal[ToolType.A2_A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``\"a2a_preview``. Required. A2_A_PREVIEW."""
+    type: Literal[ToolType.A2A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``\"a2a_preview``. Required. A2A_PREVIEW."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -176,7 +176,7 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.A2_A_PREVIEW  # type: ignore
+        self.type = ToolType.A2A_PREVIEW  # type: ignore
 
 
 class AgentBlueprintReference(_Model):
