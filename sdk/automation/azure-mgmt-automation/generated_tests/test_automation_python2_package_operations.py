@@ -25,7 +25,7 @@ class TestAutomationPython2PackageOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             package_name="str",
-            api_version="2018-06-30",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestAutomationPython2PackageOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             package_name="str",
-            api_version="2018-06-30",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestAutomationPython2PackageOperations(AzureMgmtRecordedTestCase):
                 "contentLink": {"contentHash": {"algorithm": "str", "value": "str"}, "uri": "str", "version": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2018-06-30",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestAutomationPython2PackageOperations(AzureMgmtRecordedTestCase):
             automation_account_name="str",
             package_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2018-06-30",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestAutomationPython2PackageOperations(AzureMgmtRecordedTestCase):
         response = self.client.python2_package.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2018-06-30",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

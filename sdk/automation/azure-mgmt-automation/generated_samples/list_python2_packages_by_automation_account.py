@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2018-06-30/examples/listPython2PackagesByAutomationAccount.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2024-10-23/examples/listPython2PackagesByAutomationAccount.json
 if __name__ == "__main__":
     main()

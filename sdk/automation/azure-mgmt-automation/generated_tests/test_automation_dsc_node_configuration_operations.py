@@ -25,7 +25,7 @@ class TestAutomationDscNodeConfigurationOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             node_configuration_name="str",
-            api_version="2018-01-15",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestAutomationDscNodeConfigurationOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             node_configuration_name="str",
-            api_version="2018-01-15",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestAutomationDscNodeConfigurationOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2018-01-15",
+            api_version="2024-10-23",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestAutomationDscNodeConfigurationOperations(AzureMgmtRecordedTestCase):
         response = self.client.dsc_node_configuration.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2018-01-15",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

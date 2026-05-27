@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from typing import Any, Callable, Optional, TypeVar
+import urllib.parse
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -40,7 +41,7 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-31"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -85,7 +86,7 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-31"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -107,7 +108,18 @@ class Operations:
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request

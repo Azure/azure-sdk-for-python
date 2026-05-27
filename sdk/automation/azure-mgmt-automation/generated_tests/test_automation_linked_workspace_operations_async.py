@@ -25,7 +25,7 @@ class TestAutomationLinkedWorkspaceOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.linked_workspace.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

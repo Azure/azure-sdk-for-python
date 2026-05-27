@@ -77,7 +77,7 @@ class KeysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2015-10-31"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.KeyListResult] = kwargs.pop("cls", None)
 
         _request = build_list_by_automation_account_request(

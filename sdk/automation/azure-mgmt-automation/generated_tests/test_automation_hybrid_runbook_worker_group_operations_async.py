@@ -26,7 +26,7 @@ class TestAutomationHybridRunbookWorkerGroupOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             automation_account_name="str",
             hybrid_runbook_worker_group_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,21 @@ class TestAutomationHybridRunbookWorkerGroupOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             automation_account_name="str",
             hybrid_runbook_worker_group_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_hybrid_runbook_worker_group_create(self, resource_group):
+        response = await self.client.hybrid_runbook_worker_group.create(
+            resource_group_name=resource_group.name,
+            automation_account_name="str",
+            hybrid_runbook_worker_group_name="str",
+            hybrid_runbook_worker_group_creation_parameters={"credential": {"name": "str"}, "name": "str"},
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -52,8 +66,8 @@ class TestAutomationHybridRunbookWorkerGroupOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             automation_account_name="str",
             hybrid_runbook_worker_group_name="str",
-            parameters={"credential": {"name": "str"}},
-            api_version="2015-10-31",
+            hybrid_runbook_worker_group_updation_parameters={"credential": {"name": "str"}, "name": "str"},
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +79,7 @@ class TestAutomationHybridRunbookWorkerGroupOperationsAsync(AzureMgmtRecordedTes
         response = self.client.hybrid_runbook_worker_group.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

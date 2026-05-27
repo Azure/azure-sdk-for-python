@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2015-10-31/examples/listAllJobSchedulesByAutomationAccount.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2024-10-23/examples/listAllJobSchedulesByAutomationAccount.json
 if __name__ == "__main__":
     main()

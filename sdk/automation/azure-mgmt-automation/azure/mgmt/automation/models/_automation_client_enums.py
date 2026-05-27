@@ -53,12 +53,35 @@ class CountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NODECONFIGURATION = "nodeconfiguration"
 
 
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
 class DscConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the state of the configuration."""
 
     NEW = "New"
     EDIT = "Edit"
     PUBLISHED = "Published"
+
+
+class EncryptionKeySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Encryption Key Source."""
+
+    MICROSOFT_AUTOMATION = "Microsoft.Automation"
+    MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
+
+
+class GraphRunbookType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Runbook Type."""
+
+    GRAPH_POWER_SHELL = "GraphPowerShell"
+    GRAPH_POWER_SHELL_WORKFLOW = "GraphPowerShellWorkflow"
 
 
 class GroupTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -185,7 +208,7 @@ class ModuleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MODULE_IMPORT_RUNBOOK_COMPLETE = "ModuleImportRunbookComplete"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
-    CANCELLED = "Cancelled"
+    CANCELED = "Canceled"
     UPDATING = "Updating"
 
 
@@ -196,12 +219,42 @@ class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LINUX = "Linux"
 
 
+class PackageProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the provisioning state of the Package."""
+
+    CREATED = "Created"
+    CREATING = "Creating"
+    STARTING_IMPORT_MODULE_RUNBOOK = "StartingImportModuleRunbook"
+    RUNNING_IMPORT_MODULE_RUNBOOK = "RunningImportModuleRunbook"
+    CONTENT_RETRIEVED = "ContentRetrieved"
+    CONTENT_DOWNLOADED = "ContentDownloaded"
+    CONTENT_VALIDATED = "ContentValidated"
+    CONNECTION_TYPE_IMPORTED = "ConnectionTypeImported"
+    CONTENT_STORED = "ContentStored"
+    MODULE_DATA_STORED = "ModuleDataStored"
+    ACTIVITIES_STORED = "ActivitiesStored"
+    MODULE_IMPORT_RUNBOOK_COMPLETE = "ModuleImportRunbookComplete"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    UPDATING = "Updating"
+
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the job."""
 
     COMPLETED = "Completed"
     FAILED = "Failed"
     RUNNING = "Running"
+
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The identity type."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    NONE = "None"
 
 
 class RunbookState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -223,6 +276,8 @@ class RunbookTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GRAPH_POWER_SHELL = "GraphPowerShell"
     PYTHON2 = "Python2"
     PYTHON3 = "Python3"
+    PYTHON = "Python"
+    POWER_SHELL72 = "PowerShell72"
 
 
 class ScheduleDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -308,3 +363,10 @@ class WindowsUpdateClasses(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEFINITION = "Definition"
     TOOLS = "Tools"
     UPDATES = "Updates"
+
+
+class WorkerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the HybridWorker."""
+
+    HYBRID_V1 = "HybridV1"
+    HYBRID_V2 = "HybridV2"

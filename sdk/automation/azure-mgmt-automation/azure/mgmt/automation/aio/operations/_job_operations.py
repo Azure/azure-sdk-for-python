@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
+import urllib.parse
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -17,8 +18,6 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
-    StreamClosedError,
-    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -74,7 +73,7 @@ class JobOperations:
         job_name: str,
         client_request_id: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    ) -> str:
         """Retrieve the job output identified by job name.
 
         .. seealso::
@@ -88,8 +87,8 @@ class JobOperations:
         :type job_name: str
         :param client_request_id: Identifies this specific client request. Default value is None.
         :type client_request_id: str
-        :return: AsyncIterator[bytes] or the result of cls(response)
-        :rtype: AsyncIterator[bytes]
+        :return: str or the result of cls(response)
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -103,8 +102,8 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-15-preview"))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[str] = kwargs.pop("cls", None)
 
         _request = build_get_output_request(
             resource_group_name=resource_group_name,
@@ -118,8 +117,7 @@ class JobOperations:
         )
         _request.url = self._client.format_url(_request.url)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -127,14 +125,10 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = self._deserialize("str", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -149,7 +143,7 @@ class JobOperations:
         job_name: str,
         client_request_id: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    ) -> str:
         """Retrieve the runbook content of the job identified by job name.
 
         .. seealso::
@@ -163,8 +157,8 @@ class JobOperations:
         :type job_name: str
         :param client_request_id: Identifies this specific client request. Default value is None.
         :type client_request_id: str
-        :return: AsyncIterator[bytes] or the result of cls(response)
-        :rtype: AsyncIterator[bytes]
+        :return: str or the result of cls(response)
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -178,8 +172,8 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-15-preview"))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[str] = kwargs.pop("cls", None)
 
         _request = build_get_runbook_content_request(
             resource_group_name=resource_group_name,
@@ -193,8 +187,7 @@ class JobOperations:
         )
         _request.url = self._client.format_url(_request.url)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -202,18 +195,10 @@ class JobOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _models.ErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = self._deserialize("str", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -257,7 +242,7 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-15-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_suspend_request(
@@ -327,7 +312,7 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-15-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stop_request(
@@ -397,7 +382,7 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-15-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Job] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -545,7 +530,7 @@ class JobOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-15-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Job] = kwargs.pop("cls", None)
 
@@ -624,7 +609,7 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-15-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.JobListResultV2] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -651,7 +636,18 @@ class JobOperations:
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -721,7 +717,7 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-15-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_resume_request(

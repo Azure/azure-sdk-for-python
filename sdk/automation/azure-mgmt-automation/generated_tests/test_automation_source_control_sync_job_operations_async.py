@@ -28,7 +28,7 @@ class TestAutomationSourceControlSyncJobOperationsAsync(AzureMgmtRecordedTestCas
             source_control_name="str",
             source_control_sync_job_id="str",
             parameters={"commitId": "str"},
-            api_version="2017-05-15-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -42,7 +42,7 @@ class TestAutomationSourceControlSyncJobOperationsAsync(AzureMgmtRecordedTestCas
             automation_account_name="str",
             source_control_name="str",
             source_control_sync_job_id="str",
-            api_version="2017-05-15-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestAutomationSourceControlSyncJobOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             automation_account_name="str",
             source_control_name="str",
-            api_version="2017-05-15-preview",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

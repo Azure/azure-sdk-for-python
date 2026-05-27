@@ -25,12 +25,25 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             parameters={
+                "disableLocalAuth": bool,
+                "encryption": {
+                    "identity": {"userAssignedIdentity": {}},
+                    "keySource": "str",
+                    "keyVaultProperties": {"keyName": "str", "keyVersion": "str", "keyvaultUri": "str"},
+                },
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "location": "str",
                 "name": "str",
+                "publicNetworkAccess": bool,
                 "sku": {"name": "str", "capacity": 0, "family": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -43,12 +56,25 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             parameters={
+                "disableLocalAuth": bool,
+                "encryption": {
+                    "identity": {"userAssignedIdentity": {}},
+                    "keySource": "str",
+                    "keyVaultProperties": {"keyName": "str", "keyVersion": "str", "keyvaultUri": "str"},
+                },
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "location": "str",
                 "name": "str",
+                "publicNetworkAccess": bool,
                 "sku": {"name": "str", "capacity": 0, "family": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +86,7 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
         response = self.client.automation_account.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +98,7 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
         response = self.client.automation_account.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +109,7 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
     def test_automation_account_list_by_resource_group(self, resource_group):
         response = self.client.automation_account.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -93,7 +119,19 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_automation_account_list(self, resource_group):
         response = self.client.automation_account.list(
-            api_version="2015-10-31",
+            api_version="2024-10-23",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_automation_account_list_deleted_runbooks(self, resource_group):
+        response = self.client.automation_account.list_deleted_runbooks(
+            resource_group_name=resource_group.name,
+            automation_account_name="str",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -21,12 +21,12 @@ class TestAutomationPython3PackageOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_python3_package_delete(self, resource_group):
         response = await self.client.python3_package.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             package_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -34,12 +34,12 @@ class TestAutomationPython3PackageOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_python3_package_get(self, resource_group):
         response = await self.client.python3_package.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             package_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestAutomationPython3PackageOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_python3_package_create_or_update(self, resource_group):
         response = await self.client.python3_package.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -56,7 +56,7 @@ class TestAutomationPython3PackageOperationsAsync(AzureMgmtRecordedTestCase):
                 "contentLink": {"contentHash": {"algorithm": "str", "value": "str"}, "uri": "str", "version": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -64,13 +64,13 @@ class TestAutomationPython3PackageOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_python3_package_update(self, resource_group):
         response = await self.client.python3_package.update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             package_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -78,11 +78,11 @@ class TestAutomationPython3PackageOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_automation_account(self, resource_group):
+    async def test_python3_package_list_by_automation_account(self, resource_group):
         response = self.client.python3_package.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

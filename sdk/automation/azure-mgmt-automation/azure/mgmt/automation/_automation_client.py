@@ -28,13 +28,13 @@ from .operations import (
     ConnectionOperations,
     ConnectionTypeOperations,
     CredentialOperations,
-    DscCompilationJobOperations,
-    DscCompilationJobStreamOperations,
+    DeletedAutomationAccountsOperations,
     DscConfigurationOperations,
     DscNodeConfigurationOperations,
     DscNodeOperations,
     FieldsOperations,
     HybridRunbookWorkerGroupOperations,
+    HybridRunbookWorkersOperations,
     JobOperations,
     JobScheduleOperations,
     JobStreamOperations,
@@ -45,9 +45,14 @@ from .operations import (
     NodeReportsOperations,
     ObjectDataTypesOperations,
     Operations,
+    PackageOperations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
     Python2PackageOperations,
+    Python3PackageOperations,
     RunbookDraftOperations,
     RunbookOperations,
+    RuntimeEnvironmentsOperations,
     ScheduleOperations,
     SoftwareUpdateConfigurationMachineRunsOperations,
     SoftwareUpdateConfigurationRunsOperations,
@@ -62,6 +67,7 @@ from .operations import (
     VariableOperations,
     WatcherOperations,
     WebhookOperations,
+    _AutomationClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
@@ -69,13 +75,30 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AutomationClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class AutomationClient(_AutomationClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """Automation Client.
 
+    :ivar node_count_information: NodeCountInformationOperations operations
+    :vartype node_count_information:
+     azure.mgmt.automation.operations.NodeCountInformationOperations
+    :ivar software_update_configurations: SoftwareUpdateConfigurationsOperations operations
+    :vartype software_update_configurations:
+     azure.mgmt.automation.operations.SoftwareUpdateConfigurationsOperations
+    :ivar deleted_automation_accounts: DeletedAutomationAccountsOperations operations
+    :vartype deleted_automation_accounts:
+     azure.mgmt.automation.operations.DeletedAutomationAccountsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources:
+     azure.mgmt.automation.operations.PrivateLinkResourcesOperations
+    :ivar agent_registration_information: AgentRegistrationInformationOperations operations
+    :vartype agent_registration_information:
+     azure.mgmt.automation.operations.AgentRegistrationInformationOperations
+    :ivar dsc_node: DscNodeOperations operations
+    :vartype dsc_node: azure.mgmt.automation.operations.DscNodeOperations
+    :ivar node_reports: NodeReportsOperations operations
+    :vartype node_reports: azure.mgmt.automation.operations.NodeReportsOperations
     :ivar automation_account: AutomationAccountOperations operations
     :vartype automation_account: azure.mgmt.automation.operations.AutomationAccountOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.automation.operations.Operations
     :ivar statistics: StatisticsOperations operations
     :vartype statistics: azure.mgmt.automation.operations.StatisticsOperations
     :ivar usages: UsagesOperations operations
@@ -92,9 +115,19 @@ class AutomationClient:  # pylint: disable=client-accepts-api-version-keyword,to
     :vartype credential: azure.mgmt.automation.operations.CredentialOperations
     :ivar dsc_configuration: DscConfigurationOperations operations
     :vartype dsc_configuration: azure.mgmt.automation.operations.DscConfigurationOperations
+    :ivar dsc_node_configuration: DscNodeConfigurationOperations operations
+    :vartype dsc_node_configuration:
+     azure.mgmt.automation.operations.DscNodeConfigurationOperations
+    :ivar hybrid_runbook_workers: HybridRunbookWorkersOperations operations
+    :vartype hybrid_runbook_workers:
+     azure.mgmt.automation.operations.HybridRunbookWorkersOperations
     :ivar hybrid_runbook_worker_group: HybridRunbookWorkerGroupOperations operations
     :vartype hybrid_runbook_worker_group:
      azure.mgmt.automation.operations.HybridRunbookWorkerGroupOperations
+    :ivar job: JobOperations operations
+    :vartype job: azure.mgmt.automation.operations.JobOperations
+    :ivar job_stream: JobStreamOperations operations
+    :vartype job_stream: azure.mgmt.automation.operations.JobStreamOperations
     :ivar job_schedule: JobScheduleOperations operations
     :vartype job_schedule: azure.mgmt.automation.operations.JobScheduleOperations
     :ivar linked_workspace: LinkedWorkspaceOperations operations
@@ -107,54 +140,17 @@ class AutomationClient:  # pylint: disable=client-accepts-api-version-keyword,to
     :vartype object_data_types: azure.mgmt.automation.operations.ObjectDataTypesOperations
     :ivar fields: FieldsOperations operations
     :vartype fields: azure.mgmt.automation.operations.FieldsOperations
-    :ivar schedule: ScheduleOperations operations
-    :vartype schedule: azure.mgmt.automation.operations.ScheduleOperations
-    :ivar variable: VariableOperations operations
-    :vartype variable: azure.mgmt.automation.operations.VariableOperations
-    :ivar webhook: WebhookOperations operations
-    :vartype webhook: azure.mgmt.automation.operations.WebhookOperations
-    :ivar watcher: WatcherOperations operations
-    :vartype watcher: azure.mgmt.automation.operations.WatcherOperations
-    :ivar software_update_configurations: SoftwareUpdateConfigurationsOperations operations
-    :vartype software_update_configurations:
-     azure.mgmt.automation.operations.SoftwareUpdateConfigurationsOperations
-    :ivar software_update_configuration_runs: SoftwareUpdateConfigurationRunsOperations operations
-    :vartype software_update_configuration_runs:
-     azure.mgmt.automation.operations.SoftwareUpdateConfigurationRunsOperations
-    :ivar software_update_configuration_machine_runs:
-     SoftwareUpdateConfigurationMachineRunsOperations operations
-    :vartype software_update_configuration_machine_runs:
-     azure.mgmt.automation.operations.SoftwareUpdateConfigurationMachineRunsOperations
-    :ivar source_control: SourceControlOperations operations
-    :vartype source_control: azure.mgmt.automation.operations.SourceControlOperations
-    :ivar source_control_sync_job: SourceControlSyncJobOperations operations
-    :vartype source_control_sync_job:
-     azure.mgmt.automation.operations.SourceControlSyncJobOperations
-    :ivar source_control_sync_job_streams: SourceControlSyncJobStreamsOperations operations
-    :vartype source_control_sync_job_streams:
-     azure.mgmt.automation.operations.SourceControlSyncJobStreamsOperations
-    :ivar job: JobOperations operations
-    :vartype job: azure.mgmt.automation.operations.JobOperations
-    :ivar job_stream: JobStreamOperations operations
-    :vartype job_stream: azure.mgmt.automation.operations.JobStreamOperations
-    :ivar agent_registration_information: AgentRegistrationInformationOperations operations
-    :vartype agent_registration_information:
-     azure.mgmt.automation.operations.AgentRegistrationInformationOperations
-    :ivar dsc_node: DscNodeOperations operations
-    :vartype dsc_node: azure.mgmt.automation.operations.DscNodeOperations
-    :ivar node_reports: NodeReportsOperations operations
-    :vartype node_reports: azure.mgmt.automation.operations.NodeReportsOperations
-    :ivar dsc_compilation_job: DscCompilationJobOperations operations
-    :vartype dsc_compilation_job: azure.mgmt.automation.operations.DscCompilationJobOperations
-    :ivar dsc_compilation_job_stream: DscCompilationJobStreamOperations operations
-    :vartype dsc_compilation_job_stream:
-     azure.mgmt.automation.operations.DscCompilationJobStreamOperations
-    :ivar dsc_node_configuration: DscNodeConfigurationOperations operations
-    :vartype dsc_node_configuration:
-     azure.mgmt.automation.operations.DscNodeConfigurationOperations
-    :ivar node_count_information: NodeCountInformationOperations operations
-    :vartype node_count_information:
-     azure.mgmt.automation.operations.NodeCountInformationOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.automation.operations.Operations
+    :ivar package: PackageOperations operations
+    :vartype package: azure.mgmt.automation.operations.PackageOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.automation.operations.PrivateEndpointConnectionsOperations
+    :ivar python2_package: Python2PackageOperations operations
+    :vartype python2_package: azure.mgmt.automation.operations.Python2PackageOperations
+    :ivar python3_package: Python3PackageOperations operations
+    :vartype python3_package: azure.mgmt.automation.operations.Python3PackageOperations
     :ivar runbook_draft: RunbookDraftOperations operations
     :vartype runbook_draft: azure.mgmt.automation.operations.RunbookDraftOperations
     :ivar runbook: RunbookOperations operations
@@ -163,8 +159,31 @@ class AutomationClient:  # pylint: disable=client-accepts-api-version-keyword,to
     :vartype test_job_streams: azure.mgmt.automation.operations.TestJobStreamsOperations
     :ivar test_job: TestJobOperations operations
     :vartype test_job: azure.mgmt.automation.operations.TestJobOperations
-    :ivar python2_package: Python2PackageOperations operations
-    :vartype python2_package: azure.mgmt.automation.operations.Python2PackageOperations
+    :ivar runtime_environments: RuntimeEnvironmentsOperations operations
+    :vartype runtime_environments: azure.mgmt.automation.operations.RuntimeEnvironmentsOperations
+    :ivar schedule: ScheduleOperations operations
+    :vartype schedule: azure.mgmt.automation.operations.ScheduleOperations
+    :ivar software_update_configuration_machine_runs:
+     SoftwareUpdateConfigurationMachineRunsOperations operations
+    :vartype software_update_configuration_machine_runs:
+     azure.mgmt.automation.operations.SoftwareUpdateConfigurationMachineRunsOperations
+    :ivar software_update_configuration_runs: SoftwareUpdateConfigurationRunsOperations operations
+    :vartype software_update_configuration_runs:
+     azure.mgmt.automation.operations.SoftwareUpdateConfigurationRunsOperations
+    :ivar source_control: SourceControlOperations operations
+    :vartype source_control: azure.mgmt.automation.operations.SourceControlOperations
+    :ivar source_control_sync_job: SourceControlSyncJobOperations operations
+    :vartype source_control_sync_job:
+     azure.mgmt.automation.operations.SourceControlSyncJobOperations
+    :ivar source_control_sync_job_streams: SourceControlSyncJobStreamsOperations operations
+    :vartype source_control_sync_job_streams:
+     azure.mgmt.automation.operations.SourceControlSyncJobStreamsOperations
+    :ivar variable: VariableOperations operations
+    :vartype variable: azure.mgmt.automation.operations.VariableOperations
+    :ivar watcher: WatcherOperations operations
+    :vartype watcher: azure.mgmt.automation.operations.WatcherOperations
+    :ivar webhook: WebhookOperations operations
+    :vartype webhook: azure.mgmt.automation.operations.WebhookOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Gets subscription credentials which uniquely identify Microsoft Azure
@@ -175,6 +194,9 @@ class AutomationClient:  # pylint: disable=client-accepts-api-version-keyword,to
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2024-10-23". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -225,10 +247,26 @@ class AutomationClient:  # pylint: disable=client-accepts-api-version-keyword,to
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.node_count_information = NodeCountInformationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.software_update_configurations = SoftwareUpdateConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.deleted_automation_accounts = DeletedAutomationAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.agent_registration_information = AgentRegistrationInformationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dsc_node = DscNodeOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.node_reports = NodeReportsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.automation_account = AutomationAccountOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.statistics = StatisticsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.keys = KeysOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -239,9 +277,17 @@ class AutomationClient:  # pylint: disable=client-accepts-api-version-keyword,to
         self.dsc_configuration = DscConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.dsc_node_configuration = DscNodeConfigurationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.hybrid_runbook_workers = HybridRunbookWorkersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.hybrid_runbook_worker_group = HybridRunbookWorkerGroupOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.job = JobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_stream = JobStreamOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_schedule = JobScheduleOperations(self._client, self._config, self._serialize, self._deserialize)
         self.linked_workspace = LinkedWorkspaceOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -252,17 +298,25 @@ class AutomationClient:  # pylint: disable=client-accepts-api-version-keyword,to
             self._client, self._config, self._serialize, self._deserialize
         )
         self.fields = FieldsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.package = PackageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.python2_package = Python2PackageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.python3_package = Python3PackageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.runbook_draft = RunbookDraftOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.runbook = RunbookOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.test_job_streams = TestJobStreamsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.test_job = TestJobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.runtime_environments = RuntimeEnvironmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.schedule = ScheduleOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.variable = VariableOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.webhook = WebhookOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.watcher = WatcherOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.software_update_configurations = SoftwareUpdateConfigurationsOperations(
+        self.software_update_configuration_machine_runs = SoftwareUpdateConfigurationMachineRunsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.software_update_configuration_runs = SoftwareUpdateConfigurationRunsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.software_update_configuration_machine_runs = SoftwareUpdateConfigurationMachineRunsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.source_control = SourceControlOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -272,30 +326,9 @@ class AutomationClient:  # pylint: disable=client-accepts-api-version-keyword,to
         self.source_control_sync_job_streams = SourceControlSyncJobStreamsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.job = JobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.job_stream = JobStreamOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.agent_registration_information = AgentRegistrationInformationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.dsc_node = DscNodeOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.node_reports = NodeReportsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dsc_compilation_job = DscCompilationJobOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.dsc_compilation_job_stream = DscCompilationJobStreamOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.dsc_node_configuration = DscNodeConfigurationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.node_count_information = NodeCountInformationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.runbook_draft = RunbookDraftOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.runbook = RunbookOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.test_job_streams = TestJobStreamsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.test_job = TestJobOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.python2_package = Python2PackageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.variable = VariableOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.watcher = WatcherOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.webhook = WebhookOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

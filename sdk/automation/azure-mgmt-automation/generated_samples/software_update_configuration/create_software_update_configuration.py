@@ -68,10 +68,10 @@ def main():
                                 ],
                                 "tagSettings": {
                                     "filterOperator": "All",
-                                    "tags": [
-                                        {"tag1": ["tag1Value1", "tag1Value2", "tag1Value3"]},
-                                        {"tag2": ["tag2Value1", "tag2Value2", "tag2Value3"]},
-                                    ],
+                                    "tags": {
+                                        "tag1": ["tag1Value1", "tag1Value2", "tag1Value3"],
+                                        "tag2": ["tag2Value1", "tag2Value2", "tag2Value3"],
+                                    },
                                 },
                             }
                         ],
@@ -92,6 +92,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/preview/2017-05-15-preview/examples/softwareUpdateConfiguration/createSoftwareUpdateConfiguration.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2024-10-23/examples/softwareUpdateConfiguration/createSoftwareUpdateConfiguration.json
 if __name__ == "__main__":
     main()

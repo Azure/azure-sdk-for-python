@@ -25,7 +25,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.webhook.generate_uri(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             webhook_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             webhook_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
                 "runbook": {"name": "str"},
                 "uri": "str",
             },
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -93,7 +93,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
                 "parameters": {"str": "str"},
                 "runOn": "str",
             },
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.webhook.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

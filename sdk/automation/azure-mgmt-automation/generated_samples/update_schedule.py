@@ -43,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2015-10-31/examples/updateSchedule.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2024-10-23/examples/updateSchedule.json
 if __name__ == "__main__":
     main()

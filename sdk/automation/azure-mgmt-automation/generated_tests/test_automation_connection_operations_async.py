@@ -26,7 +26,7 @@ class TestAutomationConnectionOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             connection_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestAutomationConnectionOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             connection_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestAutomationConnectionOperationsAsync(AzureMgmtRecordedTestCase):
                 "description": "str",
                 "fieldDefinitionValues": {"str": "str"},
             },
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestAutomationConnectionOperationsAsync(AzureMgmtRecordedTestCase):
             automation_account_name="str",
             connection_name="str",
             parameters={"description": "str", "fieldDefinitionValues": {"str": "str"}, "name": "str"},
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -84,7 +84,7 @@ class TestAutomationConnectionOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.connection.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,6 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
+import urllib.parse
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -48,7 +49,7 @@ def build_publish_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -62,7 +63,7 @@ def build_publish_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -82,7 +83,7 @@ def build_get_content_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     accept = _headers.pop("Accept", "text/powershell")
 
     # Construct URL
@@ -96,7 +97,7 @@ def build_get_content_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -116,7 +117,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,7 +131,7 @@ def build_get_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -150,7 +151,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -165,7 +166,7 @@ def build_create_or_update_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -187,7 +188,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -202,7 +203,7 @@ def build_update_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -224,7 +225,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -238,7 +239,7 @@ def build_delete_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -258,7 +259,7 @@ def build_list_by_automation_account_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -318,7 +319,7 @@ class RunbookOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_publish_request(
@@ -384,7 +385,7 @@ class RunbookOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -452,7 +453,7 @@ class RunbookOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_get_content_request(
@@ -519,7 +520,7 @@ class RunbookOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Runbook] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -660,7 +661,7 @@ class RunbookOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Runbook] = kwargs.pop("cls", None)
 
@@ -810,7 +811,7 @@ class RunbookOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Runbook] = kwargs.pop("cls", None)
 
@@ -888,7 +889,7 @@ class RunbookOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
@@ -940,7 +941,7 @@ class RunbookOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.RunbookListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -965,7 +966,18 @@ class RunbookOperations:
                 _request.url = self._client.format_url(_request.url)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request

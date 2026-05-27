@@ -20,13 +20,13 @@ class TestAutomationHybridRunbookWorkersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_hybrid_runbook_workers_delete(self, resource_group):
         response = self.client.hybrid_runbook_workers.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             hybrid_runbook_worker_group_name="str",
             hybrid_runbook_worker_id="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -34,13 +34,13 @@ class TestAutomationHybridRunbookWorkersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_hybrid_runbook_workers_get(self, resource_group):
         response = self.client.hybrid_runbook_workers.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             hybrid_runbook_worker_group_name="str",
             hybrid_runbook_worker_id="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -48,14 +48,14 @@ class TestAutomationHybridRunbookWorkersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create(self, resource_group):
+    def test_hybrid_runbook_workers_create(self, resource_group):
         response = self.client.hybrid_runbook_workers.create(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             hybrid_runbook_worker_group_name="str",
             hybrid_runbook_worker_id="str",
             hybrid_runbook_worker_creation_parameters={"name": "str", "vmResourceId": "str"},
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -63,14 +63,28 @@ class TestAutomationHybridRunbookWorkersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_move(self, resource_group):
+    def test_hybrid_runbook_workers_patch(self, resource_group):
+        response = self.client.hybrid_runbook_workers.patch(
+            resource_group_name=resource_group.name,
+            automation_account_name="str",
+            hybrid_runbook_worker_group_name="str",
+            hybrid_runbook_worker_id="str",
+            api_version="2024-10-23",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_hybrid_runbook_workers_move(self, resource_group):
         response = self.client.hybrid_runbook_workers.move(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             hybrid_runbook_worker_group_name="str",
             hybrid_runbook_worker_id="str",
             hybrid_runbook_worker_move_parameters={"hybridRunbookWorkerGroupName": "str"},
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -78,12 +92,12 @@ class TestAutomationHybridRunbookWorkersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_hybrid_runbook_worker_group(self, resource_group):
+    def test_hybrid_runbook_workers_list_by_hybrid_runbook_worker_group(self, resource_group):
         response = self.client.hybrid_runbook_workers.list_by_hybrid_runbook_worker_group(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             hybrid_runbook_worker_group_name="str",
-            api_version="2022-08-08",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

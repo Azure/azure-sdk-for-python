@@ -25,7 +25,7 @@ class TestAutomationDscConfigurationOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             configuration_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestAutomationDscConfigurationOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             configuration_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestAutomationDscConfigurationOperations(AzureMgmtRecordedTestCase):
                 "parameters": {"str": {"defaultValue": "str", "isMandatory": bool, "position": 0, "type": "str"}},
                 "tags": {"str": "str"},
             },
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestAutomationDscConfigurationOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             configuration_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestAutomationDscConfigurationOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             configuration_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -104,7 +104,7 @@ class TestAutomationDscConfigurationOperations(AzureMgmtRecordedTestCase):
         response = self.client.dsc_configuration.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

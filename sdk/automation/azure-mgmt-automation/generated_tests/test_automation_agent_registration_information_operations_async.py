@@ -25,7 +25,7 @@ class TestAutomationAgentRegistrationInformationOperationsAsync(AzureMgmtRecorde
         response = await self.client.agent_registration_information.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2018-01-15",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestAutomationAgentRegistrationInformationOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             automation_account_name="str",
             parameters={"keyName": "str"},
-            api_version="2018-01-15",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

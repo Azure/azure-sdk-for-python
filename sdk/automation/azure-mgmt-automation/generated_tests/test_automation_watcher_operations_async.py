@@ -40,10 +40,18 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
                 "scriptParameters": {"str": "str"},
                 "scriptRunOn": "str",
                 "status": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +64,7 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             watcher_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +78,7 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
             automation_account_name="str",
             watcher_name="str",
             parameters={"executionFrequencyInSeconds": 0, "name": "str"},
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +91,7 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             watcher_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +104,7 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             watcher_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -109,7 +117,7 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             watcher_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -121,7 +129,7 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.watcher.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

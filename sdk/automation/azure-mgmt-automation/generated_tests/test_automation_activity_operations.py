@@ -26,7 +26,7 @@ class TestAutomationActivityOperations(AzureMgmtRecordedTestCase):
             automation_account_name="str",
             module_name="str",
             activity_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestAutomationActivityOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             module_name="str",
-            api_version="2015-10-31",
+            api_version="2024-10-23",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

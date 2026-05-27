@@ -26,7 +26,7 @@ class TestAutomationRunbookDraftOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2018-06-30",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestAutomationRunbookDraftOperationsAsync(AzureMgmtRecordedTestCase):
                 automation_account_name="str",
                 runbook_name="str",
                 runbook_content=b"bytes",
-                api_version="2018-06-30",
+                api_version="2024-10-23",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -55,7 +55,7 @@ class TestAutomationRunbookDraftOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2018-06-30",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestAutomationRunbookDraftOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             automation_account_name="str",
             runbook_name="str",
-            api_version="2018-06-30",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

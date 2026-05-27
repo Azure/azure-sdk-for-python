@@ -33,12 +33,12 @@ def main():
 
     response = client.job.list_by_automation_account(
         resource_group_name="mygroup",
-        automation_account_name="ContoseAutomationAccount",
+        automation_account_name="ContosoAutomationAccount",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/preview/2017-05-15-preview/examples/job/listJobsByAutomationAccount.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2024-10-23/examples/job/listJobsByAutomationAccount.json
 if __name__ == "__main__":
     main()

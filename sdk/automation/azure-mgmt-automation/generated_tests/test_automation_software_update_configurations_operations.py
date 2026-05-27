@@ -88,7 +88,7 @@ class TestAutomationSoftwareUpdateConfigurationsOperations(AzureMgmtRecordedTest
                 },
                 "type": "str",
             },
-            api_version="2017-05-15-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestAutomationSoftwareUpdateConfigurationsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             automation_account_name="str",
             software_update_configuration_name="str",
-            api_version="2017-05-15-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -114,7 +114,7 @@ class TestAutomationSoftwareUpdateConfigurationsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             automation_account_name="str",
             software_update_configuration_name="str",
-            api_version="2017-05-15-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself
@@ -126,7 +126,7 @@ class TestAutomationSoftwareUpdateConfigurationsOperations(AzureMgmtRecordedTest
         response = self.client.software_update_configurations.list(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2017-05-15-preview",
+            api_version="2024-10-23",
         )
 
         # please add some check logic here by yourself

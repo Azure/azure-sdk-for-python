@@ -32,6 +32,9 @@ class AutomationClientConfiguration:  # pylint: disable=too-many-instance-attrib
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2024-10-23". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -41,6 +44,8 @@ class AutomationClientConfiguration:  # pylint: disable=too-many-instance-attrib
         cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        api_version: str = kwargs.pop("api_version", "2024-10-23")
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -49,6 +54,7 @@ class AutomationClientConfiguration:  # pylint: disable=too-many-instance-attrib
         self.credential = credential
         self.subscription_id = subscription_id
         self.cloud_setting = cloud_setting
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-automation/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

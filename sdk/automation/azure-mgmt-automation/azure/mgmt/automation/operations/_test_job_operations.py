@@ -43,7 +43,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -58,7 +58,7 @@ def build_create_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -80,7 +80,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -94,7 +94,7 @@ def build_get_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -114,7 +114,7 @@ def build_resume_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -128,7 +128,7 @@ def build_resume_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -148,7 +148,7 @@ def build_stop_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +162,7 @@ def build_stop_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -182,7 +182,7 @@ def build_suspend_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-10-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -196,7 +196,7 @@ def build_suspend_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._]+$"
         ),
         "automationAccountName": _SERIALIZER.url("automation_account_name", automation_account_name, "str"),
-        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str"),
+        "runbookName": _SERIALIZER.url("runbook_name", runbook_name, "str", pattern=r"^[a-zA-Z][a-zA-Z-_0-9]*$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -331,7 +331,7 @@ class TestJobOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TestJob] = kwargs.pop("cls", None)
 
@@ -409,7 +409,7 @@ class TestJobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.TestJob] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -475,7 +475,7 @@ class TestJobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_resume_request(
@@ -537,7 +537,7 @@ class TestJobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stop_request(
@@ -599,7 +599,7 @@ class TestJobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_suspend_request(

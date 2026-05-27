@@ -41,6 +41,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/preview/2017-05-15-preview/examples/sourceControlSyncJobStreams/getSourceControlSyncJobStreams.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2024-10-23/examples/sourceControlSyncJobStreams/getSourceControlSyncJobStreams.json
 if __name__ == "__main__":
     main()
