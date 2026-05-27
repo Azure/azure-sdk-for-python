@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, Sequence
 
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 
+from ._durability_context import DurabilityContext
 from .models._generated import (
     CreateResponse,
     Item,
@@ -18,7 +19,7 @@ from .models._generated import (
     OutputItem,
 )
 from .models._helpers import get_input_expanded, to_item, to_output_item
-from .models.runtime import ResponseModeFlags
+from .models.runtime import CancellationReason, ResponseModeFlags
 
 if TYPE_CHECKING:
     from .store._base import ResponseProviderProtocol
@@ -79,7 +80,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self.mode_flags = mode_flags
         self.request = request
         self.created_at = created_at if created_at is not None else datetime.now(timezone.utc)
-        self.is_shutdown_requested: bool = False
+        self.cancellation_reason: CancellationReason | None = None
         self.client_headers: dict[str, str] = client_headers or {}
         self.query_parameters: dict[str, str] = query_parameters or {}
         self.isolation: IsolationContext = isolation if isolation is not None else IsolationContext()
@@ -97,6 +98,52 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._input_items_unresolved_cache: Sequence[Item] | None = None
         self._history_cache: Sequence[OutputItem] | None = None
         self._prefetched_history_ids: list[str] | None = prefetched_history_ids
+        # Always provide a DurabilityContext — for non-durable paths this is a
+        # transient in-memory instance (metadata writes silently lost on restart).
+        self._durability: DurabilityContext = DurabilityContext(
+            entry_mode="fresh",
+            run_attempt=0,
+            was_steered=False,
+            pending_inputs=0,
+            metadata={},
+        )
+
+    @property
+    def durability(self) -> DurabilityContext:
+        """Recovery-awareness context for checkpoint and steering state.
+
+        Always present.  For ``store=true`` (durable) responses the context is
+        backed by persistent task metadata that survives crashes and restarts.
+        For ``store=false`` responses a transient in-memory instance is used —
+        metadata writes succeed at runtime but are silently lost on restart.
+
+        :rtype: DurabilityContext
+        """
+        return self._durability
+
+    @durability.setter
+    def durability(self, value: DurabilityContext) -> None:
+        self._durability = value
+
+    @property
+    def is_shutdown_requested(self) -> bool:
+        """Backward-compatible flag: True when cancellation is due to server shutdown.
+
+        Prefer checking ``cancellation_reason`` directly for new code.
+
+        :rtype: bool
+        """
+        return self.cancellation_reason == CancellationReason.SHUTTING_DOWN
+
+    @is_shutdown_requested.setter
+    def is_shutdown_requested(self, value: bool) -> None:
+        """Backward-compat setter — sets cancellation_reason to SHUTTING_DOWN when True."""
+        if value:
+            if self.cancellation_reason is None:
+                self.cancellation_reason = CancellationReason.SHUTTING_DOWN
+        else:
+            if self.cancellation_reason == CancellationReason.SHUTTING_DOWN:
+                self.cancellation_reason = None
 
     async def get_input_items(self, *, resolve_references: bool = True) -> Sequence[Item]:
         """Return the caller's input items as :class:`Item` subtypes.

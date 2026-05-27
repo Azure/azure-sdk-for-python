@@ -113,6 +113,8 @@ class ResponsesAgentServerHost(AgentServerHost):
     ) -> None:
         # Handler slot — populated via @app.response_handler decorator
         self._create_fn: Optional[CreateHandlerFn] = None
+        # Acceptance hook — populated via @app.response_acceptor decorator
+        self._acceptance_hook: Optional[Any] = None
 
         # Normalize prefix
         normalized_prefix = prefix.strip()
@@ -128,11 +130,15 @@ class ResponsesAgentServerHost(AgentServerHost):
         # assembled lazily by _build_server_version() (joining all
         # registered segments) and is also used as the Foundry storage
         # User-Agent via callback so both headers are always identical.
-        _responses_version = build_server_version("azure-ai-agentserver-responses", _RESPONSES_VERSION)
+        _responses_version = build_server_version(
+            "azure-ai-agentserver-responses", _RESPONSES_VERSION
+        )
 
         # Resolve AgentConfig — used for Foundry auto-activation and
         # merging platform env-vars (SSE keep-alive) into runtime options.
-        from azure.ai.agentserver.core._config import AgentConfig  # pylint: disable=import-error,no-name-in-module
+        from azure.ai.agentserver.core._config import (
+            AgentConfig,
+        )  # pylint: disable=import-error,no-name-in-module
 
         config = AgentConfig.from_env()
 
@@ -140,8 +146,13 @@ class ResponsesAgentServerHost(AgentServerHost):
         # explicitly set one via the options constructor.  AgentConfig
         # defaults to 0 (disabled) per spec; a positive value means the
         # platform env var SSE_KEEPALIVE_INTERVAL was explicitly set.
-        if runtime_options.sse_keep_alive_interval_seconds is None and config.sse_keepalive_interval > 0:
-            runtime_options.sse_keep_alive_interval_seconds = config.sse_keepalive_interval
+        if (
+            runtime_options.sse_keep_alive_interval_seconds is None
+            and config.sse_keepalive_interval > 0
+        ):
+            runtime_options.sse_keep_alive_interval_seconds = (
+                config.sse_keepalive_interval
+            )
 
         # SSE-specific headers (x-platform-server is handled by hosting middleware)
         sse_headers: dict[str, str] = {
@@ -158,21 +169,52 @@ class ResponsesAgentServerHost(AgentServerHost):
                 try:
                     from azure.identity.aio import DefaultAzureCredential
                 except ImportError:
-                    logger.warning("azure-identity not installed; Foundry auto-activation disabled")
+                    logger.warning(
+                        "azure-identity not installed; Foundry auto-activation disabled"
+                    )
                 else:
-                    settings = FoundryStorageSettings.from_endpoint(config.project_endpoint)
+                    settings = FoundryStorageSettings.from_endpoint(
+                        config.project_endpoint
+                    )
                     store = FoundryStorageProvider(
                         DefaultAzureCredential(),
                         settings,
                         get_server_version=self._build_server_version,
                     )
 
-        resolved_provider: ResponseProviderProtocol = store if store is not None else InMemoryResponseProvider()
+        resolved_provider: ResponseProviderProtocol = (
+            store if store is not None else InMemoryResponseProvider()
+        )
         stream_provider: ResponseStreamProviderProtocol = (
             resolved_provider
             if isinstance(resolved_provider, ResponseStreamProviderProtocol)
             else InMemoryResponseProvider()
         )
+
+        # For durable_background mode, if the resolved stream provider does not
+        # support incremental append (DurableStreamProviderProtocol), create a
+        # file-based provider that does. This enables crash-recoverable streaming.
+        from ..store._base import (
+            DurableStreamProviderProtocol,
+        )  # pylint: disable=import-outside-toplevel
+
+        if runtime_options.durable_background and not isinstance(
+            stream_provider, DurableStreamProviderProtocol
+        ):
+            import tempfile  # pylint: disable=import-outside-toplevel
+            from pathlib import Path  # pylint: disable=import-outside-toplevel
+
+            from ..streaming._file_stream_provider import (
+                FileStreamProvider,
+            )  # pylint: disable=import-outside-toplevel
+
+            # Use a temp directory for local development; production deployments
+            # should provide their own DurableStreamProviderProtocol implementation.
+            stream_dir = Path(tempfile.gettempdir()) / "agentserver_streams"
+            stream_provider = FileStreamProvider(  # type: ignore[assignment]
+                storage_dir=stream_dir,
+                replay_event_ttl_seconds=runtime_options.replay_event_ttl_seconds,
+            )
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(
             create_fn=self._dispatch_create,
@@ -180,6 +222,7 @@ class ResponsesAgentServerHost(AgentServerHost):
             runtime_options=runtime_options,
             provider=resolved_provider,
             stream_provider=stream_provider,
+            acceptance_hook=self._acceptance_hook,
         )
         endpoint = _ResponseEndpointHandler(
             orchestrator=orchestrator,
@@ -242,6 +285,9 @@ class ResponsesAgentServerHost(AgentServerHost):
         # Register shutdown handler on self (inherited from AgentServerHost)
         self.shutdown_handler(endpoint.handle_shutdown)
 
+        # Stash endpoint reference for request_shutdown() access.
+        self._endpoint = endpoint
+
         # --- Responses startup configuration logging ---
         logger.info(
             "Responses protocol: storage_provider=%s, default_model=%s, "
@@ -251,6 +297,24 @@ class ResponsesAgentServerHost(AgentServerHost):
             runtime_options.default_fetch_history_count,
             runtime_options.shutdown_grace_period_seconds,
         )
+
+    # ------------------------------------------------------------------
+    # Shutdown notification
+    # ------------------------------------------------------------------
+
+    def request_shutdown(self) -> None:
+        """Signal that shutdown is imminent.
+
+        Sets the internal shutdown flag immediately so that in-flight
+        foreground requests observe the cancellation signal without waiting
+        for the ASGI lifespan shutdown phase (which only fires after all
+        requests drain).
+
+        Call this from a process signal handler (SIGTERM) or before
+        triggering the ASGI server's shutdown to avoid deadlocking
+        foreground handlers that await the cancellation signal.
+        """
+        self._endpoint._shutdown_requested.set()
 
     # ------------------------------------------------------------------
     # Handler decorator
@@ -275,6 +339,27 @@ class ResponsesAgentServerHost(AgentServerHost):
         :rtype: CreateHandlerFn
         """
         self._create_fn = fn
+        return fn
+
+    def response_acceptor(self, fn: Any) -> Any:
+        """Register a function as the acceptance hook for steerable conversations.
+
+        The acceptance hook is called when a new turn is queued on an
+        already-active steerable conversation. It generates the "queued"
+        response returned to the HTTP caller.
+
+        Usage::
+
+            @app.response_acceptor
+            def my_acceptor(request, context):
+                return {"status": "queued", "id": context.response_id}
+
+        :param fn: A callable accepting (request, context) and returning a dict.
+        :type fn: Callable
+        :return: The original function (unmodified).
+        :rtype: Callable
+        """
+        self._acceptance_hook = fn
         return fn
 
     # ------------------------------------------------------------------
@@ -308,11 +393,15 @@ class ResponsesAgentServerHost(AgentServerHost):
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if self._create_fn is None:
-            raise NotImplementedError("No create handler registered. Use the @app.response_handler decorator.")
+            raise NotImplementedError(
+                "No create handler registered. Use the @app.response_handler decorator."
+            )
         result = self._create_fn(request, context, cancellation_signal)
         return self._normalize_handler_result(result)
 
-    def _normalize_handler_result(self, result: Any) -> AsyncIterator[ResponseStreamEvent]:
+    def _normalize_handler_result(
+        self, result: Any
+    ) -> AsyncIterator[ResponseStreamEvent]:
         """Convert a handler result into an AsyncIterator.
 
         Supports sync generators, async generators, coroutines (async def

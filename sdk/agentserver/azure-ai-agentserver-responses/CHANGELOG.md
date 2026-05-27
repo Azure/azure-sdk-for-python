@@ -4,7 +4,15 @@
 
 ### Features Added
 
+- **Durable background responses**: Background responses with `store=True` are now automatically crash-recoverable. If the server crashes mid-response, handlers are re-invoked on restart via the durable task primitive. Zero handler code changes required for basic crash recovery.
+- **Stream recovery**: SSE events are persisted incrementally during streaming. Clients can reconnect using the `starting_after` query parameter and resume from their last received event. Stream events are retained for a configurable TTL (default 10 minutes) after response completion.
+- **Steerable conversations**: Enable `steerable_conversations=True` for multi-turn agents. New turns can cancel in-progress responses via cooperative cancellation. Queued turns return a "queued" response shape, customizable via `@app.response_acceptor`.
+- **DurabilityContext API**: Handlers can access `context.durability` for crash-recovery metadata, entry mode detection (`"fresh"` vs `"recovered"`), run attempt tracking, and pending input counts.
+- **File-based stream provider**: New `FileStreamProvider` stores stream events as JSON lines with configurable TTL-based expiry. Used automatically in local development when no custom durable provider is configured.
+- **Acceptance hook**: Register `@app.response_acceptor` to customize the response shape when turns are queued behind an active steerable conversation.
 - Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Client validation errors (400/404) are classified as `user`, Foundry storage infrastructure errors (transport failures, 5xx) as `platform`, and developer handler exceptions as `upstream`. Platform errors additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics. Matches the container image specification §8 error source classification.
+
+- Added durable samples demonstrating real SDK integrations: Claude Agent SDK (`durable_claude`), Copilot SDK (`durable_copilot`), LangGraph (`durable_langgraph`), and multi-turn conversation (`durable_multiturn`).
 
 ### Breaking Changes
 

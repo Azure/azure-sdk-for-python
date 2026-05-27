@@ -113,6 +113,10 @@ The library orchestrates the complete response lifecycle: `created` → `in_prog
 
 For detailed handler implementation guidance, see [docs/handler-implementation-guide.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md).
 
+### Durability
+
+Background responses with `store=True` are automatically crash-recoverable. If the server crashes mid-response, the handler is re-invoked on restart — no code changes needed. Stream events are persisted incrementally so clients can reconnect and resume from where they left off. For advanced scenarios (metadata checkpointing, multi-turn steering), see the [Durable Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/durable-responses-developer-guide.md).
+
 ## Examples
 
 ### Echo handler
@@ -214,6 +218,10 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 | [File Inputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_14_file_inputs.py) | Receive files via base64 data URL, URL, or file ID |
 | [Annotations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | Attach file_path, file_citation, and url_citation annotations |
 | [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | Return structured JSON as a `structured_outputs` item |
+| [Durable Claude](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/durable_claude/agent.py) | Claude Agent SDK with stateful sessions and three-phase cancel |
+| [Durable Copilot](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/durable_copilot/agent.py) | Copilot SDK with session lifecycle and steering |
+| [Durable LangGraph](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/durable_langgraph/agent.py) | LangGraph multi-step graph with per-node checkpointing |
+| [Durable Multi-turn](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/durable_multiturn/agent.py) | Multi-turn conversation with bounded metadata |
 
 - [Handler implementation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) — Detailed reference for building handlers
 

@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from datetime import datetime, timezone
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Literal, Mapping, cast
 
 from ._generated import AgentReference, OutputItem, ResponseObject, ResponseStreamEvent, ResponseStreamEventType
@@ -18,6 +19,23 @@ if TYPE_CHECKING:
 
 ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancelled", "incomplete"]
 TerminalResponseStatus = Literal["completed", "failed", "cancelled", "incomplete"]
+
+
+class CancellationReason(str, Enum):
+    """Why the handler's cancellation signal was set.
+
+    Mutually exclusive — only one reason applies per cancellation event.
+    Using ``str, Enum`` for JSON serialization and pattern matching.
+    """
+
+    STEERED = "steered"
+    """A newer turn superseded this one (steerable conversations)."""
+
+    CLIENT_CANCELLED = "cancelled"
+    """The client called the cancel API or disconnected on a foreground request."""
+
+    SHUTTING_DOWN = "shutting_down"
+    """The server is shutting down (SIGTERM/SIGINT). Hard cutoff applies."""
 
 
 class ResponseModeFlags:

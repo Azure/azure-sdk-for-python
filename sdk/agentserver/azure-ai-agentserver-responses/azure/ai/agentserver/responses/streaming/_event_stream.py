@@ -153,7 +153,13 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._agent_reference, self._model = _internals.extract_response_fields(self._response)
         self._events: list[generated_models.ResponseStreamEvent] = []
         self._validator = EventStreamValidator()
-        self._output_index = 0
+
+        # FR-007 (Spec 012): when seeded with a `response=` payload that
+        # already carries output items (e.g. on a recovered entry), the
+        # output_index allocator must continue past those items so the
+        # next `add_output_item_*` doesn't collide with an existing slot.
+        seeded_output = self._response.get("output") if self._response is not None else None
+        self._output_index = len(seeded_output) if isinstance(seeded_output, list) else 0
 
     @property
     def response(self) -> generated_models.ResponseObject:

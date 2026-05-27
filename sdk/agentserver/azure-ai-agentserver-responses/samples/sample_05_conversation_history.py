@@ -51,7 +51,9 @@ app = ResponsesAgentServerHost(
 
 def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
     """Compose a study-tutor reply that references the conversation history."""
-    history_messages = [item for item in history if getattr(item, "type", None) == "message"]
+    history_messages = [
+        item for item in history if getattr(item, "type", None) == "message"
+    ]
     turn_number = len(history_messages) + 1
 
     if not history_messages:
@@ -71,7 +73,11 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
 
 
 @app.response_handler
-async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(
+    request: CreateResponse,
+    context: ResponseContext,
+    cancellation_signal: asyncio.Event,
+):
     """Study tutor that reads and references conversation history."""
     history = await context.get_history()
     current_input = await context.get_input_text()
