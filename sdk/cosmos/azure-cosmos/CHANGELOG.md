@@ -6,6 +6,7 @@
 * Added **preview** support for the optional `embeddingSource` field on entries in `vector_embedding_policy.vectorEmbeddings`, which allows the service to generate vector embeddings from the specified item paths. Requires the embedding-generation service to be enabled on the account. See [46870](https://github.com/Azure/azure-sdk-for-python/pull/46870)
 
 #### Breaking Changes
+* Removed `get_last_response_headers()` from `CosmosItemPaged` and `CosmosAsyncItemPaged` changes introduced in 4.16.0b1. `get_response_headers()` now returns only the most recent page's headers instead of a list of all pages' headers, to avoid unbounded memory growth on large queries. See [PR ](https://github.com/Azure/azure-sdk-for-python/pull/)
 
 #### Bugs Fixed
 * Fixed bug where the `Content-Length` HTTP request header was computed from the character count of the request body instead of its UTF-8 byte count. See [PR 47008](https://github.com/Azure/azure-sdk-for-python/pull/47008)
