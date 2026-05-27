@@ -318,7 +318,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
 
     def test_reentrant_release_during_init_does_not_deadlock(self):
         """Regression: ``__init__`` must hold a reentrant lock so that a
-        ``release()`` triggered re-entrantly on the same thread (e.g. by GC
+        ``release()`` triggered recursively on the same thread (e.g. by GC
         of a prior instance during attribute lookup, or by a test that uses
         ``MagicMock()`` as ``client``) cannot deadlock.
 

@@ -9,6 +9,9 @@ from azure.cosmos._routing import routing_range as routing_range
 from azure.cosmos._routing.routing_map_provider import CollectionRoutingMap
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
+from azure.cosmos._routing._routing_map_provider_common import (
+    _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
+)
 from azure.cosmos import http_constants
 
 from typing import Optional, Mapping, Any
@@ -366,7 +369,9 @@ class TestRoutingMapProvider(unittest.TestCase):
                     feed_options={},
                 )
         self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
-        self.assertEqual(call_count['count'], 3)
+        # Source the expected attempt count from the production constant so a
+        # future tuning change updates both sides in lockstep.
+        self.assertEqual(call_count['count'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS)
 
     def test_fetch_routing_map_incremental_with_parents(self):
         """Incremental update correctly merges child ranges that reference a parent."""

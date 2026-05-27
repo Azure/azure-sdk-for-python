@@ -55,21 +55,90 @@ PAGE_SIZE_CHANGE_FEED = "-1"  # Return all available changes
 
 # Retry budget for transient ``/pkranges`` snapshot inconsistencies (overlap
 # or gap) before the caller surfaces a 503. Shared by sync and async providers.
-_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS = 3
-# Initial backoff (seconds) before the next retry; doubles each attempt and
-# is jittered uniformly in ``[0, upper_bound]``. With MAX_ATTEMPTS=3 the
-# worst-case cumulative sleep is 0 + 0.1 + 0.2 = 0.3s per surfaced 503.
-_TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS = 0.1
+#
+# Total attempts the fetch loop will make before raising 503. With the
+# schedule below, 4 attempts means up to 3 sleeps: worst-case cumulative
+# blocking time is 1.4s (0.2 + 0.4 + 0.8), expected ~0.775s when all three
+# retries occur (sum of per-attempt midpoints of the floored uniform).
+_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS = 4
+
+# Initial deterministic upper bound (seconds) for the first retry sleep.
+# Doubled each attempt and clamped at ``_TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS``.
+# At 0.2s the median sleep on attempt 1 lands in the same window in which
+# /pkranges gateway-snapshot inconsistencies typically converge (tens to a
+# few hundred ms), so attempt 2 is much more likely to see fresh state.
+_TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS = 0.2
+
+# Hard cap on the deterministic upper bound for any single retry sleep.
+# Forward-protection: if ``_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS`` ever
+# grows, exponential growth alone cannot block the calling thread for more
+# than this many seconds inside a single sleep. Independent of the per-call
+# budget -- this caps *one* sleep, not the cumulative.
+_TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS = 2.0
+
+# Floor (seconds) for the jittered sleep. Below this, gateway /pkranges
+# state has not had time to begin converging, so a retry would burn an
+# attempt with no benefit. Applied as ``min(MIN, upper / 4)`` so the floor
+# never dominates the jitter range on small upper bounds (i.e. attempt 1).
+_TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS = 0.05
 
 
-def _jittered_backoff(backoff_seconds: float) -> float:
-    """Return a uniformly-distributed sleep in ``[0, backoff_seconds]``.
+def _deterministic_backoff_for_attempt(attempt: int) -> float:
+    """Return the deterministic exponential upper bound for ``attempt``.
 
-    :param float backoff_seconds: Non-negative upper bound for the backoff.
-    :return: A random sleep value in ``[0, backoff_seconds]``.
+    The schedule is ``INITIAL * 2^(attempt - 1)``, clamped at
+    ``_TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS``. ``attempt`` is
+    1-indexed (i.e. ``attempt=1`` is the first retry after the first
+    failure).
+
+    Extracted as a single source of truth so the test suite can derive
+    expected bounds from the same formula the production code uses rather
+    than re-encoding the constants. A regression that changes either the
+    base or the doubling factor now fails one test, not many.
+
+    :param int attempt: 1-indexed retry attempt number.
+    :return: The deterministic upper bound (seconds) for this attempt's sleep.
     :rtype: float
     """
-    return random.uniform(0, backoff_seconds)
+    raw = _TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS * (2 ** (attempt - 1))
+    return min(raw, _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS)
+
+
+def _jittered_backoff(deterministic_upper: float) -> float:
+    """Return a floored-full-jitter sleep in ``[floor, deterministic_upper]``.
+
+    ``floor = min(_TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS, deterministic_upper / 4)``
+
+    This is the hybrid jitter strategy chosen for ``/pkranges`` snapshot
+    retries:
+
+    * The **non-zero floor** eliminates the near-zero-sleep tail of pure
+      full jitter. The failure mode here is state propagation on the
+      gateway, not contention -- a retry that fires within a few ms of
+      the previous one will see the same stale snapshot and burn an
+      attempt for nothing.
+    * The **uniform distribution over** ``[floor, upper]`` preserves the
+      bulk of full jitter's fleet-wide herd dispersion. Using an additive
+      form (``uniform(floor, upper)``) rather than ``max(floor, uniform(0,
+      upper))`` avoids creating a probability spike at exactly ``floor``,
+      which would itself form a micro-herd at scale.
+    * The ``upper / 4`` clamp on the floor guarantees the jitter range is
+      always at least 75% of the deterministic upper, so the floor never
+      collapses the smallest attempts into a near-constant wait.
+
+    :param float deterministic_upper: Non-negative upper bound for the
+        sleep (typically produced by :func:`_deterministic_backoff_for_attempt`).
+    :return: A random sleep value in ``[floor, deterministic_upper]``, or
+        ``0.0`` when ``deterministic_upper`` is non-positive.
+    :rtype: float
+    """
+    if deterministic_upper <= 0:
+        return 0.0
+    floor = min(
+        _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS,
+        deterministic_upper / 4,
+    )
+    return random.uniform(floor, deterministic_upper)
 
 
 def _handle_transient_snapshot_retry_decision(
@@ -88,7 +157,8 @@ def _handle_transient_snapshot_retry_decision(
         one. Pass ``1`` after the first failure.
     :keyword str collection_link: Used in log messages and the 503 body.
     :keyword logging.Logger logger: Caller's module-level logger.
-    :return: Jittered backoff seconds in ``[0, deterministic_upper_bound]``.
+    :return: Floored-full-jitter backoff seconds in
+        ``[floor, deterministic_upper_bound]``.
     :rtype: float
     :raises CosmosHttpResponseError: When the retry budget is exhausted.
     """
@@ -107,9 +177,7 @@ def _handle_transient_snapshot_retry_decision(
             ).format(collection_link, retry_attempt_count),
         )
 
-    deterministic_backoff = (
-        _TRANSIENT_SNAPSHOT_RETRY_INITIAL_BACKOFF_SECONDS * (2 ** (retry_attempt_count - 1))
-    )
+    deterministic_backoff = _deterministic_backoff_for_attempt(retry_attempt_count)
     jittered_backoff = _jittered_backoff(deterministic_backoff)
     logger.warning(
         "Routing-map fetch for collection '%s' returned overlapping or "

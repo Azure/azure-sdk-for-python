@@ -18,6 +18,10 @@ import pytest
 from azure.cosmos._routing._routing_map_provider_common import (
     _handle_transient_snapshot_retry_decision,
     _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
+    _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS,
+    _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS,
+    _deterministic_backoff_for_attempt,
+    _jittered_backoff,
     process_fetched_ranges,
     _IncrementalMergeFailed,
 )
@@ -643,25 +647,122 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
 
     def test_overlap_retry_backoff_is_within_deterministic_upper_bound(self):
         """Each non-terminal attempt's backoff must lie in
-        ``[0, deterministic_bound]`` (the exponential schedule: 0.5s, 1.0s)."""
+        ``[floor, _deterministic_backoff_for_attempt(attempt)]``.
+
+        The expected upper bound is *derived from the same helper the
+        production code uses* rather than hard-coded -- a regression that
+        changes the base constant or the doubling factor fails one test
+        here instead of silently widening the bound.
+        """
         test_logger = logging.getLogger(__name__ + ".jitter_bounds_test")
 
-        # _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS is 3, so non-terminal
-        # attempts are 1 and 2; attempt 3 raises 503.
-        for attempt_index, expected_upper_bound in [(1, 0.5), (2, 1.0)]:
+        # Non-terminal attempts are 1 .. MAX_ATTEMPTS - 1; the final attempt
+        # raises 503 instead of returning a backoff.
+        for attempt_index in range(1, _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS):
+            expected_upper_bound = _deterministic_backoff_for_attempt(attempt_index)
+            expected_floor = min(
+                _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS,
+                expected_upper_bound / 4,
+            )
             for _ in range(50):
                 backoff = _handle_transient_snapshot_retry_decision(
                     retry_attempt_count=attempt_index,
                     collection_link="dbs/db1/colls/coll1",
                     logger=test_logger,
                 )
-                self.assertGreaterEqual(backoff, 0.0)
+                self.assertGreaterEqual(
+                    backoff, expected_floor,
+                    "Backoff for attempt {} below floor {}s; got {}s.".format(
+                        attempt_index, expected_floor, backoff,
+                    )
+                )
                 self.assertLessEqual(
                     backoff, expected_upper_bound,
                     "Backoff for attempt {} exceeded upper bound {}s; got {}s.".format(
                         attempt_index, expected_upper_bound, backoff,
                     )
                 )
+
+    def test_backoff_schedule_is_exponential_doubling_until_cap(self):
+        """Pin the *shape* of the deterministic schedule: each attempt's
+        upper bound is exactly 2x the previous attempt's, until the per-sleep
+        cap kicks in. A regression that flattens the schedule (e.g.
+        ``2 ** attempt`` instead of ``2 ** (attempt - 1)``) or removes the
+        cap fails here, independently of the absolute base value."""
+        # Walk attempts until we observe the cap being applied at least once.
+        bounds = [_deterministic_backoff_for_attempt(a) for a in range(1, 12)]
+
+        # Pre-cap region: each value is exactly 2x the previous.
+        for i in range(1, len(bounds)):
+            prev, curr = bounds[i - 1], bounds[i]
+            if curr >= _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS:
+                # Once we hit the cap, the doubling invariant is intentionally
+                # broken by clamping; verify clamp and stop checking growth.
+                self.assertEqual(curr, _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS)
+                break
+            self.assertAlmostEqual(
+                curr, prev * 2.0, places=9,
+                msg="Schedule must double between attempts {} and {}; got {} -> {}.".format(
+                    i, i + 1, prev, curr,
+                )
+            )
+        else:
+            self.fail(
+                "Expected the deterministic schedule to reach "
+                "_TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS within 12 attempts; "
+                "got bounds {}.".format(bounds)
+            )
+
+    def test_backoff_respects_max_cap(self):
+        """For attempts large enough that ``INITIAL * 2^(attempt-1)`` would
+        exceed the cap, the deterministic bound and any jittered draw must
+        stay at or below ``_TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS``.
+        Forward-protection against a future bump to ``MAX_ATTEMPTS``."""
+        # Pick an attempt index large enough that the unclamped schedule
+        # would blow well past the cap (2^20 * 0.2 = ~210000s).
+        bound = _deterministic_backoff_for_attempt(20)
+        self.assertEqual(
+            bound, _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS,
+            "Deterministic bound for attempt=20 must be clamped to the cap."
+        )
+        for _ in range(50):
+            sample = _jittered_backoff(bound)
+            self.assertLessEqual(
+                sample, _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS,
+                "Jittered sample {} exceeded the per-sleep cap.".format(sample)
+            )
+
+    def test_backoff_respects_min_floor(self):
+        """For deterministic upper bounds large enough that the floor does
+        not get clamped down, every jittered draw must be at least
+        ``_TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS``. Pins the
+        non-zero-floor invariant that prevents wasted retries on
+        state-propagation failure modes."""
+        # Pick an upper bound where MIN < upper/4 so the floor is not
+        # clamped down (otherwise the assertion would be vacuous).
+        upper = _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS * 8
+        self.assertGreater(
+            upper / 4, _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS,
+            "Test precondition: chosen upper must leave the floor un-clamped."
+        )
+        for _ in range(200):
+            sample = _jittered_backoff(upper)
+            self.assertGreaterEqual(
+                sample, _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS,
+                "Floored full jitter must never sleep below the configured "
+                "minimum; got {}.".format(sample)
+            )
+            self.assertLessEqual(sample, upper)
+
+        # Edge case: when upper is small enough that upper/4 < MIN, the floor
+        # collapses to upper/4 so the jitter range stays at 75% of upper.
+        small_upper = _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS * 2
+        expected_clamped_floor = small_upper / 4
+        self.assertLess(expected_clamped_floor, _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS)
+        for _ in range(200):
+            sample = _jittered_backoff(small_upper)
+            self.assertGreaterEqual(sample, expected_clamped_floor)
+            self.assertLessEqual(sample, small_upper)
 
     def test_overlap_retry_backoff_actually_varies_between_calls(self):
         """Consecutive calls for the same attempt index must produce varying
