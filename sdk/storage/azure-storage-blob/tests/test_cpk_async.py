@@ -3,11 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 import asyncio
 from datetime import datetime, timedelta
 
 import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE, NEW_CPK_KEY_HASH, NEW_CPK_KEY_VALUE
+from settings.testcase import BlobPreparer
+
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobBlock,
@@ -18,10 +25,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob.aio import BlobServiceClient
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE, NEW_CPK_KEY_HASH, NEW_CPK_KEY_VALUE
-from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
@@ -42,7 +45,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             loop = asyncio.get_event_loop()
             try:
                 loop.run_until_complete(bsc.delete_container(self.container_name))
-            except:
+            except HttpResponseError:
                 pass
 
     # --Helpers-----------------------------------------------------------------

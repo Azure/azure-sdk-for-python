@@ -1,13 +1,28 @@
 ---
 name: azure-search-documents
-description: 'Post-regeneration customization guide for azure-search-documents. Verifies _patch.py imports, ApiVersion, enum aliases, mypy/pylint, and changelog after codegen. WHEN: regenerate azure-search-documents; modify azure-search-documents; fix azure-search-documents bug; add azure-search-documents feature; azure-search-documents tsp-client update; edit azure-search-documents _patch.py.'
+description: 'Post-regeneration customization guide for azure-search-documents. Verifies _patch.py imports, ApiVersion, enum aliases, validation, testing, and changelog after codegen. WHEN: regenerate azure-search-documents; azure-search-documents tsp-client update; update azure-search-documents API version; reconcile azure-search-documents _patch.py after regeneration; fix azure-search-documents regeneration break; prepare azure-search-documents release after regeneration.'
 ---
 
 # azure-search-documents — Post-Regeneration Customization Guide
 
 After running `tsp-client update`, the generated code is a raw skeleton — not a shippable SDK. This skill tells you exactly which `_patch.py` files customize it and how to verify those customizations still work after regeneration.
 
-The generator never touches `_patch.py` files, so your customizations survive regeneration. But they import from generated modules that **do** change. A renamed model, a new parameter, or a removed enum value will silently break a `_patch.py` file. The verification steps below catch those breaks.
+The generator never touches `_patch.py` files, so your customizations survive regeneration. Only edit `_patch.py` files for SDK customizations; the sole exception is adding inline `# pylint: disable=` comments to generated files for pylint issues. `_patch.py` files import from generated modules that **do** change, so a renamed model, a new parameter, or a removed enum value can silently break them. The verification steps below catch those breaks.
+
+## Additional references
+
+Use these sidecars for guidance that is required for release-ready changes but does not belong in the generated post-regeneration checklist.
+
+- Release tracks, branch-dependent API surface, and CHANGELOG rules: `references/release.md`
+- Test commands, live recording workflow, and test authoring rules: `references/testing.md`
+
+## Environment setup
+
+Use the alias as a prefix for any command that needs the package environment, for example `venv python`, `venv pip`, `venv azpysdk`, or `venv python -m pytest`. Plain `git`, `grep`, and file commands do not need it.
+
+```powershell
+Set-Alias venv .\.github\skills\azure-search-documents\scripts\Invoke-VenvCommand.ps1
+```
 
 ## Step 1: Run Regeneration
 
@@ -26,14 +41,14 @@ tsp-client update
 
 Every non-empty `_patch.py` imports from generated modules. After regeneration, check those imports still resolve:
 
-```bash
-python -c "from azure.search.documents import SearchClient, SearchIndexingBufferedSender, ApiVersion, DEFAULT_VERSION, IndexDocumentsBatch"
-python -c "from azure.search.documents.aio import SearchClient, SearchIndexingBufferedSender"
-python -c "from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient"
-python -c "from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient"
-python -c "from azure.search.documents.indexes.models import SearchField, SearchFieldDataType, SimpleField, SearchableField, ComplexField, KnowledgeBase"
-python -c "from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient"
-python -c "from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient"
+```powershell
+venv python -c "from azure.search.documents import SearchClient, SearchIndexingBufferedSender, ApiVersion, DEFAULT_VERSION, IndexDocumentsBatch"
+venv python -c "from azure.search.documents.aio import SearchClient, SearchIndexingBufferedSender"
+venv python -c "from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient"
+venv python -c "from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient"
+venv python -c "from azure.search.documents.indexes.models import SearchField, SearchFieldDataType, SimpleField, SearchableField, ComplexField, KnowledgeBase"
+venv python -c "from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient"
+venv python -c "from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient"
 ```
 
 If any fail, a generated class/enum was renamed or removed. See `references/customizations.md` for the exact import each `_patch.py` depends on.
@@ -62,7 +77,7 @@ The generator targets the version in `_metadata.json`. The hand-maintained `ApiV
 
 ```bash
 # 1. See what API version the generator used
-python -c "import json; print(json.load(open('_metadata.json'))['apiVersion'])"
+venv python -c "import json; print(json.load(open('_metadata.json'))['apiVersion'])"
 
 # 2. See what versions the SDK currently advertises
 grep -A 20 'class ApiVersion' azure/search/documents/_patch.py
@@ -79,7 +94,7 @@ If the generated API version is **not** in the enum:
 Verify the default round-trips:
 
 ```bash
-python -c "from azure.search.documents._patch import ApiVersion, DEFAULT_VERSION; print(DEFAULT_VERSION.value)"
+venv python -c "from azure.search.documents._patch import ApiVersion, DEFAULT_VERSION; print(DEFAULT_VERSION.value)"
 ```
 
 ## Step 4: Expose New Generated Methods Through `_patch.py`
@@ -109,9 +124,9 @@ For each new method, pick the exposure path:
 
 6. **Re-export via `__all__`** — any NEW symbol you add or override in `_patch.py` MUST be appended to that file's `__all__`. Otherwise `patch_sdk()` will not surface it.
 
-   ```bash
-   python -c "import azure.search.documents as m; print(sorted(m.__all__))"
-   python -c "import azure.search.documents.indexes as m; print(sorted(m.__all__))"
+   ```powershell
+   venv python -c "import azure.search.documents as m; print(sorted(m.__all__))"
+   venv python -c "import azure.search.documents.indexes as m; print(sorted(m.__all__))"
    ```
 
 Every sync wrapper needs a matching async mirror under `aio/`. Shared helpers (`_build_search_request`, `_convert_search_result`, `_convert_index_response`, `_pack_continuation_token`, `_unpack_continuation_token`) live in the **sync** `_operations/_patch.py` and are **imported** by async — do not duplicate them.
@@ -145,28 +160,11 @@ azsdk_package_run_check with checkType="All"
 
 ### CHANGELOG
 
-Open `CHANGELOG.md` and find the topmost `## (Unreleased)` section. Add entries under:
+Follow the CHANGELOG rules in `references/release.md`. Add entries under:
 
 - `### Features Added` — new operations, models, parameters, API version support
 - `### Breaking Changes` — renamed/removed models, changed signatures, dropped API versions
 - `### Bugs Fixed` — fixes to `_patch.py` logic, pagination, encoding, batching
-
-Example:
-
-```markdown
-## 11.x.0bN (Unreleased)
-
-### Features Added
-
-- Added `create_or_update_knowledge_base` to `SearchIndexClient`.
-- Support for API version `2026-05-01-preview`.
-
-### Breaking Changes
-
-- Renamed `OldModel` to `NewModel`.
-```
-
-If no `(Unreleased)` section exists, create one above the latest release using the next version from `azure/search/documents/_version.py`.
 
 ### README
 

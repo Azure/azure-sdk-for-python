@@ -6,6 +6,7 @@
 import os
 from azure.messaging.webpubsubclient import WebPubSubClient, WebPubSubClientCredential
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from azure.identity import DefaultAzureCredential
 from azure.messaging.webpubsubclient.models import (
     OnConnectedArgs,
     OnGroupDataMessageArgs,
@@ -37,8 +38,8 @@ def on_group_message(msg: OnGroupDataMessageArgs):
 
 
 def main():
-    service_client = WebPubSubServiceClient.from_connection_string( # type: ignore
-        connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
+    service_client = WebPubSubServiceClient(
+        endpoint=os.getenv("WEBPUBSUB_ENDPOINT", ""), hub="hub", credential=DefaultAzureCredential()
     )
     client = WebPubSubClient(
         credential=WebPubSubClientCredential(

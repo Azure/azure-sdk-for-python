@@ -371,4 +371,27 @@ _GEN_AI_ATTRIBUTES = (
     "gen_ai.evaluation.explanation",
 )
 
+# Gen AI main-agent attribution constants
+# Attribute mapping for main-agent propagation in OnStart
+_MAIN_AGENT_ATTRIBUTES = (
+    ("microsoft.gen_ai.main_agent.name", "microsoft.gen_ai.main_agent.name", "gen_ai.agent.name"),
+    ("microsoft.gen_ai.main_agent.id", "microsoft.gen_ai.main_agent.id", "gen_ai.agent.id"),
+    ("microsoft.gen_ai.main_agent.version", "microsoft.gen_ai.main_agent.version", "gen_ai.agent.version"),
+    (
+        "microsoft.gen_ai.main_agent.conversation_id",
+        "microsoft.gen_ai.main_agent.conversation_id",
+        "gen_ai.conversation.id",
+    ),
+)
+
+# OnEnd self-attribution mapping (for root invoke_agent spans)
+_MAIN_AGENT_SELF_ATTRIBUTES = (
+    ("microsoft.gen_ai.main_agent.name", "gen_ai.agent.name"),
+    ("microsoft.gen_ai.main_agent.id", "gen_ai.agent.id"),
+    ("microsoft.gen_ai.main_agent.version", "gen_ai.agent.version"),
+    ("microsoft.gen_ai.main_agent.conversation_id", "gen_ai.conversation.id"),
+)
+
+_MAIN_AGENT_PREFIX = "microsoft.gen_ai.main_agent."
+
 # cSpell:disable

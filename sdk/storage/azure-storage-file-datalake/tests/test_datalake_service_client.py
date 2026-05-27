@@ -4,12 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
 from typing import NamedTuple
 from unittest.mock import MagicMock
 
+import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.storage.filedatalake import (
     AnalyticsLogging,
     CorsRule,
@@ -19,13 +24,10 @@ from azure.storage.filedatalake import (
     FileSystemClient,
     Metrics,
     RetentionPolicy,
-    StaticWebsite
+    StaticWebsite,
 )
 from azure.storage.filedatalake._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
@@ -99,9 +101,7 @@ class TestDatalakeService(StorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
-            rule2 = cors2[i]
+        for rule1, rule2 in zip(cors1, cors2):
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
             assert rule1.max_age_in_seconds == rule2.max_age_in_seconds
@@ -441,7 +441,7 @@ class TestDatalakeService(StorageRecordedTestCase):
         assert props is not None
 
     @DataLakePreparer()
-    def test_datalake_clients_properly_close(self, **kwargs):
+    def test_datalake_clients_properly_close(self):
         account_name = "adlsstorage"
         # secret attribute necessary for credential parameter because of hidden environment variables from loader
         account_key = NamedTuple("StorageAccountKey", [("secret", str)])("adlskey")
@@ -463,13 +463,13 @@ class TestDatalakeService(StorageRecordedTestCase):
 
         # Act
         with self.dsc as dsc:
-            pass
+            pass  # pylint: disable=unnecessary-pass
             with file_system_client as fsc:
-                pass
+                pass  # pylint: disable=unnecessary-pass
                 with dir_client as dc:
-                    pass
+                    pass  # pylint: disable=unnecessary-pass
                     with file_client as fc:
-                        pass
+                        pass  # pylint: disable=unnecessary-pass
 
         # Assert
         self.dsc._blob_service_client.__exit__.assert_called_once()
@@ -520,7 +520,7 @@ class TestDatalakeService(StorageRecordedTestCase):
         dsc = DataLakeServiceClient(
             self.account_url(datalake_storage_account_name, "blob"),
             credential=token_credential,
-            audience=f'https://badaudience.blob.core.windows.net/'
+            audience='https://badaudience.blob.core.windows.net/'
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge

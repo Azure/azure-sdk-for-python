@@ -1691,7 +1691,7 @@ class ClusterGetProperties(_serialization.Model):
         "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         cluster_definition: "_models.ClusterDefinition",
@@ -1977,33 +1977,19 @@ class ClusterPatchParameters(_serialization.Model):
 
     :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
-    :ivar identity: The identity of the cluster, if configured. Setting this property will override
-     the existing identity configuration of the cluster.
-    :vartype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
-        "identity": {"key": "identity", "type": "ClusterIdentity"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ClusterIdentity"] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
-        :keyword identity: The identity of the cluster, if configured. Setting this property will
-         override the existing identity configuration of the cluster.
-        :paramtype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
         """
         super().__init__(**kwargs)
         self.tags = tags
-        self.identity = identity
 
 
 class ClusterResizeParameters(_serialization.Model):
@@ -2339,49 +2325,6 @@ class EncryptionInTransitProperties(_serialization.Model):
         self.is_encryption_in_transit_enabled = is_encryption_in_transit_enabled
 
 
-class EntraUserInfo(_serialization.Model):
-    """Details of an Entra user for gateway access.
-
-    :ivar object_id: The unique object ID of the Entra user or client ID of the enterprise
-     applications.
-    :vartype object_id: str
-    :ivar display_name: The display name of the Entra user.
-    :vartype display_name: str
-    :ivar upn: The User Principal Name (UPN) of the Entra user. It may be empty in certain cases,
-     such as for enterprise applications.
-    :vartype upn: str
-    """
-
-    _attribute_map = {
-        "object_id": {"key": "objectId", "type": "str"},
-        "display_name": {"key": "displayName", "type": "str"},
-        "upn": {"key": "upn", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        object_id: Optional[str] = None,
-        display_name: Optional[str] = None,
-        upn: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword object_id: The unique object ID of the Entra user or client ID of the enterprise
-         applications.
-        :paramtype object_id: str
-        :keyword display_name: The display name of the Entra user.
-        :paramtype display_name: str
-        :keyword upn: The User Principal Name (UPN) of the Entra user. It may be empty in certain
-         cases, such as for enterprise applications.
-        :paramtype upn: str
-        """
-        super().__init__(**kwargs)
-        self.object_id = object_id
-        self.display_name = display_name
-        self.upn = upn
-
-
 class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
@@ -2542,8 +2485,6 @@ class GatewaySettings(_serialization.Model):
     :vartype user_name: str
     :ivar password: The gateway settings user password.
     :vartype password: str
-    :ivar rest_auth_entra_users: List of Entra users for gateway access.
-    :vartype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
     """
 
     _validation = {
@@ -2556,19 +2497,14 @@ class GatewaySettings(_serialization.Model):
         "is_credential_enabled": {"key": "restAuthCredential\\.isEnabled", "type": "str"},
         "user_name": {"key": "restAuthCredential\\.username", "type": "str"},
         "password": {"key": "restAuthCredential\\.password", "type": "str"},
-        "rest_auth_entra_users": {"key": "restAuthEntraUsers", "type": "[EntraUserInfo]"},
     }
 
-    def __init__(self, *, rest_auth_entra_users: Optional[list["_models.EntraUserInfo"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword rest_auth_entra_users: List of Entra users for gateway access.
-        :paramtype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.is_credential_enabled: Optional[str] = None
         self.user_name: Optional[str] = None
         self.password: Optional[str] = None
-        self.rest_auth_entra_users = rest_auth_entra_users
 
 
 class HardwareProfile(_serialization.Model):
@@ -2713,41 +2649,6 @@ class IPConfiguration(_serialization.Model):
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
         self.subnet = subnet
-
-
-class IpTag(_serialization.Model):
-    """Contains the IpTag associated with the public IP address.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar ip_tag_type: Gets or sets the ipTag type: Example FirstPartyUsage. Required.
-    :vartype ip_tag_type: str
-    :ivar tag: Gets or sets value of the IpTag associated with the public IP. Example HDInsight,
-     SQL, Storage etc. Required.
-    :vartype tag: str
-    """
-
-    _validation = {
-        "ip_tag_type": {"required": True},
-        "tag": {"required": True},
-    }
-
-    _attribute_map = {
-        "ip_tag_type": {"key": "ipTagType", "type": "str"},
-        "tag": {"key": "tag", "type": "str"},
-    }
-
-    def __init__(self, *, ip_tag_type: str, tag: str, **kwargs: Any) -> None:
-        """
-        :keyword ip_tag_type: Gets or sets the ipTag type: Example FirstPartyUsage. Required.
-        :paramtype ip_tag_type: str
-        :keyword tag: Gets or sets value of the IpTag associated with the public IP. Example HDInsight,
-         SQL, Storage etc. Required.
-        :paramtype tag: str
-        """
-        super().__init__(**kwargs)
-        self.ip_tag_type = ip_tag_type
-        self.tag = tag
 
 
 class KafkaRestProperties(_serialization.Model):
@@ -3052,12 +2953,6 @@ class NameAvailabilityCheckResult(_serialization.Model):
 class NetworkProperties(_serialization.Model):
     """The network properties.
 
-    :ivar outbound_dependencies_managed_type: A value to describe how the outbound dependencies of
-     a HDInsight cluster are managed. 'Managed' means that the outbound dependencies are managed by
-     the HDInsight service. 'External' means that the outbound dependencies are managed by a
-     customer specific solution. Known values are: "Managed" and "External".
-    :vartype outbound_dependencies_managed_type: str or
-     ~azure.mgmt.hdinsight.models.OutboundDependenciesManagedType
     :ivar resource_provider_connection: The direction for the resource provider connection. Known
      values are: "Inbound" and "Outbound".
     :vartype resource_provider_connection: str or
@@ -3065,34 +2960,21 @@ class NetworkProperties(_serialization.Model):
     :ivar private_link: Indicates whether or not private link is enabled. Known values are:
      "Disabled" and "Enabled".
     :vartype private_link: str or ~azure.mgmt.hdinsight.models.PrivateLink
-    :ivar public_ip_tag: Gets or sets the IP tag for the public IPs created along with the
-     HDInsight Clusters.
-    :vartype public_ip_tag: ~azure.mgmt.hdinsight.models.IpTag
     """
 
     _attribute_map = {
-        "outbound_dependencies_managed_type": {"key": "outboundDependenciesManagedType", "type": "str"},
         "resource_provider_connection": {"key": "resourceProviderConnection", "type": "str"},
         "private_link": {"key": "privateLink", "type": "str"},
-        "public_ip_tag": {"key": "publicIpTag", "type": "IpTag"},
     }
 
     def __init__(
         self,
         *,
-        outbound_dependencies_managed_type: Optional[Union[str, "_models.OutboundDependenciesManagedType"]] = None,
         resource_provider_connection: Optional[Union[str, "_models.ResourceProviderConnection"]] = None,
         private_link: Optional[Union[str, "_models.PrivateLink"]] = None,
-        public_ip_tag: Optional["_models.IpTag"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword outbound_dependencies_managed_type: A value to describe how the outbound dependencies
-         of a HDInsight cluster are managed. 'Managed' means that the outbound dependencies are managed
-         by the HDInsight service. 'External' means that the outbound dependencies are managed by a
-         customer specific solution. Known values are: "Managed" and "External".
-        :paramtype outbound_dependencies_managed_type: str or
-         ~azure.mgmt.hdinsight.models.OutboundDependenciesManagedType
         :keyword resource_provider_connection: The direction for the resource provider connection.
          Known values are: "Inbound" and "Outbound".
         :paramtype resource_provider_connection: str or
@@ -3100,15 +2982,10 @@ class NetworkProperties(_serialization.Model):
         :keyword private_link: Indicates whether or not private link is enabled. Known values are:
          "Disabled" and "Enabled".
         :paramtype private_link: str or ~azure.mgmt.hdinsight.models.PrivateLink
-        :keyword public_ip_tag: Gets or sets the IP tag for the public IPs created along with the
-         HDInsight Clusters.
-        :paramtype public_ip_tag: ~azure.mgmt.hdinsight.models.IpTag
         """
         super().__init__(**kwargs)
-        self.outbound_dependencies_managed_type = outbound_dependencies_managed_type
         self.resource_provider_connection = resource_provider_connection
         self.private_link = private_link
-        self.public_ip_tag = public_ip_tag
 
 
 class Operation(_serialization.Model):
@@ -4305,9 +4182,6 @@ class StorageAccount(_serialization.Model):
     :vartype saskey: str
     :ivar fileshare: The file share name.
     :vartype fileshare: str
-    :ivar enable_secure_channel: Enable secure channel or not, it's an optional field. Default
-     value is false when cluster version < 5.1 and true when cluster version >= 5.1 ,.
-    :vartype enable_secure_channel: bool
     """
 
     _attribute_map = {
@@ -4320,7 +4194,6 @@ class StorageAccount(_serialization.Model):
         "msi_resource_id": {"key": "msiResourceId", "type": "str"},
         "saskey": {"key": "saskey", "type": "str"},
         "fileshare": {"key": "fileshare", "type": "str"},
-        "enable_secure_channel": {"key": "enableSecureChannel", "type": "bool"},
     }
 
     def __init__(
@@ -4335,7 +4208,6 @@ class StorageAccount(_serialization.Model):
         msi_resource_id: Optional[str] = None,
         saskey: Optional[str] = None,
         fileshare: Optional[str] = None,
-        enable_secure_channel: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4360,9 +4232,6 @@ class StorageAccount(_serialization.Model):
         :paramtype saskey: str
         :keyword fileshare: The file share name.
         :paramtype fileshare: str
-        :keyword enable_secure_channel: Enable secure channel or not, it's an optional field. Default
-         value is false when cluster version < 5.1 and true when cluster version >= 5.1 ,.
-        :paramtype enable_secure_channel: bool
         """
         super().__init__(**kwargs)
         self.name = name
@@ -4374,7 +4243,6 @@ class StorageAccount(_serialization.Model):
         self.msi_resource_id = msi_resource_id
         self.saskey = saskey
         self.fileshare = fileshare
-        self.enable_secure_channel = enable_secure_channel
 
 
 class StorageProfile(_serialization.Model):
@@ -4501,8 +4369,7 @@ class UpdateClusterIdentityCertificateParameters(_serialization.Model):  # pylin
 
 
 class UpdateGatewaySettingsParameters(_serialization.Model):
-    """The update gateway settings request parameters. Note either basic or entra user should be
-    provided at a time.
+    """The update gateway settings request parameters.
 
     :ivar is_credential_enabled: Indicates whether or not the gateway settings based authorization
      is enabled.
@@ -4511,15 +4378,12 @@ class UpdateGatewaySettingsParameters(_serialization.Model):
     :vartype user_name: str
     :ivar password: The gateway settings user password.
     :vartype password: str
-    :ivar rest_auth_entra_users: List of Entra users for gateway access.
-    :vartype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
     """
 
     _attribute_map = {
         "is_credential_enabled": {"key": "restAuthCredential\\.isEnabled", "type": "bool"},
         "user_name": {"key": "restAuthCredential\\.username", "type": "str"},
         "password": {"key": "restAuthCredential\\.password", "type": "str"},
-        "rest_auth_entra_users": {"key": "restAuthEntraUsers", "type": "[EntraUserInfo]"},
     }
 
     def __init__(
@@ -4528,7 +4392,6 @@ class UpdateGatewaySettingsParameters(_serialization.Model):
         is_credential_enabled: bool = True,
         user_name: Optional[str] = None,
         password: Optional[str] = None,
-        rest_auth_entra_users: Optional[list["_models.EntraUserInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4539,14 +4402,11 @@ class UpdateGatewaySettingsParameters(_serialization.Model):
         :paramtype user_name: str
         :keyword password: The gateway settings user password.
         :paramtype password: str
-        :keyword rest_auth_entra_users: List of Entra users for gateway access.
-        :paramtype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
         """
         super().__init__(**kwargs)
         self.is_credential_enabled = is_credential_enabled
         self.user_name = user_name
         self.password = password
-        self.rest_auth_entra_users = rest_auth_entra_users
 
 
 class Usage(_serialization.Model):

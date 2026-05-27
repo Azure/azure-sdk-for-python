@@ -609,6 +609,7 @@ async def format_llm_response(
         )
         sample_output = json.dumps(sample_output_list)
         input_str = f"{json.dumps(inputs)}" if inputs else ""
+        sample_input = ""
         if inputs and len(inputs) > 0:
             sample_input_json = []
             msg = ChatCompletionUserMessageParam(

@@ -1,6 +1,6 @@
 {
-  "apiVersion": "2026-01-01-preview",
+  "apiVersion": "2026-04-10",
   "apiVersions": {
-    "VoiceLive": "2026-01-01-preview"
+    "VoiceLive": "2026-04-10"
   }
 }
