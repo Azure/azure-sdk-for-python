@@ -32507,7 +32507,7 @@ class GlobalParameterSpecification(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar type: Global Parameter type. Required. Known values are: "Object", "String", "Int",
-     "Float", "Bool", "Array", and "Int".
+     "Float", "Bool", and "Array".
     :vartype type: str or ~azure.mgmt.datafactory.models.GlobalParameterType
     :ivar value: Value of parameter. Required.
     :vartype value: JSON
@@ -32526,7 +32526,7 @@ class GlobalParameterSpecification(_serialization.Model):
     def __init__(self, *, type: Union[str, "_models.GlobalParameterType"], value: JSON, **kwargs: Any) -> None:
         """
         :keyword type: Global Parameter type. Required. Known values are: "Object", "String", "Int",
-         "Float", "Bool", "Array", and "Int".
+         "Float", "Bool", and "Array".
         :paramtype type: str or ~azure.mgmt.datafactory.models.GlobalParameterType
         :keyword value: Value of parameter. Required.
         :paramtype value: JSON
@@ -37264,10 +37264,8 @@ class HttpDataset(Dataset):
      string).
     :vartype request_body: JSON
     :ivar additional_headers: The headers for the HTTP Request. e.g.
-     request-header-name-1:request-header-value-1
-     ...
-     request-header-name-n:request-header-value-n Type: string (or Expression with resultType
-     string).
+     request-header-name-1:request-header-value-1 ... request-header-name-n:request-header-value-n
+     Type: string (or Expression with resultType string).
     :vartype additional_headers: JSON
     :ivar format: The format of files.
     :vartype format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
@@ -37348,10 +37346,8 @@ class HttpDataset(Dataset):
          resultType string).
         :paramtype request_body: JSON
         :keyword additional_headers: The headers for the HTTP Request. e.g.
-         request-header-name-1:request-header-value-1
-         ...
-         request-header-name-n:request-header-value-n Type: string (or Expression with resultType
-         string).
+         request-header-name-1:request-header-value-1 ... request-header-name-n:request-header-value-n
+         Type: string (or Expression with resultType string).
         :paramtype additional_headers: JSON
         :keyword format: The format of files.
         :paramtype format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
@@ -47788,8 +47784,7 @@ class NotebookParameter(_serialization.Model):
 
     :ivar value: Notebook parameter value. Type: string (or Expression with resultType string).
     :vartype value: JSON
-    :ivar type: Notebook parameter type. Known values are: "string", "int", "float", "bool", and
-     "int".
+    :ivar type: Notebook parameter type. Known values are: "string", "int", "float", and "bool".
     :vartype type: str or ~azure.mgmt.datafactory.models.NotebookParameterType
     """
 
@@ -47808,8 +47803,7 @@ class NotebookParameter(_serialization.Model):
         """
         :keyword value: Notebook parameter value. Type: string (or Expression with resultType string).
         :paramtype value: JSON
-        :keyword type: Notebook parameter type. Known values are: "string", "int", "float", "bool", and
-         "int".
+        :keyword type: Notebook parameter type. Known values are: "string", "int", "float", and "bool".
         :paramtype type: str or ~azure.mgmt.datafactory.models.NotebookParameterType
         """
         super().__init__(**kwargs)
@@ -51243,7 +51237,7 @@ class ParameterSpecification(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar type: Parameter type. Required. Known values are: "Object", "String", "Int", "Float",
-     "Bool", "Array", "SecureString", and "Int".
+     "Bool", "Array", and "SecureString".
     :vartype type: str or ~azure.mgmt.datafactory.models.ParameterType
     :ivar default_value: Default value of parameter.
     :vartype default_value: JSON
@@ -51263,7 +51257,7 @@ class ParameterSpecification(_serialization.Model):
     ) -> None:
         """
         :keyword type: Parameter type. Required. Known values are: "Object", "String", "Int", "Float",
-         "Bool", "Array", "SecureString", and "Int".
+         "Bool", "Array", and "SecureString".
         :paramtype type: str or ~azure.mgmt.datafactory.models.ParameterType
         :keyword default_value: Default value of parameter.
         :paramtype default_value: JSON
@@ -56976,7 +56970,7 @@ class RunQueryFilter(_serialization.Model):
      "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", and "LatestOnly".
     :vartype operand: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperand
     :ivar operator: Operator to be used for filter. Required. Known values are: "Equals",
-     "NotEquals", "In", "NotIn", and "In".
+     "NotEquals", "In", and "NotIn".
     :vartype operator: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperator
     :ivar values: List of filter values. Required.
     :vartype values: list[str]
@@ -57011,7 +57005,7 @@ class RunQueryFilter(_serialization.Model):
          "ActivityType", "TriggerName", "TriggerRunTimestamp", "RunGroupId", and "LatestOnly".
         :paramtype operand: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperand
         :keyword operator: Operator to be used for filter. Required. Known values are: "Equals",
-         "NotEquals", "In", "NotIn", and "In".
+         "NotEquals", "In", and "NotIn".
         :paramtype operator: str or ~azure.mgmt.datafactory.models.RunQueryFilterOperator
         :keyword values: List of filter values. Required.
         :paramtype values: list[str]
@@ -70841,7 +70835,7 @@ class StoredProcedureParameter(_serialization.Model):
      string).
     :vartype value: JSON
     :ivar type: Stored procedure parameter type. Known values are: "String", "Int", "Int64",
-     "Decimal", "Guid", "Boolean", "Date", and "Int".
+     "Decimal", "Guid", "Boolean", and "Date".
     :vartype type: str or ~azure.mgmt.datafactory.models.StoredProcedureParameterType
     """
 
@@ -70862,7 +70856,7 @@ class StoredProcedureParameter(_serialization.Model):
          string).
         :paramtype value: JSON
         :keyword type: Stored procedure parameter type. Known values are: "String", "Int", "Int64",
-         "Decimal", "Guid", "Boolean", "Date", and "Int".
+         "Decimal", "Guid", "Boolean", and "Date".
         :paramtype type: str or ~azure.mgmt.datafactory.models.StoredProcedureParameterType
         """
         super().__init__(**kwargs)
@@ -76305,8 +76299,7 @@ class XeroLinkedService(LinkedService):
         :paramtype consumer_key: ~azure.mgmt.datafactory.models.SecretBase
         :keyword private_key: The private key from the .pem file that was generated for your Xero
          private application. You must include all the text from the .pem file, including the Unix line
-         endings(
-         ).
+         endings( ).
         :paramtype private_key: ~azure.mgmt.datafactory.models.SecretBase
         :keyword use_encrypted_endpoints: Specifies whether the data source endpoints are encrypted
          using HTTPS. The default value is true.

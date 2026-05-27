@@ -1,5 +1,9 @@
 # Release History
 
+## 9.4.0 (2026-05-27)
+
+skip changelog generation
+
 ## 9.3.0 (2026-03-10)
 
 ### Features Added

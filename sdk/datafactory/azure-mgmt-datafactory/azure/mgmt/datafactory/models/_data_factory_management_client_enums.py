@@ -365,7 +365,6 @@ class GlobalParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FLOAT = "Float"
     BOOL = "Bool"
     ARRAY = "Array"
-    INT_ENUM = "Int"
 
 
 class GoogleAdWordsAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -672,7 +671,6 @@ class NotebookParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INT = "int"
     FLOAT = "float"
     BOOL = "bool"
-    INT_ENUM = "int"
 
 
 class NotebookReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -731,7 +729,6 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BOOL = "Bool"
     ARRAY = "Array"
     SECURE_STRING = "SecureString"
-    INT_ENUM = "Int"
 
 
 class PhoenixAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -819,7 +816,6 @@ class RunQueryFilterOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOT_EQUALS = "NotEquals"
     IN = "In"
     NOT_IN = "NotIn"
-    IN_ENUM = "In"
 
 
 class RunQueryOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1099,7 +1095,6 @@ class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     GUID = "Guid"
     BOOLEAN = "Boolean"
     DATE = "Date"
-    INT_ENUM = "Int"
 
 
 class SybaseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
