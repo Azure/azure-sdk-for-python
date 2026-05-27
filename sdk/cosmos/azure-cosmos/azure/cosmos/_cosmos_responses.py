@@ -16,7 +16,8 @@ class CosmosItemPaged(ItemPaged[dict[str, Any]]):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self._response_headers: CaseInsensitiveDict = kwargs.pop('response_headers', CaseInsensitiveDict())
+        popped = kwargs.pop('response_headers', None)
+        self._response_headers: CaseInsensitiveDict = popped if popped is not None else CaseInsensitiveDict()
         super().__init__(*args, **kwargs)
 
     def get_response_headers(self) -> CaseInsensitiveDict:
@@ -36,7 +37,8 @@ class CosmosAsyncItemPaged(AsyncItemPaged[dict[str, Any]]):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self._response_headers: CaseInsensitiveDict = kwargs.pop('response_headers', CaseInsensitiveDict())
+        popped = kwargs.pop('response_headers', None)
+        self._response_headers: CaseInsensitiveDict = popped if popped is not None else CaseInsensitiveDict()
         super().__init__(*args, **kwargs)
 
     def get_response_headers(self) -> CaseInsensitiveDict:

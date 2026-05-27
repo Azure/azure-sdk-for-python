@@ -159,8 +159,9 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert len(items) == 0
 
             # The key is that the method doesn't throw an error
+            # and the headers are populated since an HTTP request was made
             response_headers = query_iterable.get_response_headers()
-            assert response_headers is not None
+            assert "x-ms-request-charge" in response_headers
 
         finally:
             await self._delete_container_for_test(cid)
@@ -242,10 +243,11 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert len(all_items) == num_items
 
             # The last page should have fewer items than the page size,
-            # proving headers are overwritten per page
-            assert item_counts[-1] == 1
-            for count in item_counts[:-1]:
-                assert count == 3
+            # proving headers are overwritten per page.
+            # max_item_count is a hint, so pages may have fewer items than requested.
+            assert len(item_counts) > 1
+            assert sum(item_counts) == num_items
+            assert item_counts[-1] < item_counts[0]
 
         finally:
             await self._delete_container_for_test(cid)
@@ -271,6 +273,9 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             # Get headers twice
             headers1 = query_iterable.get_response_headers()
             headers2 = query_iterable.get_response_headers()
+
+            # They should be distinct objects
+            assert headers1 is not headers2
 
             # Modifying one should not affect the other
             headers1["test-key"] = "test-value"
@@ -338,6 +343,10 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                     f"Query {result['query_id']} got wrong item count"
                 assert "x-ms-request-charge" in result["headers"], \
                     f"Query {result['query_id']} headers missing x-ms-request-charge"
+
+            # Verify that different queries have independent header dicts
+            if len(results) >= 2:
+                assert results[0]["headers"] is not results[1]["headers"]
 
         finally:
             await self._delete_container_for_test(cid)

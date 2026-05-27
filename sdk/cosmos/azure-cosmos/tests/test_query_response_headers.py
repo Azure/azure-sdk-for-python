@@ -145,8 +145,9 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self.assertEqual(len(items), 0)
 
             # The key is that the method doesn't throw an error
+            # and the headers are populated since an HTTP request was made
             response_headers = query_iterable.get_response_headers()
-            self.assertIsNotNone(response_headers)
+            self.assertIn("x-ms-request-charge", response_headers)
 
         finally:
             self._delete_container_for_test(container_id)
@@ -226,10 +227,11 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self.assertEqual(len(all_items), num_items)
 
             # The last page should have fewer items than the page size,
-            # proving headers are overwritten per page
-            self.assertEqual(item_counts[-1], 1)
-            for count in item_counts[:-1]:
-                self.assertEqual(count, 3)
+            # proving headers are overwritten per page.
+            # max_item_count is a hint, so pages may have fewer items than requested.
+            self.assertGreater(len(item_counts), 1)
+            self.assertEqual(sum(item_counts), num_items)
+            self.assertLess(item_counts[-1], item_counts[0])
 
         finally:
             self._delete_container_for_test(container_id)
@@ -254,6 +256,9 @@ class TestQueryResponseHeaders(unittest.TestCase):
             # Get headers twice
             headers1 = query_iterable.get_response_headers()
             headers2 = query_iterable.get_response_headers()
+
+            # They should be distinct objects
+            self.assertIsNot(headers1, headers2)
 
             # Modifying one should not affect the other
             headers1["test-key"] = "test-value"
@@ -335,6 +340,12 @@ class TestQueryResponseHeaders(unittest.TestCase):
                     f"Thread {thread_id} got wrong item count")
                 self.assertIn("x-ms-request-charge", result["headers"],
                     f"Thread {thread_id} headers missing x-ms-request-charge")
+
+            # Verify that different threads have independent header dicts
+            thread_ids = list(results.keys())
+            if len(thread_ids) >= 2:
+                self.assertIsNot(results[thread_ids[0]]["headers"],
+                    results[thread_ids[1]]["headers"])
 
         finally:
             self._delete_container_for_test(container_id)
