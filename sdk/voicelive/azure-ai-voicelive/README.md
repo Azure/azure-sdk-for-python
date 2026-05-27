@@ -111,13 +111,16 @@ Key concepts
   - **SessionResource** – Update session parameters (voice, formats, VAD) with async methods
   - **RequestSession** – Strongly-typed session configuration
   - **ServerVad** – Configure voice activity detection
+  - **SmartEndOfTurnDetection** – Configure audio-based end-of-turn detection
   - **AzureStandardVoice** – Configure voice settings
+  - **parallel_tool_calls** – Control whether tool calls may run in parallel for a session
 - **Audio Handling**:
   - **InputAudioBufferResource** – Manage audio input to the service with async methods
   - **OutputAudioBufferResource** – Control audio output from the service with async methods
 - **Conversation Management**:
   - **ResponseResource** – Create or cancel model responses with async methods
   - **ConversationResource** – Manage conversation items with async methods
+  - **ClientEventInputTextDelta / ClientEventInputTextDone** – Stream text input incrementally into an item
 - **Error Handling**: 
   - **ConnectionError** – Base exception for WebSocket connection errors
   - **ConnectionClosed** – Raised when WebSocket connection is closed
@@ -156,7 +159,13 @@ import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive.aio import connect
 from azure.ai.voicelive.models import (
-    RequestSession, Modality, InputAudioFormat, OutputAudioFormat, ServerVad, ServerEventType
+    AudioEchoCancellation,
+    RequestSession,
+    Modality,
+    InputAudioFormat,
+    OutputAudioFormat,
+    ServerVad,
+    ServerEventType,
 )
 
 API_KEY = "your-api-key"
@@ -174,6 +183,7 @@ async def main():
             instructions="You are a helpful assistant.",
             input_audio_format=InputAudioFormat.PCM16,
             output_audio_format=OutputAudioFormat.PCM16,
+            input_audio_echo_cancellation=AudioEchoCancellation(),
             turn_detection=ServerVad(
                 threshold=0.5, 
                 prefix_padding_ms=300, 
@@ -190,6 +200,13 @@ async def main():
 
 asyncio.run(main())
 ```
+
+`AudioEchoCancellation` now supports both the default server loopback reference path and a
+client-provided stereo echo reference. Use `reference_source="client"` with `channels=2` only when
+your application sends stereo PCM16 input with the microphone on channel 0 and the echo reference
+signal on channel 1.
+
+For image inputs, `RequestImageContentPart` uses the `image_url` field name.
 
 Available Voice Options
 -----------------------

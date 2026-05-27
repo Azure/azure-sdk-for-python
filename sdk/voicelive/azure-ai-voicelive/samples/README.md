@@ -23,6 +23,11 @@ This directory contains sample applications demonstrating various capabilities o
    PyAudio requires PortAudio to be installed on your system:
 
    - **Linux (Ubuntu/Debian)**:
+
+  The interactive audio samples explicitly use `AudioEchoCancellation(reference_source="server",
+  channels=1)` by default. If your application captures stereo PCM16 input with the microphone on
+  channel 0 and an echo reference on channel 1, you can switch to `reference_source="client"` and
+  `channels=2`.
      ```bash
      sudo apt-get install -y portaudio19-dev libasound2-dev
      pip install pyaudio

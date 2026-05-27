@@ -18,6 +18,8 @@ from azure.ai.voicelive.models import (
     ClientEventConversationItemTruncate,
     ClientEventResponseCreate,
     ClientEventResponseCancel,
+    ClientEventInputTextDelta,
+    ClientEventInputTextDone,
     ClientEventRtcCallSdpCreate,
     # Event Types
     ClientEventType,
@@ -270,6 +272,29 @@ class TestClientEventRtcCall:
 
         assert event.event_id == "rtc-evt-1"
         assert event.session == session
+
+
+class TestClientEventInputText:
+    """Test streaming text input client events."""
+
+    def test_input_text_delta_basic(self):
+        """Test creating an input text delta event."""
+        event = ClientEventInputTextDelta(id="item-123", delta="hello", content_index=0, event_id="evt-1")
+
+        assert event.type == ClientEventType.INPUT_TEXT_DELTA
+        assert event.id == "item-123"
+        assert event.delta == "hello"
+        assert event.content_index == 0
+        assert event.event_id == "evt-1"
+
+    def test_input_text_done_basic(self):
+        """Test creating an input text done event."""
+        event = ClientEventInputTextDone(id="item-123", content_index=0, event_id="evt-2")
+
+        assert event.type == ClientEventType.INPUT_TEXT_DONE
+        assert event.id == "item-123"
+        assert event.content_index == 0
+        assert event.event_id == "evt-2"
 
 
 class TestClientEventSerialization:

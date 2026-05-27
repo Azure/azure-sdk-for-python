@@ -1428,7 +1428,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         ) as conn:
             session = RequestSession(
                 input_audio_transcription=_get_speech_recognition_setting(model),
-                input_audio_echo_cancellation=AudioEchoCancellation(),
+                input_audio_echo_cancellation=AudioEchoCancellation(reference_source="server", channels=1),
             )
 
             await conn.session.update(session=session)
@@ -1474,7 +1474,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         ) as conn:
             session = RequestSession(
                 input_audio_transcription=_get_speech_recognition_setting(model),
-                input_audio_echo_cancellation=AudioEchoCancellation(),
+                input_audio_echo_cancellation=AudioEchoCancellation(reference_source="server", channels=1),
                 output_audio_format=audio_output_format,
                 instructions="You are a helpful assistant.",
             )

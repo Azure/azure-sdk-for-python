@@ -19,6 +19,7 @@ from azure.ai.voicelive.models import (
     AzureStandardVoice,
     AzureVoiceType,
     EchoCancellationReferenceSource,
+    EouThresholdLevel,
     FileSearchResult,
     InputAudioContentPart,
     InputTextContentPart,
@@ -35,6 +36,8 @@ from azure.ai.voicelive.models import (
     OpenAIVoiceName,
     OutputTextContentPart,
     PersonalVoiceModels,
+    RequestImageContentPart,
+    RequestImageContentPartDetail,
     RequestSession,
     ResponseFileSearchCallItem,
     ResponseMCPApprovalRequestItem,
@@ -55,6 +58,8 @@ from azure.ai.voicelive.models import (
     ServerEventRtcCallError,
     ServerEventRtcCallSdpCreated,
     ServerEventType,
+    ServerVad,
+    SmartEndOfTurnDetection,
     SystemMessageItem,
     ToolType,
     TranscriptionPhrase,
@@ -165,6 +170,17 @@ class TestMessageContentParts:
 
         assert content.type == "text"
         assert content.text == "Response text"
+
+    def test_request_image_content_part(self):
+        """Test RequestImageContentPart model uses image_url."""
+        content = RequestImageContentPart(
+            image_url="https://example.com/image.png",
+            detail=RequestImageContentPartDetail.HIGH,
+        )
+
+        assert content.type == "input_image"
+        assert content.image_url == "https://example.com/image.png"
+        assert content.detail == RequestImageContentPartDetail.HIGH
 
     def test_message_content_part_inheritance(self):
         """Test that content parts inherit from MessageContentPart."""
@@ -286,6 +302,12 @@ class TestRequestSession:
         assert session.voice == voice
         assert session.voice.type == "azure-realtime-native"
 
+    def test_request_session_with_parallel_tool_calls(self):
+        """Test request session with parallel tool call control."""
+        session = RequestSession(model="gpt-4o-realtime-preview", parallel_tool_calls=False)
+
+        assert session.parallel_tool_calls is False
+
 
 class TestResponseSession:
     """Test ResponseSession model."""
@@ -296,6 +318,12 @@ class TestResponseSession:
 
         assert session.id == "session-789"
         assert session.model == "gpt-4o-realtime-preview"
+
+    def test_response_session_with_parallel_tool_calls(self):
+        """Test response session with parallel tool call control."""
+        session = ResponseSession(model="gpt-4o-realtime-preview", parallel_tool_calls=True)
+
+        assert session.parallel_tool_calls is True
 
 
 class TestModelValidation:
@@ -353,6 +381,35 @@ class TestAudioEchoCancellationModel:
 
         assert config.reference_source == EchoCancellationReferenceSource.CLIENT
         assert config.channels == 2
+
+    def test_request_session_with_explicit_echo_cancellation_settings(self):
+        """Test RequestSession with explicit echo cancellation settings."""
+        config = AudioEchoCancellation(reference_source=EchoCancellationReferenceSource.SERVER, channels=1)
+        session = RequestSession(model="gpt-4o-realtime-preview", input_audio_echo_cancellation=config)
+
+        assert session.input_audio_echo_cancellation is not None
+        assert session.input_audio_echo_cancellation.reference_source == EchoCancellationReferenceSource.SERVER
+        assert session.input_audio_echo_cancellation.channels == 1
+
+
+class TestEndOfTurnDetectionModels:
+    """Test smart end-of-turn detection models."""
+
+    def test_smart_end_of_turn_detection_basic(self):
+        """Test SmartEndOfTurnDetection model."""
+        detection = SmartEndOfTurnDetection(threshold_level=EouThresholdLevel.MEDIUM, timeout_ms=750)
+
+        assert detection.model == "smart_end_of_turn_detection"
+        assert detection.threshold_level == EouThresholdLevel.MEDIUM
+        assert detection.timeout_ms == 750
+
+    def test_server_vad_with_smart_end_of_turn_detection(self):
+        """Test ServerVad using SmartEndOfTurnDetection."""
+        detection = SmartEndOfTurnDetection(threshold_level=EouThresholdLevel.HIGH, timeout_ms=1000)
+        turn_detection = ServerVad(end_of_utterance_detection=detection)
+
+        assert turn_detection.end_of_utterance_detection is not None
+        assert turn_detection.end_of_utterance_detection.model == "smart_end_of_turn_detection"
 
 
 class TestMCPModels:

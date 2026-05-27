@@ -111,6 +111,7 @@ session_config = RequestSession(
     voice=voice_config,
     input_audio_format=InputAudioFormat.PCM16,
     output_audio_format=OutputAudioFormat.PCM16,
+    input_audio_echo_cancellation=AudioEchoCancellation(),
     turn_detection=ServerVad(
         threshold=0.5,
         prefix_padding_ms=300,
@@ -118,6 +119,10 @@ session_config = RequestSession(
     ),
 )
 ```
+
+The sample keeps echo cancellation on the default server loopback path. If your application captures
+stereo PCM16 input with the microphone on channel 0 and a client-provided echo reference on channel 1,
+you can switch to `AudioEchoCancellation(reference_source="client", channels=2)`.
 
 ### 3. Audio Processing
 - **Input**: Captures microphone audio in real-time using PyAudio

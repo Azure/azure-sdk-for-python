@@ -409,8 +409,9 @@ class AudioEchoCancellation(_Model):
 
      * `1`: Mono input (default).
      * `2`: Interleaved stereo input where channel 0 is the microphone signal and channel 1 is
-             the echo reference signal. When set to 2, `reference_source` must be `client` and
-             `input_audio_format` must be `pcm16`.
+       the echo reference signal.
+     When set to 2, `reference_source` must be `client` and `input_audio_format` must be
+     `pcm16`.
 
     :vartype channels: int
     """
@@ -1140,17 +1141,20 @@ class EouDetection(_Model):
     """Top-level union for end-of-utterance (EOU) semantic detection configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureSemanticDetection, AzureSemanticDetectionEn, AzureSemanticDetectionMultilingual
+    AzureSemanticDetection, AzureSemanticDetectionEn, AzureSemanticDetectionMultilingual,
+    SmartEndOfTurnDetection
 
     :ivar model: Required. Is one of the following types: Literal["semantic_detection_v1"],
-     Literal["semantic_detection_v1_en"], Literal["semantic_detection_v1_multilingual"], str
-    :vartype model: str or str or str or str
+     Literal["semantic_detection_v1_en"], Literal["semantic_detection_v1_multilingual"],
+     Literal["smart_end_of_turn_detection"], str
+    :vartype model: str or str or str or str or str
     """
 
     __mapping__: dict[str, _Model] = {}
     model: str = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])
     """Required. Is one of the following types: Literal[\"semantic_detection_v1\"],
-     Literal[\"semantic_detection_v1_en\"], Literal[\"semantic_detection_v1_multilingual\"], str"""
+     Literal[\"semantic_detection_v1_en\"], Literal[\"semantic_detection_v1_multilingual\"],
+     Literal[\"smart_end_of_turn_detection\"], str"""
 
     @overload
     def __init__(
@@ -1791,9 +1795,9 @@ class ClientEvent(_Model):
     ClientEventInputAudioClear, ClientEventInputAudioTurnAppend, ClientEventInputAudioTurnCancel,
     ClientEventInputAudioTurnEnd, ClientEventInputAudioTurnStart,
     ClientEventInputAudioBufferAppend, ClientEventInputAudioBufferClear,
-    ClientEventInputAudioBufferCommit, ClientEventOutputAudioBufferClear,
-    ClientEventResponseCancel, ClientEventResponseCreate, ClientEventRtcCallSdpCreate,
-    ClientEventSessionAvatarConnect, ClientEventSessionUpdate
+    ClientEventInputAudioBufferCommit, ClientEventInputTextDelta, ClientEventInputTextDone,
+    ClientEventOutputAudioBufferClear, ClientEventResponseCancel, ClientEventResponseCreate,
+    ClientEventRtcCallSdpCreate, ClientEventSessionAvatarConnect, ClientEventSessionUpdate
 
     :ivar type: The type of event. Required. Known values are: "session.update",
      "input_audio_buffer.append", "input_audio_buffer.commit", "input_audio_buffer.clear",
@@ -1801,7 +1805,7 @@ class ClientEvent(_Model):
      "input_audio.turn.cancel", "input_audio.clear", "conversation.item.create",
      "conversation.item.retrieve", "conversation.item.truncate", "conversation.item.delete",
      "response.create", "response.cancel", "session.avatar.connect", "mcp_approval_response",
-     "output_audio_buffer.clear", and "rtc.call.sdp.create".
+     "output_audio_buffer.clear", "rtc.call.sdp.create", "input_text.delta", and "input_text.done".
     :vartype type: str or ~azure.ai.voicelive.models.ClientEventType
     :ivar event_id:
     :vartype event_id: str
@@ -1815,7 +1819,8 @@ class ClientEvent(_Model):
      \"input_audio.turn.cancel\", \"input_audio.clear\", \"conversation.item.create\",
      \"conversation.item.retrieve\", \"conversation.item.truncate\", \"conversation.item.delete\",
      \"response.create\", \"response.cancel\", \"session.avatar.connect\",
-     \"mcp_approval_response\", \"output_audio_buffer.clear\", and \"rtc.call.sdp.create\"."""
+     \"mcp_approval_response\", \"output_audio_buffer.clear\", \"rtc.call.sdp.create\",
+     \"input_text.delta\", and \"input_text.done\"."""
     event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -2328,6 +2333,97 @@ class ClientEventInputAudioTurnStart(ClientEvent, discriminator="input_audio.tur
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ClientEventType.INPUT_AUDIO_TURN_START  # type: ignore
+
+
+class ClientEventInputTextDelta(ClientEvent, discriminator="input_text.delta"):
+    """Streams a delta of input text content into the specified item.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The event type, must be ``input_text.delta``. Required. Streamed delta of input
+     text content being appended to an item.
+    :vartype type: str or ~azure.ai.voicelive.models.INPUT_TEXT_DELTA
+    :ivar id: The ID of the item the text delta is being appended to. Required.
+    :vartype id: str
+    :ivar delta: The text delta to append. Required.
+    :vartype delta: str
+    :ivar content_index: The index of the content part within the item the delta applies to.
+    :vartype content_index: int
+    """
+
+    type: Literal[ClientEventType.INPUT_TEXT_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, must be ``input_text.delta``. Required. Streamed delta of input text content
+     being appended to an item."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the item the text delta is being appended to. Required."""
+    delta: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The text delta to append. Required."""
+    content_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the content part within the item the delta applies to."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        delta: str,
+        event_id: Optional[str] = None,
+        content_index: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.INPUT_TEXT_DELTA  # type: ignore
+
+
+class ClientEventInputTextDone(ClientEvent, discriminator="input_text.done"):
+    """Signals that the streamed input text content for the specified item is complete.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The event type, must be ``input_text.done``. Required. Signals that the streamed
+     input text content for an item is complete.
+    :vartype type: str or ~azure.ai.voicelive.models.INPUT_TEXT_DONE
+    :ivar id: The ID of the item whose text content has finished streaming. Required.
+    :vartype id: str
+    :ivar content_index: The index of the content part within the item.
+    :vartype content_index: int
+    """
+
+    type: Literal[ClientEventType.INPUT_TEXT_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, must be ``input_text.done``. Required. Signals that the streamed input text
+     content for an item is complete."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the item whose text content has finished streaming. Required."""
+    content_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the content part within the item."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        event_id: Optional[str] = None,
+        content_index: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.INPUT_TEXT_DONE  # type: ignore
 
 
 class ClientEventOutputAudioBufferClear(ClientEvent, discriminator="output_audio_buffer.clear"):
@@ -3500,15 +3596,15 @@ class RequestImageContentPart(ContentPart, discriminator="input_image"):
 
     :ivar type: Required. INPUT_IMAGE.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_IMAGE
-    :ivar url:
-    :vartype url: str
+    :ivar image_url:
+    :vartype image_url: str
     :ivar detail: Known values are: "auto", "low", and "high".
     :vartype detail: str or ~azure.ai.voicelive.models.RequestImageContentPartDetail
     """
 
     type: Literal[ContentPartType.INPUT_IMAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. INPUT_IMAGE."""
-    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    image_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     detail: Optional[Union[str, "_models.RequestImageContentPartDetail"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3518,7 +3614,7 @@ class RequestImageContentPart(ContentPart, discriminator="input_image"):
     def __init__(
         self,
         *,
-        url: Optional[str] = None,
+        image_url: Optional[str] = None,
         detail: Optional[Union[str, "_models.RequestImageContentPartDetail"]] = None,
     ) -> None: ...
 
@@ -3582,6 +3678,8 @@ class RequestSession(_Model):
      either a Union[str, "_models.ToolChoiceLiteral"] type or a ToolChoiceSelection type.
     :vartype tool_choice: str or ~azure.ai.voicelive.models.ToolChoiceLiteral or
      ~azure.ai.voicelive.models.ToolChoiceSelection
+    :ivar parallel_tool_calls: Whether the model is allowed to call tools in parallel.
+    :vartype parallel_tool_calls: bool
     :ivar temperature: Controls the randomness of the model's output. Range: 0.0 to 1.0. Default is
      0.7.
     :vartype temperature: float
@@ -3664,6 +3762,8 @@ class RequestSession(_Model):
     tool_choice: Optional["_types.ToolChoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies which tools the model is allowed to call during the session. Is either a Union[str,
      \"_models.ToolChoiceLiteral\"] type or a ToolChoiceSelection type."""
+    parallel_tool_calls: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the model is allowed to call tools in parallel."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Controls the randomness of the model's output. Range: 0.0 to 1.0. Default is 0.7."""
     max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
@@ -3714,6 +3814,7 @@ class RequestSession(_Model):
         output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = None,
         tools: Optional[list["_models.Tool"]] = None,
         tool_choice: Optional["_types.ToolChoice"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         reasoning_effort: Optional[Union[str, "_models.ReasoningEffort"]] = None,
@@ -4783,6 +4884,8 @@ class ResponseSession(_Model):
      either a Union[str, "_models.ToolChoiceLiteral"] type or a ToolChoiceSelection type.
     :vartype tool_choice: str or ~azure.ai.voicelive.models.ToolChoiceLiteral or
      ~azure.ai.voicelive.models.ToolChoiceSelection
+    :ivar parallel_tool_calls: Whether the model is allowed to call tools in parallel.
+    :vartype parallel_tool_calls: bool
     :ivar temperature: Controls the randomness of the model's output. Range: 0.0 to 1.0. Default is
      0.7.
     :vartype temperature: float
@@ -4869,6 +4972,8 @@ class ResponseSession(_Model):
     tool_choice: Optional["_types.ToolChoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies which tools the model is allowed to call during the session. Is either a Union[str,
      \"_models.ToolChoiceLiteral\"] type or a ToolChoiceSelection type."""
+    parallel_tool_calls: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the model is allowed to call tools in parallel."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Controls the randomness of the model's output. Range: 0.0 to 1.0. Default is 0.7."""
     max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
@@ -4923,6 +5028,7 @@ class ResponseSession(_Model):
         output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = None,
         tools: Optional[list["_models.Tool"]] = None,
         tool_choice: Optional["_types.ToolChoice"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         reasoning_effort: Optional[Union[str, "_models.ReasoningEffort"]] = None,
@@ -8323,6 +8429,49 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
 
 class SessionBase(_Model):
     """VoiceLive session object configuration."""
+
+
+class SmartEndOfTurnDetection(EouDetection, discriminator="smart_end_of_turn_detection"):
+    """Audio-based end-of-turn detection. Operates directly on the input audio stream rather than
+    text. Use ``threshold_level`` and ``timeout_ms`` to tune detection.
+
+    :ivar model: Required. Default value is "smart_end_of_turn_detection".
+    :vartype model: str
+    :ivar threshold_level: Threshold level setting. One of ``low``, ``medium``, ``high``, or
+     ``default``. Known values are: "low", "medium", "high", and "default".
+    :vartype threshold_level: str or ~azure.ai.voicelive.models.EouThresholdLevel
+    :ivar timeout_ms: Timeout in milliseconds.
+    :vartype timeout_ms: int
+    """
+
+    model: Literal["smart_end_of_turn_detection"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"smart_end_of_turn_detection\"."""
+    threshold_level: Optional[Union[str, "_models.EouThresholdLevel"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Threshold level setting. One of ``low``, ``medium``, ``high``, or ``default``. Known values
+     are: \"low\", \"medium\", \"high\", and \"default\"."""
+    timeout_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Timeout in milliseconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        threshold_level: Optional[Union[str, "_models.EouThresholdLevel"]] = None,
+        timeout_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.model = "smart_end_of_turn_detection"  # type: ignore
 
 
 class StaticInterimResponseConfig(InterimResponseConfigBase, discriminator="static_interim_response"):

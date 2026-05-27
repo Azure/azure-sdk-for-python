@@ -123,6 +123,11 @@ class TestClientEventType:
         """Test RTC call events."""
         assert ClientEventType.RTC_CALL_SDP_CREATE == "rtc.call.sdp.create"
 
+    def test_input_text_events(self):
+        """Test input text streaming events."""
+        assert ClientEventType.INPUT_TEXT_DELTA == "input_text.delta"
+        assert ClientEventType.INPUT_TEXT_DONE == "input_text.done"
+
 
 class TestContentPartType:
     """Test ContentPartType enum."""

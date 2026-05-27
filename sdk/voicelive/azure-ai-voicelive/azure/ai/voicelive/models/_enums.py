@@ -129,6 +129,10 @@ class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Client request to clear the avatar output buffer."""
     RTC_CALL_SDP_CREATE = "rtc.call.sdp.create"
     """Sent by the client to initiate a WebRTC session with an SDP offer."""
+    INPUT_TEXT_DELTA = "input_text.delta"
+    """Streamed delta of input text content being appended to an item."""
+    INPUT_TEXT_DONE = "input_text.done"
+    """Signals that the streamed input text content for an item is complete."""
 
 
 class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
