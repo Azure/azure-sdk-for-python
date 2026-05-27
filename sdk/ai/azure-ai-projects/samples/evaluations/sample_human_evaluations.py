@@ -108,6 +108,7 @@ def _emit_human_evaluation(
     desirable_direction: DesirableDirection,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
+    conversation_id: Optional[str] = None,
     project_resource_id: Optional[str] = None,
     enduser_id: Optional[str] = None,
     enduser_pseudo_id: Optional[str] = None,
@@ -149,6 +150,8 @@ def _emit_human_evaluation(
         attributes["gen_ai.evaluation.explanation"] = explanation
     if response_id is not None:
         attributes["gen_ai.response.id"] = response_id
+    if conversation_id is not None:
+        attributes["gen_ai.conversation.id"] = conversation_id
     if enduser_id is not None:
         attributes["enduser.id"] = enduser_id
     if enduser_pseudo_id is not None:
@@ -168,6 +171,7 @@ def emit_boolean_evaluation(
     passed: bool,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
+    conversation_id: Optional[str] = None,
     project_resource_id: Optional[str] = None,
     enduser_id: Optional[str] = None,
     enduser_pseudo_id: Optional[str] = None,
@@ -186,6 +190,7 @@ def emit_boolean_evaluation(
         passed: Whether the human evaluation passed.
         explanation: Optional free-form explanation from the end user.
         response_id: Optional OpenAI Responses API response ID being evaluated.
+        conversation_id: Optional conversation ID associated with the evaluation.
         project_resource_id: Optional ARM resource ID for the Foundry project.
         enduser_id: Optional signed-in end-user ID. This may contain PII.
         enduser_pseudo_id: Optional pseudonymous end-user ID.
@@ -202,6 +207,7 @@ def emit_boolean_evaluation(
         desirable_direction="increase",
         explanation=explanation,
         response_id=response_id,
+        conversation_id=conversation_id,
         project_resource_id=project_resource_id,
         enduser_id=enduser_id,
         enduser_pseudo_id=enduser_pseudo_id,
@@ -217,6 +223,7 @@ def emit_5_point_ordinal_evaluation(
     threshold: float = 3.0,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
+    conversation_id: Optional[str] = None,
     project_resource_id: Optional[str] = None,
     enduser_id: Optional[str] = None,
     enduser_pseudo_id: Optional[str] = None,
@@ -235,6 +242,7 @@ def emit_5_point_ordinal_evaluation(
         threshold: Score at or above this value is passing.
         explanation: Optional free-form explanation from the end user.
         response_id: Optional OpenAI Responses API response ID being evaluated.
+        conversation_id: Optional conversation ID associated with the evaluation.
         project_resource_id: Optional ARM resource ID for the Foundry project.
         enduser_id: Optional signed-in end-user ID. This may contain PII.
         enduser_pseudo_id: Optional pseudonymous end-user ID.
@@ -255,6 +263,7 @@ def emit_5_point_ordinal_evaluation(
         desirable_direction="increase",
         explanation=explanation,
         response_id=response_id,
+        conversation_id=conversation_id,
         project_resource_id=project_resource_id,
         enduser_id=enduser_id,
         enduser_pseudo_id=enduser_pseudo_id,
@@ -298,6 +307,7 @@ if __name__ == "__main__":
             passed=True,
             explanation="The agent provided accurate weather information as requested.",
             response_id="resp_64904952b20872620069f8d600779c81908f58b0a3be090ef0",
+            conversation_id="conv_5j66UpCpwteGg4YSxUnt7lPY",
             project_resource_id=project_resource_id,
             enduser_pseudo_id="sess_123456",
             tags={"subscription_tier": "free_plan"},
@@ -314,6 +324,7 @@ if __name__ == "__main__":
                 "information that addresses the user's intent."
             ),
             response_id="resp_64904952b20872620069f8d600779c81908f58b0a3be090ef0",
+            conversation_id="conv_5j66UpCpwteGg4YSxUnt7lPY",
             project_resource_id=project_resource_id,
             enduser_id="oid:241964ad-a8db-4318-9f2e-5a7dc1f05349",
             tags={"department": "marketing"},

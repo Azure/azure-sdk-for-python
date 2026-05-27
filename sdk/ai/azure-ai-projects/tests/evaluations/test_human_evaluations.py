@@ -151,6 +151,16 @@ def test_response_id_omitted_omits_top_level_id(capture):
     assert "gen_ai.response.id" not in attrs
 
 
+def test_conversation_id_set_adds_top_level_id(capture):
+    emit_boolean_evaluation(
+        evaluation_metric_name="task_completion",
+        passed=True,
+        conversation_id="conv_abc123",
+    )
+    attrs = _only_attrs(capture)
+    assert attrs["gen_ai.conversation.id"] == "conv_abc123"
+
+
 def test_project_resource_id_set_added_to_internal_properties(capture):
     arm_id = (
         "/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.CognitiveServices" "/accounts/acct/projects/proj"
