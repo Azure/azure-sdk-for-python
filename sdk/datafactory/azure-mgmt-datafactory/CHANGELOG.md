@@ -5,2402 +5,371 @@
 ### Features Added
 
   - Client `DataFactoryManagementClient` added method `send_request`
-  - Model `AmazonMWSLinkedService` added property `type_properties`
-  - Model `AmazonMWSObjectDataset` added property `type_properties`
-  - Model `AmazonRdsForOracleLinkedService` added property `type_properties`
-  - Model `AmazonRdsForOracleTableDataset` added property `type_properties`
-  - Model `AmazonRdsForSqlServerLinkedService` added property `type_properties`
-  - Model `AmazonRdsForSqlServerTableDataset` added property `type_properties`
-  - Model `AmazonRedshiftLinkedService` added property `type_properties`
-  - Model `AmazonRedshiftTableDataset` added property `type_properties`
-  - Model `AmazonS3CompatibleLinkedService` added property `type_properties`
-  - Model `AmazonS3Dataset` added property `type_properties`
-  - Model `AmazonS3LinkedService` added property `type_properties`
-  - Model `AppFiguresLinkedService` added property `type_properties`
-  - Model `AppendVariableActivity` added property `type_properties`
-  - Model `AsanaLinkedService` added property `type_properties`
-  - Model `AvroDataset` added property `type_properties`
-  - Model `AzPowerShellSetup` added property `type_properties`
-  - Model `AzureBatchLinkedService` added property `type_properties`
-  - Model `AzureBlobDataset` added property `type_properties`
-  - Model `AzureBlobFSDataset` added property `type_properties`
-  - Model `AzureBlobFSLinkedService` added property `type_properties`
-  - Model `AzureBlobStorageLinkedService` added property `type_properties`
-  - Model `AzureDataExplorerCommandActivity` added property `type_properties`
-  - Model `AzureDataExplorerLinkedService` added property `type_properties`
-  - Model `AzureDataExplorerTableDataset` added property `type_properties`
-  - Model `AzureDataLakeAnalyticsLinkedService` added property `type_properties`
-  - Model `AzureDataLakeStoreDataset` added property `type_properties`
-  - Model `AzureDataLakeStoreLinkedService` added property `type_properties`
-  - Model `AzureDatabricksDeltaLakeDataset` added property `type_properties`
-  - Model `AzureDatabricksDeltaLakeLinkedService` added property `type_properties`
-  - Model `AzureDatabricksLinkedService` added property `type_properties`
-  - Model `AzureFileStorageLinkedService` added property `type_properties`
-  - Model `AzureFunctionActivity` added property `type_properties`
-  - Model `AzureFunctionLinkedService` added property `type_properties`
-  - Model `AzureKeyVaultLinkedService` added property `type_properties`
-  - Model `AzureMLBatchExecutionActivity` added property `type_properties`
-  - Model `AzureMLExecutePipelineActivity` added property `type_properties`
-  - Model `AzureMLLinkedService` added property `type_properties`
-  - Model `AzureMLServiceLinkedService` added property `type_properties`
-  - Model `AzureMLUpdateResourceActivity` added property `type_properties`
-  - Model `AzureMariaDBLinkedService` added property `type_properties`
-  - Model `AzureMariaDBTableDataset` added property `type_properties`
-  - Model `AzureMySqlLinkedService` added property `type_properties`
-  - Model `AzureMySqlTableDataset` added property `type_properties`
-  - Model `AzurePostgreSqlLinkedService` added property `type_properties`
-  - Model `AzurePostgreSqlTableDataset` added property `type_properties`
-  - Model `AzureSearchIndexDataset` added property `type_properties`
-  - Model `AzureSearchLinkedService` added property `type_properties`
-  - Model `AzureSqlDWLinkedService` added property `type_properties`
-  - Model `AzureSqlDWTableDataset` added property `type_properties`
-  - Model `AzureSqlDatabaseLinkedService` added property `type_properties`
-  - Model `AzureSqlMILinkedService` added property `type_properties`
-  - Model `AzureSqlMITableDataset` added property `type_properties`
-  - Model `AzureSqlTableDataset` added property `type_properties`
-  - Model `AzureStorageLinkedService` added property `type_properties`
-  - Model `AzureSynapseArtifactsLinkedService` added property `type_properties`
-  - Model `AzureTableDataset` added property `type_properties`
-  - Model `AzureTableStorageLinkedService` added property `type_properties`
-  - Model `BinaryDataset` added property `type_properties`
-  - Model `BlobEventsTrigger` added property `type_properties`
-  - Model `BlobTrigger` added property `type_properties`
-  - Model `CassandraLinkedService` added property `type_properties`
-  - Model `CassandraTableDataset` added property `type_properties`
-  - Model `ChainingTrigger` added property `type_properties`
-  - Model `ChangeDataCaptureResource` added property `properties`
   - Model `ChangeDataCaptureResource` added property `system_data`
-  - Model `CmdkeySetup` added property `type_properties`
-  - Model `CommonDataServiceForAppsEntityDataset` added property `type_properties`
-  - Model `CommonDataServiceForAppsLinkedService` added property `type_properties`
-  - Model `ComponentSetup` added property `type_properties`
-  - Model `ConcurLinkedService` added property `type_properties`
-  - Model `ConcurObjectDataset` added property `type_properties`
-  - Model `CopyActivity` added property `type_properties`
-  - Model `CosmosDbLinkedService` added property `type_properties`
-  - Model `CosmosDbMongoDbApiCollectionDataset` added property `type_properties`
-  - Model `CosmosDbMongoDbApiLinkedService` added property `type_properties`
-  - Model `CosmosDbSqlApiCollectionDataset` added property `type_properties`
-  - Model `CouchbaseLinkedService` added property `type_properties`
-  - Model `CouchbaseTableDataset` added property `type_properties`
   - Model `CredentialResource` added property `system_data`
-  - Model `CustomActivity` added property `type_properties`
-  - Model `CustomEventsTrigger` added property `type_properties`
   - Model `DataFlowResource` added property `system_data`
-  - Model `DataLakeAnalyticsUSQLActivity` added property `type_properties`
-  - Model `DatabricksJobActivity` added property `type_properties`
-  - Model `DatabricksNotebookActivity` added property `type_properties`
-  - Model `DatabricksSparkJarActivity` added property `type_properties`
-  - Model `DatabricksSparkPythonActivity` added property `type_properties`
   - Model `DatasetResource` added property `system_data`
-  - Model `DataworldLinkedService` added property `type_properties`
-  - Model `Db2LinkedService` added property `type_properties`
-  - Model `Db2TableDataset` added property `type_properties`
-  - Model `DeleteActivity` added property `type_properties`
-  - Model `DelimitedTextDataset` added property `type_properties`
-  - Model `DocumentDbCollectionDataset` added property `type_properties`
-  - Model `DrillLinkedService` added property `type_properties`
-  - Model `DrillTableDataset` added property `type_properties`
-  - Model `DynamicsAXLinkedService` added property `type_properties`
-  - Model `DynamicsAXResourceDataset` added property `type_properties`
-  - Model `DynamicsCrmEntityDataset` added property `type_properties`
-  - Model `DynamicsCrmLinkedService` added property `type_properties`
-  - Model `DynamicsEntityDataset` added property `type_properties`
-  - Model `DynamicsLinkedService` added property `type_properties`
-  - Model `EloquaLinkedService` added property `type_properties`
-  - Model `EloquaObjectDataset` added property `type_properties`
-  - Model `EnvironmentVariableSetup` added property `type_properties`
-  - Model `ExcelDataset` added property `type_properties`
-  - Model `ExecuteDataFlowActivity` added property `type_properties`
-  - Model `ExecutePipelineActivity` added property `type_properties`
-  - Model `ExecuteSSISPackageActivity` added property `type_properties`
-  - Model `ExecuteWranglingDataflowActivity` added property `type_properties`
   - Model `Factory` added property `system_data`
-  - Model `FactoryUpdateParameters` added property `properties`
-  - Model `FailActivity` added property `type_properties`
-  - Model `FileServerLinkedService` added property `type_properties`
-  - Model `FileShareDataset` added property `type_properties`
-  - Model `FilterActivity` added property `type_properties`
-  - Model `Flowlet` added property `type_properties`
-  - Model `ForEachActivity` added property `type_properties`
-  - Model `FtpServerLinkedService` added property `type_properties`
-  - Model `GetMetadataActivity` added property `type_properties`
   - Model `GlobalParameterResource` added property `system_data`
-  - Model `GoogleAdWordsLinkedService` added property `type_properties`
-  - Model `GoogleAdWordsObjectDataset` added property `type_properties`
-  - Model `GoogleBigQueryLinkedService` added property `type_properties`
-  - Model `GoogleBigQueryObjectDataset` added property `type_properties`
-  - Model `GoogleBigQueryV2LinkedService` added property `type_properties`
-  - Model `GoogleBigQueryV2ObjectDataset` added property `type_properties`
-  - Model `GoogleCloudStorageLinkedService` added property `type_properties`
-  - Model `GoogleSheetsLinkedService` added property `type_properties`
-  - Model `GreenplumLinkedService` added property `type_properties`
-  - Model `GreenplumTableDataset` added property `type_properties`
-  - Model `HBaseLinkedService` added property `type_properties`
-  - Model `HBaseObjectDataset` added property `type_properties`
-  - Model `HDInsightHiveActivity` added property `type_properties`
-  - Model `HDInsightLinkedService` added property `type_properties`
-  - Model `HDInsightMapReduceActivity` added property `type_properties`
-  - Model `HDInsightOnDemandLinkedService` added property `type_properties`
-  - Model `HDInsightPigActivity` added property `type_properties`
-  - Model `HDInsightSparkActivity` added property `type_properties`
-  - Model `HDInsightStreamingActivity` added property `type_properties`
-  - Model `HdfsLinkedService` added property `type_properties`
-  - Model `HiveLinkedService` added property `type_properties`
-  - Model `HiveObjectDataset` added property `type_properties`
-  - Model `HttpDataset` added property `type_properties`
-  - Model `HttpLinkedService` added property `type_properties`
-  - Model `HubspotLinkedService` added property `type_properties`
-  - Model `HubspotObjectDataset` added property `type_properties`
-  - Model `IcebergDataset` added property `type_properties`
-  - Model `IfConditionActivity` added property `type_properties`
-  - Model `ImpalaLinkedService` added property `type_properties`
-  - Model `ImpalaObjectDataset` added property `type_properties`
-  - Model `InformixLinkedService` added property `type_properties`
-  - Model `InformixTableDataset` added property `type_properties`
   - Model `IntegrationRuntimeResource` added property `system_data`
-  - Model `JiraLinkedService` added property `type_properties`
-  - Model `JiraObjectDataset` added property `type_properties`
-  - Model `JsonDataset` added property `type_properties`
-  - Model `LakeHouseLinkedService` added property `type_properties`
-  - Model `LakeHouseTableDataset` added property `type_properties`
   - Model `LinkedServiceResource` added property `system_data`
-  - Model `LookupActivity` added property `type_properties`
-  - Model `MagentoLinkedService` added property `type_properties`
-  - Model `MagentoObjectDataset` added property `type_properties`
-  - Model `ManagedIdentityCredential` added property `type_properties`
-  - Model `ManagedIntegrationRuntime` added property `type_properties`
-  - Model `ManagedIntegrationRuntimeStatus` added property `type_properties`
   - Model `ManagedPrivateEndpointResource` added property `system_data`
   - Model `ManagedVirtualNetworkResource` added property `system_data`
-  - Model `MappingDataFlow` added property `type_properties`
-  - Model `MariaDBLinkedService` added property `type_properties`
-  - Model `MariaDBTableDataset` added property `type_properties`
-  - Model `MarketoLinkedService` added property `type_properties`
-  - Model `MarketoObjectDataset` added property `type_properties`
-  - Model `MicrosoftAccessLinkedService` added property `type_properties`
-  - Model `MicrosoftAccessTableDataset` added property `type_properties`
-  - Model `MongoDbAtlasCollectionDataset` added property `type_properties`
-  - Model `MongoDbAtlasLinkedService` added property `type_properties`
-  - Model `MongoDbCollectionDataset` added property `type_properties`
-  - Model `MongoDbLinkedService` added property `type_properties`
-  - Model `MongoDbV2CollectionDataset` added property `type_properties`
-  - Model `MongoDbV2LinkedService` added property `type_properties`
-  - Model `MySqlLinkedService` added property `type_properties`
-  - Model `MySqlTableDataset` added property `type_properties`
-  - Model `NetezzaLinkedService` added property `type_properties`
-  - Model `NetezzaTableDataset` added property `type_properties`
-  - Model `ODataLinkedService` added property `type_properties`
-  - Model `ODataResourceDataset` added property `type_properties`
-  - Model `OdbcLinkedService` added property `type_properties`
-  - Model `OdbcTableDataset` added property `type_properties`
-  - Model `Office365Dataset` added property `type_properties`
-  - Model `Office365LinkedService` added property `type_properties`
-  - Model `OracleCloudStorageLinkedService` added property `type_properties`
-  - Model `OracleLinkedService` added property `type_properties`
-  - Model `OracleServiceCloudLinkedService` added property `type_properties`
-  - Model `OracleServiceCloudObjectDataset` added property `type_properties`
-  - Model `OracleTableDataset` added property `type_properties`
-  - Model `OrcDataset` added property `type_properties`
-  - Model `ParquetDataset` added property `type_properties`
-  - Model `PaypalLinkedService` added property `type_properties`
-  - Model `PaypalObjectDataset` added property `type_properties`
-  - Model `PhoenixLinkedService` added property `type_properties`
-  - Model `PhoenixObjectDataset` added property `type_properties`
-  - Model `PipelineResource` added property `properties`
   - Model `PipelineResource` added property `system_data`
-  - Model `PostgreSqlLinkedService` added property `type_properties`
-  - Model `PostgreSqlTableDataset` added property `type_properties`
-  - Model `PostgreSqlV2LinkedService` added property `type_properties`
-  - Model `PostgreSqlV2TableDataset` added property `type_properties`
-  - Model `PrestoLinkedService` added property `type_properties`
-  - Model `PrestoObjectDataset` added property `type_properties`
   - Model `PrivateEndpointConnectionResource` added property `system_data`
-  - Model `QuickBooksLinkedService` added property `type_properties`
-  - Model `QuickBooksObjectDataset` added property `type_properties`
-  - Model `QuickbaseLinkedService` added property `type_properties`
-  - Model `RelationalTableDataset` added property `type_properties`
-  - Model `RerunTumblingWindowTrigger` added property `type_properties`
-  - Model `ResponsysLinkedService` added property `type_properties`
-  - Model `ResponsysObjectDataset` added property `type_properties`
-  - Model `RestResourceDataset` added property `type_properties`
-  - Model `RestServiceLinkedService` added property `type_properties`
-  - Model `RunQueryFilter` added property `values_property`
-  - Model `SSISLogLocation` added property `type_properties`
-  - Model `SSISPackageLocation` added property `type_properties`
-  - Model `SalesforceLinkedService` added property `type_properties`
-  - Model `SalesforceMarketingCloudLinkedService` added property `type_properties`
-  - Model `SalesforceMarketingCloudObjectDataset` added property `type_properties`
-  - Model `SalesforceObjectDataset` added property `type_properties`
-  - Model `SalesforceServiceCloudLinkedService` added property `type_properties`
-  - Model `SalesforceServiceCloudObjectDataset` added property `type_properties`
-  - Model `SalesforceServiceCloudV2LinkedService` added property `type_properties`
-  - Model `SalesforceServiceCloudV2ObjectDataset` added property `type_properties`
-  - Model `SalesforceV2LinkedService` added property `type_properties`
-  - Model `SalesforceV2ObjectDataset` added property `type_properties`
-  - Model `SapBWLinkedService` added property `type_properties`
-  - Model `SapCloudForCustomerLinkedService` added property `type_properties`
-  - Model `SapCloudForCustomerResourceDataset` added property `type_properties`
-  - Model `SapEccLinkedService` added property `type_properties`
-  - Model `SapEccResourceDataset` added property `type_properties`
-  - Model `SapHanaLinkedService` added property `type_properties`
-  - Model `SapHanaTableDataset` added property `type_properties`
-  - Model `SapOdpLinkedService` added property `type_properties`
-  - Model `SapOdpResourceDataset` added property `type_properties`
-  - Model `SapOpenHubLinkedService` added property `type_properties`
-  - Model `SapOpenHubTableDataset` added property `type_properties`
-  - Model `SapTableLinkedService` added property `type_properties`
-  - Model `SapTableResourceDataset` added property `type_properties`
-  - Model `ScheduleTrigger` added property `type_properties`
-  - Model `ScriptActivity` added property `type_properties`
-  - Model `SelfHostedIntegrationRuntime` added property `type_properties`
-  - Model `SelfHostedIntegrationRuntimeStatus` added property `type_properties`
-  - Model `ServiceNowLinkedService` added property `type_properties`
-  - Model `ServiceNowObjectDataset` added property `type_properties`
-  - Model `ServiceNowV2LinkedService` added property `type_properties`
-  - Model `ServiceNowV2ObjectDataset` added property `type_properties`
-  - Model `ServicePrincipalCredential` added property `type_properties`
-  - Model `SetVariableActivity` added property `type_properties`
-  - Model `SftpServerLinkedService` added property `type_properties`
-  - Model `SharePointOnlineListLinkedService` added property `type_properties`
-  - Model `SharePointOnlineListResourceDataset` added property `type_properties`
-  - Model `ShopifyLinkedService` added property `type_properties`
-  - Model `ShopifyObjectDataset` added property `type_properties`
-  - Model `SmartsheetLinkedService` added property `type_properties`
-  - Model `SnowflakeDataset` added property `type_properties`
-  - Model `SnowflakeLinkedService` added property `type_properties`
-  - Model `SnowflakeV2Dataset` added property `type_properties`
-  - Model `SnowflakeV2LinkedService` added property `type_properties`
-  - Model `SparkLinkedService` added property `type_properties`
-  - Model `SparkObjectDataset` added property `type_properties`
-  - Model `SqlDWUpsertSettings` added property `keys_property`
-  - Model `SqlServerLinkedService` added property `type_properties`
-  - Model `SqlServerStoredProcedureActivity` added property `type_properties`
-  - Model `SqlServerTableDataset` added property `type_properties`
-  - Model `SqlUpsertSettings` added property `keys_property`
-  - Model `SquareLinkedService` added property `type_properties`
-  - Model `SquareObjectDataset` added property `type_properties`
-  - Model `SwitchActivity` added property `type_properties`
-  - Model `SybaseLinkedService` added property `type_properties`
-  - Model `SybaseTableDataset` added property `type_properties`
-  - Model `SynapseNotebookActivity` added property `type_properties`
-  - Model `SynapseSparkJobDefinitionActivity` added property `type_properties`
-  - Model `TeamDeskLinkedService` added property `type_properties`
-  - Model `TeradataLinkedService` added property `type_properties`
-  - Model `TeradataTableDataset` added property `type_properties`
   - Model `TriggerResource` added property `system_data`
-  - Model `TumblingWindowTrigger` added property `type_properties`
-  - Model `TwilioLinkedService` added property `type_properties`
-  - Model `UntilActivity` added property `type_properties`
-  - Model `ValidationActivity` added property `type_properties`
-  - Model `VerticaLinkedService` added property `type_properties`
-  - Model `VerticaTableDataset` added property `type_properties`
-  - Model `WaitActivity` added property `type_properties`
-  - Model `WarehouseLinkedService` added property `type_properties`
-  - Model `WarehouseTableDataset` added property `type_properties`
-  - Model `WebActivity` added property `type_properties`
-  - Model `WebHookActivity` added property `type_properties`
-  - Model `WebTableDataset` added property `type_properties`
-  - Model `WranglingDataFlow` added property `type_properties`
-  - Model `XeroLinkedService` added property `type_properties`
-  - Model `XeroObjectDataset` added property `type_properties`
-  - Model `XmlDataset` added property `type_properties`
-  - Model `ZendeskLinkedService` added property `type_properties`
-  - Model `ZohoLinkedService` added property `type_properties`
-  - Model `ZohoObjectDataset` added property `type_properties`
-  - Added model `AmazonMWSLinkedServiceTypeProperties`
-  - Added model `AmazonRdsForLinkedServiceTypeProperties`
-  - Added model `AmazonRdsForOracleTableDatasetTypeProperties`
-  - Added model `AmazonRdsForSqlServerTableDatasetTypeProperties`
-  - Added model `AmazonRedshiftLinkedServiceTypeProperties`
-  - Added model `AmazonRedshiftTableDatasetTypeProperties`
-  - Added model `AmazonS3CompatibleLinkedServiceTypeProperties`
-  - Added model `AmazonS3DatasetTypeProperties`
-  - Added model `AmazonS3LinkedServiceTypeProperties`
-  - Added model `AppFiguresLinkedServiceTypeProperties`
-  - Added model `AppendVariableActivityTypeProperties`
-  - Added model `AsanaLinkedServiceTypeProperties`
-  - Added model `AvroDatasetTypeProperties`
-  - Added model `AzPowerShellSetupTypeProperties`
-  - Added model `AzureBatchLinkedServiceTypeProperties`
-  - Added model `AzureBlobDatasetTypeProperties`
-  - Added model `AzureBlobFSDatasetTypeProperties`
-  - Added model `AzureBlobFSLinkedServiceTypeProperties`
-  - Added model `AzureBlobStorageLinkedServiceTypeProperties`
-  - Added model `AzureDataExplorerCommandActivityTypeProperties`
-  - Added model `AzureDataExplorerDatasetTypeProperties`
-  - Added model `AzureDataExplorerLinkedServiceTypeProperties`
-  - Added model `AzureDataLakeAnalyticsLinkedServiceTypeProperties`
-  - Added model `AzureDataLakeStoreDatasetTypeProperties`
-  - Added model `AzureDataLakeStoreLinkedServiceTypeProperties`
-  - Added model `AzureDatabricksDeltaLakeDatasetTypeProperties`
-  - Added model `AzureDatabricksDetltaLakeLinkedServiceTypeProperties`
-  - Added model `AzureDatabricksLinkedServiceTypeProperties`
-  - Added model `AzureFileStorageLinkedServiceTypeProperties`
-  - Added model `AzureFunctionActivityTypeProperties`
-  - Added model `AzureFunctionLinkedServiceTypeProperties`
-  - Added model `AzureKeyVaultLinkedServiceTypeProperties`
-  - Added model `AzureMLBatchExecutionActivityTypeProperties`
-  - Added model `AzureMLExecutePipelineActivityTypeProperties`
-  - Added model `AzureMLLinkedServiceTypeProperties`
-  - Added model `AzureMLServiceLinkedServiceTypeProperties`
-  - Added model `AzureMLUpdateResourceActivityTypeProperties`
-  - Added model `AzureMariaDBLinkedServiceTypeProperties`
-  - Added model `AzureMySqlLinkedServiceTypeProperties`
-  - Added model `AzureMySqlTableDatasetTypeProperties`
-  - Added model `AzurePostgreSqlLinkedServiceTypeProperties`
-  - Added model `AzurePostgreSqlTableDatasetTypeProperties`
-  - Added model `AzureSearchIndexDatasetTypeProperties`
-  - Added model `AzureSearchLinkedServiceTypeProperties`
-  - Added model `AzureSqlDWTableDatasetTypeProperties`
-  - Added model `AzureSqlMITableDatasetTypeProperties`
-  - Added model `AzureSqlTableDatasetTypeProperties`
-  - Added model `AzureSynapseArtifactsLinkedServiceTypeProperties`
-  - Added model `AzureTableDatasetTypeProperties`
-  - Added model `BinaryDatasetTypeProperties`
-  - Added model `BlobEventsTriggerTypeProperties`
-  - Added model `BlobTriggerTypeProperties`
-  - Added model `CassandraLinkedServiceTypeProperties`
-  - Added model `CassandraTableDatasetTypeProperties`
-  - Added model `ChainingTriggerTypeProperties`
-  - Added model `ChangeDataCapture`
   - Added model `CloudErrorBody`
-  - Added model `CmdkeySetupTypeProperties`
-  - Added model `CommonDataServiceForAppsEntityDatasetTypeProperties`
-  - Added model `CommonDataServiceForAppsLinkedServiceTypeProperties`
-  - Added model `ConcurLinkedServiceTypeProperties`
-  - Added model `CopyActivityTypeProperties`
-  - Added model `CosmosDbLinkedServiceTypeProperties`
-  - Added model `CosmosDbMongoDbApiCollectionDatasetTypeProperties`
-  - Added model `CosmosDbMongoDbApiLinkedServiceTypeProperties`
-  - Added model `CosmosDbSqlApiCollectionDatasetTypeProperties`
-  - Added model `CouchbaseLinkedServiceTypeProperties`
   - Added enum `CreatedByType`
-  - Added model `CustomActivityTypeProperties`
-  - Added model `CustomEventsTriggerTypeProperties`
-  - Added model `DataLakeAnalyticsUSQLActivityTypeProperties`
-  - Added model `DatabricksJobActivityTypeProperties`
-  - Added model `DatabricksNotebookActivityTypeProperties`
-  - Added model `DatabricksSparkJarActivityTypeProperties`
-  - Added model `DatabricksSparkPythonActivityTypeProperties`
-  - Added model `DataworldLinkedServiceTypeProperties`
-  - Added model `Db2LinkedServiceTypeProperties`
-  - Added model `Db2TableDatasetTypeProperties`
-  - Added model `DeleteActivityTypeProperties`
-  - Added model `DelimitedTextDatasetTypeProperties`
-  - Added model `DocumentDbCollectionDatasetTypeProperties`
-  - Added model `DrillDatasetTypeProperties`
-  - Added model `DrillLinkedServiceTypeProperties`
-  - Added model `DynamicsAXLinkedServiceTypeProperties`
-  - Added model `DynamicsAXResourceDatasetTypeProperties`
-  - Added model `DynamicsCrmEntityDatasetTypeProperties`
-  - Added model `DynamicsCrmLinkedServiceTypeProperties`
-  - Added model `DynamicsEntityDatasetTypeProperties`
-  - Added model `DynamicsLinkedServiceTypeProperties`
-  - Added model `EloquaLinkedServiceTypeProperties`
-  - Added model `EnvironmentVariableSetupTypeProperties`
-  - Added model `ExcelDatasetTypeProperties`
-  - Added model `ExecutePipelineActivityTypeProperties`
-  - Added model `ExecuteSSISPackageActivityTypeProperties`
-  - Added model `FactoryUpdateProperties`
-  - Added model `FailActivityTypeProperties`
-  - Added model `FileServerLinkedServiceTypeProperties`
-  - Added model `FileShareDatasetTypeProperties`
-  - Added model `FilterActivityTypeProperties`
-  - Added model `FlowletTypeProperties`
-  - Added model `ForEachActivityTypeProperties`
-  - Added model `FtpServerLinkedServiceTypeProperties`
-  - Added model `GenericDatasetTypeProperties`
-  - Added model `GetMetadataActivityTypeProperties`
-  - Added model `GoogleAdWordsLinkedServiceTypeProperties`
-  - Added model `GoogleBigQueryDatasetTypeProperties`
-  - Added model `GoogleBigQueryLinkedServiceTypeProperties`
-  - Added model `GoogleBigQueryV2DatasetTypeProperties`
-  - Added model `GoogleBigQueryV2LinkedServiceTypeProperties`
-  - Added model `GoogleCloudStorageLinkedServiceTypeProperties`
-  - Added model `GoogleSheetsLinkedServiceTypeProperties`
-  - Added model `GreenplumDatasetTypeProperties`
-  - Added model `GreenplumLinkedServiceTypeProperties`
-  - Added model `HBaseLinkedServiceTypeProperties`
-  - Added model `HDInsightHiveActivityTypeProperties`
-  - Added model `HDInsightLinkedServiceTypeProperties`
-  - Added model `HDInsightMapReduceActivityTypeProperties`
-  - Added model `HDInsightOnDemandLinkedServiceTypeProperties`
-  - Added model `HDInsightPigActivityTypeProperties`
-  - Added model `HDInsightSparkActivityTypeProperties`
-  - Added model `HDInsightStreamingActivityTypeProperties`
-  - Added model `HdfsLinkedServiceTypeProperties`
-  - Added model `HiveDatasetTypeProperties`
-  - Added model `HiveLinkedServiceTypeProperties`
-  - Added model `HttpDatasetTypeProperties`
-  - Added model `HttpLinkedServiceTypeProperties`
-  - Added model `HubspotLinkedServiceTypeProperties`
-  - Added model `IcebergDatasetTypeProperties`
-  - Added model `IfConditionActivityTypeProperties`
-  - Added model `ImpalaDatasetTypeProperties`
-  - Added model `ImpalaLinkedServiceTypeProperties`
-  - Added model `InformixLinkedServiceTypeProperties`
-  - Added model `InformixTableDatasetTypeProperties`
-  - Added model `JiraLinkedServiceTypeProperties`
-  - Added model `JiraTableDatasetTypeProperties`
-  - Added model `JsonDatasetTypeProperties`
-  - Added model `LakeHouseLinkedServiceTypeProperties`
-  - Added model `LakeHouseTableDatasetTypeProperties`
-  - Added model `LicensedComponentSetupTypeProperties`
-  - Added model `LookupActivityTypeProperties`
-  - Added model `MagentoLinkedServiceTypeProperties`
-  - Added model `ManagedIdentityTypeProperties`
-  - Added model `ManagedIntegrationRuntimeStatusTypeProperties`
-  - Added model `ManagedIntegrationRuntimeTypeProperties`
-  - Added model `MappingDataFlowTypeProperties`
-  - Added model `MariaDBLinkedServiceTypeProperties`
-  - Added model `MarketoLinkedServiceTypeProperties`
-  - Added model `MicrosoftAccessLinkedServiceTypeProperties`
-  - Added model `MicrosoftAccessTableDatasetTypeProperties`
-  - Added model `MongoDbAtlasCollectionDatasetTypeProperties`
-  - Added model `MongoDbAtlasLinkedServiceTypeProperties`
-  - Added model `MongoDbCollectionDatasetTypeProperties`
-  - Added model `MongoDbLinkedServiceTypeProperties`
-  - Added model `MongoDbV2CollectionDatasetTypeProperties`
-  - Added model `MongoDbV2LinkedServiceTypeProperties`
-  - Added model `MySqlLinkedServiceTypeProperties`
-  - Added model `MySqlTableDatasetTypeProperties`
-  - Added model `NetezzaLinkedServiceTypeProperties`
-  - Added model `NetezzaTableDatasetTypeProperties`
-  - Added model `ODataLinkedServiceTypeProperties`
-  - Added model `ODataResourceDatasetTypeProperties`
-  - Added model `OdbcLinkedServiceTypeProperties`
-  - Added model `OdbcTableDatasetTypeProperties`
-  - Added model `Office365DatasetTypeProperties`
-  - Added model `Office365LinkedServiceTypeProperties`
-  - Added model `OracleCloudStorageLinkedServiceTypeProperties`
-  - Added model `OracleLinkedServiceTypeProperties`
-  - Added model `OracleServiceCloudLinkedServiceTypeProperties`
-  - Added model `OracleTableDatasetTypeProperties`
-  - Added model `OrcDatasetTypeProperties`
-  - Added model `ParquetDatasetTypeProperties`
-  - Added model `PaypalLinkedServiceTypeProperties`
-  - Added model `PhoenixDatasetTypeProperties`
-  - Added model `PhoenixLinkedServiceTypeProperties`
-  - Added model `Pipeline`
-  - Added model `PostgreSqlLinkedServiceTypeProperties`
-  - Added model `PostgreSqlTableDatasetTypeProperties`
-  - Added model `PostgreSqlV2LinkedServiceTypeProperties`
-  - Added model `PostgreSqlV2TableDatasetTypeProperties`
-  - Added model `PowerQueryTypeProperties`
-  - Added model `PrestoDatasetTypeProperties`
-  - Added model `PrestoLinkedServiceTypeProperties`
   - Added model `ProxyResource`
-  - Added model `QuickBooksLinkedServiceTypeProperties`
-  - Added model `QuickbaseLinkedServiceTypeProperties`
-  - Added model `RelationalTableDatasetTypeProperties`
-  - Added model `RerunTumblingWindowTriggerTypeProperties`
   - Added model `ResourceAutoGenerated`
-  - Added model `ResponsysLinkedServiceTypeProperties`
-  - Added model `RestResourceDatasetTypeProperties`
-  - Added model `RestServiceLinkedServiceTypeProperties`
-  - Added model `SSISLogLocationTypeProperties`
-  - Added model `SSISPackageLocationTypeProperties`
-  - Added model `SalesforceLinkedServiceTypeProperties`
-  - Added model `SalesforceMarketingCloudLinkedServiceTypeProperties`
-  - Added model `SalesforceObjectDatasetTypeProperties`
-  - Added model `SalesforceServiceCloudLinkedServiceTypeProperties`
-  - Added model `SalesforceServiceCloudObjectDatasetTypeProperties`
-  - Added model `SalesforceServiceCloudV2LinkedServiceTypeProperties`
-  - Added model `SalesforceServiceCloudV2ObjectDatasetTypeProperties`
-  - Added model `SalesforceV2LinkedServiceTypeProperties`
-  - Added model `SalesforceV2ObjectDatasetTypeProperties`
-  - Added model `SapBWLinkedServiceTypeProperties`
-  - Added model `SapCloudForCustomerLinkedServiceTypeProperties`
-  - Added model `SapCloudForCustomerResourceDatasetTypeProperties`
-  - Added model `SapEccLinkedServiceTypeProperties`
-  - Added model `SapEccResourceDatasetTypeProperties`
-  - Added model `SapHanaLinkedServiceProperties`
-  - Added model `SapHanaTableDatasetTypeProperties`
-  - Added model `SapOdpLinkedServiceTypeProperties`
-  - Added model `SapOdpResourceDatasetTypeProperties`
-  - Added model `SapOpenHubLinkedServiceTypeProperties`
-  - Added model `SapOpenHubTableDatasetTypeProperties`
-  - Added model `SapTableLinkedServiceTypeProperties`
-  - Added model `SapTableResourceDatasetTypeProperties`
-  - Added model `ScheduleTriggerTypeProperties`
-  - Added model `ScriptActivityTypeProperties`
-  - Added model `SelfHostedIntegrationRuntimeStatusTypeProperties`
-  - Added model `SelfHostedIntegrationRuntimeTypeProperties`
-  - Added model `ServiceNowLinkedServiceTypeProperties`
-  - Added model `ServiceNowV2DatasetTypeProperties`
-  - Added model `ServiceNowV2LinkedServiceTypeProperties`
-  - Added model `ServicePrincipalCredentialTypeProperties`
-  - Added model `SetVariableActivityTypeProperties`
-  - Added model `SftpServerLinkedServiceTypeProperties`
-  - Added model `SharePointOnlineListDatasetTypeProperties`
-  - Added model `SharePointOnlineListLinkedServiceTypeProperties`
-  - Added model `ShopifyLinkedServiceTypeProperties`
-  - Added model `SmartsheetLinkedServiceTypeProperties`
-  - Added model `SnowflakeDatasetTypeProperties`
-  - Added model `SnowflakeLinkedServiceTypeProperties`
-  - Added model `SnowflakeLinkedV2ServiceTypeProperties`
-  - Added model `SparkDatasetTypeProperties`
-  - Added model `SparkLinkedServiceTypeProperties`
-  - Added model `SqlServerStoredProcedureActivityTypeProperties`
-  - Added model `SqlServerTableDatasetTypeProperties`
-  - Added model `SquareLinkedServiceTypeProperties`
-  - Added model `SwitchActivityTypeProperties`
-  - Added model `SybaseLinkedServiceTypeProperties`
-  - Added model `SybaseTableDatasetTypeProperties`
-  - Added model `SynapseNotebookActivityTypeProperties`
-  - Added model `SynapseSparkJobActivityTypeProperties`
   - Added model `SystemData`
-  - Added model `TeamDeskLinkedServiceTypeProperties`
-  - Added model `TeradataLinkedServiceTypeProperties`
-  - Added model `TeradataTableDatasetTypeProperties`
-  - Added model `TumblingWindowTriggerTypeProperties`
-  - Added model `TwilioLinkedServiceTypeProperties`
-  - Added model `UntilActivityTypeProperties`
-  - Added model `ValidationActivityTypeProperties`
-  - Added model `VerticaDatasetTypeProperties`
-  - Added model `VerticaLinkedServiceTypeProperties`
-  - Added model `WaitActivityTypeProperties`
-  - Added model `WarehouseLinkedServiceTypeProperties`
-  - Added model `WarehouseTableDatasetTypeProperties`
-  - Added model `WebActivityTypeProperties`
-  - Added model `WebHookActivityTypeProperties`
-  - Added model `WebTableDatasetTypeProperties`
-  - Added model `XeroLinkedServiceTypeProperties`
-  - Added model `XmlDatasetTypeProperties`
-  - Added model `ZendeskLinkedServiceTypeProperties`
-  - Added model `ZohoLinkedServiceTypeProperties`
-  - Model `ChangeDataCaptureOperations` added parameter `etag` in method `create_or_update`
-  - Model `ChangeDataCaptureOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ChangeDataCaptureOperations` added parameter `etag` in method `get`
-  - Model `ChangeDataCaptureOperations` added parameter `match_condition` in method `get`
-  - Model `CredentialOperationsOperations` added parameter `etag` in method `create_or_update`
-  - Model `CredentialOperationsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `CredentialOperationsOperations` added parameter `etag` in method `get`
-  - Model `CredentialOperationsOperations` added parameter `match_condition` in method `get`
-  - Model `DataFlowsOperations` added parameter `etag` in method `create_or_update`
-  - Model `DataFlowsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `DataFlowsOperations` added parameter `etag` in method `get`
-  - Model `DataFlowsOperations` added parameter `match_condition` in method `get`
-  - Model `DatasetsOperations` added parameter `etag` in method `create_or_update`
-  - Model `DatasetsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `DatasetsOperations` added parameter `etag` in method `get`
-  - Model `DatasetsOperations` added parameter `match_condition` in method `get`
-  - Model `FactoriesOperations` added parameter `etag` in method `create_or_update`
-  - Model `FactoriesOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `FactoriesOperations` added parameter `etag` in method `get`
-  - Model `FactoriesOperations` added parameter `match_condition` in method `get`
-  - Model `IntegrationRuntimesOperations` added parameter `etag` in method `create_or_update`
-  - Model `IntegrationRuntimesOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `IntegrationRuntimesOperations` added parameter `etag` in method `get`
-  - Model `IntegrationRuntimesOperations` added parameter `match_condition` in method `get`
-  - Model `LinkedServicesOperations` added parameter `etag` in method `create_or_update`
-  - Model `LinkedServicesOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `LinkedServicesOperations` added parameter `etag` in method `get`
-  - Model `LinkedServicesOperations` added parameter `match_condition` in method `get`
-  - Model `ManagedPrivateEndpointsOperations` added parameter `etag` in method `create_or_update`
-  - Model `ManagedPrivateEndpointsOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ManagedPrivateEndpointsOperations` added parameter `etag` in method `get`
-  - Model `ManagedPrivateEndpointsOperations` added parameter `match_condition` in method `get`
-  - Model `ManagedVirtualNetworksOperations` added parameter `etag` in method `create_or_update`
-  - Model `ManagedVirtualNetworksOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `ManagedVirtualNetworksOperations` added parameter `etag` in method `get`
-  - Model `ManagedVirtualNetworksOperations` added parameter `match_condition` in method `get`
-  - Model `PipelinesOperations` added parameter `etag` in method `create_or_update`
-  - Model `PipelinesOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `PipelinesOperations` added parameter `etag` in method `get`
-  - Model `PipelinesOperations` added parameter `match_condition` in method `get`
-  - Model `PrivateEndpointConnectionOperations` added parameter `etag` in method `create_or_update`
-  - Model `PrivateEndpointConnectionOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `PrivateEndpointConnectionOperations` added parameter `etag` in method `get`
-  - Model `PrivateEndpointConnectionOperations` added parameter `match_condition` in method `get`
-  - Model `TriggersOperations` added parameter `etag` in method `create_or_update`
-  - Model `TriggersOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `TriggersOperations` added parameter `etag` in method `get`
-  - Model `TriggersOperations` added parameter `match_condition` in method `get`
-  - Added model `privateEndPointConnectionsOperations`
+  - Added operation group `privateEndPointConnectionsOperations`
 
 ### Breaking Changes
 
-  - Model `AmazonMWSLinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `AmazonMWSLinkedService` deleted or renamed its instance variable `marketplace_id`
-  - Model `AmazonMWSLinkedService` deleted or renamed its instance variable `seller_id`
-  - Model `AmazonMWSLinkedService` deleted or renamed its instance variable `mws_auth_token`
-  - Model `AmazonMWSLinkedService` deleted or renamed its instance variable `access_key_id`
-  - Model `AmazonMWSLinkedService` deleted or renamed its instance variable `secret_key`
-  - Model `AmazonMWSLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `AmazonMWSLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `AmazonMWSLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `AmazonMWSLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AmazonMWSObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `server`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `username`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `password`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `encryption_client`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `encryption_types_client`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `crypto_checksum_client`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `crypto_checksum_types_client`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `initial_lob_fetch_size`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `fetch_size`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `statement_cache_size`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `initialization_string`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `enable_bulk_load`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `support_v1_data_types`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `fetch_tswtz_as_timestamp`
-  - Model `AmazonRdsForOracleLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AmazonRdsForOracleTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `AmazonRdsForOracleTableDataset` deleted or renamed its instance variable `table`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `server`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `database`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `encrypt`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `trust_server_certificate`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `host_name_in_certificate`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `application_intent`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `connect_timeout`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `connect_retry_count`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `connect_retry_interval`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `load_balance_timeout`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `command_timeout`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `integrated_security`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `failover_partner`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `max_pool_size`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `min_pool_size`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `multiple_active_result_sets`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `multi_subnet_failover`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `packet_size`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `pooling`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `password`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AmazonRdsForSqlServerLinkedService` deleted or renamed its instance variable `always_encrypted_settings`
-  - Model `AmazonRdsForSqlServerTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `AmazonRdsForSqlServerTableDataset` deleted or renamed its instance variable `table`
-  - Model `AmazonRedshiftLinkedService` deleted or renamed its instance variable `server`
-  - Model `AmazonRedshiftLinkedService` deleted or renamed its instance variable `username`
-  - Model `AmazonRedshiftLinkedService` deleted or renamed its instance variable `password`
-  - Model `AmazonRedshiftLinkedService` deleted or renamed its instance variable `database`
-  - Model `AmazonRedshiftLinkedService` deleted or renamed its instance variable `port`
-  - Model `AmazonRedshiftLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AmazonRedshiftTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `AmazonRedshiftTableDataset` deleted or renamed its instance variable `table`
-  - Model `AmazonRedshiftTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `AmazonS3CompatibleLinkedService` deleted or renamed its instance variable `access_key_id`
-  - Model `AmazonS3CompatibleLinkedService` deleted or renamed its instance variable `secret_access_key`
-  - Model `AmazonS3CompatibleLinkedService` deleted or renamed its instance variable `service_url`
-  - Model `AmazonS3CompatibleLinkedService` deleted or renamed its instance variable `force_path_style`
-  - Model `AmazonS3CompatibleLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AmazonS3Dataset` deleted or renamed its instance variable `bucket_name`
-  - Model `AmazonS3Dataset` deleted or renamed its instance variable `key`
-  - Model `AmazonS3Dataset` deleted or renamed its instance variable `prefix`
-  - Model `AmazonS3Dataset` deleted or renamed its instance variable `version`
-  - Model `AmazonS3Dataset` deleted or renamed its instance variable `modified_datetime_start`
-  - Model `AmazonS3Dataset` deleted or renamed its instance variable `modified_datetime_end`
-  - Model `AmazonS3Dataset` deleted or renamed its instance variable `format`
-  - Model `AmazonS3Dataset` deleted or renamed its instance variable `compression`
-  - Model `AmazonS3LinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `AmazonS3LinkedService` deleted or renamed its instance variable `access_key_id`
-  - Model `AmazonS3LinkedService` deleted or renamed its instance variable `secret_access_key`
-  - Model `AmazonS3LinkedService` deleted or renamed its instance variable `service_url`
-  - Model `AmazonS3LinkedService` deleted or renamed its instance variable `session_token`
-  - Model `AmazonS3LinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AppFiguresLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `AppFiguresLinkedService` deleted or renamed its instance variable `password`
-  - Model `AppFiguresLinkedService` deleted or renamed its instance variable `client_key`
-  - Model `AppendVariableActivity` deleted or renamed its instance variable `variable_name`
-  - Model `AppendVariableActivity` deleted or renamed its instance variable `value`
-  - Model `AsanaLinkedService` deleted or renamed its instance variable `api_token`
-  - Model `AsanaLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AvroDataset` deleted or renamed its instance variable `location`
-  - Model `AvroDataset` deleted or renamed its instance variable `avro_compression_codec`
-  - Model `AvroDataset` deleted or renamed its instance variable `avro_compression_level`
-  - Model `AzPowerShellSetup` deleted or renamed its instance variable `version`
-  - Model `AzureBatchLinkedService` deleted or renamed its instance variable `account_name`
-  - Model `AzureBatchLinkedService` deleted or renamed its instance variable `access_key`
-  - Model `AzureBatchLinkedService` deleted or renamed its instance variable `batch_uri`
-  - Model `AzureBatchLinkedService` deleted or renamed its instance variable `pool_name`
-  - Model `AzureBatchLinkedService` deleted or renamed its instance variable `linked_service_name`
-  - Model `AzureBatchLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureBatchLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureBlobDataset` deleted or renamed its instance variable `folder_path`
-  - Model `AzureBlobDataset` deleted or renamed its instance variable `table_root_location`
-  - Model `AzureBlobDataset` deleted or renamed its instance variable `file_name`
-  - Model `AzureBlobDataset` deleted or renamed its instance variable `modified_datetime_start`
-  - Model `AzureBlobDataset` deleted or renamed its instance variable `modified_datetime_end`
-  - Model `AzureBlobDataset` deleted or renamed its instance variable `format`
-  - Model `AzureBlobDataset` deleted or renamed its instance variable `compression`
-  - Model `AzureBlobFSDataset` deleted or renamed its instance variable `folder_path`
-  - Model `AzureBlobFSDataset` deleted or renamed its instance variable `file_name`
-  - Model `AzureBlobFSDataset` deleted or renamed its instance variable `format`
-  - Model `AzureBlobFSDataset` deleted or renamed its instance variable `compression`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `url`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `account_key`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `azure_cloud_type`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `service_principal_credential`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `sas_uri`
-  - Model `AzureBlobFSLinkedService` deleted or renamed its instance variable `sas_token`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `account_key`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `sas_uri`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `sas_token`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `service_endpoint`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `azure_cloud_type`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `account_kind`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `AzureBlobStorageLinkedService` deleted or renamed its instance variable `container_uri`
-  - Model `AzureDataExplorerCommandActivity` deleted or renamed its instance variable `command`
-  - Model `AzureDataExplorerCommandActivity` deleted or renamed its instance variable `command_timeout`
-  - Model `AzureDataExplorerLinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `AzureDataExplorerLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzureDataExplorerLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzureDataExplorerLinkedService` deleted or renamed its instance variable `database`
-  - Model `AzureDataExplorerLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzureDataExplorerLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureDataExplorerTableDataset` deleted or renamed its instance variable `table`
-  - Model `AzureDataLakeAnalyticsLinkedService` deleted or renamed its instance variable `account_name`
-  - Model `AzureDataLakeAnalyticsLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzureDataLakeAnalyticsLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzureDataLakeAnalyticsLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzureDataLakeAnalyticsLinkedService` deleted or renamed its instance variable `subscription_id`
-  - Model `AzureDataLakeAnalyticsLinkedService` deleted or renamed its instance variable `resource_group_name`
-  - Model `AzureDataLakeAnalyticsLinkedService` deleted or renamed its instance variable `data_lake_analytics_uri`
-  - Model `AzureDataLakeAnalyticsLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureDataLakeStoreDataset` deleted or renamed its instance variable `folder_path`
-  - Model `AzureDataLakeStoreDataset` deleted or renamed its instance variable `file_name`
-  - Model `AzureDataLakeStoreDataset` deleted or renamed its instance variable `format`
-  - Model `AzureDataLakeStoreDataset` deleted or renamed its instance variable `compression`
-  - Model `AzureDataLakeStoreLinkedService` deleted or renamed its instance variable `data_lake_store_uri`
-  - Model `AzureDataLakeStoreLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzureDataLakeStoreLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzureDataLakeStoreLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzureDataLakeStoreLinkedService` deleted or renamed its instance variable `azure_cloud_type`
-  - Model `AzureDataLakeStoreLinkedService` deleted or renamed its instance variable `account_name`
-  - Model `AzureDataLakeStoreLinkedService` deleted or renamed its instance variable `subscription_id`
-  - Model `AzureDataLakeStoreLinkedService` deleted or renamed its instance variable `resource_group_name`
-  - Model `AzureDataLakeStoreLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureDataLakeStoreLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureDatabricksDeltaLakeDataset` deleted or renamed its instance variable `table`
-  - Model `AzureDatabricksDeltaLakeDataset` deleted or renamed its instance variable `database`
-  - Model `AzureDatabricksDeltaLakeLinkedService` deleted or renamed its instance variable `domain`
-  - Model `AzureDatabricksDeltaLakeLinkedService` deleted or renamed its instance variable `access_token`
-  - Model `AzureDatabricksDeltaLakeLinkedService` deleted or renamed its instance variable `cluster_id`
-  - Model `AzureDatabricksDeltaLakeLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureDatabricksDeltaLakeLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureDatabricksDeltaLakeLinkedService` deleted or renamed its instance variable `workspace_resource_id`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `domain`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `access_token`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `authentication`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `workspace_resource_id`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `existing_cluster_id`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `instance_pool_id`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `new_cluster_version`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `new_cluster_num_of_worker`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `new_cluster_node_type`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `new_cluster_spark_conf`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `new_cluster_spark_env_vars`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `new_cluster_custom_tags`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `new_cluster_log_destination`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `new_cluster_driver_node_type`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `new_cluster_init_scripts`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `new_cluster_enable_elastic_disk`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `policy_id`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureDatabricksLinkedService` deleted or renamed its instance variable `data_security_mode`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `host`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `user_id`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `password`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `account_key`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `sas_uri`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `sas_token`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `file_share`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `snapshot`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `service_endpoint`
-  - Model `AzureFileStorageLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureFunctionActivity` deleted or renamed its instance variable `method`
-  - Model `AzureFunctionActivity` deleted or renamed its instance variable `function_name`
-  - Model `AzureFunctionActivity` deleted or renamed its instance variable `headers`
-  - Model `AzureFunctionActivity` deleted or renamed its instance variable `body`
-  - Model `AzureFunctionLinkedService` deleted or renamed its instance variable `function_app_url`
-  - Model `AzureFunctionLinkedService` deleted or renamed its instance variable `function_key`
-  - Model `AzureFunctionLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureFunctionLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureFunctionLinkedService` deleted or renamed its instance variable `resource_id`
-  - Model `AzureFunctionLinkedService` deleted or renamed its instance variable `authentication`
-  - Model `AzureKeyVaultLinkedService` deleted or renamed its instance variable `base_url`
-  - Model `AzureKeyVaultLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureMLBatchExecutionActivity` deleted or renamed its instance variable `global_parameters`
-  - Model `AzureMLBatchExecutionActivity` deleted or renamed its instance variable `web_service_outputs`
-  - Model `AzureMLBatchExecutionActivity` deleted or renamed its instance variable `web_service_inputs`
-  - Model `AzureMLExecutePipelineActivity` deleted or renamed its instance variable `ml_pipeline_id`
-  - Model `AzureMLExecutePipelineActivity` deleted or renamed its instance variable `ml_pipeline_endpoint_id`
-  - Model `AzureMLExecutePipelineActivity` deleted or renamed its instance variable `version`
-  - Model `AzureMLExecutePipelineActivity` deleted or renamed its instance variable `experiment_name`
-  - Model `AzureMLExecutePipelineActivity` deleted or renamed its instance variable `ml_pipeline_parameters`
-  - Model `AzureMLExecutePipelineActivity` deleted or renamed its instance variable `data_path_assignments`
-  - Model `AzureMLExecutePipelineActivity` deleted or renamed its instance variable `ml_parent_run_id`
-  - Model `AzureMLExecutePipelineActivity` deleted or renamed its instance variable `continue_on_step_failure`
-  - Model `AzureMLLinkedService` deleted or renamed its instance variable `ml_endpoint`
-  - Model `AzureMLLinkedService` deleted or renamed its instance variable `api_key`
-  - Model `AzureMLLinkedService` deleted or renamed its instance variable `update_resource_endpoint`
-  - Model `AzureMLLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzureMLLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzureMLLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzureMLLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureMLLinkedService` deleted or renamed its instance variable `authentication`
-  - Model `AzureMLServiceLinkedService` deleted or renamed its instance variable `subscription_id`
-  - Model `AzureMLServiceLinkedService` deleted or renamed its instance variable `resource_group_name`
-  - Model `AzureMLServiceLinkedService` deleted or renamed its instance variable `ml_workspace_name`
-  - Model `AzureMLServiceLinkedService` deleted or renamed its instance variable `authentication`
-  - Model `AzureMLServiceLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzureMLServiceLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzureMLServiceLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzureMLServiceLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureMLUpdateResourceActivity` deleted or renamed its instance variable `trained_model_name`
-  - Model `AzureMLUpdateResourceActivity` deleted or renamed its instance variable `trained_model_linked_service_name`
-  - Model `AzureMLUpdateResourceActivity` deleted or renamed its instance variable `trained_model_file_path`
-  - Model `AzureMariaDBLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AzureMariaDBLinkedService` deleted or renamed its instance variable `pwd`
-  - Model `AzureMariaDBLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureMariaDBTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `AzureMySqlLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AzureMySqlLinkedService` deleted or renamed its instance variable `password`
-  - Model `AzureMySqlLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureMySqlTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `AzureMySqlTableDataset` deleted or renamed its instance variable `table`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `server`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `port`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `username`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `database`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `ssl_mode`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `timeout`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `command_timeout`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `trust_server_certificate`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `read_buffer_size`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `timezone`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `encoding`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `password`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `service_principal_embedded_cert`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `service_principal_embedded_cert_password`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `azure_cloud_type`
-  - Model `AzurePostgreSqlLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzurePostgreSqlSinkUpsertSettings` deleted or renamed its instance variable `keys`
-  - Model `AzurePostgreSqlTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `AzurePostgreSqlTableDataset` deleted or renamed its instance variable `table`
-  - Model `AzurePostgreSqlTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `AzureSearchIndexDataset` deleted or renamed its instance variable `index_name`
-  - Model `AzureSearchLinkedService` deleted or renamed its instance variable `url`
-  - Model `AzureSearchLinkedService` deleted or renamed its instance variable `key`
-  - Model `AzureSearchLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `server`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `database`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `encrypt`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `trust_server_certificate`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `host_name_in_certificate`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `application_intent`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `connect_timeout`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `connect_retry_count`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `connect_retry_interval`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `load_balance_timeout`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `command_timeout`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `integrated_security`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `failover_partner`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `max_pool_size`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `min_pool_size`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `multiple_active_result_sets`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `multi_subnet_failover`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `packet_size`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `pooling`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `password`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `service_principal_credential`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `azure_cloud_type`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureSqlDWLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureSqlDWTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `AzureSqlDWTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `AzureSqlDWTableDataset` deleted or renamed its instance variable `table`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `server`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `database`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `encrypt`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `trust_server_certificate`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `host_name_in_certificate`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `application_intent`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `connect_timeout`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `connect_retry_count`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `connect_retry_interval`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `load_balance_timeout`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `command_timeout`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `integrated_security`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `failover_partner`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `max_pool_size`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `min_pool_size`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `multiple_active_result_sets`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `multi_subnet_failover`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `packet_size`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `pooling`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `password`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `service_principal_credential`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `azure_cloud_type`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `always_encrypted_settings`
-  - Model `AzureSqlDatabaseLinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `server`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `database`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `encrypt`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `trust_server_certificate`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `host_name_in_certificate`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `application_intent`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `connect_timeout`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `connect_retry_count`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `connect_retry_interval`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `load_balance_timeout`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `command_timeout`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `integrated_security`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `failover_partner`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `max_pool_size`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `min_pool_size`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `multiple_active_result_sets`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `multi_subnet_failover`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `packet_size`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `pooling`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `user_name`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `password`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `service_principal_credential`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `tenant`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `azure_cloud_type`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `always_encrypted_settings`
-  - Model `AzureSqlMILinkedService` deleted or renamed its instance variable `credential`
-  - Model `AzureSqlMITableDataset` deleted or renamed its instance variable `table_name`
-  - Model `AzureSqlMITableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `AzureSqlMITableDataset` deleted or renamed its instance variable `table`
-  - Model `AzureSqlTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `AzureSqlTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `AzureSqlTableDataset` deleted or renamed its instance variable `table`
-  - Model `AzureStorageLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AzureStorageLinkedService` deleted or renamed its instance variable `account_key`
-  - Model `AzureStorageLinkedService` deleted or renamed its instance variable `sas_uri`
-  - Model `AzureStorageLinkedService` deleted or renamed its instance variable `sas_token`
-  - Model `AzureStorageLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureSynapseArtifactsLinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `AzureSynapseArtifactsLinkedService` deleted or renamed its instance variable `authentication`
-  - Model `AzureSynapseArtifactsLinkedService` deleted or renamed its instance variable `workspace_resource_id`
-  - Model `AzureTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `AzureTableStorageLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `AzureTableStorageLinkedService` deleted or renamed its instance variable `account_key`
-  - Model `AzureTableStorageLinkedService` deleted or renamed its instance variable `sas_uri`
-  - Model `AzureTableStorageLinkedService` deleted or renamed its instance variable `sas_token`
-  - Model `AzureTableStorageLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `AzureTableStorageLinkedService` deleted or renamed its instance variable `service_endpoint`
-  - Model `AzureTableStorageLinkedService` deleted or renamed its instance variable `credential`
-  - Model `BinaryDataset` deleted or renamed its instance variable `location`
-  - Model `BinaryDataset` deleted or renamed its instance variable `compression`
-  - Model `BlobEventsTrigger` deleted or renamed its instance variable `blob_path_begins_with`
-  - Model `BlobEventsTrigger` deleted or renamed its instance variable `blob_path_ends_with`
-  - Model `BlobEventsTrigger` deleted or renamed its instance variable `ignore_empty_blobs`
-  - Model `BlobEventsTrigger` deleted or renamed its instance variable `events`
-  - Model `BlobEventsTrigger` deleted or renamed its instance variable `scope`
-  - Model `BlobTrigger` deleted or renamed its instance variable `folder_path`
-  - Model `BlobTrigger` deleted or renamed its instance variable `max_concurrency`
-  - Model `BlobTrigger` deleted or renamed its instance variable `linked_service`
-  - Model `CassandraLinkedService` deleted or renamed its instance variable `host`
-  - Model `CassandraLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `CassandraLinkedService` deleted or renamed its instance variable `port`
-  - Model `CassandraLinkedService` deleted or renamed its instance variable `username`
-  - Model `CassandraLinkedService` deleted or renamed its instance variable `password`
-  - Model `CassandraLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `CassandraTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `CassandraTableDataset` deleted or renamed its instance variable `keyspace`
-  - Model `ChainingTrigger` deleted or renamed its instance variable `depends_on`
-  - Model `ChainingTrigger` deleted or renamed its instance variable `run_dimension`
-  - Model `ChangeDataCaptureResource` deleted or renamed its instance variable `folder`
-  - Model `ChangeDataCaptureResource` deleted or renamed its instance variable `description`
-  - Model `ChangeDataCaptureResource` deleted or renamed its instance variable `source_connections_info`
-  - Model `ChangeDataCaptureResource` deleted or renamed its instance variable `target_connections_info`
-  - Model `ChangeDataCaptureResource` deleted or renamed its instance variable `policy`
-  - Model `ChangeDataCaptureResource` deleted or renamed its instance variable `allow_v_net_override`
-  - Model `ChangeDataCaptureResource` deleted or renamed its instance variable `status`
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `AzurePostgreSqlSinkUpsertSettings` renamed its instance variable `keys` to `keys_property`
   - Model `CloudError` deleted or renamed its instance variable `code`
   - Model `CloudError` deleted or renamed its instance variable `message`
   - Model `CloudError` deleted or renamed its instance variable `target`
   - Model `CloudError` deleted or renamed its instance variable `details`
-  - Model `CmdkeySetup` deleted or renamed its instance variable `target_name`
-  - Model `CmdkeySetup` deleted or renamed its instance variable `user_name`
-  - Model `CmdkeySetup` deleted or renamed its instance variable `password`
-  - Model `CommonDataServiceForAppsEntityDataset` deleted or renamed its instance variable `entity_name`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `deployment_type`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `host_name`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `port`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `service_uri`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `organization_name`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `domain`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `username`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `password`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `service_principal_credential`
-  - Model `CommonDataServiceForAppsLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `ComponentSetup` deleted or renamed its instance variable `component_name`
-  - Model `ComponentSetup` deleted or renamed its instance variable `license_key`
-  - Model `ConcurLinkedService` deleted or renamed its instance variable `connection_properties`
-  - Model `ConcurLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `ConcurLinkedService` deleted or renamed its instance variable `username`
-  - Model `ConcurLinkedService` deleted or renamed its instance variable `password`
-  - Model `ConcurLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `ConcurLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `ConcurLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `ConcurLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `ConcurObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `CopyActivity` deleted or renamed its instance variable `source`
-  - Model `CopyActivity` deleted or renamed its instance variable `sink`
-  - Model `CopyActivity` deleted or renamed its instance variable `translator`
-  - Model `CopyActivity` deleted or renamed its instance variable `enable_staging`
-  - Model `CopyActivity` deleted or renamed its instance variable `staging_settings`
-  - Model `CopyActivity` deleted or renamed its instance variable `parallel_copies`
-  - Model `CopyActivity` deleted or renamed its instance variable `data_integration_units`
-  - Model `CopyActivity` deleted or renamed its instance variable `enable_skip_incompatible_row`
-  - Model `CopyActivity` deleted or renamed its instance variable `redirect_incompatible_row_settings`
-  - Model `CopyActivity` deleted or renamed its instance variable `log_storage_settings`
-  - Model `CopyActivity` deleted or renamed its instance variable `log_settings`
-  - Model `CopyActivity` deleted or renamed its instance variable `preserve_rules`
-  - Model `CopyActivity` deleted or renamed its instance variable `preserve`
-  - Model `CopyActivity` deleted or renamed its instance variable `validate_data_consistency`
-  - Model `CopyActivity` deleted or renamed its instance variable `skip_error_file`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `account_endpoint`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `database`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `account_key`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `service_principal_credential`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `azure_cloud_type`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `connection_mode`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `CosmosDbLinkedService` deleted or renamed its instance variable `credential`
-  - Model `CosmosDbMongoDbApiCollectionDataset` deleted or renamed its instance variable `collection`
-  - Model `CosmosDbMongoDbApiLinkedService` deleted or renamed its instance variable `is_server_version_above32`
-  - Model `CosmosDbMongoDbApiLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `CosmosDbMongoDbApiLinkedService` deleted or renamed its instance variable `database`
-  - Model `CosmosDbSqlApiCollectionDataset` deleted or renamed its instance variable `collection_name`
-  - Model `CouchbaseLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `CouchbaseLinkedService` deleted or renamed its instance variable `cred_string`
-  - Model `CouchbaseLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `CouchbaseTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `CustomActivity` deleted or renamed its instance variable `command`
-  - Model `CustomActivity` deleted or renamed its instance variable `resource_linked_service`
-  - Model `CustomActivity` deleted or renamed its instance variable `folder_path`
-  - Model `CustomActivity` deleted or renamed its instance variable `reference_objects`
-  - Model `CustomActivity` deleted or renamed its instance variable `extended_properties`
-  - Model `CustomActivity` deleted or renamed its instance variable `retention_time_in_days`
-  - Model `CustomActivity` deleted or renamed its instance variable `auto_user_specification`
-  - Model `CustomEventsTrigger` deleted or renamed its instance variable `subject_begins_with`
-  - Model `CustomEventsTrigger` deleted or renamed its instance variable `subject_ends_with`
-  - Model `CustomEventsTrigger` deleted or renamed its instance variable `events`
-  - Model `CustomEventsTrigger` deleted or renamed its instance variable `scope`
-  - Model `DataLakeAnalyticsUSQLActivity` deleted or renamed its instance variable `script_path`
-  - Model `DataLakeAnalyticsUSQLActivity` deleted or renamed its instance variable `script_linked_service`
-  - Model `DataLakeAnalyticsUSQLActivity` deleted or renamed its instance variable `degree_of_parallelism`
-  - Model `DataLakeAnalyticsUSQLActivity` deleted or renamed its instance variable `priority`
-  - Model `DataLakeAnalyticsUSQLActivity` deleted or renamed its instance variable `parameters`
-  - Model `DataLakeAnalyticsUSQLActivity` deleted or renamed its instance variable `runtime_version`
-  - Model `DataLakeAnalyticsUSQLActivity` deleted or renamed its instance variable `compilation_mode`
-  - Model `DatabricksJobActivity` deleted or renamed its instance variable `job_id`
-  - Model `DatabricksJobActivity` deleted or renamed its instance variable `job_parameters`
-  - Model `DatabricksNotebookActivity` deleted or renamed its instance variable `notebook_path`
-  - Model `DatabricksNotebookActivity` deleted or renamed its instance variable `base_parameters`
-  - Model `DatabricksNotebookActivity` deleted or renamed its instance variable `libraries`
-  - Model `DatabricksSparkJarActivity` deleted or renamed its instance variable `main_class_name`
-  - Model `DatabricksSparkJarActivity` deleted or renamed its instance variable `parameters`
-  - Model `DatabricksSparkJarActivity` deleted or renamed its instance variable `libraries`
-  - Model `DatabricksSparkPythonActivity` deleted or renamed its instance variable `python_file`
-  - Model `DatabricksSparkPythonActivity` deleted or renamed its instance variable `parameters`
-  - Model `DatabricksSparkPythonActivity` deleted or renamed its instance variable `libraries`
-  - Model `DataworldLinkedService` deleted or renamed its instance variable `api_token`
-  - Model `DataworldLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `Db2LinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `Db2LinkedService` deleted or renamed its instance variable `server`
-  - Model `Db2LinkedService` deleted or renamed its instance variable `database`
-  - Model `Db2LinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `Db2LinkedService` deleted or renamed its instance variable `username`
-  - Model `Db2LinkedService` deleted or renamed its instance variable `password`
-  - Model `Db2LinkedService` deleted or renamed its instance variable `package_collection`
-  - Model `Db2LinkedService` deleted or renamed its instance variable `certificate_common_name`
-  - Model `Db2LinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `Db2TableDataset` deleted or renamed its instance variable `table_name`
-  - Model `Db2TableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `Db2TableDataset` deleted or renamed its instance variable `table`
-  - Model `DeleteActivity` deleted or renamed its instance variable `recursive`
-  - Model `DeleteActivity` deleted or renamed its instance variable `max_concurrent_connections`
-  - Model `DeleteActivity` deleted or renamed its instance variable `enable_logging`
-  - Model `DeleteActivity` deleted or renamed its instance variable `log_storage_settings`
-  - Model `DeleteActivity` deleted or renamed its instance variable `dataset`
-  - Model `DeleteActivity` deleted or renamed its instance variable `store_settings`
-  - Model `DelimitedTextDataset` deleted or renamed its instance variable `location`
-  - Model `DelimitedTextDataset` deleted or renamed its instance variable `column_delimiter`
-  - Model `DelimitedTextDataset` deleted or renamed its instance variable `row_delimiter`
-  - Model `DelimitedTextDataset` deleted or renamed its instance variable `encoding_name`
-  - Model `DelimitedTextDataset` deleted or renamed its instance variable `compression_codec`
-  - Model `DelimitedTextDataset` deleted or renamed its instance variable `compression_level`
-  - Model `DelimitedTextDataset` deleted or renamed its instance variable `quote_char`
-  - Model `DelimitedTextDataset` deleted or renamed its instance variable `escape_char`
-  - Model `DelimitedTextDataset` deleted or renamed its instance variable `first_row_as_header`
-  - Model `DelimitedTextDataset` deleted or renamed its instance variable `null_value`
-  - Model `DocumentDbCollectionDataset` deleted or renamed its instance variable `collection_name`
-  - Model `DrillLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `DrillLinkedService` deleted or renamed its instance variable `pwd`
-  - Model `DrillLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `DrillTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `DrillTableDataset` deleted or renamed its instance variable `table`
-  - Model `DrillTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `DynamicsAXLinkedService` deleted or renamed its instance variable `url`
-  - Model `DynamicsAXLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `DynamicsAXLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `DynamicsAXLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `DynamicsAXLinkedService` deleted or renamed its instance variable `aad_resource_id`
-  - Model `DynamicsAXLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `DynamicsAXResourceDataset` deleted or renamed its instance variable `path`
-  - Model `DynamicsCrmEntityDataset` deleted or renamed its instance variable `entity_name`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `deployment_type`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `host_name`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `port`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `service_uri`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `organization_name`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `domain`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `username`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `password`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `service_principal_credential`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `credential`
-  - Model `DynamicsCrmLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `DynamicsEntityDataset` deleted or renamed its instance variable `entity_name`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `deployment_type`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `host_name`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `port`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `service_uri`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `organization_name`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `domain`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `username`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `password`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `service_principal_credential`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `DynamicsLinkedService` deleted or renamed its instance variable `credential`
-  - Model `EloquaLinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `EloquaLinkedService` deleted or renamed its instance variable `username`
-  - Model `EloquaLinkedService` deleted or renamed its instance variable `password`
-  - Model `EloquaLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `EloquaLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `EloquaLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `EloquaLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `EloquaObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `EnvironmentVariableSetup` deleted or renamed its instance variable `variable_name`
-  - Model `EnvironmentVariableSetup` deleted or renamed its instance variable `variable_value`
-  - Model `ExcelDataset` deleted or renamed its instance variable `location`
-  - Model `ExcelDataset` deleted or renamed its instance variable `sheet_name`
-  - Model `ExcelDataset` deleted or renamed its instance variable `sheet_index`
-  - Model `ExcelDataset` deleted or renamed its instance variable `range`
-  - Model `ExcelDataset` deleted or renamed its instance variable `first_row_as_header`
-  - Model `ExcelDataset` deleted or renamed its instance variable `compression`
-  - Model `ExcelDataset` deleted or renamed its instance variable `null_value`
-  - Model `ExecuteDataFlowActivity` deleted or renamed its instance variable `data_flow`
-  - Model `ExecuteDataFlowActivity` deleted or renamed its instance variable `staging`
-  - Model `ExecuteDataFlowActivity` deleted or renamed its instance variable `integration_runtime`
-  - Model `ExecuteDataFlowActivity` deleted or renamed its instance variable `continuation_settings`
-  - Model `ExecuteDataFlowActivity` deleted or renamed its instance variable `compute`
-  - Model `ExecuteDataFlowActivity` deleted or renamed its instance variable `trace_level`
-  - Model `ExecuteDataFlowActivity` deleted or renamed its instance variable `continue_on_error`
-  - Model `ExecuteDataFlowActivity` deleted or renamed its instance variable `run_concurrently`
-  - Model `ExecuteDataFlowActivity` deleted or renamed its instance variable `source_staging_concurrency`
-  - Model `ExecutePipelineActivity` deleted or renamed its instance variable `pipeline`
-  - Model `ExecutePipelineActivity` deleted or renamed its instance variable `parameters`
-  - Model `ExecutePipelineActivity` deleted or renamed its instance variable `wait_on_completion`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `package_location`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `runtime`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `logging_level`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `environment_path`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `execution_credential`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `connect_via`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `project_parameters`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `package_parameters`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `project_connection_managers`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `package_connection_managers`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `property_overrides`
-  - Model `ExecuteSSISPackageActivity` deleted or renamed its instance variable `log_location`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `data_flow`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `staging`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `integration_runtime`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `continuation_settings`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `compute`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `trace_level`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `continue_on_error`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `run_concurrently`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `source_staging_concurrency`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `sinks`
-  - Model `ExecuteWranglingDataflowActivity` deleted or renamed its instance variable `queries`
-  - Model `FactoryUpdateParameters` deleted or renamed its instance variable `public_network_access`
-  - Model `FailActivity` deleted or renamed its instance variable `message`
-  - Model `FailActivity` deleted or renamed its instance variable `error_code`
-  - Model `FileServerLinkedService` deleted or renamed its instance variable `host`
-  - Model `FileServerLinkedService` deleted or renamed its instance variable `user_id`
-  - Model `FileServerLinkedService` deleted or renamed its instance variable `password`
-  - Model `FileServerLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `FileShareDataset` deleted or renamed its instance variable `folder_path`
-  - Model `FileShareDataset` deleted or renamed its instance variable `file_name`
-  - Model `FileShareDataset` deleted or renamed its instance variable `modified_datetime_start`
-  - Model `FileShareDataset` deleted or renamed its instance variable `modified_datetime_end`
-  - Model `FileShareDataset` deleted or renamed its instance variable `format`
-  - Model `FileShareDataset` deleted or renamed its instance variable `file_filter`
-  - Model `FileShareDataset` deleted or renamed its instance variable `compression`
-  - Model `FilterActivity` deleted or renamed its instance variable `items`
-  - Model `FilterActivity` deleted or renamed its instance variable `condition`
-  - Model `Flowlet` deleted or renamed its instance variable `sources`
-  - Model `Flowlet` deleted or renamed its instance variable `sinks`
-  - Model `Flowlet` deleted or renamed its instance variable `transformations`
-  - Model `Flowlet` deleted or renamed its instance variable `script`
-  - Model `Flowlet` deleted or renamed its instance variable `script_lines`
-  - Model `ForEachActivity` deleted or renamed its instance variable `is_sequential`
-  - Model `ForEachActivity` deleted or renamed its instance variable `batch_count`
-  - Model `ForEachActivity` deleted or renamed its instance variable `items`
-  - Model `ForEachActivity` deleted or renamed its instance variable `activities`
-  - Model `FtpServerLinkedService` deleted or renamed its instance variable `host`
-  - Model `FtpServerLinkedService` deleted or renamed its instance variable `port`
-  - Model `FtpServerLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `FtpServerLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `FtpServerLinkedService` deleted or renamed its instance variable `password`
-  - Model `FtpServerLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `FtpServerLinkedService` deleted or renamed its instance variable `enable_ssl`
-  - Model `FtpServerLinkedService` deleted or renamed its instance variable `enable_server_certificate_validation`
-  - Model `GetMetadataActivity` deleted or renamed its instance variable `dataset`
-  - Model `GetMetadataActivity` deleted or renamed its instance variable `field_list`
-  - Model `GetMetadataActivity` deleted or renamed its instance variable `store_settings`
-  - Model `GetMetadataActivity` deleted or renamed its instance variable `format_settings`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `connection_properties`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `client_customer_id`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `developer_token`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `refresh_token`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `email`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `key_file_path`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `trusted_cert_path`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `use_system_trust_store`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `private_key`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `login_customer_id`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `google_ads_api_version`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `support_legacy_data_types`
-  - Model `GoogleAdWordsLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `GoogleAdWordsObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `project`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `additional_projects`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `request_google_drive_scope`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `refresh_token`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `email`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `key_file_path`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `trusted_cert_path`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `use_system_trust_store`
-  - Model `GoogleBigQueryLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `GoogleBigQueryObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `GoogleBigQueryObjectDataset` deleted or renamed its instance variable `table`
-  - Model `GoogleBigQueryObjectDataset` deleted or renamed its instance variable `dataset`
-  - Model `GoogleBigQueryV2LinkedService` deleted or renamed its instance variable `project_id`
-  - Model `GoogleBigQueryV2LinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `GoogleBigQueryV2LinkedService` deleted or renamed its instance variable `client_id`
-  - Model `GoogleBigQueryV2LinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `GoogleBigQueryV2LinkedService` deleted or renamed its instance variable `refresh_token`
-  - Model `GoogleBigQueryV2LinkedService` deleted or renamed its instance variable `key_file_content`
-  - Model `GoogleBigQueryV2LinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `GoogleBigQueryV2ObjectDataset` deleted or renamed its instance variable `table`
-  - Model `GoogleBigQueryV2ObjectDataset` deleted or renamed its instance variable `dataset`
-  - Model `GoogleCloudStorageLinkedService` deleted or renamed its instance variable `access_key_id`
-  - Model `GoogleCloudStorageLinkedService` deleted or renamed its instance variable `secret_access_key`
-  - Model `GoogleCloudStorageLinkedService` deleted or renamed its instance variable `service_url`
-  - Model `GoogleCloudStorageLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `GoogleSheetsLinkedService` deleted or renamed its instance variable `api_token`
-  - Model `GoogleSheetsLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `pwd`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `host`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `port`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `username`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `database`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `ssl_mode`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `connection_timeout`
-  - Model `GreenplumLinkedService` deleted or renamed its instance variable `command_timeout`
-  - Model `GreenplumTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `GreenplumTableDataset` deleted or renamed its instance variable `table`
-  - Model `GreenplumTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `host`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `port`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `http_path`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `username`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `password`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `enable_ssl`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `trusted_cert_path`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `allow_host_name_cn_mismatch`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `allow_self_signed_server_cert`
-  - Model `HBaseLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `HBaseObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `HDInsightHiveActivity` deleted or renamed its instance variable `storage_linked_services`
-  - Model `HDInsightHiveActivity` deleted or renamed its instance variable `arguments`
-  - Model `HDInsightHiveActivity` deleted or renamed its instance variable `get_debug_info`
-  - Model `HDInsightHiveActivity` deleted or renamed its instance variable `script_path`
-  - Model `HDInsightHiveActivity` deleted or renamed its instance variable `script_linked_service`
-  - Model `HDInsightHiveActivity` deleted or renamed its instance variable `defines`
-  - Model `HDInsightHiveActivity` deleted or renamed its instance variable `variables`
-  - Model `HDInsightHiveActivity` deleted or renamed its instance variable `query_timeout`
-  - Model `HDInsightLinkedService` deleted or renamed its instance variable `cluster_uri`
-  - Model `HDInsightLinkedService` deleted or renamed its instance variable `cluster_auth_type`
-  - Model `HDInsightLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `HDInsightLinkedService` deleted or renamed its instance variable `password`
-  - Model `HDInsightLinkedService` deleted or renamed its instance variable `linked_service_name`
-  - Model `HDInsightLinkedService` deleted or renamed its instance variable `hcatalog_linked_service_name`
-  - Model `HDInsightLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `HDInsightLinkedService` deleted or renamed its instance variable `is_esp_enabled`
-  - Model `HDInsightLinkedService` deleted or renamed its instance variable `file_system`
-  - Model `HDInsightLinkedService` deleted or renamed its instance variable `credential`
-  - Model `HDInsightMapReduceActivity` deleted or renamed its instance variable `storage_linked_services`
-  - Model `HDInsightMapReduceActivity` deleted or renamed its instance variable `arguments`
-  - Model `HDInsightMapReduceActivity` deleted or renamed its instance variable `get_debug_info`
-  - Model `HDInsightMapReduceActivity` deleted or renamed its instance variable `class_name`
-  - Model `HDInsightMapReduceActivity` deleted or renamed its instance variable `jar_file_path`
-  - Model `HDInsightMapReduceActivity` deleted or renamed its instance variable `jar_linked_service`
-  - Model `HDInsightMapReduceActivity` deleted or renamed its instance variable `jar_libs`
-  - Model `HDInsightMapReduceActivity` deleted or renamed its instance variable `defines`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `cluster_size`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `time_to_live`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `version_type_properties_version`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `linked_service_name`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `host_subscription_id`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `cluster_resource_group`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `cluster_resource_group_auth_type`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `cluster_name_prefix`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `cluster_user_name`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `cluster_password`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `cluster_ssh_user_name`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `cluster_ssh_password`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `additional_linked_service_names`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `hcatalog_linked_service_name`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `cluster_type`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `spark_version`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `core_configuration`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `h_base_configuration`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `hdfs_configuration`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `hive_configuration`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `map_reduce_configuration`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `oozie_configuration`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `storm_configuration`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `yarn_configuration`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `head_node_size`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `data_node_size`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `zookeeper_node_size`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `script_actions`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `virtual_network_id`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `subnet_name`
-  - Model `HDInsightOnDemandLinkedService` deleted or renamed its instance variable `credential`
-  - Model `HDInsightPigActivity` deleted or renamed its instance variable `storage_linked_services`
-  - Model `HDInsightPigActivity` deleted or renamed its instance variable `arguments`
-  - Model `HDInsightPigActivity` deleted or renamed its instance variable `get_debug_info`
-  - Model `HDInsightPigActivity` deleted or renamed its instance variable `script_path`
-  - Model `HDInsightPigActivity` deleted or renamed its instance variable `script_linked_service`
-  - Model `HDInsightPigActivity` deleted or renamed its instance variable `defines`
-  - Model `HDInsightSparkActivity` deleted or renamed its instance variable `root_path`
-  - Model `HDInsightSparkActivity` deleted or renamed its instance variable `entry_file_path`
-  - Model `HDInsightSparkActivity` deleted or renamed its instance variable `arguments`
-  - Model `HDInsightSparkActivity` deleted or renamed its instance variable `get_debug_info`
-  - Model `HDInsightSparkActivity` deleted or renamed its instance variable `spark_job_linked_service`
-  - Model `HDInsightSparkActivity` deleted or renamed its instance variable `class_name`
-  - Model `HDInsightSparkActivity` deleted or renamed its instance variable `proxy_user`
-  - Model `HDInsightSparkActivity` deleted or renamed its instance variable `spark_config`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `storage_linked_services`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `arguments`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `get_debug_info`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `mapper`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `reducer`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `input`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `output`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `file_paths`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `file_linked_service`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `combiner`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `command_environment`
-  - Model `HDInsightStreamingActivity` deleted or renamed its instance variable `defines`
-  - Model `HdfsLinkedService` deleted or renamed its instance variable `url`
-  - Model `HdfsLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `HdfsLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `HdfsLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `HdfsLinkedService` deleted or renamed its instance variable `password`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `host`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `port`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `server_type`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `thrift_transport_protocol`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `service_discovery_mode`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `zoo_keeper_name_space`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `use_native_query`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `username`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `password`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `http_path`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `enable_ssl`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `enable_server_certificate_validation`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `trusted_cert_path`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `use_system_trust_store`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `allow_host_name_cn_mismatch`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `allow_self_signed_server_cert`
-  - Model `HiveLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `HiveObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `HiveObjectDataset` deleted or renamed its instance variable `table`
-  - Model `HiveObjectDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `HttpDataset` deleted or renamed its instance variable `relative_url`
-  - Model `HttpDataset` deleted or renamed its instance variable `request_method`
-  - Model `HttpDataset` deleted or renamed its instance variable `request_body`
-  - Model `HttpDataset` deleted or renamed its instance variable `additional_headers`
-  - Model `HttpDataset` deleted or renamed its instance variable `format`
-  - Model `HttpDataset` deleted or renamed its instance variable `compression`
-  - Model `HttpLinkedService` deleted or renamed its instance variable `url`
-  - Model `HttpLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `HttpLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `HttpLinkedService` deleted or renamed its instance variable `password`
-  - Model `HttpLinkedService` deleted or renamed its instance variable `auth_headers`
-  - Model `HttpLinkedService` deleted or renamed its instance variable `embedded_cert_data`
-  - Model `HttpLinkedService` deleted or renamed its instance variable `cert_thumbprint`
-  - Model `HttpLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `HttpLinkedService` deleted or renamed its instance variable `enable_server_certificate_validation`
-  - Model `HubspotLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `HubspotLinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `HubspotLinkedService` deleted or renamed its instance variable `access_token`
-  - Model `HubspotLinkedService` deleted or renamed its instance variable `refresh_token`
-  - Model `HubspotLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `HubspotLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `HubspotLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `HubspotLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `HubspotObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `IcebergDataset` deleted or renamed its instance variable `location`
-  - Model `IfConditionActivity` deleted or renamed its instance variable `expression`
-  - Model `IfConditionActivity` deleted or renamed its instance variable `if_true_activities`
-  - Model `IfConditionActivity` deleted or renamed its instance variable `if_false_activities`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `host`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `port`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `username`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `password`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `thrift_transport_protocol`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `enable_ssl`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `enable_server_certificate_validation`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `trusted_cert_path`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `use_system_trust_store`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `allow_host_name_cn_mismatch`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `allow_self_signed_server_cert`
-  - Model `ImpalaLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `ImpalaObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `ImpalaObjectDataset` deleted or renamed its instance variable `table`
-  - Model `ImpalaObjectDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `InformixLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `InformixLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `InformixLinkedService` deleted or renamed its instance variable `credential`
-  - Model `InformixLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `InformixLinkedService` deleted or renamed its instance variable `password`
-  - Model `InformixLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `InformixTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `JiraLinkedService` deleted or renamed its instance variable `host`
-  - Model `JiraLinkedService` deleted or renamed its instance variable `port`
-  - Model `JiraLinkedService` deleted or renamed its instance variable `username`
-  - Model `JiraLinkedService` deleted or renamed its instance variable `password`
-  - Model `JiraLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `JiraLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `JiraLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `JiraLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `JiraObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `JiraObjectDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `JiraObjectDataset` deleted or renamed its instance variable `table`
-  - Model `JsonDataset` deleted or renamed its instance variable `location`
-  - Model `JsonDataset` deleted or renamed its instance variable `encoding_name`
-  - Model `JsonDataset` deleted or renamed its instance variable `compression`
-  - Model `LakeHouseLinkedService` deleted or renamed its instance variable `workspace_id`
-  - Model `LakeHouseLinkedService` deleted or renamed its instance variable `artifact_id`
-  - Model `LakeHouseLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `LakeHouseLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `LakeHouseLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `LakeHouseLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `LakeHouseLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `LakeHouseLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `LakeHouseLinkedService` deleted or renamed its instance variable `service_principal_credential`
-  - Model `LakeHouseLinkedService` deleted or renamed its instance variable `credential`
-  - Model `LakeHouseTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `LakeHouseTableDataset` deleted or renamed its instance variable `table`
-  - Model `LookupActivity` deleted or renamed its instance variable `source`
-  - Model `LookupActivity` deleted or renamed its instance variable `dataset`
-  - Model `LookupActivity` deleted or renamed its instance variable `first_row_only`
-  - Model `LookupActivity` deleted or renamed its instance variable `treat_decimal_as_string`
-  - Model `MagentoLinkedService` deleted or renamed its instance variable `host`
-  - Model `MagentoLinkedService` deleted or renamed its instance variable `access_token`
-  - Model `MagentoLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `MagentoLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `MagentoLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `MagentoLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `MagentoObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `ManagedIdentityCredential` deleted or renamed its instance variable `resource_id`
-  - Model `ManagedIntegrationRuntime` deleted or renamed its instance variable `compute_properties`
-  - Model `ManagedIntegrationRuntime` deleted or renamed its instance variable `ssis_properties`
-  - Model `ManagedIntegrationRuntime` deleted or renamed its instance variable `customer_virtual_network`
-  - Model `ManagedIntegrationRuntime` deleted or renamed its instance variable `interactive_query`
-  - Model `ManagedIntegrationRuntimeStatus` deleted or renamed its instance variable `create_time`
-  - Model `ManagedIntegrationRuntimeStatus` deleted or renamed its instance variable `nodes`
-  - Model `ManagedIntegrationRuntimeStatus` deleted or renamed its instance variable `other_errors`
-  - Model `ManagedIntegrationRuntimeStatus` deleted or renamed its instance variable `last_operation`
-  - Model `MappingDataFlow` deleted or renamed its instance variable `sources`
-  - Model `MappingDataFlow` deleted or renamed its instance variable `sinks`
-  - Model `MappingDataFlow` deleted or renamed its instance variable `transformations`
-  - Model `MappingDataFlow` deleted or renamed its instance variable `script`
-  - Model `MappingDataFlow` deleted or renamed its instance variable `script_lines`
-  - Model `MariaDBLinkedService` deleted or renamed its instance variable `driver_version`
-  - Model `MariaDBLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `MariaDBLinkedService` deleted or renamed its instance variable `server`
-  - Model `MariaDBLinkedService` deleted or renamed its instance variable `port`
-  - Model `MariaDBLinkedService` deleted or renamed its instance variable `username`
-  - Model `MariaDBLinkedService` deleted or renamed its instance variable `database`
-  - Model `MariaDBLinkedService` deleted or renamed its instance variable `ssl_mode`
-  - Model `MariaDBLinkedService` deleted or renamed its instance variable `use_system_trust_store`
-  - Model `MariaDBLinkedService` deleted or renamed its instance variable `password`
-  - Model `MariaDBLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `MariaDBTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `MarketoLinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `MarketoLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `MarketoLinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `MarketoLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `MarketoLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `MarketoLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `MarketoLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `MarketoObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `MicrosoftAccessLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `MicrosoftAccessLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `MicrosoftAccessLinkedService` deleted or renamed its instance variable `credential`
-  - Model `MicrosoftAccessLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `MicrosoftAccessLinkedService` deleted or renamed its instance variable `password`
-  - Model `MicrosoftAccessLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `MicrosoftAccessTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `MongoDbAtlasCollectionDataset` deleted or renamed its instance variable `collection`
-  - Model `MongoDbAtlasLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `MongoDbAtlasLinkedService` deleted or renamed its instance variable `database`
-  - Model `MongoDbAtlasLinkedService` deleted or renamed its instance variable `driver_version`
-  - Model `MongoDbCollectionDataset` deleted or renamed its instance variable `collection_name`
-  - Model `MongoDbLinkedService` deleted or renamed its instance variable `server`
-  - Model `MongoDbLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `MongoDbLinkedService` deleted or renamed its instance variable `database_name`
-  - Model `MongoDbLinkedService` deleted or renamed its instance variable `username`
-  - Model `MongoDbLinkedService` deleted or renamed its instance variable `password`
-  - Model `MongoDbLinkedService` deleted or renamed its instance variable `auth_source`
-  - Model `MongoDbLinkedService` deleted or renamed its instance variable `port`
-  - Model `MongoDbLinkedService` deleted or renamed its instance variable `enable_ssl`
-  - Model `MongoDbLinkedService` deleted or renamed its instance variable `allow_self_signed_server_cert`
-  - Model `MongoDbLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `MongoDbV2CollectionDataset` deleted or renamed its instance variable `collection`
-  - Model `MongoDbV2LinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `MongoDbV2LinkedService` deleted or renamed its instance variable `database`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `driver_version`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `server`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `port`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `username`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `database`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `ssl_mode`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `use_system_trust_store`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `password`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `allow_zero_date_time`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `connection_timeout`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `convert_zero_date_time`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `guid_format`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `ssl_cert`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `ssl_key`
-  - Model `MySqlLinkedService` deleted or renamed its instance variable `treat_tiny_as_boolean`
-  - Model `MySqlTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `NetezzaLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `NetezzaLinkedService` deleted or renamed its instance variable `server`
-  - Model `NetezzaLinkedService` deleted or renamed its instance variable `port`
-  - Model `NetezzaLinkedService` deleted or renamed its instance variable `uid`
-  - Model `NetezzaLinkedService` deleted or renamed its instance variable `database`
-  - Model `NetezzaLinkedService` deleted or renamed its instance variable `security_level`
-  - Model `NetezzaLinkedService` deleted or renamed its instance variable `pwd`
-  - Model `NetezzaLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `NetezzaTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `NetezzaTableDataset` deleted or renamed its instance variable `table`
-  - Model `NetezzaTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `url`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `password`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `auth_headers`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `azure_cloud_type`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `aad_resource_id`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `aad_service_principal_credential_type`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `service_principal_embedded_cert`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `service_principal_embedded_cert_password`
-  - Model `ODataLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `ODataResourceDataset` deleted or renamed its instance variable `path`
-  - Model `OdbcLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `OdbcLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `OdbcLinkedService` deleted or renamed its instance variable `credential`
-  - Model `OdbcLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `OdbcLinkedService` deleted or renamed its instance variable `password`
-  - Model `OdbcLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `OdbcTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `Office365Dataset` deleted or renamed its instance variable `table_name`
-  - Model `Office365Dataset` deleted or renamed its instance variable `predicate`
-  - Model `Office365LinkedService` deleted or renamed its instance variable `office365_tenant_id`
-  - Model `Office365LinkedService` deleted or renamed its instance variable `service_principal_tenant_id`
-  - Model `Office365LinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `Office365LinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `Office365LinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `Office365LinkedService` deleted or renamed its instance variable `service_principal_embedded_cert`
-  - Model `Office365LinkedService` deleted or renamed its instance variable `service_principal_embedded_cert_password`
-  - Model `Office365LinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `OracleCloudStorageLinkedService` deleted or renamed its instance variable `access_key_id`
-  - Model `OracleCloudStorageLinkedService` deleted or renamed its instance variable `secret_access_key`
-  - Model `OracleCloudStorageLinkedService` deleted or renamed its instance variable `service_url`
-  - Model `OracleCloudStorageLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `server`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `username`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `password`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `encryption_client`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `encryption_types_client`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `crypto_checksum_client`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `crypto_checksum_types_client`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `initial_lob_fetch_size`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `fetch_size`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `statement_cache_size`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `initialization_string`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `enable_bulk_load`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `support_v1_data_types`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `fetch_tswtz_as_timestamp`
-  - Model `OracleLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `OracleServiceCloudLinkedService` deleted or renamed its instance variable `host`
-  - Model `OracleServiceCloudLinkedService` deleted or renamed its instance variable `username`
-  - Model `OracleServiceCloudLinkedService` deleted or renamed its instance variable `password`
-  - Model `OracleServiceCloudLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `OracleServiceCloudLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `OracleServiceCloudLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `OracleServiceCloudLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `OracleServiceCloudObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `OracleTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `OracleTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `OracleTableDataset` deleted or renamed its instance variable `table`
-  - Model `OrcDataset` deleted or renamed its instance variable `location`
-  - Model `OrcDataset` deleted or renamed its instance variable `orc_compression_codec`
-  - Model `ParquetDataset` deleted or renamed its instance variable `location`
-  - Model `ParquetDataset` deleted or renamed its instance variable `compression_codec`
-  - Model `PaypalLinkedService` deleted or renamed its instance variable `host`
-  - Model `PaypalLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `PaypalLinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `PaypalLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `PaypalLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `PaypalLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `PaypalLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `PaypalObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `host`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `port`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `http_path`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `username`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `password`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `enable_ssl`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `trusted_cert_path`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `use_system_trust_store`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `allow_host_name_cn_mismatch`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `allow_self_signed_server_cert`
-  - Model `PhoenixLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `PhoenixObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `PhoenixObjectDataset` deleted or renamed its instance variable `table`
-  - Model `PhoenixObjectDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `PipelineResource` deleted or renamed its instance variable `description`
-  - Model `PipelineResource` deleted or renamed its instance variable `activities`
-  - Model `PipelineResource` deleted or renamed its instance variable `parameters`
-  - Model `PipelineResource` deleted or renamed its instance variable `variables`
-  - Model `PipelineResource` deleted or renamed its instance variable `concurrency`
-  - Model `PipelineResource` deleted or renamed its instance variable `annotations`
-  - Model `PipelineResource` deleted or renamed its instance variable `run_dimensions`
-  - Model `PipelineResource` deleted or renamed its instance variable `folder`
-  - Model `PipelineResource` deleted or renamed its instance variable `policy`
-  - Model `PostgreSqlLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `PostgreSqlLinkedService` deleted or renamed its instance variable `password`
-  - Model `PostgreSqlLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `PostgreSqlTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `PostgreSqlTableDataset` deleted or renamed its instance variable `table`
-  - Model `PostgreSqlTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `server`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `port`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `username`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `database`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `ssl_mode`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `schema`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `pooling`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `connection_timeout`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `command_timeout`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `trust_server_certificate`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `ssl_certificate`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `ssl_key`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `ssl_password`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `read_buffer_size`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `log_parameters`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `timezone`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `encoding`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `password`
-  - Model `PostgreSqlV2LinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `PostgreSqlV2TableDataset` deleted or renamed its instance variable `table`
-  - Model `PostgreSqlV2TableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `host`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `server_version`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `catalog`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `port`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `username`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `password`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `enable_ssl`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `enable_server_certificate_validation`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `trusted_cert_path`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `use_system_trust_store`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `allow_host_name_cn_mismatch`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `allow_self_signed_server_cert`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `time_zone_id`
-  - Model `PrestoLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `PrestoObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `PrestoObjectDataset` deleted or renamed its instance variable `table`
-  - Model `PrestoObjectDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `QuickBooksLinkedService` deleted or renamed its instance variable `connection_properties`
-  - Model `QuickBooksLinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `QuickBooksLinkedService` deleted or renamed its instance variable `company_id`
-  - Model `QuickBooksLinkedService` deleted or renamed its instance variable `consumer_key`
-  - Model `QuickBooksLinkedService` deleted or renamed its instance variable `consumer_secret`
-  - Model `QuickBooksLinkedService` deleted or renamed its instance variable `access_token`
-  - Model `QuickBooksLinkedService` deleted or renamed its instance variable `access_token_secret`
-  - Model `QuickBooksLinkedService` deleted or renamed its instance variable `refresh_token`
-  - Model `QuickBooksLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `QuickBooksLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `QuickBooksObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `QuickbaseLinkedService` deleted or renamed its instance variable `url`
-  - Model `QuickbaseLinkedService` deleted or renamed its instance variable `user_token`
-  - Model `QuickbaseLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `RelationalTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `RerunTumblingWindowTrigger` deleted or renamed its instance variable `parent_trigger`
-  - Model `RerunTumblingWindowTrigger` deleted or renamed its instance variable `requested_start_time`
-  - Model `RerunTumblingWindowTrigger` deleted or renamed its instance variable `requested_end_time`
-  - Model `RerunTumblingWindowTrigger` deleted or renamed its instance variable `rerun_concurrency`
-  - Model `ResponsysLinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `ResponsysLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `ResponsysLinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `ResponsysLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `ResponsysLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `ResponsysLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `ResponsysLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `ResponsysObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `RestResourceDataset` deleted or renamed its instance variable `relative_url`
-  - Model `RestResourceDataset` deleted or renamed its instance variable `request_method`
-  - Model `RestResourceDataset` deleted or renamed its instance variable `request_body`
-  - Model `RestResourceDataset` deleted or renamed its instance variable `additional_headers`
-  - Model `RestResourceDataset` deleted or renamed its instance variable `pagination_rules`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `url`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `enable_server_certificate_validation`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `password`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `auth_headers`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `azure_cloud_type`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `aad_resource_id`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `credential`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `token_endpoint`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `resource`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `scope`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `service_principal_embedded_cert`
-  - Model `RestServiceLinkedService` deleted or renamed its instance variable `service_principal_embedded_cert_password`
-  - Model `RunQueryFilter` deleted or renamed its instance variable `values`
-  - Model `SSISLogLocation` deleted or renamed its instance variable `access_credential`
-  - Model `SSISLogLocation` deleted or renamed its instance variable `log_refresh_interval`
-  - Model `SSISPackageLocation` deleted or renamed its instance variable `package_password`
-  - Model `SSISPackageLocation` deleted or renamed its instance variable `access_credential`
-  - Model `SSISPackageLocation` deleted or renamed its instance variable `configuration_path`
-  - Model `SSISPackageLocation` deleted or renamed its instance variable `configuration_access_credential`
-  - Model `SSISPackageLocation` deleted or renamed its instance variable `package_name`
-  - Model `SSISPackageLocation` deleted or renamed its instance variable `package_content`
-  - Model `SSISPackageLocation` deleted or renamed its instance variable `package_last_modified_date`
-  - Model `SSISPackageLocation` deleted or renamed its instance variable `child_packages`
-  - Model `SalesforceLinkedService` deleted or renamed its instance variable `environment_url`
-  - Model `SalesforceLinkedService` deleted or renamed its instance variable `username`
-  - Model `SalesforceLinkedService` deleted or renamed its instance variable `password`
-  - Model `SalesforceLinkedService` deleted or renamed its instance variable `security_token`
-  - Model `SalesforceLinkedService` deleted or renamed its instance variable `api_version`
-  - Model `SalesforceLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SalesforceMarketingCloudLinkedService` deleted or renamed its instance variable `connection_properties`
-  - Model `SalesforceMarketingCloudLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `SalesforceMarketingCloudLinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `SalesforceMarketingCloudLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `SalesforceMarketingCloudLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `SalesforceMarketingCloudLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `SalesforceMarketingCloudLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SalesforceMarketingCloudObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `SalesforceObjectDataset` deleted or renamed its instance variable `object_api_name`
-  - Model `SalesforceServiceCloudLinkedService` deleted or renamed its instance variable `environment_url`
-  - Model `SalesforceServiceCloudLinkedService` deleted or renamed its instance variable `username`
-  - Model `SalesforceServiceCloudLinkedService` deleted or renamed its instance variable `password`
-  - Model `SalesforceServiceCloudLinkedService` deleted or renamed its instance variable `security_token`
-  - Model `SalesforceServiceCloudLinkedService` deleted or renamed its instance variable `api_version`
-  - Model `SalesforceServiceCloudLinkedService` deleted or renamed its instance variable `extended_properties`
-  - Model `SalesforceServiceCloudLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SalesforceServiceCloudObjectDataset` deleted or renamed its instance variable `object_api_name`
-  - Model `SalesforceServiceCloudV2LinkedService` deleted or renamed its instance variable `environment_url`
-  - Model `SalesforceServiceCloudV2LinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `SalesforceServiceCloudV2LinkedService` deleted or renamed its instance variable `client_id`
-  - Model `SalesforceServiceCloudV2LinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `SalesforceServiceCloudV2LinkedService` deleted or renamed its instance variable `api_version`
-  - Model `SalesforceServiceCloudV2LinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SalesforceServiceCloudV2ObjectDataset` deleted or renamed its instance variable `object_api_name`
-  - Model `SalesforceServiceCloudV2ObjectDataset` deleted or renamed its instance variable `report_id`
-  - Model `SalesforceV2LinkedService` deleted or renamed its instance variable `environment_url`
-  - Model `SalesforceV2LinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `SalesforceV2LinkedService` deleted or renamed its instance variable `client_id`
-  - Model `SalesforceV2LinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `SalesforceV2LinkedService` deleted or renamed its instance variable `api_version`
-  - Model `SalesforceV2LinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SalesforceV2ObjectDataset` deleted or renamed its instance variable `object_api_name`
-  - Model `SalesforceV2ObjectDataset` deleted or renamed its instance variable `report_id`
-  - Model `SapBWLinkedService` deleted or renamed its instance variable `server`
-  - Model `SapBWLinkedService` deleted or renamed its instance variable `system_number`
-  - Model `SapBWLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `SapBWLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `SapBWLinkedService` deleted or renamed its instance variable `password`
-  - Model `SapBWLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SapCloudForCustomerLinkedService` deleted or renamed its instance variable `url`
-  - Model `SapCloudForCustomerLinkedService` deleted or renamed its instance variable `username`
-  - Model `SapCloudForCustomerLinkedService` deleted or renamed its instance variable `password`
-  - Model `SapCloudForCustomerLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SapCloudForCustomerResourceDataset` deleted or renamed its instance variable `path`
-  - Model `SapEccLinkedService` deleted or renamed its instance variable `url`
-  - Model `SapEccLinkedService` deleted or renamed its instance variable `username`
-  - Model `SapEccLinkedService` deleted or renamed its instance variable `password`
-  - Model `SapEccLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SapEccResourceDataset` deleted or renamed its instance variable `path`
-  - Model `SapHanaLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `SapHanaLinkedService` deleted or renamed its instance variable `server`
-  - Model `SapHanaLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `SapHanaLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `SapHanaLinkedService` deleted or renamed its instance variable `password`
-  - Model `SapHanaLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SapHanaTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `SapHanaTableDataset` deleted or renamed its instance variable `table`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `server`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `system_number`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `language`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `system_id`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `password`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `message_server`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `message_server_service`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `snc_mode`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `snc_my_name`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `snc_partner_name`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `snc_library_path`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `snc_qop`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `x509_certificate_path`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `logon_group`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `subscriber_name`
-  - Model `SapOdpLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SapOdpResourceDataset` deleted or renamed its instance variable `context`
-  - Model `SapOdpResourceDataset` deleted or renamed its instance variable `object_name`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `server`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `system_number`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `language`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `system_id`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `password`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `message_server`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `message_server_service`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `logon_group`
-  - Model `SapOpenHubLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SapOpenHubTableDataset` deleted or renamed its instance variable `open_hub_destination_name`
-  - Model `SapOpenHubTableDataset` deleted or renamed its instance variable `exclude_last_request`
-  - Model `SapOpenHubTableDataset` deleted or renamed its instance variable `base_request_id`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `server`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `system_number`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `language`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `system_id`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `password`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `message_server`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `message_server_service`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `snc_mode`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `snc_my_name`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `snc_partner_name`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `snc_library_path`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `snc_qop`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `logon_group`
-  - Model `SapTableLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SapTableResourceDataset` deleted or renamed its instance variable `table_name`
-  - Model `ScheduleTrigger` deleted or renamed its instance variable `recurrence`
-  - Model `ScriptActivity` deleted or renamed its instance variable `script_block_execution_timeout`
-  - Model `ScriptActivity` deleted or renamed its instance variable `scripts`
-  - Model `ScriptActivity` deleted or renamed its instance variable `log_settings`
-  - Model `ScriptActivity` deleted or renamed its instance variable `return_multistatement_result`
-  - Model `ScriptActivity` deleted or renamed its instance variable `treat_decimal_as_string`
-  - Model `SelfHostedIntegrationRuntime` deleted or renamed its instance variable `linked_info`
-  - Model `SelfHostedIntegrationRuntime` deleted or renamed its instance variable `self_contained_interactive_authoring_enabled`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `create_time`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `task_queue_id`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `internal_channel_encryption`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `version`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `nodes`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `scheduled_update_date`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `update_delay_offset`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `local_time_zone_offset`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `capabilities`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `service_urls`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `auto_update`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `version_status`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `links`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `pushed_version`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `latest_version`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `auto_update_eta`
-  - Model `SelfHostedIntegrationRuntimeStatus` deleted or renamed its instance variable `self_contained_interactive_authoring_enabled`
-  - Model `ServiceNowLinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `ServiceNowLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `ServiceNowLinkedService` deleted or renamed its instance variable `username`
-  - Model `ServiceNowLinkedService` deleted or renamed its instance variable `password`
-  - Model `ServiceNowLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `ServiceNowLinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `ServiceNowLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `ServiceNowLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `ServiceNowLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `ServiceNowLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `ServiceNowObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `ServiceNowV2LinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `ServiceNowV2LinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `ServiceNowV2LinkedService` deleted or renamed its instance variable `username`
-  - Model `ServiceNowV2LinkedService` deleted or renamed its instance variable `password`
-  - Model `ServiceNowV2LinkedService` deleted or renamed its instance variable `client_id`
-  - Model `ServiceNowV2LinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `ServiceNowV2LinkedService` deleted or renamed its instance variable `grant_type`
-  - Model `ServiceNowV2LinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `ServiceNowV2ObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `ServiceNowV2ObjectDataset` deleted or renamed its instance variable `value_type`
-  - Model `ServicePrincipalCredential` deleted or renamed its instance variable `service_principal_id`
-  - Model `ServicePrincipalCredential` deleted or renamed its instance variable `service_principal_key`
-  - Model `ServicePrincipalCredential` deleted or renamed its instance variable `tenant`
-  - Model `SetVariableActivity` deleted or renamed its instance variable `variable_name`
-  - Model `SetVariableActivity` deleted or renamed its instance variable `value`
-  - Model `SetVariableActivity` deleted or renamed its instance variable `set_system_variable`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `host`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `port`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `password`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `private_key_path`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `private_key_content`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `pass_phrase`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `skip_host_key_validation`
-  - Model `SftpServerLinkedService` deleted or renamed its instance variable `host_key_fingerprint`
-  - Model `SharePointOnlineListLinkedService` deleted or renamed its instance variable `site_url`
-  - Model `SharePointOnlineListLinkedService` deleted or renamed its instance variable `tenant_id`
-  - Model `SharePointOnlineListLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `SharePointOnlineListLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `SharePointOnlineListLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `SharePointOnlineListLinkedService` deleted or renamed its instance variable `service_principal_embedded_cert`
-  - Model `SharePointOnlineListLinkedService` deleted or renamed its instance variable `service_principal_embedded_cert_password`
-  - Model `SharePointOnlineListLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SharePointOnlineListResourceDataset` deleted or renamed its instance variable `list_name`
-  - Model `ShopifyLinkedService` deleted or renamed its instance variable `host`
-  - Model `ShopifyLinkedService` deleted or renamed its instance variable `access_token`
-  - Model `ShopifyLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `ShopifyLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `ShopifyLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `ShopifyLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `ShopifyObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `SmartsheetLinkedService` deleted or renamed its instance variable `api_token`
-  - Model `SmartsheetLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SnowflakeDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `SnowflakeDataset` deleted or renamed its instance variable `table`
-  - Model `SnowflakeLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `SnowflakeLinkedService` deleted or renamed its instance variable `password`
-  - Model `SnowflakeLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SnowflakeV2Dataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `SnowflakeV2Dataset` deleted or renamed its instance variable `table`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `account_identifier`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `user`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `password`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `database`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `warehouse`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `client_id`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `tenant_id`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `scope`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `private_key`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `private_key_passphrase`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `role`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `host`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `schema`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SnowflakeV2LinkedService` deleted or renamed its instance variable `use_utc_timestamps`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `host`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `port`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `server_type`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `thrift_transport_protocol`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `username`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `password`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `http_path`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `enable_ssl`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `enable_server_certificate_validation`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `trusted_cert_path`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `use_system_trust_store`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `allow_host_name_cn_mismatch`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `allow_self_signed_server_cert`
-  - Model `SparkLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SparkObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `SparkObjectDataset` deleted or renamed its instance variable `table`
-  - Model `SparkObjectDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `SqlDWUpsertSettings` deleted or renamed its instance variable `keys`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `server`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `database`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `encrypt`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `trust_server_certificate`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `host_name_in_certificate`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `application_intent`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `connect_timeout`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `connect_retry_count`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `connect_retry_interval`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `load_balance_timeout`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `command_timeout`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `integrated_security`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `failover_partner`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `max_pool_size`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `min_pool_size`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `multiple_active_result_sets`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `multi_subnet_failover`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `packet_size`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `pooling`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `password`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `always_encrypted_settings`
-  - Model `SqlServerLinkedService` deleted or renamed its instance variable `credential`
-  - Model `SqlServerStoredProcedureActivity` deleted or renamed its instance variable `stored_procedure_name`
-  - Model `SqlServerStoredProcedureActivity` deleted or renamed its instance variable `stored_procedure_parameters`
-  - Model `SqlServerTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `SqlServerTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `SqlServerTableDataset` deleted or renamed its instance variable `table`
-  - Model `SqlUpsertSettings` deleted or renamed its instance variable `keys`
-  - Model `SquareLinkedService` deleted or renamed its instance variable `connection_properties`
-  - Model `SquareLinkedService` deleted or renamed its instance variable `host`
-  - Model `SquareLinkedService` deleted or renamed its instance variable `client_id`
-  - Model `SquareLinkedService` deleted or renamed its instance variable `client_secret`
-  - Model `SquareLinkedService` deleted or renamed its instance variable `redirect_uri`
-  - Model `SquareLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `SquareLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `SquareLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `SquareLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SquareObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `SwitchActivity` deleted or renamed its instance variable `on`
-  - Model `SwitchActivity` deleted or renamed its instance variable `cases`
-  - Model `SwitchActivity` deleted or renamed its instance variable `default_activities`
-  - Model `SybaseLinkedService` deleted or renamed its instance variable `server`
-  - Model `SybaseLinkedService` deleted or renamed its instance variable `database`
-  - Model `SybaseLinkedService` deleted or renamed its instance variable `schema`
-  - Model `SybaseLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `SybaseLinkedService` deleted or renamed its instance variable `username`
-  - Model `SybaseLinkedService` deleted or renamed its instance variable `password`
-  - Model `SybaseLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `SybaseTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `SynapseNotebookActivity` deleted or renamed its instance variable `notebook`
-  - Model `SynapseNotebookActivity` deleted or renamed its instance variable `spark_pool`
-  - Model `SynapseNotebookActivity` deleted or renamed its instance variable `parameters`
-  - Model `SynapseNotebookActivity` deleted or renamed its instance variable `executor_size`
-  - Model `SynapseNotebookActivity` deleted or renamed its instance variable `conf`
-  - Model `SynapseNotebookActivity` deleted or renamed its instance variable `driver_size`
-  - Model `SynapseNotebookActivity` deleted or renamed its instance variable `num_executors`
-  - Model `SynapseNotebookActivity` deleted or renamed its instance variable `configuration_type`
-  - Model `SynapseNotebookActivity` deleted or renamed its instance variable `target_spark_configuration`
-  - Model `SynapseNotebookActivity` deleted or renamed its instance variable `spark_config`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `spark_job`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `arguments`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `file`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `scan_folder`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `class_name`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `files`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `python_code_reference`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `files_v2`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `target_big_data_pool`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `executor_size`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `conf`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `driver_size`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `num_executors`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `configuration_type`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `target_spark_configuration`
-  - Model `SynapseSparkJobDefinitionActivity` deleted or renamed its instance variable `spark_config`
-  - Model `TeamDeskLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `TeamDeskLinkedService` deleted or renamed its instance variable `url`
-  - Model `TeamDeskLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `TeamDeskLinkedService` deleted or renamed its instance variable `password`
-  - Model `TeamDeskLinkedService` deleted or renamed its instance variable `api_token`
-  - Model `TeamDeskLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `server`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `username`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `password`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `ssl_mode`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `port_number`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `https_port_number`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `use_data_encryption`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `character_set`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `max_resp_size`
-  - Model `TeradataLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `TeradataTableDataset` deleted or renamed its instance variable `database`
-  - Model `TeradataTableDataset` deleted or renamed its instance variable `table`
-  - Model `TumblingWindowTrigger` deleted or renamed its instance variable `frequency`
-  - Model `TumblingWindowTrigger` deleted or renamed its instance variable `interval`
-  - Model `TumblingWindowTrigger` deleted or renamed its instance variable `start_time`
-  - Model `TumblingWindowTrigger` deleted or renamed its instance variable `end_time`
-  - Model `TumblingWindowTrigger` deleted or renamed its instance variable `delay`
-  - Model `TumblingWindowTrigger` deleted or renamed its instance variable `max_concurrency`
-  - Model `TumblingWindowTrigger` deleted or renamed its instance variable `retry_policy`
-  - Model `TumblingWindowTrigger` deleted or renamed its instance variable `depends_on`
-  - Model `TwilioLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `TwilioLinkedService` deleted or renamed its instance variable `password`
-  - Model `UntilActivity` deleted or renamed its instance variable `expression`
-  - Model `UntilActivity` deleted or renamed its instance variable `timeout`
-  - Model `UntilActivity` deleted or renamed its instance variable `activities`
-  - Model `ValidationActivity` deleted or renamed its instance variable `timeout`
-  - Model `ValidationActivity` deleted or renamed its instance variable `sleep`
-  - Model `ValidationActivity` deleted or renamed its instance variable `minimum_size`
-  - Model `ValidationActivity` deleted or renamed its instance variable `child_items`
-  - Model `ValidationActivity` deleted or renamed its instance variable `dataset`
-  - Model `VerticaLinkedService` deleted or renamed its instance variable `connection_string`
-  - Model `VerticaLinkedService` deleted or renamed its instance variable `server`
-  - Model `VerticaLinkedService` deleted or renamed its instance variable `port`
-  - Model `VerticaLinkedService` deleted or renamed its instance variable `uid`
-  - Model `VerticaLinkedService` deleted or renamed its instance variable `database`
-  - Model `VerticaLinkedService` deleted or renamed its instance variable `pwd`
-  - Model `VerticaLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `VerticaTableDataset` deleted or renamed its instance variable `table_name`
-  - Model `VerticaTableDataset` deleted or renamed its instance variable `table`
-  - Model `VerticaTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `WaitActivity` deleted or renamed its instance variable `wait_time_in_seconds`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `artifact_id`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `workspace_id`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `service_principal_id`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `service_principal_key`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `tenant`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `service_principal_credential_type`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `service_principal_credential`
-  - Model `WarehouseLinkedService` deleted or renamed its instance variable `credential`
-  - Model `WarehouseTableDataset` deleted or renamed its instance variable `schema_type_properties_schema`
-  - Model `WarehouseTableDataset` deleted or renamed its instance variable `table`
-  - Model `WebActivity` deleted or renamed its instance variable `method`
-  - Model `WebActivity` deleted or renamed its instance variable `url`
-  - Model `WebActivity` deleted or renamed its instance variable `headers`
-  - Model `WebActivity` deleted or renamed its instance variable `body`
-  - Model `WebActivity` deleted or renamed its instance variable `authentication`
-  - Model `WebActivity` deleted or renamed its instance variable `disable_cert_validation`
-  - Model `WebActivity` deleted or renamed its instance variable `http_request_timeout`
-  - Model `WebActivity` deleted or renamed its instance variable `turn_off_async`
-  - Model `WebActivity` deleted or renamed its instance variable `datasets`
-  - Model `WebActivity` deleted or renamed its instance variable `linked_services`
-  - Model `WebActivity` deleted or renamed its instance variable `connect_via`
-  - Model `WebHookActivity` deleted or renamed its instance variable `method`
-  - Model `WebHookActivity` deleted or renamed its instance variable `url`
-  - Model `WebHookActivity` deleted or renamed its instance variable `timeout`
-  - Model `WebHookActivity` deleted or renamed its instance variable `headers`
-  - Model `WebHookActivity` deleted or renamed its instance variable `body`
-  - Model `WebHookActivity` deleted or renamed its instance variable `authentication`
-  - Model `WebHookActivity` deleted or renamed its instance variable `report_status_on_call_back`
-  - Model `WebTableDataset` deleted or renamed its instance variable `index`
-  - Model `WebTableDataset` deleted or renamed its instance variable `path`
-  - Model `WranglingDataFlow` deleted or renamed its instance variable `sources`
-  - Model `WranglingDataFlow` deleted or renamed its instance variable `script`
-  - Model `WranglingDataFlow` deleted or renamed its instance variable `document_locale`
-  - Model `XeroLinkedService` deleted or renamed its instance variable `connection_properties`
-  - Model `XeroLinkedService` deleted or renamed its instance variable `host`
-  - Model `XeroLinkedService` deleted or renamed its instance variable `consumer_key`
-  - Model `XeroLinkedService` deleted or renamed its instance variable `private_key`
-  - Model `XeroLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `XeroLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `XeroLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `XeroLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `XeroObjectDataset` deleted or renamed its instance variable `table_name`
-  - Model `XmlDataset` deleted or renamed its instance variable `location`
-  - Model `XmlDataset` deleted or renamed its instance variable `encoding_name`
-  - Model `XmlDataset` deleted or renamed its instance variable `null_value`
-  - Model `XmlDataset` deleted or renamed its instance variable `compression`
-  - Model `ZendeskLinkedService` deleted or renamed its instance variable `authentication_type`
-  - Model `ZendeskLinkedService` deleted or renamed its instance variable `url`
-  - Model `ZendeskLinkedService` deleted or renamed its instance variable `user_name`
-  - Model `ZendeskLinkedService` deleted or renamed its instance variable `password`
-  - Model `ZendeskLinkedService` deleted or renamed its instance variable `api_token`
-  - Model `ZendeskLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `ZohoLinkedService` deleted or renamed its instance variable `connection_properties`
-  - Model `ZohoLinkedService` deleted or renamed its instance variable `endpoint`
-  - Model `ZohoLinkedService` deleted or renamed its instance variable `access_token`
-  - Model `ZohoLinkedService` deleted or renamed its instance variable `use_encrypted_endpoints`
-  - Model `ZohoLinkedService` deleted or renamed its instance variable `use_host_verification`
-  - Model `ZohoLinkedService` deleted or renamed its instance variable `use_peer_verification`
-  - Model `ZohoLinkedService` deleted or renamed its instance variable `encrypted_credential`
-  - Model `ZohoObjectDataset` deleted or renamed its instance variable `table_name`
+  - Model `RunQueryFilter` renamed its instance variable `values` to `values_property`
+  - Model `SqlDWUpsertSettings` renamed its instance variable `keys` to `keys_property`
+  - Model `SqlUpsertSettings` renamed its instance variable `keys` to `keys_property`
+  - Method `PipelineRunsOperations.cancel` changed its parameter `is_recursive` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed operation group `PrivateEndPointConnectionsOperations`
+  - Model `AmazonMWSLinkedService` moved instance variable `endpoint`, `marketplace_id`, `seller_id`, `mws_auth_token`, `access_key_id`, `secret_key`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `AmazonMWSLinkedServiceTypeProperties`
+  - Model `AmazonMWSObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `AmazonRdsForOracleLinkedService` moved instance variable `connection_string`, `server`, `authentication_type`, `username`, `password`, `encryption_client`, `encryption_types_client`, `crypto_checksum_client`, `crypto_checksum_types_client`, `initial_lob_fetch_size`, `fetch_size`, `statement_cache_size`, `initialization_string`, `enable_bulk_load`, `support_v1_data_types`, `fetch_tswtz_as_timestamp` and `encrypted_credential` under property `type_properties` whose type is `AmazonRdsForLinkedServiceTypeProperties`
+  - Model `AmazonRdsForOracleTableDataset` moved instance variable `schema_type_properties_schema` and `table` under property `type_properties` whose type is `AmazonRdsForOracleTableDatasetTypeProperties`
+  - Model `AmazonRdsForSqlServerLinkedService` moved instance variable `server`, `database`, `encrypt`, `trust_server_certificate`, `host_name_in_certificate`, `application_intent`, `connect_timeout`, `connect_retry_count`, `connect_retry_interval`, `load_balance_timeout`, `command_timeout`, `integrated_security`, `failover_partner`, `max_pool_size`, `min_pool_size`, `multiple_active_result_sets`, `multi_subnet_failover`, `packet_size`, `pooling`, `connection_string`, `authentication_type`, `user_name`, `password`, `encrypted_credential` and `always_encrypted_settings` under property `type_properties` whose type is `AmazonRdsForSqlServerLinkedServiceTypeProperties`
+  - Model `AmazonRdsForSqlServerTableDataset` moved instance variable `schema_type_properties_schema` and `table` under property `type_properties` whose type is `AmazonRdsForSqlServerTableDatasetTypeProperties`
+  - Model `AmazonRedshiftLinkedService` moved instance variable `server`, `username`, `password`, `database`, `port` and `encrypted_credential` under property `type_properties` whose type is `AmazonRedshiftLinkedServiceTypeProperties`
+  - Model `AmazonRedshiftTableDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `AmazonRedshiftTableDatasetTypeProperties`
+  - Model `AmazonS3CompatibleLinkedService` moved instance variable `access_key_id`, `secret_access_key`, `service_url`, `force_path_style` and `encrypted_credential` under property `type_properties` whose type is `AmazonS3CompatibleLinkedServiceTypeProperties`
+  - Model `AmazonS3Dataset` moved instance variable `bucket_name`, `key`, `prefix`, `version`, `modified_datetime_start`, `modified_datetime_end`, `format` and `compression` under property `type_properties` whose type is `AmazonS3DatasetTypeProperties`
+  - Model `AmazonS3LinkedService` moved instance variable `authentication_type`, `access_key_id`, `secret_access_key`, `service_url`, `session_token` and `encrypted_credential` under property `type_properties` whose type is `AmazonS3LinkedServiceTypeProperties`
+  - Model `AppFiguresLinkedService` moved instance variable `user_name`, `password` and `client_key` under property `type_properties` whose type is `AppFiguresLinkedServiceTypeProperties`
+  - Model `AppendVariableActivity` moved instance variable `variable_name` and `value` under property `type_properties` whose type is `AppendVariableActivityTypeProperties`
+  - Model `AsanaLinkedService` moved instance variable `api_token` and `encrypted_credential` under property `type_properties` whose type is `AsanaLinkedServiceTypeProperties`
+  - Model `AvroDataset` moved instance variable `location`, `avro_compression_codec` and `avro_compression_level` under property `type_properties` whose type is `AvroDatasetTypeProperties`
+  - Model `AzPowerShellSetup` moved instance variable `version` under property `type_properties` whose type is `AzPowerShellSetupTypeProperties`
+  - Model `AzureBatchLinkedService` moved instance variable `account_name`, `access_key`, `batch_uri`, `pool_name`, `linked_service_name`, `encrypted_credential` and `credential` under property `type_properties` whose type is `AzureBatchLinkedServiceTypeProperties`
+  - Model `AzureBlobDataset` moved instance variable `folder_path`, `table_root_location`, `file_name`, `modified_datetime_start`, `modified_datetime_end`, `format` and `compression` under property `type_properties` whose type is `AzureBlobDatasetTypeProperties`
+  - Model `AzureBlobFSDataset` moved instance variable `folder_path`, `file_name`, `format` and `compression` under property `type_properties` whose type is `AzureBlobFSDatasetTypeProperties`
+  - Model `AzureBlobFSLinkedService` moved instance variable `url`, `account_key`, `service_principal_id`, `service_principal_key`, `tenant`, `azure_cloud_type`, `encrypted_credential`, `credential`, `service_principal_credential_type`, `service_principal_credential`, `sas_uri` and `sas_token` under property `type_properties` whose type is `AzureBlobFSLinkedServiceTypeProperties`
+  - Model `AzureBlobStorageLinkedService` moved instance variable `connection_string`, `account_key`, `sas_uri`, `sas_token`, `service_endpoint`, `service_principal_id`, `service_principal_key`, `tenant`, `azure_cloud_type`, `account_kind`, `encrypted_credential`, `credential`, `authentication_type` and `container_uri` under property `type_properties` whose type is `AzureBlobStorageLinkedServiceTypeProperties`
+  - Model `AzureDataExplorerCommandActivity` moved instance variable `command` and `command_timeout` under property `type_properties` whose type is `AzureDataExplorerCommandActivityTypeProperties`
+  - Model `AzureDataExplorerLinkedService` moved instance variable `endpoint`, `service_principal_id`, `service_principal_key`, `database`, `tenant` and `credential` under property `type_properties` whose type is `AzureDataExplorerLinkedServiceTypeProperties`
+  - Model `AzureDataExplorerTableDataset` moved instance variable `table` under property `type_properties` whose type is `AzureDataExplorerDatasetTypeProperties`
+  - Model `AzureDataLakeAnalyticsLinkedService` moved instance variable `account_name`, `service_principal_id`, `service_principal_key`, `tenant`, `subscription_id`, `resource_group_name`, `data_lake_analytics_uri` and `encrypted_credential` under property `type_properties` whose type is `AzureDataLakeAnalyticsLinkedServiceTypeProperties`
+  - Model `AzureDataLakeStoreDataset` moved instance variable `folder_path`, `file_name`, `format` and `compression` under property `type_properties` whose type is `AzureDataLakeStoreDatasetTypeProperties`
+  - Model `AzureDataLakeStoreLinkedService` moved instance variable `data_lake_store_uri`, `service_principal_id`, `service_principal_key`, `tenant`, `azure_cloud_type`, `account_name`, `subscription_id`, `resource_group_name`, `encrypted_credential` and `credential` under property `type_properties` whose type is `AzureDataLakeStoreLinkedServiceTypeProperties`
+  - Model `AzureDatabricksDeltaLakeDataset` moved instance variable `table` and `database` under property `type_properties` whose type is `AzureDatabricksDeltaLakeDatasetTypeProperties`
+  - Model `AzureDatabricksDeltaLakeLinkedService` moved instance variable `domain`, `access_token`, `cluster_id`, `encrypted_credential`, `credential` and `workspace_resource_id` under property `type_properties` whose type is `AzureDatabricksDetltaLakeLinkedServiceTypeProperties`
+  - Model `AzureDatabricksLinkedService` moved instance variable `domain`, `access_token`, `authentication`, `workspace_resource_id`, `existing_cluster_id`, `instance_pool_id`, `new_cluster_version`, `new_cluster_num_of_worker`, `new_cluster_node_type`, `new_cluster_spark_conf`, `new_cluster_spark_env_vars`, `new_cluster_custom_tags`, `new_cluster_log_destination`, `new_cluster_driver_node_type`, `new_cluster_init_scripts`, `new_cluster_enable_elastic_disk`, `encrypted_credential`, `policy_id`, `credential` and `data_security_mode` under property `type_properties` whose type is `AzureDatabricksLinkedServiceTypeProperties`
+  - Model `AzureFileStorageLinkedService` moved instance variable `host`, `user_id`, `password`, `connection_string`, `account_key`, `sas_uri`, `sas_token`, `file_share`, `snapshot`, `encrypted_credential`, `service_endpoint` and `credential` under property `type_properties` whose type is `AzureFileStorageLinkedServiceTypeProperties`
+  - Model `AzureFunctionActivity` moved instance variable `method`, `function_name`, `headers` and `body` under property `type_properties` whose type is `AzureFunctionActivityTypeProperties`
+  - Model `AzureFunctionLinkedService` moved instance variable `function_app_url`, `function_key`, `encrypted_credential`, `credential`, `resource_id` and `authentication` under property `type_properties` whose type is `AzureFunctionLinkedServiceTypeProperties`
+  - Model `AzureKeyVaultLinkedService` moved instance variable `base_url` and `credential` under property `type_properties` whose type is `AzureKeyVaultLinkedServiceTypeProperties`
+  - Model `AzureMLBatchExecutionActivity` moved instance variable `global_parameters`, `web_service_outputs` and `web_service_inputs` under property `type_properties` whose type is `AzureMLBatchExecutionActivityTypeProperties`
+  - Model `AzureMLExecutePipelineActivity` moved instance variable `ml_pipeline_id`, `ml_pipeline_endpoint_id`, `version`, `experiment_name`, `ml_pipeline_parameters`, `data_path_assignments`, `ml_parent_run_id` and `continue_on_step_failure` under property `type_properties` whose type is `AzureMLExecutePipelineActivityTypeProperties`
+  - Model `AzureMLLinkedService` moved instance variable `ml_endpoint`, `api_key`, `update_resource_endpoint`, `service_principal_id`, `service_principal_key`, `tenant`, `encrypted_credential` and `authentication` under property `type_properties` whose type is `AzureMLLinkedServiceTypeProperties`
+  - Model `AzureMLServiceLinkedService` moved instance variable `subscription_id`, `resource_group_name`, `ml_workspace_name`, `authentication`, `service_principal_id`, `service_principal_key`, `tenant` and `encrypted_credential` under property `type_properties` whose type is `AzureMLServiceLinkedServiceTypeProperties`
+  - Model `AzureMLUpdateResourceActivity` moved instance variable `trained_model_name`, `trained_model_linked_service_name` and `trained_model_file_path` under property `type_properties` whose type is `AzureMLUpdateResourceActivityTypeProperties`
+  - Model `AzureMariaDBLinkedService` moved instance variable `connection_string`, `pwd` and `encrypted_credential` under property `type_properties` whose type is `AzureMariaDBLinkedServiceTypeProperties`
+  - Model `AzureMariaDBTableDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `AzureMySqlLinkedService` moved instance variable `connection_string`, `password` and `encrypted_credential` under property `type_properties` whose type is `AzureMySqlLinkedServiceTypeProperties`
+  - Model `AzureMySqlTableDataset` moved instance variable `table_name` and `table` under property `type_properties` whose type is `AzureMySqlTableDatasetTypeProperties`
+  - Model `AzurePostgreSqlLinkedService` moved instance variable `connection_string`, `server`, `port`, `username`, `database`, `ssl_mode`, `timeout`, `command_timeout`, `trust_server_certificate`, `read_buffer_size`, `timezone`, `encoding`, `password`, `encrypted_credential`, `service_principal_id`, `service_principal_key`, `service_principal_credential_type`, `service_principal_embedded_cert`, `service_principal_embedded_cert_password`, `tenant`, `azure_cloud_type` and `credential` under property `type_properties` whose type is `AzurePostgreSqlLinkedServiceTypeProperties`
+  - Model `AzurePostgreSqlTableDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `AzurePostgreSqlTableDatasetTypeProperties`
+  - Model `AzureSearchIndexDataset` moved instance variable `index_name` under property `type_properties` whose type is `AzureSearchIndexDatasetTypeProperties`
+  - Model `AzureSearchLinkedService` moved instance variable `url`, `key` and `encrypted_credential` under property `type_properties` whose type is `AzureSearchLinkedServiceTypeProperties`
+  - Model `AzureSqlDWLinkedService` moved instance variable `connection_string`, `authentication_type`, `user_name`, `password`, `service_principal_id`, `service_principal_key`, `service_principal_credential_type`, `service_principal_credential`, `tenant`, `azure_cloud_type`, `encrypted_credential`, `credential`, `server`, `database`, `encrypt`, `trust_server_certificate`, `host_name_in_certificate`, `application_intent`, `connect_timeout`, `connect_retry_count`, `connect_retry_interval`, `load_balance_timeout`, `command_timeout`, `integrated_security`, `failover_partner`, `max_pool_size`, `min_pool_size`, `multiple_active_result_sets`, `multi_subnet_failover`, `packet_size` and `pooling` under property `type_properties` whose type is `AzureSqlDWLinkedServiceTypeProperties`
+  - Model `AzureSqlDWTableDataset` moved instance variable `table_name`, `schema_type_properties_schema` and `table` under property `type_properties` whose type is `AzureSqlDWTableDatasetTypeProperties`
+  - Model `AzureSqlDatabaseLinkedService` moved instance variable `server`, `database`, `encrypt`, `trust_server_certificate`, `host_name_in_certificate`, `application_intent`, `connect_timeout`, `connect_retry_count`, `connect_retry_interval`, `load_balance_timeout`, `command_timeout`, `integrated_security`, `failover_partner`, `max_pool_size`, `min_pool_size`, `multiple_active_result_sets`, `multi_subnet_failover`, `packet_size`, `pooling`, `connection_string`, `authentication_type`, `user_name`, `password`, `service_principal_id`, `service_principal_key`, `service_principal_credential_type`, `service_principal_credential`, `tenant`, `azure_cloud_type`, `encrypted_credential`, `always_encrypted_settings` and `credential` under property `type_properties` whose type is `AzureSqlDatabaseLinkedServiceTypeProperties`
+  - Model `AzureSqlMILinkedService` moved instance variable `connection_string`, `authentication_type`, `user_name`, `password`, `service_principal_id`, `service_principal_key`, `service_principal_credential_type`, `service_principal_credential`, `tenant`, `azure_cloud_type`, `encrypted_credential`, `always_encrypted_settings`, `credential`, `server`, `database`, `encrypt`, `trust_server_certificate`, `host_name_in_certificate`, `application_intent`, `connect_timeout`, `connect_retry_count`, `connect_retry_interval`, `load_balance_timeout`, `command_timeout`, `integrated_security`, `failover_partner`, `max_pool_size`, `min_pool_size`, `multiple_active_result_sets`, `multi_subnet_failover`, `packet_size` and `pooling` under property `type_properties` whose type is `AzureSqlMILinkedServiceTypeProperties`
+  - Model `AzureSqlMITableDataset` moved instance variable `table_name`, `schema_type_properties_schema` and `table` under property `type_properties` whose type is `AzureSqlMITableDatasetTypeProperties`
+  - Model `AzureSqlTableDataset` moved instance variable `table_name`, `schema_type_properties_schema` and `table` under property `type_properties` whose type is `AzureSqlTableDatasetTypeProperties`
+  - Model `AzureStorageLinkedService` moved instance variable `connection_string`, `account_key`, `sas_uri`, `sas_token` and `encrypted_credential` under property `type_properties` whose type is `AzureStorageLinkedServiceTypeProperties`
+  - Model `AzureSynapseArtifactsLinkedService` moved instance variable `endpoint`, `authentication` and `workspace_resource_id` under property `type_properties` whose type is `AzureSynapseArtifactsLinkedServiceTypeProperties`
+  - Model `AzureTableDataset` moved instance variable `table_name` under property `type_properties` whose type is `AzureTableDatasetTypeProperties`
+  - Model `AzureTableStorageLinkedService` moved instance variable `connection_string`, `account_key`, `sas_uri`, `sas_token`, `encrypted_credential`, `service_endpoint` and `credential` under property `type_properties` whose type is `AzureTableStorageLinkedServiceTypeProperties`
+  - Model `BinaryDataset` moved instance variable `location` and `compression` under property `type_properties` whose type is `BinaryDatasetTypeProperties`
+  - Model `BlobEventsTrigger` moved instance variable `blob_path_begins_with`, `blob_path_ends_with`, `ignore_empty_blobs`, `events` and `scope` under property `type_properties` whose type is `BlobEventsTriggerTypeProperties`
+  - Model `BlobTrigger` moved instance variable `folder_path`, `max_concurrency` and `linked_service` under property `type_properties` whose type is `BlobTriggerTypeProperties`
+  - Model `CassandraLinkedService` moved instance variable `host`, `authentication_type`, `port`, `username`, `password` and `encrypted_credential` under property `type_properties` whose type is `CassandraLinkedServiceTypeProperties`
+  - Model `CassandraTableDataset` moved instance variable `table_name` and `keyspace` under property `type_properties` whose type is `CassandraTableDatasetTypeProperties`
+  - Model `ChainingTrigger` moved instance variable `depends_on` and `run_dimension` under property `type_properties` whose type is `ChainingTriggerTypeProperties`
+  - Model `ChangeDataCaptureResource` moved instance variable `folder`, `description`, `source_connections_info`, `target_connections_info`, `policy`, `allow_v_net_override` and `status` under property `properties` whose type is `ChangeDataCapture`
+  - Model `CmdkeySetup` moved instance variable `target_name`, `user_name` and `password` under property `type_properties` whose type is `CmdkeySetupTypeProperties`
+  - Model `CommonDataServiceForAppsEntityDataset` moved instance variable `entity_name` under property `type_properties` whose type is `CommonDataServiceForAppsEntityDatasetTypeProperties`
+  - Model `CommonDataServiceForAppsLinkedService` moved instance variable `deployment_type`, `host_name`, `port`, `service_uri`, `organization_name`, `authentication_type`, `domain`, `username`, `password`, `service_principal_id`, `service_principal_credential_type`, `service_principal_credential` and `encrypted_credential` under property `type_properties` whose type is `CommonDataServiceForAppsLinkedServiceTypeProperties`
+  - Model `ComponentSetup` moved instance variable `component_name` and `license_key` under property `type_properties` whose type is `LicensedComponentSetupTypeProperties`
+  - Model `ConcurLinkedService` moved instance variable `connection_properties`, `client_id`, `username`, `password`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `ConcurLinkedServiceTypeProperties`
+  - Model `ConcurObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `CopyActivity` moved instance variable `source`, `sink`, `translator`, `enable_staging`, `staging_settings`, `parallel_copies`, `data_integration_units`, `enable_skip_incompatible_row`, `redirect_incompatible_row_settings`, `log_storage_settings`, `log_settings`, `preserve_rules`, `preserve`, `validate_data_consistency` and `skip_error_file` under property `type_properties` whose type is `CopyActivityTypeProperties`
+  - Model `CosmosDbLinkedService` moved instance variable `connection_string`, `account_endpoint`, `database`, `account_key`, `service_principal_id`, `service_principal_credential_type`, `service_principal_credential`, `tenant`, `azure_cloud_type`, `connection_mode`, `encrypted_credential` and `credential` under property `type_properties` whose type is `CosmosDbLinkedServiceTypeProperties`
+  - Model `CosmosDbMongoDbApiCollectionDataset` moved instance variable `collection` under property `type_properties` whose type is `CosmosDbMongoDbApiCollectionDatasetTypeProperties`
+  - Model `CosmosDbMongoDbApiLinkedService` moved instance variable `is_server_version_above32`, `connection_string` and `database` under property `type_properties` whose type is `CosmosDbMongoDbApiLinkedServiceTypeProperties`
+  - Model `CosmosDbSqlApiCollectionDataset` moved instance variable `collection_name` under property `type_properties` whose type is `CosmosDbSqlApiCollectionDatasetTypeProperties`
+  - Model `CouchbaseLinkedService` moved instance variable `connection_string`, `cred_string` and `encrypted_credential` under property `type_properties` whose type is `CouchbaseLinkedServiceTypeProperties`
+  - Model `CouchbaseTableDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `CustomActivity` moved instance variable `command`, `resource_linked_service`, `folder_path`, `reference_objects`, `extended_properties`, `retention_time_in_days` and `auto_user_specification` under property `type_properties` whose type is `CustomActivityTypeProperties`
+  - Model `CustomEventsTrigger` moved instance variable `subject_begins_with`, `subject_ends_with`, `events` and `scope` under property `type_properties` whose type is `CustomEventsTriggerTypeProperties`
+  - Model `DataLakeAnalyticsUSQLActivity` moved instance variable `script_path`, `script_linked_service`, `degree_of_parallelism`, `priority`, `parameters`, `runtime_version` and `compilation_mode` under property `type_properties` whose type is `DataLakeAnalyticsUSQLActivityTypeProperties`
+  - Model `DatabricksJobActivity` moved instance variable `job_id` and `job_parameters` under property `type_properties` whose type is `DatabricksJobActivityTypeProperties`
+  - Model `DatabricksNotebookActivity` moved instance variable `notebook_path`, `base_parameters` and `libraries` under property `type_properties` whose type is `DatabricksNotebookActivityTypeProperties`
+  - Model `DatabricksSparkJarActivity` moved instance variable `main_class_name`, `parameters` and `libraries` under property `type_properties` whose type is `DatabricksSparkJarActivityTypeProperties`
+  - Model `DatabricksSparkPythonActivity` moved instance variable `python_file`, `parameters` and `libraries` under property `type_properties` whose type is `DatabricksSparkPythonActivityTypeProperties`
+  - Model `DataworldLinkedService` moved instance variable `api_token` and `encrypted_credential` under property `type_properties` whose type is `DataworldLinkedServiceTypeProperties`
+  - Model `Db2LinkedService` moved instance variable `connection_string`, `server`, `database`, `authentication_type`, `username`, `password`, `package_collection`, `certificate_common_name` and `encrypted_credential` under property `type_properties` whose type is `Db2LinkedServiceTypeProperties`
+  - Model `Db2TableDataset` moved instance variable `table_name`, `schema_type_properties_schema` and `table` under property `type_properties` whose type is `Db2TableDatasetTypeProperties`
+  - Model `DeleteActivity` moved instance variable `recursive`, `max_concurrent_connections`, `enable_logging`, `log_storage_settings`, `dataset` and `store_settings` under property `type_properties` whose type is `DeleteActivityTypeProperties`
+  - Model `DelimitedTextDataset` moved instance variable `location`, `column_delimiter`, `row_delimiter`, `encoding_name`, `compression_codec`, `compression_level`, `quote_char`, `escape_char`, `first_row_as_header` and `null_value` under property `type_properties` whose type is `DelimitedTextDatasetTypeProperties`
+  - Model `DocumentDbCollectionDataset` moved instance variable `collection_name` under property `type_properties` whose type is `DocumentDbCollectionDatasetTypeProperties`
+  - Model `DrillLinkedService` moved instance variable `connection_string`, `pwd` and `encrypted_credential` under property `type_properties` whose type is `DrillLinkedServiceTypeProperties`
+  - Model `DrillTableDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `DrillDatasetTypeProperties`
+  - Model `DynamicsAXLinkedService` moved instance variable `url`, `service_principal_id`, `service_principal_key`, `tenant`, `aad_resource_id` and `encrypted_credential` under property `type_properties` whose type is `DynamicsAXLinkedServiceTypeProperties`
+  - Model `DynamicsAXResourceDataset` moved instance variable `path` under property `type_properties` whose type is `DynamicsAXResourceDatasetTypeProperties`
+  - Model `DynamicsCrmEntityDataset` moved instance variable `entity_name` under property `type_properties` whose type is `DynamicsCrmEntityDatasetTypeProperties`
+  - Model `DynamicsCrmLinkedService` moved instance variable `deployment_type`, `host_name`, `port`, `service_uri`, `organization_name`, `authentication_type`, `domain`, `username`, `password`, `service_principal_id`, `service_principal_credential_type`, `service_principal_credential`, `credential` and `encrypted_credential` under property `type_properties` whose type is `DynamicsCrmLinkedServiceTypeProperties`
+  - Model `DynamicsEntityDataset` moved instance variable `entity_name` under property `type_properties` whose type is `DynamicsEntityDatasetTypeProperties`
+  - Model `DynamicsLinkedService` moved instance variable `deployment_type`, `host_name`, `port`, `service_uri`, `organization_name`, `authentication_type`, `domain`, `username`, `password`, `service_principal_id`, `service_principal_credential_type`, `service_principal_credential`, `encrypted_credential` and `credential` under property `type_properties` whose type is `DynamicsLinkedServiceTypeProperties`
+  - Model `EloquaLinkedService` moved instance variable `endpoint`, `username`, `password`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `EloquaLinkedServiceTypeProperties`
+  - Model `EloquaObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `EnvironmentVariableSetup` moved instance variable `variable_name` and `variable_value` under property `type_properties` whose type is `EnvironmentVariableSetupTypeProperties`
+  - Model `ExcelDataset` moved instance variable `location`, `sheet_name`, `sheet_index`, `range`, `first_row_as_header`, `compression` and `null_value` under property `type_properties` whose type is `ExcelDatasetTypeProperties`
+  - Model `ExecuteDataFlowActivity` moved instance variable `data_flow`, `staging`, `integration_runtime`, `continuation_settings`, `compute`, `trace_level`, `continue_on_error`, `run_concurrently` and `source_staging_concurrency` under property `type_properties` whose type is `ExecuteDataFlowActivityTypeProperties`
+  - Model `ExecutePipelineActivity` moved instance variable `pipeline`, `parameters` and `wait_on_completion` under property `type_properties` whose type is `ExecutePipelineActivityTypeProperties`
+  - Model `ExecuteSSISPackageActivity` moved instance variable `package_location`, `runtime`, `logging_level`, `environment_path`, `execution_credential`, `connect_via`, `project_parameters`, `package_parameters`, `project_connection_managers`, `package_connection_managers`, `property_overrides` and `log_location` under property `type_properties` whose type is `ExecuteSSISPackageActivityTypeProperties`
+  - Model `ExecuteWranglingDataflowActivity` moved instance variable `sinks`, `queries`, `data_flow`, `staging`, `integration_runtime`, `continuation_settings`, `compute`, `trace_level`, `continue_on_error`, `run_concurrently` and `source_staging_concurrency` under property `type_properties` whose type is `ExecutePowerQueryActivityTypeProperties`
+  - Model `FactoryUpdateParameters` moved instance variable `public_network_access` under property `properties` whose type is `FactoryUpdateProperties`
+  - Model `FailActivity` moved instance variable `message` and `error_code` under property `type_properties` whose type is `FailActivityTypeProperties`
+  - Model `FileServerLinkedService` moved instance variable `host`, `user_id`, `password` and `encrypted_credential` under property `type_properties` whose type is `FileServerLinkedServiceTypeProperties`
+  - Model `FileShareDataset` moved instance variable `folder_path`, `file_name`, `modified_datetime_start`, `modified_datetime_end`, `format`, `file_filter` and `compression` under property `type_properties` whose type is `FileShareDatasetTypeProperties`
+  - Model `FilterActivity` moved instance variable `condition` and `items` under property `type_properties` whose type is `FilterActivityTypeProperties`
+  - Model `Flowlet` moved instance variable `sources`, `sinks`, `transformations`, `script` and `script_lines` under property `type_properties` whose type is `FlowletTypeProperties`
+  - Model `ForEachActivity` moved instance variable `is_sequential`, `batch_count`, `activities` and `items` under property `type_properties` whose type is `ForEachActivityTypeProperties`
+  - Model `FtpServerLinkedService` moved instance variable `host`, `port`, `authentication_type`, `user_name`, `password`, `encrypted_credential`, `enable_ssl` and `enable_server_certificate_validation` under property `type_properties` whose type is `FtpServerLinkedServiceTypeProperties`
+  - Model `GetMetadataActivity` moved instance variable `dataset`, `field_list`, `store_settings` and `format_settings` under property `type_properties` whose type is `GetMetadataActivityTypeProperties`
+  - Model `GoogleAdWordsLinkedService` moved instance variable `connection_properties`, `client_customer_id`, `developer_token`, `authentication_type`, `refresh_token`, `client_id`, `client_secret`, `email`, `key_file_path`, `trusted_cert_path`, `use_system_trust_store`, `private_key`, `login_customer_id`, `google_ads_api_version`, `support_legacy_data_types` and `encrypted_credential` under property `type_properties` whose type is `GoogleAdWordsLinkedServiceTypeProperties`
+  - Model `GoogleAdWordsObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `GoogleBigQueryLinkedService` moved instance variable `project`, `additional_projects`, `request_google_drive_scope`, `authentication_type`, `refresh_token`, `client_id`, `client_secret`, `email`, `key_file_path`, `trusted_cert_path`, `use_system_trust_store` and `encrypted_credential` under property `type_properties` whose type is `GoogleBigQueryLinkedServiceTypeProperties`
+  - Model `GoogleBigQueryObjectDataset` moved instance variable `table_name`, `table` and `dataset` under property `type_properties` whose type is `GoogleBigQueryDatasetTypeProperties`
+  - Model `GoogleBigQueryV2LinkedService` moved instance variable `project_id`, `authentication_type`, `client_id`, `client_secret`, `refresh_token`, `key_file_content` and `encrypted_credential` under property `type_properties` whose type is `GoogleBigQueryV2LinkedServiceTypeProperties`
+  - Model `GoogleBigQueryV2ObjectDataset` moved instance variable `table` and `dataset` under property `type_properties` whose type is `GoogleBigQueryV2DatasetTypeProperties`
+  - Model `GoogleCloudStorageLinkedService` moved instance variable `access_key_id`, `secret_access_key`, `service_url` and `encrypted_credential` under property `type_properties` whose type is `GoogleCloudStorageLinkedServiceTypeProperties`
+  - Model `GoogleSheetsLinkedService` moved instance variable `api_token` and `encrypted_credential` under property `type_properties` whose type is `GoogleSheetsLinkedServiceTypeProperties`
+  - Model `GreenplumLinkedService` moved instance variable `connection_string`, `pwd`, `encrypted_credential`, `authentication_type`, `host`, `port`, `username`, `database`, `ssl_mode`, `connection_timeout` and `command_timeout` under property `type_properties` whose type is `GreenplumLinkedServiceTypeProperties`
+  - Model `GreenplumTableDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `GreenplumDatasetTypeProperties`
+  - Model `HBaseLinkedService` moved instance variable `host`, `port`, `http_path`, `authentication_type`, `username`, `password`, `enable_ssl`, `trusted_cert_path`, `allow_host_name_cn_mismatch`, `allow_self_signed_server_cert` and `encrypted_credential` under property `type_properties` whose type is `HBaseLinkedServiceTypeProperties`
+  - Model `HBaseObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `HDInsightHiveActivity` moved instance variable `storage_linked_services`, `arguments`, `get_debug_info`, `script_path`, `script_linked_service`, `defines`, `variables` and `query_timeout` under property `type_properties` whose type is `HDInsightHiveActivityTypeProperties`
+  - Model `HDInsightLinkedService` moved instance variable `cluster_uri`, `cluster_auth_type`, `user_name`, `password`, `linked_service_name`, `hcatalog_linked_service_name`, `encrypted_credential`, `is_esp_enabled`, `file_system` and `credential` under property `type_properties` whose type is `HDInsightLinkedServiceTypeProperties`
+  - Model `HDInsightMapReduceActivity` moved instance variable `storage_linked_services`, `arguments`, `get_debug_info`, `class_name`, `jar_file_path`, `jar_linked_service`, `jar_libs` and `defines` under property `type_properties` whose type is `HDInsightMapReduceActivityTypeProperties`
+  - Model `HDInsightOnDemandLinkedService` moved instance variable `cluster_size`, `time_to_live`, `version_type_properties_version`, `linked_service_name`, `host_subscription_id`, `service_principal_id`, `service_principal_key`, `tenant`, `cluster_resource_group`, `cluster_resource_group_auth_type`, `cluster_name_prefix`, `cluster_user_name`, `cluster_password`, `cluster_ssh_user_name`, `cluster_ssh_password`, `additional_linked_service_names`, `hcatalog_linked_service_name`, `cluster_type`, `spark_version`, `core_configuration`, `h_base_configuration`, `hdfs_configuration`, `hive_configuration`, `map_reduce_configuration`, `oozie_configuration`, `storm_configuration`, `yarn_configuration`, `encrypted_credential`, `head_node_size`, `data_node_size`, `zookeeper_node_size`, `script_actions`, `virtual_network_id`, `subnet_name` and `credential` under property `type_properties` whose type is `HDInsightOnDemandLinkedServiceTypeProperties`
+  - Model `HDInsightPigActivity` moved instance variable `storage_linked_services`, `arguments`, `get_debug_info`, `script_path`, `script_linked_service` and `defines` under property `type_properties` whose type is `HDInsightPigActivityTypeProperties`
+  - Model `HDInsightSparkActivity` moved instance variable `root_path`, `entry_file_path`, `arguments`, `get_debug_info`, `spark_job_linked_service`, `class_name`, `proxy_user` and `spark_config` under property `type_properties` whose type is `HDInsightSparkActivityTypeProperties`
+  - Model `HDInsightStreamingActivity` moved instance variable `storage_linked_services`, `arguments`, `get_debug_info`, `mapper`, `reducer`, `input`, `output`, `file_paths`, `file_linked_service`, `combiner`, `command_environment` and `defines` under property `type_properties` whose type is `HDInsightStreamingActivityTypeProperties`
+  - Model `HdfsLinkedService` moved instance variable `url`, `authentication_type`, `encrypted_credential`, `user_name` and `password` under property `type_properties` whose type is `HdfsLinkedServiceTypeProperties`
+  - Model `HiveLinkedService` moved instance variable `host`, `port`, `server_type`, `thrift_transport_protocol`, `authentication_type`, `service_discovery_mode`, `zoo_keeper_name_space`, `use_native_query`, `username`, `password`, `http_path`, `enable_ssl`, `enable_server_certificate_validation`, `trusted_cert_path`, `use_system_trust_store`, `allow_host_name_cn_mismatch`, `allow_self_signed_server_cert` and `encrypted_credential` under property `type_properties` whose type is `HiveLinkedServiceTypeProperties`
+  - Model `HiveObjectDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `HiveDatasetTypeProperties`
+  - Model `HttpDataset` moved instance variable `relative_url`, `request_method`, `request_body`, `additional_headers`, `format` and `compression` under property `type_properties` whose type is `HttpDatasetTypeProperties`
+  - Model `HttpLinkedService` moved instance variable `url`, `authentication_type`, `user_name`, `password`, `auth_headers`, `embedded_cert_data`, `cert_thumbprint`, `encrypted_credential` and `enable_server_certificate_validation` under property `type_properties` whose type is `HttpLinkedServiceTypeProperties`
+  - Model `HubspotLinkedService` moved instance variable `client_id`, `client_secret`, `access_token`, `refresh_token`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `HubspotLinkedServiceTypeProperties`
+  - Model `HubspotObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `IcebergDataset` moved instance variable `location` under property `type_properties` whose type is `IcebergDatasetTypeProperties`
+  - Model `IfConditionActivity` moved instance variable `expression`, `if_true_activities` and `if_false_activities` under property `type_properties` whose type is `IfConditionActivityTypeProperties`
+  - Model `ImpalaLinkedService` moved instance variable `host`, `port`, `authentication_type`, `username`, `password`, `thrift_transport_protocol`, `enable_ssl`, `enable_server_certificate_validation`, `trusted_cert_path`, `use_system_trust_store`, `allow_host_name_cn_mismatch`, `allow_self_signed_server_cert` and `encrypted_credential` under property `type_properties` whose type is `ImpalaLinkedServiceTypeProperties`
+  - Model `ImpalaObjectDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `ImpalaDatasetTypeProperties`
+  - Model `InformixLinkedService` moved instance variable `connection_string`, `authentication_type`, `credential`, `user_name`, `password` and `encrypted_credential` under property `type_properties` whose type is `InformixLinkedServiceTypeProperties`
+  - Model `InformixTableDataset` moved instance variable `table_name` under property `type_properties` whose type is `InformixTableDatasetTypeProperties`
+  - Model `JiraLinkedService` moved instance variable `host`, `port`, `username`, `password`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `JiraLinkedServiceTypeProperties`
+  - Model `JiraObjectDataset` moved instance variable `table_name`, `schema_type_properties_schema` and `table` under property `type_properties` whose type is `JiraTableDatasetTypeProperties`
+  - Model `JsonDataset` moved instance variable `location`, `encoding_name` and `compression` under property `type_properties` whose type is `JsonDatasetTypeProperties`
+  - Model `LakeHouseLinkedService` moved instance variable `workspace_id`, `artifact_id`, `authentication_type`, `service_principal_id`, `service_principal_key`, `tenant`, `encrypted_credential`, `service_principal_credential_type`, `service_principal_credential` and `credential` under property `type_properties` whose type is `LakeHouseLinkedServiceTypeProperties`
+  - Model `LakeHouseTableDataset` moved instance variable `schema_type_properties_schema` and `table` under property `type_properties` whose type is `LakeHouseTableDatasetTypeProperties`
+  - Model `LookupActivity` moved instance variable `source`, `dataset`, `first_row_only` and `treat_decimal_as_string` under property `type_properties` whose type is `LookupActivityTypeProperties`
+  - Model `MagentoLinkedService` moved instance variable `host`, `access_token`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `MagentoLinkedServiceTypeProperties`
+  - Model `MagentoObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `ManagedIdentityCredential` moved instance variable `resource_id` under property `type_properties` whose type is `ManagedIdentityTypeProperties`
+  - Model `ManagedIntegrationRuntime` moved instance variable `compute_properties`, `ssis_properties`, `customer_virtual_network` and `interactive_query` under property `type_properties` whose type is `ManagedIntegrationRuntimeTypeProperties`
+  - Model `ManagedIntegrationRuntimeStatus` moved instance variable `create_time`, `nodes`, `other_errors` and `last_operation` under property `type_properties` whose type is `ManagedIntegrationRuntimeStatusTypeProperties`
+  - Model `MappingDataFlow` moved instance variable `sources`, `sinks`, `transformations`, `script` and `script_lines` under property `type_properties` whose type is `MappingDataFlowTypeProperties`
+  - Model `MariaDBLinkedService` moved instance variable `driver_version`, `connection_string`, `server`, `port`, `username`, `database`, `ssl_mode`, `use_system_trust_store`, `password` and `encrypted_credential` under property `type_properties` whose type is `MariaDBLinkedServiceTypeProperties`
+  - Model `MariaDBTableDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `MarketoLinkedService` moved instance variable `endpoint`, `client_id`, `client_secret`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `MarketoLinkedServiceTypeProperties`
+  - Model `MarketoObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `MicrosoftAccessLinkedService` moved instance variable `connection_string`, `authentication_type`, `credential`, `user_name`, `password` and `encrypted_credential` under property `type_properties` whose type is `MicrosoftAccessLinkedServiceTypeProperties`
+  - Model `MicrosoftAccessTableDataset` moved instance variable `table_name` under property `type_properties` whose type is `MicrosoftAccessTableDatasetTypeProperties`
+  - Model `MongoDbAtlasCollectionDataset` moved instance variable `collection` under property `type_properties` whose type is `MongoDbAtlasCollectionDatasetTypeProperties`
+  - Model `MongoDbAtlasLinkedService` moved instance variable `connection_string`, `database` and `driver_version` under property `type_properties` whose type is `MongoDbAtlasLinkedServiceTypeProperties`
+  - Model `MongoDbCollectionDataset` moved instance variable `collection_name` under property `type_properties` whose type is `MongoDbCollectionDatasetTypeProperties`
+  - Model `MongoDbLinkedService` moved instance variable `server`, `authentication_type`, `database_name`, `username`, `password`, `auth_source`, `port`, `enable_ssl`, `allow_self_signed_server_cert` and `encrypted_credential` under property `type_properties` whose type is `MongoDbLinkedServiceTypeProperties`
+  - Model `MongoDbV2CollectionDataset` moved instance variable `collection` under property `type_properties` whose type is `MongoDbV2CollectionDatasetTypeProperties`
+  - Model `MongoDbV2LinkedService` moved instance variable `connection_string` and `database` under property `type_properties` whose type is `MongoDbV2LinkedServiceTypeProperties`
+  - Model `MySqlLinkedService` moved instance variable `driver_version`, `connection_string`, `server`, `port`, `username`, `database`, `ssl_mode`, `use_system_trust_store`, `password`, `encrypted_credential`, `allow_zero_date_time`, `connection_timeout`, `convert_zero_date_time`, `guid_format`, `ssl_cert`, `ssl_key` and `treat_tiny_as_boolean` under property `type_properties` whose type is `MySqlLinkedServiceTypeProperties`
+  - Model `MySqlTableDataset` moved instance variable `table_name` under property `type_properties` whose type is `MySqlTableDatasetTypeProperties`
+  - Model `NetezzaLinkedService` moved instance variable `connection_string`, `server`, `port`, `uid`, `database`, `security_level`, `pwd` and `encrypted_credential` under property `type_properties` whose type is `NetezzaLinkedServiceTypeProperties`
+  - Model `NetezzaTableDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `NetezzaTableDatasetTypeProperties`
+  - Model `ODataLinkedService` moved instance variable `url`, `authentication_type`, `user_name`, `password`, `auth_headers`, `tenant`, `service_principal_id`, `azure_cloud_type`, `aad_resource_id`, `aad_service_principal_credential_type`, `service_principal_key`, `service_principal_embedded_cert`, `service_principal_embedded_cert_password` and `encrypted_credential` under property `type_properties` whose type is `ODataLinkedServiceTypeProperties`
+  - Model `ODataResourceDataset` moved instance variable `path` under property `type_properties` whose type is `ODataResourceDatasetTypeProperties`
+  - Model `OdbcLinkedService` moved instance variable `connection_string`, `authentication_type`, `credential`, `user_name`, `password` and `encrypted_credential` under property `type_properties` whose type is `OdbcLinkedServiceTypeProperties`
+  - Model `OdbcTableDataset` moved instance variable `table_name` under property `type_properties` whose type is `OdbcTableDatasetTypeProperties`
+  - Model `Office365Dataset` moved instance variable `table_name` and `predicate` under property `type_properties` whose type is `Office365DatasetTypeProperties`
+  - Model `Office365LinkedService` moved instance variable `office365_tenant_id`, `service_principal_tenant_id`, `service_principal_id`, `service_principal_key`, `service_principal_credential_type`, `service_principal_embedded_cert`, `service_principal_embedded_cert_password` and `encrypted_credential` under property `type_properties` whose type is `Office365LinkedServiceTypeProperties`
+  - Model `OracleCloudStorageLinkedService` moved instance variable `access_key_id`, `secret_access_key`, `service_url` and `encrypted_credential` under property `type_properties` whose type is `OracleCloudStorageLinkedServiceTypeProperties`
+  - Model `OracleLinkedService` moved instance variable `connection_string`, `server`, `authentication_type`, `username`, `password`, `encryption_client`, `encryption_types_client`, `crypto_checksum_client`, `crypto_checksum_types_client`, `initial_lob_fetch_size`, `fetch_size`, `statement_cache_size`, `initialization_string`, `enable_bulk_load`, `support_v1_data_types`, `fetch_tswtz_as_timestamp` and `encrypted_credential` under property `type_properties` whose type is `OracleLinkedServiceTypeProperties`
+  - Model `OracleServiceCloudLinkedService` moved instance variable `host`, `username`, `password`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `OracleServiceCloudLinkedServiceTypeProperties`
+  - Model `OracleServiceCloudObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `OracleTableDataset` moved instance variable `table_name`, `schema_type_properties_schema` and `table` under property `type_properties` whose type is `OracleTableDatasetTypeProperties`
+  - Model `OrcDataset` moved instance variable `location` and `orc_compression_codec` under property `type_properties` whose type is `OrcDatasetTypeProperties`
+  - Model `ParquetDataset` moved instance variable `location` and `compression_codec` under property `type_properties` whose type is `ParquetDatasetTypeProperties`
+  - Model `PaypalLinkedService` moved instance variable `host`, `client_id`, `client_secret`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `PaypalLinkedServiceTypeProperties`
+  - Model `PaypalObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `PhoenixLinkedService` moved instance variable `host`, `port`, `http_path`, `authentication_type`, `username`, `password`, `enable_ssl`, `trusted_cert_path`, `use_system_trust_store`, `allow_host_name_cn_mismatch`, `allow_self_signed_server_cert` and `encrypted_credential` under property `type_properties` whose type is `PhoenixLinkedServiceTypeProperties`
+  - Model `PhoenixObjectDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `PhoenixDatasetTypeProperties`
+  - Model `PipelineResource` moved instance variable `description`, `activities`, `parameters`, `variables`, `concurrency`, `annotations`, `run_dimensions`, `folder` and `policy` under property `properties` whose type is `Pipeline`
+  - Model `PostgreSqlLinkedService` moved instance variable `connection_string`, `password` and `encrypted_credential` under property `type_properties` whose type is `PostgreSqlLinkedServiceTypeProperties`
+  - Model `PostgreSqlTableDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `PostgreSqlTableDatasetTypeProperties`
+  - Model `PostgreSqlV2LinkedService` moved instance variable `server`, `port`, `username`, `database`, `authentication_type`, `ssl_mode`, `schema`, `pooling`, `connection_timeout`, `command_timeout`, `trust_server_certificate`, `ssl_certificate`, `ssl_key`, `ssl_password`, `read_buffer_size`, `log_parameters`, `timezone`, `encoding`, `password` and `encrypted_credential` under property `type_properties` whose type is `PostgreSqlV2LinkedServiceTypeProperties`
+  - Model `PostgreSqlV2TableDataset` moved instance variable `table` and `schema_type_properties_schema` under property `type_properties` whose type is `PostgreSqlV2TableDatasetTypeProperties`
+  - Model `PrestoLinkedService` moved instance variable `host`, `server_version`, `catalog`, `port`, `authentication_type`, `username`, `password`, `enable_ssl`, `enable_server_certificate_validation`, `trusted_cert_path`, `use_system_trust_store`, `allow_host_name_cn_mismatch`, `allow_self_signed_server_cert`, `time_zone_id` and `encrypted_credential` under property `type_properties` whose type is `PrestoLinkedServiceTypeProperties`
+  - Model `PrestoObjectDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `PrestoDatasetTypeProperties`
+  - Model `QuickBooksLinkedService` moved instance variable `connection_properties`, `endpoint`, `company_id`, `consumer_key`, `consumer_secret`, `access_token`, `access_token_secret`, `refresh_token`, `use_encrypted_endpoints` and `encrypted_credential` under property `type_properties` whose type is `QuickBooksLinkedServiceTypeProperties`
+  - Model `QuickBooksObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `QuickbaseLinkedService` moved instance variable `url`, `user_token` and `encrypted_credential` under property `type_properties` whose type is `QuickbaseLinkedServiceTypeProperties`
+  - Model `RelationalTableDataset` moved instance variable `table_name` under property `type_properties` whose type is `RelationalTableDatasetTypeProperties`
+  - Model `RerunTumblingWindowTrigger` moved instance variable `parent_trigger`, `requested_start_time`, `requested_end_time` and `rerun_concurrency` under property `type_properties` whose type is `RerunTumblingWindowTriggerTypeProperties`
+  - Model `ResponsysLinkedService` moved instance variable `endpoint`, `client_id`, `client_secret`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `ResponsysLinkedServiceTypeProperties`
+  - Model `ResponsysObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `RestResourceDataset` moved instance variable `relative_url`, `request_method`, `request_body`, `additional_headers` and `pagination_rules` under property `type_properties` whose type is `RestResourceDatasetTypeProperties`
+  - Model `RestServiceLinkedService` moved instance variable `url`, `enable_server_certificate_validation`, `authentication_type`, `user_name`, `password`, `auth_headers`, `service_principal_id`, `service_principal_key`, `tenant`, `azure_cloud_type`, `aad_resource_id`, `encrypted_credential`, `credential`, `client_id`, `client_secret`, `token_endpoint`, `resource`, `scope`, `service_principal_credential_type`, `service_principal_embedded_cert` and `service_principal_embedded_cert_password` under property `type_properties` whose type is `RestServiceLinkedServiceTypeProperties`
+  - Model `SSISLogLocation` moved instance variable `access_credential` and `log_refresh_interval` under property `type_properties` whose type is `SSISLogLocationTypeProperties`
+  - Model `SSISPackageLocation` moved instance variable `package_password`, `access_credential`, `configuration_path`, `configuration_access_credential`, `package_name`, `package_content`, `package_last_modified_date` and `child_packages` under property `type_properties` whose type is `SSISPackageLocationTypeProperties`
+  - Model `SalesforceLinkedService` moved instance variable `environment_url`, `username`, `password`, `security_token`, `api_version` and `encrypted_credential` under property `type_properties` whose type is `SalesforceLinkedServiceTypeProperties`
+  - Model `SalesforceMarketingCloudLinkedService` moved instance variable `connection_properties`, `client_id`, `client_secret`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `SalesforceMarketingCloudLinkedServiceTypeProperties`
+  - Model `SalesforceMarketingCloudObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `SalesforceObjectDataset` moved instance variable `object_api_name` under property `type_properties` whose type is `SalesforceObjectDatasetTypeProperties`
+  - Model `SalesforceServiceCloudLinkedService` moved instance variable `environment_url`, `username`, `password`, `security_token`, `api_version`, `extended_properties` and `encrypted_credential` under property `type_properties` whose type is `SalesforceServiceCloudLinkedServiceTypeProperties`
+  - Model `SalesforceServiceCloudObjectDataset` moved instance variable `object_api_name` under property `type_properties` whose type is `SalesforceServiceCloudObjectDatasetTypeProperties`
+  - Model `SalesforceServiceCloudV2LinkedService` moved instance variable `environment_url`, `authentication_type`, `client_id`, `client_secret`, `api_version` and `encrypted_credential` under property `type_properties` whose type is `SalesforceServiceCloudV2LinkedServiceTypeProperties`
+  - Model `SalesforceServiceCloudV2ObjectDataset` moved instance variable `object_api_name` and `report_id` under property `type_properties` whose type is `SalesforceServiceCloudV2ObjectDatasetTypeProperties`
+  - Model `SalesforceV2LinkedService` moved instance variable `environment_url`, `authentication_type`, `client_id`, `client_secret`, `api_version` and `encrypted_credential` under property `type_properties` whose type is `SalesforceV2LinkedServiceTypeProperties`
+  - Model `SalesforceV2ObjectDataset` moved instance variable `object_api_name` and `report_id` under property `type_properties` whose type is `SalesforceV2ObjectDatasetTypeProperties`
+  - Model `SapBWLinkedService` moved instance variable `server`, `system_number`, `client_id`, `user_name`, `password` and `encrypted_credential` under property `type_properties` whose type is `SapBWLinkedServiceTypeProperties`
+  - Model `SapCloudForCustomerLinkedService` moved instance variable `url`, `username`, `password` and `encrypted_credential` under property `type_properties` whose type is `SapCloudForCustomerLinkedServiceTypeProperties`
+  - Model `SapCloudForCustomerResourceDataset` moved instance variable `path` under property `type_properties` whose type is `SapCloudForCustomerResourceDatasetTypeProperties`
+  - Model `SapEccLinkedService` moved instance variable `url`, `username`, `password` and `encrypted_credential` under property `type_properties` whose type is `SapEccLinkedServiceTypeProperties`
+  - Model `SapEccResourceDataset` moved instance variable `path` under property `type_properties` whose type is `SapEccResourceDatasetTypeProperties`
+  - Model `SapHanaLinkedService` moved instance variable `connection_string`, `server`, `authentication_type`, `user_name`, `password` and `encrypted_credential` under property `type_properties` whose type is `SapHanaLinkedServiceProperties`
+  - Model `SapHanaTableDataset` moved instance variable `schema_type_properties_schema` and `table` under property `type_properties` whose type is `SapHanaTableDatasetTypeProperties`
+  - Model `SapOdpLinkedService` moved instance variable `server`, `system_number`, `client_id`, `language`, `system_id`, `user_name`, `password`, `message_server`, `message_server_service`, `snc_mode`, `snc_my_name`, `snc_partner_name`, `snc_library_path`, `snc_qop`, `x509_certificate_path`, `logon_group`, `subscriber_name` and `encrypted_credential` under property `type_properties` whose type is `SapOdpLinkedServiceTypeProperties`
+  - Model `SapOdpResourceDataset` moved instance variable `context` and `object_name` under property `type_properties` whose type is `SapOdpResourceDatasetTypeProperties`
+  - Model `SapOpenHubLinkedService` moved instance variable `server`, `system_number`, `client_id`, `language`, `system_id`, `user_name`, `password`, `message_server`, `message_server_service`, `logon_group` and `encrypted_credential` under property `type_properties` whose type is `SapOpenHubLinkedServiceTypeProperties`
+  - Model `SapOpenHubTableDataset` moved instance variable `open_hub_destination_name`, `exclude_last_request` and `base_request_id` under property `type_properties` whose type is `SapOpenHubTableDatasetTypeProperties`
+  - Model `SapTableLinkedService` moved instance variable `server`, `system_number`, `client_id`, `language`, `system_id`, `user_name`, `password`, `message_server`, `message_server_service`, `snc_mode`, `snc_my_name`, `snc_partner_name`, `snc_library_path`, `snc_qop`, `logon_group` and `encrypted_credential` under property `type_properties` whose type is `SapTableLinkedServiceTypeProperties`
+  - Model `SapTableResourceDataset` moved instance variable `table_name` under property `type_properties` whose type is `SapTableResourceDatasetTypeProperties`
+  - Model `ScheduleTrigger` moved instance variable `recurrence` under property `type_properties` whose type is `ScheduleTriggerTypeProperties`
+  - Model `ScriptActivity` moved instance variable `script_block_execution_timeout`, `scripts`, `log_settings`, `return_multistatement_result` and `treat_decimal_as_string` under property `type_properties` whose type is `ScriptActivityTypeProperties`
+  - Model `SelfHostedIntegrationRuntime` moved instance variable `linked_info` and `self_contained_interactive_authoring_enabled` under property `type_properties` whose type is `SelfHostedIntegrationRuntimeTypeProperties`
+  - Model `SelfHostedIntegrationRuntimeStatus` moved instance variable `create_time`, `task_queue_id`, `internal_channel_encryption`, `version`, `nodes`, `scheduled_update_date`, `update_delay_offset`, `local_time_zone_offset`, `capabilities`, `service_urls`, `auto_update`, `version_status`, `links`, `pushed_version`, `latest_version`, `auto_update_eta` and `self_contained_interactive_authoring_enabled` under property `type_properties` whose type is `SelfHostedIntegrationRuntimeStatusTypeProperties`
+  - Model `ServiceNowLinkedService` moved instance variable `endpoint`, `authentication_type`, `username`, `password`, `client_id`, `client_secret`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `ServiceNowLinkedServiceTypeProperties`
+  - Model `ServiceNowObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `ServiceNowV2LinkedService` moved instance variable `endpoint`, `authentication_type`, `username`, `password`, `client_id`, `client_secret`, `grant_type` and `encrypted_credential` under property `type_properties` whose type is `ServiceNowV2LinkedServiceTypeProperties`
+  - Model `ServiceNowV2ObjectDataset` moved instance variable `table_name` and `value_type` under property `type_properties` whose type is `ServiceNowV2DatasetTypeProperties`
+  - Model `ServicePrincipalCredential` moved instance variable `service_principal_id`, `service_principal_key` and `tenant` under property `type_properties` whose type is `ServicePrincipalCredentialTypeProperties`
+  - Model `SetVariableActivity` moved instance variable `variable_name`, `value` and `set_system_variable` under property `type_properties` whose type is `SetVariableActivityTypeProperties`
+  - Model `SftpServerLinkedService` moved instance variable `host`, `port`, `authentication_type`, `user_name`, `password`, `encrypted_credential`, `private_key_path`, `private_key_content`, `pass_phrase`, `skip_host_key_validation` and `host_key_fingerprint` under property `type_properties` whose type is `SftpServerLinkedServiceTypeProperties`
+  - Model `SharePointOnlineListLinkedService` moved instance variable `site_url`, `tenant_id`, `service_principal_id`, `service_principal_key`, `service_principal_credential_type`, `service_principal_embedded_cert`, `service_principal_embedded_cert_password` and `encrypted_credential` under property `type_properties` whose type is `SharePointOnlineListLinkedServiceTypeProperties`
+  - Model `SharePointOnlineListResourceDataset` moved instance variable `list_name` under property `type_properties` whose type is `SharePointOnlineListDatasetTypeProperties`
+  - Model `ShopifyLinkedService` moved instance variable `host`, `access_token`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `ShopifyLinkedServiceTypeProperties`
+  - Model `ShopifyObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `SmartsheetLinkedService` moved instance variable `api_token` and `encrypted_credential` under property `type_properties` whose type is `SmartsheetLinkedServiceTypeProperties`
+  - Model `SnowflakeDataset` moved instance variable `schema_type_properties_schema` and `table` under property `type_properties` whose type is `SnowflakeDatasetTypeProperties`
+  - Model `SnowflakeLinkedService` moved instance variable `connection_string`, `password` and `encrypted_credential` under property `type_properties` whose type is `SnowflakeLinkedServiceTypeProperties`
+  - Model `SnowflakeV2Dataset` moved instance variable `schema_type_properties_schema` and `table` under property `type_properties` whose type is `SnowflakeDatasetTypeProperties`
+  - Model `SnowflakeV2LinkedService` moved instance variable `account_identifier`, `user`, `password`, `database`, `warehouse`, `authentication_type`, `client_id`, `client_secret`, `tenant_id`, `scope`, `private_key`, `private_key_passphrase`, `role`, `host`, `schema`, `encrypted_credential` and `use_utc_timestamps` under property `type_properties` whose type is `SnowflakeLinkedV2ServiceTypeProperties`
+  - Model `SparkLinkedService` moved instance variable `host`, `port`, `server_type`, `thrift_transport_protocol`, `authentication_type`, `username`, `password`, `http_path`, `enable_ssl`, `enable_server_certificate_validation`, `trusted_cert_path`, `use_system_trust_store`, `allow_host_name_cn_mismatch`, `allow_self_signed_server_cert` and `encrypted_credential` under property `type_properties` whose type is `SparkLinkedServiceTypeProperties`
+  - Model `SparkObjectDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `SparkDatasetTypeProperties`
+  - Model `SqlServerLinkedService` moved instance variable `connection_string`, `authentication_type`, `user_name`, `password`, `encrypted_credential`, `always_encrypted_settings`, `credential`, `server`, `database`, `encrypt`, `trust_server_certificate`, `host_name_in_certificate`, `application_intent`, `connect_timeout`, `connect_retry_count`, `connect_retry_interval`, `load_balance_timeout`, `command_timeout`, `integrated_security`, `failover_partner`, `max_pool_size`, `min_pool_size`, `multiple_active_result_sets`, `multi_subnet_failover`, `packet_size` and `pooling` under property `type_properties` whose type is `SqlServerLinkedServiceTypeProperties`
+  - Model `SqlServerStoredProcedureActivity` moved instance variable `stored_procedure_name` and `stored_procedure_parameters` under property `type_properties` whose type is `SqlServerStoredProcedureActivityTypeProperties`
+  - Model `SqlServerTableDataset` moved instance variable `table_name`, `schema_type_properties_schema` and `table` under property `type_properties` whose type is `SqlServerTableDatasetTypeProperties`
+  - Model `SquareLinkedService` moved instance variable `connection_properties`, `host`, `client_id`, `client_secret`, `redirect_uri`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `SquareLinkedServiceTypeProperties`
+  - Model `SquareObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `SwitchActivity` moved instance variable `on`, `cases` and `default_activities` under property `type_properties` whose type is `SwitchActivityTypeProperties`
+  - Model `SybaseLinkedService` moved instance variable `server`, `database`, `schema`, `authentication_type`, `username`, `password` and `encrypted_credential` under property `type_properties` whose type is `SybaseLinkedServiceTypeProperties`
+  - Model `SybaseTableDataset` moved instance variable `table_name` under property `type_properties` whose type is `SybaseTableDatasetTypeProperties`
+  - Model `SynapseNotebookActivity` moved instance variable `notebook`, `spark_pool`, `parameters`, `executor_size`, `conf`, `driver_size`, `num_executors`, `configuration_type`, `target_spark_configuration` and `spark_config` under property `type_properties` whose type is `SynapseNotebookActivityTypeProperties`
+  - Model `SynapseSparkJobDefinitionActivity` moved instance variable `spark_job`, `arguments`, `file`, `scan_folder`, `class_name`, `files`, `python_code_reference`, `files_v2`, `target_big_data_pool`, `executor_size`, `conf`, `driver_size`, `num_executors`, `configuration_type`, `target_spark_configuration` and `spark_config` under property `type_properties` whose type is `SynapseSparkJobActivityTypeProperties`
+  - Model `TeamDeskLinkedService` moved instance variable `authentication_type`, `url`, `user_name`, `password`, `api_token` and `encrypted_credential` under property `type_properties` whose type is `TeamDeskLinkedServiceTypeProperties`
+  - Model `TeradataLinkedService` moved instance variable `connection_string`, `server`, `authentication_type`, `username`, `password`, `ssl_mode`, `port_number`, `https_port_number`, `use_data_encryption`, `character_set`, `max_resp_size` and `encrypted_credential` under property `type_properties` whose type is `TeradataLinkedServiceTypeProperties`
+  - Model `TeradataTableDataset` moved instance variable `database` and `table` under property `type_properties` whose type is `TeradataTableDatasetTypeProperties`
+  - Model `TumblingWindowTrigger` moved instance variable `frequency`, `interval`, `start_time`, `end_time`, `delay`, `max_concurrency`, `retry_policy` and `depends_on` under property `type_properties` whose type is `TumblingWindowTriggerTypeProperties`
+  - Model `TwilioLinkedService` moved instance variable `user_name` and `password` under property `type_properties` whose type is `TwilioLinkedServiceTypeProperties`
+  - Model `UntilActivity` moved instance variable `expression`, `timeout` and `activities` under property `type_properties` whose type is `UntilActivityTypeProperties`
+  - Model `ValidationActivity` moved instance variable `timeout`, `sleep`, `minimum_size`, `child_items` and `dataset` under property `type_properties` whose type is `ValidationActivityTypeProperties`
+  - Model `VerticaLinkedService` moved instance variable `connection_string`, `server`, `port`, `uid`, `database`, `pwd` and `encrypted_credential` under property `type_properties` whose type is `VerticaLinkedServiceTypeProperties`
+  - Model `VerticaTableDataset` moved instance variable `table_name`, `table` and `schema_type_properties_schema` under property `type_properties` whose type is `VerticaDatasetTypeProperties`
+  - Model `WaitActivity` moved instance variable `wait_time_in_seconds` under property `type_properties` whose type is `WaitActivityTypeProperties`
+  - Model `WarehouseLinkedService` moved instance variable `artifact_id`, `endpoint`, `workspace_id`, `authentication_type`, `service_principal_id`, `service_principal_key`, `tenant`, `encrypted_credential`, `service_principal_credential_type`, `service_principal_credential` and `credential` under property `type_properties` whose type is `WarehouseLinkedServiceTypeProperties`
+  - Model `WarehouseTableDataset` moved instance variable `schema_type_properties_schema` and `table` under property `type_properties` whose type is `WarehouseTableDatasetTypeProperties`
+  - Model `WebActivity` moved instance variable `method`, `url`, `headers`, `body`, `authentication`, `disable_cert_validation`, `http_request_timeout`, `turn_off_async`, `datasets`, `linked_services` and `connect_via` under property `type_properties` whose type is `WebActivityTypeProperties`
+  - Model `WebHookActivity` moved instance variable `method`, `url`, `timeout`, `headers`, `body`, `authentication` and `report_status_on_call_back` under property `type_properties` whose type is `WebHookActivityTypeProperties`
+  - Model `WebTableDataset` moved instance variable `index` and `path` under property `type_properties` whose type is `WebTableDatasetTypeProperties`
+  - Model `WranglingDataFlow` moved instance variable `sources`, `script` and `document_locale` under property `type_properties` whose type is `PowerQueryTypeProperties`
+  - Model `XeroLinkedService` moved instance variable `connection_properties`, `host`, `consumer_key`, `private_key`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `XeroLinkedServiceTypeProperties`
+  - Model `XeroObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Model `XmlDataset` moved instance variable `location`, `encoding_name`, `null_value` and `compression` under property `type_properties` whose type is `XmlDatasetTypeProperties`
+  - Model `ZendeskLinkedService` moved instance variable `authentication_type`, `url`, `user_name`, `password`, `api_token` and `encrypted_credential` under property `type_properties` whose type is `ZendeskLinkedServiceTypeProperties`
+  - Model `ZohoLinkedService` moved instance variable `connection_properties`, `endpoint`, `access_token`, `use_encrypted_endpoints`, `use_host_verification`, `use_peer_verification` and `encrypted_credential` under property `type_properties` whose type is `ZohoLinkedServiceTypeProperties`
+  - Model `ZohoObjectDataset` moved instance variable `table_name` under property `type_properties` whose type is `GenericDatasetTypeProperties`
+  - Method `ChangeDataCaptureOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ChangeDataCaptureOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `CredentialOperationsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `CredentialOperationsOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DataFlowsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DataFlowsOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DatasetsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DatasetsOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `FactoriesOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `FactoriesOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `IntegrationRuntimesOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `IntegrationRuntimesOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `LinkedServicesOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `LinkedServicesOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ManagedPrivateEndpointsOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ManagedPrivateEndpointsOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ManagedVirtualNetworksOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ManagedVirtualNetworksOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `PipelinesOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `PipelinesOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `PrivateEndpointConnectionOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `PrivateEndpointConnectionOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `TriggersOperations.create_or_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `TriggersOperations.get` replaced positional_or_keyword parameter `if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `PipelinesOperations.create_run` changed its parameter `reference_pipeline_run_id`/`is_recovery`/`start_activity_name`/`start_from_failure` from `positional_or_keyword` to `keyword_only`
   - Deleted or renamed model `AdditionalColumns`
-  - Deleted or renamed model `AmazonRdsForOraclePartitionOption`
-  - Deleted or renamed model `AvroCompressionCodec`
-  - Deleted or renamed model `ChangeDataCaptureListResponse`
-  - Deleted or renamed model `CompressionCodec`
-  - Deleted or renamed model `CopyBehaviorType`
   - Deleted or renamed model `CopyTranslator`
-  - Deleted or renamed model `CredentialListResponse`
-  - Deleted or renamed model `DataFlowListResponse`
-  - Deleted or renamed model `DatasetCompressionLevel`
   - Deleted or renamed model `DatasetDataElement`
-  - Deleted or renamed model `DatasetListResponse`
   - Deleted or renamed model `DatasetSchemaDataElement`
-  - Deleted or renamed model `DynamicsAuthenticationType`
-  - Deleted or renamed model `DynamicsDeploymentType`
-  - Deleted or renamed model `FactoryListResponse`
-  - Deleted or renamed model `GetDataFactoryOperationStatusResponse`
-  - Deleted or renamed model `GlobalParameterListResponse`
-  - Deleted or renamed model `HdiNodeTypes`
-  - Deleted or renamed model `IntegrationRuntimeListResponse`
-  - Deleted or renamed model `IntegrationRuntimeStatusListResponse`
-  - Deleted or renamed model `JsonFormatFilePattern`
-  - Deleted or renamed model `JsonWriteFilePattern`
-  - Deleted or renamed model `LinkedServiceListResponse`
-  - Deleted or renamed model `ManagedPrivateEndpointListResponse`
-  - Deleted or renamed model `ManagedVirtualNetworkListResponse`
-  - Deleted or renamed model `NetezzaPartitionOption`
-  - Deleted or renamed model `OperationListResponse`
-  - Deleted or renamed model `OraclePartitionOption`
-  - Deleted or renamed model `OrcCompressionCodec`
   - Deleted or renamed model `OutputColumn`
-  - Deleted or renamed model `PipelineListResponse`
-  - Deleted or renamed model `PrivateEndpointConnectionListResponse`
-  - Deleted or renamed model `QueryDataFlowDebugSessionsResponse`
   - Deleted or renamed model `Resource`
-  - Deleted or renamed model `SalesforceSourceReadBehavior`
-  - Deleted or renamed model `SapHanaPartitionOption`
-  - Deleted or renamed model `SapTablePartitionOption`
   - Deleted or renamed model `ScriptType`
-  - Deleted or renamed model `ServicePrincipalCredentialType`
   - Deleted or renamed model `SqlDWWriteBehaviorEnum`
-  - Deleted or renamed model `SqlPartitionOption`
   - Deleted or renamed model `SqlWriteBehaviorEnum`
   - Deleted or renamed model `StoredProcedureParameter`
   - Deleted or renamed model `StoredProcedureParameterType`
   - Deleted or renamed model `TabularTranslator`
-  - Deleted or renamed model `TeradataPartitionOption`
-  - Deleted or renamed model `TriggerListResponse`
   - Deleted or renamed model `TypeConversionSettings`
-  - Method `ChangeDataCaptureOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ChangeDataCaptureOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `CredentialOperationsOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `CredentialOperationsOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `DataFlowsOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DataFlowsOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `DatasetsOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DatasetsOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `FactoriesOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `FactoriesOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `IntegrationRuntimesOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `IntegrationRuntimesOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `LinkedServicesOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `LinkedServicesOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `ManagedPrivateEndpointsOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ManagedPrivateEndpointsOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `ManagedVirtualNetworksOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ManagedVirtualNetworksOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `PipelineRunsOperations.cancel` changed its parameter `is_recursive` from `positional_or_keyword` to `keyword_only`
-  - Method `PipelinesOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `PipelinesOperations.create_run` changed its parameter `reference_pipeline_run_id` from `positional_or_keyword` to `keyword_only`
-  - Method `PipelinesOperations.create_run` changed its parameter `is_recovery` from `positional_or_keyword` to `keyword_only`
-  - Method `PipelinesOperations.create_run` changed its parameter `start_activity_name` from `positional_or_keyword` to `keyword_only`
-  - Method `PipelinesOperations.create_run` changed its parameter `start_from_failure` from `positional_or_keyword` to `keyword_only`
-  - Method `PipelinesOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `PrivateEndpointConnectionOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `PrivateEndpointConnectionOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `TriggersOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `TriggersOperations.get` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Deleted or renamed model `PrivateEndPointConnectionsOperations`
-  - Method `PipelinesOperations.create_run` re-ordered its parameters from `['self', 'resource_group_name', 'factory_name', 'pipeline_name', 'reference_pipeline_run_id', 'is_recovery', 'start_activity_name', 'start_from_failure', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'factory_name', 'pipeline_name', 'parameters', 'reference_pipeline_run_id', 'is_recovery', 'start_activity_name', 'start_from_failure', 'kwargs']`
+
+### Other Changes
+
+  - Deleted model `ChangeDataCaptureListResponse/CredentialListResponse/DataFlowListResponse/DatasetListResponse/FactoryListResponse/GlobalParameterListResponse/IntegrationRuntimeListResponse/IntegrationRuntimeStatusListResponse/LinkedServiceListResponse/ManagedPrivateEndpointListResponse/ManagedVirtualNetworkListResponse/OperationListResponse/PipelineListResponse/PrivateEndpointConnectionListResponse/QueryDataFlowDebugSessionsResponse/TriggerListResponse` which actually were not used by SDK users
+  - Deleted model `GetDataFactoryOperationStatusResponse` which actually were not used by SDK users
+  - Deleted enum `AmazonRdsForOraclePartitionOption/AvroCompressionCodec/CompressionCodec/CopyBehaviorType/DatasetCompressionLevel/DynamicsAuthenticationType/DynamicsDeploymentType/HdiNodeTypes/JsonFormatFilePattern/JsonWriteFilePattern/NetezzaPartitionOption/OraclePartitionOption/OrcCompressionCodec/SalesforceSourceReadBehavior/SapHanaPartitionOption/SapTablePartitionOption/ServicePrincipalCredentialType/SqlPartitionOption/TeradataPartitionOption` which actually were not used by SDK users
 
 ## 9.3.0 (2026-03-10)
 
