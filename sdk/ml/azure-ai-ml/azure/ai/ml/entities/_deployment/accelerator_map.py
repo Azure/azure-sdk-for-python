@@ -20,11 +20,11 @@ class AcceleratorMap:
     :type default: bool
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=name-too-long
         self,
         *,
         accelerator_type: str,
-        number_of_accelerators_per_model_instance: int,  # pylint: disable=name-too-long
+        number_of_accelerators_per_model_instance: int,
         default: Optional[bool] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
