@@ -32,6 +32,7 @@ from ._shared.uploads import (
     upload_data_chunks,
     upload_substream_blocks
 )
+from ._shared.validation import CV_TYPE_PARSED
 
 if TYPE_CHECKING:
     from ._generated.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
@@ -71,7 +72,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    validate_content: bool,
+    validate_content: CV_TYPE_PARSED,
     max_concurrency: Optional[int],
     length: Optional[int] = None,
     **kwargs: Any
@@ -123,11 +124,15 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
 
             return cast(Dict[str, Any], response)
 
-        use_original_upload_path = blob_settings.use_byte_buffer or \
-            validate_content or encryption_options.get('required') or \
-            blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold or \
-            hasattr(stream, 'seekable') and not stream.seekable() or \
-            not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
+        use_original_upload_path = (
+            blob_settings.use_byte_buffer
+            or validate_content not in (None, False)
+            or encryption_options.get('required')
+            or blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold
+            or hasattr(stream, 'seekable') and not stream.seekable()
+            or not hasattr(stream, 'seek')
+            or not hasattr(stream, 'tell')
+        )
 
         if use_original_upload_path:
             total_size = length
@@ -209,7 +214,7 @@ def upload_page_blob(
     headers: Dict[str, Any],
     stream: IO,
     length: Optional[int] = None,
-    validate_content: Optional[bool] = None,
+    validate_content: CV_TYPE_PARSED = None,
     max_concurrency: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
@@ -287,7 +292,7 @@ def upload_append_blob(  # pylint: disable=unused-argument
     headers: Dict[str, Any],
     stream: IO,
     length: Optional[int] = None,
-    validate_content: Optional[bool] = None,
+    validate_content: CV_TYPE_PARSED = None,
     max_concurrency: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
