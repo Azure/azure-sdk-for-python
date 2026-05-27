@@ -30,7 +30,7 @@ from .._shared.uploads_async import (
     upload_substream_blocks,
 )
 from .._shared.validation import CV_TYPE_PARSED
-from .._upload_helpers import _any_conditions, _convert_mod_error
+from .._upload_helpers import _any_conditions, _convert_mod_error, _pop_content_settings
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
