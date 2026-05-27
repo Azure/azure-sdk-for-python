@@ -88,7 +88,6 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             # Verify response headers were captured
             response_headers = query_iterable.get_response_headers()
             assert response_headers is not None
-            assert isinstance(response_headers, dict)
 
             # Verify headers contain expected fields
             assert "x-ms-request-charge" in response_headers

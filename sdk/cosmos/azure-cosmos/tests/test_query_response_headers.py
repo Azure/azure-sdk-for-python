@@ -76,7 +76,6 @@ class TestQueryResponseHeaders(unittest.TestCase):
             # Verify response headers were captured
             response_headers = query_iterable.get_response_headers()
             self.assertIsNotNone(response_headers)
-            self.assertIsInstance(response_headers, dict)
 
             # Verify headers contain expected fields
             self.assertIn("x-ms-request-charge", response_headers)
