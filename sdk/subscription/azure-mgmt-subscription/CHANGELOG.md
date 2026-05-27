@@ -1,5 +1,58 @@
 # Release History
 
+## 3.2.0b2 (2026-05-27)
+
+### Features Added
+
+  - Client `SubscriptionClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SubscriptionClient` added method `send_request`
+  - Client `SubscriptionClient` added operation group `subscription_operation`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Added enum `ActionType`
+  - Added enum `ChangeDirectoryOperationStatus`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `SubscriptionCreationResult`
+  - Added model `TargetDirectoryRequest`
+  - Added model `TargetDirectoryRequestProperties`
+  - Added model `TargetDirectoryResult`
+  - Added model `TargetDirectoryResultProperties`
+  - Model `SubscriptionsOperations` added method `accept_target_directory`
+  - Model `SubscriptionsOperations` added method `delete_target_directory`
+  - Model `SubscriptionsOperations` added method `get_target_directory`
+  - Model `SubscriptionsOperations` added method `list_target_directory`
+  - Model `SubscriptionsOperations` added method `put_target_directory`
+  - Model `SubscriptionsOperations` added method `target_directory_status`
+  - Added model `SubscriptionOperationOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `SubscriptionClient.tenants`
+  - Method `AliasOperations.list` changed from `asynchronous` to `synchronous`
+  - Model `ErrorResponse` deleted or renamed its instance variable `code`
+  - Model `ErrorResponse` deleted or renamed its instance variable `message`
+  - Deleted or renamed model `ErrorResponseBody`
+  - Deleted or renamed model `GetTenantPolicyListResponse`
+  - Deleted or renamed model `Location`
+  - Deleted or renamed model `SpendingLimit`
+  - Deleted or renamed model `Subscription`
+  - Deleted or renamed model `SubscriptionPolicies`
+  - Deleted or renamed model `SubscriptionState`
+  - Deleted or renamed model `TenantIdDescription`
+  - Method `SubscriptionOperations.begin_accept_ownership` inserted a `positional_or_keyword` parameter `requestbody_body`
+  - Method `SubscriptionOperations.begin_accept_ownership` deleted or renamed its parameter `body` of kind `positional_or_keyword`
+  - Deleted or renamed method `SubscriptionsOperations.get`
+  - Deleted or renamed method `SubscriptionsOperations.list`
+  - Deleted or renamed method `SubscriptionsOperations.list_locations`
+  - Deleted or renamed model `TenantsOperations`
+  - Method `AliasOperations.list` changed return type from `SubscriptionAliasListResult` to `AsyncItemPaged[_models.SubscriptionAliasResponse]`
+  - Method `AliasOperations.list` changed return type from `SubscriptionAliasListResult` to `ItemPaged[_models.SubscriptionAliasResponse]`
+  - Method `SubscriptionOperations.begin_accept_ownership` re-ordered its parameters from `['self', 'subscription_id', 'body', 'kwargs']` to `['self', 'subscription_id', 'requestbody_body', 'kwargs']`
+
 ## 3.2.0b1 (2022-12-27)
 
 ### Features Added
