@@ -316,6 +316,64 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         # Endpoint still present.
         self.assertIn(ep, _shared_routing_map_cache)
 
+    def test_reentrant_release_during_init_does_not_deadlock(self):
+        """Regression: ``__init__`` must hold a reentrant lock so that a
+        ``release()`` triggered re-entrantly on the same thread (e.g. by GC
+        of a prior instance during attribute lookup, or by a test that uses
+        ``MagicMock()`` as ``client``) cannot deadlock.
+
+        The original ``threading.Lock`` would hang ``__init__`` forever the
+        moment any code path under the lock ran ``release()`` on the same
+        thread; this surfaced first in
+        ``test_fetch_routing_map_recovers_after_transient_gap`` (sync) and
+        the async sibling, which both construct ``PartitionKeyRangeCache``
+        with a ``MagicMock()`` client. ``_mock_set_magics`` drops references
+        to prior child mocks during attribute access, GC sweeps them
+        synchronously, and the swept instance's ``__del__`` -> ``release()``
+        re-enters the same lock. Using ``threading.RLock`` makes the
+        re-entry safe; this test exercises exactly that re-entry from a
+        single thread with no mocks involved, so a future swap back to
+        ``Lock()`` would hang this test under the 5-second join timeout
+        rather than letting the regression escape.
+        """
+        import threading
+
+        ep = "https://reentry1.documents.azure.com:443/"
+        c1 = PartitionKeyRangeCache(MockClient(ep))
+        self.assertEqual(self._refcount(ep), 1)
+
+        # Explicit ``Any`` value type so the static checker doesn't infer
+        # ``dict[str, bool | None]`` from the initial values and then flag
+        # the ``Exception`` assignment in the exception arm as a type error.
+        result: dict = {"done": False, "error": None}
+
+        def reenter():
+            try:
+                # Acquire the shared lock first to mimic the ``__init__``
+                # critical section, then call ``release()`` from inside it
+                # to simulate the GC-driven ``__del__`` path. A non-reentrant
+                # Lock deadlocks here; an RLock returns cleanly.
+                with _shared_cache_lock:
+                    c1.release()
+                result["done"] = True
+            except Exception as exc:  # pylint: disable=broad-except
+                result["error"] = exc
+
+        worker = threading.Thread(target=reenter)
+        worker.start()
+        worker.join(timeout=5)
+
+        self.assertFalse(
+            worker.is_alive(),
+            "Reentrant release() under _shared_cache_lock deadlocked; "
+            "the lock must be a threading.RLock (see module-level comment)."
+        )
+        self.assertIsNone(result["error"])
+        self.assertTrue(result["done"])
+        # Refcount must have decremented exactly once.
+        self.assertEqual(self._refcount(ep), 0)
+        self.assertNotIn(ep, _shared_routing_map_cache)
+
 
 if __name__ == "__main__":
     unittest.main()

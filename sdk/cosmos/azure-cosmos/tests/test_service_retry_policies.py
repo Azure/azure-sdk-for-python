@@ -4,6 +4,7 @@ import unittest
 import uuid
 from types import SimpleNamespace
 from unittest.mock import patch
+from urllib.parse import urlparse
 
 import pytest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
@@ -41,6 +42,11 @@ class TestServiceRetryPolicies(unittest.TestCase):
         cls.created_container = cls.created_database.get_container_client(cls.TEST_CONTAINER_ID)
 
     @classmethod
+    def _uses_localhost_endpoint(cls):
+        parsed = urlparse(cls.host)
+        return parsed.hostname in ("localhost", "127.0.0.1")
+
+    @classmethod
     def _make_regional_endpoint(cls, region):
         """Return a per-region locational endpoint (e.g. ``acct-westus...``).
 
@@ -68,6 +74,18 @@ class TestServiceRetryPolicies(unittest.TestCase):
         derived state behind, which silently inflates the retry budget the
         next assertion observes.
         """
+        if self._uses_localhost_endpoint():
+            shared_context = RegionalRoutingContext(self.host)
+            location_cache.account_read_locations = list(regions)
+            location_cache.account_read_regional_routing_contexts_by_location = {
+                r: shared_context for r in regions
+            }
+            location_cache.account_locations_by_read_endpoints = {self.host: regions[0]}
+            location_cache.effective_preferred_locations = list(regions)
+            location_cache.read_regional_routing_contexts = [shared_context for _ in regions]
+            location_cache.location_unavailability_info_by_endpoint = {}
+            return
+
         endpoints_by_region = {r: self._make_regional_endpoint(r) for r in regions}
         location_cache.account_read_locations = list(regions)
         location_cache.account_read_regional_routing_contexts_by_location = endpoints_by_region
@@ -96,6 +114,17 @@ class TestServiceRetryPolicies(unittest.TestCase):
         rationale on clearing unavailability state and re-running
         ``update_location_cache()``.
         """
+        if self._uses_localhost_endpoint():
+            shared_context = RegionalRoutingContext(self.host)
+            location_cache.account_write_locations = list(regions)
+            location_cache.account_write_regional_routing_contexts_by_location = {
+                r: shared_context for r in regions
+            }
+            location_cache.account_locations_by_write_endpoints = {self.host: regions[0]}
+            location_cache.write_regional_routing_contexts = [shared_context for _ in regions]
+            location_cache.location_unavailability_info_by_endpoint = {}
+            return
+
         endpoints_by_region = {r: self._make_regional_endpoint(r) for r in regions}
         location_cache.account_write_locations = list(regions)
         location_cache.account_write_regional_routing_contexts_by_location = endpoints_by_region

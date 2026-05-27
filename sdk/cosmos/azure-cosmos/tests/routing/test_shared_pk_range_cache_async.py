@@ -172,6 +172,49 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         self.assertEqual(self._refcount(ep), before)
         self.assertIn(ep, _shared_routing_map_cache)
 
+    async def test_reentrant_release_during_init_does_not_deadlock_async(self):
+        """Regression: async ``__init__`` must hold a reentrant lock so a
+        ``release()`` triggered re-entrantly on the same thread (e.g. by GC
+        of a prior instance during attribute lookup, or by a test that uses
+        ``MagicMock()`` as ``client``) cannot deadlock.
+
+        Same root cause as the sync test in
+        ``test_shared_pk_range_cache.test_reentrant_release_during_init_does_not_deadlock``
+        — the async module duplicates the lock + ``__init__`` + ``__del__``
+        shape and would deadlock identically with a non-reentrant Lock.
+        """
+        import threading
+
+        ep = "https://async-reentry1.documents.azure.com:443/"
+        c1 = PartitionKeyRangeCache(MockClient(ep))
+        self.assertEqual(self._refcount(ep), 1)
+
+        # Explicit ``Any`` value type so the static checker doesn't infer
+        # ``dict[str, bool | None]`` and reject the ``Exception`` assignment.
+        result: dict = {"done": False, "error": None}
+
+        def reenter():
+            try:
+                with _shared_cache_lock:
+                    c1.release()
+                result["done"] = True
+            except Exception as exc:  # pylint: disable=broad-except
+                result["error"] = exc
+
+        worker = threading.Thread(target=reenter)
+        worker.start()
+        worker.join(timeout=5)
+
+        self.assertFalse(
+            worker.is_alive(),
+            "Reentrant release() under _shared_cache_lock deadlocked; "
+            "the async module's lock must be a threading.RLock."
+        )
+        self.assertIsNone(result["error"])
+        self.assertTrue(result["done"])
+        self.assertEqual(self._refcount(ep), 0)
+        self.assertNotIn(ep, _shared_routing_map_cache)
+
 
 if __name__ == "__main__":
     unittest.main()

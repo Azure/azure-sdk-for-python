@@ -83,11 +83,21 @@ _shared_cache_refcounts: Dict[str, int] = {}
 # independent set of module-level dicts and its own ``_shared_cache_lock`` —
 # state is NOT shared between the sync and async modules. A sync and an async
 # ``CosmosClient`` targeting the same endpoint maintain separate routing-map
-# caches. We use a ``threading.Lock`` (rather than an ``asyncio.Lock``)
-# because the critical sections it protects are pure dict reads/writes — no
-# await, no network I/O — so a brief threading-lock acquisition is safe even
-# from a coroutine context (used by the async module's analogous lock).
-_shared_cache_lock = threading.Lock()
+# caches. We use a ``threading.RLock`` (rather than an ``asyncio.Lock`` or a
+# plain ``threading.Lock``) because the critical sections it protects are
+# pure dict reads/writes — no await, no network I/O — so a brief
+# threading-lock acquisition is safe even from a coroutine context (used by
+# the async module's analogous lock). ``RLock`` is required (not ``Lock``)
+# because ``__init__`` holds this lock while indexing into
+# ``_shared_routing_map_cache``, and that indexing can synchronously trigger
+# GC of an older ``PartitionKeyRangeCache`` instance on the same thread
+# (e.g. when ``client`` is a ``MagicMock`` whose ``_mock_set_magics`` drops
+# prior child-mock references; the same shape can fire in production any
+# time GC collects a prior instance during a new instance's ``__init__``).
+# GC runs ``__del__`` -> ``release()``, which re-acquires this same lock on
+# the same thread; with a non-reentrant ``Lock`` that re-acquisition would
+# deadlock the main thread (see ``test_fetch_routing_map_recovers_after_transient_gap``).
+_shared_cache_lock = threading.RLock()
 
 
 # pylint: disable=protected-access, line-too-long
