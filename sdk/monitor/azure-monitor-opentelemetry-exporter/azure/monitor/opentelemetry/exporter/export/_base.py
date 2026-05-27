@@ -44,11 +44,17 @@ from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     _exception_categories,
 )
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._connection_string_parser import (
+    ConnectionStringParser,
+)
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
     _get_sha256_hash,
+)
+from azure.monitor.opentelemetry.exporter.export._rate_limiter import (
+    _TokenBucketRateLimiter,
+    _DEFAULT_MAX_ENVELOPES_PER_SECOND,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
@@ -70,7 +76,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
     get_customer_stats_manager,
 )
 
-
 logger = logging.getLogger(__name__)
 
 _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
@@ -86,6 +91,7 @@ class ExportResult(Enum):
 
 # pylint: disable=broad-except
 # pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-statements
 # pylint: disable=C0301
 class BaseExporter:
     """Azure Monitor base exporter for OpenTelemetry."""
@@ -98,6 +104,7 @@ class BaseExporter:
         :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
         :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records for retry. Defaults to `False`.
         :keyword str storage_directory: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
+        :keyword int max_envelopes_per_second: Maximum number of telemetry envelopes sent per second. Acts as a client-side safety cap to prevent overloading shared ingestion infrastructure during telemetry bursts. Defaults to 10000. Set to 0 to disable rate limiting.
         :rtype: None
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
@@ -139,6 +146,17 @@ class BaseExporter:
             "storage_retention_period", 48 * 60 * 60
         )  # Retention period in seconds (default 48 hrs)
         self._timeout = kwargs.get("timeout", 10.0)  # networking timeout in seconds
+        max_eps = kwargs.get("max_envelopes_per_second", _DEFAULT_MAX_ENVELOPES_PER_SECOND)
+        if max_eps is not None and max_eps < 0:
+            raise ValueError("max_envelopes_per_second must be non-negative (0 disables rate limiting)")
+        # Each exporter instance gets its own rate limiter. This is intentional:
+        # different telemetry types (traces, logs, metrics) have different
+        # ingestion characteristics and burst profiles, so per-exporter caps
+        # provide more predictable behaviour than a shared process-wide bucket.
+        if max_eps and max_eps > 0:
+            self._rate_limiter: Optional[_TokenBucketRateLimiter] = _TokenBucketRateLimiter(max_eps)
+        else:
+            self._rate_limiter = None
         self._distro_version = kwargs.get(
             _AZURE_MONITOR_DISTRO_VERSION_ARG, ""
         )  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
@@ -168,7 +186,10 @@ class BaseExporter:
             policies.append(config.http_logging_policy or HttpLoggingPolicy(**kwargs))
 
         self.client: AzureMonitorClient = AzureMonitorClient(
-            host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
+            host=self._endpoint,
+            connection_timeout=self._timeout,
+            policies=policies,
+            **kwargs,
         )
         # TODO: Uncomment configuration changes once testing is completed
         # if self._configuration_manager:
@@ -195,7 +216,9 @@ class BaseExporter:
         if self._should_collect_stats():
             try:
                 # Import here to avoid circular dependencies
-                from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import collect_statsbeat_metrics
+                from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
+                    collect_statsbeat_metrics,
+                )
 
                 collect_statsbeat_metrics(self)
             except Exception as e:  # pylint: disable=broad-except
@@ -205,7 +228,9 @@ class BaseExporter:
 
         # customer sdkstats initialization
         if self._should_collect_customer_sdkstats():
-            from azure.monitor.opentelemetry.exporter.statsbeat.customer import collect_customer_sdkstats
+            from azure.monitor.opentelemetry.exporter.statsbeat.customer import (
+                collect_customer_sdkstats,
+            )
 
             # Collect customer sdkstats metrics
             collect_customer_sdkstats(self)
@@ -261,7 +286,7 @@ class BaseExporter:
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-statements
-    def _transmit(self, envelopes: List[TelemetryItem]) -> ExportResult:
+    def _transmit(self, envelopes: List[TelemetryItem], _skip_rate_limit: bool = False) -> ExportResult:
         """
         Transmit the data envelopes to the ingestion service.
 
@@ -269,10 +294,52 @@ class BaseExporter:
         throw an exception.
         :param envelopes: The list of telemetry items to transmit.
         :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.exporter.models.TelemetryItem
+        :param _skip_rate_limit: Internal flag to skip rate limiting on recursive calls (e.g. redirects).
+        :type _skip_rate_limit: bool
         :return: The result of the export.
         :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
         if len(envelopes) > 0:
+            # Client-side rate limiting: cap send rate to protect shared ingestion infrastructure.
+            # Stats exporters bypass rate limiting to ensure observability data is not lost.
+            # Skip rate limiting on recursive calls (e.g. 307/308 redirects) to avoid
+            # double-consuming tokens for the same batch.
+            if (
+                not _skip_rate_limit
+                and self._rate_limiter
+                and not self._is_stats_exporter()
+                and not self._is_customer_sdkstats_exporter()
+            ):
+                granted = self._rate_limiter.try_consume(len(envelopes))
+                if granted == 0:
+                    logger.warning(
+                        "Rate limiter rejected entire batch of %d envelopes. Routing to local storage for retry.",
+                        len(envelopes),
+                    )
+                    return ExportResult.FAILED_RETRYABLE
+                if granted < len(envelopes):
+                    # Send what we can, route the rest to local storage.
+                    # We mutate the list in-place so that the caller's reference
+                    # (used later in _handle_transmit_from_storage) only sees
+                    # the admitted envelopes, preventing double-persist of the
+                    # overflow on a subsequent retryable failure.
+                    overflow = envelopes[granted:]
+                    del envelopes[granted:]
+                    logger.info(
+                        "Rate limiter admitted %d of %d envelopes; %d envelopes deferred to local storage.",
+                        granted,
+                        granted + len(overflow),
+                        len(overflow),
+                    )
+                    if self.storage:
+                        self.storage.put([x.as_dict() for x in overflow])
+                    else:
+                        logger.warning(
+                            "Rate limiter deferred %d envelopes but offline "
+                            "storage is disabled; these envelopes are dropped.",
+                            len(overflow),
+                        )
+
             result = ExportResult.SUCCESS
             # Track whether or not exporter has successfully reached ingestion
             # Currently only used for statsbeat exporter to detect shutdown cases
@@ -308,7 +375,7 @@ class BaseExporter:
                                 logger.info(
                                     "Data dropped due to ingestion sampling: %s %s.",
                                     error.message,
-                                    envelopes[error.index] if error.index is not None else "",
+                                    (envelopes[error.index] if error.index is not None else ""),
                                 )
                         elif _is_retryable_code(error.status_code):
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
@@ -330,7 +397,7 @@ class BaseExporter:
                                     "Data drop %s: %s %s.",
                                     error.status_code,
                                     error.message,
-                                    envelopes[error.index] if error.index is not None else "",
+                                    (envelopes[error.index] if error.index is not None else ""),
                                 )
                     if self.storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
@@ -394,7 +461,7 @@ class BaseExporter:
                             # Change the host to the new redirected host
                             self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
                             # Attempt to export again
-                            result = self._transmit(envelopes)
+                            result = self._transmit(envelopes, _skip_rate_limit=True)
                         else:
                             if not self._is_stats_exporter():
                                 if self._should_collect_customer_sdkstats():
@@ -412,7 +479,9 @@ class BaseExporter:
                             # Track dropped items in customer sdkstats, non-retryable scenario
                             if self._should_collect_customer_sdkstats():
                                 track_dropped_items(
-                                    envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value
+                                    envelopes,
+                                    DropCode.CLIENT_EXCEPTION,
+                                    _exception_categories.CLIENT_EXCEPTION.value,
                                 )
                             logger.error(
                                 "Error sending telemetry because of circular redirects. "
@@ -474,7 +543,9 @@ class BaseExporter:
                 # Track dropped items in customer sdkstats for general exceptions
                 if self._should_collect_customer_sdkstats():
                     track_dropped_items(
-                        envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value
+                        envelopes,
+                        DropCode.CLIENT_EXCEPTION,
+                        _exception_categories.CLIENT_EXCEPTION.value,
                     )
 
                 if self._should_collect_stats():
@@ -608,7 +679,9 @@ def _is_sampling_rejection(message: Optional[str]) -> bool:
 
 
 # mypy: disable-error-code="union-attr"
-def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:
+def _get_authentication_credential(
+    **kwargs: Any,
+) -> Optional[ManagedIdentityCredential]:
     if "credential" in kwargs:
         return kwargs.get("credential")
     auth_string = os.getenv(_APPLICATIONINSIGHTS_AUTHENTICATION_STRING, "")
@@ -625,7 +698,9 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
                 return credential
     except ValueError as exc:
         logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
-            "APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc
+            "APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s",
+            auth_string,
+            exc,
         )
     except Exception as e:
         logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
@@ -688,6 +763,8 @@ def _get_storage_directory(instrumentation_key: str) -> str:
     )
     subdirectory = _get_sha256_hash(hash_input)
     storage_directory = os.path.join(
-        shared_root, _AZURE_TEMPDIR_PREFIX + subdirectory, _TEMPDIR_PREFIX + instrumentation_key
+        shared_root,
+        _AZURE_TEMPDIR_PREFIX + subdirectory,
+        _TEMPDIR_PREFIX + instrumentation_key,
     )
     return storage_directory

@@ -60,21 +60,36 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         ordered_versions = client.get_ordered_versions(package_name)
         last_release = ordered_versions[-1]
         stable_releases = [x for x in ordered_versions if not x.is_prerelease]
-        last_stable_release = stable_releases[-1] if stable_releases else ""
+        last_stable_version = str(stable_releases[-1] if stable_releases else "")
         if tag_is_stable:
-            last_version = str(last_stable_release) if last_stable_release else str(last_release)
+            last_version = last_stable_version if last_stable_version else str(last_release)
         else:
             last_version = str(last_release)
+
+        # temporary logic to always get latest version from pypi for specific packages whose latest stable version
+        # is not updated for a long time and has some issue in changelog generation.
+        # This is a workaround before we have a better solution to determine the version for changelog generation.
+        sdks_with_changelog_issue = {"azure-mgmt-sql": "3.0.1"}
+        if package_name in sdks_with_changelog_issue and (
+            last_version == sdks_with_changelog_issue[package_name]
+            or last_stable_version == sdks_with_changelog_issue[package_name]
+        ):
+            _LOGGER.info(
+                f"Package {package_name} has changelog generation issue with version {last_version}, fallback to get latest version from pypi"
+            )
+            last_version = str(last_release)
+            last_stable_version = ""
+
     except Exception as e:
         _LOGGER.warning(f"Failed to get version info from PyPI for {package_name}: {e}")
         last_version = ""
-        last_stable_release = ""
+        last_stable_version = ""
 
     # Ignore 0.0.0 when it appears on PyPI as a placeholder or name-reservation version.
     if last_version and Version(last_version).base_version == "0.0.0":
         return "", ""
 
-    return last_version, str(last_stable_release)
+    return last_version, last_stable_version
 
 
 def change_log_generate(

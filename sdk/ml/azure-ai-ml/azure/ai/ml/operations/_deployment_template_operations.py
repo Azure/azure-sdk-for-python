@@ -68,40 +68,39 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
     def _get_registry_endpoint(self) -> str:
         """Dynamically determine the registry endpoint based on registry region.
 
+        Uses the registry discovery API (which does not require ARM access to the
+        registry's subscription) to resolve the primary region, then constructs the
+        appropriate dataplane endpoint.
+
         :return: The API endpoint URL for the registry
         :rtype: str
         """
         try:
-            # Import here to avoid circular dependencies
-            from azure.ai.ml._restclient.v2022_10_01_preview import (
-                AzureMachineLearningWorkspaces as ServiceClient102022,
+            from azure.ai.ml._azure_environments import (
+                _get_default_cloud_name,
+                _get_registry_discovery_endpoint_from_metadata,
             )
-            from azure.ai.ml.operations import RegistryOperations
+            from azure.ai.ml._restclient.registry_discovery import (
+                RegistryDiscoveryClient as ServiceClientRegistryDiscovery,
+            )
 
-            if self._credential and self._operation_scope.registry_name:
-                # Get registry information to determine the region
-                registry_operations = RegistryOperations(
-                    operation_scope=self._operation_scope,
-                    service_client=ServiceClient102022(
-                        credential=self._credential,
-                        subscription_id=self._operation_scope.subscription_id,
-                        resource_group_name=self._operation_scope.resource_group_name,
-                    ),
-                    all_operations=None,  # type: ignore[arg-type]
-                    credentials=self._credential,
+            # Try to get credential from service client or operation config
+            credential = None
+            if hasattr(self._service_client, "_config") and hasattr(self._service_client._config, "credential"):
+                credential = self._service_client._config.credential
+            elif hasattr(self._operation_config, "credential"):
+                credential = self._operation_config.credential
+
+            if credential and self._operation_scope.registry_name:
+                # Use registry discovery API to get the primary region
+                discovery_base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
+                discovery_client = ServiceClientRegistryDiscovery(credential=credential, base_url=discovery_base_url)
+                response = discovery_client.registry_management_non_workspace.get_registry_management_non_workspace(
+                    self._operation_scope.registry_name
                 )
 
-                registry = registry_operations.get(self._operation_scope.registry_name)
-
-                # Extract region from registry location or replication locations
-                region = None
-                if registry.location:
-                    region = registry.location
-                elif registry.replication_locations and len(registry.replication_locations) > 0:
-                    region = registry.replication_locations[0].location
-
-                if region:
-                    return f"https://{region}.api.azureml.ms"
+                if response.primary_region:
+                    return f"https://{response.primary_region}.api.azureml.ms"
 
         except Exception as e:
             module_logger.debug("Could not determine registry region dynamically: %s. Using default.", e)
