@@ -78,6 +78,14 @@ def test_ordinal_score_emits_expected_label(capture, score_value, expected_label
     assert attrs["gen_ai.evaluation.score.value"] == score_value
 
 
+def test_ordinal_custom_threshold_controls_label_and_flows_to_internal_properties(capture):
+    emit_5_point_ordinal_evaluation(evaluation_metric_name="relevance", score_value=2.0, threshold=4.0)
+    attrs = _only_attrs(capture)
+    decoded = _internal_properties(attrs)
+    assert attrs["gen_ai.evaluation.score.label"] == "fail"
+    assert decoded["gen_ai.evaluation.threshold"] == "4.0"
+
+
 def test_ordinal_non_integer_score_raises():
     with pytest.raises(ValueError):
         emit_5_point_ordinal_evaluation(evaluation_metric_name="relevance", score_value=2.5)
@@ -89,6 +97,12 @@ def test_ordinal_score_out_of_range_raises(score_value):
         emit_5_point_ordinal_evaluation(evaluation_metric_name="relevance", score_value=score_value)
 
 
+@pytest.mark.parametrize("threshold", [0.0, 6.0])
+def test_ordinal_threshold_out_of_range_raises(threshold):
+    with pytest.raises(ValueError):
+        emit_5_point_ordinal_evaluation(evaluation_metric_name="relevance", score_value=4.0, threshold=threshold)
+
+
 def test_top_level_attributes_have_canonical_keys_and_routing(capture):
     emit_boolean_evaluation(evaluation_metric_name="task_completion", passed=True)
     attrs = _only_attrs(capture)
@@ -96,7 +110,8 @@ def test_top_level_attributes_have_canonical_keys_and_routing(capture):
     assert attrs["gen_ai.evaluation.name"] == "task_completion"
     assert attrs["gen_ai.evaluation.score.value"] == 1.0
     assert attrs["gen_ai.evaluation.score.label"] == "pass"
-    assert attrs["microsoft.human_evaluation.source"] == "end_user"
+    assert attrs["microsoft.gen_ai.human_evaluation.source"] == "end_user"
+    assert attrs["microsoft.gen_ai.evaluation.actor.type"] == "human"
     assert "internal_properties" in attrs
 
 
@@ -120,7 +135,7 @@ def test_internal_properties_ordinal_defaults(capture):
     assert decoded["gen_ai.evaluation.type"] == "ordinal"
 
 
-def test_response_id_set_adds_top_level_id_and_response_id_type(capture):
+def test_response_id_set_adds_top_level_id(capture):
     emit_boolean_evaluation(
         evaluation_metric_name="task_completion",
         passed=True,
@@ -128,20 +143,17 @@ def test_response_id_set_adds_top_level_id_and_response_id_type(capture):
     )
     attrs = _only_attrs(capture)
     assert attrs["gen_ai.response.id"] == "resp_abc123"
-    assert attrs["microsoft.gen_ai.response.id.type"] == "responses"
 
 
-def test_response_id_omitted_omits_response_id_type(capture):
+def test_response_id_omitted_omits_top_level_id(capture):
     emit_boolean_evaluation(evaluation_metric_name="task_completion", passed=True)
     attrs = _only_attrs(capture)
     assert "gen_ai.response.id" not in attrs
-    assert "microsoft.gen_ai.response.id.type" not in attrs
 
 
 def test_project_resource_id_set_added_to_internal_properties(capture):
     arm_id = (
-        "/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.CognitiveServices"
-        "/accounts/acct/projects/proj"
+        "/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.CognitiveServices" "/accounts/acct/projects/proj"
     )
     emit_boolean_evaluation(
         evaluation_metric_name="task_completion",
@@ -199,14 +211,14 @@ def test_tags_fan_out_as_top_level_attributes(capture):
         tags={"subscription_tier": "basic_plan", "department": "marketing"},
     )
     attrs = _only_attrs(capture)
-    assert attrs["microsoft.evaluation.tags.subscription_tier"] == "basic_plan"
-    assert attrs["microsoft.evaluation.tags.department"] == "marketing"
+    assert attrs["microsoft.gen_ai.evaluation.tags.subscription_tier"] == "basic_plan"
+    assert attrs["microsoft.gen_ai.evaluation.tags.department"] == "marketing"
 
 
 def test_evaluation_id_omitted_omits_attribute(capture):
     emit_boolean_evaluation(evaluation_metric_name="task_completion", passed=True)
     attrs = _only_attrs(capture)
-    assert "microsoft.evaluation.id" not in attrs
+    assert "microsoft.gen_ai.human_evaluation.id" not in attrs
 
 
 def test_evaluation_id_provided_flows_through_verbatim_as_top_level_attribute(capture):
@@ -216,7 +228,7 @@ def test_evaluation_id_provided_flows_through_verbatim_as_top_level_attribute(ca
         evaluation_id="custom-eval-id-42",
     )
     attrs = _only_attrs(capture)
-    assert attrs["microsoft.evaluation.id"] == "custom-eval-id-42"
+    assert attrs["microsoft.gen_ai.human_evaluation.id"] == "custom-eval-id-42"
 
 
 def test_explanation_flows_through_as_top_level_attribute(capture):

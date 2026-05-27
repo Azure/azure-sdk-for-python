@@ -62,6 +62,7 @@ logger.setLevel(logging.INFO)
 EvaluationType = Literal["boolean", "ordinal"]
 DesirableDirection = Literal["increase", "decrease"]
 
+
 def _validate_score(
     *,
     score_value: float,
@@ -140,23 +141,23 @@ def _emit_human_evaluation(
         "gen_ai.evaluation.name": evaluation_metric_name,
         "gen_ai.evaluation.score.value": score_value,
         "gen_ai.evaluation.score.label": score_label,
-        "microsoft.human_evaluation.source": "end_user",
+        "microsoft.gen_ai.human_evaluation.source": "end_user",
+        "microsoft.gen_ai.evaluation.actor.type": "human",
         "internal_properties": json.dumps(internal_properties),
     }
     if explanation is not None:
         attributes["gen_ai.evaluation.explanation"] = explanation
     if response_id is not None:
         attributes["gen_ai.response.id"] = response_id
-        attributes["microsoft.gen_ai.response.id.type"] = "responses"
     if enduser_id is not None:
         attributes["enduser.id"] = enduser_id
     if enduser_pseudo_id is not None:
         attributes["enduser.pseudo.id"] = enduser_pseudo_id
     if tags:
         for tag_name, tag_value in tags.items():
-            attributes[f"microsoft.evaluation.tags.{tag_name}"] = tag_value
+            attributes[f"microsoft.gen_ai.evaluation.tags.{tag_name}"] = tag_value
     if evaluation_id is not None:
-        attributes["microsoft.evaluation.id"] = evaluation_id
+        attributes["microsoft.gen_ai.human_evaluation.id"] = evaluation_id
 
     logger.info("gen_ai.evaluation.result", extra=attributes)
 
@@ -186,11 +187,9 @@ def emit_boolean_evaluation(
         explanation: Optional free-form explanation from the end user.
         response_id: Optional OpenAI Responses API response ID being evaluated.
         project_resource_id: Optional ARM resource ID for the Foundry project.
-        enduser_id: Optional signed-in end-user ID. This may contain PII and maps
-            to `user_AuthenticatedId` in Application Insights.
-        enduser_pseudo_id: Optional pseudonymous end-user ID. This maps to
-            `user_Id` in Application Insights.
-        tags: Optional metadata emitted as `microsoft.evaluation.tags.<key>`.
+        enduser_id: Optional signed-in end-user ID. This may contain PII.
+        enduser_pseudo_id: Optional pseudonymous end-user ID.
+        tags: Optional metadata associated with the evaluation.
         evaluation_id: Optional ID for the evaluation event itself.
     """
     _emit_human_evaluation(
@@ -215,6 +214,7 @@ def emit_5_point_ordinal_evaluation(
     *,
     evaluation_metric_name: str,
     score_value: float,
+    threshold: float = 3.0,
     explanation: Optional[str] = None,
     response_id: Optional[str] = None,
     project_resource_id: Optional[str] = None,
@@ -232,23 +232,26 @@ def emit_5_point_ordinal_evaluation(
         evaluation_metric_name: Name of the evaluated metric, such as
             `"relevance"` or `"helpfulness"`.
         score_value: Integer score from `1.0` through `5.0`.
+        threshold: Score at or above this value is passing.
         explanation: Optional free-form explanation from the end user.
         response_id: Optional OpenAI Responses API response ID being evaluated.
         project_resource_id: Optional ARM resource ID for the Foundry project.
-        enduser_id: Optional signed-in end-user ID. This may contain PII and maps
-            to `user_AuthenticatedId` in Application Insights.
-        enduser_pseudo_id: Optional pseudonymous end-user ID. This maps to
-            `user_Id` in Application Insights.
-        tags: Optional metadata emitted as `microsoft.evaluation.tags.<key>`.
+        enduser_id: Optional signed-in end-user ID. This may contain PII.
+        enduser_pseudo_id: Optional pseudonymous end-user ID.
+        tags: Optional metadata associated with the evaluation.
         evaluation_id: Optional ID for the evaluation event itself.
     """
+    threshold = float(threshold)
+    if not 1.0 <= threshold <= 5.0:
+        raise ValueError(f"threshold {threshold} is outside the allowed range [1.0, 5.0].")
+
     _emit_human_evaluation(
         evaluation_metric_name=evaluation_metric_name,
         score_value=score_value,
         evaluation_type="ordinal",
         min_value=1.0,
         max_value=5.0,
-        threshold=3.0,
+        threshold=threshold,
         desirable_direction="increase",
         explanation=explanation,
         response_id=response_id,
