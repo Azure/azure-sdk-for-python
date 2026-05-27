@@ -130,7 +130,9 @@ with (
     # `isinstance` narrows the discriminated `definition` to the rubric subtype.
     definition = evaluator.definition
     assert isinstance(definition, RubricBasedEvaluatorDefinition)
-    print(f"Created evaluator `{evaluator.name}` version `{evaluator.version}` with {len(definition.dimensions)} dimensions.")
+    print(
+        f"Created evaluator `{evaluator.name}` version `{evaluator.version}` with {len(definition.dimensions)} dimensions."
+    )
 
     # 2. Create an OpenAI evaluation that uses the rubric as a testing criterion.
     eval_object = openai_client.evals.create(

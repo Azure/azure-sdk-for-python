@@ -398,17 +398,13 @@ class TestValidateCreateVersionInputs:
     def test_non_positive_polling_timeout_raises(self, tmp_path, bad_timeout):
         (tmp_path / "weights.bin").write_bytes(b"x")
         with pytest.raises(ValueError, match="polling_timeout"):
-            BetaModelsOperations._validate_create_inputs(
-                **self._kwargs(source=tmp_path, polling_timeout=bad_timeout)
-            )
+            BetaModelsOperations._validate_create_inputs(**self._kwargs(source=tmp_path, polling_timeout=bad_timeout))
 
     @pytest.mark.parametrize("bad_interval", [0, -1.0])
     def test_non_positive_polling_interval_raises(self, tmp_path, bad_interval):
         (tmp_path / "weights.bin").write_bytes(b"x")
         with pytest.raises(ValueError, match="polling_interval"):
-            BetaModelsOperations._validate_create_inputs(
-                **self._kwargs(source=tmp_path, polling_interval=bad_interval)
-            )
+            BetaModelsOperations._validate_create_inputs(**self._kwargs(source=tmp_path, polling_interval=bad_interval))
 
     def test_polling_params_skipped_when_wait_for_commit_false(self, tmp_path):
         (tmp_path / "weights.bin").write_bytes(b"x")
