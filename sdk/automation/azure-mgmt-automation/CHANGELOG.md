@@ -8,89 +8,41 @@
   - Client `AutomationClient` added method `send_request`
   - Client `AutomationClient` added operation group `runtime_environments`
   - Client `AutomationClient` added operation group `package`
-  - Model `AgentRegistration` added property `keys_property`
-  - Model `AutomationAccountCreateOrUpdateParameters` added property `properties`
-  - Model `AutomationAccountUpdateParameters` added property `properties`
   - Model `Certificate` added property `system_data`
-  - Model `CertificateCreateOrUpdateParameters` added property `properties`
-  - Model `CertificateUpdateParameters` added property `properties`
   - Model `Connection` added property `system_data`
-  - Model `ConnectionCreateOrUpdateParameters` added property `properties`
   - Model `ConnectionType` added property `system_data`
-  - Model `ConnectionTypeCreateOrUpdateParameters` added property `properties`
-  - Model `ConnectionUpdateParameters` added property `properties`
   - Model `Credential` added property `system_data`
-  - Model `CredentialCreateOrUpdateParameters` added property `properties`
-  - Model `CredentialUpdateParameters` added property `properties`
   - Model `DscConfiguration` added property `system_data`
-  - Model `DscConfigurationCreateOrUpdateParameters` added property `properties`
-  - Model `DscConfigurationUpdateParameters` added property `properties`
   - Model `DscNode` added property `system_data`
   - Model `DscNodeConfiguration` added property `system_data`
   - Model `HybridRunbookWorker` added property `tags`
   - Model `HybridRunbookWorker` added property `location`
-  - Model `HybridRunbookWorkerCreateParameters` added property `properties`
   - Model `HybridRunbookWorkerGroup` added property `tags`
   - Model `HybridRunbookWorkerGroup` added property `location`
-  - Model `HybridRunbookWorkerGroupCreateOrUpdateParameters` added property `properties`
   - Model `Job` added property `system_data`
   - Model `JobCollectionItem` added property `system_data`
   - Model `JobSchedule` added property `system_data`
   - Model `Module` added property `system_data`
-  - Model `ModuleCreateOrUpdateParameters` added property `properties`
-  - Enum `ModuleProvisioningState` added member `CANCELED`
-  - Model `ModuleUpdateParameters` added property `properties`
-  - Model `Operation` added property `properties`
   - Model `PrivateEndpointConnection` added property `system_data`
   - Model `PrivateLinkResource` added property `system_data`
   - Model `ProxyResource` added property `system_data`
-  - Model `PythonPackageCreateParameters` added property `properties`
   - Model `Resource` added property `system_data`
   - Model `Runbook` added property `system_data`
-  - Model `RunbookCreateOrUpdateParameters` added property `properties`
   - Enum `RunbookTypeEnum` added member `POWER_SHELL72`
   - Enum `RunbookTypeEnum` added member `PYTHON`
-  - Model `RunbookUpdateParameters` added property `properties`
   - Model `Schedule` added property `system_data`
-  - Model `ScheduleCreateOrUpdateParameters` added property `properties`
-  - Model `ScheduleUpdateParameters` added property `properties`
   - Model `SoftwareUpdateConfiguration` added property `system_data`
-  - Model `SoftwareUpdateConfigurationMachineRun` added property `properties`
   - Model `SourceControl` added property `system_data`
   - Model `TestJobCreateParameters` added property `runtime_environment`
   - Model `TrackedResource` added property `system_data`
   - Model `Variable` added property `system_data`
-  - Model `VariableCreateOrUpdateParameters` added property `properties`
-  - Model `VariableUpdateParameters` added property `properties`
   - Model `Watcher` added property `system_data`
-  - Model `WatcherUpdateParameters` added property `properties`
   - Model `Webhook` added property `system_data`
-  - Model `WebhookCreateOrUpdateParameters` added property `properties`
-  - Model `WebhookUpdateParameters` added property `properties`
-  - Added model `AutomationAccountCreateOrUpdateProperties`
-  - Added model `AutomationAccountUpdateProperties`
   - Added model `AutomationErrorResponse`
-  - Added model `CertificateCreateOrUpdateProperties`
-  - Added model `CertificateUpdateProperties`
-  - Added model `ConnectionCreateOrUpdateProperties`
-  - Added model `ConnectionTypeCreateOrUpdateProperties`
-  - Added model `ConnectionUpdateProperties`
-  - Added model `CredentialCreateOrUpdateProperties`
-  - Added model `CredentialUpdateProperties`
   - Added model `DeletedRunbook`
   - Added model `DeletedRunbookProperties`
-  - Added model `DscConfigurationCreateOrUpdateProperties`
-  - Added model `DscNodeConfigurationAssociationProperty`
   - Added model `ErrorAdditionalInfo`
-  - Added model `ErrorDetail`
-  - Added model `HybridRunbookWorkerCreateOrUpdateParameters`
-  - Added model `HybridRunbookWorkerGroupCreateOrUpdateProperties`
-  - Added model `JobCreateProperties`
   - Added model `JobRuntimeEnvironment`
-  - Added model `JobScheduleCreateProperties`
-  - Added model `ModuleCreateOrUpdateProperties`
-  - Added model `ModuleUpdateProperties`
-  - Added model `OperationPropertiesFormat`
   - Added model `Package`
   - Added model `PackageCreateOrUpdateParameters`
   - Added model `PackageCreateOrUpdateProperties`
@@ -99,162 +51,62 @@
   - Added enum `PackageProvisioningState`
   - Added model `PackageUpdateParameters`
   - Added model `PackageUpdateProperties`
-  - Added model `PythonPackageCreateProperties`
-  - Added model `RunbookCreateOrUpdateProperties`
-  - Added model `RunbookUpdateProperties`
   - Added model `RuntimeEnvironment`
   - Added model `RuntimeEnvironmentProperties`
   - Added model `RuntimeEnvironmentUpdateParameters`
   - Added model `RuntimeEnvironmentUpdateProperties`
   - Added model `RuntimeProperties`
-  - Added model `ScheduleCreateOrUpdateProperties`
-  - Added model `ScheduleUpdateProperties`
-  - Added model `SourceControlCreateOrUpdateProperties`
-  - Added model `SourceControlSyncJobCreateProperties`
-  - Added model `SourceControlUpdateProperties`
-  - Added model `UpdateConfigurationMachineRunProperties`
-  - Added model `VariableCreateOrUpdateProperties`
-  - Added model `VariableUpdateProperties`
-  - Added model `WatcherUpdateProperties`
-  - Added model `WebhookCreateOrUpdateProperties`
-  - Added model `WebhookUpdateProperties`
-  - Model `AutomationAccountOperations` added method `list_deleted_runbooks`
-  - Model `HybridRunbookWorkersOperations` added method `patch`
-  - Added model `PackageOperations`
-  - Added model `RuntimeEnvironmentsOperations`
+  - Operation group `AutomationAccountOperations` added method `list_deleted_runbooks`
+  - Operation group `HybridRunbookWorkersOperations` added method `patch`
+  - Added operation group `PackageOperations`
+  - Added operation group `RuntimeEnvironmentsOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed client operation group `AutomationClient.dsc_compilation_job`
   - Deleted or renamed client operation group `AutomationClient.dsc_compilation_job_stream`
-  - Model `AgentRegistration` deleted or renamed its instance variable `keys`
-  - Model `AutomationAccountCreateOrUpdateParameters` deleted or renamed its instance variable `sku`
-  - Model `AutomationAccountCreateOrUpdateParameters` deleted or renamed its instance variable `encryption`
-  - Model `AutomationAccountCreateOrUpdateParameters` deleted or renamed its instance variable `public_network_access`
-  - Model `AutomationAccountCreateOrUpdateParameters` deleted or renamed its instance variable `disable_local_auth`
-  - Model `AutomationAccountUpdateParameters` deleted or renamed its instance variable `sku`
-  - Model `AutomationAccountUpdateParameters` deleted or renamed its instance variable `encryption`
-  - Model `AutomationAccountUpdateParameters` deleted or renamed its instance variable `public_network_access`
-  - Model `AutomationAccountUpdateParameters` deleted or renamed its instance variable `disable_local_auth`
-  - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `base64_value`
-  - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `thumbprint`
-  - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `is_exportable`
-  - Model `CertificateUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `ConnectionCreateOrUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `ConnectionCreateOrUpdateParameters` deleted or renamed its instance variable `connection_type`
-  - Model `ConnectionCreateOrUpdateParameters` deleted or renamed its instance variable `field_definition_values`
-  - Model `ConnectionTypeCreateOrUpdateParameters` deleted or renamed its instance variable `is_global`
-  - Model `ConnectionTypeCreateOrUpdateParameters` deleted or renamed its instance variable `field_definitions`
-  - Model `ConnectionUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `ConnectionUpdateParameters` deleted or renamed its instance variable `field_definition_values`
-  - Model `CredentialCreateOrUpdateParameters` deleted or renamed its instance variable `user_name`
-  - Model `CredentialCreateOrUpdateParameters` deleted or renamed its instance variable `password`
-  - Model `CredentialCreateOrUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `CredentialUpdateParameters` deleted or renamed its instance variable `user_name`
-  - Model `CredentialUpdateParameters` deleted or renamed its instance variable `password`
-  - Model `CredentialUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `DscConfigurationCreateOrUpdateParameters` deleted or renamed its instance variable `log_verbose`
-  - Model `DscConfigurationCreateOrUpdateParameters` deleted or renamed its instance variable `log_progress`
-  - Model `DscConfigurationCreateOrUpdateParameters` deleted or renamed its instance variable `source`
-  - Model `DscConfigurationCreateOrUpdateParameters` deleted or renamed its instance variable `parameters`
-  - Model `DscConfigurationCreateOrUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `DscConfigurationUpdateParameters` deleted or renamed its instance variable `log_verbose`
-  - Model `DscConfigurationUpdateParameters` deleted or renamed its instance variable `log_progress`
-  - Model `DscConfigurationUpdateParameters` deleted or renamed its instance variable `source`
-  - Model `DscConfigurationUpdateParameters` deleted or renamed its instance variable `parameters`
-  - Model `DscConfigurationUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `DscNodeUpdateParametersProperties` deleted or renamed its instance variable `name`
-  - Model `ErrorResponse` deleted or renamed its instance variable `code`
-  - Model `ErrorResponse` deleted or renamed its instance variable `message`
-  - Model `HybridRunbookWorkerCreateParameters` deleted or renamed its instance variable `vm_resource_id`
-  - Model `HybridRunbookWorkerGroupCreateOrUpdateParameters` deleted or renamed its instance variable `credential`
-  - Model `JobCreateParameters` deleted or renamed its instance variable `runbook`
-  - Model `JobCreateParameters` deleted or renamed its instance variable `parameters`
-  - Model `JobCreateParameters` deleted or renamed its instance variable `run_on`
-  - Model `JobScheduleCreateParameters` deleted or renamed its instance variable `schedule`
-  - Model `JobScheduleCreateParameters` deleted or renamed its instance variable `runbook`
-  - Model `JobScheduleCreateParameters` deleted or renamed its instance variable `run_on`
-  - Model `JobScheduleCreateParameters` deleted or renamed its instance variable `parameters`
-  - Model `KeyListResult` deleted or renamed its instance variable `keys`
-  - Model `ModuleCreateOrUpdateParameters` deleted or renamed its instance variable `content_link`
-  - Deleted or renamed enum value `ModuleProvisioningState.CANCELLED`
-  - Model `ModuleUpdateParameters` deleted or renamed its instance variable `content_link`
-  - Model `Operation` deleted or renamed its instance variable `service_specification`
-  - Model `PythonPackageCreateParameters` deleted or renamed its instance variable `content_link`
-  - Model `RunbookCreateOrUpdateParameters` deleted or renamed its instance variable `log_verbose`
-  - Model `RunbookCreateOrUpdateParameters` deleted or renamed its instance variable `log_progress`
-  - Model `RunbookCreateOrUpdateParameters` deleted or renamed its instance variable `runbook_type`
-  - Model `RunbookCreateOrUpdateParameters` deleted or renamed its instance variable `draft`
-  - Model `RunbookCreateOrUpdateParameters` deleted or renamed its instance variable `publish_content_link`
-  - Model `RunbookCreateOrUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `RunbookCreateOrUpdateParameters` deleted or renamed its instance variable `log_activity_trace`
-  - Model `RunbookUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `RunbookUpdateParameters` deleted or renamed its instance variable `log_verbose`
-  - Model `RunbookUpdateParameters` deleted or renamed its instance variable `log_progress`
-  - Model `RunbookUpdateParameters` deleted or renamed its instance variable `log_activity_trace`
-  - Model `ScheduleCreateOrUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `ScheduleCreateOrUpdateParameters` deleted or renamed its instance variable `start_time`
-  - Model `ScheduleCreateOrUpdateParameters` deleted or renamed its instance variable `expiry_time`
-  - Model `ScheduleCreateOrUpdateParameters` deleted or renamed its instance variable `interval`
-  - Model `ScheduleCreateOrUpdateParameters` deleted or renamed its instance variable `frequency`
-  - Model `ScheduleCreateOrUpdateParameters` deleted or renamed its instance variable `time_zone`
-  - Model `ScheduleCreateOrUpdateParameters` deleted or renamed its instance variable `advanced_schedule`
-  - Model `ScheduleUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `ScheduleUpdateParameters` deleted or renamed its instance variable `is_enabled`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `target_computer`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `target_computer_type`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `software_update_configuration`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `status`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `os_type`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `correlation_id`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `source_computer_id`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `start_time`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `end_time`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `configured_duration`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `job`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `creation_time`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `created_by`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `last_modified_time`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `last_modified_by`
-  - Model `SoftwareUpdateConfigurationMachineRun` deleted or renamed its instance variable `error`
-  - Model `SourceControlCreateOrUpdateParameters` deleted or renamed its instance variable `repo_url`
-  - Model `SourceControlCreateOrUpdateParameters` deleted or renamed its instance variable `branch`
-  - Model `SourceControlCreateOrUpdateParameters` deleted or renamed its instance variable `folder_path`
-  - Model `SourceControlCreateOrUpdateParameters` deleted or renamed its instance variable `auto_sync`
-  - Model `SourceControlCreateOrUpdateParameters` deleted or renamed its instance variable `publish_runbook`
-  - Model `SourceControlCreateOrUpdateParameters` deleted or renamed its instance variable `source_type`
-  - Model `SourceControlCreateOrUpdateParameters` deleted or renamed its instance variable `security_token`
-  - Model `SourceControlCreateOrUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `SourceControlSyncJobCreateParameters` deleted or renamed its instance variable `commit_id`
-  - Model `SourceControlUpdateParameters` deleted or renamed its instance variable `branch`
-  - Model `SourceControlUpdateParameters` deleted or renamed its instance variable `folder_path`
-  - Model `SourceControlUpdateParameters` deleted or renamed its instance variable `auto_sync`
-  - Model `SourceControlUpdateParameters` deleted or renamed its instance variable `publish_runbook`
-  - Model `SourceControlUpdateParameters` deleted or renamed its instance variable `security_token`
-  - Model `SourceControlUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `VariableCreateOrUpdateParameters` deleted or renamed its instance variable `value`
-  - Model `VariableCreateOrUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `VariableCreateOrUpdateParameters` deleted or renamed its instance variable `is_encrypted`
-  - Model `VariableUpdateParameters` deleted or renamed its instance variable `value`
-  - Model `VariableUpdateParameters` deleted or renamed its instance variable `description`
-  - Model `WatcherUpdateParameters` deleted or renamed its instance variable `execution_frequency_in_seconds`
-  - Model `WebhookCreateOrUpdateParameters` deleted or renamed its instance variable `is_enabled`
-  - Model `WebhookCreateOrUpdateParameters` deleted or renamed its instance variable `uri`
-  - Model `WebhookCreateOrUpdateParameters` deleted or renamed its instance variable `expiry_time`
-  - Model `WebhookCreateOrUpdateParameters` deleted or renamed its instance variable `parameters`
-  - Model `WebhookCreateOrUpdateParameters` deleted or renamed its instance variable `runbook`
-  - Model `WebhookCreateOrUpdateParameters` deleted or renamed its instance variable `run_on`
-  - Model `WebhookUpdateParameters` deleted or renamed its instance variable `is_enabled`
-  - Model `WebhookUpdateParameters` deleted or renamed its instance variable `run_on`
-  - Model `WebhookUpdateParameters` deleted or renamed its instance variable `parameters`
-  - Model `WebhookUpdateParameters` deleted or renamed its instance variable `description`
+  - Model `AgentRegistration` renamed its instance variable `keys` to `keys_property`
+  - Model `AutomationAccountCreateOrUpdateParameters` moved instance variable `sku`, `encryption`, `public_network_access` and `disable_local_auth` under property `properties` whose type is `AutomationAccountCreateOrUpdateProperties`
+  - Model `AutomationAccountUpdateParameters` moved instance variable `sku`, `encryption`, `public_network_access` and `disable_local_auth` under property `properties` whose type is `AutomationAccountUpdateProperties`
+  - Model `CertificateCreateOrUpdateParameters` moved instance variable `base64_value`, `description`, `thumbprint` and `is_exportable` under property `properties` whose type is `CertificateCreateOrUpdateProperties`
+  - Model `CertificateUpdateParameters` moved instance variable `description` under property `properties` whose type is `CertificateUpdateProperties`
+  - Model `ConnectionCreateOrUpdateParameters` moved instance variable `description`, `connection_type` and `field_definition_values` under property `properties` whose type is `ConnectionCreateOrUpdateProperties`
+  - Model `ConnectionTypeCreateOrUpdateParameters` moved instance variable `is_global` and `field_definitions` under property `properties` whose type is `ConnectionTypeCreateOrUpdateProperties`
+  - Model `ConnectionUpdateParameters` moved instance variable `description` and `field_definition_values` under property `properties` whose type is `ConnectionUpdateProperties`
+  - Model `CredentialCreateOrUpdateParameters` moved instance variable `user_name`, `password` and `description` under property `properties` whose type is `CredentialCreateOrUpdateProperties`
+  - Model `CredentialUpdateParameters` moved instance variable `user_name`, `password` and `description` under property `properties` whose type is `CredentialUpdateProperties`
+  - Model `DscConfigurationCreateOrUpdateParameters` moved instance variable `log_verbose`, `log_progress`, `source`, `parameters` and `description` under property `properties` whose type is `DscConfigurationCreateOrUpdateProperties`
+  - Model `DscConfigurationUpdateParameters` moved instance variable `log_verbose`, `log_progress`, `source`, `parameters` and `description` under property `properties` whose type is `DscConfigurationCreateOrUpdateProperties`
+  - Model `DscNodeUpdateParametersProperties` moved instance variable `name` under property `node_configuration` whose type is `DscNodeConfigurationAssociationProperty`
+  - Model `ErrorResponse` moved instance variable `code` and `message` under property `error` whose type is `ErrorDetail`
+  - Model `HybridRunbookWorkerCreateParameters` moved instance variable `vm_resource_id` under property `properties` whose type is `HybridRunbookWorkerCreateOrUpdateParameters`
+  - Model `HybridRunbookWorkerGroupCreateOrUpdateParameters` moved instance variable `credential` under property `properties` whose type is `HybridRunbookWorkerGroupCreateOrUpdateProperties`
+  - Model `JobCreateParameters` moved instance variable `runbook`, `parameters` and `run_on` under property `properties` whose type is `JobCreateProperties`
+  - Model `JobScheduleCreateParameters` moved instance variable `schedule`, `runbook`, `run_on` and `parameters` under property `properties` whose type is `JobScheduleCreateProperties`
+  - Model `KeyListResult` renamed its instance variable `keys` to `keys_property`
+  - Model `ModuleCreateOrUpdateParameters` moved instance variable `content_link` under property `properties` whose type is `ModuleCreateOrUpdateProperties`
+  - Renamed enum value `ModuleProvisioningState.CANCELLED` to `ModuleProvisioningState.CANCELED`
+  - Model `ModuleUpdateParameters` moved instance variable `content_link` under property `properties` whose type is `ModuleUpdateProperties`
+  - Model `Operation` moved instance variable `service_specification` under property `properties` whose type is `OperationPropertiesFormat`
+  - Model `PythonPackageCreateParameters` moved instance variable `content_link` under property `properties` whose type is `PythonPackageCreateProperties`
+  - Model `RunbookCreateOrUpdateParameters` moved instance variable `log_verbose`, `log_progress`, `runbook_type`, `draft`, `publish_content_link`, `description` and `log_activity_trace` under property `properties` whose type is `RunbookCreateOrUpdateProperties`
+  - Model `RunbookUpdateParameters` moved instance variable `description`, `log_verbose`, `log_progress` and `log_activity_trace` under property `properties` whose type is `RunbookUpdateProperties`
+  - Model `ScheduleCreateOrUpdateParameters` moved instance variable `description`, `start_time`, `expiry_time`, `interval`, `frequency`, `time_zone` and `advanced_schedule` under property `properties` whose type is `ScheduleCreateOrUpdateProperties`
+  - Model `ScheduleUpdateParameters` moved instance variable `description` and `is_enabled` under property `properties` whose type is `ScheduleUpdateProperties`
+  - Model `SoftwareUpdateConfigurationMachineRun` moved instance variable `target_computer`, `target_computer_type`, `software_update_configuration`, `status`, `os_type`, `correlation_id`, `source_computer_id`, `start_time`, `end_time`, `configured_duration`, `job`, `creation_time`, `created_by`, `last_modified_time`, `last_modified_by` and `error` under property `properties` whose type is `UpdateConfigurationMachineRunProperties`
+  - Model `SourceControlCreateOrUpdateParameters` moved instance variable `repo_url`, `branch`, `folder_path`, `auto_sync`, `publish_runbook`, `source_type`, `security_token` and `description` under property `properties` whose type is `SourceControlCreateOrUpdateProperties`
+  - Model `SourceControlSyncJobCreateParameters` moved instance variable `commit_id` under property `properties` whose type is `SourceControlSyncJobCreateProperties`
+  - Model `SourceControlUpdateParameters` moved instance variable `branch`, `folder_path`, `auto_sync`, `publish_runbook`, `security_token` and `description` under property `properties` whose type is `SourceControlUpdateProperties`
+  - Model `VariableCreateOrUpdateParameters` moved instance variable `value`, `description` and `is_encrypted` under property `properties` whose type is `VariableCreateOrUpdateProperties`
+  - Model `VariableUpdateParameters` moved instance variable `value` and `description` under property `properties` whose type is `VariableUpdateProperties`
+  - Model `WatcherUpdateParameters` moved instance variable `execution_frequency_in_seconds` under property `properties` whose type is `WatcherUpdateProperties`
+  - Model `WebhookCreateOrUpdateParameters` moved instance variable `is_enabled`, `uri`, `expiry_time`, `parameters`, `runbook` and `run_on` under property `properties` whose type is `WebhookCreateOrUpdateProperties`
+  - Model `WebhookUpdateParameters` moved instance variable `is_enabled`, `run_on`, `parameters` and `description` under property `properties` whose type is `WebhookUpdateProperties`
   - Deleted or renamed model `DscCompilationJob`
   - Deleted or renamed model `DscCompilationJobCreateParameters`
-  - Deleted or renamed model `JobListResultV2`
   - Deleted or renamed model `RunbookCreateOrUpdateDraftParameters`
   - Deleted or renamed model `RunbookCreateOrUpdateDraftProperties`
-  - Deleted or renamed model `SourceControlSyncJobStreamsListBySyncJob`
   - Method `DscConfigurationOperations.list_by_automation_account` changed its parameter `inlinecount` from `positional_or_keyword` to `keyword_only`
   - Method `DscNodeConfigurationOperations.list_by_automation_account` changed its parameter `inlinecount` from `positional_or_keyword` to `keyword_only`
   - Method `DscNodeOperations.list_by_automation_account` changed its parameter `inlinecount` from `positional_or_keyword` to `keyword_only`
@@ -276,9 +128,6 @@
   - Method `SoftwareUpdateConfigurationsOperations.delete` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
   - Method `SoftwareUpdateConfigurationsOperations.get_by_name` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
   - Method `SoftwareUpdateConfigurationsOperations.list` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed model `AutomationClientOperationsMixin`
-  - Deleted or renamed model `DscCompilationJobOperations`
-  - Deleted or renamed model `DscCompilationJobStreamOperations`
   - Method `DscConfigurationOperations.get_content` changed return type from `AsyncIterator[bytes]` to `str`
   - Method `RunbookDraftOperations.begin_replace_content` changed return type from `AsyncLROPoller[AsyncIterator[bytes]]` to `AsyncLROPoller[None]`
   - Method `RunbookDraftOperations.get_content` changed return type from `AsyncIterator[bytes]` to `str`
@@ -288,6 +137,10 @@
   - Method `RunbookDraftOperations.begin_replace_content` changed return type from `LROPoller[Iterator[bytes]]` to `LROPoller[None]`
   - Method `RunbookDraftOperations.get_content` changed return type from `Iterator[bytes]` to `str`
   - Method `RunbookOperations.get_content` changed return type from `Iterator[bytes]` to `str`
+
+### Other Changes
+
+  - Deleted model `JobListResultV2`/`SourceControlSyncJobStreamsListBySyncJob` which actually were not used by SDK users
 
 ## 1.0.1 (2026-05-14)
 
