@@ -2162,6 +2162,96 @@ class TestBuildInternalLogAttributesThreshold:
 
 
 @pytest.mark.unittest
+class TestBuildInternalLogAttributesEvaluatorDefinition:
+    """Tests for _build_internal_log_attributes handling of malformed/missing evaluator metrics.
+
+    Regression: rubric evaluators registered without a `metrics` field on the evaluator
+    definition (RAISvc sends bare ``{"type": "rubric"}``) used to crash this helper with
+    ``AttributeError: 'NoneType' object has no attribute 'get'``. That exception was
+    silently swallowed by the per-event try/except in ``_log_events_to_app_insights``
+    and resulted in zero events being emitted to App Insights for the entire run.
+    """
+
+    def test_definition_without_metrics_key_does_not_raise(self):
+        """Evaluator definition lacking 'metrics' (e.g. rubric ``{"type": "rubric"}``)
+        must not raise. Base evaluator attributes should still be populated."""
+        event_data = {"name": "rubric-manual-260526043804-e45a09"}
+        evaluator_config = {
+            "rubric-manual-260526043804-e45a09": {
+                "_evaluator_name": "rubric-manual-260526043804-e45a09",
+                "_evaluator_version": "1",
+                "_evaluator_definition": {"type": "rubric"},
+            }
+        }
+        attrs = _build_internal_log_attributes(event_data, "rubric-manual-260526043804-e45a09", evaluator_config, {})
+        assert attrs["gen_ai.evaluation.testing_criteria.name"] == "rubric-manual-260526043804-e45a09"
+        assert attrs["gen_ai.evaluator.name"] == "rubric-manual-260526043804-e45a09"
+        assert attrs["gen_ai.evaluator.version"] == "1"
+        assert "gen_ai.evaluation.min_value" not in attrs
+        assert "gen_ai.evaluation.max_value" not in attrs
+        assert "gen_ai.evaluation.desirable_direction" not in attrs
+        assert "gen_ai.evaluation.type" not in attrs
+
+    def test_definition_with_metrics_none_does_not_raise(self):
+        """Evaluator definition with metrics=None must not raise."""
+        event_data = {"name": "my_grader"}
+        evaluator_config = {
+            "my_grader": {
+                "_evaluator_definition": {"type": "rubric", "metrics": None},
+            }
+        }
+        attrs = _build_internal_log_attributes(event_data, "my_grader", evaluator_config, {})
+        assert "gen_ai.evaluation.min_value" not in attrs
+
+    def test_definition_with_metrics_empty_dict_does_not_raise(self):
+        """Evaluator definition with metrics={} must not raise."""
+        event_data = {"name": "my_grader"}
+        evaluator_config = {
+            "my_grader": {
+                "_evaluator_definition": {"type": "rubric", "metrics": {}},
+            }
+        }
+        attrs = _build_internal_log_attributes(event_data, "my_grader", evaluator_config, {})
+        assert "gen_ai.evaluation.min_value" not in attrs
+
+    def test_definition_with_metrics_list_does_not_raise(self):
+        """Evaluator definition with malformed metrics (e.g. list) must not raise."""
+        event_data = {"name": "my_grader"}
+        evaluator_config = {
+            "my_grader": {
+                "_evaluator_definition": {"type": "rubric", "metrics": ["score"]},
+            }
+        }
+        attrs = _build_internal_log_attributes(event_data, "my_grader", evaluator_config, {})
+        assert "gen_ai.evaluation.min_value" not in attrs
+
+    def test_definition_with_metric_metadata_still_populates_attributes(self):
+        """When evaluator definition does contain matching metric metadata, the
+        min/max/desirable_direction/type attributes should still be emitted."""
+        event_data = {"name": "my_grader"}
+        evaluator_config = {
+            "my_grader": {
+                "_evaluator_definition": {
+                    "type": "prompt",
+                    "metrics": {
+                        "score": {
+                            "min_value": 1.0,
+                            "max_value": 5.0,
+                            "desirable_direction": "increase",
+                            "type": "ordinal",
+                        }
+                    },
+                },
+            }
+        }
+        attrs = _build_internal_log_attributes(event_data, "score", evaluator_config, {})
+        assert attrs["gen_ai.evaluation.min_value"] == "1.0"
+        assert attrs["gen_ai.evaluation.max_value"] == "5.0"
+        assert attrs["gen_ai.evaluation.desirable_direction"] == "increase"
+        assert attrs["gen_ai.evaluation.type"] == "ordinal"
+
+
+@pytest.mark.unittest
 class TestExtractTestingCriteriaMetadataPassThreshold:
     """Tests for pass_threshold propagation in _extract_testing_criteria_metadata."""
 

@@ -1136,7 +1136,11 @@ def _build_internal_log_attributes(
                 internal_log_attributes["gen_ai.evaluator.id"] = str(evaluator_id)
 
             if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
-                metric_config_detail = evaluator_definition.get("metrics").get(metric_name)
+                metrics_section = evaluator_definition.get("metrics")
+                if isinstance(metrics_section, dict):
+                    metric_config_detail = metrics_section.get(metric_name)
+                else:
+                    metric_config_detail = None
 
                 if metric_config_detail:
                     if metric_config_detail.get("min_value") is not None:

@@ -19,6 +19,7 @@
 - Fixed row classification where rows with empty or missing results lists were incorrectly counted as "passed" (the condition `passed_count == len(results) - error_count` evaluated `0 == 0` as True).
 - Fixed `_get_metric_result` prefix matching where shorter metric names (e.g., `xpia`) could match before longer, more-specific ones (e.g., `xpia_manipulated_content`). Now sorts by length descending for correct longest-prefix matching.
 - Fixed non-dict `_properties` values from evaluators causing downstream issues. Values that are not dicts are now logged and dropped gracefully.
+- Fixed App Insights emission silently dropping every `gen_ai.evaluation.result` event when an evaluator definition (e.g., a rubric evaluator registered without metric metadata, sent as `{"type": "rubric"}`) lacked a `metrics` dict. `_build_internal_log_attributes` raised `AttributeError: 'NoneType' object has no attribute 'get'`, which was swallowed by the per-event try/except in `_log_events_to_app_insights`, resulting in zero events being emitted to App Insights for the affected run. The helper now tolerates missing or non-dict `metrics` sections and still emits the event with the base evaluator attributes.
 
 ### Other Changes
 
