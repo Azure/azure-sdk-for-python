@@ -11,7 +11,6 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
-import yaml  # type: ignore[import-untyped]
 from ._models import (
     CommandJob as _RestCommandJob,
     CommandJobLimits as _RestCommandJobLimits,
@@ -235,7 +234,16 @@ def load_job(source: Union[str, "PathLike[str]", IO[AnyStr]]) -> CommandJob:
     :returns: A job object populated from the YAML content.
     :rtype: ~azure.ai.projects.models.CommandJob
     :raises ValueError: If the ``type`` field specifies an unsupported job type.
+    :raises ImportError: If PyYAML is not installed. Install it with ``pip install "pyyaml>=6.0"``.
     """
+    try:
+        import yaml  # type: ignore[import-untyped]
+    except ImportError as e:
+        raise ImportError(
+            "PyYAML (>=6.0) is required to load jobs from YAML files. "
+            'Install it with: pip install "pyyaml>=6.0"'
+        ) from e
+
     if hasattr(source, "read"):
         data: dict = yaml.safe_load(source)  # type: ignore[arg-type]
         source_name = getattr(source, "name", None)

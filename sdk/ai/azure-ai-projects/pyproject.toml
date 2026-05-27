@@ -38,11 +38,13 @@ dependencies = [
     "azure-identity>=1.15.0",
     "openai>=2.8.0",
     "azure-storage-blob>=12.15.0",
-    "pyyaml>=6.0",
 ]
 dynamic = [
 "version", "readme"
 ]
+
+[project.optional-dependencies]
+yaml = ["pyyaml>=6.0"]
 
 [project.urls]
 repository = "https://aka.ms/azsdk/azure-ai-projects-v2/python/code"
