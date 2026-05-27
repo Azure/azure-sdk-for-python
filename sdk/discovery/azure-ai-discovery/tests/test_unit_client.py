@@ -110,15 +110,41 @@ class TestExplicitTransportKwarg:
         client_cls = getattr(importlib.import_module(module_path), class_name)
 
         params = inspect.signature(client_cls.__init__).parameters
-        assert "transport" in params, (
-            f"{client_cls_path}.__init__ must expose ``transport`` as an explicit parameter"
-        )
-        assert params["transport"].kind == inspect.Parameter.KEYWORD_ONLY, (
-            f"{client_cls_path}.__init__ ``transport`` must be keyword-only"
-        )
-        assert params["transport"].default is None, (
-            f"{client_cls_path}.__init__ ``transport`` must default to None"
-        )
+        assert "transport" in params, f"{client_cls_path}.__init__ must expose ``transport`` as an explicit parameter"
+        assert (
+            params["transport"].kind == inspect.Parameter.KEYWORD_ONLY
+        ), f"{client_cls_path}.__init__ ``transport`` must be keyword-only"
+        assert params["transport"].default is None, f"{client_cls_path}.__init__ ``transport`` must default to None"
+
+    @pytest.mark.parametrize(
+        "client_cls_path",
+        [
+            "azure.ai.discovery.WorkspaceClient",
+            "azure.ai.discovery.BookshelfClient",
+            "azure.ai.discovery.aio.WorkspaceClient",
+            "azure.ai.discovery.aio.BookshelfClient",
+        ],
+    )
+    def test_api_version_is_explicit_kw_only(self, client_cls_path):
+        """``api_version`` must be an explicit keyword-only parameter.
+
+        Required by the Azure SDK Python design guideline (pylint C4748):
+        https://azure.github.io/azure-sdk/python_design.html#specifying-the-service-version
+        """
+        import importlib
+        import inspect
+
+        module_path, _, class_name = client_cls_path.rpartition(".")
+        client_cls = getattr(importlib.import_module(module_path), class_name)
+
+        params = inspect.signature(client_cls.__init__).parameters
+        assert (
+            "api_version" in params
+        ), f"{client_cls_path}.__init__ must expose ``api_version`` as an explicit parameter"
+        assert (
+            params["api_version"].kind == inspect.Parameter.KEYWORD_ONLY
+        ), f"{client_cls_path}.__init__ ``api_version`` must be keyword-only"
+        assert params["api_version"].default is None, f"{client_cls_path}.__init__ ``api_version`` must default to None"
 
     def test_sync_clients_accept_transport_argument(self):
         """Sync clients should accept a ``transport`` instance without error."""

@@ -14,7 +14,11 @@ Covers all 9 methods on WorkspaceClient.investigations:
 import pytest
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
-from azure.ai.discovery._workspace.azure.ai.discovery.models import Investigation, DiscoveryEngine, DiscoveryEngineUpdate
+from azure.ai.discovery._workspace.azure.ai.discovery.models import (
+    Investigation,
+    DiscoveryEngine,
+    DiscoveryEngineUpdate,
+)
 from .testcase import DiscoveryWorkspaceTestCase
 
 
@@ -69,7 +73,7 @@ class TestInvestigations(DiscoveryWorkspaceTestCase):
             body=DiscoveryEngineUpdate(discovery_engine_status="Active"),
         )
         assert engine is not None
-        assert hasattr(engine, 'discovery_engine_status')
+        assert hasattr(engine, "discovery_engine_status")
 
     @recorded_by_proxy
     def test_get_discovery_engine(self):
@@ -80,7 +84,7 @@ class TestInvestigations(DiscoveryWorkspaceTestCase):
             investigation_name=self.investigation_name,
         )
         assert engine is not None
-        assert hasattr(engine, 'discovery_engine_status')
+        assert hasattr(engine, "discovery_engine_status")
 
     @recorded_by_proxy
     def test_start_discovery_engine(self):
@@ -88,6 +92,7 @@ class TestInvestigations(DiscoveryWorkspaceTestCase):
         client = self.create_workspace_client()
         # Discovery Engine requires at least one task in the investigation before starting
         from azure.ai.discovery._workspace.azure.ai.discovery.models import Task
+
         test_task = client.tasks.create(
             project_name=self.project_name,
             investigation_name=self.investigation_name,
@@ -99,12 +104,10 @@ class TestInvestigations(DiscoveryWorkspaceTestCase):
             investigation_name=self.investigation_name,
         )
         client.tasks.delete(
-            project_name=self.project_name,
-            investigation_name=self.investigation_name,
-            task_name=test_task.name
+            project_name=self.project_name, investigation_name=self.investigation_name, task_name=test_task.name
         )
         assert engine is not None
-        assert hasattr(engine, 'discovery_engine_status')
+        assert hasattr(engine, "discovery_engine_status")
 
     @recorded_by_proxy
     def test_get_discovery_engine_memory(self):

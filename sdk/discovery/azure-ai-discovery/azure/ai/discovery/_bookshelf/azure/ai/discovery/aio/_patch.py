@@ -20,6 +20,11 @@ class BookshelfClient(_GeneratedBookshelfClient):
     """Async BookshelfClient with explicit ``transport`` keyword-only argument.
 
     See https://azure.github.io/azure-sdk/python_design.html#python-client-constructor-transport-argument
+
+    :ivar knowledge_bases: KnowledgeBasesOperations operations
+    :vartype knowledge_bases: azure.ai.discovery.aio.operations.KnowledgeBasesOperations
+    :ivar knowledge_base_versions: KnowledgeBaseVersionsOperations operations
+    :vartype knowledge_base_versions: azure.ai.discovery.aio.operations.KnowledgeBaseVersionsOperations
     """
 
     def __init__(
@@ -27,9 +32,28 @@ class BookshelfClient(_GeneratedBookshelfClient):
         endpoint: str,
         credential: "AsyncTokenCredential",
         *,
+        api_version: Optional[str] = None,
         transport: Optional["AsyncHttpTransport"] = None,
         **kwargs: Any,
     ) -> None:
+        """Create a new asynchronous ``BookshelfClient``.
+
+        :param endpoint: The Discovery service endpoint, in the form
+            ``https://<your-resource-name>.services.ai.azure.com``. Required.
+        :type endpoint: str
+        :param credential: Credential used to authenticate requests to the service.
+            Required.
+        :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+        :keyword api_version: The API version to use for the request. Default value
+            is the latest service version supported by this client. Note that
+            overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
+        :keyword transport: The async HTTP transport to use. If not specified, the
+            default ``azure-core`` async transport (``AioHttpTransport``) is used.
+        :paramtype transport: ~azure.core.pipeline.transport.AsyncHttpTransport
+        """
+        if api_version is not None:
+            kwargs["api_version"] = api_version
         if transport is not None:
             kwargs["transport"] = transport
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)

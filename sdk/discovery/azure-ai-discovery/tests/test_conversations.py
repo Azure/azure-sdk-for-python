@@ -15,6 +15,7 @@ from azure.ai.discovery._workspace.azure.ai.discovery.models import Conversation
 from .testcase import DiscoveryWorkspaceTestCase
 from .constants import investigation_path
 
+
 class TestConversations(DiscoveryWorkspaceTestCase):
     """Tests for ConversationsOperations."""
 

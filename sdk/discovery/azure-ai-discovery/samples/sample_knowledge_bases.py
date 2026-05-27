@@ -65,9 +65,7 @@ def sample_knowledge_bases():
     print(f"  Description: {version.description}")
 
     # List versions for a knowledge base
-    versions = list(
-        client.knowledge_base_versions.list(knowledge_base_name=knowledge_base_name)
-    )
+    versions = list(client.knowledge_base_versions.list(knowledge_base_name=knowledge_base_name))
     print(f"\nVersions for '{knowledge_base_name}':")
     for v in versions:
         print(f"  - {v.name}")

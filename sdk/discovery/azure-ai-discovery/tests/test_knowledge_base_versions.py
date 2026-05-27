@@ -60,9 +60,7 @@ class TestKnowledgeBaseVersionsOperations(DiscoveryBookshelfTestCase):
     def test_list(self):
         """Test listing knowledge base versions."""
         client = self.create_bookshelf_client()
-        versions = list(
-            client.knowledge_base_versions.list(knowledge_base_name=KNOWLEDGE_BASE_NAME)
-        )
+        versions = list(client.knowledge_base_versions.list(knowledge_base_name=KNOWLEDGE_BASE_NAME))
         assert isinstance(versions, list)
         assert len(versions) > 0
         for v in versions:
@@ -111,7 +109,7 @@ class TestKnowledgeBaseVersionsOperations(DiscoveryBookshelfTestCase):
         poller = client.knowledge_base_versions.begin_start_indexing(
             knowledge_base_name=KNOWLEDGE_BASE_NAME,
             version_name=KNOWLEDGE_BASE_VERSION,
-            node_pool_id=NODE_POOL_ID, # BOOKSHELF_
+            node_pool_id=NODE_POOL_ID,  # BOOKSHELF_
             project_id=PROJECT_ARM_ID,
             polling=False,
         )
@@ -134,7 +132,7 @@ class TestKnowledgeBaseVersionsOperations(DiscoveryBookshelfTestCase):
         client.knowledge_base_versions.begin_cancel_indexing(
             knowledge_base_name=KNOWLEDGE_BASE_NAME,
             version_name=KNOWLEDGE_BASE_VERSION,
-            node_pool_id=NODE_POOL_ID, # BOOKSHELF_
+            node_pool_id=NODE_POOL_ID,  # BOOKSHELF_
             polling=False,
         )
 
@@ -171,7 +169,6 @@ class TestKnowledgeBaseVersionsOperations(DiscoveryBookshelfTestCase):
         )
         result = poller.result()
         assert result is not None
-
 
     @recorded_by_proxy
     def test_begin_delete_latest_version(self):

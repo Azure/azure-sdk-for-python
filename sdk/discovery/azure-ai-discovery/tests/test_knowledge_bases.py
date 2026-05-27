@@ -26,9 +26,9 @@ class TestKnowledgeBasesOperations(DiscoveryBookshelfTestCase):
         for kb in knowledge_bases:
             # Required read-visible fields per spec (BaseKnowledgeBase)
             assert kb.name is not None
-            assert len(kb.name) <= 24                 # @maxLength(24)
+            assert len(kb.name) <= 24  # @maxLength(24)
             assert kb.version is not None
             assert kb.bookshelf_name is not None
             # Optional but useful sanity checks
             assert kb.provisioning_state is not None  # set after first reconcile
-            assert kb.status is not None              # IndexingStatus
+            assert kb.status is not None  # IndexingStatus
