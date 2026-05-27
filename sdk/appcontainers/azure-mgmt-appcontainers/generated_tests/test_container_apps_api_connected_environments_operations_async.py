@@ -46,7 +46,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
                         "customDomainConfiguration": {
                             "certificateKeyVaultProperties": {"identity": "str", "keyVaultUrl": "str"},
                             "certificatePassword": "str",
-                            "certificateValue": "str",
+                            "certificateValue": bytes("bytes", encoding="utf-8"),
                             "customDomainVerificationId": "str",
                             "dnsSuffix": "str",
                             "expirationDate": "2020-02-20 00:00:00",

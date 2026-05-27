@@ -17322,7 +17322,7 @@
                     "param_type": "keyword_only"
                   },
                   "value": {
-                    "type": "Optional[str]",
+                    "type": "Optional[bytes]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -27130,7 +27130,7 @@
                     "param_type": "keyword_only"
                   },
                   "certificate_value": {
-                    "type": "Optional[str]",
+                    "type": "Optional[bytes]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -39912,7 +39912,7 @@
                     "param_type": "keyword_only"
                   },
                   "type": {
-                    "type": "Optional[Union[str, _models.ExtendedLocationType]]",
+                    "type": "Optional[Union[str, _models.ExtendedLocationTypes]]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -40203,7 +40203,7 @@
           "type": "Optional"
         }
       },
-      "ExtendedLocationType": {
+      "ExtendedLocationTypes": {
         "type": "Enum",
         "methods": {},
         "properties": {

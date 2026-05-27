@@ -264,7 +264,7 @@
         "azure.mgmt.appcontainers.models.Scheme": "Microsoft.App.Scheme",
         "azure.mgmt.appcontainers.models.Type": "Microsoft.App.Type",
         "azure.mgmt.appcontainers.models.StorageType": "Microsoft.App.StorageType",
-        "azure.mgmt.appcontainers.models.ExtendedLocationType": "Microsoft.App.ExtendedLocationType",
+        "azure.mgmt.appcontainers.models.ExtendedLocationTypes": "Microsoft.App.ExtendedLocationTypes",
         "azure.mgmt.appcontainers.models.Kind": "Microsoft.App.Kind",
         "azure.mgmt.appcontainers.models.DnsVerificationTestResult": "Microsoft.App.DnsVerificationTestResult",
         "azure.mgmt.appcontainers.models.RevisionHealthState": "Microsoft.App.RevisionHealthState",
@@ -568,5 +568,5 @@
         "azure.mgmt.appcontainers.ContainerAppsAPIClient.job_execution": "Microsoft.App.Jobs.jobExecution",
         "azure.mgmt.appcontainers.aio.ContainerAppsAPIClient.job_execution": "Microsoft.App.Jobs.jobExecution"
     },
-    "CrossLanguageVersion": "f72f35839a09"
+    "CrossLanguageVersion": "d8d4104159f1"
 }

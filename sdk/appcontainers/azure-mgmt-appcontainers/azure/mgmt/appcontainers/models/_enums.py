@@ -279,7 +279,7 @@ class EnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """UpgradeFailed."""
 
 
-class ExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of extendedLocation."""
 
     CUSTOM_LOCATION = "CustomLocation"

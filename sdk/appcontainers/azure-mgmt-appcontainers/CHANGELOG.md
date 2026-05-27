@@ -1,34 +1,8 @@
 # Release History
 
-## 4.1.0 (2026-05-22)
+## 4.1.0 (2026-05-27)
 
-### Features Added
-
-  - Client `ContainerAppsAPIClient` added method `send_request`
-  - Model `JobExecution` added property `system_data`
-  - Model `Usage` added property `unit`
-  - Added enum `SessionPoolIdentityLifeCycle`
-
-### Breaking Changes
-
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Parameter `args` of `BaseContainer.__init__` is now required
-  - Method `BaseContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
-  - Parameter `args` of `Container.__init__` is now required
-  - Method `Container.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
-  - Parameter `args` of `InitContainer.__init__` is now required
-  - Method `InitContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
-  - Parameter `args` of `JobExecutionContainer.__init__` is now required
-  - Method `JobExecutionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
-  - Model `MaintenanceConfigurationResource` moved instance variable `scheduled_entries` under property `properties` whose type is `ScheduledEntries`
-  - Parameter `args` of `SessionContainer.__init__` is now required
-  - Method `SessionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
-  - Renamed enum `ExtendedLocationTypes` to `ExtendedLocationType`
-  - Method `ContainerAppsOperations.list_custom_host_name_analysis` changed its parameter `custom_hostname` from `positional_or_keyword` to `keyword_only`
-
-### Other Changes
-
-  - Deleted model `AuthConfigCollection`/`AvailableOperations`/`AvailableWorkloadProfilesCollection`/`CertificateCollection`/`ConnectedEnvironmentCollection`/`ContainerAppCollection`/`DaprComponentsCollection`/`HttpRouteConfigCollection`/`JavaComponentsCollection`/`JobExecutionNamesCollection`/`JobsCollection`/`ListUsagesResult`/`MaintenanceConfigurationCollection`/`ManagedCertificateCollection`/`ManagedEnvironmentsCollection`/`RevisionCollection`/`SessionPoolCollection`/`SourceControlCollection`/`WorkflowEnvelopeCollection`/`WorkloadProfileStatesCollection` which actually were not used by SDK users
+skip changelog generation
 
 ## 4.0.0 (2025-10-24)
 

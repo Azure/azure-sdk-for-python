@@ -1375,7 +1375,7 @@ class CertificateProperties(_Model):
     :ivar subject_alternative_names: Subject alternative names the certificate applies to.
     :vartype subject_alternative_names: list[str]
     :ivar value: PFX or PEM blob.
-    :vartype value: str
+    :vartype value: bytes
     :ivar issuer: Certificate issuer.
     :vartype issuer: str
     :ivar issue_date: Certificate issue Date.
@@ -1407,7 +1407,7 @@ class CertificateProperties(_Model):
     """Subject name of the certificate."""
     subject_alternative_names: Optional[list[str]] = rest_field(name="subjectAlternativeNames", visibility=["read"])
     """Subject alternative names the certificate applies to."""
-    value: Optional[str] = rest_field(visibility=["create"])
+    value: Optional[bytes] = rest_field(visibility=["create"], format="base64")
     """PFX or PEM blob."""
     issuer: Optional[str] = rest_field(visibility=["read"])
     """Certificate issuer."""
@@ -1430,7 +1430,7 @@ class CertificateProperties(_Model):
         *,
         certificate_key_vault_properties: Optional["_models.CertificateKeyVaultProperties"] = None,
         password: Optional[str] = None,
-        value: Optional[str] = None,
+        value: Optional[bytes] = None,
     ) -> None: ...
 
     @overload
@@ -2832,7 +2832,7 @@ class CustomDomainConfiguration(_Model):
     :vartype certificate_key_vault_properties:
      ~azure.mgmt.appcontainers.models.CertificateKeyVaultProperties
     :ivar certificate_value: PFX or PEM blob.
-    :vartype certificate_value: str
+    :vartype certificate_value: bytes
     :ivar certificate_password: Certificate password.
     :vartype certificate_password: str
     :ivar expiration_date: Certificate expiration date.
@@ -2851,8 +2851,8 @@ class CustomDomainConfiguration(_Model):
         name="certificateKeyVaultProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Certificate stored in Azure Key Vault."""
-    certificate_value: Optional[str] = rest_field(
-        name="certificateValue", visibility=["read", "create", "update", "delete", "query"]
+    certificate_value: Optional[bytes] = rest_field(
+        name="certificateValue", visibility=["read", "create", "update", "delete", "query"], format="base64"
     )
     """PFX or PEM blob."""
     certificate_password: Optional[str] = rest_field(
@@ -2874,7 +2874,7 @@ class CustomDomainConfiguration(_Model):
         *,
         dns_suffix: Optional[str] = None,
         certificate_key_vault_properties: Optional["_models.CertificateKeyVaultProperties"] = None,
-        certificate_value: Optional[str] = None,
+        certificate_value: Optional[bytes] = None,
         certificate_password: Optional[str] = None,
     ) -> None: ...
 
@@ -4484,12 +4484,12 @@ class ExtendedLocation(_Model):
     :ivar name: The name of the extended location.
     :vartype name: str
     :ivar type: The type of the extended location. "CustomLocation"
-    :vartype type: str or ~azure.mgmt.appcontainers.models.ExtendedLocationType
+    :vartype type: str or ~azure.mgmt.appcontainers.models.ExtendedLocationTypes
     """
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the extended location."""
-    type: Optional[Union[str, "_models.ExtendedLocationType"]] = rest_field(
+    type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of the extended location. \"CustomLocation\""""
@@ -4499,7 +4499,7 @@ class ExtendedLocation(_Model):
         self,
         *,
         name: Optional[str] = None,
-        type: Optional[Union[str, "_models.ExtendedLocationType"]] = None,
+        type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
     ) -> None: ...
 
     @overload
