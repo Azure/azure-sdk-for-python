@@ -12,6 +12,12 @@ from math import ceil
 from urllib.parse import quote, urlencode
 
 import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+from test_helpers_async import AsyncStream, MockStorageTransport, ProgressTracker
+
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
@@ -19,7 +25,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceModifiedError,
-    ResourceNotFoundError
+    ResourceNotFoundError,
 )
 from azure.storage.filedatalake import (
     AccountSasPermissions,
@@ -30,19 +36,20 @@ from azure.storage.filedatalake import (
     generate_account_sas,
     generate_file_sas,
     generate_file_system_sas,
-    ResourceTypes
+    ResourceTypes,
 )
-from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient, DataLakeServiceClient, FileSystemClient
+from azure.storage.filedatalake.aio import (
+    DataLakeDirectoryClient,
+    DataLakeFileClient,
+    DataLakeServiceClient,
+    FileSystemClient,
+)
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import DataLakePreparer
-from test_helpers_async import AsyncStream, MockStorageTransport, ProgressTracker
+
 # ------------------------------------------------------------------------------
-
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
-
+TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
 
 
@@ -50,9 +57,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
     async def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key.secret)
-
         self.config = self.dsc._config
-
         self.file_system_name = self.get_resource_name('filesystem')
 
         if not self.is_playback():
@@ -63,16 +68,11 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             except ResourceExistsError:
                 pass
 
-    def tearDown(self):
-        if not self.is_playback():
-            try:
-                loop = asyncio.get_event_loop()
-                loop.run_until_complete(self.dsc.delete_file_system(self.file_system_name))
-                loop.run_until_complete(self.dsc.__aexit__())
-            except:
-                pass
-
     # --Helpers-----------------------------------------------------------------
+    def _get_file_system_reference(self, prefix=TEST_FILE_SYSTEM_PREFIX):
+        file_system_name = self.get_resource_name(prefix)
+        return file_system_name
+
     def _get_directory_reference(self, prefix=TEST_DIRECTORY_PREFIX):
         directory_name = self.get_resource_name(prefix)
         return directory_name
@@ -129,7 +129,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert response is not None
-    
+
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_create_file_owner_group_acl(self, **kwargs):
@@ -662,7 +662,8 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             content_language='spanish',
             content_disposition='inline')
 
-        await file_client.upload_data(data, content_settings=content_settings, etag=etag, match_condition=MatchConditions.IfNotModified)
+        await file_client.upload_data(
+            data, content_settings=content_settings, etag=etag, match_condition=MatchConditions.IfNotModified)
 
         downloaded_data = await (await file_client.download_file()).readall()
         properties = await file_client.get_file_properties()
@@ -692,7 +693,14 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         # to override the existing file
         data = self.get_random_bytes(100)
 
-        await file_client.upload_data(data, overwrite=True, permissions='0777', umask="0000", etag=etag, match_condition=MatchConditions.IfNotModified)
+        await file_client.upload_data(
+            data,
+            overwrite=True,
+            permissions='0777',
+            umask="0000",
+            etag=etag,
+            match_condition=MatchConditions.IfNotModified
+        )
 
         downloaded_data = await (await file_client.download_file()).readall()
         prop = await file_client.get_access_control()
@@ -803,7 +811,8 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         # Get user delegation key
         token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
-        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential)
+        service_client = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential)
         user_delegation_key = await service_client.get_user_delegation_key(datetime.utcnow(),
                                                                            datetime.utcnow() + timedelta(hours=1))
 
@@ -912,7 +921,12 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
         with pytest.raises(ValueError):
-            DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
+            DataLakeFileClient(
+                self.dsc.url + "?sig=foo",
+                self.file_system_name,
+                "foo",
+                credential=AzureSasCredential("?foo=bar")
+            )
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
@@ -1178,7 +1192,8 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             content_language='spanish',
             content_disposition='inline')
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
-        file_client = await directory_client.create_file("newfile", metadata=metadata, content_settings=content_settings)
+        file_client = await directory_client.create_file(
+            "newfile", metadata=metadata, content_settings=content_settings)
 
         # Act / Assert
         await file_client.set_file_expiry("Absolute", expires_on=expiry_time)
@@ -1267,23 +1282,25 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # SAS URL is calculated from storage key, so this test runs live only
-        token = generate_file_sas(self.dsc.account_name,
-                                  self.file_system_name,
-                                  None,
-                                  "oldfile",
-                                  datalake_storage_account_key.secret,
-                                  permission=FileSasPermissions(read=True, create=True, write=True, delete=True, move=True),
-                                  expiry=datetime.utcnow() + timedelta(hours=1),
-                                  )
+        token = generate_file_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            None,
+            "oldfile",
+            datalake_storage_account_key.secret,
+            permission=FileSasPermissions(read=True, create=True, write=True, delete=True, move=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
 
-        new_token = generate_file_sas(self.dsc.account_name,
-                                      self.file_system_name,
-                                      None,
-                                      "newname",
-                                      datalake_storage_account_key.secret,
-                                      permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
-                                      expiry=datetime.utcnow() + timedelta(hours=1),
-                                      )
+        new_token = generate_file_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            None,
+            "newname",
+            datalake_storage_account_key.secret,
+            permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
 
         # read the created file which is under root directory
         file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=token)
@@ -1570,7 +1587,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             file_client.file_system_name + '/',
             '/' + file_client.path_name,
             credential=token_credential,
-            audience=f'https://badaudience.blob.core.windows.net/'
+            audience='https://badaudience.blob.core.windows.net/'
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
@@ -1671,7 +1688,8 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         # Arrange
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = await self._create_file_and_return_client()
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = (b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH'
+                           b'\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00')
         decompressed_data = b"hello from gzip"
         content_settings = ContentSettings(content_encoding='gzip')
 
@@ -1710,7 +1728,8 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         )
         await file_client.create_file()
 
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = (b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH'
+                           b'\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00')
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert
@@ -1730,7 +1749,8 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
 
         token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
-        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "dfs"), credential=token_credential)
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "dfs"), credential=token_credential)
         fs_name, file_name = self.get_resource_name('filesystem'), self.get_resource_name('file')
         fs = await dsc.create_file_system(fs_name)
         file = await fs.create_file(file_name)
@@ -1823,7 +1843,8 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(ResourceModifiedError):
             await file_client.get_tags(if_unmodified_since=early)
         with pytest.raises(ResourceModifiedError):
-            await file_client.set_tags(first_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+            await file_client.set_tags(
+                first_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
 
         await file_client.set_tags(first_tags, if_modified_since=early)
         tags = await file_client.get_tags(if_modified_since=early)

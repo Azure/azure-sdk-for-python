@@ -1,39 +1,30 @@
 name: TypeSpec Python Regenerate Tests
 
 on:
-  # Trigger when eng/emitter-package.json is updated on main (branded emitter version bump)
+  # Trigger when eng/emitter-package.json is updated on main (uses default microsoft/typespec@main)
   push:
     branches: [main]
     paths:
       - "eng/emitter-package.json"
-  # Allow manual triggering with emitter choice
+  # Run daily at 22:00 UTC against microsoft/typespec@main
+  schedule:
+    - cron: "0 22 * * *"
+  # Allow manual triggering
   workflow_dispatch:
     inputs:
-      emitter:
-        description: "Which emitter to regenerate with"
-        required: true
-        type: choice
-        options:
-          - "branded (@azure-tools/typespec-python)"
-          - "unbranded (@typespec/http-client-python)"
-        default: "branded (@azure-tools/typespec-python)"
-      version:
-        description: "Emitter version (leave empty to use version from emitter-package.json for branded, or latest for unbranded)"
-        required: false
       typespec_ref:
-        description: "Git ref (branch, tag, or SHA) of typespec repo to build regeneration infrastructure from"
+        description: "Either 'main' (microsoft/typespec@main) or a microsoft/typespec pull request URL (e.g. https://github.com/microsoft/typespec/pull/1234). The PR's head repo + SHA will be checked out."
         required: false
         default: "main"
-      typespec_repo:
-        description: "TypeSpec repository (owner/repo) to checkout from (default: microsoft/typespec)"
-        required: false
-        default: "microsoft/typespec"
 
 permissions:
   contents: write
-  pull-requests: write
   issues: write
 
+# Note: with cancel-in-progress, a newer run can cancel an older one after it
+# has force-pushed the branch but before it finishes updating the tracking
+# issue. The newer run will redo the issue update, so the worst case is a
+# brief stale issue body that is immediately refreshed.
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
@@ -49,33 +40,51 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Determine emitter to use
-        id: emitter-info
+      - name: Resolve TypeSpec repo/ref
+        id: typespec-info
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          if [ "${{ github.event_name }}" = "push" ]; then
-            # Push trigger: always use branded emitter at version from emitter-package.json
-            EMITTER_NAME="@azure-tools/typespec-python"
-            VERSION=$(jq -r '.dependencies["@azure-tools/typespec-python"]' eng/emitter-package.json)
-            echo "Push trigger: using branded emitter @ $VERSION"
-          elif [[ "${{ github.event.inputs.emitter }}" == branded* ]]; then
-            EMITTER_NAME="@azure-tools/typespec-python"
-            VERSION="${{ github.event.inputs.version }}"
-            if [ -z "$VERSION" ]; then
-              VERSION=$(jq -r '.dependencies["@azure-tools/typespec-python"]' eng/emitter-package.json)
-              echo "No version specified, using emitter-package.json version: $VERSION"
+          INPUT="${{ github.event.inputs.typespec_ref || 'main' }}"
+          # Default: microsoft/typespec @ main
+          REPO="microsoft/typespec"
+          REF="main"
+          DISPLAY_REF="main"
+          REF_URL="https://github.com/${REPO}/tree/main"
+          PR_NUMBER=""
+
+          # Accept a microsoft/typespec PR URL and resolve it to head repo + SHA.
+          # Example: https://github.com/microsoft/typespec/pull/1234
+          if [[ "$INPUT" =~ ^https://github\.com/([^/]+)/([^/]+)/pull/([0-9]+)/?$ ]]; then
+            PR_OWNER="${BASH_REMATCH[1]}"
+            PR_REPO_NAME="${BASH_REMATCH[2]}"
+            PR_NUMBER="${BASH_REMATCH[3]}"
+            if [ "$PR_OWNER/$PR_REPO_NAME" != "microsoft/typespec" ]; then
+              echo "::error::Only pull request URLs from microsoft/typespec are accepted (got ${PR_OWNER}/${PR_REPO_NAME})."
+              exit 1
             fi
-          else
-            EMITTER_NAME="@typespec/http-client-python"
-            VERSION="${{ github.event.inputs.version }}"
-            if [ -z "$VERSION" ]; then
-              VERSION=$(npm view @typespec/http-client-python version 2>/dev/null)
-              echo "No version specified, using latest npm version: $VERSION"
-            fi
+            echo "Resolving PR #${PR_NUMBER} from ${PR_OWNER}/${PR_REPO_NAME}..."
+            PR_JSON=$(gh pr view "$PR_NUMBER" --repo "${PR_OWNER}/${PR_REPO_NAME}" \
+              --json headRefOid,headRepositoryOwner,headRepository)
+            HEAD_SHA=$(echo "$PR_JSON" | jq -r '.headRefOid')
+            HEAD_OWNER=$(echo "$PR_JSON" | jq -r '.headRepositoryOwner.login')
+            HEAD_REPO_NAME=$(echo "$PR_JSON" | jq -r '.headRepository.name')
+            REPO="${HEAD_OWNER}/${HEAD_REPO_NAME}"
+            REF="${HEAD_SHA}"
+            DISPLAY_REF="PR #${PR_NUMBER} @ ${HEAD_SHA:0:7}"
+            REF_URL="${INPUT}"
+          elif [ "$INPUT" != "main" ]; then
+            echo "::error::typespec_ref must be 'main' or a microsoft/typespec pull request URL (got: ${INPUT})."
+            exit 1
           fi
-          echo "emitter_name=$EMITTER_NAME" >> $GITHUB_OUTPUT
-          echo "emitter_version=$VERSION" >> $GITHUB_OUTPUT
-          echo "::notice::Regenerating with $EMITTER_NAME@$VERSION"
+
+          echo "typespec_repo=$REPO" >> $GITHUB_OUTPUT
+          echo "typespec_ref=$REF" >> $GITHUB_OUTPUT
+          echo "typespec_display_ref=$DISPLAY_REF" >> $GITHUB_OUTPUT
+          echo "typespec_ref_url=$REF_URL" >> $GITHUB_OUTPUT
+          echo "typespec_pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "::notice::Regenerating from ${REPO}@${DISPLAY_REF}"
 
       - name: Checkout microsoft/typespec
         # SHA corresponds to actions/checkout@v6
@@ -84,8 +93,8 @@ jobs:
         # in regenerate.ts, which breaks unbranded package name detection
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
-          repository: ${{ github.event.inputs.typespec_repo || 'microsoft/typespec' }}
-          ref: ${{ github.event.inputs.typespec_ref || 'main' }}
+          repository: ${{ steps.typespec-info.outputs.typespec_repo }}
+          ref: ${{ steps.typespec-info.outputs.typespec_ref }}
           path: _typespec
           fetch-depth: 0
 
@@ -107,14 +116,6 @@ jobs:
           npm install --ignore-scripts
           npm run build
 
-      - name: Install target emitter
-        working-directory: _typespec/packages/http-client-python
-        run: |
-          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
-          VERSION="${{ steps.emitter-info.outputs.emitter_version }}"
-          echo "Installing $EMITTER@$VERSION"
-          npm install "${EMITTER}@${VERSION}"
-
       - name: Prepare Python environment
         working-directory: _typespec/packages/http-client-python
         run: |
@@ -124,13 +125,12 @@ jobs:
       - name: Regenerate tests
         working-directory: _typespec/packages/http-client-python
         run: |
-          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
-          npm run regenerate -- --emitterName "$EMITTER"
+          npm run regenerate
 
       - name: Copy regenerated tests
         run: |
           set -euo pipefail
-          TARGET="eng/tools/emitter/gen"
+          TARGET="eng/tools/azure-sdk-tools/emitter/generated"
           rm -rf "$TARGET/azure" "$TARGET/unbranded"
           mkdir -p "$TARGET"
           cp -r "_typespec/packages/http-client-python/tests/generated/azure" "$TARGET/azure"
@@ -139,69 +139,63 @@ jobs:
       - name: Clean up typespec checkout
         run: rm -rf "_typespec"
 
-      - name: Commit and push changes
-        id: push-changes
+      - name: Apply README template to generated test packages
         run: |
           set -euo pipefail
-          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
-          VERSION="${{ steps.emitter-info.outputs.emitter_version }}"
-          BRANCH="auto/typespec-python-regenerate"
+          TARGET="eng/tools/azure-sdk-tools/emitter/generated"
+          TEMPLATE="$TARGET/template/README.md"
+          if [ ! -f "$TEMPLATE" ]; then
+            echo "::error::Template README not found at $TEMPLATE"
+            exit 1
+          fi
+          # Replace every README.md under generated/ with the template, except:
+          #   - the top-level generated/README.md
+          #   - anything under generated/template/ (the template itself and any
+          #     future siblings)
+          find "$TARGET" -type f -name README.md \
+            ! -path "$TARGET/README.md" \
+            ! -path "$TARGET/template/*" \
+            -print -exec cp -f "$TEMPLATE" {} \;
+
+      - name: Commit and push to dedicated branch
+        run: |
+          set -euo pipefail
+          BRANCH="typespec-python-generated-tests"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add eng/tools/emitter/gen/
-          if git diff --cached --quiet; then
+          # Quick check: skip if regeneration produced no changes vs HEAD.
+          if [ -z "$(git status --porcelain -- eng/tools/azure-sdk-tools/emitter/generated/)" ]; then
             echo "No changes to commit"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          git checkout -B "$BRANCH"
-          git commit -m "[typespec-python] Regenerate tests with ${EMITTER}@${VERSION}"
-          git push origin "$BRANCH" --force
-          echo "has_changes=true" >> $GITHUB_OUTPUT
-          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
-
-      - name: Create or update Pull Request
-        id: create-pr
-        if: steps.push-changes.outputs.has_changes == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
-          VERSION="${{ steps.emitter-info.outputs.emitter_version }}"
-          BRANCH="${{ steps.push-changes.outputs.branch }}"
-          TITLE="[typespec-python] Regenerate tests with ${EMITTER}@${VERSION}"
-          BODY="Automated regeneration of TypeSpec Python generated tests.
-
-          - Emitter: \`${EMITTER}@${VERSION}\`
-          - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-          This PR was auto-generated."
-
-          # Check if a PR already exists for this branch
-          EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number' || echo "")
-          if [ -n "$EXISTING_PR" ]; then
-            echo "Updating existing PR #$EXISTING_PR"
-            gh pr edit "$EXISTING_PR" --title "$TITLE" --body "$BODY" --add-reviewer iscai-msft,msyyc
-            PR_NUMBER="$EXISTING_PR"
+          # Push regenerated files directly to the dedicated branch.
+          # This branch is machine-managed and may be force-pushed.
+          PR_NUMBER="${{ steps.typespec-info.outputs.typespec_pr_number }}"
+          if [ -n "$PR_NUMBER" ]; then
+            SOURCE_LABEL="microsoft/typespec PR #${PR_NUMBER}"
           else
-            echo "Creating new PR"
-            PR_NUMBER=$(gh pr create --head "$BRANCH" --base main \
-              --title "$TITLE" --body "$BODY" \
-              --reviewer iscai-msft,msyyc | grep -oP '\d+$')
-            echo "Created PR #$PR_NUMBER"
+            SOURCE_LABEL="microsoft/typespec@main"
           fi
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
 
-      - name: Enable auto-merge
-        if: steps.push-changes.outputs.has_changes == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr merge "${{ steps.create-pr.outputs.pr_number }}" --auto --squash || \
-            echo "::warning::Auto-merge could not be enabled (may require branch protection rules)"
+          # Base on origin/main so the dedicated branch never inherits
+          # unrelated content from whatever ref the workflow checked out.
+          git fetch --no-tags --depth=1 origin main
+          git checkout -B "$BRANCH" origin/main
+
+          # Re-apply just the regenerated tree on top of origin/main.
+          git checkout HEAD@{1} -- eng/tools/azure-sdk-tools/emitter/generated
+          git add -f eng/tools/azure-sdk-tools/emitter/generated/
+
+          if git diff --cached --quiet; then
+            echo "No changes vs origin/main"
+            exit 0
+          fi
+
+          git commit -m "[typespec-python] Regenerate tests from ${SOURCE_LABEL}"
+          git push origin "$BRANCH" --force-with-lease
+          echo "::notice::Pushed regenerated tests to $BRANCH"
 
   notify-on-failure:
     name: "Notify on failure"
@@ -215,14 +209,37 @@ jobs:
         with:
           script: |
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: '[typespec-python] Regeneration workflow failed',
-              body: `The TypeSpec Python test regeneration workflow failed.\n\n` +
-                    `- **Run:** ${runUrl}\n` +
-                    `- **Trigger:** ${context.eventName}\n\n` +
-                    `cc @iscai-msft @msyyc`,
-              labels: ['typespec-python'],
-              assignees: ['iscai-msft', 'msyyc']
+            const title = '[typespec-python] Regeneration workflow failed';
+            const body = `The TypeSpec Python test regeneration workflow failed.\n\n` +
+                         `- **Run:** ${runUrl}\n` +
+                         `- **Trigger:** ${context.eventName}\n\n` +
+                         `cc @iscai-msft @msyyc`;
+
+            // Look for an existing open issue with the same title; if found,
+            // add a comment instead of creating a duplicate.
+            const existing = await github.rest.search.issuesAndPullRequests({
+              q: `repo:${context.repo.owner}/${context.repo.repo} is:issue is:open in:title "${title}"`,
             });
+            const match = existing.data.items.find(
+              (i) => i.title === title && !i.pull_request,
+            );
+
+            if (match) {
+              core.info(`Commenting on existing issue #${match.number}`);
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: match.number,
+                body,
+              });
+            } else {
+              core.info('Creating new failure-notification issue');
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['typespec-python'],
+                assignees: ['iscai-msft', 'msyyc'],
+              });
+            }

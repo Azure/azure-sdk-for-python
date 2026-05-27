@@ -3,14 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 
-import pytest
-from azure.storage.fileshare.aio import ShareServiceClient
+import unittest
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
+
+import pytest
+from azure.storage.fileshare.aio import ShareServiceClient
+
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_NAME = 'test-share'
