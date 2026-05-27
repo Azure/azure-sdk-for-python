@@ -164,6 +164,47 @@ class TestSharedPartitionKeyRangeCacheLifecycleAsync(unittest.IsolatedAsyncioTes
         self.assertIn(ep, _shared_routing_map_cache)
         del c2
 
+    async def test_concurrent_release_does_not_double_decrement_async(self):
+        """TOCTOU regression: concurrent release() decrements at most once.
+
+        Mirrors the sync lifecycle guard for the async module's shared cache.
+        """
+        import threading
+
+        ep = "https://async-lifecycle5.documents.azure.com:443/"
+        c_keep = PartitionKeyRangeCache(MockClient(ep))
+        c_target = PartitionKeyRangeCache(MockClient(ep))
+        self.assertEqual(self._refcount(ep), 2)
+
+        barrier = threading.Barrier(2)
+
+        def go():
+            barrier.wait()
+            c_target.release()
+
+        threads = [threading.Thread(target=go) for _ in range(2)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(timeout=5)
+
+        # Refcount must still be 1 (only c_keep alive).
+        self.assertEqual(self._refcount(ep), 1)
+        self.assertIn(ep, _shared_routing_map_cache)
+        self.assertIs(c_keep._collection_routing_map_by_item, _shared_routing_map_cache[ep])
+
+    async def test_del_fallback_releases_async(self):
+        """``__del__`` decrements refcount when explicit release is skipped."""
+        import gc
+
+        ep = "https://async-lifecycle6.documents.azure.com:443/"
+        c1 = PartitionKeyRangeCache(MockClient(ep))
+        self.assertEqual(self._refcount(ep), 1)
+        del c1
+        gc.collect()
+        self.assertEqual(self._refcount(ep), 0)
+        self.assertNotIn(ep, _shared_routing_map_cache)
+
     async def test_clear_cache_does_not_change_refcount_async(self):
         ep = "https://async-lifecycle4.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
