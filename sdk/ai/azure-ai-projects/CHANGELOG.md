@@ -21,6 +21,11 @@
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
 * New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
 * New convenience method `.beta.models.create()` that wraps the spec's three-step upload-first sequence (`pending_upload` → `azcopy copy` → `pending_create_version`) and polls `get()` until the new `ModelVersion` is observable.
+* New methods on `.beta.agents` for session management: `stop_session`, `list_session_files` (replaces `get_session_files`).
+* New methods on `.beta.agents` for optimization candidates: `get_candidate_file`, `promote_candidate`.
+* New methods on `.beta.skills` for skill versioning: `list_skill_versions`, `get_skill_version`, `get_skill_version_content`, `delete_skill_version`.
+* New enum `EvaluationLevel` with values `turn` and `conversation`.
+* New `INVOCATIONS_WS` value on `AgentEndpointProtocol` enum for WebSocket-based streaming agents.
 
 ### Breaking Changes
 
@@ -40,6 +45,14 @@ Breaking changes in beta classes:
 * Renamed class `TargetConfig` to `RedTeamTargetConfig`.
 * Removed class `FabricIQPreviewToolParameters`.
 * Removed class `WorkIQPreviewToolParameters`.
+* Renamed method `.beta.agents.get_session_files()` to `list_session_files()`.
+* Renamed enum values `MEMORY_1GB`, `MEMORY_4GB`, `MEMORY_16GB`, `MEMORY_64GB` to `MEMORY1_GB`, `MEMORY4_GB`, `MEMORY16_GB`, `MEMORY64_GB` in `CodeInterpreterCompute`.
+* Method `.beta.skills.create()` now requires a `name` parameter.
+* Method `.beta.skills.create_from_package()` now requires a `name` parameter and returns `SkillVersion` instead of `SkillDetails`.
+* New optional `force` parameter on `.beta.agents.delete_optimization_job()`.
+* Removed models: `DatasetDataGenerationJobSource`, `DatasetItem`, `EvalRunOutputItemResult`, `EvaluationCriterion`, `OptimizationAgentSkill`.
+* Removed enums: `EvalRunOutputItemResultStatus`, `OptimizationMode`, `OptimizationStrategy`.
+* Removed enum value `DATASET` from `DatasetSourceType`.
 
 ### Bugs Fixed
 
