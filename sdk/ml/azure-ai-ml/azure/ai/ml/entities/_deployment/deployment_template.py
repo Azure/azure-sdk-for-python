@@ -281,7 +281,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         :return: Dictionary representation of the deployment template.
         :rtype: Dict[str, Any]
         """
-        result = {
+        result: Dict[str, Any] = {
             "name": self.name,
             "version": self.version,
         }
@@ -529,7 +529,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                                        If None, automatically determines based on whether template came from service.
         :type exclude_immutable_fields: bool
         """
-        result = {
+        result: Dict[str, Any] = {
             "name": self.name,
             "version": self.version,
         }
@@ -620,7 +620,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
 
     def _to_dict(self) -> Dict:
         """Convert the deployment template to a dictionary matching the expected API format."""
-        result = {
+        result: Dict[str, Any] = {
             "type": "deploymenttemplates",
             "name": self.name,
             "version": self.version,
