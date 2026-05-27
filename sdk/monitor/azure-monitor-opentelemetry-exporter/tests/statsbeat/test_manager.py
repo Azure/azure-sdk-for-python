@@ -270,6 +270,8 @@ class TestStatsbeatManager(unittest.TestCase):
             self.manager._metrics = None
         if hasattr(self.manager, "_meter_provider"):
             self.manager._meter_provider = None
+        if hasattr(self.manager, "_warmup_timer"):
+            self.manager._warmup_timer = None
 
     def tearDown(self):
         """Clean up after tests."""
@@ -673,6 +675,8 @@ class TestStatsbeatManager(unittest.TestCase):
         self.manager._initialized = True
         mock_meter_provider = Mock()
         self.manager._meter_provider = mock_meter_provider
+        mock_timer = Mock()
+        self.manager._warmup_timer = mock_timer
         self.manager._metrics = Mock()
         config_mock = Mock()
         self.manager._config = config_mock
@@ -682,8 +686,10 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertFalse(self.manager._initialized)
         self.assertIsNone(self.manager._meter_provider)
         self.assertIsNone(self.manager._metrics)
+        self.assertIsNone(self.manager._warmup_timer)
         # Config is intact for potential re-initialization
         self.assertEqual(self.manager._config, config_mock)
+        mock_timer.cancel.assert_called_once()
         mock_meter_provider.shutdown.assert_called_once()
 
     def test_cleanup_without_shutdown(self):
@@ -692,6 +698,8 @@ class TestStatsbeatManager(unittest.TestCase):
         self.manager._initialized = True
         mock_meter_provider = Mock()
         self.manager._meter_provider = mock_meter_provider
+        mock_timer = Mock()
+        self.manager._warmup_timer = mock_timer
         self.manager._metrics = Mock()
         config_mock = Mock()
         self.manager._config = config_mock
@@ -701,8 +709,10 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertFalse(self.manager._initialized)
         self.assertIsNone(self.manager._meter_provider)
         self.assertIsNone(self.manager._metrics)
+        self.assertIsNone(self.manager._warmup_timer)
         # Config is intact for potential re-initialization
         self.assertEqual(self.manager._config, config_mock)
+        mock_timer.cancel.assert_called_once()
         mock_meter_provider.shutdown.assert_not_called()
 
     def test_cleanup_meter_provider_exception(self):
