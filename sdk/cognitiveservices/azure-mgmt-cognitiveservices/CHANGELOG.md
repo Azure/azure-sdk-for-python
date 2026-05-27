@@ -1,5 +1,63 @@
 # Release History
 
+## 15.0.0b2 (2026-05-22)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added operation group `managed_compute_deployments`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_compute_usages_operation_group`
+  - Client `CognitiveServicesManagementClient` added operation group `computes`
+  - Client `CognitiveServicesManagementClient` added operation group `workbenches`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_compute_capacities`
+  - Enum `RoutingMode` added member `QUALITY`
+  - Added model `ClusterComputeProperties`
+  - Added model `Compute`
+  - Added model `ComputeProperties`
+  - Added enum `ComputeProvisioningState`
+  - Added enum `ComputeType`
+  - Added model `ConnectivityEndpoints`
+  - Added model `ContainerInstanceComputeProperties`
+  - Added model `DeploymentPolicyEvaluationResult`
+  - Added model `DeploymentSizeCapacity`
+  - Added model `EvaluateDeploymentPoliciesDeployment`
+  - Added model `EvaluateDeploymentPoliciesDeploymentProperties`
+  - Added model `EvaluateDeploymentPoliciesRequest`
+  - Added model `EvaluateDeploymentPoliciesResponse`
+  - Added model `ManagedComputeCapacity`
+  - Added model `ManagedComputeCapacityProperties`
+  - Added model `ManagedComputeDeployment`
+  - Added model `ManagedComputeDeploymentInfo`
+  - Added model `ManagedComputeDeploymentProperties`
+  - Added model `ManagedComputeDeploymentProvisioningDetails`
+  - Added model `ManagedComputeDeploymentRoutes`
+  - Added model `ManagedComputeUsage`
+  - Added model `PatchResourceSku`
+  - Added model `PolicyAssignmentEvaluationDetails`
+  - Added enum `PolicyEvaluationOutcome`
+  - Added model `PolicyExpressionEvaluationDetails`
+  - Added model `Pool`
+  - Added model `SshSettings`
+  - Added enum `VmPriority`
+  - Added model `Workbench`
+  - Added model `WorkbenchProperties`
+  - Operation group `AccountsOperations` added method `evaluate_deployment_policies`
+  - Added operation group `ComputesOperations`
+  - Added operation group `ManagedComputeCapacitiesOperations`
+  - Added operation group `ManagedComputeDeploymentsOperations`
+  - Added operation group `ManagedComputeUsagesOperationGroupOperations`
+  - Added operation group `WorkbenchesOperations`
+
+### Breaking Changes
+
+  - Model `RaiPolicyProperties` deleted or renamed its instance variable `custom_topics`
+  - Deleted or renamed enum value `RoutingMode.ACCURACY`
+  - Deleted or renamed model `CustomTopicConfig`
+  - Deleted or renamed model `RaiExternalSafetyProvider`
+  - Deleted or renamed model `RaiExternalSafetyProviderProperties`
+  - Deleted or renamed model `RaiTopicConfig`
+  - Method `OutboundRulesOperations.begin_post` changed return type from `LROPoller[OutboundRuleListResult]` to `LROPoller[ItemPaged[_models.OutboundRuleBasicResource]]`
+  - Method `RaiExternalSafetyProviderOperations.create_or_update` changed return type from `Union[RaiExternalSafetyProviderSchema, RaiExternalSafetyProvider]` to `RaiExternalSafetyProviderSchema`
+
 ## 15.0.0b1 (2026-03-26)
 
 ### Features Added
