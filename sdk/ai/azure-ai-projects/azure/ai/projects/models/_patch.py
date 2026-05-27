@@ -65,7 +65,7 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
     "routines": _FoundryFeaturesOptInKeys.ROUTINES_V1_PREVIEW.value,
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
-    "toolboxes": "Toolboxes=V1Preview",
+    "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
     "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
     "agents": _AGENT_OPERATION_FEATURE_HEADERS,
