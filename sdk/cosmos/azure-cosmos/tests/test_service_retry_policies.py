@@ -12,7 +12,6 @@ import test_config
 from azure.cosmos import (CosmosClient, _retry_utility, DatabaseAccount, _global_endpoint_manager,
                           _location_cache)
 from azure.cosmos._location_cache import RegionalRoutingContext
-from azure.cosmos._request_object import RequestObject
 from azure.cosmos.documents import _OperationType
 from azure.cosmos.http_constants import HttpHeaders
 
@@ -57,19 +56,54 @@ class TestServiceRetryPolicies(unittest.TestCase):
         )
 
     def _setup_read_regions(self, location_cache, regions):
-        """Populate the read side of the location cache with N distinct regions."""
+        """Populate the read side of the location cache with N distinct regions.
+
+        Mirrors the production initialization flow: set the raw inputs
+        (account locations, locational-endpoint map, preferred locations),
+        clear any unavailability state carried over from a previous
+        assertion, then call ``update_location_cache()`` so the derived
+        dicts (``_read_locations_by_normalized``, the reverse endpoint→region
+        map, and ``read_regional_routing_contexts``) are recomputed from a
+        consistent snapshot. Direct attribute assignment alone leaves stale
+        derived state behind, which silently inflates the retry budget the
+        next assertion observes.
+        """
         endpoints_by_region = {r: self._make_regional_endpoint(r) for r in regions}
         location_cache.account_read_locations = list(regions)
         location_cache.account_read_regional_routing_contexts_by_location = endpoints_by_region
-        location_cache.read_regional_routing_contexts = [endpoints_by_region[r] for r in regions]
+        # Reverse map (endpoint URL -> region name). The retry policy uses
+        # this to translate ``location_endpoint_to_route`` back to a region
+        # when marking endpoints unavailable; if it is stale the wrong
+        # region gets marked and the retry budget can drift.
+        location_cache.account_locations_by_read_endpoints = {
+            ctx.get_primary(): name for name, ctx in endpoints_by_region.items()
+        }
         location_cache.effective_preferred_locations = list(regions)
+        # Each assertion in this test reuses the same location cache; reset
+        # unavailability so a region marked unavailable in the previous
+        # 3-region step does not silently shrink (or extend) the next step's
+        # effective routing list.
+        location_cache.location_unavailability_info_by_endpoint = {}
+        # Recompute derived state from the raw inputs above so the helper's
+        # output matches what the production initialization path would
+        # produce for the same topology.
+        location_cache.update_location_cache()
 
     def _setup_write_regions(self, location_cache, regions):
-        """Populate the write side of the location cache with N distinct regions."""
+        """Populate the write side of the location cache with N distinct regions.
+
+        Companion to ``_setup_read_regions`` — see that docstring for the
+        rationale on clearing unavailability state and re-running
+        ``update_location_cache()``.
+        """
         endpoints_by_region = {r: self._make_regional_endpoint(r) for r in regions}
         location_cache.account_write_locations = list(regions)
         location_cache.account_write_regional_routing_contexts_by_location = endpoints_by_region
-        location_cache.write_regional_routing_contexts = [endpoints_by_region[r] for r in regions]
+        location_cache.account_locations_by_write_endpoints = {
+            ctx.get_primary(): name for name, ctx in endpoints_by_region.items()
+        }
+        location_cache.location_unavailability_info_by_endpoint = {}
+        location_cache.update_location_cache()
 
     def test_service_request_retry_policy(self):
         mock_client = CosmosClient(self.host, self.masterKey)
@@ -138,11 +172,14 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         # Now we change the location cache to have only 1 preferred read region
         self._setup_read_regions(original_location_cache, [self.REGION1])
-        mf = self.MockExecuteServiceResponseException(Exception)
+        expected_counter = len(original_location_cache.read_regional_routing_contexts)
+        mf = self.MockExecuteServiceResponseExceptionIgnoreQuery(
+            Exception, _retry_utility.ExecuteFunction
+        )
         with patch.object(_retry_utility, 'ExecuteFunction', mf):
             with pytest.raises(ServiceResponseError):
                 container.read_item(created_item['id'], created_item['pk'])
-            assert mf.counter == 1
+            assert mf.counter == expected_counter
 
         # Now we try it out with a write request
         self._setup_write_regions(original_location_cache, [self.REGION1, self.REGION2])
@@ -256,11 +293,12 @@ class TestServiceRetryPolicies(unittest.TestCase):
             self.original_execute_function = original_execute_function
 
         def __call__(self, func, *args, **kwargs):
-
-            if args and isinstance(args[1], RequestObject):
+            if len(args) > 1:
                 request_obj = args[1]
-                if request_obj.resource_type == "docs" and request_obj.operation_type == "Query" or\
-                    request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed":
+                if not (hasattr(request_obj, "resource_type") and hasattr(request_obj, "operation_type")):
+                    return self.original_execute_function(func, *args, **kwargs)
+                if ((request_obj.resource_type == "docs" and request_obj.operation_type == "Query") or
+                        (request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed")):
                     # Ignore query requests, As an additional ReadFeed might occur during a regular Read operation
                     return self.original_execute_function(func, *args, **kwargs)
                 self.counter = self.counter + 1
@@ -287,11 +325,12 @@ class TestServiceRetryPolicies(unittest.TestCase):
             self.original_execute_function = original_execute_function
 
         def __call__(self, func, *args, **kwargs):
-
-            if args and isinstance(args[1], RequestObject):
+            if len(args) > 1:
                 request_obj = args[1]
-                if request_obj.resource_type == "docs" and request_obj.operation_type == "Query" or\
-                    request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed":
+                if not (hasattr(request_obj, "resource_type") and hasattr(request_obj, "operation_type")):
+                    return self.original_execute_function(func, *args, **kwargs)
+                if ((request_obj.resource_type == "docs" and request_obj.operation_type == "Query") or
+                        (request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed")):
                     # Ignore query requests, As an additional ReadFeed might occur during a regular Read operation
                     return self.original_execute_function(func, *args, **kwargs)
                 self.counter = self.counter + 1
