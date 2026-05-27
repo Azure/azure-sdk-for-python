@@ -82,3 +82,84 @@ class TestBookshelfClientUnit:
             credential=AzureKeyCredential("fake-key"),
         )
         assert client is not None
+
+
+class TestExplicitTransportKwarg:
+    """Verify that ``transport`` is exposed as an explicit keyword-only parameter
+    on every client constructor (sync + async, Workspace + Bookshelf).
+
+    Required by the Azure SDK for Python design guideline:
+    https://azure.github.io/azure-sdk/python_design.html#python-client-constructor-transport-argument
+    """
+
+    @pytest.mark.parametrize(
+        "client_cls_path",
+        [
+            "azure.ai.discovery.WorkspaceClient",
+            "azure.ai.discovery.BookshelfClient",
+            "azure.ai.discovery.aio.WorkspaceClient",
+            "azure.ai.discovery.aio.BookshelfClient",
+        ],
+    )
+    def test_transport_is_explicit_kw_only(self, client_cls_path):
+        """``transport`` must be an explicit keyword-only parameter."""
+        import importlib
+        import inspect
+
+        module_path, _, class_name = client_cls_path.rpartition(".")
+        client_cls = getattr(importlib.import_module(module_path), class_name)
+
+        params = inspect.signature(client_cls.__init__).parameters
+        assert "transport" in params, (
+            f"{client_cls_path}.__init__ must expose ``transport`` as an explicit parameter"
+        )
+        assert params["transport"].kind == inspect.Parameter.KEYWORD_ONLY, (
+            f"{client_cls_path}.__init__ ``transport`` must be keyword-only"
+        )
+        assert params["transport"].default is None, (
+            f"{client_cls_path}.__init__ ``transport`` must default to None"
+        )
+
+    def test_sync_clients_accept_transport_argument(self):
+        """Sync clients should accept a ``transport`` instance without error."""
+        from unittest.mock import MagicMock
+        from azure.core.pipeline.transport import HttpTransport
+
+        fake_transport = MagicMock(spec=HttpTransport)
+        ws = WorkspaceClient(
+            endpoint="https://fake-workspace.discovery.azure.com",
+            credential=AzureKeyCredential("fake-key"),
+            transport=fake_transport,
+        )
+        assert ws is not None
+
+        bs = BookshelfClient(
+            endpoint="https://fake-bookshelf.discovery.azure.com",
+            credential=AzureKeyCredential("fake-key"),
+            transport=fake_transport,
+        )
+        assert bs is not None
+
+    def test_async_clients_accept_transport_argument(self):
+        """Async clients should accept an ``AsyncHttpTransport`` instance without error."""
+        from unittest.mock import MagicMock
+        from azure.core.pipeline.transport import AsyncHttpTransport
+        from azure.ai.discovery.aio import (
+            WorkspaceClient as AsyncWorkspaceClient,
+            BookshelfClient as AsyncBookshelfClient,
+        )
+
+        fake_transport = MagicMock(spec=AsyncHttpTransport)
+        ws = AsyncWorkspaceClient(
+            endpoint="https://fake-workspace.discovery.azure.com",
+            credential=AzureKeyCredential("fake-key"),
+            transport=fake_transport,
+        )
+        assert ws is not None
+
+        bs = AsyncBookshelfClient(
+            endpoint="https://fake-bookshelf.discovery.azure.com",
+            credential=AzureKeyCredential("fake-key"),
+            transport=fake_transport,
+        )
+        assert bs is not None
