@@ -80,10 +80,14 @@ with (
             initialization_parameters={"model": f"{model_deployment_name}"},
         ),
         TestingCriterionAzureAIEvaluator(
-            type="azure_ai_evaluator", 
-            name="f1", 
+            type="azure_ai_evaluator",
+            name="f1",
             evaluator_name="builtin.f1_score",
-            data_mapping={"query": "{{item.query}}", "response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+            data_mapping={
+                "query": "{{item.query}}",
+                "response": "{{item.response}}",
+                "ground_truth": "{{item.ground_truth}}",
+            },
         ),
         TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
