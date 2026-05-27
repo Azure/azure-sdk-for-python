@@ -25,7 +25,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from ._operations import (
-    AzureAppConfigurationClientOperationsMixin as AzureAppConfigClientOpGenerated,
+    _AzureAppConfigurationClientOperationsMixin as AzureAppConfigClientOpGenerated,
     ClsType,
     build_azure_app_configuration_get_key_values_request,
     build_azure_app_configuration_check_key_values_request,

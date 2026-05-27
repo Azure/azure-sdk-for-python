@@ -19,3 +19,10 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    from ._operations._patch import AzureAppConfigurationClientOperationsMixin as _Patched
+    from ._operations._operations import _AzureAppConfigurationClientOperationsMixin as _Raw
+
+    for _name, _attr in vars(_Patched).items():
+        if _name in ("__dict__", "__weakref__", "__doc__", "__module__", "__qualname__"):
+            continue
+        setattr(_Raw, _name, _attr)
