@@ -11,17 +11,8 @@
 
 ### Breaking Changes
 
-  - Parameter `args` of `BaseContainer.__init__` is now required
-  - Method `BaseContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
-  - Parameter `args` of `Container.__init__` is now required
-  - Method `Container.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
-  - Parameter `args` of `InitContainer.__init__` is now required
-  - Method `InitContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
-  - Parameter `args` of `JobExecutionContainer.__init__` is now required
-  - Method `JobExecutionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
-  - Model `MaintenanceConfigurationResource` moved instance variable `scheduled_entries` under property `properties` whose type is `ScheduledEntries`
-  - Parameter `args` of `SessionContainer.__init__` is now required
-  - Method `SessionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Method `ContainerAppsOperations.list_custom_host_name_analysis` changed its parameter `custom_hostname` from `positional_or_keyword` to `keyword_only`
 
 ### Other Changes
