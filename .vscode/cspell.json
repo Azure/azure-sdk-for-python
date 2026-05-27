@@ -105,9 +105,6 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
     "sdk/storage/azure-storage-file-datalake/tests/**",
-    "sdk/projects/azure-projects/tests/test_infra/**",
-    "sdk/projects/azure-projects/samples/**/*.html",
-    "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
@@ -683,46 +680,6 @@
       "filename": "sdk/identity/azure-identity-broker/tests/*.py",
       "words": [
         "signin"
-      ]
-    },
-    {
-      "filename": "sdk/projects/azure-projects/tests/**/*.py",
-      "words": [
-        "tofile",
-        "rgtest",
-        "rgexists",
-        "rgtag",
-        "kvtest",
-        "testb",
-        "sclient",
-        "aclient"
-      ]
-    },
-    {
-      "filename": "sdk/projects/azure-projects/**",
-      "words": [
-        "azproj",
-        "azproject",
-        "azprojects",
-        "aiservices",
-        "aifoundry",
-        "mcpcommand",
-        "fastmcp",
-        "GUNICORN",
-        "GZRS",
-        "RAGZRS",
-        "nfsv",
-        "Eloqua",
-        "Hdfs",
-        "Informix",
-        "Magento",
-        "Netezza",
-        "Odbc",
-        "Serp",
-        "Sybase",
-        "Vertica",
-        "Xero",
-        "redef"
       ]
     },
     {
@@ -2209,7 +2166,12 @@
       "words": ["envml", "paginators"]
     },
     {
+      "filename": "sdk/planetarycomputer/azure-planetarycomputer/**",
+      "words": ["topo", "haline", "Aproperty", "pygen"]
+    },
+    {
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
+      "filename": "sdk/agentserver/azure-ai-agentserver-ghcopilot/**",
       "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
     }
   ],

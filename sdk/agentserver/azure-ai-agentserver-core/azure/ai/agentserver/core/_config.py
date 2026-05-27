@@ -24,6 +24,9 @@ from typing_extensions import Self
 
 _ENV_FOUNDRY_AGENT_NAME = "FOUNDRY_AGENT_NAME"
 _ENV_FOUNDRY_AGENT_VERSION = "FOUNDRY_AGENT_VERSION"
+_ENV_FOUNDRY_AGENT_INSTANCE_CLIENT_ID = "FOUNDRY_AGENT_INSTANCE_CLIENT_ID"
+_ENV_FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID = "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID"
+_ENV_FOUNDRY_AGENT_TENANT_ID = "FOUNDRY_AGENT_TENANT_ID"
 _ENV_FOUNDRY_HOSTING_ENVIRONMENT = "FOUNDRY_HOSTING_ENVIRONMENT"
 _ENV_FOUNDRY_PROJECT_ENDPOINT = "FOUNDRY_PROJECT_ENDPOINT"
 _ENV_FOUNDRY_PROJECT_ARM_ID = "FOUNDRY_PROJECT_ARM_ID"
@@ -32,9 +35,11 @@ _ENV_PORT = "PORT"
 _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING = "APPLICATIONINSIGHTS_CONNECTION_STRING"
 _ENV_OTEL_EXPORTER_OTLP_ENDPOINT = "OTEL_EXPORTER_OTLP_ENDPOINT"
 _ENV_SSE_KEEPALIVE_INTERVAL = "SSE_KEEPALIVE_INTERVAL"
+_ENV_WS_KEEPALIVE_INTERVAL = "WS_KEEPALIVE_INTERVAL"
 
 _DEFAULT_PORT = 8088
 _DEFAULT_SSE_KEEPALIVE_INTERVAL = 0
+_DEFAULT_WS_PING_INTERVAL = 0.0
 
 
 # ======================================================================
@@ -64,6 +69,8 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
     :param appinsights_connection_string: Application Insights connection string.
     :param otlp_endpoint: OTLP exporter endpoint.
     :param sse_keepalive_interval: SSE keep-alive interval in seconds (0 = disabled).
+    :param ws_ping_interval: WebSocket protocol Ping interval in seconds
+        (``0`` disables keep-alive).
     """
 
     def __init__(
@@ -80,6 +87,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         appinsights_connection_string: str,
         otlp_endpoint: str,
         sse_keepalive_interval: int,
+        ws_ping_interval: float = 0.0,
     ) -> None:
         self.agent_name = agent_name
         self.agent_version = agent_version
@@ -92,6 +100,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         self.appinsights_connection_string = appinsights_connection_string
         self.otlp_endpoint = otlp_endpoint
         self.sse_keepalive_interval = sse_keepalive_interval
+        self.ws_ping_interval = ws_ping_interval
 
     @classmethod
     def from_env(cls) -> Self:
@@ -123,6 +132,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
                 _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING, ""),
             otlp_endpoint=os.environ.get(_ENV_OTEL_EXPORTER_OTLP_ENDPOINT, ""),
             sse_keepalive_interval=resolve_sse_keepalive_interval(None),
+            ws_ping_interval=resolve_ws_ping_interval(),
         )
 
 
@@ -283,6 +293,46 @@ def resolve_agent_version() -> str:
     return os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
 
 
+def resolve_agent_id() -> str:
+    """Resolve the agent ID.
+
+    Resolution order:
+    1. ``FOUNDRY_AGENT_INSTANCE_CLIENT_ID`` environment variable.
+    2. ``<agent_name>:<agent_version>`` if both are set.
+    3. ``<agent_name>`` if only name is set.
+    4. Empty string if nothing is available.
+
+    :return: The resolved agent ID, or an empty string if not determinable.
+    :rtype: str
+    """
+    agent_id = os.environ.get(_ENV_FOUNDRY_AGENT_INSTANCE_CLIENT_ID, "")
+    if agent_id:
+        return agent_id
+    agent_name = os.environ.get(_ENV_FOUNDRY_AGENT_NAME, "")
+    agent_version = os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
+    if agent_name and agent_version:
+        return f"{agent_name}:{agent_version}"
+    return agent_name
+
+
+def resolve_agent_blueprint_id() -> str:
+    """Resolve the agent blueprint client ID from the ``FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID`` environment variable.
+
+    :return: The agent blueprint client ID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(_ENV_FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID, "")
+
+
+def resolve_agent_tenant_id() -> str:
+    """Resolve the agent tenant ID from the ``FOUNDRY_AGENT_TENANT_ID`` environment variable.
+
+    :return: The agent tenant ID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(_ENV_FOUNDRY_AGENT_TENANT_ID, "")
+
+
 def resolve_project_id() -> str:
     """Resolve the Foundry project ARM resource ID from the ``FOUNDRY_PROJECT_ARM_ID`` environment variable.
 
@@ -322,3 +372,40 @@ def resolve_otlp_endpoint() -> Optional[str]:
     """
     value = os.environ.get(_ENV_OTEL_EXPORTER_OTLP_ENDPOINT, "")
     return value if value else None
+
+
+def resolve_ws_ping_interval() -> float:
+    """Resolve the WebSocket Ping/Pong keep-alive interval from the env var.
+
+    Reads the ``WS_KEEPALIVE_INTERVAL`` environment variable (auto-injected
+    by AgentService into hosted-agent containers) and returns the parsed
+    value in seconds.  ``0`` (or unset) disables keep-alive.
+
+    The keep-alive interval is intentionally env-only — there is no
+    programmatic constructor argument to override it.  Hosted agents
+    inherit the platform-injected value automatically; in tests, set the
+    env var (e.g. via ``monkeypatch.setenv``).
+
+    :return: The resolved interval in seconds (``0`` means disabled).
+    :rtype: float
+    :raises ValueError: If the env var is set but not parseable as a
+        non-negative finite number.
+    """
+    import math  # local import — only used here
+
+    env_raw = os.environ.get(_ENV_WS_KEEPALIVE_INTERVAL)
+    if env_raw is None or env_raw == "":
+        return _DEFAULT_WS_PING_INTERVAL
+    try:
+        resolved = float(env_raw)
+    except ValueError as exc:
+        raise ValueError(
+            f"Invalid value for {_ENV_WS_KEEPALIVE_INTERVAL}: "
+            f"{env_raw!r} (expected a non-negative number)"
+        ) from exc
+    if math.isnan(resolved) or math.isinf(resolved) or resolved < 0.0:
+        raise ValueError(
+            f"Invalid value for {_ENV_WS_KEEPALIVE_INTERVAL}: "
+            f"{env_raw!r} (expected a non-negative finite number)"
+        )
+    return resolved

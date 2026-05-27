@@ -29,7 +29,7 @@ from azure.storage.blob import (
     PremiumPageBlobTier,
     SequenceNumberAction,
 )
-from azure.storage.blob._shared.policies import StorageContentValidation
+from azure.storage.blob._shared.validation import calculate_content_md5
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
 
@@ -679,7 +679,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
+        src_md5 = calculate_content_md5(source_blob_data)
         sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -713,7 +713,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
                 0,
                 SOURCE_BLOB_SIZE,
                 0,
-                source_content_md5=StorageContentValidation.get_content_md5(b"POTATO"),
+                source_content_md5=calculate_content_md5(b"POTATO")
             )
 
     @BlobPreparer()

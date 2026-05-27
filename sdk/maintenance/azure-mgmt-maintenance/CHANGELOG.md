@@ -1,5 +1,26 @@
 # Release History
 
+## 2.2.0b3 (2026-05-21)
+
+### Features Added
+
+  - Client `MaintenanceManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `MaintenanceManagementClient` added method `send_request`
+  - Model `Operation` added property `action_type`
+  - Added enum `ActionType`
+  - Added model `MaintenanceWindow`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `Operation` deleted or renamed its instance variable `properties`
+
+### Other Changes
+
+  - Deleted model `ListApplyUpdate`/`ListConfigurationAssignmentsResult`/`ListMaintenanceConfigurationsResult`/`ListUpdatesResult` which actually were not used by SDK users
+
 ## 2.2.0b2 (2024-05-20)
 
 ### Features Added

@@ -51,9 +51,6 @@ SUPPORTED_OTEL_SAMPLERS = (
     PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
 )
 
-# Distro version
-AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
-
 # --------------------Autoinstrumentation Configuration------------------------------------------
 
 LOG_EXPORTER_NAMES_ARG = "log_exporter_names"

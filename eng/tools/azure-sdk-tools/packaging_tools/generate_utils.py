@@ -39,6 +39,89 @@ _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
 
+# ---------------------------------------------------------------------------
+# Sanitize invalid Python escape sequences in generated docstrings.
+#
+# Python generators (TypeSpec and Swagger) write `@doc` strings verbatim into
+# generated source. When a doc contains a backslash followed by a character
+# that is not a valid Python escape (e.g. ``\W`` in ``(Regex match [\W_])``),
+# Python 3.12+ emits a SyntaxWarning on import (and will become SyntaxError in
+# a future version).
+#
+# See:
+#   - https://github.com/Azure/azure-sdk-for-python/issues/47011
+#   - https://github.com/microsoft/typespec/issues/10784
+#
+# This sanitizer escapes those backslashes inside triple-quoted string literals
+# of just-generated files only. It is idempotent: once ``\X`` is rewritten to
+# ``\\X`` it no longer matches.
+# ---------------------------------------------------------------------------
+
+# Match a triple-quoted string literal at a token boundary, capturing the
+# full Python string prefix. Per PEP, valid Python 3 string prefixes are:
+# (empty), u, U, b, B, f, F, r, R, br, bR, Br, BR, rb, rB, Rb, RB,
+# fr, fR, Fr, FR, rf, rF, Rf, RF. We anchor with ``(?<!\w)`` so the prefix
+# can't start mid-identifier (e.g. ``foo r"""..."""`` is still matched, but
+# ``barf"""..."""`` is not — though that wouldn't be valid Python anyway).
+_TRIPLE_QUOTED_RE = re.compile(
+    r"(?<!\w)"
+    r"(?P<prefix>(?:[bB][rR]?|[rR][bBfF]?|[fF][rR]?|[uU])?)"
+    r'(?P<quote>"""|\'\'\')'
+    r"(?P<body>.*?)"
+    r"(?P=quote)",
+    re.DOTALL,
+)
+# Process one escape at a time. The first alternative consumes a *valid*
+# escape pair as a single unit (so we never re-process its second char),
+# making the overall transformation idempotent. The second alternative
+# matches any remaining backslash + char and is the one we rewrite.
+_ESCAPE_PROCESSOR = re.compile(
+    r'\\(?P<valid>\\|[\'"abfnrtv0-7xNuU\n])|\\(?P<invalid>.)',
+    re.DOTALL,
+)
+
+
+def _process_escape(match: "re.Match") -> str:
+    if match.group("invalid") is not None:
+        return "\\\\" + match.group("invalid")
+    return match.group(0)
+
+
+def _fix_triple_quoted(match: "re.Match") -> str:
+    prefix = match.group("prefix")
+    # Raw (r/R) and byte (b/B) string literals must be left untouched.
+    if prefix and ("r" in prefix.lower() or "b" in prefix.lower()):
+        return match.group(0)
+    body = match.group("body")
+    fixed = _ESCAPE_PROCESSOR.sub(_process_escape, body)
+    if fixed == body:
+        return match.group(0)
+    return f"{prefix}{match.group('quote')}{fixed}{match.group('quote')}"
+
+
+def sanitize_generated_docstrings(sdk_code_path: str) -> None:
+    """Escape invalid Python escape sequences in generated triple-quoted docstrings.
+
+    Workaround for microsoft/typespec#10784 (and the swagger generator
+    equivalent). Scans ``<sdk_code_path>/azure/**/*.py`` (excluding
+    ``*_patch.py``) and rewrites only triple-quoted string literals.
+    Idempotent.
+    """
+    pkg_root = Path(sdk_code_path) / "azure"
+    if not pkg_root.exists():
+        return
+    for py_file in pkg_root.rglob("*.py"):
+        if py_file.name.endswith("_patch.py"):
+            continue
+        try:
+            original = py_file.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        fixed = _TRIPLE_QUOTED_RE.sub(_fix_triple_quoted, original)
+        if fixed != original:
+            py_file.write_text(fixed, encoding="utf-8")
+            _LOGGER.info(f"sanitized invalid escape sequences in {py_file}")
+
 
 # tsp example: "../azure-rest-api-specs/specification/informatica/Informatica.DataManagement"
 def del_outdated_generated_files(tsp: str):
