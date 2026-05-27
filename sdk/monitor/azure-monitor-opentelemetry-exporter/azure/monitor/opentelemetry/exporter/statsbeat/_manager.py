@@ -280,7 +280,7 @@ class StatsbeatManager(metaclass=Singleton):
 
     def _cleanup(self, shutdown_meter_provider: bool = True) -> None:
         # Clean up resources with optional meter provider shutdown
-        if hasattr(self, '_warmup_timer') and self._warmup_timer:
+        if hasattr(self, "_warmup_timer") and self._warmup_timer:
             self._warmup_timer.cancel()
             self._warmup_timer = None
         if shutdown_meter_provider and self._meter_provider:
