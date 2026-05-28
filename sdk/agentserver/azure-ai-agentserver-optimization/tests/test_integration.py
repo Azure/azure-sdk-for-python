@@ -252,7 +252,7 @@ class TestFullWorkflow:
 
     def test_defaults_workflow_no_optimization(self):
         """When no optimization is configured, returns None."""
-        config = load_config(required=False)
+        config = load_config()
         assert config is None
 
 

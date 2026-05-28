@@ -39,18 +39,14 @@ def clear_downloaded():
 class TestDefaults:
     """When no env vars or config dir are set."""
 
-    def test_required_true_raises_by_default(self):
-        with pytest.raises(ValueError, match="No optimization config found"):
-            load_config()
-
-    def test_required_false_returns_none(self):
-        config = load_config(required=False)
+    def test_returns_none_when_no_config(self):
+        config = load_config()
         assert config is None
 
     def test_falls_back_to_model_deployment_name_env(self, monkeypatch):
-        """MODEL_DEPLOYMENT_NAME is only used by priority 1/2, not by required=False."""
+        """MODEL_DEPLOYMENT_NAME is only used by priority 1/2, not by no-config None."""
         monkeypatch.setenv("MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
-        config = load_config(required=False)
+        config = load_config()
         assert config is None
 
     def test_config_dir_loads_baseline(self, monkeypatch, tmp_path):
@@ -160,14 +156,14 @@ class TestEnvConfig:
         assert config.tool_definitions[0]["function"]["name"] == "lookup_policy"
 
 
-    def test_bad_json_falls_through(self, monkeypatch):
+    def test_bad_json_raises_value_error(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CONFIG", "not-json{{{")
-        config = load_config(required=False)
-        assert config is None
+        with pytest.raises(ValueError, match="Bad OPTIMIZATION_CONFIG env var"):
+            load_config()
 
     def test_empty_env_var_ignored(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CONFIG", "   ")
-        config = load_config(required=False)
+        config = load_config()
         assert config is None
 
     def test_partial_config_fills_none(self, monkeypatch):
@@ -220,7 +216,7 @@ class TestCandidateResolver:
             "azure.ai.agentserver.optimization._config.resolve_candidate",
             lambda cid, endpoint, local_dir=None, credential=None: None,
         )
-        config = load_config(required=False)
+        config = load_config()
         assert config is None
 
     def test_resolver_error_raises_value_error(self, monkeypatch):
@@ -240,7 +236,7 @@ class TestCandidateResolver:
     def test_missing_endpoint_skips_resolver(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-1")
         # No ENDPOINT set
-        config = load_config(required=False)
+        config = load_config()
         assert config is None
 
     def test_resolver_falls_to_local_dir(self, monkeypatch, tmp_path):
@@ -422,13 +418,13 @@ class TestLocalDir:
 
     def test_nonexistent_local_dir_falls_to_defaults(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent/path")
-        config = load_config(required=False)
+        config = load_config()
         assert config is None
 
     def test_no_candidate_no_baseline_falls_to_defaults(self, monkeypatch, tmp_path):
         """Empty local dir with no baseline falls through."""
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
-        config = load_config(required=False)
+        config = load_config()
         assert config is None
 
     def test_metadata_instruction_file_outside_candidate(self, monkeypatch, tmp_path):
@@ -565,30 +561,20 @@ class TestResolveCandidateFolder:
 
 
 class TestGracefulErrorHandling:
-    """load_config never crashes — always returns a valid config (unless required ValueError)."""
+    """load_config lets exceptions propagate to the caller."""
 
-    def test_unexpected_exception_returns_none(self, monkeypatch):
-        """Any unexpected error in _load_config_inner returns None."""
-        monkeypatch.setattr(
-            "azure.ai.agentserver.optimization._config._load_config_inner",
-            lambda **kwargs: (_ for _ in ()).throw(RuntimeError("boom")),
-        )
-        config = load_config(required=False)
-        assert config is None
-
-    def test_load_config_never_raises_on_corrupt_env(self, monkeypatch):
-        """Even with corrupted env vars, load_config(required=False) returns None."""
+    def test_corrupt_env_raises_value_error(self, monkeypatch):
+        """Bad OPTIMIZATION_CONFIG JSON raises ValueError."""
         monkeypatch.setenv("OPTIMIZATION_CONFIG", "{invalid")
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent")
-        config = load_config(required=False)
-        assert config is None
+        with pytest.raises(ValueError, match="Bad OPTIMIZATION_CONFIG env var"):
+            load_config()
 
     def test_resolver_configured_but_fails_raises(self, monkeypatch):
-        """When resolver is configured but fails, ValueError is raised even with required=False."""
+        """When resolver is configured but fails, ValueError is raised."""
         def mock_resolver(cid, endpoint, local_dir=None, credential=None):
             raise ValueError("service unreachable")
 
-        monkeypatch.setenv("OPTIMIZATION_CONFIG", "{invalid")
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "x")
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://nope")
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent")
@@ -597,18 +583,7 @@ class TestGracefulErrorHandling:
             mock_resolver,
         )
         with pytest.raises(ValueError, match="service unreachable"):
-            load_config(required=False)
-
-    def test_required_true_raises_value_error(self):
-        """required=True (default) raises ValueError when no config found."""
-        with pytest.raises(ValueError, match="No optimization config found"):
             load_config()
-
-    def test_required_true_not_caught_by_broad_except(self, monkeypatch):
-        """ValueError from required=True is NOT swallowed by the outer try/except."""
-        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent")
-        with pytest.raises(ValueError, match="baseline"):
-            load_config(required=True)
 
 
 # ── OptimizationConfig dataclass ────────────────────────────────────
@@ -732,20 +707,20 @@ class TestCandidateConfig:
         assert len(candidate.tool_definitions) == 1
         assert candidate.tool_definitions[0]["function"]["name"] == "get_weather"
 
-    def test_tools_non_list_ignored(self):
-        """Non-list tools value is coerced to empty list."""
-        candidate = CandidateConfig.from_dict({"tools": "not a list"})
-        assert candidate.tool_definitions == []
+    def test_tools_non_list_raises(self):
+        """Non-list tools value raises TypeError."""
+        with pytest.raises(TypeError, match="Expected 'tools' to be a list"):
+            CandidateConfig.from_dict({"tools": "not a list"})
 
-    def test_tools_dict_ignored(self):
-        """Dict tools value is coerced to empty list."""
-        candidate = CandidateConfig.from_dict({"tools": {"a": "b"}})
-        assert candidate.tool_definitions == []
+    def test_tools_dict_raises(self):
+        """Dict tools value raises TypeError."""
+        with pytest.raises(TypeError, match="Expected 'tools' to be a list"):
+            CandidateConfig.from_dict({"tools": {"a": "b"}})
 
-    def test_tools_none_ignored(self):
-        """None tools value results in empty list."""
-        candidate = CandidateConfig.from_dict({"tools": None})
-        assert candidate.tool_definitions == []
+    def test_tools_none_raises(self):
+        """None tools value raises TypeError."""
+        with pytest.raises(TypeError, match="Expected 'tools' to be a list"):
+            CandidateConfig.from_dict({"tools": None})
 
     def test_no_job_id_field(self):
         """OptimizationConfig no longer carries a job_id field."""
@@ -1321,13 +1296,9 @@ class TestConfigDirParam:
         config = load_config(config_dir=Path(tmp_path))
         assert config.instructions == "Path dir."
 
-    def test_config_dir_nonexistent_required_false(self, tmp_path):
-        config = load_config(config_dir=tmp_path / "nope", required=False)
+    def test_config_dir_nonexistent_returns_none(self, tmp_path):
+        config = load_config(config_dir=tmp_path / "nope")
         assert config is None
-
-    def test_config_dir_nonexistent_required_true(self, tmp_path):
-        with pytest.raises(ValueError, match="baseline"):
-            load_config(config_dir=tmp_path / "nope")
 
     def test_config_dir_with_candidate(self, tmp_path, monkeypatch):
         """config_dir + OPTIMIZATION_CANDIDATE_ID selects the right folder."""

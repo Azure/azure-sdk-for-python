@@ -34,9 +34,10 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any
 
 import yaml  # type: ignore[import-untyped]
+
+from azure.core.credentials import TokenCredential
 
 from azure.ai.agentserver.optimization._models import (
     CandidateConfig,
@@ -52,8 +53,7 @@ logger = logging.getLogger(__name__)
 def load_config(
     *,
     config_dir: str | Path | None = None,
-    required: bool = True,
-    credential: Any | None = None,
+    credential: TokenCredential | None = None,
 ) -> OptimizationConfig | None:
     """Load optimization config with graceful fallback.
 
@@ -71,55 +71,20 @@ def load_config(
        ``<config_dir>/<candidate_id>/`` (or ``<config_dir>/baseline/``
        as fallback).  Defaults to ``.agent_configs/`` relative to the
        main script, overridable via ``OPTIMIZATION_LOCAL_DIR`` env var.
-    4. When none of the above match:
-
-       - ``required=True``  (default) → raises ``ValueError``.
-       - ``required=False`` → returns ``None``.
+    4. When none of the above match, returns ``None``.
 
     :keyword config_dir: Path to the agent config directory.  When ``None``,
         falls back to the ``OPTIMIZATION_LOCAL_DIR`` env var, then
         to ``.agent_configs/`` next to the main script.
     :paramtype config_dir: str | Path | None
-    :keyword required: If ``True`` (default), raise ``ValueError`` when no
-        config source is found.  Set to ``False`` during initial
-        setup or testing.
-    :paramtype required: bool
     :keyword credential: Optional credential for resolver API authentication.
-        If omitted, resolver will attempt ``DefaultAzureCredential``.
-    :paramtype credential: Any | None
-    :return: The resolved optimization config, or ``None`` when not found
-        and *required* is ``False``.
+        If omitted, resolver will not use authentication.
+    :paramtype credential: ~azure.core.credentials.TokenCredential | None
+    :return: The resolved optimization config, or ``None`` when no
+        config source is found.
     :rtype: OptimizationConfig | None
-    :raises ValueError: When *required* is ``True`` and no config source
-        (env var, resolver API, or local directory) provides a
-        valid config, or when a discovered config file is invalid.
-    """
-    try:
-        return _load_config_inner(config_dir=config_dir, required=required, credential=credential)
-    except ValueError:
-        raise
-    except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
-        logger.error("Unexpected error loading optimization config: %s", exc)
-        return None
-
-
-def _load_config_inner(
-    *,
-    config_dir: str | Path | None,
-    required: bool,
-    credential: Any | None,
-) -> OptimizationConfig | None:
-    """Internal config loader — may raise on unexpected errors.
-
-    :keyword config_dir: Path to the agent config directory.
-    :paramtype config_dir: str | Path | None
-    :keyword required: Whether to raise on missing config.
-    :paramtype required: bool
-    :keyword credential: Optional credential for resolver API authentication.
-    :paramtype credential: Any | None
-    :return: Resolved config or ``None``.
-    :rtype: OptimizationConfig | None
-    :raises ValueError: When a discovered config file is invalid.
+    :raises ValueError: When a discovered config source is invalid
+        (e.g. malformed JSON env var, unreadable metadata.yaml).
     """
     # ── Priority 1: Inline JSON env var (used by temp agent versions, deprecating) ─
     env_var = OptimizationConfig.ENV_CONFIG
@@ -142,7 +107,7 @@ def _load_config_inner(
                 source=f"env:{env_var}",
             )
         except (json.JSONDecodeError, TypeError) as exc:
-            logger.error("Bad %s env var: %s", env_var, exc)
+            raise ValueError(f"Bad {env_var} env var: {exc}") from exc
 
     # ── Priority 2: Candidate ID → resolver API ──────────────────────
     candidate_id = os.environ.get(OptimizationConfig.ENV_CANDIDATE_ID, "").strip()
@@ -186,13 +151,6 @@ def _load_config_inner(
         return local_config
 
     # ── Priority 4: No config found ───────────────────────────────────
-    if required:
-        local_dir = _resolve_local_dir(config_dir)
-        raise ValueError(
-            "No optimization config found. Prepare a baseline folder at "
-            f"'{local_dir / OptimizationConfig.BASELINE_DIR}' with a "
-            "metadata.yaml file, or pass required=False."
-        )
     logger.warning("No optimization config found — returning None")
     return None
 
@@ -328,7 +286,8 @@ def _load_tool_definitions(tool_file: Path) -> list[dict]:
 
     Expects the OpenAI function-calling list format::
 
-        [{"type": "function", "function": {"name": "...", "description": "...", "parameters": {...}}}]
+        [{"type": "function", "function": {"name": "...",
+         "description": "...", "parameters": {...}}}]
 
     :param tool_file: Path to the tools.json file.
     :type tool_file: Path

@@ -7,13 +7,11 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field, fields
 from typing import Any, ClassVar
 
 logger = logging.getLogger(__name__)
 
 
-@dataclass
 class Skill:
     """A learned skill discovered during optimization.
 
@@ -22,18 +20,28 @@ class Skill:
         {"name": "budget-checker", "description": "...", "body": "..."}
     """
 
-    name: str
-    description: str
-    body: str = ""
+    def __init__(self, name: str, description: str, body: str = "") -> None:
+        self.name = name
+        self.description = description
+        self.body = body
+
+    def __repr__(self) -> str:
+        return f"Skill(name={self.name!r}, description={self.description!r}, body={self.body!r})"
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Skill):
+            return NotImplemented
+        return (
+            self.name == other.name
+            and self.description == other.description
+            and self.body == other.body
+        )
 
 
-@dataclass
 class CandidateConfig:
     """Typed representation of the candidate config payload from the API.
 
-    This mirrors the wire format produced by the optimization service's
-    ``to_hosted_agent_config_payload()``::
-
+    Example:
         {
             "name": "travel",
             "instructions": "You are a travel assistant...",
@@ -44,12 +52,29 @@ class CandidateConfig:
         }
     """
 
-    name: str | None = None
-    instructions: str | None = None
-    model: str | None = None
-    temperature: float | None = None
-    skills: list[Skill] = field(default_factory=list)
-    tool_definitions: list[dict] = field(default_factory=list)
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        *,
+        name: str | None = None,
+        instructions: str | None = None,
+        model: str | None = None,
+        temperature: float | None = None,
+        skills: list[Skill] | None = None,
+        tool_definitions: list[dict] | None = None,
+    ) -> None:
+        self.name = name
+        self.instructions = instructions
+        self.model = model
+        self.temperature = temperature
+        self.skills = skills if skills is not None else []
+        self.tool_definitions = tool_definitions if tool_definitions is not None else []
+
+    def __repr__(self) -> str:
+        return (
+            f"CandidateConfig(name={self.name!r}, model={self.model!r}, "
+            f"temperature={self.temperature!r}, skills={len(self.skills)}, "
+            f"tool_definitions={len(self.tool_definitions)})"
+        )
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> CandidateConfig:
@@ -61,17 +86,20 @@ class CandidateConfig:
         :rtype: CandidateConfig
         """
         tools = data.get("tools", [])
+        if not isinstance(tools, list):
+            raise TypeError(
+                f"Expected 'tools' to be a list, got {type(tools).__name__}"
+            )
         return cls(
             name=data.get("name"),
             instructions=data.get("instructions"),
             model=data.get("model"),
             temperature=data.get("temperature"),
             skills=_parse_skills(data.get("skills", [])),
-            tool_definitions=tools if isinstance(tools, list) else [],
+            tool_definitions=tools,
         )
 
 
-@dataclass
 class MetadataConfig:
     """Schema for metadata.yaml in the local directory layout.
 
@@ -84,11 +112,31 @@ class MetadataConfig:
         tool_file: tools.json
     """
 
-    model: str | None = None
-    temperature: float | None = None
-    instruction_file: str = "instructions.md"
-    skill_dir: str = "skills"
-    tool_file: str = "tools.json"
+    _KNOWN_FIELDS: ClassVar[frozenset[str]] = frozenset(
+        {"model", "temperature", "instruction_file", "skill_dir", "tool_file"}
+    )
+
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        *,
+        model: str | None = None,
+        temperature: float | None = None,
+        instruction_file: str = "instructions.md",
+        skill_dir: str = "skills",
+        tool_file: str = "tools.json",
+    ) -> None:
+        self.model = model
+        self.temperature = temperature
+        self.instruction_file = instruction_file
+        self.skill_dir = skill_dir
+        self.tool_file = tool_file
+
+    def __repr__(self) -> str:
+        return (
+            f"MetadataConfig(model={self.model!r}, temperature={self.temperature!r}, "
+            f"instruction_file={self.instruction_file!r}, skill_dir={self.skill_dir!r}, "
+            f"tool_file={self.tool_file!r})"
+        )
 
     @classmethod
     def from_dict(cls, data: dict) -> MetadataConfig:
@@ -99,12 +147,10 @@ class MetadataConfig:
         :return: Metadata config.
         :rtype: MetadataConfig
         """
-        known = {f.name for f in fields(cls)}
-        filtered = {k: v for k, v in data.items() if k in known}
+        filtered = {k: v for k, v in data.items() if k in cls._KNOWN_FIELDS}
         return cls(**filtered)
 
 
-@dataclass
 class OptimizationConfig:  # pylint: disable=too-many-instance-attributes
     """Resolved optimization config.
 
@@ -125,17 +171,36 @@ class OptimizationConfig:  # pylint: disable=too-many-instance-attributes
     SKILL_FILE: ClassVar[str] = "SKILL.md"
     BASELINE_DIR: ClassVar[str] = "baseline"
 
-    instructions: str | None = None
-    model: str | None = None
-    temperature: float | None = None
-    skills: list[Skill] = field(default_factory=list)
-    skills_dir: str | None = None
-    tool_definitions: list[dict] = field(default_factory=list)
-    source: str = "defaults"
-    candidate_id: str | None = None
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        *,
+        instructions: str | None = None,
+        model: str | None = None,
+        temperature: float | None = None,
+        skills: list[Skill] | None = None,
+        skills_dir: str | None = None,
+        tool_definitions: list[dict] | None = None,
+        source: str = "defaults",
+        candidate_id: str | None = None,
+    ) -> None:
+        self.instructions = instructions
+        self.model = model
+        self.temperature = temperature
+        self.skills = skills if skills is not None else []
+        self.skills_dir = skills_dir
+        self.tool_definitions = tool_definitions if tool_definitions is not None else []
+        self.source = source
+        self.candidate_id = candidate_id
+
+    def __repr__(self) -> str:
+        return (
+            f"OptimizationConfig(source={self.source!r}, model={self.model!r}, "
+            f"candidate_id={self.candidate_id!r})"
+        )
 
     @property
     def has_skills(self) -> bool:
+        """Whether this config carries any skill data."""
         return len(self.skills) > 0 or self.skills_dir is not None
 
     def apply_tool_descriptions(self, tools: list) -> list:

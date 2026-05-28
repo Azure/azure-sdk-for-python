@@ -25,9 +25,9 @@ pip install azure-ai-agentserver-optimization
 | 1 | **Inline JSON** | `OPTIMIZATION_CONFIG` | Full config as a JSON string. Used by temporary agent versions during evaluation. |
 | 2 | **Resolver API** | `OPTIMIZATION_CANDIDATE_ID`, `OPTIMIZATION_RESOLVE_ENDPOINT` | Fetches the candidate config from the remote optimization service and persists it to the local directory. The endpoint should be the full job-scoped URL. |
 | 3 | **Local directory** | `OPTIMIZATION_LOCAL_DIR` (optional, defaults to `.agent_configs/`) | Reads from `<local_dir>/<candidate_id>/` or `baseline/` as fallback. |
-| 4 | **No config** | *(none)* | `required=True` (default) raises `ValueError`; `required=False` returns `None`. |
+| 4 | **No config** | *(none)* | Returns `None`. |
 
-Any unexpected error is caught and logged — `load_config()` never crashes (only `ValueError` from `required=True` propagates).
+When `load_config()` encounters an invalid config source (e.g. malformed JSON env var, unreadable metadata), it raises `ValueError`. Other exceptions (e.g. network errors from the resolver API) propagate to the caller.
 
 ### Environment Variables
 
@@ -135,13 +135,13 @@ and return APPROVED or DENIED with a reason.
 
 | Export | Type | Description |
 |--------|------|-------------|
-| `load_config(*, config_dir, required)` | function | Load optimization config with 4-priority resolution. |
+| `load_config(*, config_dir)` | function | Load optimization config with 4-priority resolution. |
 | `load_skills_from_dir(path)` | function | Load skills from a directory of `SKILL.md` files. |
-| `OptimizationConfig` | dataclass | Resolved config with instructions, model, temperature, skills_dir, tool_definitions. |
+| `OptimizationConfig` | class | Resolved config with instructions, model, temperature, skills_dir, tool_definitions. |
 | `OptimizationConfig.apply_tool_descriptions(tools)` | method | Patch `__doc__`, `.description`, and parameter descriptions on tool functions. |
 | `OptimizationConfig.compose_instructions()` | method | Return instructions with skill catalog appended. |
-| `CandidateConfig` | dataclass | Typed representation of the resolver API response. |
-| `Skill` | dataclass | A learned skill (name, description, body). |
+| `CandidateConfig` | class | Typed representation of the resolver API response. |
+| `Skill` | class | A learned skill (name, description, body). |
 
 ## Examples
 
@@ -152,13 +152,15 @@ from azure.ai.agentserver.optimization import load_config
 
 config = load_config()                          # uses .agent_configs/baseline/
 config = load_config(config_dir="my_configs")   # custom directory
-config = load_config(required=False)            # returns None if no config found
 
-print(config.instructions)       # optimized system prompt
-print(config.model)              # optimized model name
-print(config.temperature)        # optimized temperature
-print(config.tool_definitions)   # optimized tool definitions (list)
-print(config.source)             # "env:OPTIMIZATION_CONFIG", "api:candidate:abc", "local:...", etc.
+if config is None:
+    print("No optimization config found")
+else:
+    print(config.instructions)       # optimized system prompt
+    print(config.model)              # optimized model name
+    print(config.temperature)        # optimized temperature
+    print(config.tool_definitions)   # optimized tool definitions (list)
+    print(config.source)             # "env:OPTIMIZATION_CONFIG", "api:candidate:abc", "local:...", etc.
 ```
 
 ### Apply optimized tool descriptions
@@ -208,7 +210,7 @@ logging.getLogger("azure.ai.agentserver.optimization").setLevel(logging.DEBUG)
 Common issues:
 - **Config not loading from resolver API** — ensure both env vars are set: `OPTIMIZATION_CANDIDATE_ID` and `OPTIMIZATION_RESOLVE_ENDPOINT`.
 - **Local directory not found** — check that `OPTIMIZATION_LOCAL_DIR` points to an existing directory, or ensure `.agent_configs/` exists relative to your main script.
-- **`load_config()` raises ValueError** — no config source was found; either set up a baseline folder or pass `required=False`.
+- **`load_config()` returns `None`** — no config source was found; set up a baseline folder or set the appropriate env vars.
 
 ## Next steps
 

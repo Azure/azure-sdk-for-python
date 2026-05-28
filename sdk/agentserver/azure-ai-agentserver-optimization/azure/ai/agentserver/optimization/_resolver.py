@@ -26,6 +26,7 @@ import shutil
 from typing import Any
 
 from azure.core import PipelineClient
+from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, RetryPolicy
 from azure.core.rest import HttpRequest
 from azure.identity import DefaultAzureCredential
@@ -45,7 +46,7 @@ def resolve_candidate(
     candidate_id: str,
     endpoint: str,
     local_dir: pathlib.Path | None = None,
-    credential: Any | None = None,
+    credential: TokenCredential | None = None,
 ) -> dict[str, Any] | None:
     """Resolve a candidate's full config from the optimization service.
 
@@ -64,8 +65,8 @@ def resolve_candidate(
     :param local_dir: Local directory for persisting config.
     :type local_dir: pathlib.Path | None
     :param credential: Optional credential for bearer token auth.
-        If omitted, resolver attempts ``DefaultAzureCredential``.
-    :type credential: Any | None
+        If omitted, resolver will not use authentication.
+    :type credential: ~azure.core.credentials.TokenCredential | None
     :return: Candidate config dict, or ``None`` when an existing local copy is reused.
     :rtype: dict[str, Any] | None
     :raises ValueError: When remote config or required skill files cannot be fetched.
@@ -80,12 +81,12 @@ def resolve_candidate(
         )
         _downloaded.discard(candidate_id)
 
-    client = _build_client(endpoint, credential)
-    try:
+    with _build_client(endpoint, credential) as client:
         config = _fetch_candidate_config(client, candidate_id)
 
         logger.info(
-            "Resolved candidate %s: model=%s, instructions=%d chars, skills=%d, tool_definitions=%d",
+            "Resolved candidate %s: model=%s, instructions=%d chars, "
+            "skills=%d, tool_definitions=%d",
             candidate_id,
             config.get("model", "?"),
             len(config.get("instructions", "")),
@@ -110,8 +111,6 @@ def resolve_candidate(
 
         _downloaded.add(candidate_id)
         return config
-    finally:
-        client.close()
 
 
 def _fetch_candidate_config(client: PipelineClient, candidate_id: str) -> dict[str, Any]:
@@ -232,7 +231,8 @@ def _download_skill_files(
     :type candidate_id: str
     :param candidate_path: Local directory for the candidate.
     :type candidate_path: pathlib.Path
-    :raises ValueError: When the manifest or any referenced skill file is invalid or cannot be fetched.
+    :raises ValueError: When the manifest or any referenced skill file
+        is invalid or cannot be fetched.
     """
     try:
         manifest = _api_get_json(
@@ -324,13 +324,14 @@ def _is_skill_file(file_entry: dict) -> bool:
 # ── HTTP helpers (azure.core transport) ──────────────────────────────
 
 
-def _build_client(endpoint: str, credential: Any | None = None) -> PipelineClient:
+def _build_client(endpoint: str, credential: TokenCredential | None = None) -> PipelineClient:
     """Create a PipelineClient with credential-based auth and retry.
 
     :param endpoint: Base URL for the API.
     :type endpoint: str
-    :param credential: Azure credential for bearer token auth. If None, attempts to use DefaultAzureCredential.
-    :type credential: Any | None
+    :param credential: Azure credential for bearer token auth.
+        If ``None``, falls back to ``DefaultAzureCredential``.
+    :type credential: ~azure.core.credentials.TokenCredential | None
     :return: Configured pipeline client.
     :rtype: PipelineClient
     """
