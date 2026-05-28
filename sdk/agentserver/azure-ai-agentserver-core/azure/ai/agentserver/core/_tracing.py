@@ -233,6 +233,8 @@ def _setup_distro_export(
         kwargs["a365_enable_observability_exporter"] = True
         kwargs["a365_observability_scope_override"] = "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
 
+    kwargs["instrumentation_options"] = {"azure_sdk": {"enabled": False}}
+
     use_microsoft_opentelemetry(**kwargs)
 
 
