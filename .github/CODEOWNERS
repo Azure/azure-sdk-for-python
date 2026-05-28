@@ -256,10 +256,10 @@
 /sdk/eventgrid/    @rajeshka @shankarsama
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/    @axisc @hmlam @sjkwak
+/sdk/eventhub/    @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
 
 # ServiceLabel: %Event Hubs
-# ServiceOwners: @axisc @hmlam @sjkwak
+# ServiceOwners: @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
 
 # PRLabel: %Graph
 /sdk/graphrbac/    @lmazuel
