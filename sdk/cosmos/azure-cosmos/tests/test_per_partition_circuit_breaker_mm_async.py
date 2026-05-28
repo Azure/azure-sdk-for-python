@@ -464,8 +464,6 @@ class TestPerPartitionCircuitBreakerMMAsync:
         except AssertionError:
             await cleanup_method([custom_setup, setup])
             pytest.skip("Recovery-phase precondition not met: partition was not marked unavailable.")
-
-
         number_of_errors = 0
 
         async def concurrent_upsert():
@@ -487,7 +485,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
             for i in range(15):
                 tasks.append(concurrent_upsert())
             await asyncio.gather(*tasks)
-            # Depending on retry timing, recovery may surface one request failure or none.
+            # Depending on retry timing, recovery can surface one request failure or none.
             assert number_of_errors <= 1
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
