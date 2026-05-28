@@ -1221,17 +1221,13 @@ class Setting(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.security.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: any
     :ivar kind: the kind of the settings string. Required. Known values are: "DataExportSettings",
      "AlertSuppressionSetting", and "AlertSyncSettings".
     :vartype kind: str or ~azure.mgmt.security.models.SettingKind
     """
 
     __mapping__: dict[str, _Model] = {}
-    properties: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource-specific properties for this resource."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update"])
     """the kind of the settings string. Required. Known values are: \"DataExportSettings\",
      \"AlertSuppressionSetting\", and \"AlertSyncSettings\"."""
 
@@ -1240,7 +1236,6 @@ class Setting(ProxyResource):
         self,
         *,
         kind: str,
-        properties: Optional[Any] = None,
     ) -> None: ...
 
     @overload
@@ -4054,17 +4049,13 @@ class ServerVulnerabilityAssessmentsSetting(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.security.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: any
     :ivar kind: The kind of the server vulnerability assessments setting. Required.
      "AzureServersSetting"
     :vartype kind: str or ~azure.mgmt.security.models.ServerVulnerabilityAssessmentsSettingKind
     """
 
     __mapping__: dict[str, _Model] = {}
-    properties: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource-specific properties for this resource."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update"])
     """The kind of the server vulnerability assessments setting. Required. \"AzureServersSetting\""""
 
     @overload
@@ -4072,7 +4063,6 @@ class ServerVulnerabilityAssessmentsSetting(ProxyResource):
         self,
         *,
         kind: str,
-        properties: Optional[Any] = None,
     ) -> None: ...
 
     @overload

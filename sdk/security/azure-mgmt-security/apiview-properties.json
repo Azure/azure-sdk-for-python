@@ -1062,5 +1062,6 @@
         "azure.mgmt.security.aio.operations.SubAssessmentsOperations.list": "SubAssessmentsAPI.SecuritySubAssessments.list",
         "azure.mgmt.security.operations.SubAssessmentsOperations.list_all": "SubAssessmentsAPI.SubAssessmentsOperationGroup.listAll",
         "azure.mgmt.security.aio.operations.SubAssessmentsOperations.list_all": "SubAssessmentsAPI.SubAssessmentsOperationGroup.listAll"
-    }
+    },
+    "CrossLanguageVersion": "8002992ade73"
 }

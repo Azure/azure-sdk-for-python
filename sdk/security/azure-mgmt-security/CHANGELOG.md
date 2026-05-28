@@ -1,5 +1,12 @@
 # Release History
 
+## 8.0.0b3 (2026-05-28)
+
+### Breaking Changes
+
+  - Model `ServerVulnerabilityAssessmentsSetting` deleted or renamed its instance variable `properties`
+  - Model `Setting` deleted or renamed its instance variable `properties`
+
 ## 8.0.0b2 (2026-05-11)
 
 ### Features Added

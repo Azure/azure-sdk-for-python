@@ -444,7 +444,7 @@ class AlertsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -852,7 +852,7 @@ class AlertsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -1188,7 +1188,7 @@ class AlertsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -1272,7 +1272,7 @@ class AlertsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -1865,7 +1865,7 @@ class AlertsSuppressionRulesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -1963,7 +1963,7 @@ class ApplicationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -2699,7 +2699,7 @@ class AssessmentsMetadataOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -2847,7 +2847,7 @@ class AssessmentsMetadataOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -3425,7 +3425,7 @@ class AutomationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -3506,7 +3506,7 @@ class AutomationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -4060,7 +4060,7 @@ class SecurityContactsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -4230,7 +4230,7 @@ class ComplianceResultsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -4647,7 +4647,7 @@ class GovernanceAssignmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -5095,7 +5095,7 @@ class GovernanceRulesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -5584,7 +5584,7 @@ class HealthReportsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -5996,7 +5996,7 @@ class DeviceSecurityGroupsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -6303,7 +6303,7 @@ class AutoProvisioningSettingsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -6472,7 +6472,7 @@ class CompliancesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -6829,7 +6829,7 @@ class InformationProtectionPoliciesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -7359,7 +7359,7 @@ class WorkspaceSettingsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -7602,7 +7602,7 @@ class Operations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -8181,7 +8181,7 @@ class PrivateLinkResourcesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -8775,7 +8775,7 @@ class PrivateEndpointConnectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -8950,7 +8950,7 @@ class RegulatoryComplianceStandardsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -9133,7 +9133,7 @@ class RegulatoryComplianceControlsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -9333,7 +9333,7 @@ class RegulatoryComplianceAssessmentsOperations:  # pylint: disable=name-too-lon
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -9915,7 +9915,7 @@ class SecurityConnectorsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -9996,7 +9996,7 @@ class SecurityConnectorsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -10707,7 +10707,7 @@ class AzureDevOpsOrgsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -10972,7 +10972,7 @@ class GitHubOwnersOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -11234,7 +11234,7 @@ class GitLabGroupsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -12117,7 +12117,7 @@ class DevOpsConfigurationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -12866,7 +12866,7 @@ class AzureDevOpsProjectsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -13068,7 +13068,7 @@ class GitLabProjectsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -13368,7 +13368,7 @@ class SecurityOperatorsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -13551,7 +13551,7 @@ class DiscoveredSecuritySolutionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -13632,7 +13632,7 @@ class DiscoveredSecuritySolutionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -13815,7 +13815,7 @@ class ExternalSecuritySolutionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -13896,7 +13896,7 @@ class ExternalSecuritySolutionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -14341,7 +14341,7 @@ class JitNetworkAccessPoliciesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -14427,7 +14427,7 @@ class JitNetworkAccessPoliciesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -14705,7 +14705,7 @@ class JitNetworkAccessPoliciesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -14793,7 +14793,7 @@ class JitNetworkAccessPoliciesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -14968,7 +14968,7 @@ class SecuritySolutionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -15349,7 +15349,7 @@ class SecurityStandardsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -15775,7 +15775,7 @@ class StandardAssignmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -16168,7 +16168,7 @@ class CustomRecommendationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -16576,7 +16576,7 @@ class ServerVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -16905,7 +16905,7 @@ class SettingsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -17371,7 +17371,7 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -17763,7 +17763,7 @@ class SqlVulnerabilityAssessmentScanResultsOperations:  # pylint: disable=name-t
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -18169,7 +18169,7 @@ class StandardsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -18249,7 +18249,7 @@ class StandardsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -18661,7 +18661,7 @@ class AssignmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -18741,7 +18741,7 @@ class AssignmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -18929,7 +18929,7 @@ class TasksOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -19164,7 +19164,7 @@ class TasksOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -19315,7 +19315,7 @@ class TasksOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -19714,7 +19714,7 @@ class APICollectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -19797,7 +19797,7 @@ class APICollectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -19886,7 +19886,7 @@ class APICollectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -20279,7 +20279,7 @@ class SecurityConnectorApplicationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -20698,7 +20698,7 @@ class AssessmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -21311,7 +21311,7 @@ class DefenderForStorageOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -22304,7 +22304,7 @@ class IotSecuritySolutionOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -22391,7 +22391,7 @@ class IotSecuritySolutionOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -22580,7 +22580,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:  # pylint: disable
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -22834,7 +22834,7 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations:  # pylint: disable=
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -23002,7 +23002,7 @@ class LocationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -23979,7 +23979,7 @@ class PrivateLinksOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -24063,7 +24063,7 @@ class PrivateLinksOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -24231,7 +24231,7 @@ class SecureScoresOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -24339,7 +24339,7 @@ class SecureScoreControlsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -24425,7 +24425,7 @@ class SecureScoreControlsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -24523,7 +24523,7 @@ class SecureScoreControlDefinitionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -24605,7 +24605,7 @@ class SecureScoreControlDefinitionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -25589,7 +25589,7 @@ class AzureDevOpsReposOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -25782,7 +25782,7 @@ class GitHubReposOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -26270,7 +26270,7 @@ class AllowedConnectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -26351,7 +26351,7 @@ class AllowedConnectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -26928,7 +26928,7 @@ class TopologyOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -27008,7 +27008,7 @@ class TopologyOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -27914,14 +27914,10 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.SqlVulnerabilityAssessmentScanOperationResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -28157,7 +28153,7 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -28338,7 +28334,7 @@ class SubAssessmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -28421,7 +28417,7 @@ class SubAssessmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
