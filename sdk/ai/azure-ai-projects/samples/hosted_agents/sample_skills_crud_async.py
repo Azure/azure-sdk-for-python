@@ -32,6 +32,7 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import SkillInlineContent
 
 load_dotenv()
 
@@ -56,27 +57,27 @@ async def main() -> None:
         created = None
         created = await skills_client.create(
             name=skill_name,
-            description="Example skill created by the azure-ai-projects sample.",
-            instructions="You help answer product support questions using company policy and product guidance.",
-            metadata={"status": "created", "domain": "support"},
+            inline_content=SkillInlineContent(
+                description="Example skill created by the azure-ai-projects sample.",
+                instructions="You help answer product support questions using company policy and product guidance.",
+                metadata={"status": "created", "domain": "support"},
+            ),
         )
         print(
             f"Created skill: {created.name} ({created.skill_id}) "
-            f"has_blob={created.has_blob} metadata={created.metadata}"
+            f"version={created.version}"
         )
 
         fetched = await skills_client.get(skill_name)
-        print(f"Retrieved skill: {fetched.name} ({fetched.skill_id}) " f"description={fetched.description!r}")
+        print(f"Retrieved skill: {fetched.name} ({fetched.id}) " f"description={fetched.description!r}")
 
         updated = await skills_client.update(
             skill_name,
-            description="Updated description for the sample skill.",
-            instructions="You help answer product support questions and escalate billing issues.",
-            metadata={"status": "updated", "domain": "support"},
+            default_version=created.version,
         )
         print(
-            f"Updated skill: {updated.name} ({updated.skill_id}) "
-            f"has_blob={updated.has_blob} metadata={updated.metadata}"
+            f"Updated skill: {updated.name} ({updated.id}) "
+            f"default_version={updated.default_version}"
         )
 
         skills = []

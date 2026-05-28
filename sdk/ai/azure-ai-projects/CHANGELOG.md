@@ -21,6 +21,14 @@
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
 * New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
 * New convenience method `.beta.models.create()` that wraps the spec's three-step upload-first sequence (`pending_upload` → `azcopy copy` → `pending_create_version`) and polls `get()` until the new `ModelVersion` is observable.
+* New method `beta.agents.stop_session` to stop a running agent session.
+* New methods on `.beta.agents` for optimization candidate management: `get_candidate_file`, `promote_candidate`.
+* New methods on `.beta.skills` for versioned skill management: `create`, `list_skill_versions`, `get_skill_version`, `get_skill_version_content`, `delete_skill_version`.
+* New enum value `INVOCATIONS_WS` in `AgentEndpointProtocol` and `AgentProtocol` for WebSocket-based real-time streaming agents.
+* New enum `EvaluationLevel` with values `TURN` and `CONVERSATION`.
+* New enum `GitHubIssueEvent` with values `OPENED` and `CLOSED`.
+* New class `SkillInlineContent` for defining simple skills without file uploads.
+* New class `SkillVersion` representing a specific version of a skill.
 
 ### Breaking Changes
 
@@ -28,6 +36,10 @@ Breaking changes in beta methods:
 * Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
 * Argument `body` in method `.beta.skills.create_from_package()` renamed to `content`.
+* Method `.beta.agents.get_session_files` renamed to `.beta.agents.list_session_files`.
+* Method `.beta.skills.create` signature changed — now takes `name` and keyword `inline_content: SkillInlineContent`; returns `SkillVersion`.
+* Method `.beta.skills.create_from_package` signature changed — now takes `name` and `content: CreateSkillVersionFromFilesBody`; returns `SkillVersion`.
+* Method `.beta.skills.update` signature changed — now only accepts keyword `default_version`; returns `SkillDetails`.
 
 Breaking changes in beta classes:
 * Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
@@ -40,6 +52,13 @@ Breaking changes in beta classes:
 * Renamed class `TargetConfig` to `RedTeamTargetConfig`.
 * Removed class `FabricIQPreviewToolParameters`.
 * Removed class `WorkIQPreviewToolParameters`.
+* Enum values `ContainerMemoryLimit.MEMORY_1GB/4GB/16GB/64GB` renamed to `MEMORY1_GB/MEMORY4_GB/MEMORY16_GB/MEMORY64_GB`.
+* Renamed class `GitHubIssueOpenedRoutineTrigger` to `GitHubIssueRoutineTrigger`.
+* Renamed enum value `RoutineTriggerType.GITHUB_ISSUE_OPENED` to `GITHUB_ISSUE`.
+* Removed enum value `DataGenerationJobSourceType.DATASET`.
+* Removed classes: `DatasetDataGenerationJobSource`, `DatasetItem`, `EvalRunOutputItemResultStatus`, `EvaluationCriterion`, `OptimizationAgentSkill`, `RoutineRunDiagnostics`.
+* Removed enums: `OptimizationMode`, `OptimizationStrategy`.
+* Removed properties `has_blob`, `skill_id`, `metadata` from class `SkillDetails`.
 
 ### Bugs Fixed
 

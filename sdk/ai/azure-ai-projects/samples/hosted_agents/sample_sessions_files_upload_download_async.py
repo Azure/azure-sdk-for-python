@@ -88,7 +88,7 @@ async def main():
             )
 
             print("Listing session files for the session at path '.'...")
-            files = await project_client.beta.agents.get_session_files(
+            files = await project_client.beta.agents.list_session_files(
                 agent_name=agent_name,
                 agent_session_id=session.agent_session_id,
                 path="/remote",

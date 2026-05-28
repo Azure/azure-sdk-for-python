@@ -43,6 +43,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import CreateSkillVersionFromFilesBody
 
 load_dotenv()
 
@@ -61,12 +62,14 @@ with (
     except ResourceNotFoundError:
         pass
 
-    imported = project_client.beta.skills.create_from_package(Path(skill_file_path).read_bytes())
+    imported = project_client.beta.skills.create_from_package(
+        skill_name, content=CreateSkillVersionFromFilesBody(files=[Path(skill_file_path).read_bytes()])
+    )
     imported_skill_name = imported.name
-    print(f"Imported skill from package: {imported.name} ({imported.skill_id}) has_blob={imported.has_blob}")
+    print(f"Imported skill from package: {imported.name} ({imported.skill_id}) version={imported.version}")
 
     fetched = project_client.beta.skills.get(imported.name)
-    print(f"Fetched imported skill: {fetched.name} ({fetched.skill_id}) has_blob={fetched.has_blob}")
+    print(f"Fetched imported skill: {fetched.name} ({fetched.id}) default_version={fetched.default_version}")
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     download_path = download_folder / f"{fetched.name}_{timestamp}.zip"
