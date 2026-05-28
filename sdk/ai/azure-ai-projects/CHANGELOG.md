@@ -23,7 +23,7 @@
 * New convenience method `.beta.models.create()` that wraps the spec's three-step upload-first sequence (`pending_upload` → `azcopy copy` → `pending_create_version`) and polls `get()` until the new `ModelVersion` is observable.
 * New method `beta.agents.stop_session` to stop a running agent session.
 * New methods on `.beta.agents` for optimization candidate management: `get_candidate_file`, `promote_candidate`.
-* New methods on `.beta.skills` for versioned skill management: `create`, `list_skill_versions`, `get_skill_version`, `get_skill_version_content`, `delete_skill_version`.
+* New methods on `.beta.skills` for versioned skill management: `create`, `list_versions`, `get_version`, `download_version`, `delete_version`.
 * New enum value `INVOCATIONS_WS` in `AgentEndpointProtocol` and `AgentProtocol` for WebSocket-based real-time streaming agents.
 * New enum `EvaluationLevel` with values `TURN` and `CONVERSATION`.
 * New enum `GitHubIssueEvent` with values `OPENED` and `CLOSED`.

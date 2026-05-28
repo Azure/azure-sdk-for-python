@@ -13375,7 +13375,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_skill_versions(
+    def list_versions(
         self,
         name: str,
         *,
@@ -13469,7 +13469,7 @@ class BetaSkillsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_skill_version(self, name: str, version: str, **kwargs: Any) -> _models.SkillVersion:
+    async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.SkillVersion:
         """Retrieve a specific version of a skill.
 
         :param name: The name of the skill. Required.
@@ -13602,7 +13602,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_skill_version_content(self, name: str, version: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def download_version(self, name: str, version: str, **kwargs: Any) -> AsyncIterator[bytes]:
         """Download the zip content for a specific version of a skill.
 
         :param name: The name of the skill. Required.
@@ -13670,7 +13670,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_skill_version(self, name: str, version: str, **kwargs: Any) -> _models.DeleteSkillVersionResponse:
+    async def delete_version(self, name: str, version: str, **kwargs: Any) -> _models.DeleteSkillVersionResponse:
         """Delete a specific version of a skill.
 
         :param name: The name of the skill. Required.

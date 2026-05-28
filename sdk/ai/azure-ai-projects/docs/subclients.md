@@ -4,7 +4,7 @@ This document lists all sub-clients available on `AIProjectClient` and their pub
 
 ## Summary
 
-There are a total of 132 unique public methods across all sub-clients.
+There are a total of 139 unique public methods across all sub-clients.
 
 ### Top-level Sub-clients (stable operations)
 
@@ -22,7 +22,7 @@ There are a total of 132 unique public methods across all sub-clients.
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `beta.agents` | BetaAgentsOperations | 21 |
+| `beta.agents` | BetaAgentsOperations | 24 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
 | `beta.evaluators` | BetaEvaluatorsOperations | 13 |
@@ -32,7 +32,7 @@ There are a total of 132 unique public methods across all sub-clients.
 | `beta.red_teams` | BetaRedTeamsOperations | 3 |
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
-| `beta.skills` | BetaSkillsOperations | 7 |
+| `beta.skills` | BetaSkillsOperations | 11 |
 | `beta.toolboxes` | BetaToolboxesOperations | 8 |
 
 
@@ -89,17 +89,20 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.agents.delete_session_file
 .beta.agents.download_code
 .beta.agents.download_session_file
+.beta.agents.get_candidate_file
 .beta.agents.get_optimization_candidate
 .beta.agents.get_optimization_candidate_config
 .beta.agents.get_optimization_candidate_results
 .beta.agents.get_optimization_job
 .beta.agents.get_session
-.beta.agents.get_session_files
 .beta.agents.get_session_log_stream
 .beta.agents.list_optimization_candidates
 .beta.agents.list_optimization_jobs
+.beta.agents.list_session_files
 .beta.agents.list_sessions
 .beta.agents.patch_agent_details
+.beta.agents.promote_candidate
+.beta.agents.stop_session
 .beta.agents.upload_session_file
 
 .beta.datasets.cancel_generation_job
@@ -178,9 +181,13 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.skills.create
 .beta.skills.create_from_package
 .beta.skills.delete
+.beta.skills.delete_version
 .beta.skills.download
+.beta.skills.download_version
 .beta.skills.get
+.beta.skills.get_version
 .beta.skills.list
+.beta.skills.list_versions
 .beta.skills.update
 
 .beta.toolboxes.create_version
