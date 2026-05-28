@@ -4,6 +4,7 @@
 
 #### Features Added
 * Added **preview** support for the optional `embeddingSource` field on entries in `vector_embedding_policy.vectorEmbeddings`, which allows the service to generate vector embeddings from the specified item paths. Requires the embedding-generation service to be enabled on the account. See [46870](https://github.com/Azure/azure-sdk-for-python/pull/46870)
+* Added `aio` extras to the package, allowing users to install async dependencies with `pip install azure-cosmos[aio]`. See [PR 47143](https://github.com/Azure/azure-sdk-for-python/pull/47143)
 
 #### Breaking Changes
 * `CosmosItemPaged.get_response_headers()` and `CosmosAsyncItemPaged.get_response_headers()` now return a single `CaseInsensitiveDict` (the latest page) instead of `List[CaseInsensitiveDict]` (introduced in 4.16.0b1); `get_last_response_headers()` has been removed. This avoids unbounded memory growth on large queries. **Migration:** code that previously accessed `headers[i]['x-ms-request-charge']` should switch to `headers['x-ms-request-charge']` for the latest page, or pass `response_hook=` to the query method to receive per-page headers as they arrive. See [PR 47172](https://github.com/Azure/azure-sdk-for-python/pull/47172).
