@@ -7,8 +7,13 @@
 
 """
 DESCRIPTION:
-    Demonstrates Knowledge Source and Knowledge Base CRUD operations and
-    a minimal retrieval query using a semantic intent.
+    Demonstrates the end-to-end agentic retrieval scenario using async clients:
+    create a knowledge source over an existing search index, create a knowledge
+    base that references it, query the knowledge base with a semantic intent,
+    and clean up.
+
+    For knowledge source / knowledge base CRUD details (get, update, list),
+    see sample_knowledge_source_crud_async.py and sample_knowledge_base_crud_async.py.
 
 USAGE:
     python sample_agentic_retrieval_async.py
@@ -25,18 +30,15 @@ import json
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ResourceNotFoundError
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
 from azure.search.documents.knowledgebases.models import (
     KnowledgeBaseRetrievalRequest,
     KnowledgeRetrievalSemanticIntent,
-    KnowledgeRetrievalMinimalReasoningEffort,
 )
 from azure.search.documents.indexes.models import (
     KnowledgeBase,
     KnowledgeSourceReference,
-    SearchIndexFieldReference,
     SearchIndexKnowledgeSource,
     SearchIndexKnowledgeSourceParameters,
 )
@@ -49,106 +51,22 @@ knowledge_source_name = "hotels-sample-knowledge-source"
 knowledge_base_name = "hotels-sample-knowledge-base"
 
 
-async def create_knowledge_source_async():
-    # [START create_knowledge_source_async]
+async def setup_knowledge_base_async():
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
-    knowledge_source = SearchIndexKnowledgeSource(
-        name=knowledge_source_name,
-        search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
-    )
-
     async with index_client:
+        knowledge_source = SearchIndexKnowledgeSource(
+            name=knowledge_source_name,
+            search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
+        )
         await index_client.create_or_update_knowledge_source(knowledge_source=knowledge_source)
-    print(f"Created: knowledge source '{knowledge_source_name}'")
-    # [END create_knowledge_source_async]
+        print(f"Created: knowledge source '{knowledge_source_name}'")
 
-
-async def get_knowledge_source_async():
-    # [START get_knowledge_source_async]
-    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
-    async with index_client:
-        knowledge_source = await index_client.get_knowledge_source(knowledge_source_name)
-    print(f"Retrieved: knowledge source '{knowledge_source.name}'")
-    # [END get_knowledge_source_async]
-
-
-async def update_knowledge_source_async():
-    # [START update_knowledge_source_async]
-    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
-    knowledge_source = SearchIndexKnowledgeSource(
-        name=knowledge_source_name,
-        search_index_parameters=SearchIndexKnowledgeSourceParameters(
-            search_index_name=index_name,
-            source_data_fields=[
-                SearchIndexFieldReference(name="HotelId"),
-                SearchIndexFieldReference(name="HotelName"),
-                SearchIndexFieldReference(name="Description"),
-                SearchIndexFieldReference(name="Category"),
-                SearchIndexFieldReference(name="Tags"),
-            ],
-        ),
-    )
-
-    async with index_client:
-        await index_client.create_or_update_knowledge_source(knowledge_source=knowledge_source)
-    print(f"Updated: knowledge source '{knowledge_source_name}'")
-    # [END update_knowledge_source_async]
-
-
-async def delete_knowledge_source_async():
-    # [START delete_knowledge_source_async]
-    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-    try:
-        async with index_client:
-            await index_client.delete_knowledge_source(knowledge_source_name)
-        print(f"Deleted: knowledge source '{knowledge_source_name}'")
-    except ResourceNotFoundError:
-        print(f"Skipped: knowledge source '{knowledge_source_name}' not found")
-    # [END delete_knowledge_source_async]
-
-
-async def create_knowledge_base_async():
-    # [START create_knowledge_base_async]
-    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
-    knowledge_base = KnowledgeBase(
-        name=knowledge_base_name,
-        knowledge_sources=[KnowledgeSourceReference(name=knowledge_source_name)],
-    )
-
-    async with index_client:
+        knowledge_base = KnowledgeBase(
+            name=knowledge_base_name,
+            knowledge_sources=[KnowledgeSourceReference(name=knowledge_source_name)],
+        )
         await index_client.create_or_update_knowledge_base(knowledge_base)
-    print(f"Created: knowledge base '{knowledge_base_name}'")
-    # [END create_knowledge_base_async]
-
-
-async def get_knowledge_base_async():
-    # [START get_knowledge_base_async]
-    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
-    async with index_client:
-        knowledge_base = await index_client.get_knowledge_base(knowledge_base_name)
-    print(f"Retrieved: knowledge base '{knowledge_base.name}'")
-    # [END get_knowledge_base_async]
-
-
-async def update_knowledge_base_async():
-    # [START update_knowledge_base_async]
-    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
-    knowledge_base = KnowledgeBase(
-        name=knowledge_base_name,
-        knowledge_sources=[KnowledgeSourceReference(name=knowledge_source_name)],
-        retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
-    )
-
-    async with index_client:
-        await index_client.create_or_update_knowledge_base(knowledge_base)
-    print(f"Updated: knowledge base '{knowledge_base_name}'")
-    # [END update_knowledge_base_async]
+        print(f"Created: knowledge base '{knowledge_base_name}'")
 
 
 async def retrieve_knowledge_base_async():
@@ -156,12 +74,13 @@ async def retrieve_knowledge_base_async():
     retrieval_client = KnowledgeBaseRetrievalClient(
         service_endpoint,
         credential=AzureKeyCredential(key),
+        knowledge_base_name=knowledge_base_name,
     )
 
     request = KnowledgeBaseRetrievalRequest(intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")])
 
     try:
-        result = await retrieval_client.retrieve(knowledge_base_name=knowledge_base_name, retrieval_request=request)
+        result = await retrieval_client.retrieve(request)
     finally:
         await retrieval_client.close()
 
@@ -174,9 +93,7 @@ async def retrieve_knowledge_base_async():
                 response_parts.append(content.text)
 
     if response_parts:
-        response_content = "\n\n".join(response_parts)
-
-        items = json.loads(response_content)
+        items = json.loads("\n\n".join(response_parts))
         for i, item in enumerate(items[:5], start=1):
             print(f"  Result {i}:")
             print(f"    Title: {item.get('title')}")
@@ -186,25 +103,20 @@ async def retrieve_knowledge_base_async():
     # [END retrieve_knowledge_base_async]
 
 
-async def delete_knowledge_base_async():
-    # [START delete_knowledge_base_async]
+async def cleanup_async():
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-    try:
-        async with index_client:
-            await index_client.delete_knowledge_base(knowledge_base_name)
+    async with index_client:
+        await index_client.delete_knowledge_base(knowledge_base_name)
         print(f"Deleted: knowledge base '{knowledge_base_name}'")
-    except ResourceNotFoundError:
-        print(f"Skipped: knowledge base '{knowledge_base_name}' not found")
-    # [END delete_knowledge_base_async]
+        await index_client.delete_knowledge_source(knowledge_source_name)
+        print(f"Deleted: knowledge source '{knowledge_source_name}'")
+
+
+async def main():
+    await setup_knowledge_base_async()
+    await retrieve_knowledge_base_async()
+    await cleanup_async()
 
 
 if __name__ == "__main__":
-    asyncio.run(create_knowledge_source_async())
-    asyncio.run(get_knowledge_source_async())
-    asyncio.run(update_knowledge_source_async())
-    asyncio.run(create_knowledge_base_async())
-    asyncio.run(get_knowledge_base_async())
-    asyncio.run(update_knowledge_base_async())
-    asyncio.run(retrieve_knowledge_base_async())
-    asyncio.run(delete_knowledge_base_async())
-    asyncio.run(delete_knowledge_source_async())
+    asyncio.run(main())

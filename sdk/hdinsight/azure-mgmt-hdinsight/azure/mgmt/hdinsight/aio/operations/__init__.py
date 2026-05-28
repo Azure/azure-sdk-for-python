@@ -12,34 +12,34 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._applications_operations import ApplicationsOperations  # type: ignore
 from ._clusters_operations import ClustersOperations  # type: ignore
+from ._applications_operations import ApplicationsOperations  # type: ignore
+from ._locations_operations import LocationsOperations  # type: ignore
 from ._configurations_operations import ConfigurationsOperations  # type: ignore
 from ._extensions_operations import ExtensionsOperations  # type: ignore
-from ._locations_operations import LocationsOperations  # type: ignore
-from ._operations import Operations  # type: ignore
-from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
-from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
 from ._script_actions_operations import ScriptActionsOperations  # type: ignore
 from ._script_execution_history_operations import ScriptExecutionHistoryOperations  # type: ignore
+from ._operations import Operations  # type: ignore
 from ._virtual_machines_operations import VirtualMachinesOperations  # type: ignore
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
+from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ApplicationsOperations",
     "ClustersOperations",
+    "ApplicationsOperations",
+    "LocationsOperations",
     "ConfigurationsOperations",
     "ExtensionsOperations",
-    "LocationsOperations",
-    "Operations",
-    "PrivateEndpointConnectionsOperations",
-    "PrivateLinkResourcesOperations",
     "ScriptActionsOperations",
     "ScriptExecutionHistoryOperations",
+    "Operations",
     "VirtualMachinesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -173,9 +173,7 @@ class VoiceLiveInstrumentor:
         """
         env_gate = os.environ.get("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", "").lower()
         if env_gate != "true":
-            logger.debug(
-                "VoiceLive tracing not enabled. Set AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true to enable."
-            )
+            logger.debug("VoiceLive tracing not enabled. Set AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true to enable.")
             return
         self._impl.instrument(enable_content_recording)
 
@@ -749,7 +747,9 @@ class _VoiceLiveInstrumentorPreview:
         instrumentor = self
 
         @functools.wraps(original_send)
-        async def wrapper(conn_self, event, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-locals,too-many-statements,protected-access
+        async def wrapper(
+            conn_self, event, *args, **kwargs
+        ):  # pylint: disable=too-many-branches,too-many-locals,too-many-statements,protected-access
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_send(conn_self, event, *args, **kwargs)
@@ -808,7 +808,7 @@ class _VoiceLiveInstrumentorPreview:
                     if message_size is not None:
                         span.add_attribute(GEN_AI_VOICE_MESSAGE_SIZE, message_size)
                     # Extract call_id from send events (e.g. conversation.item.create with function_call_output)
-                    instrumentor._extract_send_event_ids(conn_self, event, span)
+                    instrumentor._extract_send_event_ids(event, span)
                     instrumentor._add_send_event(span, event_type, content_str)
                     return await original_send(conn_self, event, *args, **kwargs)
             except Exception as exc:
@@ -829,7 +829,9 @@ class _VoiceLiveInstrumentorPreview:
         instrumentor = self
 
         @functools.wraps(original_recv)
-        async def wrapper(conn_self, *args, **kwargs):  # pylint: disable=too-many-branches,too-many-locals,too-many-statements,protected-access
+        async def wrapper(
+            conn_self, *args, **kwargs
+        ):  # pylint: disable=too-many-branches,too-many-locals,too-many-statements,protected-access
             span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
             if span_impl_type is None:
                 return await original_recv(conn_self, *args, **kwargs)
@@ -945,14 +947,18 @@ class _VoiceLiveInstrumentorPreview:
                         if input_tokens is not None:
                             span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, input_tokens)
                             instrumentor._record_token_usage(
-                                input_tokens, "input", "recv",
+                                input_tokens,
+                                "input",
+                                "recv",
                                 server_address=getattr(conn_self, "_telemetry_server_address", None),
                                 model=getattr(conn_self, "_telemetry_model", None),
                             )
                         if output_tokens is not None:
                             span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, output_tokens)
                             instrumentor._record_token_usage(
-                                output_tokens, "output", "recv",
+                                output_tokens,
+                                "output",
+                                "recv",
                                 server_address=getattr(conn_self, "_telemetry_server_address", None),
                                 model=getattr(conn_self, "_telemetry_model", None),
                             )
@@ -1121,9 +1127,7 @@ class _VoiceLiveInstrumentorPreview:
                 event_attrs[GEN_AI_EVENT_CONTENT] = json.dumps(
                     [{"role": "system", "content": instructions}], ensure_ascii=False
                 )
-                connect_span.span_instance.add_event(
-                    name=GEN_AI_SYSTEM_INSTRUCTION_EVENT, attributes=event_attrs
-                )
+                connect_span.span_instance.add_event(name=GEN_AI_SYSTEM_INSTRUCTION_EVENT, attributes=event_attrs)
 
         # Temperature
         temperature = get(session, "temperature")
@@ -1141,9 +1145,12 @@ class _VoiceLiveInstrumentorPreview:
             try:
                 if isinstance(tools, list):
                     tools_json = json.dumps(
-                        [t if isinstance(t, dict) else (t.as_dict() if hasattr(t, "as_dict") else str(t))
-                         for t in tools],
-                        default=str, ensure_ascii=False,
+                        [
+                            t if isinstance(t, dict) else (t.as_dict() if hasattr(t, "as_dict") else str(t))
+                            for t in tools
+                        ],
+                        default=str,
+                        ensure_ascii=False,
                     )
                 else:
                     tools_json = str(tools)
@@ -1167,7 +1174,9 @@ class _VoiceLiveInstrumentorPreview:
         return getattr(obj, field, None)
 
     @staticmethod
-    def _extract_event_ids(conn_self: Any, result: Any, span: "AbstractSpan") -> None:  # pylint: disable=too-many-branches,too-many-locals
+    def _extract_event_ids(
+        conn_self: Any, result: Any, span: "AbstractSpan"
+    ) -> None:  # pylint: disable=too-many-branches,too-many-locals
         """Extract IDs, MCP fields, and agent fields from any recv event.
 
         Extracts ``response_id``, ``call_id``, ``item_id``, ``previous_item_id``,
@@ -1261,15 +1270,13 @@ class _VoiceLiveInstrumentorPreview:
                     span.add_attribute(GEN_AI_VOICE_MCP_APPROVE, approve)
 
     @staticmethod
-    def _extract_send_event_ids(conn_self: Any, event: Any, span: "AbstractSpan") -> None:  # pylint: disable=unused-argument
+    def _extract_send_event_ids(event: Any, span: "AbstractSpan") -> None:
         """Extract call_id and response_id from send events.
 
         For ``conversation.item.create`` events, the nested ``item`` may carry
         a ``call_id`` (for function_call_output items). For ``response.cancel``
         events, ``response_id`` may be present.
 
-        :param conn_self: The ``VoiceLiveConnection`` instance.
-        :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
         :param event: The client event being sent.
         :type event: any
         :param span: The current send span.
@@ -1303,7 +1310,9 @@ class _VoiceLiveInstrumentorPreview:
             span.add_attribute(GEN_AI_VOICE_PREVIOUS_ITEM_ID, previous_item_id)
 
     @staticmethod
-    def _extract_response_done(conn_self: Any, result: Any, span: "AbstractSpan") -> None:  # pylint: disable=too-many-branches
+    def _extract_response_done(
+        conn_self: Any, result: Any, span: "AbstractSpan"
+    ) -> None:  # pylint: disable=too-many-branches
         """Extract response metadata from a response.done event.
 
         Sets ``gen_ai.response.id``, ``gen_ai.conversation.id``, and
@@ -1469,7 +1478,9 @@ class _VoiceLiveInstrumentorPreview:
             logger.debug("Failed to record token usage", exc_info=True)
 
     @staticmethod
-    def _add_rate_limit_event(span: "AbstractSpan", event_type: str, result: Any) -> None:  # pylint: disable=too-many-branches
+    def _add_rate_limit_event(
+        span: "AbstractSpan", event_type: str, result: Any
+    ) -> None:  # pylint: disable=too-many-branches
         """Add a span event for rate limit or error events from the server.
 
         :param span: The active span.
@@ -1515,8 +1526,10 @@ class _VoiceLiveInstrumentorPreview:
                 try:
                     if isinstance(rate_limits, (list, tuple)):
                         attrs["gen_ai.voice.rate_limits"] = json.dumps(
-                            [rl if isinstance(rl, dict) else (rl.as_dict() if hasattr(rl, "as_dict") else str(rl))
-                             for rl in rate_limits],
+                            [
+                                rl if isinstance(rl, dict) else (rl.as_dict() if hasattr(rl, "as_dict") else str(rl))
+                                for rl in rate_limits
+                            ],
                             default=str,
                         )
                     else:

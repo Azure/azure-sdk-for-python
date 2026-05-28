@@ -6,3 +6,4 @@ aiohttp>=3.0
 parameterized>=0.7.3
 python-dateutil>=2.8.0
 pyopenssl
+cryptography>=44.0.2,<47.0.0

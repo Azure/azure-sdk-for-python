@@ -9,11 +9,13 @@ import pytest
 from azure.keyvault.keys import KeyType
 from devtools_testutils.aio import recorded_by_proxy_async
 
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from _async_test_case import AsyncKeysClientPreparer
 from _test_case import get_decorator
 from _shared.test_case_async import KeyVaultTestCase
 
 all_api_versions = get_decorator(is_async=True, only_vault=True)
+default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 
 
@@ -43,11 +45,11 @@ async def test_create_key_client():
 
 class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_example_key_crud_operations(self, key_client, **kwargs):
-        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+        if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
             pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
 
         key_name = self.get_resource_name("key-name")
@@ -133,7 +135,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END delete_key]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
+    @pytest.mark.parametrize("api_version,is_hsm", default_version)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_example_create_oct_key(self, key_client, **kwargs):
@@ -145,10 +147,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(key.id)
         print(key.name)
         print(key.key_type)
+        print(key.properties.key_size)
         # [END create_oct_key]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_example_key_list_operations(self, key_client, **kwargs):
@@ -195,7 +198,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_keys]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_example_keys_backup_restore(self, key_client, **kwargs):
@@ -230,7 +233,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END restore_key_backup]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_example_keys_recover(self, key_client, **kwargs):

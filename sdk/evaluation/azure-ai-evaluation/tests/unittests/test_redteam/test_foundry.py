@@ -825,7 +825,55 @@ class TestRAIServiceScorer:
             with pytest.raises(Exception, match="RAI service error"):
                 await scorer.score_async(mock_message, objective="Test attack")
 
-    def test_get_context_for_piece_from_labels(self, mock_credential, mock_azure_ai_project, mock_logger):
+    @pytest.mark.asyncio
+    async def test_score_async_sends_redteam_scenario(self, mock_credential, mock_azure_ai_project, mock_logger):
+        """Regression: RAIServiceScorer must include scenario=redteam in eval_input
+        so the server-side ContextDependent score mapping routes to Direct for red team."""
+        scorer = RAIServiceScorer(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            risk_category=RiskCategory.Violence,
+            logger=mock_logger,
+        )
+
+        mock_piece = MagicMock()
+        mock_piece.id = "test-id"
+        mock_piece.converted_value = "Test response"
+        mock_piece.original_value = "Original content"
+        mock_piece.labels = {}
+        mock_piece.api_role = "assistant"
+
+        mock_message = MagicMock()
+        mock_message.message_pieces = [mock_piece]
+
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=5,
+                reason="Harmful content",
+                threshold=3,
+                passed=False,
+                label="high",
+            )
+        ]
+
+        with patch(
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
+        ) as mock_eval:
+            mock_eval.return_value = mock_eval_result
+
+            await scorer.score_async(mock_message, objective="Test attack")
+
+            # Verify scenario=redteam was included in the eval_input
+            call_args = mock_eval.call_args
+            eval_input = call_args[0][0]  # First positional arg
+            assert eval_input.get("scenario") == "redteam", (
+                "RAIServiceScorer must send scenario=redteam so server-side "
+                "ContextDependent mapping routes to Direct for red team evaluations"
+            )
         """Test context retrieval from message labels."""
         scorer = RAIServiceScorer(
             credential=mock_credential,

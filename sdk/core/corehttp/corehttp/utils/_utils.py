@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import datetime
 from typing import (
     Any,
     AsyncContextManager,
@@ -12,6 +11,7 @@ from typing import (
     Iterator,
     Mapping,
     MutableMapping,
+    MutableSet,
     Optional,
     Tuple,
     Union,
@@ -24,30 +24,6 @@ from urllib.parse import urlparse
 
 if TYPE_CHECKING:
     from corehttp.rest._helpers import FileType, FilesType
-
-
-class _FixedOffset(datetime.tzinfo):
-    """Fixed offset in minutes east from UTC.
-
-    Copy/pasted from Python doc
-
-    :param int offset: offset in minutes
-    """
-
-    def __init__(self, offset):
-        self.__offset = datetime.timedelta(minutes=offset)
-
-    def utcoffset(self, dt):
-        return self.__offset
-
-    def tzname(self, dt):
-        return str(self.__offset.total_seconds() / 3600)
-
-    def __repr__(self):
-        return "<FixedOffset {}>".format(self.tzname(None))
-
-    def dst(self, dt):
-        return datetime.timedelta(0)
 
 
 def case_insensitive_dict(
@@ -157,6 +133,45 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
+
+
+class CaseInsensitiveSet(MutableSet[str]):
+    """A set that stores values in their original form but performs
+    case-insensitive lookups via a pre-computed lowercase cache.
+
+    :param data: Initial values for the set.
+    :type data: Iterable[str]
+    """
+
+    def __init__(self, data: Optional[Iterable[str]] = None) -> None:
+        self._lower_to_original: Dict[str, str] = {}
+        if data:
+            for item in data:
+                self.add(item)
+
+    def __contains__(self, item: object) -> bool:
+        if not isinstance(item, str):
+            return False
+        return item.lower() in self._lower_to_original
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._lower_to_original.values())
+
+    def __len__(self) -> int:
+        return len(self._lower_to_original)
+
+    def add(self, value: str) -> None:
+        lower = value.lower()
+        if lower not in self._lower_to_original:
+            self._lower_to_original[lower] = value
+
+    def discard(self, value: str) -> None:
+        self._lower_to_original.pop(value.lower(), None)
+
+    def update(self, *others: Iterable[str]) -> None:
+        for other in others:
+            for item in other:
+                self.add(item)
 
 
 def get_file_items(files: "FilesType") -> Sequence[Tuple[str, "FileType"]]:
