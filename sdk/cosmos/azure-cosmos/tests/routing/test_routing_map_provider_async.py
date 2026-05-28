@@ -16,7 +16,15 @@ from azure.cosmos import http_constants
 
 from typing import Optional, Mapping, Any
 from unittest.mock import MagicMock, patch
+import gc
 from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.cosmos._routing.aio.routing_map_provider import (
+    _shared_routing_map_cache,
+    _shared_collection_locks,
+    _shared_locks_locks,
+    _shared_cache_refcounts,
+    _shared_cache_lock,
+)
 
 
 @pytest.mark.cosmosEmulator
@@ -51,9 +59,18 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             return _gen()
 
     def tearDown(self):
-        from azure.cosmos._routing.aio.routing_map_provider import _shared_routing_map_cache, _shared_cache_lock
+        # Release first, then collect cycles, then clear all shared dicts
+        # together so no partial shared-cache state leaks across tests.
+        provider = getattr(self, 'smart_routing_map_provider', None)
+        if provider is not None:
+            provider.release()
+            self.smart_routing_map_provider = None
+        gc.collect()
         with _shared_cache_lock:
             _shared_routing_map_cache.clear()
+            _shared_collection_locks.clear()
+            _shared_locks_locks.clear()
+            _shared_cache_refcounts.clear()
 
     def setUp(self):
         self.partition_key_ranges = [
