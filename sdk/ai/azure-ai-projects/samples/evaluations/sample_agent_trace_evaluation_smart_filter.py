@@ -17,8 +17,8 @@ DESCRIPTION:
         selection toward more interesting conversations.
 
 USAGE:
-    python sample_trace_evaluation_agent_smart_filter.py
-    python sample_trace_evaluation_agent_smart_filter.py --agent-id "my-agent:1"
+    python sample_agent_trace_evaluation_smart_filter.py
+    python sample_agent_trace_evaluation_smart_filter.py --agent-id "my-agent:1"
 
     Before running the sample:
 
