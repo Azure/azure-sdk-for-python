@@ -42,6 +42,15 @@ def _normalize_multipart_file_entry(field_name: str, entry: Any, index: int) -> 
     "At least one file must be uploaded". This helper synthesizes a filename
     from the IO object's ``name`` attribute when available, otherwise falls
     back to a stable default.
+
+    :param field_name: The multipart form field name, used as a fallback filename.
+    :type field_name: str
+    :param entry: The file entry to normalize. May be a tuple, bytes, str, or IO object.
+    :type entry: any
+    :param index: Position of the entry within its field's list, used to disambiguate fallback filenames.
+    :type index: int
+    :return: A ``(filename, entry)`` tuple if ``entry`` was not already a tuple, otherwise ``entry`` unchanged.
+    :rtype: any
     """
     if isinstance(entry, tuple):
         return entry
