@@ -855,7 +855,7 @@
 /sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd @danieljurek
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
-/sdk/eventhub/azure-eventhub/* @j7nw4r @SwayGom
+/sdk/eventhub/azure-eventhub/* @j7nw4r @SwayGom @sagar0207
 
 # Add Johnathan Walker as code owner for Service Bus SDK
-/sdk/servicebus/azure-servicebus/* @j7nw4r @SwayGom
+/sdk/servicebus/azure-servicebus/* @j7nw4r @SwayGom @sagar0207
