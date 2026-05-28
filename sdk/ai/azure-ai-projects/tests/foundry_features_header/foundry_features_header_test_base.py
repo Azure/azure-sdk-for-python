@@ -67,7 +67,9 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
 #
 # Format: { "<sub_client_name>": frozenset({"<method_name>", ...}) }
 EXCLUDED_BETA_METHODS: dict[str, frozenset] = {
-    "models": frozenset({"create"}),  # multi-step helper: validate -> pending_upload -> azcopy -> pending_create_version -> poll get
+    "models": frozenset(
+        {"create"}
+    ),  # multi-step helper: validate -> pending_upload -> azcopy -> pending_create_version -> poll get
 }
 
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.
