@@ -47,9 +47,9 @@ from typing import Literal, Mapping, Optional
 # azure-monitor-opentelemetry, azure-ai-projects, python-dotenv) are
 # intentionally deferred into the `if __name__ == "__main__":` block at the
 # bottom of this file. They are only needed when running the sample directly;
-# the helper functions themselves depend only on the standard library and
-# `typing`, which keeps them importable in test environments that do not install
-# the full OTel stack.
+# the helper functions remain importable in test environments that do not install
+# the full OTel stack. The trace-context imports are only needed when a saved
+# trace ID and span ID are provided.
 
 # `configure_azure_monitor` (called in __main__) installs an OpenTelemetry
 # LoggingHandler on the root logger, so any standard Python `logging` call below
@@ -61,6 +61,63 @@ logger.setLevel(logging.INFO)
 
 EvaluationType = Literal["boolean", "ordinal"]
 DesirableDirection = Literal["increase", "decrease"]
+
+
+def _validate_hex_id(*, name: str, value: str, length: int) -> int:
+    if len(value) != length:
+        raise ValueError(f"{name} must be a {length}-character hexadecimal string.")
+
+    try:
+        parsed_value = int(value, 16)
+    except ValueError as exc:
+        raise ValueError(
+            f"{name} must be a {length}-character hexadecimal string."
+        ) from exc
+
+    if parsed_value == 0:
+        raise ValueError(f"{name} cannot be all zeros.")
+
+    return parsed_value
+
+
+def _log_evaluation_event(
+    *,
+    attributes: Mapping[str, object],
+    trace_id: Optional[str] = None,
+    span_id: Optional[str] = None,
+) -> None:
+    if trace_id is None and span_id is None:
+        logger.info("gen_ai.evaluation.result", extra=attributes)
+        return
+    if trace_id is None or span_id is None:
+        raise ValueError("trace_id and span_id must be provided together.")
+
+    trace_id_int = _validate_hex_id(name="trace_id", value=trace_id, length=32)
+    span_id_int = _validate_hex_id(name="span_id", value=span_id, length=16)
+
+    from opentelemetry import context as otel_context
+    from opentelemetry import trace
+    from opentelemetry.trace import (
+        NonRecordingSpan,
+        SpanContext,
+        TraceFlags,
+        TraceState,
+    )
+
+    span_context = SpanContext(
+        trace_id=trace_id_int,
+        span_id=span_id_int,
+        is_remote=True,
+        trace_flags=TraceFlags(TraceFlags.SAMPLED),
+        trace_state=TraceState(),
+    )
+    token = otel_context.attach(
+        trace.set_span_in_context(NonRecordingSpan(span_context))
+    )
+    try:
+        logger.info("gen_ai.evaluation.result", extra=attributes)
+    finally:
+        otel_context.detach(token)
 
 
 def _validate_score(
@@ -114,6 +171,8 @@ def _emit_human_evaluation(
     enduser_pseudo_id: Optional[str] = None,
     tags: Optional[Mapping[str, str]] = None,
     evaluation_id: Optional[str] = None,
+    trace_id: Optional[str] = None,
+    span_id: Optional[str] = None,
 ) -> None:
     score_value = _validate_score(
         score_value=score_value,
@@ -162,7 +221,7 @@ def _emit_human_evaluation(
     if evaluation_id is not None:
         attributes["microsoft.gen_ai.human_evaluation.id"] = evaluation_id
 
-    logger.info("gen_ai.evaluation.result", extra=attributes)
+    _log_evaluation_event(attributes=attributes, trace_id=trace_id, span_id=span_id)
 
 
 def emit_boolean_evaluation(
@@ -177,6 +236,8 @@ def emit_boolean_evaluation(
     enduser_pseudo_id: Optional[str] = None,
     tags: Optional[Mapping[str, str]] = None,
     evaluation_id: Optional[str] = None,
+    trace_id: Optional[str] = None,
+    span_id: Optional[str] = None,
 ) -> None:
     """Emit a boolean human evaluation event.
 
@@ -196,6 +257,8 @@ def emit_boolean_evaluation(
         enduser_pseudo_id: Optional pseudonymous end-user ID.
         tags: Optional metadata associated with the evaluation.
         evaluation_id: Optional ID for the evaluation event itself.
+        trace_id: Optional trace ID captured when the evaluated response was created.
+        span_id: Optional span ID captured when the evaluated response was created.
     """
     _emit_human_evaluation(
         evaluation_metric_name=evaluation_metric_name,
@@ -213,6 +276,8 @@ def emit_boolean_evaluation(
         enduser_pseudo_id=enduser_pseudo_id,
         tags=tags,
         evaluation_id=evaluation_id,
+        trace_id=trace_id,
+        span_id=span_id,
     )
 
 
@@ -229,6 +294,8 @@ def emit_5_point_ordinal_evaluation(
     enduser_pseudo_id: Optional[str] = None,
     tags: Optional[Mapping[str, str]] = None,
     evaluation_id: Optional[str] = None,
+    trace_id: Optional[str] = None,
+    span_id: Optional[str] = None,
 ) -> None:
     """Emit a 5-point ordinal human evaluation event.
 
@@ -248,10 +315,14 @@ def emit_5_point_ordinal_evaluation(
         enduser_pseudo_id: Optional pseudonymous end-user ID.
         tags: Optional metadata associated with the evaluation.
         evaluation_id: Optional ID for the evaluation event itself.
+        trace_id: Optional trace ID captured when the evaluated response was created.
+        span_id: Optional span ID captured when the evaluated response was created.
     """
     threshold = float(threshold)
     if not 1.0 <= threshold <= 5.0:
-        raise ValueError(f"threshold {threshold} is outside the allowed range [1.0, 5.0].")
+        raise ValueError(
+            f"threshold {threshold} is outside the allowed range [1.0, 5.0]."
+        )
 
     _emit_human_evaluation(
         evaluation_metric_name=evaluation_metric_name,
@@ -269,6 +340,8 @@ def emit_5_point_ordinal_evaluation(
         enduser_pseudo_id=enduser_pseudo_id,
         tags=tags,
         evaluation_id=evaluation_id,
+        trace_id=trace_id,
+        span_id=span_id,
     )
 
 
@@ -291,7 +364,9 @@ if __name__ == "__main__":
         # Pull the Application Insights connection string attached to your Foundry
         # project and wire OpenTelemetry up to it. All `logger.info(...)` calls
         # below will be exported to Application Insights.
-        connection_string = project_client.telemetry.get_application_insights_connection_string()
+        connection_string = (
+            project_client.telemetry.get_application_insights_connection_string()
+        )
 
         configure_azure_monitor(connection_string=connection_string)
 
@@ -299,7 +374,13 @@ if __name__ == "__main__":
         # The endpoint URL alone only gives us the account + project names, but
         # every Connection's `id` is a full ARM path ending with /connections/<name>.
         any_connection = next(iter(project_client.connections.list()), None)
-        project_resource_id = any_connection.id.rsplit("/connections/", 1)[0] if any_connection else None
+        project_resource_id = (
+            any_connection.id.rsplit("/connections/", 1)[0] if any_connection else None
+        )
+
+        # Sample trace and span IDs for demonstration purposes.
+        trace_id = "4bf92f3577b34da6a3ce929d0e0e4736"
+        span_id = "00f067aa0ba902b7"
 
         # Example 1: an anonymous end user gives a thumbs up on task completion.
         emit_boolean_evaluation(
@@ -312,6 +393,8 @@ if __name__ == "__main__":
             enduser_pseudo_id="sess_123456",
             tags={"subscription_tier": "free_plan"},
             evaluation_id="0b27be45-cd65-4671-ab08-c3eafd4c9613",
+            trace_id=trace_id,
+            span_id=span_id,
         )
         print("Emitted boolean human evaluation event.")
 
@@ -329,5 +412,7 @@ if __name__ == "__main__":
             enduser_id="oid:241964ad-a8db-4318-9f2e-5a7dc1f05349",
             tags={"department": "marketing"},
             evaluation_id="69d937a7-32e2-412e-97c9-119e2d282723",
+            trace_id=trace_id,
+            span_id=span_id,
         )
         print("Emitted 5-point ordinal human evaluation event.")
