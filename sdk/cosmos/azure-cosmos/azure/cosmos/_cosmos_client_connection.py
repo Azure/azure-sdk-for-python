@@ -3628,7 +3628,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         self._UpdateSessionIfRequired(req_headers, backend_query_result, backend_response_headers)
                         if response_headers is not None:
                             response_headers.clear()
-                            response_headers.update(last_response_headers)
+                            response_headers.update(backend_response_headers)
 
                         # Merge results, falling back to a plain extend if the
                         # aggregating merge raises (it can on aggregated queries
