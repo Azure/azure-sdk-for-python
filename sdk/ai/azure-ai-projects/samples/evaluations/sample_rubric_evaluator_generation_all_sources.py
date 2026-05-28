@@ -82,14 +82,7 @@ traces_evaluator_version = ""
 
 with (
     DefaultAzureCredential() as credential,
-    # `allow_preview` and `api_version` are required for the evaluator
-    # generation endpoints in this preview.
-    AIProjectClient(
-        endpoint=endpoint,
-        credential=credential,
-        allow_preview=True,
-        api_version="2025-11-15-preview",
-    ) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # 1. Combined Prompt + Agent + Dataset generation job.
     multi_sources: List[Dict[str, Any]] = [
