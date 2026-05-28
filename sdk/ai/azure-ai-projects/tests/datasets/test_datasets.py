@@ -9,8 +9,7 @@ import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, is_live, is_live_and_not_recording, add_general_regex_sanitizer
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import DatasetVersion, DatasetType
-from azure.ai.projects.models._enums import ConnectionType
+from azure.ai.projects.models import ConnectionType, DatasetVersion, DatasetType, DatasetsFolderUploadProgress
 from azure.core.exceptions import HttpResponseError
 
 # Construct the paths to the data folder and data file used in this test
@@ -51,6 +50,8 @@ class TestDatasets(TestBase):
                 version=str(dataset_version),
                 file_path=data_file1,
                 connection_name=connection_name,
+                max_concurrency=2,
+                timeout=5,
             )
             print(dataset)
             TestBase.validate_dataset(
@@ -159,6 +160,14 @@ class TestDatasets(TestBase):
 
             print("Get the default Azure Storage connection to use for uploading files.")
             connection_name = project_client.connections.get_default(ConnectionType.AZURE_STORAGE_ACCOUNT).name
+
+            def progress_callback(progress: DatasetsFolderUploadProgress) -> None:
+                percent = (progress.completed_files / progress.total_files) * 100
+                print(
+                    f"[{percent:.1f}%] Uploaded {progress.completed_files}/{progress.total_files}: {progress.current_file}"
+                    + (f" (failed: {progress.failed_files})" if progress.failed_files > 0 else "")
+                )
+
             print(
                 f"[test_datasets_upload_folder] Upload files in a folder (including sub-folders) and create a new version `{dataset_version}` in the same Dataset, to reference the files."
             )
@@ -168,6 +177,10 @@ class TestDatasets(TestBase):
                 folder=data_folder,
                 connection_name=connection_name,
                 file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
+                progress_callback=progress_callback,
+                max_workers=2,
+                max_concurrency=2,
+                timeout=5,
             )
             print(dataset)
             TestBase.validate_dataset(

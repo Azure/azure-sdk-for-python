@@ -10,9 +10,7 @@ from pathlib import Path
 
 import pytest
 
-SAMPLES_EVALUATIONS_DIR = (
-    Path(__file__).resolve().parents[1] / ".." / "samples" / "evaluations"
-)
+SAMPLES_EVALUATIONS_DIR = Path(__file__).resolve().parents[1] / ".." / "samples" / "evaluations"
 sys.path.insert(0, str(SAMPLES_EVALUATIONS_DIR.resolve()))
 
 from sample_human_evaluations import (
@@ -44,9 +42,7 @@ def capture():
 
 
 def _only_attrs(capture: _RecordCapture) -> dict:
-    assert (
-        len(capture.records) == 1
-    ), f"expected exactly 1 emitted record, got {len(capture.records)}"
+    assert len(capture.records) == 1, f"expected exactly 1 emitted record, got {len(capture.records)}"
     return capture.records[0].__dict__
 
 
@@ -79,9 +75,7 @@ def test_boolean_passed_emits_score_1_with_pass_label(capture):
     ],
 )
 def test_ordinal_score_emits_expected_label(capture, score_value, expected_label):
-    emit_5_point_ordinal_evaluation(
-        evaluation_metric_name="relevance", score_value=score_value
-    )
+    emit_5_point_ordinal_evaluation(evaluation_metric_name="relevance", score_value=score_value)
     attrs = _only_attrs(capture)
     assert attrs["gen_ai.evaluation.score.label"] == expected_label
     assert attrs["gen_ai.evaluation.score.value"] == score_value
@@ -90,9 +84,7 @@ def test_ordinal_score_emits_expected_label(capture, score_value, expected_label
 def test_ordinal_custom_threshold_controls_label_and_flows_to_internal_properties(
     capture,
 ):
-    emit_5_point_ordinal_evaluation(
-        evaluation_metric_name="relevance", score_value=2.0, threshold=4.0
-    )
+    emit_5_point_ordinal_evaluation(evaluation_metric_name="relevance", score_value=2.0, threshold=4.0)
     attrs = _only_attrs(capture)
     decoded = _internal_properties(attrs)
     assert attrs["gen_ai.evaluation.score.label"] == "fail"
@@ -101,25 +93,19 @@ def test_ordinal_custom_threshold_controls_label_and_flows_to_internal_propertie
 
 def test_ordinal_non_integer_score_raises():
     with pytest.raises(ValueError):
-        emit_5_point_ordinal_evaluation(
-            evaluation_metric_name="relevance", score_value=2.5
-        )
+        emit_5_point_ordinal_evaluation(evaluation_metric_name="relevance", score_value=2.5)
 
 
 @pytest.mark.parametrize("score_value", [0.0, 6.0])
 def test_ordinal_score_out_of_range_raises(score_value):
     with pytest.raises(ValueError):
-        emit_5_point_ordinal_evaluation(
-            evaluation_metric_name="relevance", score_value=score_value
-        )
+        emit_5_point_ordinal_evaluation(evaluation_metric_name="relevance", score_value=score_value)
 
 
 @pytest.mark.parametrize("threshold", [0.0, 6.0])
 def test_ordinal_threshold_out_of_range_raises(threshold):
     with pytest.raises(ValueError):
-        emit_5_point_ordinal_evaluation(
-            evaluation_metric_name="relevance", score_value=4.0, threshold=threshold
-        )
+        emit_5_point_ordinal_evaluation(evaluation_metric_name="relevance", score_value=4.0, threshold=threshold)
 
 
 def test_top_level_attributes_have_canonical_keys_and_routing(capture):
@@ -229,8 +215,7 @@ def test_trace_id_and_span_id_must_be_provided_together(trace_id, span_id):
 
 def test_project_resource_id_set_added_to_internal_properties(capture):
     arm_id = (
-        "/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.CognitiveServices"
-        "/accounts/acct/projects/proj"
+        "/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.CognitiveServices" "/accounts/acct/projects/proj"
     )
     emit_boolean_evaluation(
         evaluation_metric_name="task_completion",

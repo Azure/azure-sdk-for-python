@@ -14,6 +14,7 @@ from ._patch_datasets_async import DatasetsOperations
 from ._patch_evaluation_rules_async import EvaluationRulesOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
+from ._patch_jobs_async import JobsOperations as BetaJobsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
 from ._patch_sessions_async import BetaAgentsOperations
@@ -50,6 +51,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaEvaluatorsOperations` operations"""
     insights: BetaInsightsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaInsightsOperations` operations"""
+    jobs: BetaJobsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaJobsOperations` operations"""
     memory_stores: BetaMemoryStoresOperations
     """:class:`~azure.ai.projects.aio.operations.BetaMemoryStoresOperations` operations"""
     models: BetaModelsOperations
@@ -77,6 +80,8 @@ class BetaOperations(GeneratedBetaOperations):
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that exposes flat CommandJob UX
+        self.jobs = BetaJobsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
@@ -93,6 +98,7 @@ __all__: List[str] = [
     "BetaEvaluationTaxonomiesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
+    "BetaJobsOperations",
     "BetaMemoryStoresOperations",
     "BetaModelsOperations",
     "BetaOperations",

@@ -3488,7 +3488,7 @@ def build_beta_skills_create_request(name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_create_from_package_request(  # pylint: disable=name-too-long
+def build_beta_skills_create_from_files_request(  # pylint: disable=name-too-long
     name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3514,7 +3514,7 @@ def build_beta_skills_create_from_package_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_list_skill_versions_request(  # pylint: disable=name-too-long
+def build_beta_skills_list_versions_request(
     name: str,
     *,
     limit: Optional[int] = None,
@@ -3554,9 +3554,7 @@ def build_beta_skills_list_skill_versions_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_get_skill_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_beta_skills_get_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -3605,7 +3603,7 @@ def build_beta_skills_download_request(name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_get_skill_version_content_request(  # pylint: disable=name-too-long
+def build_beta_skills_download_version_request(  # pylint: disable=name-too-long
     name: str, version: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3632,9 +3630,7 @@ def build_beta_skills_get_skill_version_content_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_delete_skill_version_request(  # pylint: disable=name-too-long
-    name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_beta_skills_delete_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -3791,6 +3787,286 @@ def build_beta_datasets_delete_generation_job_request(  # pylint: disable=name-t
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
+def build_beta_jobs_list_request(
+    *,
+    job_type: Optional[Union[str, _models.JobType]] = None,
+    tag: Optional[str] = None,
+    list_view_type: Optional[Union[str, _models.ListViewType]] = None,
+    properties: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+    if job_type is not None:
+        _params["jobType"] = _SERIALIZER.query("job_type", job_type, "str")
+    if tag is not None:
+        _params["tag"] = _SERIALIZER.query("tag", tag, "str")
+    if list_view_type is not None:
+        _params["listViewType"] = _SERIALIZER.query("list_view_type", list_view_type, "str")
+    if properties is not None:
+        _params["properties"] = _SERIALIZER.query("properties", properties, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_jobs_get_request(name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_jobs_show_services_request(name: str, run_id: str, node_id: int, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{name}/history/runs/{runId}/serviceinstances/{nodeId}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "int"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_jobs_get_run_details_request(name: str, run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{name}/history/runs/{runId}/details"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_jobs_get_run_request(name: str, run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{name}/history/runs/{runId}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_jobs_list_artifacts_request(
+    name: str,
+    experiment_id: str,
+    run_id: str,
+    *,
+    path: Optional[str] = None,
+    continuation_token_parameter: Optional[str] = None,
+    page_size: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{name}/history/experimentids/{experimentId}/runs/{runId}/artifacts"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "experimentId": _SERIALIZER.url("experiment_id", experiment_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+    if path is not None:
+        _params["path"] = _SERIALIZER.query("path", path, "str")
+    if continuation_token_parameter is not None:
+        _params["continuationToken"] = _SERIALIZER.query(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
+    if page_size is not None:
+        _params["pageSize"] = _SERIALIZER.query("page_size", page_size, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_jobs_get_artifact_content_information_request(  # pylint: disable=name-too-long
+    name: str,
+    experiment_id: str,
+    run_id: str,
+    *,
+    path: Optional[str] = None,
+    continuation_token_parameter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{name}/history/experimentids/{experimentId}/runs/{runId}/artifacts/prefix/contentinfo"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "experimentId": _SERIALIZER.url("experiment_id", experiment_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+    if path is not None:
+        _params["path"] = _SERIALIZER.query("path", path, "str")
+    if continuation_token_parameter is not None:
+        _params["continuationToken"] = _SERIALIZER.query(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_jobs_create_or_update_request(name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_jobs_begin_delete_request(name: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/jobs/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_beta_jobs_begin_cancel_request(name: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/jobs/{name}/cancel"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
 class BetaOperations:  # pylint: disable=too-many-instance-attributes
     """
     .. warning::
@@ -3822,6 +4098,7 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self.toolboxes = BetaToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.skills = BetaSkillsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = BetaDatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jobs = BetaJobsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
 class AgentsOperations:
@@ -12892,14 +13169,6 @@ class BetaMemoryStoresOperations:
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
-
-        # BUG? These lines were inside the prepare_request() method. Moved here instead.
-        if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {"scope": scope}
-            body = {k: v for k, v in body.items() if v is not None}
-
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -12908,11 +13177,11 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
-            # if body is _Unset:
-            #     if scope is _Unset:
-            #         raise TypeError("missing required argument: scope")
-            #     body = {"scope": scope}
-            #     body = {k: v for k, v in body.items() if v is not None}
+            if body is _Unset:
+                if scope is _Unset:
+                    raise TypeError("missing required argument: scope")
+                body = {"scope": scope}
+                body = {k: v for k, v in body.items() if v is not None}
 
             _request = build_beta_memory_stores_list_memories_request(
                 name=name,
@@ -16930,7 +17199,7 @@ class BetaSkillsOperations:
         _data_fields: list[str] = ["default"]
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_beta_skills_create_from_package_request(
+        _request = build_beta_skills_create_from_files_request(
             name=name,
             api_version=self._config.api_version,
             files=_files,
@@ -17020,7 +17289,7 @@ class BetaSkillsOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_skills_list_skill_versions_request(
+            _request = build_beta_skills_list_versions_request(
                 name=name,
                 limit=limit,
                 order=order,
@@ -17092,7 +17361,7 @@ class BetaSkillsOperations:
 
         cls: ClsType[_models.SkillVersion] = kwargs.pop("cls", None)
 
-        _request = build_beta_skills_get_skill_version_request(
+        _request = build_beta_skills_get_version_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -17225,7 +17494,7 @@ class BetaSkillsOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_beta_skills_get_skill_version_content_request(
+        _request = build_beta_skills_download_version_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -17294,7 +17563,7 @@ class BetaSkillsOperations:
 
         cls: ClsType[_models.DeleteSkillVersionResponse] = kwargs.pop("cls", None)
 
-        _request = build_beta_skills_delete_skill_version_request(
+        _request = build_beta_skills_delete_version_request(
             name=name,
             version=version,
             api_version=self._config.api_version,
@@ -17803,3 +18072,806 @@ class BetaDatasetsOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+
+class BetaJobsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`jobs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        job_type: Optional[Union[str, _models.JobType]] = None,
+        tag: Optional[str] = None,
+        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
+        properties: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.Job"]:
+        """List Jobs.
+
+        :keyword job_type: Filter by job type (e.g. 'Command'). "Command" Default value is None.
+        :paramtype job_type: str or ~azure.ai.projects.models.JobType
+        :keyword tag: Filter jobs by tag in the format 'key=value' (e.g., 'framework=pytorch'). Default
+         value is None.
+        :paramtype tag: str
+        :keyword list_view_type: Specifies which view type to apply when listing jobs. Known values
+         are: "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
+        :paramtype list_view_type: str or ~azure.ai.projects.models.ListViewType
+        :keyword properties: Comma-separated user property names and optionally values. Example:
+         prop1,prop2=value2. Default value is None.
+        :paramtype properties: str
+        :return: An iterator like instance of Job
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Job]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Job]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_beta_jobs_list_request(
+                    job_type=job_type,
+                    tag=tag,
+                    list_view_type=list_view_type,
+                    properties=properties,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = "2026-01-15-preview"
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Job],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get(self, name: str, **kwargs: Any) -> _models.Job:
+        """Get a Job by name.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Job] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_get_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Job, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def show_services(self, name: str, run_id: str, node_id: int, **kwargs: Any) -> _models.RunServiceInstances:
+        """Get the runtime service instances associated with a job's node. Returns a map of service name
+        to ServiceInstance describing interactive services (e.g. SSH, JupyterLab, VSCode, TensorBoard)
+        currently running on the specified node.
+
+        :param name: The name of the Job. Required.
+        :type name: str
+        :param run_id: The run identifier. For Jobs this currently matches the job name. Required.
+        :type run_id: str
+        :param node_id: Zero-based index of the compute node to query. Required.
+        :type node_id: int
+        :return: RunServiceInstances. The RunServiceInstances is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RunServiceInstances
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RunServiceInstances] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_show_services_request(
+            name=name,
+            run_id=run_id,
+            node_id=node_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RunServiceInstances, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _get_run_details(self, name: str, run_id: str, **kwargs: Any) -> _models._models.RunDetails:
+        """Get runtime details for a job's run, including current status, log file URLs, warnings and any
+        error information. Used to poll job progress and to stream log output.
+
+        :param name: The name of the Job. Required.
+        :type name: str
+        :param run_id: The run identifier. For Jobs this currently matches the job name. Required.
+        :type run_id: str
+        :return: RunDetails. The RunDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models._models.RunDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.RunDetails] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_get_run_details_request(
+            name=name,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models._models.RunDetails, response.json())  # pylint: disable=protected-access
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _get_run(self, name: str, run_id: str, **kwargs: Any) -> _models._models.Run:
+        """Get a job's run.
+
+        :param name: The name of the Job. Required.
+        :type name: str
+        :param run_id: The run identifier. For Jobs this currently matches the job name. Required.
+        :type run_id: str
+        :return: Run. The Run is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models._models.Run
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.Run] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_get_run_request(
+            name=name,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models._models.Run, response.json())  # pylint: disable=protected-access
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _list_artifacts(
+        self,
+        name: str,
+        experiment_id: str,
+        run_id: str,
+        *,
+        path: Optional[str] = None,
+        continuation_token_parameter: Optional[str] = None,
+        page_size: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models._models.ArtifactList:
+        """List artifacts produced by a job's run.
+
+        :param name: The name of the Job. Required.
+        :type name: str
+        :param experiment_id: The id of the experiment that owns the run. Required.
+        :type experiment_id: str
+        :param run_id: The run identifier. For Jobs this currently matches the job name. Required.
+        :type run_id: str
+        :keyword path: Optional artifact path or path prefix to filter by. Default value is None.
+        :paramtype path: str
+        :keyword continuation_token_parameter: Continuation token for the next page. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
+        :keyword page_size: Maximum number of artifacts per page. Default value is None.
+        :paramtype page_size: int
+        :return: ArtifactList. The ArtifactList is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models._models.ArtifactList
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.ArtifactList] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_list_artifacts_request(
+            name=name,
+            experiment_id=experiment_id,
+            run_id=run_id,
+            path=path,
+            continuation_token_parameter=continuation_token_parameter,
+            page_size=page_size,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(
+                _models._models.ArtifactList, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _get_artifact_content_information(
+        self,
+        name: str,
+        experiment_id: str,
+        run_id: str,
+        *,
+        path: Optional[str] = None,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models._models.ArtifactContentInformationList:
+        """Get content information for artifacts produced by a job's run.
+
+        :param name: The name of the Job. Required.
+        :type name: str
+        :param experiment_id: The id of the experiment that owns the run. Required.
+        :type experiment_id: str
+        :param run_id: The run identifier. For Jobs this currently matches the job name. Required.
+        :type run_id: str
+        :keyword path: Optional artifact path prefix to filter by. Default value is None.
+        :paramtype path: str
+        :keyword continuation_token_parameter: Continuation token for the next page. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
+        :return: ArtifactContentInformationList. The ArtifactContentInformationList is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models._models.ArtifactContentInformationList
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.ArtifactContentInformationList] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_get_artifact_content_information_request(
+            name=name,
+            experiment_id=experiment_id,
+            run_id=run_id,
+            path=path,
+            continuation_token_parameter=continuation_token_parameter,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(
+                _models._models.ArtifactContentInformationList, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update(
+        self, name: str, job: _models.Job, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Job:
+        """Create and execute a Job. For update case, the Tags in the definition passed in will replace
+        Tags in the existing job.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :param job: The job to create or update. Required.
+        :type job: ~azure.ai.projects.models.Job
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self, name: str, job: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Job:
+        """Create and execute a Job. For update case, the Tags in the definition passed in will replace
+        Tags in the existing job.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :param job: The job to create or update. Required.
+        :type job: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self, name: str, job: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Job:
+        """Create and execute a Job. For update case, the Tags in the definition passed in will replace
+        Tags in the existing job.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :param job: The job to create or update. Required.
+        :type job: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_or_update(self, name: str, job: Union[_models.Job, JSON, IO[bytes]], **kwargs: Any) -> _models.Job:
+        """Create and execute a Job. For update case, the Tags in the definition passed in will replace
+        Tags in the existing job.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :param job: The job to create or update. Is one of the following types: Job, JSON, IO[bytes]
+         Required.
+        :type job: ~azure.ai.projects.models.Job or JSON or IO[bytes]
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Job] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(job, (IOBase, bytes)):
+            _content = job
+        else:
+            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_jobs_create_or_update_request(
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Job, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete a Job by name. Returns 202 Accepted with a Location header to poll for completion, or
+        204 if the job does not exist.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_begin_delete_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace
+    def begin_cancel(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Cancel a Job by name. Returns 200 if cancelled immediately, or 202 Accepted with a Location
+        header to poll for completion.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_begin_cancel_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore

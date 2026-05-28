@@ -1,0 +1,10 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+type: command
+display_name: sample-command-job-from-yaml
+command: "echo hello from yaml job"
+environment_image_reference: "mcr.microsoft.com/azureml/curated/acpt-pytorch-2.2-cuda12.1:48"
+compute: "<JOB_COMPUTE_ID>"
+resources:
+  instance_count: 1
+tags:
+  sample: "true"

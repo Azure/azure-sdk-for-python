@@ -37,6 +37,7 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Upload documents and create Datasets** to reference them using `.datasets` operations.
 * **Register and manage local model weights** as Foundry `ModelVersion` resources using `.beta.models` operations, including the `create` end-to-end helper.
 * **Create and enumerate Search Indexes** using `.indexes` operations.
+* **Submit and manage Jobs (preview)** to run Training Jobs on compute using `.beta.jobs` operations.
 
 The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 

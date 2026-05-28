@@ -1297,6 +1297,67 @@ class AISearchIndexResource(_Model):
         super().__init__(*args, **kwargs)
 
 
+class NodeCollection(_Model):
+    """Nodes that user would like to start the service on.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AllNodes
+
+    :ivar nodes_value_type: Type of the Nodes value. Required. Default value is None.
+    :vartype nodes_value_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    nodes_value_type: str = rest_discriminator(
+        name="nodesValueType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of the Nodes value. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        nodes_value_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AllNodes(NodeCollection, discriminator="All"):
+    """All nodes means the service will be running on all of the nodes of the job.
+
+    :ivar nodes_value_type: Type of the Nodes value. Required. Default value is "All".
+    :vartype nodes_value_type: str
+    """
+
+    nodes_value_type: Literal["All"] = rest_discriminator(name="nodesValueType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of the Nodes value. Required. Default value is \"All\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.nodes_value_type = "All"  # type: ignore
+
+
 class ApiError(_Model):
     """ApiError.
 
@@ -1484,6 +1545,258 @@ class ApproximateLocation(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type: Literal["approximate"] = "approximate"
+
+
+class Artifact(_Model):
+    """An artifact.
+
+    :ivar artifact_id: The artifact id.
+    :vartype artifact_id: str
+    :ivar origin: The artifact origin. Required.
+    :vartype origin: str
+    :ivar container: The container name. Required.
+    :vartype container: str
+    :ivar path: The artifact path. Required.
+    :vartype path: str
+    :ivar etag: The artifact Etag.
+    :vartype etag: str
+    :ivar created_time: The artifact creation time in UTC.
+    :vartype created_time: ~datetime.datetime
+    :ivar data_path: The artifact data path.
+    :vartype data_path: ~azure.ai.projects.models._models.ArtifactDataPath
+    :ivar tags: The artifact tags.
+    :vartype tags: dict[str, str]
+    """
+
+    artifact_id: Optional[str] = rest_field(
+        name="artifactId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The artifact id."""
+    origin: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The artifact origin. Required."""
+    container: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The container name. Required."""
+    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The artifact path. Required."""
+    etag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The artifact Etag."""
+    created_time: Optional[datetime.datetime] = rest_field(
+        name="createdTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The artifact creation time in UTC."""
+    data_path: Optional["_models._models.ArtifactDataPath"] = rest_field(
+        name="dataPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The artifact data path."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The artifact tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        origin: str,
+        container: str,
+        path: str,
+        artifact_id: Optional[str] = None,
+        etag: Optional[str] = None,
+        created_time: Optional[datetime.datetime] = None,
+        data_path: Optional["_models._models.ArtifactDataPath"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArtifactContentInformation(_Model):
+    """Artifact content information.
+
+    :ivar content_uri: The content URI.
+    :vartype content_uri: str
+    :ivar origin: The artifact origin.
+    :vartype origin: str
+    :ivar container: The container name.
+    :vartype container: str
+    :ivar path: The artifact path.
+    :vartype path: str
+    :ivar tags: The artifact tags.
+    :vartype tags: dict[str, str]
+    :ivar content_length: The content byte length.
+    :vartype content_length: int
+    """
+
+    content_uri: Optional[str] = rest_field(
+        name="contentUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The content URI."""
+    origin: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The artifact origin."""
+    container: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The container name."""
+    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The artifact path."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The artifact tags."""
+    content_length: Optional[int] = rest_field(
+        name="contentLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The content byte length."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content_uri: Optional[str] = None,
+        origin: Optional[str] = None,
+        container: Optional[str] = None,
+        path: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        content_length: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArtifactContentInformationList(_Model):
+    """A page of artifact content information.
+
+    :ivar value: The entries in the page. Required.
+    :vartype value: list[~azure.ai.projects.models._models.ArtifactContentInformation]
+    :ivar continuation_token: Token for the next page.
+    :vartype continuation_token: str
+    :ivar next_link: URL for the next page.
+    :vartype next_link: str
+    """
+
+    value: list["_models._models.ArtifactContentInformation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The entries in the page. Required."""
+    continuation_token: Optional[str] = rest_field(
+        name="continuationToken", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Token for the next page."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """URL for the next page."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models._models.ArtifactContentInformation"],
+        continuation_token: Optional[str] = None,
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArtifactDataPath(_Model):
+    """A data store path.
+
+    :ivar data_store_name: The data store name.
+    :vartype data_store_name: str
+    :ivar relative_path: The relative path within the data store.
+    :vartype relative_path: str
+    :ivar sql_data_path: SQL data path information.
+    :vartype sql_data_path: any
+    """
+
+    data_store_name: Optional[str] = rest_field(
+        name="dataStoreName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The data store name."""
+    relative_path: Optional[str] = rest_field(
+        name="relativePath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The relative path within the data store."""
+    sql_data_path: Optional[Any] = rest_field(
+        name="sqlDataPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SQL data path information."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_store_name: Optional[str] = None,
+        relative_path: Optional[str] = None,
+        sql_data_path: Optional[Any] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArtifactList(_Model):
+    """A page of artifacts.
+
+    :ivar value: The artifacts in the page. Required.
+    :vartype value: list[~azure.ai.projects.models._models.Artifact]
+    :ivar continuation_token: Token for the next page.
+    :vartype continuation_token: str
+    :ivar next_link: URL for the next page.
+    :vartype next_link: str
+    """
+
+    value: list["_models._models.Artifact"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The artifacts in the page. Required."""
+    continuation_token: Optional[str] = rest_field(
+        name="continuationToken", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Token for the next page."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """URL for the next page."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models._models.Artifact"],
+        continuation_token: Optional[str] = None,
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ArtifactProfile(_Model):
@@ -3443,6 +3756,224 @@ class CodeInterpreterTool(Tool, discriminator="code_interpreter"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.CODE_INTERPRETER  # type: ignore
+
+
+class JobProperties(_Model):
+    """Base properties of a Job.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CommandJob
+
+    :ivar job_type: Job type. Required. Default value is None.
+    :vartype job_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    job_type: str = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])
+    """Job type. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CommandJob(JobProperties, discriminator="Command"):
+    """Properties of a Command Job.
+
+    :ivar job_type: Job type. Required. Default value is "Command".
+    :vartype job_type: str
+    :ivar command: The command to execute on startup of the job. Required.
+    :vartype command: str
+    :ivar environment_image_reference: ACR path of environment. Required.
+    :vartype environment_image_reference: str
+    :ivar display_name: Display name of job.
+    :vartype display_name: str
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar properties: The asset property dictionary.
+    :vartype properties: dict[str, str]
+    :ivar code: Code asset reference.
+    :vartype code: str
+    :ivar compute: Compute resource ID. Required.
+    :vartype compute: str
+    :ivar inputs: Mapping of input data bindings used in the job.
+    :vartype inputs: dict[str, ~azure.ai.projects.models.Input]
+    :ivar outputs: Mapping of output data bindings used in the job.
+    :vartype outputs: dict[str, ~azure.ai.projects.models.Output]
+    :ivar environment_variables: Environment variables included in the job.
+    :vartype environment_variables: dict[str, str]
+    :ivar resources: Compute Resource configuration for the job.
+    :vartype resources: ~azure.ai.projects.models.JobResourceConfiguration
+    :ivar distribution: Distribution configuration of the job.
+    :vartype distribution: ~azure.ai.projects.models.DistributionConfiguration
+    :ivar limits: Command Job limit.
+    :vartype limits: ~azure.ai.projects.models.CommandJobLimits
+    :ivar services: List of job services.
+    :vartype services: dict[str, ~azure.ai.projects.models.JobService]
+    :ivar queue_settings: Queue settings for the job.
+    :vartype queue_settings: ~azure.ai.projects.models.QueueSettings
+    :ivar user_assigned_identity_id: user-assigned managed identity.
+    :vartype user_assigned_identity_id: str
+    :ivar gpu_count: Number of GPUs to allocate for the job.
+    :vartype gpu_count: int
+    :ivar is_archived: Is the asset archived?.
+    :vartype is_archived: bool
+    :ivar status: Status of the job.
+    :vartype status: str
+    """
+
+    job_type: Literal["Command"] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Job type. Required. Default value is \"Command\"."""
+    command: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The command to execute on startup of the job. Required."""
+    environment_image_reference: str = rest_field(
+        name="environmentImageReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ACR path of environment. Required."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of job."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The asset description text."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tag dictionary. Tags can be added, removed, and updated."""
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The asset property dictionary."""
+    code: Optional[str] = rest_field(name="codeId", visibility=["read", "create", "update", "delete", "query"])
+    """Code asset reference."""
+    compute: str = rest_field(name="computeId", visibility=["read", "create", "update", "delete", "query"])
+    """Compute resource ID. Required."""
+    inputs: Optional[dict[str, "_models.Input"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Mapping of input data bindings used in the job."""
+    outputs: Optional[dict[str, "_models.Output"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Mapping of output data bindings used in the job."""
+    environment_variables: Optional[dict[str, str]] = rest_field(
+        name="environmentVariables", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Environment variables included in the job."""
+    resources: Optional["_models.JobResourceConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Compute Resource configuration for the job."""
+    distribution: Optional["_models.DistributionConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Distribution configuration of the job."""
+    limits: Optional["_models.CommandJobLimits"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Command Job limit."""
+    services: Optional[dict[str, "_models.JobService"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of job services."""
+    queue_settings: Optional["_models.QueueSettings"] = rest_field(
+        name="queueSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Queue settings for the job."""
+    user_assigned_identity_id: Optional[str] = rest_field(
+        name="userAssignedIdentityId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """user-assigned managed identity."""
+    gpu_count: Optional[int] = rest_field(name="gpuCount", visibility=["read", "create", "update", "delete", "query"])
+    """Number of GPUs to allocate for the job."""
+    is_archived: Optional[bool] = rest_field(
+        name="isArchived", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is the asset archived?."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Status of the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        command: str,
+        environment_image_reference: str,
+        compute: str,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional[dict[str, str]] = None,
+        code: Optional[str] = None,
+        inputs: Optional[dict[str, "_models.Input"]] = None,
+        outputs: Optional[dict[str, "_models.Output"]] = None,
+        environment_variables: Optional[dict[str, str]] = None,
+        resources: Optional["_models.JobResourceConfiguration"] = None,
+        distribution: Optional["_models.DistributionConfiguration"] = None,
+        limits: Optional["_models.CommandJobLimits"] = None,
+        services: Optional[dict[str, "_models.JobService"]] = None,
+        queue_settings: Optional["_models.QueueSettings"] = None,
+        user_assigned_identity_id: Optional[str] = None,
+        gpu_count: Optional[int] = None,
+        is_archived: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = "Command"  # type: ignore
+
+
+class CommandJobLimits(_Model):
+    """Command Job limit class.
+
+    :ivar job_limits_type: JobLimit type. Required. Default value is "Command".
+    :vartype job_limits_type: str
+    :ivar timeout: The max run duration, after which the job will be cancelled.
+    :vartype timeout: ~datetime.timedelta
+    """
+
+    job_limits_type: Literal["Command"] = rest_field(
+        name="jobLimitsType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """JobLimit type. Required. Default value is \"Command\"."""
+    timeout: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The max run duration, after which the job will be cancelled."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timeout: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_limits_type: Literal["Command"] = "Command"
 
 
 class ComparisonFilter(_Model):
@@ -5664,6 +6195,41 @@ class DispatchRoutineResult(_Model):
         super().__init__(*args, **kwargs)
 
 
+class DistributionConfiguration(_Model):
+    """Distribution configuration of the job.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    MpiDistribution, PyTorchDistribution, RayDistribution, TensorFlowDistribution
+
+    :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
+     is None.
+    :vartype distribution_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    distribution_type: str = rest_discriminator(
+        name="distributionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the type of distribution framework. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        distribution_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class EmbeddingConfiguration(_Model):
     """Embedding configuration class.
 
@@ -5820,6 +6386,39 @@ class EntraIsolationKeySource(IsolationKeySource, discriminator="Entra"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = IsolationKeySourceKind.ENTRA  # type: ignore
+
+
+class ErrorAdditionalInfo(_Model):
+    """The resource management error additional info.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: any
+    """
+
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The additional info type."""
+    info: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The additional info."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        info: Optional[Any] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class EvalResult(_Model):
@@ -8289,6 +8888,92 @@ class InlineSkillSourceParam(_Model):
         self.media_type: Literal["application/zip"] = "application/zip"
 
 
+class InnerErrorResponse(_Model):
+    """A nested structure of errors.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar inner_error: A nested structure of errors.
+    :vartype inner_error: ~azure.ai.projects.models.InnerErrorResponse
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error code."""
+    inner_error: Optional["_models.InnerErrorResponse"] = rest_field(
+        name="innerError", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A nested structure of errors."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        inner_error: Optional["_models.InnerErrorResponse"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Input(_Model):
+    """Job input definition.
+
+    :ivar type: Specifies the type of job input. Required. Known values are: "uri_file",
+     "uri_folder", "safetensors_model", and "literal".
+    :vartype type: str or ~azure.ai.projects.models.AssetTypes
+    :ivar path: Input Asset URI.
+    :vartype path: str
+    :ivar mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+     "Download", "Direct", and "Upload".
+    :vartype mode: str or ~azure.ai.projects.models.InputOutputModes
+    :ivar value: Literal value for literal-type inputs.
+    :vartype value: str
+    """
+
+    type: Union[str, "_models.AssetTypes"] = rest_field(
+        name="jobInputType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the type of job input. Required. Known values are: \"uri_file\", \"uri_folder\",
+     \"safetensors_model\", and \"literal\"."""
+    path: Optional[str] = rest_field(name="uri", visibility=["read", "create", "update", "delete", "query"])
+    """Input Asset URI."""
+    mode: Optional[Union[str, "_models.InputOutputModes"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Input Asset Delivery Mode. Known values are: \"ReadOnlyMount\", \"ReadWriteMount\",
+     \"Download\", \"Direct\", and \"Upload\"."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Literal value for literal-type inputs."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.AssetTypes"],
+        path: Optional[str] = None,
+        mode: Optional[Union[str, "_models.InputOutputModes"]] = None,
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Insight(_Model):
     """The response body for cluster insights.
 
@@ -8814,6 +9499,270 @@ class InvokeAgentResponsesApiRoutineAction(RoutineAction, discriminator="invoke_
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = RoutineActionType.INVOKE_AGENT_RESPONSES_API  # type: ignore
+
+
+class Job(_Model):
+    """Job resource.
+
+    :ivar name: The name of the Job. This is case-sensitive. Required.
+    :vartype name: str
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar properties: Properties of the job. Required.
+    :vartype properties: ~azure.ai.projects.models.JobProperties
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.ai.projects.models.SystemData
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the Job. This is case-sensitive. Required."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The resource ID."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The resource type."""
+    properties: "_models.JobProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Properties of the job. Required."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Metadata pertaining to creation and last modification of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.JobProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class JobCost(_Model):
+    """Cost information for a job run.
+
+    :ivar charged_cpu_core_seconds: Charged CPU core-seconds.
+    :vartype charged_cpu_core_seconds: float
+    :ivar charged_cpu_memory_megabyte_seconds: Charged CPU memory megabyte-seconds.
+    :vartype charged_cpu_memory_megabyte_seconds: float
+    :ivar charged_gpu_seconds: Charged GPU seconds.
+    :vartype charged_gpu_seconds: float
+    :ivar charged_node_utilization_seconds: Charged node utilization seconds.
+    :vartype charged_node_utilization_seconds: float
+    """
+
+    charged_cpu_core_seconds: Optional[float] = rest_field(
+        name="chargedCpuCoreSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Charged CPU core-seconds."""
+    charged_cpu_memory_megabyte_seconds: Optional[float] = rest_field(
+        name="chargedCpuMemoryMegabyteSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Charged CPU memory megabyte-seconds."""
+    charged_gpu_seconds: Optional[float] = rest_field(
+        name="chargedGpuSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Charged GPU seconds."""
+    charged_node_utilization_seconds: Optional[float] = rest_field(
+        name="chargedNodeUtilizationSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Charged node utilization seconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        charged_cpu_core_seconds: Optional[float] = None,
+        charged_cpu_memory_megabyte_seconds: Optional[float] = None,
+        charged_gpu_seconds: Optional[float] = None,
+        charged_node_utilization_seconds: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class JobErrorResponse(_Model):
+    """The error response returned for a job's service instance.
+
+    :ivar error: The root error.
+    :vartype error: ~azure.ai.projects.models.RootError
+    :ivar correlation: Dictionary containing correlation details for the error.
+    :vartype correlation: dict[str, str]
+    :ivar environment: The hosting environment.
+    :vartype environment: str
+    :ivar location: Location.
+    :vartype location: str
+    :ivar time: The time in UTC when the error occurred.
+    :vartype time: ~datetime.datetime
+    :ivar component_name: Component name where the error originated or was encountered.
+    :vartype component_name: str
+    """
+
+    error: Optional["_models.RootError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The root error."""
+    correlation: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Dictionary containing correlation details for the error."""
+    environment: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The hosting environment."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Location."""
+    time: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time in UTC when the error occurred."""
+    component_name: Optional[str] = rest_field(
+        name="componentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Component name where the error originated or was encountered."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.RootError"] = None,
+        correlation: Optional[dict[str, str]] = None,
+        environment: Optional[str] = None,
+        location: Optional[str] = None,
+        time: Optional[datetime.datetime] = None,
+        component_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class JobResourceConfiguration(_Model):
+    """Compute Resource configuration for the job.
+
+    :ivar instance_count: Optional number of instances or nodes used by the compute target.
+    :vartype instance_count: int
+    :ivar instance_type: Optional type of VM used as supported by the compute target.
+    :vartype instance_type: str
+    :ivar properties: Additional properties bag.
+    :vartype properties: dict[str, any]
+    :ivar shm_size: Size of the docker container's shared memory block.
+    :vartype shm_size: str
+    :ivar docker_args: Extra arguments to pass to the Docker run command.
+    :vartype docker_args: str
+    """
+
+    instance_count: Optional[int] = rest_field(
+        name="instanceCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional number of instances or nodes used by the compute target."""
+    instance_type: Optional[str] = rest_field(
+        name="instanceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional type of VM used as supported by the compute target."""
+    properties: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional properties bag."""
+    shm_size: Optional[str] = rest_field(name="shmSize", visibility=["read", "create", "update", "delete", "query"])
+    """Size of the docker container's shared memory block."""
+    docker_args: Optional[str] = rest_field(
+        name="dockerArgs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Extra arguments to pass to the Docker run command."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        instance_count: Optional[int] = None,
+        instance_type: Optional[str] = None,
+        properties: Optional[dict[str, Any]] = None,
+        shm_size: Optional[str] = None,
+        docker_args: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class JobService(_Model):
+    """Job endpoint definition.
+
+    :ivar job_service_type: Endpoint type.
+    :vartype job_service_type: str
+    :ivar port: Port for endpoint.
+    :vartype port: int
+    :ivar endpoint: Url for endpoint.
+    :vartype endpoint: str
+    :ivar properties: Additional properties to set on the endpoint.
+    :vartype properties: dict[str, str]
+    :ivar nodes: Nodes that user would like to start the service on.
+    :vartype nodes: ~azure.ai.projects.models.AllNodes
+    :ivar status: Status of endpoint.
+    :vartype status: str
+    :ivar error_message: Any error in the service.
+    :vartype error_message: str
+    """
+
+    job_service_type: Optional[str] = rest_field(
+        name="jobServiceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoint type."""
+    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Port for endpoint."""
+    endpoint: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Url for endpoint."""
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional properties to set on the endpoint."""
+    nodes: Optional["_models.AllNodes"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Nodes that user would like to start the service on."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Status of endpoint."""
+    error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
+    """Any error in the service."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_service_type: Optional[str] = None,
+        port: Optional[int] = None,
+        endpoint: Optional[str] = None,
+        properties: Optional[dict[str, str]] = None,
+        nodes: Optional["_models.AllNodes"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class LocalShellToolParam(Tool, discriminator="local_shell"):
@@ -10346,6 +11295,42 @@ class MonthlyRecurrenceSchedule(RecurrenceSchedule, discriminator="Monthly"):
         self.type = RecurrenceType.MONTHLY  # type: ignore
 
 
+class MpiDistribution(DistributionConfiguration, discriminator="Mpi"):
+    """MPI distribution configuration.
+
+    :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
+     is "Mpi".
+    :vartype distribution_type: str
+    :ivar process_count_per_node: Number of processes per MPI node.
+    :vartype process_count_per_node: int
+    """
+
+    distribution_type: Literal["Mpi"] = rest_discriminator(name="distributionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the type of distribution framework. Required. Default value is \"Mpi\"."""
+    process_count_per_node: Optional[int] = rest_field(
+        name="processCountPerNode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of processes per MPI node."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        process_count_per_node: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.distribution_type = "Mpi"  # type: ignore
+
+
 class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
     """Credentials that do not require authentication.
 
@@ -11354,6 +12339,76 @@ class OtlpTelemetryEndpoint(TelemetryEndpoint, discriminator="OTLP"):
         self.kind = TelemetryEndpointKind.OTLP  # type: ignore
 
 
+class Output(_Model):
+    """Job output definition.
+
+    :ivar type: Specifies the type of job output. Required. Known values are: "uri_file",
+     "uri_folder", "safetensors_model", and "literal".
+    :vartype type: str or ~azure.ai.projects.models.AssetTypes
+    :ivar mode: Output Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+     "Download", "Direct", and "Upload".
+    :vartype mode: str or ~azure.ai.projects.models.InputOutputModes
+    :ivar asset_name: Name of the output data asset to register.
+    :vartype asset_name: str
+    :ivar asset_version: Version of the output data asset to register.
+    :vartype asset_version: str
+    :ivar uri: Output Asset URI.
+    :vartype uri: str
+    :ivar base_model_id: Base model ID.
+    :vartype base_model_id: str
+    :ivar description: Description for the output.
+    :vartype description: str
+    """
+
+    type: Union[str, "_models.AssetTypes"] = rest_field(
+        name="jobOutputType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the type of job output. Required. Known values are: \"uri_file\", \"uri_folder\",
+     \"safetensors_model\", and \"literal\"."""
+    mode: Optional[Union[str, "_models.InputOutputModes"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Output Asset Delivery Mode. Known values are: \"ReadOnlyMount\", \"ReadWriteMount\",
+     \"Download\", \"Direct\", and \"Upload\"."""
+    asset_name: Optional[str] = rest_field(name="assetName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the output data asset to register."""
+    asset_version: Optional[str] = rest_field(
+        name="assetVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Version of the output data asset to register."""
+    uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Output Asset URI."""
+    base_model_id: Optional[str] = rest_field(
+        name="baseModelId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Base model ID."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description for the output."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.AssetTypes"],
+        mode: Optional[Union[str, "_models.InputOutputModes"]] = None,
+        asset_name: Optional[str] = None,
+        asset_version: Optional[str] = None,
+        uri: Optional[str] = None,
+        base_model_id: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PendingUploadRequest(_Model):
     """Represents a request for a pending upload.
 
@@ -11916,6 +12971,70 @@ class ProtocolVersionRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
+class PyTorchDistribution(DistributionConfiguration, discriminator="PyTorch"):
+    """PyTorch distribution configuration.
+
+    :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
+     is "PyTorch".
+    :vartype distribution_type: str
+    :ivar process_count_per_instance: Number of processes per node.
+    :vartype process_count_per_instance: int
+    """
+
+    distribution_type: Literal["PyTorch"] = rest_discriminator(name="distributionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the type of distribution framework. Required. Default value is \"PyTorch\"."""
+    process_count_per_instance: Optional[int] = rest_field(
+        name="processCountPerInstance", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of processes per node."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        process_count_per_instance: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.distribution_type = "PyTorch"  # type: ignore
+
+
+class QueueSettings(_Model):
+    """Queue settings for the job.
+
+    :ivar job_tier: Controls the compute job tier.
+    :vartype job_tier: str
+    """
+
+    job_tier: Optional[str] = rest_field(name="jobTier", visibility=["read", "create", "update", "delete", "query"])
+    """Controls the compute job tier."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_tier: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RaiConfig(_Model):
     """Configuration for Responsible AI (RAI) content filtering and safety features.
 
@@ -11990,6 +13109,73 @@ class RankingOptions(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class RayDistribution(DistributionConfiguration, discriminator="Ray"):
+    """Ray distribution configuration.
+
+    :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
+     is "Ray".
+    :vartype distribution_type: str
+    :ivar port: The port of the head Ray process.
+    :vartype port: int
+    :ivar address: The address of the Ray head node.
+    :vartype address: str
+    :ivar include_dashboard: Whether to start the Ray dashboard GUI.
+    :vartype include_dashboard: bool
+    :ivar dashboard_port: The port to bind the dashboard server to.
+    :vartype dashboard_port: int
+    :ivar head_node_additional_args: Additional arguments passed to ray start on the head node.
+    :vartype head_node_additional_args: str
+    :ivar worker_node_additional_args: Additional arguments passed to ray start on worker nodes.
+    :vartype worker_node_additional_args: str
+    """
+
+    distribution_type: Literal["Ray"] = rest_discriminator(name="distributionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the type of distribution framework. Required. Default value is \"Ray\"."""
+    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The port of the head Ray process."""
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The address of the Ray head node."""
+    include_dashboard: Optional[bool] = rest_field(
+        name="includeDashboard", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to start the Ray dashboard GUI."""
+    dashboard_port: Optional[int] = rest_field(
+        name="dashboardPort", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The port to bind the dashboard server to."""
+    head_node_additional_args: Optional[str] = rest_field(
+        name="headNodeAdditionalArgs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional arguments passed to ray start on the head node."""
+    worker_node_additional_args: Optional[str] = rest_field(
+        name="workerNodeAdditionalArgs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional arguments passed to ray start on worker nodes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        port: Optional[int] = None,
+        address: Optional[str] = None,
+        include_dashboard: Optional[bool] = None,
+        dashboard_port: Optional[int] = None,
+        head_node_additional_args: Optional[str] = None,
+        worker_node_additional_args: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.distribution_type = "Ray"  # type: ignore
 
 
 class Reasoning(_Model):
@@ -12231,6 +13417,98 @@ class ResponseUsageOutputTokensDetails(_Model):
         self,
         *,
         reasoning_tokens: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RootError(_Model):
+    """The root error.
+
+    :ivar code: The service-defined error code.
+    :vartype code: str
+    :ivar severity: The severity of the error.
+    :vartype severity: int
+    :ivar message: A human-readable representation of the error.
+    :vartype message: str
+    :ivar message_format: An unformatted version of the message with no variable substitution.
+    :vartype message_format: str
+    :ivar message_parameters: Value substitutions for the message format.
+    :vartype message_parameters: dict[str, str]
+    :ivar reference_code: A reference code for the error.
+    :vartype reference_code: str
+    :ivar details_uri: A URI with more details about the error.
+    :vartype details_uri: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    :ivar details: The related errors that occurred during the request.
+    :vartype details: list[~azure.ai.projects.models.RootError]
+    :ivar inner_error: A nested structure of errors.
+    :vartype inner_error: ~azure.ai.projects.models.InnerErrorResponse
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.ai.projects.models.ErrorAdditionalInfo]
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-defined error code."""
+    severity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The severity of the error."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable representation of the error."""
+    message_format: Optional[str] = rest_field(
+        name="messageFormat", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An unformatted version of the message with no variable substitution."""
+    message_parameters: Optional[dict[str, str]] = rest_field(
+        name="messageParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Value substitutions for the message format."""
+    reference_code: Optional[str] = rest_field(
+        name="referenceCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A reference code for the error."""
+    details_uri: Optional[str] = rest_field(
+        name="detailsUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A URI with more details about the error."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target of the error."""
+    details: Optional[list["_models.RootError"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The related errors that occurred during the request."""
+    inner_error: Optional["_models.InnerErrorResponse"] = rest_field(
+        name="innerError", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A nested structure of errors."""
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
+        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The error additional info."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        severity: Optional[int] = None,
+        message: Optional[str] = None,
+        message_format: Optional[str] = None,
+        message_parameters: Optional[dict[str, str]] = None,
+        reference_code: Optional[str] = None,
+        details_uri: Optional[str] = None,
+        target: Optional[str] = None,
+        details: Optional[list["_models.RootError"]] = None,
+        inner_error: Optional["_models.InnerErrorResponse"] = None,
+        additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None,
     ) -> None: ...
 
     @overload
@@ -12534,6 +13812,1033 @@ class RubricBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="rubric"
         self.type = EvaluatorDefinitionType.RUBRIC  # type: ignore
 
 
+class Run(_Model):
+    """A job run.
+
+    :ivar display_name: The display name of the run.
+    :vartype display_name: str
+    :ivar name: The name of the run.
+    :vartype name: str
+    :ivar data_container_id: An identifier for the data associated with this run.
+    :vartype data_container_id: str
+    :ivar description: A description of the run.
+    :vartype description: str
+    :ivar hidden: Whether the run is hidden in run listings.
+    :vartype hidden: bool
+    :ivar run_type: Run type categorization.
+    :vartype run_type: str
+    :ivar run_type_v2: Run type information.
+    :vartype run_type_v2: ~azure.ai.projects.models._models.RunTypeV2
+    :ivar properties: The properties dictionary for the run.
+    :vartype properties: dict[str, str]
+    :ivar parameters: The parameters dictionary for the run.
+    :vartype parameters: dict[str, any]
+    :ivar action_uris: Action URIs for the run, keyed by action name.
+    :vartype action_uris: dict[str, str]
+    :ivar script_name: The script name associated with the run.
+    :vartype script_name: str
+    :ivar target: The name of the compute target where the run is executed.
+    :vartype target: str
+    :ivar unique_child_run_compute_targets: The set of unique compute targets used by child runs.
+    :vartype unique_child_run_compute_targets: list[str]
+    :ivar tags: The tag dictionary for the run. Tags are mutable.
+    :vartype tags: dict[str, str]
+    :ivar settings: The run settings.
+    :vartype settings: dict[str, str]
+    :ivar services: The interactive run services for a run.
+    :vartype services: dict[str, ~azure.ai.projects.models._models.RunEndpointSetting]
+    :ivar input_datasets: A list of datasets used as input to the run.
+    :vartype input_datasets: list[any]
+    :ivar output_datasets: A list of datasets used as output to the run.
+    :vartype output_datasets: list[any]
+    :ivar run_definition: The run definition specification.
+    :vartype run_definition: any
+    :ivar job_specification: The job specification.
+    :vartype job_specification: any
+    :ivar primary_metric_name: The primary metric name for the run.
+    :vartype primary_metric_name: str
+    :ivar created_from: Information about the source that created this run.
+    :vartype created_from: any
+    :ivar cancel_uri: URI used to cancel this run.
+    :vartype cancel_uri: str
+    :ivar complete_uri: URI used to mark this run as complete.
+    :vartype complete_uri: str
+    :ivar diagnostics_uri: URI used to retrieve diagnostics for this run.
+    :vartype diagnostics_uri: str
+    :ivar virtual_workspace_storage_arm_id: ARM id of the workspace.
+    :vartype virtual_workspace_storage_arm_id: str
+    :ivar compute_request: The compute requests for this run.
+    :vartype compute_request: any
+    :ivar compute: The compute record for this run.
+    :vartype compute: any
+    :ivar retain_for_lifetime_of_workspace: Whether the run should be retained for the lifetime of
+     the workspace (root runs only).
+    :vartype retain_for_lifetime_of_workspace: bool
+    :ivar queueing_info: Queueing information for this run.
+    :vartype queueing_info: any
+    :ivar inputs: The inputs for the run, keyed by input name.
+    :vartype inputs: dict[str, ~azure.ai.projects.models._models.TypedAssetReference]
+    :ivar outputs: The outputs for the run, keyed by output name.
+    :vartype outputs: dict[str, ~azure.ai.projects.models._models.TypedAssetReference]
+    :ivar run_id: The identifier for the run.
+    :vartype run_id: str
+    :ivar parent_run_id: The parent of the run if the run is hierarchical; otherwise, null.
+    :vartype parent_run_id: str
+    :ivar experiment_id: The id of the experiment that created this run.
+    :vartype experiment_id: str
+    :ivar status: The status of the run.
+    :vartype status: str
+    :ivar start_time_utc: The start time of the run in UTC.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The end time of the run in UTC.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar schedule_id: The schedule that created this run, if it was created by a schedule.
+    :vartype schedule_id: str
+    :ivar run_number: The run number.
+    :vartype run_number: int
+    :ivar root_run_id: The id of the root run in the hierarchy.
+    :vartype root_run_id: str
+    :ivar created_utc: The time the run was created in UTC.
+    :vartype created_utc: ~datetime.datetime
+    :ivar created_by: The user that created the run.
+    :vartype created_by: ~azure.ai.projects.models._models.RunUser
+    :ivar user_id: The id of the user that created the run.
+    :vartype user_id: str
+    :ivar token: A token used for authenticating a run.
+    :vartype token: str
+    :ivar token_expiry_time_utc: The Token expiration time in UTC.
+    :vartype token_expiry_time_utc: ~datetime.datetime
+    :ivar error: Error details for the run, if any.
+    :vartype error: ~azure.ai.projects.models._models.RunErrorResponse
+    :ivar warnings: A list of warnings that occurred during the run.
+    :vartype warnings: list[~azure.ai.projects.models._models.RunDetailsWarning]
+    :ivar revision: Revision number.
+    :vartype revision: int
+    :ivar status_revision: Status revision number.
+    :vartype status_revision: int
+    :ivar run_uuid: A system generated id for the run.
+    :vartype run_uuid: str
+    :ivar parent_run_uuid: A system generated id for the run's parent.
+    :vartype parent_run_uuid: str
+    :ivar root_run_uuid: A system generated id for the root of the run's hierarchy.
+    :vartype root_run_uuid: str
+    :ivar last_start_time_utc: The last start time of the run in UTC.
+    :vartype last_start_time_utc: ~datetime.datetime
+    :ivar current_compute_time: The cumulative compute time for an active run.
+    :vartype current_compute_time: ~datetime.timedelta
+    :ivar compute_duration: The total compute time for a terminal run.
+    :vartype compute_duration: ~datetime.timedelta
+    :ivar effective_start_time_utc: The effective start time of the run in UTC.
+    :vartype effective_start_time_utc: ~datetime.datetime
+    :ivar last_modified_by: The user that last modified the run.
+    :vartype last_modified_by: ~azure.ai.projects.models._models.RunUser
+    :ivar last_modified_utc: The time the run was last modified in UTC.
+    :vartype last_modified_utc: ~datetime.datetime
+    :ivar duration: The total duration of the run.
+    :vartype duration: ~datetime.timedelta
+    :ivar cancelation_reason: The cancelation reason if the run was canceled.
+    :vartype cancelation_reason: str
+    :ivar current_attempt_id: The AttemptId of the most recent attempt.
+    :vartype current_attempt_id: int
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The display name of the run."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the run."""
+    data_container_id: Optional[str] = rest_field(
+        name="dataContainerId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An identifier for the data associated with this run."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A description of the run."""
+    hidden: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the run is hidden in run listings."""
+    run_type: Optional[str] = rest_field(name="runType", visibility=["read", "create", "update", "delete", "query"])
+    """Run type categorization."""
+    run_type_v2: Optional["_models._models.RunTypeV2"] = rest_field(
+        name="runTypeV2", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Run type information."""
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties dictionary for the run."""
+    parameters: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The parameters dictionary for the run."""
+    action_uris: Optional[dict[str, str]] = rest_field(
+        name="actionUris", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action URIs for the run, keyed by action name."""
+    script_name: Optional[str] = rest_field(
+        name="scriptName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The script name associated with the run."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the compute target where the run is executed."""
+    unique_child_run_compute_targets: Optional[list[str]] = rest_field(
+        name="uniqueChildRunComputeTargets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The set of unique compute targets used by child runs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tag dictionary for the run. Tags are mutable."""
+    settings: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The run settings."""
+    services: Optional[dict[str, "_models._models.RunEndpointSetting"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The interactive run services for a run."""
+    input_datasets: Optional[list[Any]] = rest_field(
+        name="inputDatasets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of datasets used as input to the run."""
+    output_datasets: Optional[list[Any]] = rest_field(
+        name="outputDatasets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of datasets used as output to the run."""
+    run_definition: Optional[Any] = rest_field(
+        name="runDefinition", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The run definition specification."""
+    job_specification: Optional[Any] = rest_field(
+        name="jobSpecification", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job specification."""
+    primary_metric_name: Optional[str] = rest_field(
+        name="primaryMetricName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The primary metric name for the run."""
+    created_from: Optional[Any] = rest_field(
+        name="createdFrom", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information about the source that created this run."""
+    cancel_uri: Optional[str] = rest_field(name="cancelUri", visibility=["read", "create", "update", "delete", "query"])
+    """URI used to cancel this run."""
+    complete_uri: Optional[str] = rest_field(
+        name="completeUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """URI used to mark this run as complete."""
+    diagnostics_uri: Optional[str] = rest_field(
+        name="diagnosticsUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """URI used to retrieve diagnostics for this run."""
+    virtual_workspace_storage_arm_id: Optional[str] = rest_field(
+        name="virtualWorkspaceStorageArmId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM id of the workspace."""
+    compute_request: Optional[Any] = rest_field(
+        name="computeRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compute requests for this run."""
+    compute: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The compute record for this run."""
+    retain_for_lifetime_of_workspace: Optional[bool] = rest_field(
+        name="retainForLifetimeOfWorkspace", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the run should be retained for the lifetime of the workspace (root runs only)."""
+    queueing_info: Optional[Any] = rest_field(
+        name="queueingInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Queueing information for this run."""
+    inputs: Optional[dict[str, "_models._models.TypedAssetReference"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The inputs for the run, keyed by input name."""
+    outputs: Optional[dict[str, "_models._models.TypedAssetReference"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The outputs for the run, keyed by output name."""
+    run_id: Optional[str] = rest_field(name="runId", visibility=["read", "create", "update", "delete", "query"])
+    """The identifier for the run."""
+    parent_run_id: Optional[str] = rest_field(
+        name="parentRunId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The parent of the run if the run is hierarchical; otherwise, null."""
+    experiment_id: Optional[str] = rest_field(
+        name="experimentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The id of the experiment that created this run."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the run."""
+    start_time_utc: Optional[datetime.datetime] = rest_field(
+        name="startTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the run in UTC."""
+    end_time_utc: Optional[datetime.datetime] = rest_field(
+        name="endTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the run in UTC."""
+    schedule_id: Optional[str] = rest_field(
+        name="scheduleId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The schedule that created this run, if it was created by a schedule."""
+    run_number: Optional[int] = rest_field(name="runNumber", visibility=["read", "create", "update", "delete", "query"])
+    """The run number."""
+    root_run_id: Optional[str] = rest_field(
+        name="rootRunId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The id of the root run in the hierarchy."""
+    created_utc: Optional[datetime.datetime] = rest_field(
+        name="createdUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time the run was created in UTC."""
+    created_by: Optional["_models._models.RunUser"] = rest_field(
+        name="createdBy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user that created the run."""
+    user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the user that created the run."""
+    token: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A token used for authenticating a run."""
+    token_expiry_time_utc: Optional[datetime.datetime] = rest_field(
+        name="tokenExpiryTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The Token expiration time in UTC."""
+    error: Optional["_models._models.RunErrorResponse"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Error details for the run, if any."""
+    warnings: Optional[list["_models._models.RunDetailsWarning"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of warnings that occurred during the run."""
+    revision: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Revision number."""
+    status_revision: Optional[int] = rest_field(
+        name="statusRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Status revision number."""
+    run_uuid: Optional[str] = rest_field(name="runUuid", visibility=["read", "create", "update", "delete", "query"])
+    """A system generated id for the run."""
+    parent_run_uuid: Optional[str] = rest_field(
+        name="parentRunUuid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A system generated id for the run's parent."""
+    root_run_uuid: Optional[str] = rest_field(
+        name="rootRunUuid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A system generated id for the root of the run's hierarchy."""
+    last_start_time_utc: Optional[datetime.datetime] = rest_field(
+        name="lastStartTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last start time of the run in UTC."""
+    current_compute_time: Optional[datetime.timedelta] = rest_field(
+        name="currentComputeTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The cumulative compute time for an active run."""
+    compute_duration: Optional[datetime.timedelta] = rest_field(
+        name="computeDuration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The total compute time for a terminal run."""
+    effective_start_time_utc: Optional[datetime.datetime] = rest_field(
+        name="effectiveStartTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The effective start time of the run in UTC."""
+    last_modified_by: Optional["_models._models.RunUser"] = rest_field(
+        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user that last modified the run."""
+    last_modified_utc: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time the run was last modified in UTC."""
+    duration: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The total duration of the run."""
+    cancelation_reason: Optional[str] = rest_field(
+        name="cancelationReason", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The cancelation reason if the run was canceled."""
+    current_attempt_id: Optional[int] = rest_field(
+        name="currentAttemptId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The AttemptId of the most recent attempt."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        display_name: Optional[str] = None,
+        name: Optional[str] = None,
+        data_container_id: Optional[str] = None,
+        description: Optional[str] = None,
+        hidden: Optional[bool] = None,
+        run_type: Optional[str] = None,
+        run_type_v2: Optional["_models._models.RunTypeV2"] = None,
+        properties: Optional[dict[str, str]] = None,
+        parameters: Optional[dict[str, Any]] = None,
+        action_uris: Optional[dict[str, str]] = None,
+        script_name: Optional[str] = None,
+        target: Optional[str] = None,
+        unique_child_run_compute_targets: Optional[list[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        settings: Optional[dict[str, str]] = None,
+        services: Optional[dict[str, "_models._models.RunEndpointSetting"]] = None,
+        input_datasets: Optional[list[Any]] = None,
+        output_datasets: Optional[list[Any]] = None,
+        run_definition: Optional[Any] = None,
+        job_specification: Optional[Any] = None,
+        primary_metric_name: Optional[str] = None,
+        created_from: Optional[Any] = None,
+        cancel_uri: Optional[str] = None,
+        complete_uri: Optional[str] = None,
+        diagnostics_uri: Optional[str] = None,
+        virtual_workspace_storage_arm_id: Optional[str] = None,
+        compute_request: Optional[Any] = None,
+        compute: Optional[Any] = None,
+        retain_for_lifetime_of_workspace: Optional[bool] = None,
+        queueing_info: Optional[Any] = None,
+        inputs: Optional[dict[str, "_models._models.TypedAssetReference"]] = None,
+        outputs: Optional[dict[str, "_models._models.TypedAssetReference"]] = None,
+        run_id: Optional[str] = None,
+        parent_run_id: Optional[str] = None,
+        experiment_id: Optional[str] = None,
+        status: Optional[str] = None,
+        start_time_utc: Optional[datetime.datetime] = None,
+        end_time_utc: Optional[datetime.datetime] = None,
+        schedule_id: Optional[str] = None,
+        run_number: Optional[int] = None,
+        root_run_id: Optional[str] = None,
+        created_utc: Optional[datetime.datetime] = None,
+        created_by: Optional["_models._models.RunUser"] = None,
+        user_id: Optional[str] = None,
+        token: Optional[str] = None,
+        token_expiry_time_utc: Optional[datetime.datetime] = None,
+        error: Optional["_models._models.RunErrorResponse"] = None,
+        warnings: Optional[list["_models._models.RunDetailsWarning"]] = None,
+        revision: Optional[int] = None,
+        status_revision: Optional[int] = None,
+        run_uuid: Optional[str] = None,
+        parent_run_uuid: Optional[str] = None,
+        root_run_uuid: Optional[str] = None,
+        last_start_time_utc: Optional[datetime.datetime] = None,
+        current_compute_time: Optional[datetime.timedelta] = None,
+        compute_duration: Optional[datetime.timedelta] = None,
+        effective_start_time_utc: Optional[datetime.datetime] = None,
+        last_modified_by: Optional["_models._models.RunUser"] = None,
+        last_modified_utc: Optional[datetime.datetime] = None,
+        duration: Optional[datetime.timedelta] = None,
+        cancelation_reason: Optional[str] = None,
+        current_attempt_id: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunDetails(_Model):
+    """Runtime details of a job's run, including status, log file URLs, warnings and any error
+    information.
+
+    :ivar run_id: The identifier for the run.
+    :vartype run_id: str
+    :ivar run_uuid: A system generated id for the run.
+    :vartype run_uuid: str
+    :ivar parent_run_uuid: A system generated id for the run's parent.
+    :vartype parent_run_uuid: str
+    :ivar root_run_uuid: A system generated id for the root of the run's hierarchy.
+    :vartype root_run_uuid: str
+    :ivar target: The name of the compute target where the run is executed.
+    :vartype target: str
+    :ivar status: The status of the run.
+    :vartype status: str
+    :ivar parent_run_id: The parent of the run if the run is hierarchical.
+    :vartype parent_run_id: str
+    :ivar data_container_id: An identifier for the data associated with this run.
+    :vartype data_container_id: str
+    :ivar created_time_utc: The creation time of the run in UTC.
+    :vartype created_time_utc: ~datetime.datetime
+    :ivar start_time_utc: The start time of the run in UTC.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The end time of the run in UTC.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar error: Error details for the run, if any.
+    :vartype error: ~azure.ai.projects.models._models.RunErrorResponse
+    :ivar warnings: A list of warnings that occurred during the run.
+    :vartype warnings: list[~azure.ai.projects.models._models.RunDetailsWarning]
+    :ivar tags: The tag dictionary for the run. Tags are mutable.
+    :vartype tags: dict[str, str]
+    :ivar properties: The properties dictionary for the run. Properties are immutable.
+    :vartype properties: dict[str, str]
+    :ivar parameters: The parameters dictionary for the run. Parameters are immutable.
+    :vartype parameters: dict[str, any]
+    :ivar services: The interactive run services for a run. Services are mutable.
+    :vartype services: dict[str, ~azure.ai.projects.models._models.RunEndpointSetting]
+    :ivar input_datasets: A list of datasets used as input to the run.
+    :vartype input_datasets: list[any]
+    :ivar output_datasets: A list of datasets used as output to the run.
+    :vartype output_datasets: list[any]
+    :ivar run_definition: The run definition specification.
+    :vartype run_definition: any
+    :ivar log_files: Map of log file name to its URL.
+    :vartype log_files: dict[str, str]
+    :ivar job_cost: Job cost information.
+    :vartype job_cost: ~azure.ai.projects.models._models.JobCost
+    :ivar revision: Revision number.
+    :vartype revision: int
+    :ivar run_type_v2: Run type information.
+    :vartype run_type_v2: ~azure.ai.projects.models._models.RunTypeV2
+    :ivar settings: The run settings.
+    :vartype settings: dict[str, str]
+    :ivar compute_request: The compute requests.
+    :vartype compute_request: any
+    :ivar compute: The compute record.
+    :vartype compute: any
+    :ivar created_by: The user that created the run.
+    :vartype created_by: ~azure.ai.projects.models._models.RunUser
+    :ivar compute_duration: The total compute time for a terminal run.
+    :vartype compute_duration: ~datetime.timedelta
+    :ivar effective_start_time_utc: The effective start time of the run in UTC.
+    :vartype effective_start_time_utc: ~datetime.datetime
+    :ivar run_number: The run number.
+    :vartype run_number: int
+    :ivar root_run_id: The id of the root run in the hierarchy.
+    :vartype root_run_id: str
+    :ivar experiment_id: The experiment id this run belongs to.
+    :vartype experiment_id: str
+    :ivar user_id: The id of the user that created the run.
+    :vartype user_id: str
+    :ivar status_revision: Status revision number.
+    :vartype status_revision: int
+    :ivar current_compute_time: The cumulative compute time for an active run.
+    :vartype current_compute_time: ~datetime.timedelta
+    :ivar last_start_time_utc: The last start time of the run in UTC.
+    :vartype last_start_time_utc: ~datetime.datetime
+    :ivar last_modified_by: The user that last modified the run.
+    :vartype last_modified_by: ~azure.ai.projects.models._models.RunUser
+    :ivar last_modified_utc: The time the run was last modified in UTC.
+    :vartype last_modified_utc: ~datetime.datetime
+    :ivar duration: The total duration of the run.
+    :vartype duration: ~datetime.timedelta
+    :ivar inputs: The inputs for the run, keyed by input name.
+    :vartype inputs: dict[str, ~azure.ai.projects.models._models.TypedAssetReference]
+    :ivar outputs: The outputs for the run, keyed by output name.
+    :vartype outputs: dict[str, ~azure.ai.projects.models._models.TypedAssetReference]
+    :ivar current_attempt_id: The AttemptId of the most recent attempt.
+    :vartype current_attempt_id: int
+    """
+
+    run_id: Optional[str] = rest_field(name="runId", visibility=["read", "create", "update", "delete", "query"])
+    """The identifier for the run."""
+    run_uuid: Optional[str] = rest_field(name="runUuid", visibility=["read", "create", "update", "delete", "query"])
+    """A system generated id for the run."""
+    parent_run_uuid: Optional[str] = rest_field(
+        name="parentRunUuid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A system generated id for the run's parent."""
+    root_run_uuid: Optional[str] = rest_field(
+        name="rootRunUuid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A system generated id for the root of the run's hierarchy."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the compute target where the run is executed."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the run."""
+    parent_run_id: Optional[str] = rest_field(
+        name="parentRunId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The parent of the run if the run is hierarchical."""
+    data_container_id: Optional[str] = rest_field(
+        name="dataContainerId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An identifier for the data associated with this run."""
+    created_time_utc: Optional[datetime.datetime] = rest_field(
+        name="createdTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The creation time of the run in UTC."""
+    start_time_utc: Optional[datetime.datetime] = rest_field(
+        name="startTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the run in UTC."""
+    end_time_utc: Optional[datetime.datetime] = rest_field(
+        name="endTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the run in UTC."""
+    error: Optional["_models._models.RunErrorResponse"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Error details for the run, if any."""
+    warnings: Optional[list["_models._models.RunDetailsWarning"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of warnings that occurred during the run."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tag dictionary for the run. Tags are mutable."""
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The properties dictionary for the run. Properties are immutable."""
+    parameters: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The parameters dictionary for the run. Parameters are immutable."""
+    services: Optional[dict[str, "_models._models.RunEndpointSetting"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The interactive run services for a run. Services are mutable."""
+    input_datasets: Optional[list[Any]] = rest_field(
+        name="inputDatasets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of datasets used as input to the run."""
+    output_datasets: Optional[list[Any]] = rest_field(
+        name="outputDatasets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of datasets used as output to the run."""
+    run_definition: Optional[Any] = rest_field(
+        name="runDefinition", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The run definition specification."""
+    log_files: Optional[dict[str, str]] = rest_field(
+        name="logFiles", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Map of log file name to its URL."""
+    job_cost: Optional["_models._models.JobCost"] = rest_field(
+        name="jobCost", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Job cost information."""
+    revision: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Revision number."""
+    run_type_v2: Optional["_models._models.RunTypeV2"] = rest_field(
+        name="runTypeV2", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Run type information."""
+    settings: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The run settings."""
+    compute_request: Optional[Any] = rest_field(
+        name="computeRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compute requests."""
+    compute: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The compute record."""
+    created_by: Optional["_models._models.RunUser"] = rest_field(
+        name="createdBy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user that created the run."""
+    compute_duration: Optional[datetime.timedelta] = rest_field(
+        name="computeDuration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The total compute time for a terminal run."""
+    effective_start_time_utc: Optional[datetime.datetime] = rest_field(
+        name="effectiveStartTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The effective start time of the run in UTC."""
+    run_number: Optional[int] = rest_field(name="runNumber", visibility=["read", "create", "update", "delete", "query"])
+    """The run number."""
+    root_run_id: Optional[str] = rest_field(
+        name="rootRunId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The id of the root run in the hierarchy."""
+    experiment_id: Optional[str] = rest_field(
+        name="experimentId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The experiment id this run belongs to."""
+    user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the user that created the run."""
+    status_revision: Optional[int] = rest_field(
+        name="statusRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Status revision number."""
+    current_compute_time: Optional[datetime.timedelta] = rest_field(
+        name="currentComputeTime", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The cumulative compute time for an active run."""
+    last_start_time_utc: Optional[datetime.datetime] = rest_field(
+        name="lastStartTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last start time of the run in UTC."""
+    last_modified_by: Optional["_models._models.RunUser"] = rest_field(
+        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user that last modified the run."""
+    last_modified_utc: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time the run was last modified in UTC."""
+    duration: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The total duration of the run."""
+    inputs: Optional[dict[str, "_models._models.TypedAssetReference"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The inputs for the run, keyed by input name."""
+    outputs: Optional[dict[str, "_models._models.TypedAssetReference"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The outputs for the run, keyed by output name."""
+    current_attempt_id: Optional[int] = rest_field(
+        name="currentAttemptId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The AttemptId of the most recent attempt."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        run_id: Optional[str] = None,
+        run_uuid: Optional[str] = None,
+        parent_run_uuid: Optional[str] = None,
+        root_run_uuid: Optional[str] = None,
+        target: Optional[str] = None,
+        status: Optional[str] = None,
+        parent_run_id: Optional[str] = None,
+        data_container_id: Optional[str] = None,
+        created_time_utc: Optional[datetime.datetime] = None,
+        start_time_utc: Optional[datetime.datetime] = None,
+        end_time_utc: Optional[datetime.datetime] = None,
+        error: Optional["_models._models.RunErrorResponse"] = None,
+        warnings: Optional[list["_models._models.RunDetailsWarning"]] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional[dict[str, str]] = None,
+        parameters: Optional[dict[str, Any]] = None,
+        services: Optional[dict[str, "_models._models.RunEndpointSetting"]] = None,
+        input_datasets: Optional[list[Any]] = None,
+        output_datasets: Optional[list[Any]] = None,
+        run_definition: Optional[Any] = None,
+        log_files: Optional[dict[str, str]] = None,
+        job_cost: Optional["_models._models.JobCost"] = None,
+        revision: Optional[int] = None,
+        run_type_v2: Optional["_models._models.RunTypeV2"] = None,
+        settings: Optional[dict[str, str]] = None,
+        compute_request: Optional[Any] = None,
+        compute: Optional[Any] = None,
+        created_by: Optional["_models._models.RunUser"] = None,
+        compute_duration: Optional[datetime.timedelta] = None,
+        effective_start_time_utc: Optional[datetime.datetime] = None,
+        run_number: Optional[int] = None,
+        root_run_id: Optional[str] = None,
+        experiment_id: Optional[str] = None,
+        user_id: Optional[str] = None,
+        status_revision: Optional[int] = None,
+        current_compute_time: Optional[datetime.timedelta] = None,
+        last_start_time_utc: Optional[datetime.datetime] = None,
+        last_modified_by: Optional["_models._models.RunUser"] = None,
+        last_modified_utc: Optional[datetime.datetime] = None,
+        duration: Optional[datetime.timedelta] = None,
+        inputs: Optional[dict[str, "_models._models.TypedAssetReference"]] = None,
+        outputs: Optional[dict[str, "_models._models.TypedAssetReference"]] = None,
+        current_attempt_id: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunDetailsWarning(_Model):
+    """A warning that occurred during a run.
+
+    :ivar source: The source of the warning.
+    :vartype source: str
+    :ivar message: The warning message.
+    :vartype message: str
+    """
+
+    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source of the warning."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warning message."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: Optional[str] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunEndpointSetting(_Model):
+    """Interactive endpoint setting on a run service.
+
+    :ivar type: Endpoint type.
+    :vartype type: str
+    :ivar port: Port the endpoint listens on.
+    :vartype port: int
+    :ivar ssl_thumbprint: SSL thumbprint for the endpoint.
+    :vartype ssl_thumbprint: str
+    :ivar endpoint: Endpoint URL.
+    :vartype endpoint: str
+    :ivar proxy_endpoint: Proxy endpoint URL.
+    :vartype proxy_endpoint: str
+    :ivar status: Status of the endpoint.
+    :vartype status: str
+    :ivar error_message: Error message if the endpoint failed to start.
+    :vartype error_message: str
+    :ivar enabled: Whether the endpoint is enabled.
+    :vartype enabled: bool
+    :ivar properties: Additional endpoint properties.
+    :vartype properties: dict[str, str]
+    :ivar nodes: Nodes on which the endpoint is exposed.
+    :vartype nodes: str
+    """
+
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint type."""
+    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Port the endpoint listens on."""
+    ssl_thumbprint: Optional[str] = rest_field(
+        name="sslThumbprint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SSL thumbprint for the endpoint."""
+    endpoint: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint URL."""
+    proxy_endpoint: Optional[str] = rest_field(
+        name="proxyEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Proxy endpoint URL."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Status of the endpoint."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Error message if the endpoint failed to start."""
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the endpoint is enabled."""
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional endpoint properties."""
+    nodes: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Nodes on which the endpoint is exposed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        port: Optional[int] = None,
+        ssl_thumbprint: Optional[str] = None,
+        endpoint: Optional[str] = None,
+        proxy_endpoint: Optional[str] = None,
+        status: Optional[str] = None,
+        error_message: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        properties: Optional[dict[str, str]] = None,
+        nodes: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunErrorResponse(_Model):
+    """Standard error response payload returned for a run.
+
+    :ivar error: The top level error that occurred.
+    :vartype error: ~azure.ai.projects.models.RootError
+    :ivar correlation: Dictionary containing correlation details for the error.
+    :vartype correlation: dict[str, str]
+    :ivar environment: The hosting environment.
+    :vartype environment: str
+    :ivar location: The Azure region.
+    :vartype location: str
+    :ivar time: The time in UTC when the error occurred.
+    :vartype time: ~datetime.datetime
+    :ivar component_name: Component name where the error originated or was encountered.
+    :vartype component_name: str
+    """
+
+    error: Optional["_models.RootError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The top level error that occurred."""
+    correlation: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Dictionary containing correlation details for the error."""
+    environment: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The hosting environment."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure region."""
+    time: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time in UTC when the error occurred."""
+    component_name: Optional[str] = rest_field(
+        name="componentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Component name where the error originated or was encountered."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.RootError"] = None,
+        correlation: Optional[dict[str, str]] = None,
+        environment: Optional[str] = None,
+        location: Optional[str] = None,
+        time: Optional[datetime.datetime] = None,
+        component_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunServiceInstances(_Model):
+    """Map of service instances running on a job's node, keyed by service name.
+
+    :ivar instances: Service instances running on the node, keyed by service name.
+    :vartype instances: dict[str, ~azure.ai.projects.models.ServiceInstance]
+    """
+
+    instances: Optional[dict[str, "_models.ServiceInstance"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Service instances running on the node, keyed by service name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        instances: Optional[dict[str, "_models.ServiceInstance"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunTypeV2(_Model):
+    """Run type categorization.
+
+    :ivar orchestrator: Orchestrator that produced the run.
+    :vartype orchestrator: str
+    :ivar traits: Traits associated with the run.
+    :vartype traits: list[str]
+    :ivar attribution: Attribution of the run.
+    :vartype attribution: str
+    :ivar compute_type: Compute type used by the run.
+    :vartype compute_type: str
+    """
+
+    orchestrator: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Orchestrator that produced the run."""
+    traits: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Traits associated with the run."""
+    attribution: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Attribution of the run."""
+    compute_type: Optional[str] = rest_field(
+        name="computeType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Compute type used by the run."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        orchestrator: Optional[str] = None,
+        traits: Optional[list[str]] = None,
+        attribution: Optional[str] = None,
+        compute_type: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunUser(_Model):
+    """Identity of a user or service principal that created or modified a run.
+
+    :ivar user_object_id: A user or service principal's object ID.
+    :vartype user_object_id: str
+    :ivar user_pu_id: A user or service principal's PuID.
+    :vartype user_pu_id: str
+    :ivar user_idp: A user identity provider.
+    :vartype user_idp: str
+    :ivar user_alt_sec_id: A user alternate sec id.
+    :vartype user_alt_sec_id: str
+    :ivar user_iss: The issuer which issued the token for this user.
+    :vartype user_iss: str
+    :ivar user_tenant_id: A user or service principal's tenant ID.
+    :vartype user_tenant_id: str
+    :ivar user_name: A user's full name or a service principal's app ID.
+    :vartype user_name: str
+    """
+
+    user_object_id: Optional[str] = rest_field(
+        name="userObjectId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A user or service principal's object ID."""
+    user_pu_id: Optional[str] = rest_field(name="userPuId", visibility=["read", "create", "update", "delete", "query"])
+    """A user or service principal's PuID."""
+    user_idp: Optional[str] = rest_field(name="userIdp", visibility=["read", "create", "update", "delete", "query"])
+    """A user identity provider."""
+    user_alt_sec_id: Optional[str] = rest_field(
+        name="userAltSecId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A user alternate sec id."""
+    user_iss: Optional[str] = rest_field(name="userIss", visibility=["read", "create", "update", "delete", "query"])
+    """The issuer which issued the token for this user."""
+    user_tenant_id: Optional[str] = rest_field(
+        name="userTenantId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A user or service principal's tenant ID."""
+    user_name: Optional[str] = rest_field(name="userName", visibility=["read", "create", "update", "delete", "query"])
+    """A user's full name or a service principal's app ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_object_id: Optional[str] = None,
+        user_pu_id: Optional[str] = None,
+        user_idp: Optional[str] = None,
+        user_alt_sec_id: Optional[str] = None,
+        user_iss: Optional[str] = None,
+        user_tenant_id: Optional[str] = None,
+        user_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SASCredentials(BaseCredentials, discriminator="SAS"):
     """Shared Access Signature (SAS) credential definition.
 
@@ -12721,6 +15026,59 @@ class ScheduleRun(_Model):
         *,
         schedule_id: str,
         trigger_time: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ServiceInstance(_Model):
+    """Runtime information about a single interactive service associated with a job's node.
+
+    :ivar type: The service type.
+    :vartype type: str
+    :ivar port: The port the service is listening on.
+    :vartype port: int
+    :ivar status: The current status of the service.
+    :vartype status: str
+    :ivar error: Error details if the service failed to start.
+    :vartype error: ~azure.ai.projects.models.JobErrorResponse
+    :ivar endpoint: Endpoint URL used to connect to the service.
+    :vartype endpoint: str
+    :ivar properties: Additional service-specific properties.
+    :vartype properties: dict[str, str]
+    """
+
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service type."""
+    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The port the service is listening on."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current status of the service."""
+    error: Optional["_models.JobErrorResponse"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error details if the service failed to start."""
+    endpoint: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint URL used to connect to the service."""
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional service-specific properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        port: Optional[int] = None,
+        status: Optional[str] = None,
+        error: Optional["_models.JobErrorResponse"] = None,
+        endpoint: Optional[str] = None,
+        properties: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -13399,6 +15757,39 @@ class StructuredOutputDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SystemData(_Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource.
+    :vartype created_by_type: str
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource.
+    :vartype last_modified_by_type: str
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The identity that created the resource."""
+    created_by_type: Optional[str] = rest_field(name="createdByType", visibility=["read"])
+    """The type of identity that created the resource."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The timestamp of resource creation (UTC)."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    """The identity that last modified the resource."""
+    last_modified_by_type: Optional[str] = rest_field(name="lastModifiedByType", visibility=["read"])
+    """The type of identity that last modified the resource."""
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp of resource last modification (UTC)."""
+
+
 class SystemDataV3(_Model):
     """System metadata for a resource.
 
@@ -13587,6 +15978,49 @@ class TelemetryConfig(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class TensorFlowDistribution(DistributionConfiguration, discriminator="TensorFlow"):
+    """TensorFlow distribution configuration.
+
+    :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
+     is "TensorFlow".
+    :vartype distribution_type: str
+    :ivar worker_count: Number of workers.
+    :vartype worker_count: int
+    :ivar parameter_server_count: Number of parameter server tasks.
+    :vartype parameter_server_count: int
+    """
+
+    distribution_type: Literal["TensorFlow"] = rest_discriminator(name="distributionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the type of distribution framework. Required. Default value is \"TensorFlow\"."""
+    worker_count: Optional[int] = rest_field(
+        name="workerCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of workers."""
+    parameter_server_count: Optional[int] = rest_field(
+        name="parameterServerCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of parameter server tasks."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        worker_count: Optional[int] = None,
+        parameter_server_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.distribution_type = "TensorFlow"  # type: ignore
 
 
 class TextResponseFormat(_Model):
@@ -14705,6 +17139,39 @@ class TracesEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discrimin
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = EvaluatorGenerationJobSourceType.TRACES  # type: ignore
+
+
+class TypedAssetReference(_Model):
+    """Reference to a typed asset (data, model, etc.) consumed or produced by a run.
+
+    :ivar asset_id: The asset id.
+    :vartype asset_id: str
+    :ivar type: The asset type.
+    :vartype type: str
+    """
+
+    asset_id: Optional[str] = rest_field(name="assetId", visibility=["read", "create", "update", "delete", "query"])
+    """The asset id."""
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The asset type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        asset_id: Optional[str] = None,
+        type: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class UpdateModelVersionRequest(_Model):
