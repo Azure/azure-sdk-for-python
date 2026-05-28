@@ -20,7 +20,7 @@ class TestBillingManagementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_customer(self, resource_group):
+    def test_policies_get_by_customer(self, resource_group):
         response = self.client.policies.get_by_customer(
             billing_account_name="str",
             billing_profile_name="str",
@@ -34,7 +34,7 @@ class TestBillingManagementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_by_customer(self, resource_group):
+    def test_policies_begin_create_or_update_by_customer(self, resource_group):
         response = self.client.policies.begin_create_or_update_by_customer(
             billing_account_name="str",
             billing_profile_name="str",
@@ -66,7 +66,7 @@ class TestBillingManagementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_billing_profile(self, resource_group):
+    def test_policies_get_by_billing_profile(self, resource_group):
         response = self.client.policies.get_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -78,7 +78,7 @@ class TestBillingManagementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_by_billing_profile(self, resource_group):
+    def test_policies_begin_create_or_update_by_billing_profile(self, resource_group):
         response = self.client.policies.begin_create_or_update_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -118,7 +118,7 @@ class TestBillingManagementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_customer_at_billing_account(self, resource_group):
+    def test_policies_get_by_customer_at_billing_account(self, resource_group):
         response = self.client.policies.get_by_customer_at_billing_account(
             billing_account_name="str",
             customer_name="str",
@@ -130,7 +130,7 @@ class TestBillingManagementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_by_customer_at_billing_account(self, resource_group):
+    def test_policies_begin_create_or_update_by_customer_at_billing_account(self, resource_group):
         response = self.client.policies.begin_create_or_update_by_customer_at_billing_account(
             billing_account_name="str",
             customer_name="str",
@@ -161,7 +161,7 @@ class TestBillingManagementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_billing_account(self, resource_group):
+    def test_policies_get_by_billing_account(self, resource_group):
         response = self.client.policies.get_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -172,7 +172,7 @@ class TestBillingManagementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_by_billing_account(self, resource_group):
+    def test_policies_begin_create_or_update_by_billing_account(self, resource_group):
         response = self.client.policies.begin_create_or_update_by_billing_account(
             billing_account_name="str",
             parameters={
@@ -209,7 +209,7 @@ class TestBillingManagementPoliciesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_subscription(self, resource_group):
+    def test_policies_get_by_subscription(self, resource_group):
         response = self.client.policies.get_by_subscription(
             api_version="2024-04-01",
         )

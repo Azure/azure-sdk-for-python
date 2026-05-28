@@ -20,7 +20,7 @@ class TestBillingManagementAddressOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_validate(self, resource_group):
+    def test_address_validate(self, resource_group):
         response = self.client.address.validate(
             parameters={
                 "addressLine1": "str",

@@ -20,7 +20,7 @@ class TestBillingManagementTransactionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_customer(self, resource_group):
+    def test_transactions_list_by_customer(self, resource_group):
         response = self.client.transactions.list_by_customer(
             billing_account_name="str",
             billing_profile_name="str",
@@ -36,7 +36,7 @@ class TestBillingManagementTransactionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_invoice_section(self, resource_group):
+    def test_transactions_list_by_invoice_section(self, resource_group):
         response = self.client.transactions.list_by_invoice_section(
             billing_account_name="str",
             billing_profile_name="str",
@@ -52,7 +52,7 @@ class TestBillingManagementTransactionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_billing_profile(self, resource_group):
+    def test_transactions_list_by_billing_profile(self, resource_group):
         response = self.client.transactions.list_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -67,7 +67,7 @@ class TestBillingManagementTransactionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_invoice(self, resource_group):
+    def test_transactions_list_by_invoice(self, resource_group):
         response = self.client.transactions.list_by_invoice(
             billing_account_name="str",
             invoice_name="str",
@@ -79,7 +79,7 @@ class TestBillingManagementTransactionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_transactions_download_by_invoice(self, resource_group):
+    def test_transactions_begin_transactions_download_by_invoice(self, resource_group):
         response = self.client.transactions.begin_transactions_download_by_invoice(
             billing_account_name="str",
             invoice_name="str",
@@ -91,7 +91,7 @@ class TestBillingManagementTransactionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_transaction_summary_by_invoice(self, resource_group):
+    def test_transactions_get_transaction_summary_by_invoice(self, resource_group):
         response = self.client.transactions.get_transaction_summary_by_invoice(
             billing_account_name="str",
             invoice_name="str",

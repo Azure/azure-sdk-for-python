@@ -20,7 +20,7 @@ class TestBillingManagementTransfersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_transfers_get(self, resource_group):
         response = self.client.transfers.get(
             billing_account_name="str",
             billing_profile_name="str",
@@ -34,7 +34,7 @@ class TestBillingManagementTransfersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_initiate(self, resource_group):
+    def test_transfers_initiate(self, resource_group):
         response = self.client.transfers.initiate(
             billing_account_name="str",
             billing_profile_name="str",
@@ -49,7 +49,7 @@ class TestBillingManagementTransfersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel(self, resource_group):
+    def test_transfers_cancel(self, resource_group):
         response = self.client.transfers.cancel(
             billing_account_name="str",
             billing_profile_name="str",
@@ -63,7 +63,7 @@ class TestBillingManagementTransfersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_transfers_list(self, resource_group):
         response = self.client.transfers.list(
             billing_account_name="str",
             billing_profile_name="str",

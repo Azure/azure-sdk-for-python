@@ -20,7 +20,7 @@ class TestBillingManagementPaymentMethodsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_billing_profile(self, resource_group):
+    def test_payment_methods_list_by_billing_profile(self, resource_group):
         response = self.client.payment_methods.list_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -32,7 +32,7 @@ class TestBillingManagementPaymentMethodsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_billing_profile(self, resource_group):
+    def test_payment_methods_get_by_billing_profile(self, resource_group):
         response = self.client.payment_methods.get_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -45,7 +45,7 @@ class TestBillingManagementPaymentMethodsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_billing_account(self, resource_group):
+    def test_payment_methods_list_by_billing_account(self, resource_group):
         response = self.client.payment_methods.list_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -56,7 +56,7 @@ class TestBillingManagementPaymentMethodsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_billing_account(self, resource_group):
+    def test_payment_methods_get_by_billing_account(self, resource_group):
         response = self.client.payment_methods.get_by_billing_account(
             billing_account_name="str",
             payment_method_name="str",
@@ -68,7 +68,7 @@ class TestBillingManagementPaymentMethodsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_user(self, resource_group):
+    def test_payment_methods_list_by_user(self, resource_group):
         response = self.client.payment_methods.list_by_user(
             api_version="2024-04-01",
         )
@@ -78,7 +78,7 @@ class TestBillingManagementPaymentMethodsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete_by_user(self, resource_group):
+    def test_payment_methods_delete_by_user(self, resource_group):
         response = self.client.payment_methods.delete_by_user(
             payment_method_name="str",
             api_version="2024-04-01",
@@ -89,7 +89,7 @@ class TestBillingManagementPaymentMethodsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_user(self, resource_group):
+    def test_payment_methods_get_by_user(self, resource_group):
         response = self.client.payment_methods.get_by_user(
             payment_method_name="str",
             api_version="2024-04-01",

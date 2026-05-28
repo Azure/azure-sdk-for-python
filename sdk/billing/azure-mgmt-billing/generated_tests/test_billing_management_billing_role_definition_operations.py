@@ -20,7 +20,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_billing_profile(self, resource_group):
+    def test_billing_role_definition_get_by_billing_profile(self, resource_group):
         response = self.client.billing_role_definition.get_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -33,7 +33,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_billing_profile(self, resource_group):
+    def test_billing_role_definition_list_by_billing_profile(self, resource_group):
         response = self.client.billing_role_definition.list_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -45,7 +45,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_customer(self, resource_group):
+    def test_billing_role_definition_get_by_customer(self, resource_group):
         response = self.client.billing_role_definition.get_by_customer(
             billing_account_name="str",
             billing_profile_name="str",
@@ -59,7 +59,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_customer(self, resource_group):
+    def test_billing_role_definition_list_by_customer(self, resource_group):
         response = self.client.billing_role_definition.list_by_customer(
             billing_account_name="str",
             billing_profile_name="str",
@@ -72,7 +72,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_invoice_section(self, resource_group):
+    def test_billing_role_definition_get_by_invoice_section(self, resource_group):
         response = self.client.billing_role_definition.get_by_invoice_section(
             billing_account_name="str",
             billing_profile_name="str",
@@ -86,7 +86,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_invoice_section(self, resource_group):
+    def test_billing_role_definition_list_by_invoice_section(self, resource_group):
         response = self.client.billing_role_definition.list_by_invoice_section(
             billing_account_name="str",
             billing_profile_name="str",
@@ -99,7 +99,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_billing_account(self, resource_group):
+    def test_billing_role_definition_get_by_billing_account(self, resource_group):
         response = self.client.billing_role_definition.get_by_billing_account(
             billing_account_name="str",
             role_definition_name="str",
@@ -111,7 +111,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_billing_account(self, resource_group):
+    def test_billing_role_definition_list_by_billing_account(self, resource_group):
         response = self.client.billing_role_definition.list_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -122,7 +122,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_department(self, resource_group):
+    def test_billing_role_definition_get_by_department(self, resource_group):
         response = self.client.billing_role_definition.get_by_department(
             billing_account_name="str",
             department_name="str",
@@ -135,7 +135,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_department(self, resource_group):
+    def test_billing_role_definition_list_by_department(self, resource_group):
         response = self.client.billing_role_definition.list_by_department(
             billing_account_name="str",
             department_name="str",
@@ -147,7 +147,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_enrollment_account(self, resource_group):
+    def test_billing_role_definition_get_by_enrollment_account(self, resource_group):
         response = self.client.billing_role_definition.get_by_enrollment_account(
             billing_account_name="str",
             enrollment_account_name="str",
@@ -160,7 +160,7 @@ class TestBillingManagementBillingRoleDefinitionOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_enrollment_account(self, resource_group):
+    def test_billing_role_definition_list_by_enrollment_account(self, resource_group):
         response = self.client.billing_role_definition.list_by_enrollment_account(
             billing_account_name="str",
             enrollment_account_name="str",

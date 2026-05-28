@@ -21,7 +21,7 @@ class TestBillingManagementAgreementsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_agreements_get(self, resource_group):
         response = await self.client.agreements.get(
             billing_account_name="str",
             agreement_name="str",
@@ -33,7 +33,7 @@ class TestBillingManagementAgreementsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_billing_account(self, resource_group):
+    async def test_agreements_list_by_billing_account(self, resource_group):
         response = self.client.agreements.list_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",

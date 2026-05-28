@@ -21,7 +21,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_billing_account(self, resource_group):
+    async def test_billing_permissions_list_by_billing_account(self, resource_group):
         response = self.client.billing_permissions.list_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -32,7 +32,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_billing_profile(self, resource_group):
+    async def test_billing_permissions_list_by_billing_profile(self, resource_group):
         response = self.client.billing_permissions.list_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -44,7 +44,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_access_by_billing_profile(self, resource_group):
+    async def test_billing_permissions_check_access_by_billing_profile(self, resource_group):
         response = await self.client.billing_permissions.check_access_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -57,7 +57,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_customer(self, resource_group):
+    async def test_billing_permissions_list_by_customer(self, resource_group):
         response = self.client.billing_permissions.list_by_customer(
             billing_account_name="str",
             billing_profile_name="str",
@@ -70,7 +70,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_access_by_customer(self, resource_group):
+    async def test_billing_permissions_check_access_by_customer(self, resource_group):
         response = await self.client.billing_permissions.check_access_by_customer(
             billing_account_name="str",
             billing_profile_name="str",
@@ -84,7 +84,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_invoice_section(self, resource_group):
+    async def test_billing_permissions_list_by_invoice_section(self, resource_group):
         response = self.client.billing_permissions.list_by_invoice_section(
             billing_account_name="str",
             billing_profile_name="str",
@@ -97,7 +97,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_access_by_invoice_section(self, resource_group):
+    async def test_billing_permissions_check_access_by_invoice_section(self, resource_group):
         response = await self.client.billing_permissions.check_access_by_invoice_section(
             billing_account_name="str",
             billing_profile_name="str",
@@ -111,7 +111,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_access_by_billing_account(self, resource_group):
+    async def test_billing_permissions_check_access_by_billing_account(self, resource_group):
         response = await self.client.billing_permissions.check_access_by_billing_account(
             billing_account_name="str",
             parameters={"actions": ["str"]},
@@ -123,7 +123,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_customer_at_billing_account(self, resource_group):
+    async def test_billing_permissions_list_by_customer_at_billing_account(self, resource_group):
         response = self.client.billing_permissions.list_by_customer_at_billing_account(
             billing_account_name="str",
             customer_name="str",
@@ -135,7 +135,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_department(self, resource_group):
+    async def test_billing_permissions_list_by_department(self, resource_group):
         response = self.client.billing_permissions.list_by_department(
             billing_account_name="str",
             department_name="str",
@@ -147,7 +147,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_access_by_department(self, resource_group):
+    async def test_billing_permissions_check_access_by_department(self, resource_group):
         response = await self.client.billing_permissions.check_access_by_department(
             billing_account_name="str",
             department_name="str",
@@ -160,7 +160,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_enrollment_account(self, resource_group):
+    async def test_billing_permissions_list_by_enrollment_account(self, resource_group):
         response = self.client.billing_permissions.list_by_enrollment_account(
             billing_account_name="str",
             enrollment_account_name="str",
@@ -172,7 +172,7 @@ class TestBillingManagementBillingPermissionsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_access_by_enrollment_account(self, resource_group):
+    async def test_billing_permissions_check_access_by_enrollment_account(self, resource_group):
         response = await self.client.billing_permissions.check_access_by_enrollment_account(
             billing_account_name="str",
             enrollment_account_name="str",

@@ -21,7 +21,7 @@ class TestBillingManagementAddressOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_validate(self, resource_group):
+    async def test_address_validate(self, resource_group):
         response = await self.client.address.validate(
             parameters={
                 "addressLine1": "str",

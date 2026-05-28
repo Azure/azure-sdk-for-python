@@ -1,5 +1,9 @@
 # Release History
 
+## 7.1.0 (2026-05-28)
+
+skip changelog generation
+
 ## 7.0.0 (2024-09-04)
 
 ### Features Added

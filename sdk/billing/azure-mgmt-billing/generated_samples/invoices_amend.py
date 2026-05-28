@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/billing/resource-manager/Microsoft.Billing/stable/2024-04-01/examples/invoicesAmend.json
+# x-ms-original-file: specification/billing/resource-manager/Microsoft.Billing/Billing/stable/2024-04-01/examples/invoicesAmend.json
 if __name__ == "__main__":
     main()

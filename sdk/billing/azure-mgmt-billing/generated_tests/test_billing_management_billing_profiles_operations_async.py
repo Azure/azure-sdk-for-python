@@ -21,7 +21,7 @@ class TestBillingManagementBillingProfilesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_validate_delete_eligibility(self, resource_group):
+    async def test_billing_profiles_validate_delete_eligibility(self, resource_group):
         response = await self.client.billing_profiles.validate_delete_eligibility(
             billing_account_name="str",
             billing_profile_name="str",
@@ -33,7 +33,7 @@ class TestBillingManagementBillingProfilesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_billing_profiles_begin_delete(self, resource_group):
         response = await (
             await self.client.billing_profiles.begin_delete(
                 billing_account_name="str",
@@ -47,7 +47,7 @@ class TestBillingManagementBillingProfilesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_billing_profiles_get(self, resource_group):
         response = await self.client.billing_profiles.get(
             billing_account_name="str",
             billing_profile_name="str",
@@ -59,7 +59,7 @@ class TestBillingManagementBillingProfilesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_billing_profiles_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.billing_profiles.begin_create_or_update(
                 billing_account_name="str",
@@ -185,7 +185,7 @@ class TestBillingManagementBillingProfilesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_billing_account(self, resource_group):
+    async def test_billing_profiles_list_by_billing_account(self, resource_group):
         response = self.client.billing_profiles.list_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",

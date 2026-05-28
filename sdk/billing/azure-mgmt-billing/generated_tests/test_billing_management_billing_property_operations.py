@@ -20,7 +20,7 @@ class TestBillingManagementBillingPropertyOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_billing_property_get(self, resource_group):
         response = self.client.billing_property.get(
             api_version="2024-04-01",
         )
@@ -30,7 +30,7 @@ class TestBillingManagementBillingPropertyOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_billing_property_update(self, resource_group):
         response = self.client.billing_property.update(
             parameters={
                 "id": "str",

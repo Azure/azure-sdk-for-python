@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,14 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class AcceptTransferRequest(_serialization.Model):
@@ -28,7 +29,7 @@ class AcceptTransferRequest(_serialization.Model):
         "product_details": {"key": "properties.productDetails", "type": "[ProductDetails]"},
     }
 
-    def __init__(self, *, product_details: Optional[List["_models.ProductDetails"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, product_details: Optional[list["_models.ProductDetails"]] = None, **kwargs: Any) -> None:
         """
         :keyword product_details: Request parameters to accept transfer.
         :paramtype product_details: list[~azure.mgmt.billing.models.ProductDetails]
@@ -37,7 +38,7 @@ class AcceptTransferRequest(_serialization.Model):
         self.product_details = product_details
 
 
-class AddressDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class AddressDetails(_serialization.Model):
     """Address details.
 
     All required parameters must be populated in order to send to server.
@@ -196,9 +197,9 @@ class AddressValidationResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.suggested_addresses = None
-        self.validation_message = None
+        self.status: Optional[Union[str, "_models.AddressValidationStatus"]] = None
+        self.suggested_addresses: Optional[list["_models.AddressDetails"]] = None
+        self.validation_message: Optional[str] = None
 
 
 class Resource(_serialization.Model):
@@ -207,7 +208,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -236,10 +237,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ProxyResource(Resource):
@@ -249,7 +250,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -268,7 +269,7 @@ class ProxyResourceWithTags(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -299,7 +300,7 @@ class ProxyResourceWithTags(ProxyResource):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Dictionary of metadata associated with the resource. It may not be populated for
          all resource types. Maximum key/value length supported of 256 characters. Keys/value should not
@@ -316,7 +317,7 @@ class Agreement(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -353,7 +354,7 @@ class Agreement(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AgreementProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -393,8 +394,8 @@ class AgreementListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.Agreement"]] = None
 
 
 class AgreementProperties(_serialization.Model):
@@ -458,16 +459,16 @@ class AgreementProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.acceptance_mode = None
-        self.agreement_link = None
-        self.billing_profile_info = None
-        self.category = None
-        self.display_name = None
-        self.effective_date = None
-        self.expiration_date = None
-        self.participants = None
-        self.status = None
-        self.lead_billing_account_name = None
+        self.acceptance_mode: Optional[Union[str, "_models.AcceptanceMode"]] = None
+        self.agreement_link: Optional[str] = None
+        self.billing_profile_info: Optional[list["_models.BillingProfileInfo"]] = None
+        self.category: Optional[Union[str, "_models.Category"]] = None
+        self.display_name: Optional[str] = None
+        self.effective_date: Optional[datetime.datetime] = None
+        self.expiration_date: Optional[datetime.datetime] = None
+        self.participants: Optional[list["_models.Participant"]] = None
+        self.status: Optional[str] = None
+        self.lead_billing_account_name: Optional[str] = None
 
 
 class Amount(_serialization.Model):
@@ -495,8 +496,8 @@ class Amount(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.currency = None
-        self.value = None
+        self.currency: Optional[str] = None
+        self.value: Optional[float] = None
 
 
 class AppliedScopeProperties(_serialization.Model):
@@ -564,7 +565,7 @@ class AssociatedTenant(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -601,7 +602,7 @@ class AssociatedTenant(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AssociatedTenantProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -641,8 +642,8 @@ class AssociatedTenantListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.AssociatedTenant"]] = None
 
 
 class AssociatedTenantProperties(_serialization.Model):
@@ -717,12 +718,12 @@ class AssociatedTenantProperties(_serialization.Model):
          ~azure.mgmt.billing.models.ProvisioningTenantState
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.display_name = display_name
         self.tenant_id = tenant_id
         self.billing_management_state = billing_management_state
         self.provisioning_management_state = provisioning_management_state
-        self.provisioning_billing_request_id = None
+        self.provisioning_billing_request_id: Optional[str] = None
 
 
 class AvailableBalance(ProxyResourceWithTags):
@@ -732,7 +733,7 @@ class AvailableBalance(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -770,7 +771,7 @@ class AvailableBalance(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AvailableBalanceProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -831,7 +832,7 @@ class AvailableBalanceProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.amount = amount
-        self.payments_on_account = None
+        self.payments_on_account: Optional[list["_models.PaymentOnAccount"]] = None
         self.total_payments_on_account = total_payments_on_account
 
 
@@ -932,7 +933,7 @@ class BillingAccount(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -969,7 +970,7 @@ class BillingAccount(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.BillingAccountProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -1009,8 +1010,8 @@ class BillingAccountListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.BillingAccount"]] = None
 
 
 class BillingAccountPatch(ProxyResourceWithTags):
@@ -1019,7 +1020,7 @@ class BillingAccountPatch(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1056,7 +1057,7 @@ class BillingAccountPatch(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.BillingAccountProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -1078,7 +1079,7 @@ class BillingAccountPolicy(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1115,7 +1116,7 @@ class BillingAccountPolicy(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.BillingAccountPolicyProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -1182,7 +1183,7 @@ class BillingAccountPolicyProperties(_serialization.Model):
         marketplace_purchases: Optional[Union[str, "_models.MarketplacePurchasesPolicy"]] = None,
         reservation_purchases: Optional[Union[str, "_models.ReservationPurchasesPolicy"]] = None,
         savings_plan_purchases: Optional[Union[str, "_models.SavingsPlanPurchasesPolicy"]] = None,
-        policies: Optional[List["_models.PolicySummary"]] = None,
+        policies: Optional[list["_models.PolicySummary"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1203,7 +1204,7 @@ class BillingAccountPolicyProperties(_serialization.Model):
         :paramtype policies: list[~azure.mgmt.billing.models.PolicySummary]
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.enterprise_agreement_policies = enterprise_agreement_policies
         self.marketplace_purchases = marketplace_purchases
         self.reservation_purchases = reservation_purchases
@@ -1282,7 +1283,7 @@ class BillingAccountPolicyPropertiesEnterpriseAgreementPolicies(
     """
 
 
-class BillingAccountProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BillingAccountProperties(_serialization.Model):
     """A billing account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1387,7 +1388,7 @@ class BillingAccountProperties(_serialization.Model):  # pylint: disable=too-man
         primary_billing_tenant_id: Optional[str] = None,
         sold_to: Optional["_models.BillingAccountPropertiesSoldTo"] = None,
         registration_number: Optional["_models.BillingAccountPropertiesRegistrationNumber"] = None,
-        tax_ids: Optional[List["_models.TaxIdentifier"]] = None,
+        tax_ids: Optional[list["_models.TaxIdentifier"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1419,12 +1420,12 @@ class BillingAccountProperties(_serialization.Model):  # pylint: disable=too-man
         :paramtype tax_ids: list[~azure.mgmt.billing.models.TaxIdentifier]
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.account_status = None
-        self.account_type = None
-        self.account_sub_type = None
-        self.account_status_reason_code = None
-        self.agreement_type = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.account_status: Optional[Union[str, "_models.AccountStatus"]] = None
+        self.account_type: Optional[Union[str, "_models.AccountType"]] = None
+        self.account_sub_type: Optional[Union[str, "_models.AccountSubType"]] = None
+        self.account_status_reason_code: Optional[Union[str, "_models.BillingAccountStatusReasonCode"]] = None
+        self.agreement_type: Optional[Union[str, "_models.AgreementType"]] = None
         self.display_name = display_name
         self.enrollment_details = enrollment_details
         self.has_read_access = has_read_access
@@ -1433,12 +1434,12 @@ class BillingAccountProperties(_serialization.Model):  # pylint: disable=too-man
         self.primary_billing_tenant_id = primary_billing_tenant_id
         self.sold_to = sold_to
         self.registration_number = registration_number
-        self.billing_relationship_types = None
-        self.qualifications = None
+        self.billing_relationship_types: Optional[list[Union[str, "_models.BillingRelationshipType"]]] = None
+        self.qualifications: Optional[list[str]] = None
         self.tax_ids = tax_ids
 
 
-class EnrollmentDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class EnrollmentDetails(_serialization.Model):
     """The properties of an enrollment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1539,24 +1540,22 @@ class EnrollmentDetails(_serialization.Model):  # pylint: disable=too-many-insta
         super().__init__(**kwargs)
         self.start_date = start_date
         self.end_date = end_date
-        self.currency = None
-        self.channel = None
-        self.language = None
-        self.country_code = None
-        self.billing_cycle = None
-        self.extended_term_option = None
-        self.support_level = None
-        self.support_coverage = None
-        self.cloud = None
+        self.currency: Optional[str] = None
+        self.channel: Optional[str] = None
+        self.language: Optional[str] = None
+        self.country_code: Optional[str] = None
+        self.billing_cycle: Optional[str] = None
+        self.extended_term_option: Optional[Union[str, "_models.ExtendedTermOption"]] = None
+        self.support_level: Optional[Union[str, "_models.SupportLevel"]] = None
+        self.support_coverage: Optional[str] = None
+        self.cloud: Optional[str] = None
         self.po_number = po_number
-        self.markup_status = None
+        self.markup_status: Optional[Union[str, "_models.MarkupStatus"]] = None
         self.indirect_relationship_info = indirect_relationship_info
-        self.invoice_recipient = None
+        self.invoice_recipient: Optional[str] = None
 
 
-class BillingAccountPropertiesEnrollmentDetails(
-    EnrollmentDetails
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class BillingAccountPropertiesEnrollmentDetails(EnrollmentDetails):  # pylint: disable=name-too-long
     """The properties of an enrollment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1632,8 +1631,8 @@ class RegistrationNumber(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.id = id
-        self.required = None
-        self.type = None
+        self.required: Optional[bool] = None
+        self.type: Optional[list[str]] = None
 
 
 class BillingAccountPropertiesRegistrationNumber(RegistrationNumber):  # pylint: disable=name-too-long
@@ -1651,7 +1650,7 @@ class BillingAccountPropertiesRegistrationNumber(RegistrationNumber):  # pylint:
     """
 
 
-class BillingAccountPropertiesSoldTo(AddressDetails):  # pylint: disable=too-many-instance-attributes
+class BillingAccountPropertiesSoldTo(AddressDetails):
     """The address of the individual or organization that is responsible for the billing account.
 
     All required parameters must be populated in order to send to server.
@@ -1713,8 +1712,8 @@ class BillingPermission(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.actions = None
-        self.not_actions = None
+        self.actions: Optional[list[str]] = None
+        self.not_actions: Optional[list[str]] = None
 
 
 class BillingPermissionListResult(_serialization.Model):
@@ -1741,8 +1740,8 @@ class BillingPermissionListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.BillingPermission"]] = None
 
 
 class BillingPlanInformation(_serialization.Model):
@@ -1772,7 +1771,7 @@ class BillingPlanInformation(_serialization.Model):
         pricing_currency_total: Optional["_models.Price"] = None,
         start_date: Optional[datetime.date] = None,
         next_payment_due_date: Optional[datetime.date] = None,
-        transactions: Optional[List["_models.PaymentDetail"]] = None,
+        transactions: Optional[list["_models.PaymentDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1799,7 +1798,7 @@ class BillingProfile(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1836,7 +1835,7 @@ class BillingProfile(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.BillingProfileProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -1934,8 +1933,8 @@ class BillingProfileListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.BillingProfile"]] = None
 
 
 class BillingProfilePolicy(ProxyResourceWithTags):
@@ -1944,7 +1943,7 @@ class BillingProfilePolicy(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1981,7 +1980,7 @@ class BillingProfilePolicy(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.BillingProfilePolicyProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -2060,7 +2059,7 @@ class BillingProfilePolicyProperties(_serialization.Model):
         reservation_purchases: Optional[Union[str, "_models.ReservationPurchasesPolicy"]] = None,
         savings_plan_purchases: Optional[Union[str, "_models.SavingsPlanPurchasesPolicy"]] = None,
         view_charges: Optional[Union[str, "_models.ViewChargesPolicy"]] = None,
-        policies: Optional[List["_models.PolicySummary"]] = None,
+        policies: Optional[list["_models.PolicySummary"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2090,7 +2089,7 @@ class BillingProfilePolicyProperties(_serialization.Model):
         :paramtype policies: list[~azure.mgmt.billing.models.PolicySummary]
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.enterprise_agreement_policies = enterprise_agreement_policies
         self.invoice_section_label_management = invoice_section_label_management
         self.marketplace_purchases = marketplace_purchases
@@ -2120,7 +2119,7 @@ class BillingProfilePolicyPropertiesEnterpriseAgreementPolicies(
     """
 
 
-class BillingProfileProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BillingProfileProperties(_serialization.Model):
     """A billing profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2242,14 +2241,14 @@ class BillingProfileProperties(_serialization.Model):  # pylint: disable=too-man
         *,
         bill_to: Optional["_models.BillingProfilePropertiesBillTo"] = None,
         display_name: Optional[str] = None,
-        enabled_azure_plans: Optional[List["_models.AzurePlan"]] = None,
+        enabled_azure_plans: Optional[list["_models.AzurePlan"]] = None,
         indirect_relationship_info: Optional["_models.BillingProfilePropertiesIndirectRelationshipInfo"] = None,
         invoice_email_opt_in: Optional[bool] = None,
-        invoice_recipients: Optional[List[str]] = None,
+        invoice_recipients: Optional[list[str]] = None,
         po_number: Optional[str] = None,
         ship_to: Optional["_models.BillingProfilePropertiesShipTo"] = None,
         sold_to: Optional["_models.BillingProfilePropertiesSoldTo"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         current_payment_term: Optional["_models.BillingProfilePropertiesCurrentPaymentTerm"] = None,
         **kwargs: Any
     ) -> None:
@@ -2289,32 +2288,32 @@ class BillingProfileProperties(_serialization.Model):  # pylint: disable=too-man
          ~azure.mgmt.billing.models.BillingProfilePropertiesCurrentPaymentTerm
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.billing_relationship_type = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.billing_relationship_type: Optional[Union[str, "_models.BillingRelationshipType"]] = None
         self.bill_to = bill_to
-        self.currency = None
+        self.currency: Optional[str] = None
         self.display_name = display_name
         self.enabled_azure_plans = enabled_azure_plans
-        self.has_read_access = None
+        self.has_read_access: Optional[bool] = None
         self.indirect_relationship_info = indirect_relationship_info
-        self.invoice_day = None
+        self.invoice_day: Optional[int] = None
         self.invoice_email_opt_in = invoice_email_opt_in
         self.invoice_recipients = invoice_recipients
         self.po_number = po_number
         self.ship_to = ship_to
         self.sold_to = sold_to
-        self.spending_limit = None
-        self.spending_limit_details = None
-        self.status = None
-        self.status_reason_code = None
-        self.system_id = None
+        self.spending_limit: Optional[Union[str, "_models.SpendingLimit"]] = None
+        self.spending_limit_details: Optional[list["_models.SpendingLimitDetails"]] = None
+        self.status: Optional[Union[str, "_models.BillingProfileStatus"]] = None
+        self.status_reason_code: Optional[Union[str, "_models.BillingProfileStatusReasonCode"]] = None
+        self.system_id: Optional[str] = None
         self.tags = tags
-        self.target_clouds = None
+        self.target_clouds: Optional[list[str]] = None
         self.current_payment_term = current_payment_term
-        self.other_payment_terms = None
+        self.other_payment_terms: Optional[list["_models.PaymentTerm"]] = None
 
 
-class BillingProfilePropertiesBillTo(AddressDetails):  # pylint: disable=too-many-instance-attributes
+class BillingProfilePropertiesBillTo(AddressDetails):
     """Billing address.
 
     All required parameters must be populated in order to send to server.
@@ -2400,7 +2399,7 @@ class PaymentTerm(_serialization.Model):
         self.term = term
         self.start_date = start_date
         self.end_date = end_date
-        self.is_default = None
+        self.is_default: Optional[bool] = None
 
 
 class BillingProfilePropertiesCurrentPaymentTerm(PaymentTerm):  # pylint: disable=name-too-long
@@ -2479,7 +2478,7 @@ class BillingProfilePropertiesIndirectRelationshipInfo(IndirectRelationshipInfo)
     """
 
 
-class BillingProfilePropertiesShipTo(AddressDetails):  # pylint: disable=too-many-instance-attributes
+class BillingProfilePropertiesShipTo(AddressDetails):
     """The default address where the products are shipped, or the services are being used. If a ship
     to is not specified for a product or a subscription, then this address will be used.
 
@@ -2518,7 +2517,7 @@ class BillingProfilePropertiesShipTo(AddressDetails):  # pylint: disable=too-man
     """
 
 
-class BillingProfilePropertiesSoldTo(AddressDetails):  # pylint: disable=too-many-instance-attributes
+class BillingProfilePropertiesSoldTo(AddressDetails):
     """The address of the individual or organization that is responsible for the billing account.
 
     All required parameters must be populated in order to send to server.
@@ -2562,7 +2561,7 @@ class BillingProperty(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2599,7 +2598,7 @@ class BillingProperty(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.BillingPropertyProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -2615,7 +2614,7 @@ class BillingProperty(ProxyResourceWithTags):
         self.properties = properties
 
 
-class BillingPropertyProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BillingPropertyProperties(_serialization.Model):
     """A billing property.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2859,45 +2858,45 @@ class BillingPropertyProperties(_serialization.Model):  # pylint: disable=too-ma
          ~azure.mgmt.billing.models.BillingPropertyPropertiesEnrollmentDetails
         """
         super().__init__(**kwargs)
-        self.billing_account_agreement_type = None
-        self.billing_account_display_name = None
-        self.billing_account_id = None
-        self.account_admin_notification_email_address = None
-        self.billing_account_sold_to_country = None
-        self.billing_account_status = None
-        self.billing_account_status_reason_code = None
-        self.billing_account_type = None
-        self.billing_account_sub_type = None
-        self.billing_currency = None
-        self.billing_profile_display_name = None
-        self.billing_profile_id = None
-        self.billing_profile_spending_limit = None
-        self.billing_profile_spending_limit_details = None
-        self.billing_profile_status = None
-        self.billing_profile_status_reason_code = None
-        self.billing_profile_payment_method_family = None
-        self.billing_profile_payment_method_type = None
-        self.billing_tenant_id = None
+        self.billing_account_agreement_type: Optional[Union[str, "_models.AgreementType"]] = None
+        self.billing_account_display_name: Optional[str] = None
+        self.billing_account_id: Optional[str] = None
+        self.account_admin_notification_email_address: Optional[str] = None
+        self.billing_account_sold_to_country: Optional[str] = None
+        self.billing_account_status: Optional[Union[str, "_models.AccountStatus"]] = None
+        self.billing_account_status_reason_code: Optional[Union[str, "_models.BillingAccountStatusReasonCode"]] = None
+        self.billing_account_type: Optional[Union[str, "_models.AccountType"]] = None
+        self.billing_account_sub_type: Optional[Union[str, "_models.AccountSubType"]] = None
+        self.billing_currency: Optional[str] = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_spending_limit: Optional[Union[str, "_models.SpendingLimit"]] = None
+        self.billing_profile_spending_limit_details: Optional[list["_models.SpendingLimitDetails"]] = None
+        self.billing_profile_status: Optional[Union[str, "_models.BillingProfileStatus"]] = None
+        self.billing_profile_status_reason_code: Optional[Union[str, "_models.BillingProfileStatusReasonCode"]] = None
+        self.billing_profile_payment_method_family: Optional[Union[str, "_models.PaymentMethodFamily"]] = None
+        self.billing_profile_payment_method_type: Optional[str] = None
+        self.billing_tenant_id: Optional[str] = None
         self.cost_center = cost_center
-        self.customer_display_name = None
-        self.customer_id = None
-        self.customer_status = None
-        self.invoice_section_display_name = None
-        self.invoice_section_id = None
-        self.invoice_section_status = None
-        self.invoice_section_status_reason_code = None
-        self.is_transitioned_billing_account = None
-        self.sku_description = None
-        self.sku_id = None
-        self.subscription_billing_status = None
-        self.subscription_billing_status_details = None
-        self.subscription_billing_type = None
+        self.customer_display_name: Optional[str] = None
+        self.customer_id: Optional[str] = None
+        self.customer_status: Optional[Union[str, "_models.CustomerStatus"]] = None
+        self.invoice_section_display_name: Optional[str] = None
+        self.invoice_section_id: Optional[str] = None
+        self.invoice_section_status: Optional[Union[str, "_models.InvoiceSectionState"]] = None
+        self.invoice_section_status_reason_code: Optional[Union[str, "_models.InvoiceSectionStateReasonCode"]] = None
+        self.is_transitioned_billing_account: Optional[bool] = None
+        self.sku_description: Optional[str] = None
+        self.sku_id: Optional[str] = None
+        self.subscription_billing_status: Optional[Union[str, "_models.BillingSubscriptionStatus"]] = None
+        self.subscription_billing_status_details: Optional[list["_models.BillingSubscriptionStatusDetails"]] = None
+        self.subscription_billing_type: Optional[Union[str, "_models.SubscriptionBillingType"]] = None
         self.subscription_service_usage_address = subscription_service_usage_address
-        self.subscription_workload_type = None
+        self.subscription_workload_type: Optional[Union[str, "_models.SubscriptionWorkloadType"]] = None
         self.enrollment_details = enrollment_details
-        self.is_account_admin = None
-        self.product_id = None
-        self.product_name = None
+        self.is_account_admin: Optional[bool] = None
+        self.product_id: Optional[str] = None
+        self.product_name: Optional[str] = None
 
 
 class SubscriptionEnrollmentDetails(_serialization.Model):
@@ -2971,9 +2970,7 @@ class BillingPropertyPropertiesEnrollmentDetails(SubscriptionEnrollmentDetails):
     """
 
 
-class BillingPropertyPropertiesSubscriptionServiceUsageAddress(
-    AddressDetails
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class BillingPropertyPropertiesSubscriptionServiceUsageAddress(AddressDetails):  # pylint: disable=name-too-long
     """The address of the individual or organization where service subscription is being used.
     Available for agreement type Microsoft Online Services Program. This property can be updated
     via patch.
@@ -3020,7 +3017,7 @@ class BillingRequest(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3058,7 +3055,7 @@ class BillingRequest(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.BillingRequestProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -3099,11 +3096,11 @@ class BillingRequestListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.BillingRequest"]] = None
 
 
-class BillingRequestProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BillingRequestProperties(_serialization.Model):
     """A request submitted by a user to manage billing. Users with an owner role on the scope can
     approve or decline these requests.
 
@@ -3246,12 +3243,12 @@ class BillingRequestProperties(_serialization.Model):  # pylint: disable=too-man
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_information: Optional[Dict[str, str]] = None,
+        additional_information: Optional[dict[str, str]] = None,
         reviewed_by: Optional["_models.BillingRequestPropertiesReviewedBy"] = None,
         created_by: Optional["_models.BillingRequestPropertiesCreatedBy"] = None,
         decision_reason: Optional[str] = None,
         justification: Optional[str] = None,
-        recipients: Optional[List["_models.Principal"]] = None,
+        recipients: Optional[list["_models.Principal"]] = None,
         request_scope: Optional[str] = None,
         status: Optional[Union[str, "_models.BillingRequestStatus"]] = None,
         type: Optional[Union[str, "_models.BillingRequestType"]] = None,
@@ -3285,38 +3282,38 @@ class BillingRequestProperties(_serialization.Model):  # pylint: disable=too-man
         :paramtype last_updated_by: ~azure.mgmt.billing.models.BillingRequestPropertiesLastUpdatedBy
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.additional_information = additional_information
         self.reviewed_by = reviewed_by
-        self.reviewal_date = None
-        self.billing_account_id = None
-        self.billing_account_name = None
-        self.billing_account_display_name = None
-        self.billing_account_primary_billing_tenant_id = None
-        self.billing_profile_id = None
-        self.billing_profile_name = None
-        self.billing_profile_display_name = None
+        self.reviewal_date: Optional[datetime.datetime] = None
+        self.billing_account_id: Optional[str] = None
+        self.billing_account_name: Optional[str] = None
+        self.billing_account_display_name: Optional[str] = None
+        self.billing_account_primary_billing_tenant_id: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_name: Optional[str] = None
+        self.billing_profile_display_name: Optional[str] = None
         self.created_by = created_by
-        self.creation_date = None
-        self.expiration_date = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.expiration_date: Optional[datetime.datetime] = None
         self.decision_reason = decision_reason
-        self.invoice_section_id = None
-        self.invoice_section_name = None
-        self.invoice_section_display_name = None
-        self.customer_id = None
-        self.customer_name = None
-        self.customer_display_name = None
-        self.subscription_id = None
-        self.subscription_name = None
-        self.subscription_display_name = None
+        self.invoice_section_id: Optional[str] = None
+        self.invoice_section_name: Optional[str] = None
+        self.invoice_section_display_name: Optional[str] = None
+        self.customer_id: Optional[str] = None
+        self.customer_name: Optional[str] = None
+        self.customer_display_name: Optional[str] = None
+        self.subscription_id: Optional[str] = None
+        self.subscription_name: Optional[str] = None
+        self.subscription_display_name: Optional[str] = None
         self.justification = justification
         self.recipients = recipients
         self.request_scope = request_scope
-        self.billing_scope = None
+        self.billing_scope: Optional[str] = None
         self.status = status
         self.type = type
         self.last_updated_by = last_updated_by
-        self.last_updated_date = None
+        self.last_updated_date: Optional[datetime.datetime] = None
 
 
 class Principal(_serialization.Model):
@@ -3401,7 +3398,7 @@ class BillingRoleAssignment(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3438,7 +3435,7 @@ class BillingRoleAssignment(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.BillingRoleAssignmentProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -3478,11 +3475,11 @@ class BillingRoleAssignmentListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.BillingRoleAssignment"]] = None
 
 
-class BillingRoleAssignmentProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BillingRoleAssignmentProperties(_serialization.Model):
     """The properties of the billing role assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3662,17 +3659,17 @@ class BillingRoleAssignmentProperties(_serialization.Model):  # pylint: disable=
         :paramtype user_email_address: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.created_on = None
-        self.created_by_principal_tenant_id = None
-        self.created_by_principal_id = None
-        self.created_by_principal_puid = None
-        self.created_by_user_email_address = None
-        self.modified_on = None
-        self.modified_by_principal_puid = None
-        self.modified_by_user_email_address = None
-        self.modified_by_principal_id = None
-        self.modified_by_principal_tenant_id = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.created_on: Optional[datetime.datetime] = None
+        self.created_by_principal_tenant_id: Optional[str] = None
+        self.created_by_principal_id: Optional[str] = None
+        self.created_by_principal_puid: Optional[str] = None
+        self.created_by_user_email_address: Optional[str] = None
+        self.modified_on: Optional[datetime.datetime] = None
+        self.modified_by_principal_puid: Optional[str] = None
+        self.modified_by_user_email_address: Optional[str] = None
+        self.modified_by_principal_id: Optional[str] = None
+        self.modified_by_principal_tenant_id: Optional[str] = None
         self.principal_puid = principal_puid
         self.principal_id = principal_id
         self.principal_tenant_id = principal_tenant_id
@@ -3680,18 +3677,18 @@ class BillingRoleAssignmentProperties(_serialization.Model):  # pylint: disable=
         self.scope = scope
         self.user_authentication_type = user_authentication_type
         self.user_email_address = user_email_address
-        self.principal_tenant_name = None
-        self.principal_display_name = None
-        self.principal_type = None
-        self.billing_request_id = None
-        self.billing_account_id = None
-        self.billing_account_display_name = None
-        self.billing_profile_id = None
-        self.billing_profile_display_name = None
-        self.invoice_section_id = None
-        self.invoice_section_display_name = None
-        self.customer_id = None
-        self.customer_display_name = None
+        self.principal_tenant_name: Optional[str] = None
+        self.principal_display_name: Optional[str] = None
+        self.principal_type: Optional[Union[str, "_models.PrincipalType"]] = None
+        self.billing_request_id: Optional[str] = None
+        self.billing_account_id: Optional[str] = None
+        self.billing_account_display_name: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.invoice_section_id: Optional[str] = None
+        self.invoice_section_display_name: Optional[str] = None
+        self.customer_id: Optional[str] = None
+        self.customer_display_name: Optional[str] = None
 
 
 class BillingRoleDefinition(ProxyResourceWithTags):
@@ -3700,7 +3697,7 @@ class BillingRoleDefinition(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3737,7 +3734,7 @@ class BillingRoleDefinition(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.BillingRoleDefinitionProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -3777,8 +3774,8 @@ class BillingRoleDefinitionListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.BillingRoleDefinition"]] = None
 
 
 class BillingRoleDefinitionProperties(_serialization.Model):
@@ -3814,18 +3811,18 @@ class BillingRoleDefinitionProperties(_serialization.Model):
         :paramtype role_name: str
         """
         super().__init__(**kwargs)
-        self.description = None
-        self.permissions = None
+        self.description: Optional[str] = None
+        self.permissions: Optional[list["_models.BillingPermission"]] = None
         self.role_name = role_name
 
 
-class BillingSubscription(ProxyResourceWithTags):  # pylint: disable=too-many-instance-attributes
+class BillingSubscription(ProxyResourceWithTags):
     """The billing properties of a subscription.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3890,7 +3887,8 @@ class BillingSubscription(ProxyResourceWithTags):  # pylint: disable=too-many-in
     :ivar next_billing_cycle_details: Next billing cycle details of the subscription.
     :vartype next_billing_cycle_details: ~azure.mgmt.billing.models.NextBillingCycleDetails
     :ivar offer_id: The offer ID for the subscription. This field is only available for the
-     Microsoft Online Services Program billing accounts.
+     Microsoft Online Services Program billing accounts or billing accounts with agreement type
+     Enterprise Agreement.
     :vartype offer_id: str
     :ivar product_category: The category of the product for which the subscription is purchased.
      Possible values include: AzureSupport, Hardware, ReservationOrder, SaaS, SavingsPlanOrder,
@@ -4064,7 +4062,7 @@ class BillingSubscription(ProxyResourceWithTags):  # pylint: disable=too-many-in
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         auto_renew: Optional[Union[str, "_models.AutoRenew"]] = None,
         beneficiary_tenant_id: Optional[str] = None,
         beneficiary: Optional["_models.Beneficiary"] = None,
@@ -4131,55 +4129,57 @@ class BillingSubscription(ProxyResourceWithTags):  # pylint: disable=too-many-in
         self.beneficiary = beneficiary
         self.billing_frequency = billing_frequency
         self.billing_profile_id = billing_profile_id
-        self.billing_policies = None
-        self.billing_profile_display_name = None
-        self.billing_profile_name = None
+        self.billing_policies: Optional[dict[str, str]] = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.billing_profile_name: Optional[str] = None
         self.consumption_cost_center = consumption_cost_center
         self.customer_id = customer_id
-        self.customer_display_name = None
-        self.customer_name = None
+        self.customer_display_name: Optional[str] = None
+        self.customer_name: Optional[str] = None
         self.display_name = display_name
-        self.enrollment_account_id = None
-        self.enrollment_account_display_name = None
+        self.enrollment_account_id: Optional[str] = None
+        self.enrollment_account_display_name: Optional[str] = None
         self.invoice_section_id = invoice_section_id
-        self.invoice_section_display_name = None
-        self.invoice_section_name = None
-        self.last_month_charges = None
-        self.month_to_date_charges = None
-        self.next_billing_cycle_details = None
-        self.offer_id = None
-        self.product_category = None
-        self.product_type = None
+        self.invoice_section_display_name: Optional[str] = None
+        self.invoice_section_name: Optional[str] = None
+        self.last_month_charges: Optional["_models.Amount"] = None
+        self.month_to_date_charges: Optional["_models.Amount"] = None
+        self.next_billing_cycle_details: Optional["_models.NextBillingCycleDetails"] = None
+        self.offer_id: Optional[str] = None
+        self.product_category: Optional[str] = None
+        self.product_type: Optional[str] = None
         self.product_type_id = product_type_id
-        self.purchase_date = None
+        self.purchase_date: Optional[datetime.datetime] = None
         self.quantity = quantity
-        self.reseller = None
-        self.renewal_term_details = None
+        self.reseller: Optional["_models.Reseller"] = None
+        self.renewal_term_details: Optional["_models.RenewalTermDetails"] = None
         self.sku_id = sku_id
-        self.sku_description = None
+        self.sku_description: Optional[str] = None
         self.system_overrides = system_overrides
-        self.resource_uri = None
+        self.resource_uri: Optional[str] = None
         self.term_duration = term_duration
-        self.term_start_date = None
-        self.term_end_date = None
+        self.term_start_date: Optional[datetime.datetime] = None
+        self.term_end_date: Optional[datetime.datetime] = None
         self.provisioning_tenant_id = provisioning_tenant_id
-        self.status = None
-        self.operation_status = None
-        self.provisioning_state = None
-        self.subscription_id = None
-        self.suspension_reasons = None
-        self.suspension_reason_details = None
-        self.enrollment_account_start_date = None
-        self.subscription_enrollment_account_status = None
+        self.status: Optional[Union[str, "_models.BillingSubscriptionStatus"]] = None
+        self.operation_status: Optional[Union[str, "_models.BillingSubscriptionOperationStatus"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.subscription_id: Optional[str] = None
+        self.suspension_reasons: Optional[list[str]] = None
+        self.suspension_reason_details: Optional[list["_models.BillingSubscriptionStatusDetails"]] = None
+        self.enrollment_account_start_date: Optional[datetime.datetime] = None
+        self.subscription_enrollment_account_status: Optional[
+            Union[str, "_models.SubscriptionEnrollmentAccountStatus"]
+        ] = None
 
 
-class BillingSubscriptionAlias(ProxyResourceWithTags):  # pylint: disable=too-many-instance-attributes
+class BillingSubscriptionAlias(ProxyResourceWithTags):
     """A billing subscription alias.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4244,7 +4244,8 @@ class BillingSubscriptionAlias(ProxyResourceWithTags):  # pylint: disable=too-ma
     :ivar next_billing_cycle_details: Next billing cycle details of the subscription.
     :vartype next_billing_cycle_details: ~azure.mgmt.billing.models.NextBillingCycleDetails
     :ivar offer_id: The offer ID for the subscription. This field is only available for the
-     Microsoft Online Services Program billing accounts.
+     Microsoft Online Services Program billing accounts or billing accounts with agreement type
+     Enterprise Agreement.
     :vartype offer_id: str
     :ivar product_category: The category of the product for which the subscription is purchased.
      Possible values include: AzureSupport, Hardware, ReservationOrder, SaaS, SavingsPlanOrder,
@@ -4422,7 +4423,7 @@ class BillingSubscriptionAlias(ProxyResourceWithTags):  # pylint: disable=too-ma
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         auto_renew: Optional[Union[str, "_models.AutoRenew"]] = None,
         beneficiary_tenant_id: Optional[str] = None,
         beneficiary: Optional["_models.Beneficiary"] = None,
@@ -4489,47 +4490,49 @@ class BillingSubscriptionAlias(ProxyResourceWithTags):  # pylint: disable=too-ma
         self.beneficiary = beneficiary
         self.billing_frequency = billing_frequency
         self.billing_profile_id = billing_profile_id
-        self.billing_policies = None
-        self.billing_profile_display_name = None
-        self.billing_profile_name = None
+        self.billing_policies: Optional[dict[str, str]] = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.billing_profile_name: Optional[str] = None
         self.consumption_cost_center = consumption_cost_center
         self.customer_id = customer_id
-        self.customer_display_name = None
-        self.customer_name = None
+        self.customer_display_name: Optional[str] = None
+        self.customer_name: Optional[str] = None
         self.display_name = display_name
-        self.enrollment_account_id = None
-        self.enrollment_account_display_name = None
+        self.enrollment_account_id: Optional[str] = None
+        self.enrollment_account_display_name: Optional[str] = None
         self.invoice_section_id = invoice_section_id
-        self.invoice_section_display_name = None
-        self.invoice_section_name = None
-        self.last_month_charges = None
-        self.month_to_date_charges = None
-        self.next_billing_cycle_details = None
-        self.offer_id = None
-        self.product_category = None
-        self.product_type = None
+        self.invoice_section_display_name: Optional[str] = None
+        self.invoice_section_name: Optional[str] = None
+        self.last_month_charges: Optional["_models.Amount"] = None
+        self.month_to_date_charges: Optional["_models.Amount"] = None
+        self.next_billing_cycle_details: Optional["_models.NextBillingCycleDetails"] = None
+        self.offer_id: Optional[str] = None
+        self.product_category: Optional[str] = None
+        self.product_type: Optional[str] = None
         self.product_type_id = product_type_id
-        self.purchase_date = None
+        self.purchase_date: Optional[datetime.datetime] = None
         self.quantity = quantity
-        self.reseller = None
-        self.renewal_term_details = None
+        self.reseller: Optional["_models.Reseller"] = None
+        self.renewal_term_details: Optional["_models.RenewalTermDetails"] = None
         self.sku_id = sku_id
-        self.sku_description = None
+        self.sku_description: Optional[str] = None
         self.system_overrides = system_overrides
-        self.resource_uri = None
+        self.resource_uri: Optional[str] = None
         self.term_duration = term_duration
-        self.term_start_date = None
-        self.term_end_date = None
+        self.term_start_date: Optional[datetime.datetime] = None
+        self.term_end_date: Optional[datetime.datetime] = None
         self.provisioning_tenant_id = provisioning_tenant_id
-        self.status = None
-        self.operation_status = None
-        self.provisioning_state = None
-        self.subscription_id = None
-        self.suspension_reasons = None
-        self.suspension_reason_details = None
-        self.enrollment_account_start_date = None
-        self.subscription_enrollment_account_status = None
-        self.billing_subscription_id = None
+        self.status: Optional[Union[str, "_models.BillingSubscriptionStatus"]] = None
+        self.operation_status: Optional[Union[str, "_models.BillingSubscriptionOperationStatus"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.subscription_id: Optional[str] = None
+        self.suspension_reasons: Optional[list[str]] = None
+        self.suspension_reason_details: Optional[list["_models.BillingSubscriptionStatusDetails"]] = None
+        self.enrollment_account_start_date: Optional[datetime.datetime] = None
+        self.subscription_enrollment_account_status: Optional[
+            Union[str, "_models.SubscriptionEnrollmentAccountStatus"]
+        ] = None
+        self.billing_subscription_id: Optional[str] = None
 
 
 class BillingSubscriptionAliasListResult(_serialization.Model):
@@ -4556,11 +4559,11 @@ class BillingSubscriptionAliasListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.BillingSubscriptionAlias"]] = None
 
 
-class BillingSubscriptionProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BillingSubscriptionProperties(_serialization.Model):
     """The billing properties of a subscription.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4616,7 +4619,8 @@ class BillingSubscriptionProperties(_serialization.Model):  # pylint: disable=to
     :ivar next_billing_cycle_details: Next billing cycle details of the subscription.
     :vartype next_billing_cycle_details: ~azure.mgmt.billing.models.NextBillingCycleDetails
     :ivar offer_id: The offer ID for the subscription. This field is only available for the
-     Microsoft Online Services Program billing accounts.
+     Microsoft Online Services Program billing accounts or billing accounts with agreement type
+     Enterprise Agreement.
     :vartype offer_id: str
     :ivar product_category: The category of the product for which the subscription is purchased.
      Possible values include: AzureSupport, Hardware, ReservationOrder, SaaS, SavingsPlanOrder,
@@ -4840,49 +4844,51 @@ class BillingSubscriptionProperties(_serialization.Model):  # pylint: disable=to
         self.beneficiary = beneficiary
         self.billing_frequency = billing_frequency
         self.billing_profile_id = billing_profile_id
-        self.billing_policies = None
-        self.billing_profile_display_name = None
-        self.billing_profile_name = None
+        self.billing_policies: Optional[dict[str, str]] = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.billing_profile_name: Optional[str] = None
         self.consumption_cost_center = consumption_cost_center
         self.customer_id = customer_id
-        self.customer_display_name = None
-        self.customer_name = None
+        self.customer_display_name: Optional[str] = None
+        self.customer_name: Optional[str] = None
         self.display_name = display_name
-        self.enrollment_account_id = None
-        self.enrollment_account_display_name = None
+        self.enrollment_account_id: Optional[str] = None
+        self.enrollment_account_display_name: Optional[str] = None
         self.invoice_section_id = invoice_section_id
-        self.invoice_section_display_name = None
-        self.invoice_section_name = None
-        self.last_month_charges = None
-        self.month_to_date_charges = None
-        self.next_billing_cycle_details = None
-        self.offer_id = None
-        self.product_category = None
-        self.product_type = None
+        self.invoice_section_display_name: Optional[str] = None
+        self.invoice_section_name: Optional[str] = None
+        self.last_month_charges: Optional["_models.Amount"] = None
+        self.month_to_date_charges: Optional["_models.Amount"] = None
+        self.next_billing_cycle_details: Optional["_models.NextBillingCycleDetails"] = None
+        self.offer_id: Optional[str] = None
+        self.product_category: Optional[str] = None
+        self.product_type: Optional[str] = None
         self.product_type_id = product_type_id
-        self.purchase_date = None
+        self.purchase_date: Optional[datetime.datetime] = None
         self.quantity = quantity
-        self.reseller = None
-        self.renewal_term_details = None
+        self.reseller: Optional["_models.Reseller"] = None
+        self.renewal_term_details: Optional["_models.RenewalTermDetails"] = None
         self.sku_id = sku_id
-        self.sku_description = None
+        self.sku_description: Optional[str] = None
         self.system_overrides = system_overrides
-        self.resource_uri = None
+        self.resource_uri: Optional[str] = None
         self.term_duration = term_duration
-        self.term_start_date = None
-        self.term_end_date = None
+        self.term_start_date: Optional[datetime.datetime] = None
+        self.term_end_date: Optional[datetime.datetime] = None
         self.provisioning_tenant_id = provisioning_tenant_id
-        self.status = None
-        self.operation_status = None
-        self.provisioning_state = None
-        self.subscription_id = None
-        self.suspension_reasons = None
-        self.suspension_reason_details = None
-        self.enrollment_account_start_date = None
-        self.subscription_enrollment_account_status = None
+        self.status: Optional[Union[str, "_models.BillingSubscriptionStatus"]] = None
+        self.operation_status: Optional[Union[str, "_models.BillingSubscriptionOperationStatus"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.subscription_id: Optional[str] = None
+        self.suspension_reasons: Optional[list[str]] = None
+        self.suspension_reason_details: Optional[list["_models.BillingSubscriptionStatusDetails"]] = None
+        self.enrollment_account_start_date: Optional[datetime.datetime] = None
+        self.subscription_enrollment_account_status: Optional[
+            Union[str, "_models.SubscriptionEnrollmentAccountStatus"]
+        ] = None
 
 
-class BillingSubscriptionAliasProperties(BillingSubscriptionProperties):  # pylint: disable=too-many-instance-attributes
+class BillingSubscriptionAliasProperties(BillingSubscriptionProperties):
     """A billing subscription alias.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4938,7 +4944,8 @@ class BillingSubscriptionAliasProperties(BillingSubscriptionProperties):  # pyli
     :ivar next_billing_cycle_details: Next billing cycle details of the subscription.
     :vartype next_billing_cycle_details: ~azure.mgmt.billing.models.NextBillingCycleDetails
     :ivar offer_id: The offer ID for the subscription. This field is only available for the
-     Microsoft Online Services Program billing accounts.
+     Microsoft Online Services Program billing accounts or billing accounts with agreement type
+     Enterprise Agreement.
     :vartype offer_id: str
     :ivar product_category: The category of the product for which the subscription is purchased.
      Possible values include: AzureSupport, Hardware, ReservationOrder, SaaS, SavingsPlanOrder,
@@ -5178,7 +5185,7 @@ class BillingSubscriptionAliasProperties(BillingSubscriptionProperties):  # pyli
             provisioning_tenant_id=provisioning_tenant_id,
             **kwargs
         )
-        self.billing_subscription_id = None
+        self.billing_subscription_id: Optional[str] = None
 
 
 class BillingSubscriptionListResult(_serialization.Model):
@@ -5209,9 +5216,9 @@ class BillingSubscriptionListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.total_count = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.total_count: Optional[int] = None
+        self.value: Optional[list["_models.BillingSubscription"]] = None
 
 
 class BillingSubscriptionMergeRequest(_serialization.Model):
@@ -5246,13 +5253,13 @@ class BillingSubscriptionMergeRequest(_serialization.Model):
         self.quantity = quantity
 
 
-class BillingSubscriptionPatch(ProxyResourceWithTags):  # pylint: disable=too-many-instance-attributes
+class BillingSubscriptionPatch(ProxyResourceWithTags):
     """The billing properties of a subscription.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5317,7 +5324,8 @@ class BillingSubscriptionPatch(ProxyResourceWithTags):  # pylint: disable=too-ma
     :ivar next_billing_cycle_details: Next billing cycle details of the subscription.
     :vartype next_billing_cycle_details: ~azure.mgmt.billing.models.NextBillingCycleDetails
     :ivar offer_id: The offer ID for the subscription. This field is only available for the
-     Microsoft Online Services Program billing accounts.
+     Microsoft Online Services Program billing accounts or billing accounts with agreement type
+     Enterprise Agreement.
     :vartype offer_id: str
     :ivar product_category: The category of the product for which the subscription is purchased.
      Possible values include: AzureSupport, Hardware, ReservationOrder, SaaS, SavingsPlanOrder,
@@ -5491,7 +5499,7 @@ class BillingSubscriptionPatch(ProxyResourceWithTags):  # pylint: disable=too-ma
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         auto_renew: Optional[Union[str, "_models.AutoRenew"]] = None,
         beneficiary_tenant_id: Optional[str] = None,
         beneficiary: Optional["_models.Beneficiary"] = None,
@@ -5558,46 +5566,48 @@ class BillingSubscriptionPatch(ProxyResourceWithTags):  # pylint: disable=too-ma
         self.beneficiary = beneficiary
         self.billing_frequency = billing_frequency
         self.billing_profile_id = billing_profile_id
-        self.billing_policies = None
-        self.billing_profile_display_name = None
-        self.billing_profile_name = None
+        self.billing_policies: Optional[dict[str, str]] = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.billing_profile_name: Optional[str] = None
         self.consumption_cost_center = consumption_cost_center
         self.customer_id = customer_id
-        self.customer_display_name = None
-        self.customer_name = None
+        self.customer_display_name: Optional[str] = None
+        self.customer_name: Optional[str] = None
         self.display_name = display_name
-        self.enrollment_account_id = None
-        self.enrollment_account_display_name = None
+        self.enrollment_account_id: Optional[str] = None
+        self.enrollment_account_display_name: Optional[str] = None
         self.invoice_section_id = invoice_section_id
-        self.invoice_section_display_name = None
-        self.invoice_section_name = None
-        self.last_month_charges = None
-        self.month_to_date_charges = None
-        self.next_billing_cycle_details = None
-        self.offer_id = None
-        self.product_category = None
-        self.product_type = None
+        self.invoice_section_display_name: Optional[str] = None
+        self.invoice_section_name: Optional[str] = None
+        self.last_month_charges: Optional["_models.Amount"] = None
+        self.month_to_date_charges: Optional["_models.Amount"] = None
+        self.next_billing_cycle_details: Optional["_models.NextBillingCycleDetails"] = None
+        self.offer_id: Optional[str] = None
+        self.product_category: Optional[str] = None
+        self.product_type: Optional[str] = None
         self.product_type_id = product_type_id
-        self.purchase_date = None
+        self.purchase_date: Optional[datetime.datetime] = None
         self.quantity = quantity
-        self.reseller = None
-        self.renewal_term_details = None
+        self.reseller: Optional["_models.Reseller"] = None
+        self.renewal_term_details: Optional["_models.RenewalTermDetails"] = None
         self.sku_id = sku_id
-        self.sku_description = None
+        self.sku_description: Optional[str] = None
         self.system_overrides = system_overrides
-        self.resource_uri = None
+        self.resource_uri: Optional[str] = None
         self.term_duration = term_duration
-        self.term_start_date = None
-        self.term_end_date = None
+        self.term_start_date: Optional[datetime.datetime] = None
+        self.term_end_date: Optional[datetime.datetime] = None
         self.provisioning_tenant_id = provisioning_tenant_id
-        self.status = None
-        self.operation_status = None
-        self.provisioning_state = None
-        self.subscription_id = None
-        self.suspension_reasons = None
-        self.suspension_reason_details = None
-        self.enrollment_account_start_date = None
-        self.subscription_enrollment_account_status = None
+        self.status: Optional[Union[str, "_models.BillingSubscriptionStatus"]] = None
+        self.operation_status: Optional[Union[str, "_models.BillingSubscriptionOperationStatus"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.subscription_id: Optional[str] = None
+        self.suspension_reasons: Optional[list[str]] = None
+        self.suspension_reason_details: Optional[list["_models.BillingSubscriptionStatusDetails"]] = None
+        self.enrollment_account_start_date: Optional[datetime.datetime] = None
+        self.subscription_enrollment_account_status: Optional[
+            Union[str, "_models.SubscriptionEnrollmentAccountStatus"]
+        ] = None
 
 
 class BillingSubscriptionSplitRequest(_serialization.Model):
@@ -5696,8 +5706,8 @@ class BillingSubscriptionStatusDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.effective_date = None
-        self.reason = None
+        self.effective_date: Optional[datetime.datetime] = None
+        self.reason: Optional[Union[str, "_models.SubscriptionStatusReason"]] = None
 
 
 class CancelSubscriptionRequest(_serialization.Model):
@@ -5752,7 +5762,7 @@ class CheckAccessRequest(_serialization.Model):
         "actions": {"key": "actions", "type": "[str]"},
     }
 
-    def __init__(self, *, actions: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, actions: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword actions: List of actions passed in the request body against which the permissions will
          be checked.
@@ -5787,8 +5797,8 @@ class CheckAccessResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.access_decision = None
-        self.action = None
+        self.access_decision: Optional[Union[str, "_models.AccessDecision"]] = None
+        self.action: Optional[str] = None
 
 
 class Price(_serialization.Model):
@@ -5864,7 +5874,7 @@ class Customer(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5901,7 +5911,7 @@ class Customer(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.CustomerProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -5941,8 +5951,8 @@ class CustomerListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.Customer"]] = None
 
 
 class CustomerPolicy(ProxyResourceWithTags):
@@ -5951,7 +5961,7 @@ class CustomerPolicy(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5988,7 +5998,7 @@ class CustomerPolicy(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.CustomerPolicyProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -6038,7 +6048,7 @@ class CustomerPolicyProperties(_serialization.Model):
         self,
         *,
         view_charges: Union[str, "_models.ViewChargesPolicy"],
-        policies: Optional[List["_models.PolicySummary"]] = None,
+        policies: Optional[list["_models.PolicySummary"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6050,7 +6060,7 @@ class CustomerPolicyProperties(_serialization.Model):
         :paramtype policies: list[~azure.mgmt.billing.models.PolicySummary]
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.view_charges = view_charges
         self.policies = policies
 
@@ -6104,9 +6114,9 @@ class CustomerProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        enabled_azure_plans: Optional[List["_models.AzurePlan"]] = None,
-        resellers: Optional[List["_models.Reseller"]] = None,
-        tags: Optional[Dict[str, str]] = None,
+        enabled_azure_plans: Optional[list["_models.AzurePlan"]] = None,
+        resellers: Optional[list["_models.Reseller"]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6120,11 +6130,11 @@ class CustomerProperties(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.billing_profile_display_name = None
-        self.billing_profile_id = None
-        self.display_name = None
-        self.system_id = None
-        self.status = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
+        self.display_name: Optional[str] = None
+        self.system_id: Optional[str] = None
+        self.status: Optional[Union[str, "_models.CustomerStatus"]] = None
         self.enabled_azure_plans = enabled_azure_plans
         self.resellers = resellers
         self.tags = tags
@@ -6187,7 +6197,7 @@ class DeleteBillingProfileEligibilityResult(_serialization.Model):
         self,
         *,
         eligibility_status: Optional[Union[str, "_models.DeleteBillingProfileEligibilityStatus"]] = None,
-        eligibility_details: Optional[List["_models.DeleteBillingProfileEligibilityDetail"]] = None,
+        eligibility_details: Optional[list["_models.DeleteBillingProfileEligibilityDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6261,7 +6271,7 @@ class DeleteInvoiceSectionEligibilityResult(_serialization.Model):
         self,
         *,
         eligibility_status: Optional[Union[str, "_models.DeleteInvoiceSectionEligibilityStatus"]] = None,
-        eligibility_details: Optional[List["_models.DeleteInvoiceSectionEligibilityDetail"]] = None,
+        eligibility_details: Optional[list["_models.DeleteInvoiceSectionEligibilityDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6285,7 +6295,7 @@ class Department(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6323,7 +6333,7 @@ class Department(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.DepartmentProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -6364,8 +6374,8 @@ class DepartmentListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.Department"]] = None
 
 
 class DepartmentProperties(_serialization.Model):
@@ -6406,8 +6416,8 @@ class DepartmentProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.cost_center = cost_center
         self.display_name = display_name
-        self.id = None
-        self.status = None
+        self.id: Optional[str] = None
+        self.status: Optional[str] = None
 
 
 class DetailedTransferStatus(_serialization.Model):
@@ -6454,11 +6464,11 @@ class DetailedTransferStatus(_serialization.Model):
         :paramtype error_details: ~azure.mgmt.billing.models.TransferError
         """
         super().__init__(**kwargs)
-        self.product_type = None
-        self.product_id = None
-        self.product_name = None
-        self.sku_description = None
-        self.transfer_status = None
+        self.product_type: Optional[Union[str, "_models.ProductType"]] = None
+        self.product_id: Optional[str] = None
+        self.product_name: Optional[str] = None
+        self.sku_description: Optional[str] = None
+        self.transfer_status: Optional[Union[str, "_models.ProductTransferStatus"]] = None
         self.error_details = error_details
 
 
@@ -6518,8 +6528,8 @@ class DocumentDownloadResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.expiry_time = None
-        self.url = None
+        self.expiry_time: Optional[str] = None
+        self.url: Optional[str] = None
 
 
 class EnrollmentAccount(ProxyResourceWithTags):
@@ -6529,7 +6539,7 @@ class EnrollmentAccount(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6567,7 +6577,7 @@ class EnrollmentAccount(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.EnrollmentAccountProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -6608,8 +6618,8 @@ class EnrollmentAccountListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.EnrollmentAccount"]] = None
 
 
 class EnrollmentAccountProperties(_serialization.Model):
@@ -6685,14 +6695,14 @@ class EnrollmentAccountProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.cost_center = cost_center
         self.display_name = display_name
-        self.department_display_name = None
-        self.department_id = None
+        self.department_display_name: Optional[str] = None
+        self.department_id: Optional[str] = None
         self.is_dev_test_enabled = is_dev_test_enabled
-        self.account_owner = None
-        self.auth_type = None
-        self.status = None
-        self.start_date = None
-        self.end_date = None
+        self.account_owner: Optional[str] = None
+        self.auth_type: Optional[str] = None
+        self.status: Optional[str] = None
+        self.start_date: Optional[datetime.datetime] = None
+        self.end_date: Optional[datetime.datetime] = None
 
 
 class EnrollmentDetailsIndirectRelationshipInfo(IndirectRelationshipInfo):  # pylint: disable=name-too-long
@@ -6733,8 +6743,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -6773,11 +6783,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -6884,8 +6894,8 @@ class ExternalReference(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.url = None
+        self.id: Optional[str] = None
+        self.url: Optional[str] = None
 
 
 class FailedPayment(_serialization.Model):
@@ -6913,8 +6923,8 @@ class FailedPayment(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.date = None
-        self.failed_payment_reason = None
+        self.date: Optional[datetime.datetime] = None
+        self.failed_payment_reason: Optional[Union[str, "_models.FailedPaymentReason"]] = None
 
 
 class InitiateTransferRequest(_serialization.Model):
@@ -6944,7 +6954,7 @@ class Invoice(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6981,7 +6991,7 @@ class Invoice(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.InvoiceProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -7042,12 +7052,12 @@ class InvoiceDocument(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.document_numbers = None
-        self.external_url = None
-        self.kind = None
-        self.name = None
-        self.url = None
-        self.source = None
+        self.document_numbers: Optional[list[str]] = None
+        self.external_url: Optional[str] = None
+        self.kind: Optional[Union[str, "_models.InvoiceDocumentType"]] = None
+        self.name: Optional[str] = None
+        self.url: Optional[str] = None
+        self.source: Optional[Union[str, "_models.DocumentSource"]] = None
 
 
 class InvoiceListResult(_serialization.Model):
@@ -7074,11 +7084,11 @@ class InvoiceListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.Invoice"]] = None
 
 
-class InvoiceProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class InvoiceProperties(_serialization.Model):
     """An invoice.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7276,28 +7286,28 @@ class InvoiceProperties(_serialization.Model):  # pylint: disable=too-many-insta
         self.amount_due = amount_due
         self.azure_prepayment_applied = azure_prepayment_applied
         self.billed_amount = billed_amount
-        self.billed_document_id = None
-        self.billing_profile_display_name = None
-        self.billing_profile_id = None
+        self.billed_document_id: Optional[str] = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
         self.credit_amount = credit_amount
-        self.credit_for_document_id = None
-        self.documents = None
-        self.document_type = None
-        self.due_date = None
-        self.failed_payments = None
+        self.credit_for_document_id: Optional[str] = None
+        self.documents: Optional[list["_models.InvoiceDocument"]] = None
+        self.document_type: Optional[Union[str, "_models.InvoiceDocumentType"]] = None
+        self.due_date: Optional[datetime.datetime] = None
+        self.failed_payments: Optional[list["_models.FailedPayment"]] = None
         self.free_azure_credit_applied = free_azure_credit_applied
-        self.invoice_date = None
-        self.invoice_period_end_date = None
-        self.invoice_period_start_date = None
-        self.invoice_type = None
-        self.is_monthly_invoice = None
-        self.payments = None
-        self.purchase_order_number = None
+        self.invoice_date: Optional[datetime.datetime] = None
+        self.invoice_period_end_date: Optional[datetime.datetime] = None
+        self.invoice_period_start_date: Optional[datetime.datetime] = None
+        self.invoice_type: Optional[Union[str, "_models.InvoiceType"]] = None
+        self.is_monthly_invoice: Optional[bool] = None
+        self.payments: Optional[list["_models.Payment"]] = None
+        self.purchase_order_number: Optional[str] = None
         self.rebill_details = rebill_details
-        self.status = None
-        self.subscription_display_name = None
-        self.subscription_id = None
-        self.special_taxation_type = None
+        self.status: Optional[Union[str, "_models.InvoiceStatus"]] = None
+        self.subscription_display_name: Optional[str] = None
+        self.subscription_id: Optional[str] = None
+        self.special_taxation_type: Optional[Union[str, "_models.SpecialTaxationType"]] = None
         self.sub_total = sub_total
         self.tax_amount = tax_amount
         self.total_amount = total_amount
@@ -7400,9 +7410,9 @@ class RebillDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.invoice_document_id = None
-        self.credit_note_document_id = None
-        self.rebill_details = None
+        self.invoice_document_id: Optional[str] = None
+        self.credit_note_document_id: Optional[str] = None
+        self.rebill_details: Optional["_models.RebillDetails"] = None
 
 
 class InvoicePropertiesRebillDetails(RebillDetails):
@@ -7486,16 +7496,16 @@ class RefundDetailsSummary(_serialization.Model):
         :paramtype amount_refunded: ~azure.mgmt.billing.models.RefundDetailsSummaryAmountRefunded
         """
         super().__init__(**kwargs)
-        self.requested_on = None
-        self.approved_on = None
-        self.completed_on = None
+        self.requested_on: Optional[datetime.datetime] = None
+        self.approved_on: Optional[datetime.datetime] = None
+        self.completed_on: Optional[datetime.datetime] = None
         self.amount_requested = amount_requested
         self.amount_refunded = amount_refunded
-        self.rebill_invoice_id = None
-        self.transaction_count = None
-        self.refund_status = None
-        self.refund_operation_id = None
-        self.refund_reason = None
+        self.rebill_invoice_id: Optional[str] = None
+        self.transaction_count: Optional[int] = None
+        self.refund_status: Optional[Union[str, "_models.RefundStatus"]] = None
+        self.refund_operation_id: Optional[str] = None
+        self.refund_reason: Optional[Union[str, "_models.RefundReasonCode"]] = None
 
 
 class InvoicePropertiesRefundDetails(RefundDetailsSummary):
@@ -7576,7 +7586,7 @@ class InvoiceSection(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -7613,7 +7623,7 @@ class InvoiceSection(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.InvoiceSectionProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -7653,8 +7663,8 @@ class InvoiceSectionListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.InvoiceSection"]] = None
 
 
 class InvoiceSectionProperties(_serialization.Model):
@@ -7708,7 +7718,7 @@ class InvoiceSectionProperties(_serialization.Model):
         state: Optional[Union[str, "_models.InvoiceSectionState"]] = None,
         reason_code: Optional[Union[str, "_models.InvoiceSectionStateReasonCode"]] = None,
         target_cloud: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7730,11 +7740,11 @@ class InvoiceSectionProperties(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.display_name = display_name
         self.state = state
         self.reason_code = reason_code
-        self.system_id = None
+        self.system_id: Optional[str] = None
         self.target_cloud = target_cloud
         self.tags = tags
 
@@ -7800,16 +7810,16 @@ class InvoiceSectionWithCreateSubPermission(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.billing_profile_display_name = None
-        self.billing_profile_id = None
-        self.billing_profile_system_id = None
-        self.billing_profile_status = None
-        self.billing_profile_status_reason_code = None
-        self.billing_profile_spending_limit = None
-        self.enabled_azure_plans = None
-        self.invoice_section_display_name = None
-        self.invoice_section_id = None
-        self.invoice_section_system_id = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_system_id: Optional[str] = None
+        self.billing_profile_status: Optional[Union[str, "_models.BillingProfileStatus"]] = None
+        self.billing_profile_status_reason_code: Optional[Union[str, "_models.BillingProfileStatusReasonCode"]] = None
+        self.billing_profile_spending_limit: Optional[Union[str, "_models.SpendingLimit"]] = None
+        self.enabled_azure_plans: Optional[list["_models.AzurePlan"]] = None
+        self.invoice_section_display_name: Optional[str] = None
+        self.invoice_section_id: Optional[str] = None
+        self.invoice_section_system_id: Optional[str] = None
 
 
 class InvoiceSectionWithCreateSubPermissionListResult(_serialization.Model):  # pylint: disable=name-too-long
@@ -7836,8 +7846,8 @@ class InvoiceSectionWithCreateSubPermissionListResult(_serialization.Model):  # 
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.InvoiceSectionWithCreateSubPermission"]] = None
 
 
 class MoveBillingSubscriptionEligibilityResult(_serialization.Model):
@@ -7868,7 +7878,7 @@ class MoveBillingSubscriptionEligibilityResult(_serialization.Model):
         :paramtype error_details: ~azure.mgmt.billing.models.MoveBillingSubscriptionErrorDetails
         """
         super().__init__(**kwargs)
-        self.is_move_eligible = None
+        self.is_move_eligible: Optional[bool] = None
         self.error_details = error_details
 
 
@@ -8029,9 +8039,9 @@ class MoveProductErrorDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.details = None
+        self.code: Optional[Union[str, "_models.MoveValidationErrorCode"]] = None
+        self.message: Optional[str] = None
+        self.details: Optional[str] = None
 
 
 class MoveProductEligibilityResultErrorDetails(MoveProductErrorDetails):
@@ -8100,7 +8110,7 @@ class NextBillingCycleDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.billing_frequency = None
+        self.billing_frequency: Optional[str] = None
 
 
 class Operation(_serialization.Model):
@@ -8135,8 +8145,8 @@ class Operation(_serialization.Model):
         :paramtype display: ~azure.mgmt.billing.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.is_data_action = None
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
 
 
@@ -8176,10 +8186,10 @@ class OperationDisplay(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.description = None
-        self.operation = None
-        self.provider = None
-        self.resource = None
+        self.description: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
@@ -8206,8 +8216,8 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.Operation"]] = None
 
 
 class Participant(_serialization.Model):
@@ -8238,9 +8248,9 @@ class Participant(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.email = None
-        self.status = None
-        self.status_date = None
+        self.email: Optional[str] = None
+        self.status: Optional[str] = None
+        self.status_date: Optional[datetime.datetime] = None
 
 
 class PartnerInitiateTransferRequest(_serialization.Model):
@@ -8274,13 +8284,13 @@ class PartnerInitiateTransferRequest(_serialization.Model):
         self.reseller_id = reseller_id
 
 
-class PartnerTransferDetails(ProxyResourceWithTags):  # pylint: disable=too-many-instance-attributes
+class PartnerTransferDetails(ProxyResourceWithTags):
     """Details of the transfer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -8351,7 +8361,7 @@ class PartnerTransferDetails(ProxyResourceWithTags):  # pylint: disable=too-many
         "detailed_transfer_status": {"key": "properties.detailedTransferStatus", "type": "[DetailedTransferStatus]"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Dictionary of metadata associated with the resource. It may not be populated for
          all resource types. Maximum key/value length supported of 256 characters. Keys/value should not
@@ -8359,15 +8369,15 @@ class PartnerTransferDetails(ProxyResourceWithTags):  # pylint: disable=too-many
         :paramtype tags: dict[str, str]
         """
         super().__init__(tags=tags, **kwargs)
-        self.expiration_time = None
-        self.transfer_status = None
-        self.recipient_email_id = None
-        self.initiator_customer_type = None
-        self.initiator_email_id = None
-        self.reseller_id = None
-        self.reseller_name = None
-        self.canceled_by = None
-        self.detailed_transfer_status = None
+        self.expiration_time: Optional[datetime.datetime] = None
+        self.transfer_status: Optional[Union[str, "_models.TransferStatus"]] = None
+        self.recipient_email_id: Optional[str] = None
+        self.initiator_customer_type: Optional[Union[str, "_models.InitiatorCustomerType"]] = None
+        self.initiator_email_id: Optional[str] = None
+        self.reseller_id: Optional[str] = None
+        self.reseller_name: Optional[str] = None
+        self.canceled_by: Optional[str] = None
+        self.detailed_transfer_status: Optional[list["_models.DetailedTransferStatus"]] = None
 
 
 class PartnerTransferDetailsListResult(_serialization.Model):
@@ -8394,8 +8404,8 @@ class PartnerTransferDetailsListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.PartnerTransferDetails"]] = None
+        self.next_link: Optional[str] = None
 
 
 class Patch(_serialization.Model):
@@ -8450,7 +8460,7 @@ class Patch(_serialization.Model):
         self,
         *,
         sku: Optional["_models.ReservationSkuProperty"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         applied_scope_type: Optional[Union[str, "_models.AppliedScopeType"]] = None,
         applied_scope_properties: Optional["_models.ReservationAppliedScopeProperties"] = None,
         instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None,
@@ -8545,11 +8555,11 @@ class Payment(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.amount = amount
-        self.date = None
-        self.payment_method_id = None
-        self.payment_method_family = None
-        self.payment_method_type = None
-        self.payment_type = None
+        self.date: Optional[datetime.datetime] = None
+        self.payment_method_id: Optional[str] = None
+        self.payment_method_family: Optional[Union[str, "_models.PaymentMethodFamily"]] = None
+        self.payment_method_type: Optional[str] = None
+        self.payment_type: Optional[str] = None
 
 
 class PaymentAmount(Amount):
@@ -8631,16 +8641,16 @@ class PaymentDetail(_serialization.Model):
         self.pricing_currency_total = pricing_currency_total
         self.billing_currency_total = billing_currency_total
         self.status = status
-        self.extended_status_info = None
+        self.extended_status_info: Optional["_models.ExtendedStatusInfo"] = None
 
 
-class PaymentMethod(ProxyResourceWithTags):  # pylint: disable=too-many-instance-attributes
+class PaymentMethod(ProxyResourceWithTags):
     """A payment method.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -8710,9 +8720,9 @@ class PaymentMethod(ProxyResourceWithTags):  # pylint: disable=too-many-instance
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         family: Optional[Union[str, "_models.PaymentMethodFamily"]] = None,
-        logos: Optional[List["_models.PaymentMethodLogo"]] = None,
+        logos: Optional[list["_models.PaymentMethodLogo"]] = None,
         status: Optional[Union[str, "_models.PaymentMethodStatus"]] = None,
         **kwargs: Any
     ) -> None:
@@ -8730,24 +8740,24 @@ class PaymentMethod(ProxyResourceWithTags):  # pylint: disable=too-many-instance
         :paramtype status: str or ~azure.mgmt.billing.models.PaymentMethodStatus
         """
         super().__init__(tags=tags, **kwargs)
-        self.id_properties_id = None
-        self.account_holder_name = None
-        self.display_name = None
-        self.expiration = None
+        self.id_properties_id: Optional[str] = None
+        self.account_holder_name: Optional[str] = None
+        self.display_name: Optional[str] = None
+        self.expiration: Optional[str] = None
         self.family = family
-        self.last_four_digits = None
+        self.last_four_digits: Optional[str] = None
         self.logos = logos
-        self.payment_method_type = None
+        self.payment_method_type: Optional[str] = None
         self.status = status
 
 
-class PaymentMethodLink(ProxyResourceWithTags):  # pylint: disable=too-many-instance-attributes
+class PaymentMethodLink(ProxyResourceWithTags):
     """A payment method link.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -8824,7 +8834,7 @@ class PaymentMethodLink(ProxyResourceWithTags):  # pylint: disable=too-many-inst
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         payment_method: Optional["_models.PaymentMethodProperties"] = None,
         payment_method_id: Optional[str] = None,
         **kwargs: Any
@@ -8842,16 +8852,16 @@ class PaymentMethodLink(ProxyResourceWithTags):  # pylint: disable=too-many-inst
         :paramtype payment_method_id: str
         """
         super().__init__(tags=tags, **kwargs)
-        self.account_holder_name = None
-        self.display_name = None
-        self.expiration = None
-        self.family = None
-        self.last_four_digits = None
-        self.logos = None
+        self.account_holder_name: Optional[str] = None
+        self.display_name: Optional[str] = None
+        self.expiration: Optional[str] = None
+        self.family: Optional[Union[str, "_models.PaymentMethodFamily"]] = None
+        self.last_four_digits: Optional[str] = None
+        self.logos: Optional[list["_models.PaymentMethodLogo"]] = None
         self.payment_method = payment_method
         self.payment_method_id = payment_method_id
-        self.payment_method_type = None
-        self.status = None
+        self.payment_method_type: Optional[str] = None
+        self.status: Optional[Union[str, "_models.PaymentMethodStatus"]] = None
 
 
 class PaymentMethodLinksListResult(_serialization.Model):
@@ -8878,8 +8888,8 @@ class PaymentMethodLinksListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.PaymentMethodLink"]] = None
 
 
 class PaymentMethodLogo(_serialization.Model):
@@ -8906,8 +8916,8 @@ class PaymentMethodLogo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.mime_type = None
-        self.url = None
+        self.mime_type: Optional[str] = None
+        self.url: Optional[str] = None
 
 
 class PaymentMethodProperties(_serialization.Model):
@@ -8963,7 +8973,7 @@ class PaymentMethodProperties(_serialization.Model):
         self,
         *,
         family: Optional[Union[str, "_models.PaymentMethodFamily"]] = None,
-        logos: Optional[List["_models.PaymentMethodLogo"]] = None,
+        logos: Optional[list["_models.PaymentMethodLogo"]] = None,
         status: Optional[Union[str, "_models.PaymentMethodStatus"]] = None,
         **kwargs: Any
     ) -> None:
@@ -8977,14 +8987,14 @@ class PaymentMethodProperties(_serialization.Model):
         :paramtype status: str or ~azure.mgmt.billing.models.PaymentMethodStatus
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.account_holder_name = None
-        self.display_name = None
-        self.expiration = None
+        self.id: Optional[str] = None
+        self.account_holder_name: Optional[str] = None
+        self.display_name: Optional[str] = None
+        self.expiration: Optional[str] = None
         self.family = family
-        self.last_four_digits = None
+        self.last_four_digits: Optional[str] = None
         self.logos = logos
-        self.payment_method_type = None
+        self.payment_method_type: Optional[str] = None
         self.status = status
 
 
@@ -9012,8 +9022,8 @@ class PaymentMethodsListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.PaymentMethod"]] = None
 
 
 class PaymentOnAccount(_serialization.Model):
@@ -9065,12 +9075,12 @@ class PaymentOnAccount(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.amount = amount
-        self.billing_profile_id = None
-        self.billing_profile_display_name = None
-        self.invoice_id = None
-        self.invoice_name = None
-        self.date = None
-        self.payment_method_type = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.invoice_id: Optional[str] = None
+        self.invoice_name: Optional[str] = None
+        self.date: Optional[datetime.datetime] = None
+        self.payment_method_type: Optional[Union[str, "_models.PaymentMethodFamily"]] = None
 
 
 class PaymentOnAccountAmount(Amount):
@@ -9143,7 +9153,7 @@ class PaymentTermsEligibilityResult(_serialization.Model):
         self,
         *,
         eligibility_status: Optional[Union[str, "_models.PaymentTermsEligibilityStatus"]] = None,
-        eligibility_details: Optional[List["_models.PaymentTermsEligibilityDetail"]] = None,
+        eligibility_details: Optional[list["_models.PaymentTermsEligibilityDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9212,7 +9222,7 @@ class Product(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -9249,7 +9259,7 @@ class Product(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ProductProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -9323,8 +9333,8 @@ class ProductListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.Product"]] = None
 
 
 class ProductPatch(ProxyResourceWithTags):
@@ -9333,7 +9343,7 @@ class ProductPatch(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -9370,7 +9380,7 @@ class ProductPatch(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ProductProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -9386,7 +9396,7 @@ class ProductPatch(ProxyResourceWithTags):
         self.properties = properties
 
 
-class ProductProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ProductProperties(_serialization.Model):
     """A product.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9511,26 +9521,26 @@ class ProductProperties(_serialization.Model):  # pylint: disable=too-many-insta
         """
         super().__init__(**kwargs)
         self.auto_renew = auto_renew
-        self.availability_id = None
-        self.billing_frequency = None
-        self.billing_profile_id = None
-        self.billing_profile_display_name = None
-        self.customer_id = None
-        self.customer_display_name = None
-        self.display_name = None
-        self.end_date = None
-        self.invoice_section_id = None
-        self.invoice_section_display_name = None
+        self.availability_id: Optional[str] = None
+        self.billing_frequency: Optional[str] = None
+        self.billing_profile_id: Optional[str] = None
+        self.billing_profile_display_name: Optional[str] = None
+        self.customer_id: Optional[str] = None
+        self.customer_display_name: Optional[str] = None
+        self.display_name: Optional[str] = None
+        self.end_date: Optional[str] = None
+        self.invoice_section_id: Optional[str] = None
+        self.invoice_section_display_name: Optional[str] = None
         self.last_charge = last_charge
-        self.last_charge_date = None
-        self.product_type = None
-        self.product_type_id = None
-        self.sku_id = None
-        self.sku_description = None
-        self.purchase_date = None
-        self.quantity = None
-        self.status = None
-        self.tenant_id = None
+        self.last_charge_date: Optional[str] = None
+        self.product_type: Optional[str] = None
+        self.product_type_id: Optional[str] = None
+        self.sku_id: Optional[str] = None
+        self.sku_description: Optional[str] = None
+        self.purchase_date: Optional[str] = None
+        self.quantity: Optional[int] = None
+        self.status: Optional[Union[str, "_models.ProductStatus"]] = None
+        self.tenant_id: Optional[str] = None
         self.reseller = reseller
 
 
@@ -9571,8 +9581,8 @@ class Reseller(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.reseller_id = None
-        self.description = None
+        self.reseller_id: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class ProductPropertiesReseller(Reseller):
@@ -9679,13 +9689,13 @@ class PurchaseRequest(_serialization.Model):
         self.applied_scope_properties = applied_scope_properties
 
 
-class RecipientTransferDetails(ProxyResourceWithTags):  # pylint: disable=too-many-instance-attributes
+class RecipientTransferDetails(ProxyResourceWithTags):
     """Details of the transfer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -9768,7 +9778,7 @@ class RecipientTransferDetails(ProxyResourceWithTags):  # pylint: disable=too-ma
         "supported_accounts": {"key": "properties.supportedAccounts", "type": "[str]"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Dictionary of metadata associated with the resource. It may not be populated for
          all resource types. Maximum key/value length supported of 256 characters. Keys/value should not
@@ -9776,18 +9786,18 @@ class RecipientTransferDetails(ProxyResourceWithTags):  # pylint: disable=too-ma
         :paramtype tags: dict[str, str]
         """
         super().__init__(tags=tags, **kwargs)
-        self.expiration_time = None
-        self.allowed_product_type = None
-        self.transfer_status = None
-        self.recipient_email_id = None
-        self.initiator_email_id = None
-        self.reseller_id = None
-        self.reseller_name = None
-        self.initiator_customer_type = None
-        self.canceled_by = None
-        self.detailed_transfer_status = None
-        self.customer_tenant_id = None
-        self.supported_accounts = None
+        self.expiration_time: Optional[datetime.datetime] = None
+        self.allowed_product_type: Optional[list[Union[str, "_models.EligibleProductType"]]] = None
+        self.transfer_status: Optional[Union[str, "_models.TransferStatus"]] = None
+        self.recipient_email_id: Optional[str] = None
+        self.initiator_email_id: Optional[str] = None
+        self.reseller_id: Optional[str] = None
+        self.reseller_name: Optional[str] = None
+        self.initiator_customer_type: Optional[Union[str, "_models.InitiatorCustomerType"]] = None
+        self.canceled_by: Optional[str] = None
+        self.detailed_transfer_status: Optional[list["_models.DetailedTransferStatus"]] = None
+        self.customer_tenant_id: Optional[str] = None
+        self.supported_accounts: Optional[list[Union[str, "_models.SupportedAccountType"]]] = None
 
 
 class RecipientTransferDetailsListResult(_serialization.Model):
@@ -9814,8 +9824,8 @@ class RecipientTransferDetailsListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.RecipientTransferDetails"]] = None
+        self.next_link: Optional[str] = None
 
 
 class RefundDetailsSummaryAmountRefunded(Amount):
@@ -9958,13 +9968,13 @@ class RenewalTermDetails(_serialization.Model):
         :paramtype quantity: int
         """
         super().__init__(**kwargs)
-        self.billing_frequency = None
-        self.product_id = None
-        self.product_type_id = None
-        self.sku_id = None
-        self.term_duration = None
+        self.billing_frequency: Optional[str] = None
+        self.product_id: Optional[str] = None
+        self.product_type_id: Optional[str] = None
+        self.sku_id: Optional[str] = None
+        self.term_duration: Optional[str] = None
         self.quantity = quantity
-        self.term_end_date = None
+        self.term_end_date: Optional[datetime.datetime] = None
 
 
 class RenewProperties(_serialization.Model):
@@ -10030,13 +10040,13 @@ class RenewPropertiesResponse(_serialization.Model):
         self.billing_currency_total = billing_currency_total
 
 
-class Reservation(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Reservation(ProxyResource):
     """The definition of the reservation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -10224,10 +10234,10 @@ class Reservation(ProxyResource):  # pylint: disable=too-many-instance-attribute
         *,
         location: Optional[str] = None,
         etag: Optional[int] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.ReservationSkuProperty"] = None,
         instance_flexibility: Optional[Union[str, "_models.InstanceFlexibility"]] = None,
-        applied_scopes: Optional[List[str]] = None,
+        applied_scopes: Optional[list[str]] = None,
         archived: Optional[bool] = None,
         capabilities: Optional[str] = None,
         benefit_start_time: Optional[datetime.datetime] = None,
@@ -10244,7 +10254,7 @@ class Reservation(ProxyResource):  # pylint: disable=too-many-instance-attribute
         renew_destination: Optional[str] = None,
         renew_properties: Optional["_models.RenewPropertiesResponse"] = None,
         product_code: Optional[str] = None,
-        aggregates: Optional[List["_models.ReservationUtilizationAggregates"]] = None,
+        aggregates: Optional[list["_models.ReservationUtilizationAggregates"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10310,42 +10320,42 @@ class Reservation(ProxyResource):  # pylint: disable=too-many-instance-attribute
         self.etag = etag
         self.tags = tags
         self.sku = sku
-        self.reserved_resource_type = None
+        self.reserved_resource_type: Optional[str] = None
         self.instance_flexibility = instance_flexibility
-        self.display_name = None
+        self.display_name: Optional[str] = None
         self.applied_scopes = applied_scopes
-        self.applied_scope_type = None
+        self.applied_scope_type: Optional[str] = None
         self.archived = archived
         self.capabilities = capabilities
-        self.quantity = None
-        self.provisioning_state = None
-        self.effective_date_time = None
+        self.quantity: Optional[float] = None
+        self.provisioning_state: Optional[str] = None
+        self.effective_date_time: Optional[datetime.datetime] = None
         self.benefit_start_time = benefit_start_time
-        self.last_updated_date_time = None
-        self.expiry_date = None
+        self.last_updated_date_time: Optional[datetime.datetime] = None
+        self.expiry_date: Optional[str] = None
         self.expiry_date_time = expiry_date_time
         self.review_date_time = review_date_time
-        self.sku_description = None
+        self.sku_description: Optional[str] = None
         self.extended_status_info = extended_status_info
         self.billing_plan = billing_plan
-        self.display_provisioning_state = None
-        self.provisioning_sub_state = None
+        self.display_provisioning_state: Optional[str] = None
+        self.provisioning_sub_state: Optional[str] = None
         self.purchase_date = purchase_date
         self.purchase_date_time = purchase_date_time
         self.split_properties = split_properties
         self.merge_properties = merge_properties
         self.swap_properties = swap_properties
         self.applied_scope_properties = applied_scope_properties
-        self.billing_scope_id = None
-        self.renew = None
-        self.renew_source = None
+        self.billing_scope_id: Optional[str] = None
+        self.renew: Optional[bool] = None
+        self.renew_source: Optional[str] = None
         self.renew_destination = renew_destination
         self.renew_properties = renew_properties
-        self.term = None
-        self.user_friendly_applied_scope_type = None
-        self.user_friendly_renew_state = None
+        self.term: Optional[str] = None
+        self.user_friendly_applied_scope_type: Optional[str] = None
+        self.user_friendly_renew_state: Optional[str] = None
         self.product_code = product_code
-        self.trend = None
+        self.trend: Optional[str] = None
         self.aggregates = aggregates
 
 
@@ -10467,7 +10477,7 @@ class ReservationList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Reservation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Reservation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value:
@@ -10499,7 +10509,7 @@ class ReservationMergeProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, merge_destination: Optional[str] = None, merge_sources: Optional[List[str]] = None, **kwargs: Any
+        self, *, merge_destination: Optional[str] = None, merge_sources: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword merge_destination: Reservation resource id Created due to the merge. Format of the
@@ -10516,13 +10526,13 @@ class ReservationMergeProperties(_serialization.Model):
         self.merge_sources = merge_sources
 
 
-class ReservationOrder(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class ReservationOrder(ProxyResource):
     """Details of a reservation order being returned.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -10618,11 +10628,11 @@ class ReservationOrder(ProxyResource):  # pylint: disable=too-many-instance-attr
         "product_code": {"key": "properties.productCode", "type": "str"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         etag: Optional[int] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         display_name: Optional[str] = None,
         enrollment_id: Optional[str] = None,
         customer_id: Optional[str] = None,
@@ -10636,7 +10646,7 @@ class ReservationOrder(ProxyResource):  # pylint: disable=too-many-instance-attr
         original_quantity: Optional[int] = None,
         billing_plan: Optional[Union[str, "_models.ReservationBillingPlan"]] = None,
         plan_information: Optional["_models.ReservationOrderBillingPlanInformation"] = None,
-        reservations: Optional[List["_models.Reservation"]] = None,
+        reservations: Optional[list["_models.Reservation"]] = None,
         review_date_time: Optional[datetime.datetime] = None,
         extended_status_info: Optional["_models.ReservationExtendedStatusInfo"] = None,
         product_code: Optional[str] = None,
@@ -10701,8 +10711,8 @@ class ReservationOrder(ProxyResource):  # pylint: disable=too-many-instance-attr
         self.expiry_date_time = expiry_date_time
         self.benefit_start_time = benefit_start_time
         self.original_quantity = original_quantity
-        self.term = None
-        self.provisioning_state = None
+        self.term: Optional[str] = None
+        self.provisioning_state: Optional[str] = None
         self.billing_plan = billing_plan
         self.plan_information = plan_information
         self.reservations = reservations
@@ -10738,7 +10748,7 @@ class ReservationOrderBillingPlanInformation(_serialization.Model):
         pricing_currency_total: Optional["_models.Price"] = None,
         start_date: Optional[datetime.date] = None,
         next_payment_due_date: Optional[datetime.date] = None,
-        transactions: Optional[List["_models.ReservationPaymentDetail"]] = None,
+        transactions: Optional[list["_models.ReservationPaymentDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10776,7 +10786,7 @@ class ReservationOrderList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ReservationOrder"]] = None,
+        value: Optional[list["_models.ReservationOrder"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -10864,7 +10874,7 @@ class ReservationPaymentDetail(_serialization.Model):
         self.extended_status_info = extended_status_info
 
 
-class ReservationPurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ReservationPurchaseRequest(_serialization.Model):
     """The request for reservation purchase.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10958,7 +10968,7 @@ class ReservationPurchaseRequest(_serialization.Model):  # pylint: disable=too-m
         quantity: Optional[int] = None,
         display_name: Optional[str] = None,
         applied_scope_type: Optional[Union[str, "_models.AppliedScopeType"]] = None,
-        applied_scopes: Optional[List[str]] = None,
+        applied_scopes: Optional[list[str]] = None,
         applied_scope_properties: Optional["_models.ReservationAppliedScopeProperties"] = None,
         renew: bool = False,
         instance_flexibility_properties_instance_flexibility: Optional[
@@ -11013,9 +11023,9 @@ class ReservationPurchaseRequest(_serialization.Model):  # pylint: disable=too-m
         super().__init__(**kwargs)
         self.sku = sku
         self.location = location
-        self.reserved_resource_type = None
-        self.billing_scope_id = None
-        self.term = None
+        self.reserved_resource_type: Optional[str] = None
+        self.billing_scope_id: Optional[str] = None
+        self.term: Optional[str] = None
         self.billing_plan = billing_plan
         self.quantity = quantity
         self.display_name = display_name
@@ -11050,7 +11060,7 @@ class ReservationSkuProperty(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
+        self.name: Optional[str] = None
 
 
 class ReservationsListResult(_serialization.Model):
@@ -11083,9 +11093,9 @@ class ReservationsListResult(_serialization.Model):
         :paramtype summary: ~azure.mgmt.billing.models.ReservationSummary
         """
         super().__init__(**kwargs)
-        self.next_link = None
+        self.next_link: Optional[str] = None
         self.summary = summary
-        self.value = None
+        self.value: Optional[list["_models.Reservation"]] = None
 
 
 class ReservationSplitProperties(_serialization.Model):
@@ -11107,7 +11117,7 @@ class ReservationSplitProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, split_destinations: Optional[List[str]] = None, split_source: Optional[str] = None, **kwargs: Any
+        self, *, split_destinations: Optional[list[str]] = None, split_source: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword split_destinations: List of destination resource id that are created due to split.
@@ -11176,15 +11186,15 @@ class ReservationSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.cancelled_count = None
-        self.expired_count = None
-        self.expiring_count = None
-        self.failed_count = None
-        self.pending_count = None
-        self.succeeded_count = None
-        self.no_benefit_count = None
-        self.warning_count = None
-        self.processing_count = None
+        self.cancelled_count: Optional[float] = None
+        self.expired_count: Optional[float] = None
+        self.expiring_count: Optional[float] = None
+        self.failed_count: Optional[float] = None
+        self.pending_count: Optional[float] = None
+        self.succeeded_count: Optional[float] = None
+        self.no_benefit_count: Optional[float] = None
+        self.warning_count: Optional[float] = None
+        self.processing_count: Optional[float] = None
 
 
 class ReservationSwapProperties(_serialization.Model):
@@ -11255,13 +11265,13 @@ class ReservationUtilizationAggregates(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.grain = None
-        self.grain_unit = None
-        self.value = None
-        self.value_unit = None
+        self.grain: Optional[float] = None
+        self.grain_unit: Optional[str] = None
+        self.value: Optional[float] = None
+        self.value_unit: Optional[str] = None
 
 
-class SavingsPlanModel(ProxyResourceWithTags):  # pylint: disable=too-many-instance-attributes
+class SavingsPlanModel(ProxyResourceWithTags):
     """Savings plan.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11269,7 +11279,7 @@ class SavingsPlanModel(ProxyResourceWithTags):  # pylint: disable=too-many-insta
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -11404,7 +11414,7 @@ class SavingsPlanModel(ProxyResourceWithTags):  # pylint: disable=too-many-insta
         self,
         *,
         sku: "_models.Sku",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         display_name: Optional[str] = None,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         billing_scope_id: Optional[str] = None,
@@ -11467,12 +11477,12 @@ class SavingsPlanModel(ProxyResourceWithTags):  # pylint: disable=too-many-insta
         self.sku = sku
         self.display_name = display_name
         self.provisioning_state = provisioning_state
-        self.display_provisioning_state = None
-        self.user_friendly_applied_scope_type = None
+        self.display_provisioning_state: Optional[str] = None
+        self.user_friendly_applied_scope_type: Optional[str] = None
         self.billing_scope_id = billing_scope_id
-        self.billing_profile_id = None
-        self.customer_id = None
-        self.billing_account_id = None
+        self.billing_profile_id: Optional[str] = None
+        self.customer_id: Optional[str] = None
+        self.billing_account_id: Optional[str] = None
         self.term = term
         self.renew = renew
         self.renew_source = renew_source
@@ -11482,12 +11492,12 @@ class SavingsPlanModel(ProxyResourceWithTags):  # pylint: disable=too-many-insta
         self.applied_scope_type = applied_scope_type
         self.applied_scope_properties = applied_scope_properties
         self.commitment = commitment
-        self.effective_date_time = None
-        self.benefit_start_time = None
-        self.expiry_date_time = None
-        self.purchase_date_time = None
-        self.utilization = None
-        self.extended_status_info = None
+        self.effective_date_time: Optional[datetime.datetime] = None
+        self.benefit_start_time: Optional[datetime.datetime] = None
+        self.expiry_date_time: Optional[datetime.datetime] = None
+        self.purchase_date_time: Optional[datetime.datetime] = None
+        self.utilization: Optional["_models.Utilization"] = None
+        self.extended_status_info: Optional["_models.ExtendedStatusInfo"] = None
         self.product_code = product_code
 
 
@@ -11508,7 +11518,7 @@ class SavingsPlanModelList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.SavingsPlanModel"]] = None,
+        value: Optional[list["_models.SavingsPlanModel"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -11543,7 +11553,7 @@ class SavingsPlanModelListResult(SavingsPlanModelList):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.SavingsPlanModel"]] = None,
+        value: Optional[list["_models.SavingsPlanModel"]] = None,
         next_link: Optional[str] = None,
         summary: Optional["_models.SavingsPlanSummaryCount"] = None,
         **kwargs: Any
@@ -11560,7 +11570,7 @@ class SavingsPlanModelListResult(SavingsPlanModelList):
         self.summary = summary
 
 
-class SavingsPlanOrderModel(ProxyResourceWithTags):  # pylint: disable=too-many-instance-attributes
+class SavingsPlanOrderModel(ProxyResourceWithTags):
     """Savings plan order.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11568,7 +11578,7 @@ class SavingsPlanOrderModel(ProxyResourceWithTags):  # pylint: disable=too-many-
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -11661,13 +11671,13 @@ class SavingsPlanOrderModel(ProxyResourceWithTags):  # pylint: disable=too-many-
         self,
         *,
         sku: "_models.Sku",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         display_name: Optional[str] = None,
         billing_scope_id: Optional[str] = None,
         term: Optional[Union[str, "_models.SavingsPlanTerm"]] = None,
         billing_plan: Optional[Union[str, "_models.BillingPlan"]] = None,
         plan_information: Optional["_models.BillingPlanInformation"] = None,
-        savings_plans: Optional[List[str]] = None,
+        savings_plans: Optional[list[str]] = None,
         product_code: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -11699,18 +11709,18 @@ class SavingsPlanOrderModel(ProxyResourceWithTags):  # pylint: disable=too-many-
         super().__init__(tags=tags, **kwargs)
         self.sku = sku
         self.display_name = display_name
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.billing_scope_id = billing_scope_id
-        self.billing_profile_id = None
-        self.customer_id = None
-        self.billing_account_id = None
+        self.billing_profile_id: Optional[str] = None
+        self.customer_id: Optional[str] = None
+        self.billing_account_id: Optional[str] = None
         self.term = term
         self.billing_plan = billing_plan
-        self.benefit_start_time = None
-        self.expiry_date_time = None
+        self.benefit_start_time: Optional[datetime.datetime] = None
+        self.expiry_date_time: Optional[datetime.datetime] = None
         self.plan_information = plan_information
         self.savings_plans = savings_plans
-        self.extended_status_info = None
+        self.extended_status_info: Optional["_models.ExtendedStatusInfo"] = None
         self.product_code = product_code
 
 
@@ -11731,7 +11741,7 @@ class SavingsPlanOrderModelList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.SavingsPlanOrderModel"]] = None,
+        value: Optional[list["_models.SavingsPlanOrderModel"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -11798,15 +11808,15 @@ class SavingsPlanSummaryCount(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.succeeded_count = None
-        self.failed_count = None
-        self.expiring_count = None
-        self.expired_count = None
-        self.pending_count = None
-        self.cancelled_count = None
-        self.processing_count = None
-        self.no_benefit_count = None
-        self.warning_count = None
+        self.succeeded_count: Optional[float] = None
+        self.failed_count: Optional[float] = None
+        self.expiring_count: Optional[float] = None
+        self.expired_count: Optional[float] = None
+        self.pending_count: Optional[float] = None
+        self.cancelled_count: Optional[float] = None
+        self.processing_count: Optional[float] = None
+        self.no_benefit_count: Optional[float] = None
+        self.warning_count: Optional[float] = None
 
 
 class SavingsPlanUpdateRequest(_serialization.Model):
@@ -11831,7 +11841,7 @@ class SavingsPlanUpdateRequest(_serialization.Model):
         *,
         properties: Optional["_models.SavingsPlanUpdateRequestProperties"] = None,
         sku: Optional["_models.Sku"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11919,7 +11929,7 @@ class SavingsPlanUpdateValidateRequest(_serialization.Model):
     }
 
     def __init__(
-        self, *, benefits: Optional[List["_models.SavingsPlanUpdateRequestProperties"]] = None, **kwargs: Any
+        self, *, benefits: Optional[list["_models.SavingsPlanUpdateRequestProperties"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword benefits: The benefits of a savings plan.
@@ -11946,7 +11956,7 @@ class SavingsPlanValidateResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        benefits: Optional[List["_models.SavingsPlanValidResponseProperty"]] = None,
+        benefits: Optional[list["_models.SavingsPlanValidResponseProperty"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -12114,7 +12124,7 @@ class SubscriptionPolicy(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -12151,7 +12161,7 @@ class SubscriptionPolicy(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SubscriptionPolicyProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -12189,13 +12199,13 @@ class SubscriptionPolicyProperties(_serialization.Model):
         "policies": {"key": "policies", "type": "[PolicySummary]"},
     }
 
-    def __init__(self, *, policies: Optional[List["_models.PolicySummary"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, policies: Optional[list["_models.PolicySummary"]] = None, **kwargs: Any) -> None:
         """
         :keyword policies: List of all policies defined at the billing scope.
         :paramtype policies: list[~azure.mgmt.billing.models.PolicySummary]
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.policies = policies
 
 
@@ -12289,8 +12299,8 @@ class SystemOverrides(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.cancellation = None
-        self.cancellation_allowed_end_date = None
+        self.cancellation: Optional[Union[str, "_models.Cancellation"]] = None
+        self.cancellation_allowed_end_date: Optional[datetime.datetime] = None
 
 
 class TaxIdentifier(_serialization.Model):
@@ -12362,7 +12372,7 @@ class Transaction(ProxyResourceWithTags):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -12399,7 +12409,7 @@ class Transaction(ProxyResourceWithTags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.TransactionProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -12439,11 +12449,11 @@ class TransactionListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.next_link = None
-        self.value = None
+        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.Transaction"]] = None
 
 
-class TransactionProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class TransactionProperties(_serialization.Model):
     """A transaction.
 
     :ivar azure_credit_applied: The amount of any Azure credits automatically applied to this
@@ -12925,21 +12935,21 @@ class TransactionSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.azure_credit_applied = None
-        self.billing_currency = None
-        self.consumption_commitment_decremented = None
-        self.sub_total = None
-        self.tax = None
-        self.total = None
+        self.azure_credit_applied: Optional[float] = None
+        self.billing_currency: Optional[str] = None
+        self.consumption_commitment_decremented: Optional[float] = None
+        self.sub_total: Optional[float] = None
+        self.tax: Optional[float] = None
+        self.total: Optional[float] = None
 
 
-class TransferDetails(ProxyResourceWithTags):  # pylint: disable=too-many-instance-attributes
+class TransferDetails(ProxyResourceWithTags):
     """Details of the transfer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -12995,7 +13005,7 @@ class TransferDetails(ProxyResourceWithTags):  # pylint: disable=too-many-instan
         "detailed_transfer_status": {"key": "properties.detailedTransferStatus", "type": "[DetailedTransferStatus]"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Dictionary of metadata associated with the resource. It may not be populated for
          all resource types. Maximum key/value length supported of 256 characters. Keys/value should not
@@ -13003,12 +13013,12 @@ class TransferDetails(ProxyResourceWithTags):  # pylint: disable=too-many-instan
         :paramtype tags: dict[str, str]
         """
         super().__init__(tags=tags, **kwargs)
-        self.expiration_time = None
-        self.transfer_status = None
-        self.recipient_email_id = None
-        self.initiator_email_id = None
-        self.canceled_by = None
-        self.detailed_transfer_status = None
+        self.expiration_time: Optional[datetime.datetime] = None
+        self.transfer_status: Optional[Union[str, "_models.TransferStatus"]] = None
+        self.recipient_email_id: Optional[str] = None
+        self.initiator_email_id: Optional[str] = None
+        self.canceled_by: Optional[str] = None
+        self.detailed_transfer_status: Optional[list["_models.DetailedTransferStatus"]] = None
 
 
 class TransferDetailsListResult(_serialization.Model):
@@ -13035,8 +13045,8 @@ class TransferDetailsListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.TransferDetails"]] = None
+        self.next_link: Optional[str] = None
 
 
 class TransferError(_serialization.Model):
@@ -13063,8 +13073,8 @@ class TransferError(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class TransferItemQueryParameter(_serialization.Model):
@@ -13113,8 +13123,8 @@ class TransitionDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.transition_date = None
-        self.anniversary_day = None
+        self.transition_date: Optional[datetime.datetime] = None
+        self.anniversary_day: Optional[int] = None
 
 
 class Utilization(_serialization.Model):
@@ -13137,13 +13147,13 @@ class Utilization(_serialization.Model):
         "aggregates": {"key": "aggregates", "type": "[UtilizationAggregates]"},
     }
 
-    def __init__(self, *, aggregates: Optional[List["_models.UtilizationAggregates"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, aggregates: Optional[list["_models.UtilizationAggregates"]] = None, **kwargs: Any) -> None:
         """
         :keyword aggregates: The array of aggregates of a savings plan's utilization.
         :paramtype aggregates: list[~azure.mgmt.billing.models.UtilizationAggregates]
         """
         super().__init__(**kwargs)
-        self.trend = None
+        self.trend: Optional[str] = None
         self.aggregates = aggregates
 
 
@@ -13179,10 +13189,10 @@ class UtilizationAggregates(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.grain = None
-        self.grain_unit = None
-        self.value = None
-        self.value_unit = None
+        self.grain: Optional[float] = None
+        self.grain_unit: Optional[str] = None
+        self.value: Optional[float] = None
+        self.value_unit: Optional[str] = None
 
 
 class ValidateTransferListResponse(_serialization.Model):
@@ -13205,7 +13215,7 @@ class ValidateTransferListResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[list["_models.ValidateTransferResponse"]] = None
 
 
 class ValidateTransferResponse(_serialization.Model):
@@ -13232,14 +13242,14 @@ class ValidateTransferResponse(_serialization.Model):
         "results": {"key": "properties.results", "type": "[ValidationResultProperties]"},
     }
 
-    def __init__(self, *, results: Optional[List["_models.ValidationResultProperties"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, results: Optional[list["_models.ValidationResultProperties"]] = None, **kwargs: Any) -> None:
         """
         :keyword results: The array of validation results.
         :paramtype results: list[~azure.mgmt.billing.models.ValidationResultProperties]
         """
         super().__init__(**kwargs)
-        self.status = None
-        self.product_id = None
+        self.status: Optional[str] = None
+        self.product_id: Optional[str] = None
         self.results = results
 
 
@@ -13271,6 +13281,6 @@ class ValidationResultProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.level = None
-        self.code = None
-        self.message = None
+        self.level: Optional[str] = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None

@@ -21,7 +21,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_billing_profile(self, resource_group):
+    async def test_invoices_list_by_billing_profile(self, resource_group):
         response = self.client.invoices.list_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -33,7 +33,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_download_documents_by_billing_account(self, resource_group):
+    async def test_invoices_begin_download_documents_by_billing_account(self, resource_group):
         response = await (
             await self.client.invoices.begin_download_documents_by_billing_account(
                 billing_account_name="str",
@@ -47,7 +47,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_amend(self, resource_group):
+    async def test_invoices_begin_amend(self, resource_group):
         response = await (
             await self.client.invoices.begin_amend(
                 billing_account_name="str",
@@ -61,7 +61,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_download_by_billing_account(self, resource_group):
+    async def test_invoices_begin_download_by_billing_account(self, resource_group):
         response = await (
             await self.client.invoices.begin_download_by_billing_account(
                 billing_account_name="str",
@@ -75,7 +75,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_download_summary_by_billing_account(self, resource_group):
+    async def test_invoices_begin_download_summary_by_billing_account(self, resource_group):
         response = await (
             await self.client.invoices.begin_download_summary_by_billing_account(
                 billing_account_name="str",
@@ -89,7 +89,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_billing_account(self, resource_group):
+    async def test_invoices_get_by_billing_account(self, resource_group):
         response = await self.client.invoices.get_by_billing_account(
             billing_account_name="str",
             invoice_name="str",
@@ -101,7 +101,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_billing_account(self, resource_group):
+    async def test_invoices_list_by_billing_account(self, resource_group):
         response = self.client.invoices.list_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -112,7 +112,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_download_documents_by_billing_subscription(self, resource_group):
+    async def test_invoices_begin_download_documents_by_billing_subscription(self, resource_group):
         response = await (
             await self.client.invoices.begin_download_documents_by_billing_subscription(
                 parameters=[{"documentName": "str", "invoiceName": "str"}],
@@ -125,7 +125,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_download_by_billing_subscription(self, resource_group):
+    async def test_invoices_begin_download_by_billing_subscription(self, resource_group):
         response = await (
             await self.client.invoices.begin_download_by_billing_subscription(
                 invoice_name="str",
@@ -138,7 +138,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_billing_subscription(self, resource_group):
+    async def test_invoices_get_by_billing_subscription(self, resource_group):
         response = await self.client.invoices.get_by_billing_subscription(
             invoice_name="str",
             api_version="2024-04-01",
@@ -149,7 +149,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_billing_subscription(self, resource_group):
+    async def test_invoices_list_by_billing_subscription(self, resource_group):
         response = self.client.invoices.list_by_billing_subscription(
             api_version="2024-04-01",
         )
@@ -159,7 +159,7 @@ class TestBillingManagementInvoicesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_invoices_get(self, resource_group):
         response = await self.client.invoices.get(
             invoice_name="str",
             api_version="2024-04-01",

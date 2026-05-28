@@ -21,7 +21,7 @@ class TestBillingManagementAvailableBalancesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_billing_account(self, resource_group):
+    async def test_available_balances_get_by_billing_account(self, resource_group):
         response = await self.client.available_balances.get_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -32,7 +32,7 @@ class TestBillingManagementAvailableBalancesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_billing_profile(self, resource_group):
+    async def test_available_balances_get_by_billing_profile(self, resource_group):
         response = await self.client.available_balances.get_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",

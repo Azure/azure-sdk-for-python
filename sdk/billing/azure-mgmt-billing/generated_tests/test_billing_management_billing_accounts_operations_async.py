@@ -21,7 +21,7 @@ class TestBillingManagementBillingAccountsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_add_payment_terms(self, resource_group):
+    async def test_billing_accounts_begin_add_payment_terms(self, resource_group):
         response = await (
             await self.client.billing_accounts.begin_add_payment_terms(
                 billing_account_name="str",
@@ -42,7 +42,7 @@ class TestBillingManagementBillingAccountsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_cancel_payment_terms(self, resource_group):
+    async def test_billing_accounts_begin_cancel_payment_terms(self, resource_group):
         response = await (
             await self.client.billing_accounts.begin_cancel_payment_terms(
                 billing_account_name="str",
@@ -56,7 +56,7 @@ class TestBillingManagementBillingAccountsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_confirm_transition(self, resource_group):
+    async def test_billing_accounts_confirm_transition(self, resource_group):
         response = await self.client.billing_accounts.confirm_transition(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -67,7 +67,7 @@ class TestBillingManagementBillingAccountsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_invoice_sections_by_create_subscription_permission(self, resource_group):
+    async def test_billing_accounts_list_invoice_sections_by_create_subscription_permission(self, resource_group):
         response = self.client.billing_accounts.list_invoice_sections_by_create_subscription_permission(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -78,7 +78,7 @@ class TestBillingManagementBillingAccountsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_validate_payment_terms(self, resource_group):
+    async def test_billing_accounts_validate_payment_terms(self, resource_group):
         response = await self.client.billing_accounts.validate_payment_terms(
             billing_account_name="str",
             parameters=[
@@ -92,7 +92,7 @@ class TestBillingManagementBillingAccountsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_billing_accounts_get(self, resource_group):
         response = await self.client.billing_accounts.get(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -103,7 +103,7 @@ class TestBillingManagementBillingAccountsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_billing_accounts_begin_update(self, resource_group):
         response = await (
             await self.client.billing_accounts.begin_update(
                 billing_account_name="str",
@@ -185,7 +185,7 @@ class TestBillingManagementBillingAccountsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_billing_accounts_list(self, resource_group):
         response = self.client.billing_accounts.list(
             api_version="2024-04-01",
         )

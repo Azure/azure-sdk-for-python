@@ -21,7 +21,7 @@ class TestBillingManagementRecipientTransfersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_accept(self, resource_group):
+    async def test_recipient_transfers_accept(self, resource_group):
         response = await self.client.recipient_transfers.accept(
             transfer_name="str",
             parameters={"productDetails": [{"productId": "str", "productType": "str"}]},
@@ -33,7 +33,7 @@ class TestBillingManagementRecipientTransfersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_validate(self, resource_group):
+    async def test_recipient_transfers_validate(self, resource_group):
         response = await self.client.recipient_transfers.validate(
             transfer_name="str",
             parameters={"productDetails": [{"productId": "str", "productType": "str"}]},
@@ -45,7 +45,7 @@ class TestBillingManagementRecipientTransfersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_decline(self, resource_group):
+    async def test_recipient_transfers_decline(self, resource_group):
         response = await self.client.recipient_transfers.decline(
             transfer_name="str",
             api_version="2024-04-01",
@@ -56,7 +56,7 @@ class TestBillingManagementRecipientTransfersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_recipient_transfers_get(self, resource_group):
         response = await self.client.recipient_transfers.get(
             transfer_name="str",
             api_version="2024-04-01",
@@ -67,7 +67,7 @@ class TestBillingManagementRecipientTransfersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_recipient_transfers_list(self, resource_group):
         response = self.client.recipient_transfers.list(
             api_version="2024-04-01",
         )

@@ -21,7 +21,7 @@ class TestBillingManagementSavingsPlansOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_savings_plan_order(self, resource_group):
+    async def test_savings_plans_list_by_savings_plan_order(self, resource_group):
         response = self.client.savings_plans.list_by_savings_plan_order(
             billing_account_name="str",
             savings_plan_order_id="str",
@@ -33,7 +33,7 @@ class TestBillingManagementSavingsPlansOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_billing_account(self, resource_group):
+    async def test_savings_plans_list_by_billing_account(self, resource_group):
         response = self.client.savings_plans.list_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -44,7 +44,7 @@ class TestBillingManagementSavingsPlansOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_billing_account(self, resource_group):
+    async def test_savings_plans_get_by_billing_account(self, resource_group):
         response = await self.client.savings_plans.get_by_billing_account(
             billing_account_name="str",
             savings_plan_order_id="str",
@@ -57,7 +57,7 @@ class TestBillingManagementSavingsPlansOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update_by_billing_account(self, resource_group):
+    async def test_savings_plans_begin_update_by_billing_account(self, resource_group):
         response = await (
             await self.client.savings_plans.begin_update_by_billing_account(
                 billing_account_name="str",
@@ -107,7 +107,7 @@ class TestBillingManagementSavingsPlansOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_validate_update_by_billing_account(self, resource_group):
+    async def test_savings_plans_validate_update_by_billing_account(self, resource_group):
         response = await self.client.savings_plans.validate_update_by_billing_account(
             billing_account_name="str",
             savings_plan_order_id="str",

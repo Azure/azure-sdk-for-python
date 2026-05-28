@@ -20,7 +20,7 @@ class TestBillingManagementReservationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_billing_account(self, resource_group):
+    def test_reservations_list_by_billing_account(self, resource_group):
         response = self.client.reservations.list_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",
@@ -31,7 +31,7 @@ class TestBillingManagementReservationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_billing_profile(self, resource_group):
+    def test_reservations_list_by_billing_profile(self, resource_group):
         response = self.client.reservations.list_by_billing_profile(
             billing_account_name="str",
             billing_profile_name="str",
@@ -43,7 +43,7 @@ class TestBillingManagementReservationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_reservation_order(self, resource_group):
+    def test_reservations_get_by_reservation_order(self, resource_group):
         response = self.client.reservations.get_by_reservation_order(
             billing_account_name="str",
             reservation_order_id="str",
@@ -56,7 +56,7 @@ class TestBillingManagementReservationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update_by_billing_account(self, resource_group):
+    def test_reservations_begin_update_by_billing_account(self, resource_group):
         response = self.client.reservations.begin_update_by_billing_account(
             billing_account_name="str",
             reservation_order_id="str",
@@ -107,7 +107,7 @@ class TestBillingManagementReservationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_reservation_order(self, resource_group):
+    def test_reservations_list_by_reservation_order(self, resource_group):
         response = self.client.reservations.list_by_reservation_order(
             billing_account_name="str",
             reservation_order_id="str",

@@ -21,7 +21,7 @@ class TestBillingManagementBillingSubscriptionsAliasesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_billing_subscriptions_aliases_get(self, resource_group):
         response = await self.client.billing_subscriptions_aliases.get(
             billing_account_name="str",
             alias_name="str",
@@ -33,7 +33,7 @@ class TestBillingManagementBillingSubscriptionsAliasesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_billing_subscriptions_aliases_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.billing_subscriptions_aliases.begin_create_or_update(
                 billing_account_name="str",
@@ -115,7 +115,7 @@ class TestBillingManagementBillingSubscriptionsAliasesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_billing_account(self, resource_group):
+    async def test_billing_subscriptions_aliases_list_by_billing_account(self, resource_group):
         response = self.client.billing_subscriptions_aliases.list_by_billing_account(
             billing_account_name="str",
             api_version="2024-04-01",

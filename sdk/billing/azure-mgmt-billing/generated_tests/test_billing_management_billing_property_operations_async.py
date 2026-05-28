@@ -21,7 +21,7 @@ class TestBillingManagementBillingPropertyOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_billing_property_get(self, resource_group):
         response = await self.client.billing_property.get(
             api_version="2024-04-01",
         )
@@ -31,7 +31,7 @@ class TestBillingManagementBillingPropertyOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_billing_property_update(self, resource_group):
         response = await self.client.billing_property.update(
             parameters={
                 "id": "str",
