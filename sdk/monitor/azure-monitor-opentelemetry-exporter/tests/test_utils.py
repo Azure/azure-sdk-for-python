@@ -867,9 +867,10 @@ class TestUtils(unittest.TestCase):
             "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
         },
     )
-    def test_attach_type_integrated_auto_app_service_no_isdir_check(self, mock_isdir):
-        # With the env var set, isdir is not checked - attach type is authoritative
-        self.assertTrue(_utils._is_attach_enabled())
+    def test_attach_type_integrated_auto_app_service_requires_isdir_check(self, mock_isdir):
+        # Even with IntegratedAuto, App Service attach still follows the legacy isdir gate.
+        self.assertFalse(_utils._is_attach_enabled())
+        mock_isdir.assert_called()
 
     @patch(
         "azure.monitor.opentelemetry.exporter._utils.isdir",
