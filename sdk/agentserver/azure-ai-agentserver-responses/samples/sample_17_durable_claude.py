@@ -112,9 +112,18 @@ async def _send_input_if_unprocessed(
 ) -> None:
     """Send this turn's input to Claude unless we already did on a prior attempt.
 
-    Uses ``last_processed_input_item_id`` as the watermark. Updates the
-    watermark BEFORE the streaming receive loop so a crash inside the
-    receive loop doesn't cause a re-send on the next attempt.
+    Uses ``last_processed_input_item_id`` as the watermark. The watermark is
+    written AND explicitly flushed BEFORE the upstream call so a crash
+    between flush and call still recovers cleanly (the recovered attempt
+    sees the persisted watermark and skips re-sending). The trade-off is
+    that a crash in this tiny window will leave the Claude session without
+    this turn's user message, but that is preferable to silently
+    duplicating the user message on recovery.
+
+    Without the explicit ``flush()`` the watermark write only reaches the
+    task store at the next 5-second auto-flush or the next lifecycle
+    transition — a crash within that window would lose the watermark and
+    cause the recovered attempt to issue ``query`` a second time.
     """
     input_items = await context.get_input_items()
     last_input_item_id = getattr(input_items[-1], "id", None) if input_items else None
@@ -124,8 +133,9 @@ async def _send_input_if_unprocessed(
         return  # already sent on a prior attempt; let receive_response handle it
 
     input_text = await context.get_input_text()
-    await client.query(input_text)
     durability.metadata["last_processed_input_item_id"] = last_input_item_id
+    await durability.metadata.flush()
+    await client.query(input_text)
 
 
 def _build_resumption_response(

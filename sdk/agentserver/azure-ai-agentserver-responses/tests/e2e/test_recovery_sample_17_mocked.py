@@ -249,6 +249,105 @@ class TestSample17NeverForks:
 
 
 @pytest.mark.asyncio
+class TestSample17FlushBeforeQuery:
+    """Pin the watermark-flush-then-query ordering.
+
+    The contract: between writing the watermark and calling the upstream
+    side-effecting API, the metadata MUST be explicitly flushed. A crash
+    in the tiny window between flush and call still recovers cleanly
+    because the recovered handler sees the persisted watermark and skips
+    the re-query. Without the flush, the watermark sits in the in-memory
+    dict and is only persisted on lifecycle transitions — a crash in
+    that window loses the watermark and the recovered handler re-issues
+    ``client.query`` (duplicate user message in session JSONL).
+
+    Tests below pin BOTH (a) flush is called and (b) flush happens
+    BEFORE the query call.
+    """
+
+    async def test_flush_called_before_query_on_watermarked_send(self) -> None:
+        from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
+
+        # Record the order in which flush() and query() are invoked.
+        events_in_order: list[str] = []
+
+        stub_class, query_calls = _make_claude_client_stub()
+
+        # Wrap the stub's query() to record its position.
+        original_query = stub_class.query
+
+        async def _recording_query(self_inner: Any, prompt: str) -> None:
+            events_in_order.append("query")
+            await original_query(self_inner, prompt)
+
+        stub_class.query = _recording_query  # type: ignore[method-assign]
+
+        with patch.object(mod, "ClaudeSDKClient", stub_class):
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                input_item_id="item-flush-1",
+            )
+
+            # Wrap the FilteredMetadata's flush() so we can record its position.
+            metadata = ctx.durability.metadata  # _FilteredMetadata wrapping dict
+            original_flush = metadata.flush
+
+            async def _recording_flush() -> None:
+                events_in_order.append("flush")
+                await original_flush()
+
+            metadata.flush = _recording_flush  # type: ignore[assignment]
+
+            await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+
+        # The contract: flush() must appear in the trace, and it must come
+        # before the first query().
+        assert "flush" in events_in_order, (
+            "sample_17 must call await durability.metadata.flush() after the "
+            "watermark write — see backlog B0 (deterministic metadata persistence)"
+        )
+        flush_idx = events_in_order.index("flush")
+        query_idx = events_in_order.index("query")
+        assert flush_idx < query_idx, (
+            f"flush() must happen BEFORE the upstream query(). Got order: "
+            f"{events_in_order}. If flush is after query, a crash between "
+            f"them loses the watermark and recovery re-queries (duplicate user message)."
+        )
+
+    async def test_flush_is_at_most_once_after_a_single_watermark_write(self) -> None:
+        """Dirty-tracking sanity check: idempotent flush after one watermark write."""
+        from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
+
+        flush_count = [0]
+
+        stub_class, _query_calls = _make_claude_client_stub()
+        with patch.object(mod, "ClaudeSDKClient", stub_class):
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                input_item_id="item-once",
+            )
+            metadata = ctx.durability.metadata
+            original_flush = metadata.flush
+
+            async def _counting_flush() -> None:
+                flush_count[0] += 1
+                await original_flush()
+
+            metadata.flush = _counting_flush  # type: ignore[assignment]
+
+            await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+
+        # One watermark write → at most one flush in the watermarked-send path.
+        # (Steered pre-entry test below covers the other call site separately.)
+        assert flush_count[0] >= 1, "sample_17 must flush at least once after watermark write"
+        assert flush_count[0] <= 2, (
+            f"sample_17 flushed {flush_count[0]} times; expected at most 2 "
+            f"(one in the main path + at most one in the close-out). Excess "
+            f"flushes suggest watermark is being re-written or dirty tracking is broken."
+        )
+
+
+@pytest.mark.asyncio
 class TestSample17PreEntrySteeredPreservesInput:
     async def test_pre_entry_steered_sends_input_to_claude_then_completes(self) -> None:
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]

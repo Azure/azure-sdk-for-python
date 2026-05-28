@@ -51,6 +51,27 @@ class _FilteredMetadata(MutableMapping[str, Any]):
             return False
         return key in self._raw
 
+    async def flush(self) -> None:
+        """Force-persist any pending metadata writes to the task store.
+
+        Delegates to the underlying ``TaskMetadata.flush()`` when present.
+        For non-durable / transient contexts (e.g. ``store=false`` responses
+        or unit tests) the underlying mapping is a plain ``dict`` and this
+        is a no-op.
+
+        Use this after a watermark write that gates a subsequent
+        side-effecting upstream call, so a crash between the write and the
+        call still recovers cleanly (the recovered handler will see the
+        persisted watermark and not re-issue the side effect).
+        """
+        flush = getattr(self._raw, "flush", None)
+        if callable(flush):
+            import asyncio  # local import to avoid top-level cycle  # noqa: PLC0415
+
+            result = flush()
+            if asyncio.iscoroutine(result):
+                await result
+
 
 class DurabilityContext:
     """Recovery-awareness context exposed to response handlers.

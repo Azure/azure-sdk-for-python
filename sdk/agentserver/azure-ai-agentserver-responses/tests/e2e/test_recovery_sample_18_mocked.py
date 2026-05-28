@@ -280,3 +280,96 @@ class TestSample18PreEntryOtherCancellationDoesNotTouchSDK:
         assert create_calls == []
         assert send_calls == []
         assert "response.completed" not in [_event_type(e) for e in events]
+
+
+@pytest.mark.asyncio
+class TestSample18FlushBeforeSend:
+    """Pin watermark-flush-then-send ordering for the Copilot sample.
+
+    Same contract as sample_17: flush() must come BEFORE session.send().
+    A crash between the in-memory watermark write and the actual upstream
+    call must not lose the watermark; if it did, the recovered handler
+    would re-send and duplicate the user message in Copilot's session.
+    """
+
+    async def test_flush_called_before_send_on_watermarked_send(self) -> None:
+        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+
+        events_in_order: list[str] = []
+
+        stub_client, send_calls, create_calls = _make_session_stub_classes()
+
+        # Patch the session class returned by create_session to record the
+        # order in which send() is invoked.
+        original_create_session = stub_client.create_session
+
+        async def _recording_create_session(self_inner, **kwargs):
+            session = await original_create_session(self_inner, **kwargs)
+            original_send = session.send
+
+            async def _recording_send(prompt: str) -> None:
+                events_in_order.append("send")
+                await original_send(prompt)
+
+            session.send = _recording_send  # type: ignore[method-assign]
+            return session
+
+        stub_client.create_session = _recording_create_session  # type: ignore[method-assign]
+
+        with patch.object(mod, "CopilotClient", stub_client):
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                input_item_id="item-flush-2",
+            )
+
+            metadata = ctx.durability.metadata
+            original_flush = metadata.flush
+
+            async def _recording_flush() -> None:
+                events_in_order.append("flush")
+                await original_flush()
+
+            metadata.flush = _recording_flush  # type: ignore[assignment]
+
+            await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+
+        assert "flush" in events_in_order, (
+            "sample_18 must call await durability.metadata.flush() after the "
+            "watermark write — see backlog B0 (deterministic metadata persistence)"
+        )
+        flush_idx = events_in_order.index("flush")
+        send_idx = events_in_order.index("send")
+        assert flush_idx < send_idx, (
+            f"flush() must happen BEFORE session.send(). Got order: "
+            f"{events_in_order}. If flush is after send, a crash between them "
+            f"loses the watermark and recovery re-sends (duplicate user message)."
+        )
+
+    async def test_flush_is_at_most_once_per_watermarked_send(self) -> None:
+        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+
+        flush_count = [0]
+
+        stub_client, _send_calls, _create_calls = _make_session_stub_classes()
+        with patch.object(mod, "CopilotClient", stub_client):
+            ctx = _make_context(
+                response_id=IdGenerator.new_response_id(),
+                input_item_id="item-once-2",
+            )
+            metadata = ctx.durability.metadata
+            original_flush = metadata.flush
+
+            async def _counting_flush() -> None:
+                flush_count[0] += 1
+                await original_flush()
+
+            metadata.flush = _counting_flush  # type: ignore[assignment]
+
+            await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+
+        assert flush_count[0] >= 1, "sample_18 must flush at least once after watermark write"
+        assert flush_count[0] <= 2, (
+            f"sample_18 flushed {flush_count[0]} times; expected at most 2. "
+            f"Excess flushes suggest watermark is being re-written or dirty "
+            f"tracking is broken."
+        )

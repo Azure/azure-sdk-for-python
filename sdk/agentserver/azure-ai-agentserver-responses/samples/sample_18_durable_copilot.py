@@ -110,7 +110,19 @@ async def _send_input_if_unprocessed(
     """Send the user's input to Copilot unless we already did on a prior attempt.
 
     Returns True if a send happened on this call; False otherwise.
-    Uses ``last_processed_input_item_id`` as the watermark.
+
+    Uses ``last_processed_input_item_id`` as the watermark. The watermark
+    is written AND explicitly flushed BEFORE the upstream ``session.send``
+    so a crash between flush and send still recovers cleanly: the
+    recovered attempt sees the persisted watermark and skips re-sending.
+    The trade-off is that a crash in this tiny window will leave Copilot
+    without this turn's user message, but that is preferable to silently
+    duplicating the user message in session history on recovery.
+
+    Without the explicit ``flush()`` the watermark write only reaches the
+    task store at the next 5-second auto-flush or the next lifecycle
+    transition — a crash within that window would lose the watermark and
+    cause the recovered attempt to issue ``session.send`` a second time.
     """
     input_items = await context.get_input_items()
     last_input_item_id = getattr(input_items[-1], "id", None) if input_items else None
@@ -120,8 +132,9 @@ async def _send_input_if_unprocessed(
         return False
 
     input_text = await context.get_input_text()
-    await session.send(input_text)
     durability.metadata["last_processed_input_item_id"] = last_input_item_id
+    await durability.metadata.flush()
+    await session.send(input_text)
     return True
 
 
