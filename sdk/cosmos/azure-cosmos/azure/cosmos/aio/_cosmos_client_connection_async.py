@@ -2417,8 +2417,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_or_container_link, http_constants.ResourceType.Document)
         collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
 
-        # Create shared list for thread-safe header capture
-        response_headers_list: list[CaseInsensitiveDict] = []
+        # Shared dict for header capture — overwritten each page fetch
+        response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
 
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
             await kwargs["containerProperties"](options)
@@ -2434,7 +2434,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     query,
                     new_options,
                     response_hook=response_hook,
-                    response_headers_list=response_headers_list,
+                    response_headers=response_headers,
                     **kwargs
                 ),
                 self.last_response_headers,
@@ -2450,7 +2450,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook=response_hook,
             raw_response_hook=kwargs.get('raw_response_hook'),
             resource_type=http_constants.ResourceType.Document,
-            response_headers_list=response_headers_list
+            response_headers=response_headers
         )
 
     def QueryItemsChangeFeed(
@@ -3010,7 +3010,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key_range_id: Optional[str] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
         is_query_plan: bool = False,
-        response_headers_list: Optional[list[CaseInsensitiveDict]] = None,
+        response_headers: Optional[CaseInsensitiveDict] = None,
         **kwargs: Any
     ) -> list[dict[str, Any]]:
         """Query for more than one Azure Cosmos resources.
@@ -3029,8 +3029,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :type response_hook: Callable[[Mapping[str, Any], dict[str, Any]], None]
         :param bool is_query_plan:
             Specifies if the call is to fetch query plan
-        :param response_headers_list: Optional list to capture response headers from each page fetch.
-        :type response_headers_list: Optional[list[CaseInsensitiveDict]]
+        :param response_headers: Optional dict to capture response headers from the most recent page fetch.
+        :type response_headers: Optional[CaseInsensitiveDict]
         :returns: A list of the queried resources.
         :rtype: list
         :raises SystemError: If the query compatibility mode is undefined.
@@ -3128,8 +3128,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             if internal_headers_capture is not None:
                 _capture_internal_headers(last_response_headers)
             self._UpdateSessionIfRequired(headers, result, last_response_headers)
-            if response_headers_list is not None:
-                response_headers_list.append(last_response_headers.copy())
+            if response_headers is not None:
+                response_headers.clear()
+                response_headers.update(last_response_headers)
             if response_hook:
                 response_hook(self.last_response_headers, result)
             return __GetBodiesFromQueryResult(result)
@@ -3419,8 +3420,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         if internal_headers_capture is not None:
                             _capture_internal_headers(backend_response_headers)
                         self._UpdateSessionIfRequired(req_headers, backend_query_result, backend_response_headers)
-                        if response_headers_list is not None:
-                            response_headers_list.append(backend_response_headers.copy())
+                        if response_headers is not None:
+                            response_headers.clear()
+                            response_headers.update(backend_response_headers)
 
                         # Merge results, falling back to a plain extend if the
                         # aggregating merge raises (it can on aggregated queries
@@ -3529,8 +3531,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
             query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
             self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = get_query_advice_info(query_advice_raw)
-        if response_headers_list is not None:
-            response_headers_list.append(last_response_headers.copy())
+        if response_headers is not None:
+            response_headers.clear()
+            response_headers.update(last_response_headers)
         if response_hook:
             response_hook(self.last_response_headers, result)
 

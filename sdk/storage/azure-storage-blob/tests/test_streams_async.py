@@ -16,7 +16,7 @@ from azure.storage.blob._shared.streams import (
     StructuredMessageProperties,
 )
 from azure.storage.blob._shared.streams_async import AsyncStructuredMessageDecoder
-from azure.storage.extensions import crc64
+from azure.storage.extensions import checksums
 
 
 async def _async_iter_bytes(data: bytes, chunk_size: int = 1024) -> AsyncIterator[bytes]:
@@ -80,12 +80,12 @@ def _build_structured_message(
 
             segment_crc = None
             if StructuredMessageProperties.CRC64 in flags:
-                segment_crc = crc64.compute(segment_data, 0)  # pylint: disable=I1101
+                segment_crc = checksums.crc64.compute(segment_data, 0)
                 if i == invalidate_crc_segment:
                     segment_crc += 5
             _write_segment(i, segment_data, segment_crc, message)
 
-            message_crc = crc64.compute(segment_data, message_crc)  # pylint: disable=I1101
+            message_crc = checksums.crc64.compute(segment_data, message_crc)
 
     # Message footer
     if StructuredMessageProperties.CRC64 in flags:

@@ -33,18 +33,22 @@ def prepare_multipart_form_data(
     body: Mapping[str, Any], multipart_fields: list[str], data_fields: list[str]
 ) -> list[FileType]:
     files: list[FileType] = []
+
+    # Append data fields first so they appear before file parts in the encoded
+    # multipart body. Some streaming server-side parsers (e.g. the Foundry
+    # hosted-agents `create_agent_version_from_code` endpoint) require small
+    # JSON metadata parts to precede large binary file parts; otherwise they
+    # report the metadata part as missing.
+    for data_field in data_fields:
+        data_entry = body.get(data_field)
+        if data_entry:
+            files.append((data_field, str(serialize_multipart_data_entry(data_entry))))
+
     for multipart_field in multipart_fields:
         multipart_entry = body.get(multipart_field)
         if isinstance(multipart_entry, list):
             files.extend([(multipart_field, e) for e in multipart_entry])
         elif multipart_entry:
             files.append((multipart_field, multipart_entry))
-
-    # if files is empty, sdk core library can't handle multipart/form-data correctly, so
-    # we put data fields into files with filename as None to avoid that scenario.
-    for data_field in data_fields:
-        data_entry = body.get(data_field)
-        if data_entry:
-            files.append((data_field, str(serialize_multipart_data_entry(data_entry))))
 
     return files
