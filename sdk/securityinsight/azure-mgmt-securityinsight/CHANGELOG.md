@@ -19,9 +19,6 @@
   - Enum `DataConnectorKind` added member `PREMIUM_MICROSOFT_DEFENDER_FOR_THREAT_INTELLIGENCE`
   - Enum `DataConnectorKind` added member `PURVIEW_AUDIT`
   - Enum `DataConnectorKind` added member `REST_API_POLLER`
-  - Model `EnrichmentIpGeodata` added property `city_confidence_factor`
-  - Model `EnrichmentIpGeodata` added property `country_confidence_factor`
-  - Model `EnrichmentIpGeodata` added property `state_confidence_factor`
   - Enum `EntityQueryTemplateKind` added member `ANOMALY`
   - Enum `EntityQueryTemplateKind` added member `BOOKMARK`
   - Enum `EntityQueryTemplateKind` added member `EXPANSION`
@@ -179,7 +176,6 @@
   - Added model `QueryCondition`
   - Added model `QueryProperties`
   - Added model `QuerySortBy`
-  - Added model `RecommendationPatchProperties`
   - Added model `RecommendedSuggestion`
   - Added model `ReevaluateResponse`
   - Added model `Relationship`
@@ -224,8 +220,6 @@
   - Added model `WorkspaceManagerMemberProperties`
   - Operation group `EntitiesOperations` added method `run_playbook`
   - Operation group `UpdateOperations` added method `recommendation`
-  - Operation group `WatchlistsOperations` added method `begin_create_or_update`
-  - Operation group `WatchlistsOperations` added method `begin_delete`
   - Added operation group `AlertRuleOperations`
   - Added operation group `BillingStatisticsOperations`
   - Added operation group `ContentPackageOperations`
@@ -254,8 +248,7 @@
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Deleted or renamed client `SecurityInsights`
-  - Method `EntitiesOperations.queries` changed from `asynchronous` to `synchronous`
+  - Renamed client `SecurityInsights` to `SecurityInsightsMgmtClient`
   - Model `AADCheckRequirements` moved instance variable `tenant_id` under property `properties` whose type is `AADCheckRequirementsProperties`
   - Model `AADDataConnector` moved instance variable `tenant_id` and `data_types` under property `properties` whose type is `AADDataConnectorProperties`
   - Model `AATPCheckRequirements` moved instance variable `tenant_id` under property `properties` whose type is `AATPCheckRequirementsProperties`
@@ -275,9 +268,9 @@
   - Model `DnsEntity` moved instance variable `additional_data`, `friendly_name`, `dns_server_ip_entity_id`, `domain_name`, `host_ip_address_entity_id` and `ip_address_entity_ids` under property `properties` whose type is `DnsEntityProperties`
   - Model `Dynamics365CheckRequirements` moved instance variable `tenant_id` under property `properties` whose type is `Dynamics365CheckRequirementsProperties`
   - Model `Dynamics365DataConnector` moved instance variable `tenant_id` and `data_types` under property `properties` whose type is `Dynamics365DataConnectorProperties`
-  - Model `EnrichmentIpGeodata` deleted or renamed its instance variable `city_cf`
-  - Model `EnrichmentIpGeodata` deleted or renamed its instance variable `country_cf`
-  - Model `EnrichmentIpGeodata` deleted or renamed its instance variable `state_cf`
+  - Model `EnrichmentIpGeodata` renamed property `city_cf` to `city_confidence_factor`
+  - Model `EnrichmentIpGeodata` renamed property `country_cf` to `country_confidence_factor`
+  - Model `EnrichmentIpGeodata` renamed property `state_cf` to `state_confidence_factor`
   - Model `ExpansionEntityQuery` moved instance variable `data_sources`, `display_name`, `input_entity_type`, `input_fields`, `output_entity_types` and `query_template` under property `properties` whose type is `ExpansionEntityQueriesProperties`
   - Model `EyesOn` moved instance variable `is_enabled` under property `properties` whose type is `EyesOnSettingsProperties`
   - Model `FileEntity` moved instance variable `additional_data`, `friendly_name`, `directory`, `file_hash_entity_ids`, `file_name` and `host_entity_id` under property `properties` whose type is `FileEntityProperties`
@@ -319,12 +312,12 @@
   - Deleted or renamed enum value `Operator.AND`
   - Deleted or renamed enum value `Operator.OR`
   - Model `ProcessEntity` moved instance variable `additional_data`, `friendly_name`, `account_entity_id`, `command_line`, `creation_time_utc`, `elevation_token`, `host_entity_id`, `host_logon_session_entity_id`, `image_file_entity_id`, `parent_process_entity_id` and `process_id` under property `properties` whose type is `ProcessEntityProperties`
-  - Model `RecommendationPatch` deleted or renamed its instance variable `state`
-  - Model `RecommendationPatch` deleted or renamed its instance variable `hide_until_time_utc`
+  - Model `RecommendationPatch` moved its instance variable `state` under property `properties` whose type is `RecommendationPatchProperties`
+  - Model `RecommendationPatch` deleted its instance variable `hide_until_time_utc`
   - Model `RegistryKeyEntity` moved instance variable `additional_data`, `friendly_name`, `hive` and `key` under property `properties` whose type is `RegistryKeyEntityProperties`
   - Model `RegistryValueEntity` moved instance variable `additional_data`, `friendly_name`, `key_entity_id`, `value_data`, `value_name` and `value_type` under property `properties` whose type is `RegistryValueEntityProperties`
   - Deleted or renamed enum value `RepoType.DEV_OPS`
-  - Model `Repository` deleted or renamed its instance variable `path_mapping`
+  - Model `Repository` deleted its instance variable `path_mapping`
   - Model `ScheduledAlertRule` moved instance variable `query`, `query_frequency`, `query_period`, `severity`, `trigger_operator`, `trigger_threshold`, `event_grouping_settings`, `custom_details`, `entity_mappings`, `alert_details_override`, `sentinel_entities_mappings`, `alert_rule_template_name`, `template_version`, `description`, `display_name`, `enabled`, `last_modified_utc`, `suppression_duration`, `suppression_enabled`, `tactics`, `techniques` and `incident_configuration` under property `properties` whose type is `ScheduledAlertRuleProperties`
   - Model `SecurityAlert` moved instance variable `additional_data`, `friendly_name`, `alert_display_name`, `alert_type`, `compromised_entity`, `confidence_level`, `confidence_reasons`, `confidence_score`, `confidence_score_status`, `description`, `end_time_utc`, `intent`, `provider_alert_id`, `processing_end_time`, `product_component_name`, `product_name`, `product_version`, `remediation_steps`, `severity`, `start_time_utc`, `status`, `system_alert_id`, `tactics`, `time_generated`, `vendor_name`, `alert_link` and `resource_identifiers` under property `properties` whose type is `SecurityAlertProperties`
   - Model `SecurityGroupEntity` moved instance variable `additional_data`, `friendly_name`, `distinguished_name`, `object_guid` and `sid` under property `properties` whose type is `SecurityGroupEntityProperties`
@@ -341,15 +334,6 @@
   - Model `TiTaxiiCheckRequirements` moved instance variable `tenant_id` under property `properties` whose type is `TiTaxiiCheckRequirementsProperties`
   - Model `TiTaxiiDataConnector` moved instance variable `tenant_id`, `workspace_id`, `friendly_name`, `taxii_server`, `collection_id`, `user_name`, `password`, `taxii_lookback_period`, `polling_frequency` and `data_types` under property `properties` whose type is `TiTaxiiDataConnectorProperties`
   - Model `UrlEntity` moved instance variable `additional_data`, `friendly_name` and `url` under property `properties` whose type is `UrlEntityProperties`
-  - Deleted or renamed model `Category`
-  - Deleted or renamed model `Content`
-  - Deleted or renamed model `ContentPathMap`
-  - Deleted or renamed model `Context`
-  - Deleted or renamed model `Instructions`
-  - Deleted or renamed model `MSTIDataConnectorDataTypesBingSafetyPhishingURL`
-  - Deleted or renamed model `Priority`
-  - Deleted or renamed model `QueryBasedAlertRuleTemplateProperties`
-  - Deleted or renamed model `RecommendedAction`
   - Method `BookmarkRelationsOperations.list` changed its parameter `orderby`/`skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `EntitiesOperations.queries` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
   - Method `EntitiesRelationsOperations.list` changed its parameter `orderby`/`skip_token` from `positional_or_keyword` to `keyword_only`
@@ -367,10 +351,9 @@
   - Deleted or renamed method `UpdateOperations.begin_recommendation`
   - Method `WatchlistItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `WatchlistsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `WatchlistsOperations.create_or_update`
-  - Deleted or renamed method `WatchlistsOperations.delete`
-  - Deleted or renamed operation group `DomainWhoisOperations`
-  - Deleted or renamed operation group `IPGeodataOperations`
+  - Operation group `WatchlistsOperations` renamed method `create_or_update` to `begin_create_or_update`
+  - Operation group `WatchlistsOperations` renamed method `delete` to `begin_delete`
+  - Deleted operation group `DomainWhoisOperations`/`IPGeodataOperations`
   - Method `EntitiesOperations.queries` changed return type from `GetQueriesResponse` to `AsyncItemPaged[_models.EntityQueryItem]`
   - Method `GetRecommendationsOperations.list` changed return type from `RecommendationList` to `AsyncItemPaged[_models.Recommendation]`
   - Method `ProductSettingsOperations.list` changed return type from `SettingList` to `AsyncItemPaged[_models.Settings]`
@@ -383,9 +366,9 @@
 
 ### Other Changes
 
-  - Deleted model `ActionsList`/`AlertRuleTemplatesList`/`AlertRulesList`/`AutomationRulesList`/`BookmarkList`/`DataConnectorList`/`EntityList`/`EntityQueryList`/`EntityQueryTemplateList`/`FileImportList`/`GetQueriesResponse`/`IncidentCommentList`/`IncidentList`/`IncidentTaskList`/`MetadataList`/`OfficeConsentList`/`OperationsList`/`RecommendationList`/`RelationList`/`RepoList`/`SecurityMLAnalyticsSettingsList`/`SettingList`/`SourceControlList`/`ThreatIntelligenceInformationList`/`WatchlistItemList`/`WatchlistList` which actually were not used by SDK users
-  - Deleted model `TeamProperties` which actually were not used by SDK users
-  - Deleted enum `Enum13`/`Enum15` which actually were not used by SDK users
+  - Deleted model `ActionsList`/`AlertRuleTemplatesList`/`AlertRulesList`/`AutomationRulesList`/`BookmarkList`/`DataConnectorList`/`EntityList`/`EntityQueryList`/`EntityQueryTemplateList`/`FileImportList`/`GetQueriesResponse`/`IncidentCommentList`/`IncidentList`/`IncidentTaskList`/`MetadataList`/`OfficeConsentList`/`OperationsList`/`RecommendationList`/`RelationList`/`RepoList`/`SecurityMLAnalyticsSettingsList`/`SettingList`/`SourceControlList`/`ThreatIntelligenceInformationList`/`WatchlistItemList`/`WatchlistList`/`TeamProperties`/`Content`/`ContentPathMap`/`Instructions`/`MSTIDataConnectorDataTypesBingSafetyPhishingURL`/`QueryBasedAlertRuleTemplateProperties`/`RecommendedAction` which actually were not used by SDK users
+  - Deleted enum `Enum13`/`Enum15`/`Category`/`Context`/`Priority` which actually were not used by SDK users
+
 ## 2.0.0b2 (2022-12-27)
 
 ### Features Added
