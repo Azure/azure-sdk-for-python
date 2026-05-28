@@ -19,7 +19,6 @@ from azure.ai.agentserver.optimization._models import (
 )
 from azure.ai.agentserver.optimization._config import (
     _load_tool_definitions,
-    _parse_simple_yaml,
     _parse_skill_frontmatter,
     _resolve_candidate_folder,
     _resolve_local_dir,
@@ -213,7 +212,8 @@ class TestCandidateResolver:
         assert config.candidate_id == "cand-123"
         assert len(config.skills) == 1
 
-    def test_resolver_failure_falls_to_defaults(self, monkeypatch):
+    def test_resolver_returns_none_falls_to_defaults(self, monkeypatch):
+        """When resolver returns None (already cached, no local dir), load_config returns None."""
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "bad-id")
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
@@ -222,6 +222,20 @@ class TestCandidateResolver:
         )
         config = load_config(required=False)
         assert config is None
+
+    def test_resolver_error_raises_value_error(self, monkeypatch):
+        """Resolver ValueError propagates through load_config."""
+        def mock_resolver(cid, endpoint, local_dir=None, credential=None):
+            raise ValueError("API failed")
+
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-err")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            mock_resolver,
+        )
+        with pytest.raises(ValueError, match="API failed"):
+            load_config()
 
     def test_missing_endpoint_skips_resolver(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-1")
@@ -310,6 +324,24 @@ class TestLocalDir:
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         config = load_config()
         assert config.instructions == "No metadata instructions."
+
+    def test_invalid_metadata_yaml_raises(self, monkeypatch, tmp_path):
+        candidate_dir = tmp_path / "baseline"
+        candidate_dir.mkdir()
+        (candidate_dir / "metadata.yaml").write_text("model: [unterminated\n")
+
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        with pytest.raises(ValueError, match="Invalid metadata file"):
+            load_config()
+
+    def test_non_mapping_metadata_yaml_raises(self, monkeypatch, tmp_path):
+        candidate_dir = tmp_path / "baseline"
+        candidate_dir.mkdir()
+        (candidate_dir / "metadata.yaml").write_text("- not\n- a\n- mapping\n")
+
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        with pytest.raises(ValueError, match="expected a YAML mapping"):
+            load_config()
 
     def test_loads_skills_from_local_dir(self, monkeypatch, tmp_path):
         candidate_dir = tmp_path / "baseline"
@@ -547,11 +579,25 @@ class TestGracefulErrorHandling:
     def test_load_config_never_raises_on_corrupt_env(self, monkeypatch):
         """Even with corrupted env vars, load_config(required=False) returns None."""
         monkeypatch.setenv("OPTIMIZATION_CONFIG", "{invalid")
-        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "x")
-        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://nope")
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent")
         config = load_config(required=False)
         assert config is None
+
+    def test_resolver_configured_but_fails_raises(self, monkeypatch):
+        """When resolver is configured but fails, ValueError is raised even with required=False."""
+        def mock_resolver(cid, endpoint, local_dir=None, credential=None):
+            raise ValueError("service unreachable")
+
+        monkeypatch.setenv("OPTIMIZATION_CONFIG", "{invalid")
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "x")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://nope")
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            mock_resolver,
+        )
+        with pytest.raises(ValueError, match="service unreachable"):
+            load_config(required=False)
 
     def test_required_true_raises_value_error(self):
         """required=True (default) raises ValueError when no config found."""
@@ -864,59 +910,6 @@ class TestSkillFrontmatter:
         fm, body = _parse_skill_frontmatter(content)
         assert fm == {}
         assert body == "Body."
-
-
-# ── Simple YAML parser ──────────────────────────────────────────────
-
-
-class TestSimpleYaml:
-    """Tests for the fallback YAML parser (no PyYAML)."""
-
-    def test_basic_parsing(self, tmp_path):
-        f = tmp_path / "test.yaml"
-        f.write_text("model: gpt-4o\ntemperature: 0.5\n")
-        result = _parse_simple_yaml(f)
-        assert result["model"] == "gpt-4o"
-        assert result["temperature"] == 0.5
-        assert isinstance(result["temperature"], float)
-
-    def test_skips_comments_and_blanks(self, tmp_path):
-        f = tmp_path / "test.yaml"
-        f.write_text("# comment\n\nmodel: gpt-4o\n")
-        result = _parse_simple_yaml(f)
-        assert result == {"model": "gpt-4o"}
-
-    def test_missing_file(self, tmp_path):
-        result = _parse_simple_yaml(tmp_path / "nope.yaml")
-        assert result == {}
-
-    def test_colon_in_value(self, tmp_path):
-        f = tmp_path / "test.yaml"
-        f.write_text("url: http://example.com\n")
-        result = _parse_simple_yaml(f)
-        assert result["url"] == "http://example.com"
-
-    def test_coerces_int(self, tmp_path):
-        f = tmp_path / "test.yaml"
-        f.write_text("count: 42\n")
-        result = _parse_simple_yaml(f)
-        assert result["count"] == 42
-        assert isinstance(result["count"], int)
-
-    def test_coerces_null(self, tmp_path):
-        f = tmp_path / "test.yaml"
-        f.write_text("value: null\nempty: ~\nblank:\n")
-        result = _parse_simple_yaml(f)
-        assert result["value"] is None
-        assert result["empty"] is None
-        assert result["blank"] is None
-
-    def test_coerces_bool(self, tmp_path):
-        f = tmp_path / "test.yaml"
-        f.write_text("enabled: true\ndisabled: false\n")
-        result = _parse_simple_yaml(f)
-        assert result["enabled"] is True
-        assert result["disabled"] is False
 
 
 # ── apply_tool_descriptions ──────────────────────────────────────────

@@ -32,8 +32,11 @@ from __future__ import annotations
 import json
 import logging
 import os
+import sys
 from pathlib import Path
 from typing import Any
+
+import yaml
 
 from azure.ai.agentserver.optimization._models import (
     CandidateConfig,
@@ -89,7 +92,7 @@ def load_config(
     :rtype: OptimizationConfig | None
     :raises ValueError: When *required* is ``True`` and no config source
         (env var, resolver API, or local directory) provides a
-        valid config.
+        valid config, or when a discovered config file is invalid.
     """
     try:
         return _load_config_inner(config_dir=config_dir, required=required, credential=credential)
@@ -116,6 +119,7 @@ def _load_config_inner(
     :paramtype credential: Any | None
     :return: Resolved config or ``None``.
     :rtype: OptimizationConfig | None
+    :raises ValueError: When a discovered config file is invalid.
     """
     # ── Priority 1: Inline JSON env var (used by temp agent versions, deprecating) ─
     env_var = OptimizationConfig.ENV_CONFIG
@@ -217,8 +221,6 @@ def _resolve_local_dir(config_dir: str | Path | None = None) -> Path:
         )
 
     if not local_dir.is_absolute():
-        import sys
-
         main_mod = sys.modules.get("__main__")
         main_file = getattr(main_mod, "__file__", None) if main_mod else None
         if main_file is not None:
@@ -275,18 +277,17 @@ def _load_candidate_from_metadata(
     :type candidate_id: str | None
     :return: Loaded config or ``None``.
     :rtype: OptimizationConfig | None
+    :raises ValueError: When metadata.yaml exists but is unreadable or invalid.
     """
     if metadata_file.is_file():
         try:
-            import yaml  # type: ignore[import-untyped]
-        except ImportError:
-            raw = _parse_simple_yaml(metadata_file)
-        else:
-            try:
-                raw = yaml.safe_load(metadata_file.read_text(encoding="utf-8")) or {}
-            except (yaml.YAMLError, OSError) as exc:
-                logger.warning("Failed to read %s: %s", metadata_file, exc)
-                raw = {}
+            raw = yaml.safe_load(metadata_file.read_text(encoding="utf-8")) or {}
+        except (yaml.YAMLError, OSError) as exc:
+            raise ValueError(f"Invalid metadata file {metadata_file}: {exc}") from exc
+        if not isinstance(raw, dict):
+            raise ValueError(
+                f"Invalid metadata file {metadata_file}: expected a YAML mapping at the top level"
+            )
     else:
         raw = {}
 
@@ -345,56 +346,6 @@ def _load_tool_definitions(tool_file: Path) -> list[dict]:
     except (json.JSONDecodeError, OSError) as exc:
         logger.warning("Failed to read tools file %s: %s", tool_file, exc)
         return []
-
-
-def _parse_simple_yaml(path: Path) -> dict:
-    """Minimal key: value parser for metadata.yaml when PyYAML is not installed.
-
-    Coerces numeric-looking values to float/int and recognizes
-    null/true/false literals.
-
-    :param path: Path to the YAML file.
-    :type path: Path
-    :return: Parsed key-value mapping.
-    :rtype: dict
-    """
-    result: dict = {}
-    try:
-        for line in path.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if ":" in line:
-                key, _, value = line.partition(":")
-                result[key.strip()] = _coerce_yaml_value(value.strip())
-    except OSError as exc:
-        logger.warning("Failed to read %s: %s", path, exc)
-    return result
-
-
-def _coerce_yaml_value(value: str) -> Any:
-    """Coerce a YAML scalar string to the appropriate Python type.
-
-    :param value: Raw YAML scalar string.
-    :type value: str
-    :return: Coerced Python value.
-    :rtype: Any
-    """
-    if not value or value in ("null", "~"):
-        return None
-    if value.lower() == "true":
-        return True
-    if value.lower() == "false":
-        return False
-    try:
-        return int(value)
-    except ValueError:
-        pass
-    try:
-        return float(value)
-    except ValueError:
-        pass
-    return value
 
 
 def _resolve_candidate_folder(local_dir: Path, candidate_id: str | None) -> Path | None:

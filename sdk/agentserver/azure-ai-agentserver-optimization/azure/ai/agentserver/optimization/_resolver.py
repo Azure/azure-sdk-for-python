@@ -28,6 +28,7 @@ from typing import Any
 from azure.core import PipelineClient
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, RetryPolicy
 from azure.core.rest import HttpRequest
+from azure.identity import DefaultAzureCredential
 
 from azure.ai.agentserver.optimization._models import OptimizationConfig
 
@@ -53,7 +54,8 @@ def resolve_candidate(
 
     Downloads config and skills into ``local_dir/<candidate_id>/``
     following the standard local directory layout.
-    Returns ``None`` if the call fails.
+    Returns ``None`` only when the candidate is already available locally
+    and no remote refresh is needed.
 
     :param candidate_id: Candidate identifier.
     :type candidate_id: str
@@ -64,8 +66,9 @@ def resolve_candidate(
     :param credential: Optional credential for bearer token auth.
         If omitted, resolver attempts ``DefaultAzureCredential``.
     :type credential: Any | None
-    :return: Candidate config dict, or ``None`` on failure.
+    :return: Candidate config dict, or ``None`` when an existing local copy is reused.
     :rtype: dict[str, Any] | None
+    :raises ValueError: When remote config or required skill files cannot be fetched.
     """
     if candidate_id in _downloaded:
         if local_dir is not None and (local_dir / candidate_id).is_dir():
@@ -78,46 +81,60 @@ def resolve_candidate(
         _downloaded.discard(candidate_id)
 
     client = _build_client(endpoint, credential)
-
-    # ── Step 1: Fetch config ─────────────────────────────────────────
     try:
-        config = _api_get_json(
+        config = _fetch_candidate_config(client, candidate_id)
+
+        logger.info(
+            "Resolved candidate %s: model=%s, instructions=%d chars, skills=%d, tool_definitions=%d",
+            candidate_id,
+            config.get("model", "?"),
+            len(config.get("instructions", "")),
+            len(config.get("skills", [])),
+            len(config.get("tools", [])),
+        )
+
+        if local_dir is not None:
+            candidate_path = local_dir / candidate_id
+            try:
+                _persist_to_local_layout(candidate_path, config)
+            except OSError as exc:
+                logger.warning(
+                    "Failed to persist candidate %s to disk: %s", candidate_id, exc
+                )
+            else:
+                _download_skill_files(client, candidate_id, candidate_path)
+
+                skills_path = candidate_path / OptimizationConfig.SKILLS_DIR
+                if skills_path.is_dir():
+                    config["skills_dir"] = str(skills_path)
+
+        _downloaded.add(candidate_id)
+        return config
+    finally:
+        client.close()
+
+
+def _fetch_candidate_config(client: PipelineClient, candidate_id: str) -> dict[str, Any]:
+    """Fetch the primary candidate config payload.
+
+    :param client: Azure PipelineClient for API calls.
+    :type client: PipelineClient
+    :param candidate_id: Candidate identifier.
+    :type candidate_id: str
+    :return: Candidate config payload.
+    :rtype: dict[str, Any]
+    :raises ValueError: When the candidate config cannot be fetched.
+    """
+    try:
+        return _api_get_json(
             client,
             f"/candidates/{candidate_id}/config",
             params={"api-version": _API_VERSION},
         )
     except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
-        logger.error("Failed to fetch config for candidate %s: %s", candidate_id, exc)
-        client.close()
-        return None
-
-    logger.info(
-        "Resolved candidate %s: model=%s, instructions=%d chars, skills=%d, tool_definitions=%d",
-        candidate_id,
-        config.get("model", "?"),
-        len(config.get("instructions", "")),
-        len(config.get("skills", [])),
-        len(config.get("tools", [])),
-    )
-
-    # ── Step 2: Persist to local directory layout ────────────────────
-    if local_dir is not None:
-        candidate_path = local_dir / candidate_id
-        try:
-            _persist_to_local_layout(candidate_path, config)
-            _download_skill_files(client, candidate_id, candidate_path)
-        except OSError as exc:
-            logger.warning(
-                "Failed to persist candidate %s to disk: %s", candidate_id, exc
-            )
-        # Point skills_dir to the downloaded skills folder
-        skills_path = candidate_path / OptimizationConfig.SKILLS_DIR
-        if skills_path.is_dir():
-            config["skills_dir"] = str(skills_path)
-
-    client.close()
-    _downloaded.add(candidate_id)
-    return config
+        raise ValueError(
+            f"Failed to fetch config for candidate {candidate_id}: {exc}"
+        ) from exc
 
 
 def _persist_to_local_layout(
@@ -215,6 +232,7 @@ def _download_skill_files(
     :type candidate_id: str
     :param candidate_path: Local directory for the candidate.
     :type candidate_path: pathlib.Path
+    :raises ValueError: When the manifest or any referenced skill file is invalid or cannot be fetched.
     """
     try:
         manifest = _api_get_json(
@@ -222,15 +240,22 @@ def _download_skill_files(
             f"/candidates/{candidate_id}",
             params={"api-version": _API_VERSION},
         )
-    except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
-        logger.debug("Could not fetch manifest for candidate %s", candidate_id)
-        return
+    except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
+        raise ValueError(
+            f"Failed to fetch manifest for candidate {candidate_id}: {exc}"
+        ) from exc
 
     if not isinstance(manifest, dict):
-        logger.debug("Manifest response is missing/invalid for candidate %s", candidate_id)
-        return
+        raise ValueError(
+            f"Invalid manifest for candidate {candidate_id}: expected an object response"
+        )
 
     files = manifest.get("files", [])
+    if not isinstance(files, list):
+        raise ValueError(
+            f"Invalid manifest for candidate {candidate_id}: expected 'files' to be a list"
+        )
+
     skill_files = [f for f in files if _is_skill_file(f)]
     if not skill_files:
         logger.debug("No skill files in manifest for candidate %s", candidate_id)
@@ -246,7 +271,9 @@ def _download_skill_files(
     for file_entry in skill_files:
         file_path = file_entry.get("path", "")
         if not file_path:
-            continue
+            raise ValueError(
+                f"Invalid manifest for candidate {candidate_id}: skill file path is empty"
+            )
 
         try:
             content = _api_get_text(
@@ -254,9 +281,10 @@ def _download_skill_files(
                 f"/candidates/{candidate_id}/files",
                 params={"path": file_path, "api-version": _API_VERSION},
             )
-        except Exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
-            logger.warning("Failed to download skill file: %s", file_path)
-            continue
+        except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
+            raise ValueError(
+                f"Failed to download skill file for candidate {candidate_id}: {file_path}: {exc}"
+            ) from exc
 
         # file_path is like "skills/math/SKILL.md" → write to skills_dir/math/SKILL.md
         rel_path = file_path
@@ -266,14 +294,14 @@ def _download_skill_files(
 
         out_path = (skills_dir / rel_path).resolve()
         if not str(out_path).startswith(str(skills_dir.resolve())):
-            logger.warning(
-                "Path traversal detected in skill file path: %r — skipping", file_path
+            raise ValueError(
+                f"Invalid skill file path for candidate {candidate_id}: {file_path}"
             )
-            continue
 
         if not isinstance(content, str):
-            logger.warning("Skill file content is invalid for path: %s", file_path)
-            continue
+            raise ValueError(
+                f"Invalid skill file content for candidate {candidate_id}: {file_path}"
+            )
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(content, encoding="utf-8")
@@ -312,7 +340,6 @@ def _build_client(endpoint: str, credential: Any | None = None) -> PipelineClien
     auth_credential = credential
     if auth_credential is None:
         try:
-            from azure.identity import DefaultAzureCredential  # pylint: disable=import-outside-toplevel
             auth_credential = DefaultAzureCredential()
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.debug("Could not create DefaultAzureCredential: %s", exc)

@@ -13,6 +13,7 @@ from azure.ai.agentserver.optimization._resolver import (
     _downloaded,
     _persist_to_local_layout,
     _download_skill_files,
+    _fetch_candidate_config,
     _is_skill_file,
     _build_client,
 )
@@ -44,7 +45,7 @@ ENDPOINT = "http://fake-endpoint"
 class TestResolveCandidate:
     """Tests for resolve_candidate function."""
 
-    def test_returns_none_on_api_failure(self):
+    def test_raises_on_api_failure(self):
         with (
             patch("azure.ai.agentserver.optimization._resolver._build_client"),
             patch(
@@ -52,8 +53,8 @@ class TestResolveCandidate:
                 side_effect=RuntimeError("api failure"),
             ),
         ):
-            result = resolve_candidate("cand-1", endpoint=ENDPOINT)
-            assert result is None
+            with pytest.raises(ValueError, match="Failed to fetch config"):
+                resolve_candidate("cand-1", endpoint=ENDPOINT)
 
     def test_returns_config_on_success(self):
         config = {
@@ -139,7 +140,8 @@ class TestResolveCandidate:
                 side_effect=RuntimeError("api failure"),
             ),
         ):
-            resolve_candidate("cand-fail", endpoint=ENDPOINT)
+            with pytest.raises(ValueError):
+                resolve_candidate("cand-fail", endpoint=ENDPOINT)
             assert "cand-fail" not in _downloaded
 
 
@@ -364,15 +366,15 @@ class TestDownloadSkillFiles:
         assert skill_file.exists()
         assert "Math Skill" in skill_file.read_text()
 
-    def test_skips_when_no_manifest(self, tmp_path, mock_client):
+    def test_raises_when_manifest_is_none(self, tmp_path, mock_client):
         candidate_path = tmp_path / "cand-no-manifest"
         candidate_path.mkdir()
         with patch(
             "azure.ai.agentserver.optimization._resolver._api_get_json",
             return_value=None,
         ):
-            _download_skill_files(mock_client, "cand-no-manifest", candidate_path)
-        assert not (candidate_path / "skills").exists()
+            with pytest.raises(ValueError, match="Invalid manifest"):
+                _download_skill_files(mock_client, "cand-no-manifest", candidate_path)
 
     def test_skips_when_no_skill_files_in_manifest(self, tmp_path, mock_client):
         candidate_path = tmp_path / "cand-no-skills"
@@ -385,7 +387,7 @@ class TestDownloadSkillFiles:
             _download_skill_files(mock_client, "cand-no-skills", candidate_path)
         assert not (candidate_path / "skills").exists()
 
-    def test_skips_empty_path_entries(self, tmp_path, mock_client):
+    def test_raises_on_empty_path_entries(self, tmp_path, mock_client):
         candidate_path = tmp_path / "cand-empty-path"
         candidate_path.mkdir()
         manifest = {"files": [{"path": "", "type": "skill"}]}
@@ -393,10 +395,10 @@ class TestDownloadSkillFiles:
             "azure.ai.agentserver.optimization._resolver._api_get_json",
             return_value=manifest,
         ):
-            _download_skill_files(mock_client, "cand-empty-path", candidate_path)
-        assert not (candidate_path / "skills").exists()
+            with pytest.raises(ValueError, match="path is empty"):
+                _download_skill_files(mock_client, "cand-empty-path", candidate_path)
 
-    def test_handles_download_failure(self, tmp_path, mock_client):
+    def test_raises_on_download_failure(self, tmp_path, mock_client):
         candidate_path = tmp_path / "cand-dl-fail"
         candidate_path.mkdir()
         manifest = {"files": [{"path": "skills/bad/SKILL.md", "type": "skill"}]}
@@ -404,9 +406,20 @@ class TestDownloadSkillFiles:
             patch("azure.ai.agentserver.optimization._resolver._api_get_json", return_value=manifest),
             patch("azure.ai.agentserver.optimization._resolver._api_get_text", return_value=None),
         ):
-            _download_skill_files(mock_client, "cand-dl-fail", candidate_path)
-        # No crash, skill file simply not written
-        assert not (candidate_path / "skills" / "bad" / "SKILL.md").exists()
+            with pytest.raises(ValueError, match="Invalid skill file content"):
+                _download_skill_files(mock_client, "cand-dl-fail", candidate_path)
+
+    def test_raises_on_download_exception(self, tmp_path, mock_client):
+        """Transport error during skill file download raises ValueError."""
+        candidate_path = tmp_path / "cand-dl-exc"
+        candidate_path.mkdir()
+        manifest = {"files": [{"path": "skills/bad/SKILL.md", "type": "skill"}]}
+        with (
+            patch("azure.ai.agentserver.optimization._resolver._api_get_json", return_value=manifest),
+            patch("azure.ai.agentserver.optimization._resolver._api_get_text", side_effect=RuntimeError("timeout")),
+        ):
+            with pytest.raises(ValueError, match="Failed to download skill file"):
+                _download_skill_files(mock_client, "cand-dl-exc", candidate_path)
 
     def test_rejects_traversal_in_file_path(self, tmp_path, mock_client):
         """File paths with '../' are rejected (zip-slip prevention)."""
@@ -417,7 +430,8 @@ class TestDownloadSkillFiles:
             patch("azure.ai.agentserver.optimization._resolver._api_get_json", return_value=manifest),
             patch("azure.ai.agentserver.optimization._resolver._api_get_text", return_value="malicious"),
         ):
-            _download_skill_files(mock_client, "cand-traversal", candidate_path)
+            with pytest.raises(ValueError, match="Invalid skill file path"):
+                _download_skill_files(mock_client, "cand-traversal", candidate_path)
         # Malicious file must NOT be written outside skills_dir
         assert not (tmp_path / "etc" / "passwd").exists()
         assert not (candidate_path / "skills" / ".." / ".." / "etc" / "passwd").exists()
@@ -633,6 +647,30 @@ class TestIsSkillFile:
         assert not _is_skill_file({})
 
 
+# ── _fetch_candidate_config ─────────────────────────────────────────
+
+
+class TestFetchCandidateConfig:
+    """Tests for _fetch_candidate_config."""
+
+    def test_wraps_api_error_in_value_error(self, mock_client):
+        with patch(
+            "azure.ai.agentserver.optimization._resolver._api_get_json",
+            side_effect=RuntimeError("connection timeout"),
+        ):
+            with pytest.raises(ValueError, match="Failed to fetch config"):
+                _fetch_candidate_config(mock_client, "cand-err")
+
+    def test_returns_config_on_success(self, mock_client):
+        config = {"instructions": "ok", "model": "gpt-4o"}
+        with patch(
+            "azure.ai.agentserver.optimization._resolver._api_get_json",
+            return_value=config,
+        ):
+            result = _fetch_candidate_config(mock_client, "cand-ok")
+            assert result == config
+
+
 # ── Persist IO error handling ────────────────────────────────────────
 
 
@@ -651,6 +689,9 @@ class TestPersistErrorHandling:
                 "azure.ai.agentserver.optimization._resolver._persist_to_local_layout",
                 side_effect=OSError("disk full"),
             ),
+            patch(
+                "azure.ai.agentserver.optimization._resolver._download_skill_files",
+            ) as mock_download,
         ):
             result = resolve_candidate(
                 "cand-io", endpoint=ENDPOINT, local_dir=tmp_path,
@@ -659,6 +700,8 @@ class TestPersistErrorHandling:
             assert result is not None
             assert result["instructions"] == "ok"
             assert "cand-io" in _downloaded
+            # Skill download is skipped when persist fails
+            mock_download.assert_not_called()
 
 
 # ── HTTP helpers ─────────────────────────────────────────────────────
@@ -679,7 +722,7 @@ class TestBuildClient:
         from azure.core import PipelineClient
 
         with patch(
-            "azure.identity.DefaultAzureCredential",
+            "azure.ai.agentserver.optimization._resolver.DefaultAzureCredential",
             side_effect=Exception("No cred"),
         ):
             client = _build_client("http://example.com")
