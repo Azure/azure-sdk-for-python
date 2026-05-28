@@ -16,7 +16,7 @@
   - Added enum `MeshMemberState`
   - Added model `MeshMemberStatus`
   - Added model `MeshProperties`
-  - Added model `ClusterMeshProfilesOperations`
+  - Added operation group `ClusterMeshProfilesOperations`
 
 ## 4.0.0b3 (2026-03-24)
 
