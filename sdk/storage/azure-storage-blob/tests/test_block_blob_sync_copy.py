@@ -3,9 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
+
 from datetime import datetime, timedelta
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobClient,
@@ -15,11 +22,8 @@ from azure.storage.blob import (
     StandardBlobTier,
     StorageErrorCode
 )
-from azure.storage.blob._shared.policies import StorageContentValidation
+from azure.storage.blob._shared.validation import calculate_content_md5
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -50,7 +54,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self.source_blob_with_special_chars_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
 
         blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
-        blob_with_special_chars = self.bsc.get_blob_client(self.container_name, self.source_blob_name_with_special_chars)
+        blob_with_special_chars = self.bsc.get_blob_client(
+            self.container_name, self.source_blob_name_with_special_chars)
 
         if self.is_live:
             self.bsc.create_container(self.container_name)
@@ -95,7 +100,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         split = 4 * 1024
         destination_blob_name = self.get_resource_name('destblob')
         destination_blob_client = self.bsc.get_blob_client(self.container_name, destination_blob_name)
-        token = "Bearer {}".format(self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default").token)
+        token = "Bearer {}".format(self.get_credential(BlobServiceClient).get_token(
+            "https://storage.azure.com/.default").token)
 
         # Assert this operation fails without a credential
         with pytest.raises(HttpResponseError):
@@ -106,11 +112,11 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
                 source_length=split)
         # Assert it passes after passing an oauth credential
         destination_blob_client.stage_block_from_url(
-                block_id=1,
-                source_url=self.source_blob_url_without_sas,
-                source_offset=0,
-                source_length=split,
-                source_authorization=token)
+            block_id=1,
+            source_url=self.source_blob_url_without_sas,
+            source_offset=0,
+            source_length=split,
+            source_authorization=token)
         destination_blob_client.stage_block_from_url(
             block_id=2,
             source_url=self.source_blob_url_without_sas,
@@ -200,7 +206,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
-        src_md5 = StorageContentValidation.get_content_md5(self.source_blob_data)
+        src_md5 = calculate_content_md5(self.source_blob_data)
 
         # Act part 1: put block from url with md5 validation
         dest_blob.stage_block_from_url(
@@ -216,7 +222,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         assert len(committed) == 0
 
         # Act part 2: put block from url with wrong md5
-        fake_md5 = StorageContentValidation.get_content_md5(b"POTATO")
+        fake_md5 = calculate_content_md5(b"POTATO")
         with pytest.raises(HttpResponseError) as error:
             dest_blob.stage_block_from_url(
                 block_id=2,
@@ -253,7 +259,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         content = dest_blob.download_blob().readall()
         assert self.source_blob_data == content
 
-        copy_props_with_special_chars = dest_blob.start_copy_from_url(self.source_blob_url_with_special_chars, requires_sync=True)
+        copy_props_with_special_chars = dest_blob.start_copy_from_url(
+            self.source_blob_url_with_special_chars, requires_sync=True)
 
         # Assert
         assert copy_props_with_special_chars is not None

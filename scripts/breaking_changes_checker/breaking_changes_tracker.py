@@ -26,6 +26,7 @@ class BreakingChangeType(str, Enum):
     CHANGED_PARAMETER_DEFAULT_VALUE = "ChangedParameterDefaultValue"
     CHANGED_PARAMETER_ORDERING = "ChangedParameterOrdering"
     CHANGED_PARAMETER_KIND = "ChangedParameterKind"
+    CHANGED_PARAMETER_TYPE = "ChangedParameterType"
     CHANGED_FUNCTION_KIND = "ChangedFunctionKind"
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
@@ -73,6 +74,10 @@ class BreakingChangesTracker:
         "Method `{}.{}` changed its parameter `{}` from `{}` to `{}`"
     CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
         "Function `{}` changed its parameter `{}` from `{}` to `{}`"
+    CHANGED_PARAMETER_TYPE_MSG = \
+        "Method `{}.{}` changed type of its parameter `{}` from `{}` to `{}`"
+    CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG = \
+        "Function `{}` changed type of its parameter `{}` from `{}` to `{}`"
     CHANGED_CLASS_FUNCTION_KIND_MSG = \
         "Method `{}.{}` changed from `{}` to `{}`"
     CHANGED_FUNCTION_KIND_MSG = \
@@ -113,6 +118,36 @@ class BreakingChangesTracker:
         self.run_breaking_change_diff_checks()
         self.check_parameter_ordering()  # not part of diff
         self.run_post_processing()
+
+    def is_client(self, module_name: Any, class_name: Any) -> bool:
+        """Determine whether a class should be treated as a client.
+
+        For non management-plane SDKs (module namespace does not start with
+        ``azure.mgmt.``) any class whose name ends with ``Client`` is treated
+        as a client.
+
+        For management-plane SDKs the class name must end with ``Client`` AND
+        its ``__init__`` must accept a parameter named ``credential``. This
+        avoids misclassifying helper classes such as ``ARMPollingClient`` or
+        similar that happen to end with ``Client``.
+        """
+        if isinstance(class_name, jsondiff.Symbol) or not isinstance(class_name, str):
+            return False
+        if not class_name.endswith("Client"):
+            return False
+        if not isinstance(module_name, str) or not module_name.startswith("azure.mgmt."):
+            return True
+        # Management-plane SDK: also require a "credential" parameter in __init__.
+        # The class definition may live in either the stable or current snapshot
+        # depending on whether the class is being added, removed, or modified.
+        for source in (self.current, self.stable):
+            class_info = source.get(module_name, {}).get("class_nodes", {}).get(class_name)
+            if not class_info:
+                continue
+            init_method = class_info.get("methods", {}).get("__init__", {})
+            if isinstance(init_method, dict) and "credential" in init_method.get("parameters", {}):
+                return True
+        return False
 
     def run_post_processing(self) -> None:
         # Remove duplicate reporting of changes that apply to both sync and async package components
@@ -289,8 +324,14 @@ class BreakingChangesTracker:
                         diff[diff_type], stable_default
                     )
                 elif diff_type == "param_type":
+                    # Check if the parameter kind (positional vs keyword) has changed
                     self.check_parameter_type_changed(
                         diff["param_type"], stable_parameters_node
+                    )
+                elif diff_type == "type":
+                    # Check if the parameter type annotation has changed
+                    self.check_parameter_annotation_type_changed(
+                        diff["type"], stable_parameters_node
                     )
 
     def check_kwargs_removed(self, param_type: str, param_name: str) -> None:
@@ -374,6 +415,30 @@ class BreakingChangesTracker:
                     self.CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_KIND,
                     self._module_name, self._function_name, self._parameter_name,
                     stable_parameters_node[self._parameter_name]["param_type"], diff
+                )
+            )
+
+    def check_parameter_annotation_type_changed(self, diff: Any, stable_parameters_node: Dict) -> None:
+        stable_type = stable_parameters_node[self._parameter_name].get("type")
+        # `create_parameters` stores a missing annotation as Python None, while an
+        # explicit `None` annotation is stored as the string "None". Normalize the
+        # missing-annotation case to a distinct display so the message is unambiguous.
+        display_stable = "<no annotation>" if stable_type is None else stable_type
+        display_current = "<no annotation>" if diff is None else diff
+        if self._class_name:
+            self.breaking_changes.append(
+                (
+                    self.CHANGED_PARAMETER_TYPE_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
+                    self._module_name, self._class_name, self._function_name, self._parameter_name,
+                    display_stable, display_current
+                )
+            )
+        else:
+            self.breaking_changes.append(
+                (
+                    self.CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
+                    self._module_name, self._function_name, self._parameter_name,
+                    display_stable, display_current
                 )
             )
 
@@ -546,7 +611,7 @@ class BreakingChangesTracker:
 
         for property in deleted_props:
             bc = None
-            if self._class_name.endswith("Client"):
+            if self.is_client(self._module_name, self._class_name):
                 property_type = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"][property]["attr_type"]
                 # property_type is not always a string, such as client_side_validation which is a bool, so we need to check for strings
                 if property_type is not None and isinstance(property_type, str) and property_type.lower().endswith("operations"):
@@ -587,7 +652,7 @@ class BreakingChangesTracker:
                 deleted_classes = self.stable[self._module_name]["class_nodes"]
 
             for name in deleted_classes:
-                if name.endswith("Client"):
+                if self.is_client(self._module_name, name):
                     bc = (
                         self.REMOVED_OR_RENAMED_CLIENT_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLIENT,
@@ -614,7 +679,7 @@ class BreakingChangesTracker:
                 methods_deleted = stable_methods_node
 
             for method in methods_deleted:
-                if self._class_name.endswith("Client"):
+                if self.is_client(self._module_name, self._class_name):
                     bc = (
                         self.REMOVED_OR_RENAMED_CLIENT_METHOD_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLIENT_METHOD,

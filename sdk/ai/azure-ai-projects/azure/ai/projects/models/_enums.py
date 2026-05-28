@@ -41,6 +41,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
     ROUTINES_V1_PREVIEW = "Routines=V1Preview"
     """ROUTINES_V1_PREVIEW."""
+    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
+    """TOOLBOXES_V1_PREVIEW."""
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
     DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"

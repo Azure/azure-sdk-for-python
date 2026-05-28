@@ -21,11 +21,11 @@ class TestManagedServicesRegistrationDefinitionsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_registration_definitions_get(self, resource_group):
         response = await self.client.registration_definitions.get(
             scope="str",
             registration_definition_id="str",
-            api_version="2022-10-01",
+            api_version="2020-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,11 +33,11 @@ class TestManagedServicesRegistrationDefinitionsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_registration_definitions_delete(self, resource_group):
         response = await self.client.registration_definitions.delete(
             registration_definition_id="str",
             scope="str",
-            api_version="2022-10-01",
+            api_version="2020-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestManagedServicesRegistrationDefinitionsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_registration_definitions_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.registration_definitions.begin_create_or_update(
                 registration_definition_id="str",
@@ -85,17 +85,9 @@ class TestManagedServicesRegistrationDefinitionsOperationsAsync(AzureMgmtRecorde
                         "provisioningState": "str",
                         "registrationDefinitionName": "str",
                     },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
                     "type": "str",
                 },
-                api_version="2022-10-01",
+                api_version="2020-02-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,10 +96,10 @@ class TestManagedServicesRegistrationDefinitionsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_registration_definitions_list(self, resource_group):
         response = self.client.registration_definitions.list(
             scope="str",
-            api_version="2022-10-01",
+            api_version="2020-02-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

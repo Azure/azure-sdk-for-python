@@ -95,6 +95,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_fluency.py
     - sample_groundedness.py
     - sample_intent_resolution.py
+    - sample_quality_grader.py
     - sample_relevance.py
     - sample_response_completeness.py
     - sample_task_adherence.py
@@ -124,6 +125,9 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
       uses azure-monitor-query to fetch traces.
     - sample_scheduled_evaluations.py: Requires Azure RBAC assignment via
       azure-mgmt-authorization and azure-mgmt-resource, AND uploads Dataset.
+    - sample_human_evaluations.py: Requires Azure Application Insights (fetches
+      the connection string from the Foundry project and emits OTel events via
+      `azure-monitor-opentelemetry`); not meaningful to record/replay.
 
     Complex prerequisites (require manual portal setup):
     - sample_continuous_evaluation_rule.py: Requires manual RBAC assignment in Azure
@@ -152,6 +156,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
+                "sample_human_evaluations.py",  # Requires real Foundry App Insights connection string + emits OTel events; not suitable for recorded playback
                 "sample_multiturn_conversation_evaluation.py",  # PR #47034: new multi-turn sample, recording not yet available
                 "sample_multiturn_conversation_simulation.py",  # PR #47034: new multi-turn sample, recording not yet available
                 "sample_multiturn_trace_evaluation_agent_filter.py",  # PR #47034: new multi-turn sample, recording not yet available
@@ -187,6 +192,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             "evaluations/agentic_evaluators",
             samples_to_skip=[
                 "sample_intent_resolution.py",  # Evaluator FAILED_EXECUTION: tool_definitions must be a list of dictionaries
+                "sample_quality_grader.py",
                 "sample_task_navigation_efficiency.py",  # Evaluator FAILED_EXECUTION: required 'actions' parameter is missing
                 "sample_tool_call_success.py",  # Sample data evaluates to failure (tool result has DB_CONNECTION_FAILED)
             ],

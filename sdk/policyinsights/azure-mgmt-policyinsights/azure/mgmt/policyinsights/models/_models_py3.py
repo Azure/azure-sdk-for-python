@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,313 +9,13 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
 JSON = MutableMapping[str, Any]
-
-
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-
-
-class Attestation(Resource):
-    """An attestation resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.policyinsights.models.SystemData
-    :ivar policy_assignment_id: The resource ID of the policy assignment that the attestation is
-     setting the state for. Required.
-    :vartype policy_assignment_id: str
-    :ivar policy_definition_reference_id: The policy definition reference ID from a policy set
-     definition that the attestation is setting the state for. If the policy assignment assigns a
-     policy set definition the attestation can choose a definition within the set definition with
-     this property or omit this and set the state for the entire set definition.
-    :vartype policy_definition_reference_id: str
-    :ivar compliance_state: The compliance state that should be set on the resource. Known values
-     are: "Compliant", "NonCompliant", and "Unknown".
-    :vartype compliance_state: str or ~azure.mgmt.policyinsights.models.ComplianceState
-    :ivar expires_on: The time the compliance state should expire.
-    :vartype expires_on: ~datetime.datetime
-    :ivar owner: The person responsible for setting the state of the resource. This value is
-     typically an Azure Active Directory object ID.
-    :vartype owner: str
-    :ivar comments: Comments describing why this attestation was created.
-    :vartype comments: str
-    :ivar evidence: The evidence supporting the compliance state set in this attestation.
-    :vartype evidence: list[~azure.mgmt.policyinsights.models.AttestationEvidence]
-    :ivar provisioning_state: The status of the attestation.
-    :vartype provisioning_state: str
-    :ivar last_compliance_state_change_at: The time the compliance state was last changed in this
-     attestation.
-    :vartype last_compliance_state_change_at: ~datetime.datetime
-    :ivar assessment_date: The time the evidence was assessed.
-    :vartype assessment_date: ~datetime.datetime
-    :ivar metadata: Additional metadata for this attestation.
-    :vartype metadata: JSON
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "policy_assignment_id": {"required": True},
-        "provisioning_state": {"readonly": True},
-        "last_compliance_state_change_at": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "policy_assignment_id": {"key": "properties.policyAssignmentId", "type": "str"},
-        "policy_definition_reference_id": {"key": "properties.policyDefinitionReferenceId", "type": "str"},
-        "compliance_state": {"key": "properties.complianceState", "type": "str"},
-        "expires_on": {"key": "properties.expiresOn", "type": "iso-8601"},
-        "owner": {"key": "properties.owner", "type": "str"},
-        "comments": {"key": "properties.comments", "type": "str"},
-        "evidence": {"key": "properties.evidence", "type": "[AttestationEvidence]"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "last_compliance_state_change_at": {"key": "properties.lastComplianceStateChangeAt", "type": "iso-8601"},
-        "assessment_date": {"key": "properties.assessmentDate", "type": "iso-8601"},
-        "metadata": {"key": "properties.metadata", "type": "object"},
-    }
-
-    def __init__(
-        self,
-        *,
-        policy_assignment_id: str,
-        policy_definition_reference_id: Optional[str] = None,
-        compliance_state: Optional[Union[str, "_models.ComplianceState"]] = None,
-        expires_on: Optional[datetime.datetime] = None,
-        owner: Optional[str] = None,
-        comments: Optional[str] = None,
-        evidence: Optional[List["_models.AttestationEvidence"]] = None,
-        assessment_date: Optional[datetime.datetime] = None,
-        metadata: Optional[JSON] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword policy_assignment_id: The resource ID of the policy assignment that the attestation is
-         setting the state for. Required.
-        :paramtype policy_assignment_id: str
-        :keyword policy_definition_reference_id: The policy definition reference ID from a policy set
-         definition that the attestation is setting the state for. If the policy assignment assigns a
-         policy set definition the attestation can choose a definition within the set definition with
-         this property or omit this and set the state for the entire set definition.
-        :paramtype policy_definition_reference_id: str
-        :keyword compliance_state: The compliance state that should be set on the resource. Known
-         values are: "Compliant", "NonCompliant", and "Unknown".
-        :paramtype compliance_state: str or ~azure.mgmt.policyinsights.models.ComplianceState
-        :keyword expires_on: The time the compliance state should expire.
-        :paramtype expires_on: ~datetime.datetime
-        :keyword owner: The person responsible for setting the state of the resource. This value is
-         typically an Azure Active Directory object ID.
-        :paramtype owner: str
-        :keyword comments: Comments describing why this attestation was created.
-        :paramtype comments: str
-        :keyword evidence: The evidence supporting the compliance state set in this attestation.
-        :paramtype evidence: list[~azure.mgmt.policyinsights.models.AttestationEvidence]
-        :keyword assessment_date: The time the evidence was assessed.
-        :paramtype assessment_date: ~datetime.datetime
-        :keyword metadata: Additional metadata for this attestation.
-        :paramtype metadata: JSON
-        """
-        super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
-        self.policy_assignment_id = policy_assignment_id
-        self.policy_definition_reference_id = policy_definition_reference_id
-        self.compliance_state = compliance_state
-        self.expires_on = expires_on
-        self.owner = owner
-        self.comments = comments
-        self.evidence = evidence
-        self.provisioning_state: Optional[str] = None
-        self.last_compliance_state_change_at: Optional[datetime.datetime] = None
-        self.assessment_date = assessment_date
-        self.metadata = metadata
-
-
-class AttestationEvidence(_serialization.Model):
-    """A piece of evidence supporting the compliance state set in the attestation.
-
-    :ivar description: The description for this piece of evidence.
-    :vartype description: str
-    :ivar source_uri: The URI location of the evidence.
-    :vartype source_uri: str
-    """
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "source_uri": {"key": "sourceUri", "type": "str"},
-    }
-
-    def __init__(self, *, description: Optional[str] = None, source_uri: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword description: The description for this piece of evidence.
-        :paramtype description: str
-        :keyword source_uri: The URI location of the evidence.
-        :paramtype source_uri: str
-        """
-        super().__init__(**kwargs)
-        self.description = description
-        self.source_uri = source_uri
-
-
-class AttestationListResult(_serialization.Model):
-    """List of attestations.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Array of attestation definitions.
-    :vartype value: list[~azure.mgmt.policyinsights.models.Attestation]
-    :ivar next_link: The URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Attestation]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value: Optional[List["_models.Attestation"]] = None
-        self.next_link: Optional[str] = None
-
-
-class CheckManagementGroupRestrictionsRequest(_serialization.Model):
-    """The check policy restrictions parameters describing the resource that is being evaluated.
-
-    :ivar resource_details: The information about the resource that will be evaluated.
-    :vartype resource_details: ~azure.mgmt.policyinsights.models.CheckRestrictionsResourceDetails
-    :ivar pending_fields: The list of fields and values that should be evaluated for potential
-     restrictions.
-    :vartype pending_fields: list[~azure.mgmt.policyinsights.models.PendingField]
-    """
-
-    _attribute_map = {
-        "resource_details": {"key": "resourceDetails", "type": "CheckRestrictionsResourceDetails"},
-        "pending_fields": {"key": "pendingFields", "type": "[PendingField]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        resource_details: Optional["_models.CheckRestrictionsResourceDetails"] = None,
-        pending_fields: Optional[List["_models.PendingField"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword resource_details: The information about the resource that will be evaluated.
-        :paramtype resource_details: ~azure.mgmt.policyinsights.models.CheckRestrictionsResourceDetails
-        :keyword pending_fields: The list of fields and values that should be evaluated for potential
-         restrictions.
-        :paramtype pending_fields: list[~azure.mgmt.policyinsights.models.PendingField]
-        """
-        super().__init__(**kwargs)
-        self.resource_details = resource_details
-        self.pending_fields = pending_fields
-
-
-class CheckRestrictionEvaluationDetails(_serialization.Model):
-    """Policy evaluation details.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar evaluated_expressions: Details of the evaluated expressions.
-    :vartype evaluated_expressions:
-     list[~azure.mgmt.policyinsights.models.ExpressionEvaluationDetails]
-    :ivar if_not_exists_details: Evaluation details of IfNotExists effect.
-    :vartype if_not_exists_details: ~azure.mgmt.policyinsights.models.IfNotExistsEvaluationDetails
-    :ivar reason: The reason for the evaluation result.
-    :vartype reason: str
-    """
-
-    _validation = {
-        "reason": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "evaluated_expressions": {"key": "evaluatedExpressions", "type": "[ExpressionEvaluationDetails]"},
-        "if_not_exists_details": {"key": "ifNotExistsDetails", "type": "IfNotExistsEvaluationDetails"},
-        "reason": {"key": "reason", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        evaluated_expressions: Optional[List["_models.ExpressionEvaluationDetails"]] = None,
-        if_not_exists_details: Optional["_models.IfNotExistsEvaluationDetails"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword evaluated_expressions: Details of the evaluated expressions.
-        :paramtype evaluated_expressions:
-         list[~azure.mgmt.policyinsights.models.ExpressionEvaluationDetails]
-        :keyword if_not_exists_details: Evaluation details of IfNotExists effect.
-        :paramtype if_not_exists_details:
-         ~azure.mgmt.policyinsights.models.IfNotExistsEvaluationDetails
-        """
-        super().__init__(**kwargs)
-        self.evaluated_expressions = evaluated_expressions
-        self.if_not_exists_details = if_not_exists_details
-        self.reason: Optional[str] = None
 
 
 class CheckRestrictionsRequest(_serialization.Model):
@@ -328,9 +28,6 @@ class CheckRestrictionsRequest(_serialization.Model):
     :ivar pending_fields: The list of fields and values that should be evaluated for potential
      restrictions.
     :vartype pending_fields: list[~azure.mgmt.policyinsights.models.PendingField]
-    :ivar include_audit_effect: Whether to include policies with the 'audit' effect in the results.
-     Defaults to false.
-    :vartype include_audit_effect: bool
     """
 
     _validation = {
@@ -340,15 +37,13 @@ class CheckRestrictionsRequest(_serialization.Model):
     _attribute_map = {
         "resource_details": {"key": "resourceDetails", "type": "CheckRestrictionsResourceDetails"},
         "pending_fields": {"key": "pendingFields", "type": "[PendingField]"},
-        "include_audit_effect": {"key": "includeAuditEffect", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         resource_details: "_models.CheckRestrictionsResourceDetails",
-        pending_fields: Optional[List["_models.PendingField"]] = None,
-        include_audit_effect: bool = False,
+        pending_fields: Optional[list["_models.PendingField"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -357,14 +52,10 @@ class CheckRestrictionsRequest(_serialization.Model):
         :keyword pending_fields: The list of fields and values that should be evaluated for potential
          restrictions.
         :paramtype pending_fields: list[~azure.mgmt.policyinsights.models.PendingField]
-        :keyword include_audit_effect: Whether to include policies with the 'audit' effect in the
-         results. Defaults to false.
-        :paramtype include_audit_effect: bool
         """
         super().__init__(**kwargs)
         self.resource_details = resource_details
         self.pending_fields = pending_fields
-        self.include_audit_effect = include_audit_effect
 
 
 class CheckRestrictionsResourceDetails(_serialization.Model):
@@ -440,7 +131,7 @@ class CheckRestrictionsResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.field_restrictions: Optional[List["_models.FieldRestrictions"]] = None
+        self.field_restrictions: Optional[list["_models.FieldRestrictions"]] = None
         self.content_evaluation_result: Optional["_models.CheckRestrictionsResultContentEvaluationResult"] = None
 
 
@@ -457,7 +148,7 @@ class CheckRestrictionsResultContentEvaluationResult(_serialization.Model):  # p
     }
 
     def __init__(
-        self, *, policy_evaluations: Optional[List["_models.PolicyEvaluationResult"]] = None, **kwargs: Any
+        self, *, policy_evaluations: Optional[list["_models.PolicyEvaluationResult"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword policy_evaluations: Policy evaluation results against the given resource content. This
@@ -531,7 +222,7 @@ class ComponentEventDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
         name: Optional[str] = None,
@@ -572,344 +263,6 @@ class ComponentEventDetails(_serialization.Model):
         self.policy_definition_action = policy_definition_action
 
 
-class ComponentExpressionEvaluationDetails(_serialization.Model):
-    """Evaluation details of policy language expressions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar result: Evaluation result.
-    :vartype result: str
-    :ivar expression: Expression evaluated.
-    :vartype expression: str
-    :ivar expression_kind: The kind of expression that was evaluated.
-    :vartype expression_kind: str
-    :ivar path: Property path if the expression is a field or an alias.
-    :vartype path: str
-    :ivar expression_value: Value of the expression.
-    :vartype expression_value: JSON
-    :ivar target_value: Target value to be compared with the expression value.
-    :vartype target_value: JSON
-    :ivar operator: Operator to compare the expression value and the target value.
-    :vartype operator: str
-    """
-
-    _validation = {
-        "expression": {"readonly": True},
-        "expression_kind": {"readonly": True},
-        "path": {"readonly": True},
-        "expression_value": {"readonly": True},
-        "target_value": {"readonly": True},
-        "operator": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "result": {"key": "result", "type": "str"},
-        "expression": {"key": "expression", "type": "str"},
-        "expression_kind": {"key": "expressionKind", "type": "str"},
-        "path": {"key": "path", "type": "str"},
-        "expression_value": {"key": "expressionValue", "type": "object"},
-        "target_value": {"key": "targetValue", "type": "object"},
-        "operator": {"key": "operator", "type": "str"},
-    }
-
-    def __init__(self, *, result: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword result: Evaluation result.
-        :paramtype result: str
-        """
-        super().__init__(**kwargs)
-        self.result = result
-        self.expression: Optional[str] = None
-        self.expression_kind: Optional[str] = None
-        self.path: Optional[str] = None
-        self.expression_value: Optional[JSON] = None
-        self.target_value: Optional[JSON] = None
-        self.operator: Optional[str] = None
-
-
-class ComponentPolicyEvaluationDetails(_serialization.Model):
-    """Policy evaluation details.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar evaluated_expressions: Details of the evaluated expressions.
-    :vartype evaluated_expressions:
-     list[~azure.mgmt.policyinsights.models.ComponentExpressionEvaluationDetails]
-    :ivar reason: Additional textual reason for the evaluation outcome.
-    :vartype reason: str
-    """
-
-    _validation = {
-        "evaluated_expressions": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "evaluated_expressions": {"key": "evaluatedExpressions", "type": "[ComponentExpressionEvaluationDetails]"},
-        "reason": {"key": "reason", "type": "str"},
-    }
-
-    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword reason: Additional textual reason for the evaluation outcome.
-        :paramtype reason: str
-        """
-        super().__init__(**kwargs)
-        self.evaluated_expressions: Optional[List["_models.ComponentExpressionEvaluationDetails"]] = None
-        self.reason = reason
-
-
-class ComponentPolicyState(_serialization.Model):
-    """Component Policy State record.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :vartype additional_properties: dict[str, any]
-    :ivar odata_id: OData entity ID; always set to null since component policy state records do not
-     have an entity ID.
-    :vartype odata_id: str
-    :ivar odata_context: OData context string; used by OData clients to resolve type information
-     based on metadata.
-    :vartype odata_context: str
-    :ivar timestamp: Timestamp for the component policy state record.
-    :vartype timestamp: ~datetime.datetime
-    :ivar component_id: Component Id.
-    :vartype component_id: str
-    :ivar component_type: Component type.
-    :vartype component_type: str
-    :ivar component_name: Component name.
-    :vartype component_name: str
-    :ivar resource_id: Resource ID.
-    :vartype resource_id: str
-    :ivar policy_assignment_id: Policy assignment ID.
-    :vartype policy_assignment_id: str
-    :ivar policy_definition_id: Policy definition ID.
-    :vartype policy_definition_id: str
-    :ivar subscription_id: Subscription ID.
-    :vartype subscription_id: str
-    :ivar resource_type: Resource type.
-    :vartype resource_type: str
-    :ivar resource_location: Resource location.
-    :vartype resource_location: str
-    :ivar resource_group: Resource group name.
-    :vartype resource_group: str
-    :ivar policy_assignment_name: Policy assignment name.
-    :vartype policy_assignment_name: str
-    :ivar policy_assignment_owner: Policy assignment owner.
-    :vartype policy_assignment_owner: str
-    :ivar policy_assignment_parameters: Policy assignment parameters.
-    :vartype policy_assignment_parameters: str
-    :ivar policy_assignment_scope: Policy assignment scope.
-    :vartype policy_assignment_scope: str
-    :ivar policy_definition_name: Policy definition name.
-    :vartype policy_definition_name: str
-    :ivar policy_definition_action: Policy definition action, i.e. effect.
-    :vartype policy_definition_action: str
-    :ivar policy_definition_category: Policy definition category.
-    :vartype policy_definition_category: str
-    :ivar policy_set_definition_id: Policy set definition ID, if the policy assignment is for a
-     policy set.
-    :vartype policy_set_definition_id: str
-    :ivar policy_set_definition_name: Policy set definition name, if the policy assignment is for a
-     policy set.
-    :vartype policy_set_definition_name: str
-    :ivar policy_set_definition_owner: Policy set definition owner, if the policy assignment is for
-     a policy set.
-    :vartype policy_set_definition_owner: str
-    :ivar policy_set_definition_category: Policy set definition category, if the policy assignment
-     is for a policy set.
-    :vartype policy_set_definition_category: str
-    :ivar policy_set_definition_parameters: Policy set definition parameters, if the policy
-     assignment is for a policy set.
-    :vartype policy_set_definition_parameters: str
-    :ivar policy_definition_reference_id: Reference ID for the policy definition inside the policy
-     set, if the policy assignment is for a policy set.
-    :vartype policy_definition_reference_id: str
-    :ivar compliance_state: Compliance state of the resource.
-    :vartype compliance_state: str
-    :ivar policy_evaluation_details: Policy evaluation details. This is only included in the
-     response if the request contains $expand=PolicyEvaluationDetails.
-    :vartype policy_evaluation_details:
-     ~azure.mgmt.policyinsights.models.ComponentPolicyEvaluationDetails
-    :ivar policy_definition_group_names: Policy definition group names.
-    :vartype policy_definition_group_names: list[str]
-    :ivar policy_definition_version: Evaluated policy definition version.
-    :vartype policy_definition_version: str
-    :ivar policy_set_definition_version: Evaluated policy set definition version.
-    :vartype policy_set_definition_version: str
-    :ivar policy_assignment_version: Evaluated policy assignment version.
-    :vartype policy_assignment_version: str
-    """
-
-    _validation = {
-        "odata_id": {"readonly": True},
-        "odata_context": {"readonly": True},
-        "timestamp": {"readonly": True},
-        "component_id": {"readonly": True},
-        "component_type": {"readonly": True},
-        "component_name": {"readonly": True},
-        "resource_id": {"readonly": True},
-        "policy_assignment_id": {"readonly": True},
-        "policy_definition_id": {"readonly": True},
-        "subscription_id": {"readonly": True},
-        "resource_type": {"readonly": True},
-        "resource_location": {"readonly": True},
-        "resource_group": {"readonly": True},
-        "policy_assignment_name": {"readonly": True},
-        "policy_assignment_owner": {"readonly": True},
-        "policy_assignment_parameters": {"readonly": True},
-        "policy_assignment_scope": {"readonly": True},
-        "policy_definition_name": {"readonly": True},
-        "policy_definition_action": {"readonly": True},
-        "policy_definition_category": {"readonly": True},
-        "policy_set_definition_id": {"readonly": True},
-        "policy_set_definition_name": {"readonly": True},
-        "policy_set_definition_owner": {"readonly": True},
-        "policy_set_definition_category": {"readonly": True},
-        "policy_set_definition_parameters": {"readonly": True},
-        "policy_definition_reference_id": {"readonly": True},
-        "compliance_state": {"readonly": True},
-        "policy_definition_group_names": {"readonly": True},
-        "policy_definition_version": {"readonly": True},
-        "policy_set_definition_version": {"readonly": True},
-        "policy_assignment_version": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
-        "odata_id": {"key": "@odata\\.id", "type": "str"},
-        "odata_context": {"key": "@odata\\.context", "type": "str"},
-        "timestamp": {"key": "timestamp", "type": "iso-8601"},
-        "component_id": {"key": "componentId", "type": "str"},
-        "component_type": {"key": "componentType", "type": "str"},
-        "component_name": {"key": "componentName", "type": "str"},
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "policy_assignment_id": {"key": "policyAssignmentId", "type": "str"},
-        "policy_definition_id": {"key": "policyDefinitionId", "type": "str"},
-        "subscription_id": {"key": "subscriptionId", "type": "str"},
-        "resource_type": {"key": "resourceType", "type": "str"},
-        "resource_location": {"key": "resourceLocation", "type": "str"},
-        "resource_group": {"key": "resourceGroup", "type": "str"},
-        "policy_assignment_name": {"key": "policyAssignmentName", "type": "str"},
-        "policy_assignment_owner": {"key": "policyAssignmentOwner", "type": "str"},
-        "policy_assignment_parameters": {"key": "policyAssignmentParameters", "type": "str"},
-        "policy_assignment_scope": {"key": "policyAssignmentScope", "type": "str"},
-        "policy_definition_name": {"key": "policyDefinitionName", "type": "str"},
-        "policy_definition_action": {"key": "policyDefinitionAction", "type": "str"},
-        "policy_definition_category": {"key": "policyDefinitionCategory", "type": "str"},
-        "policy_set_definition_id": {"key": "policySetDefinitionId", "type": "str"},
-        "policy_set_definition_name": {"key": "policySetDefinitionName", "type": "str"},
-        "policy_set_definition_owner": {"key": "policySetDefinitionOwner", "type": "str"},
-        "policy_set_definition_category": {"key": "policySetDefinitionCategory", "type": "str"},
-        "policy_set_definition_parameters": {"key": "policySetDefinitionParameters", "type": "str"},
-        "policy_definition_reference_id": {"key": "policyDefinitionReferenceId", "type": "str"},
-        "compliance_state": {"key": "complianceState", "type": "str"},
-        "policy_evaluation_details": {"key": "policyEvaluationDetails", "type": "ComponentPolicyEvaluationDetails"},
-        "policy_definition_group_names": {"key": "policyDefinitionGroupNames", "type": "[str]"},
-        "policy_definition_version": {"key": "policyDefinitionVersion", "type": "str"},
-        "policy_set_definition_version": {"key": "policySetDefinitionVersion", "type": "str"},
-        "policy_assignment_version": {"key": "policyAssignmentVersion", "type": "str"},
-    }
-
-    def __init__(  # pylint: disable=too-many-locals
-        self,
-        *,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        policy_evaluation_details: Optional["_models.ComponentPolicyEvaluationDetails"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword additional_properties: Unmatched properties from the message are deserialized to this
-         collection.
-        :paramtype additional_properties: dict[str, any]
-        :keyword policy_evaluation_details: Policy evaluation details. This is only included in the
-         response if the request contains $expand=PolicyEvaluationDetails.
-        :paramtype policy_evaluation_details:
-         ~azure.mgmt.policyinsights.models.ComponentPolicyEvaluationDetails
-        """
-        super().__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.odata_id: Optional[str] = None
-        self.odata_context: Optional[str] = None
-        self.timestamp: Optional[datetime.datetime] = None
-        self.component_id: Optional[str] = None
-        self.component_type: Optional[str] = None
-        self.component_name: Optional[str] = None
-        self.resource_id: Optional[str] = None
-        self.policy_assignment_id: Optional[str] = None
-        self.policy_definition_id: Optional[str] = None
-        self.subscription_id: Optional[str] = None
-        self.resource_type: Optional[str] = None
-        self.resource_location: Optional[str] = None
-        self.resource_group: Optional[str] = None
-        self.policy_assignment_name: Optional[str] = None
-        self.policy_assignment_owner: Optional[str] = None
-        self.policy_assignment_parameters: Optional[str] = None
-        self.policy_assignment_scope: Optional[str] = None
-        self.policy_definition_name: Optional[str] = None
-        self.policy_definition_action: Optional[str] = None
-        self.policy_definition_category: Optional[str] = None
-        self.policy_set_definition_id: Optional[str] = None
-        self.policy_set_definition_name: Optional[str] = None
-        self.policy_set_definition_owner: Optional[str] = None
-        self.policy_set_definition_category: Optional[str] = None
-        self.policy_set_definition_parameters: Optional[str] = None
-        self.policy_definition_reference_id: Optional[str] = None
-        self.compliance_state: Optional[str] = None
-        self.policy_evaluation_details = policy_evaluation_details
-        self.policy_definition_group_names: Optional[List[str]] = None
-        self.policy_definition_version: Optional[str] = None
-        self.policy_set_definition_version: Optional[str] = None
-        self.policy_assignment_version: Optional[str] = None
-
-
-class ComponentPolicyStatesQueryResults(_serialization.Model):
-    """Query results.
-
-    :ivar odata_context: OData context string; used by OData clients to resolve type information
-     based on metadata.
-    :vartype odata_context: str
-    :ivar odata_count: OData entity count; represents the number of policy state records returned.
-    :vartype odata_count: int
-    :ivar value: Query results.
-    :vartype value: list[~azure.mgmt.policyinsights.models.ComponentPolicyState]
-    """
-
-    _validation = {
-        "odata_count": {"minimum": 0},
-    }
-
-    _attribute_map = {
-        "odata_context": {"key": "@odata\\.context", "type": "str"},
-        "odata_count": {"key": "@odata\\.count", "type": "int"},
-        "value": {"key": "value", "type": "[ComponentPolicyState]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        odata_context: Optional[str] = None,
-        odata_count: Optional[int] = None,
-        value: Optional[List["_models.ComponentPolicyState"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword odata_context: OData context string; used by OData clients to resolve type information
-         based on metadata.
-        :paramtype odata_context: str
-        :keyword odata_count: OData entity count; represents the number of policy state records
-         returned.
-        :paramtype odata_count: int
-        :keyword value: Query results.
-        :paramtype value: list[~azure.mgmt.policyinsights.models.ComponentPolicyState]
-        """
-        super().__init__(**kwargs)
-        self.odata_context = odata_context
-        self.odata_count = odata_count
-        self.value = value
-
-
 class ComponentStateDetails(_serialization.Model):
     """Component state details.
 
@@ -940,7 +293,7 @@ class ComponentStateDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
         name: Optional[str] = None,
@@ -1011,8 +364,8 @@ class ErrorDefinition(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDefinition"]] = None
-        self.additional_info: Optional[List["_models.TypedErrorInfo"]] = None
+        self.details: Optional[list["_models.ErrorDefinition"]] = None
+        self.additional_info: Optional[list["_models.TypedErrorInfo"]] = None
 
 
 class ErrorDefinitionAutoGenerated(_serialization.Model):
@@ -1054,51 +407,8 @@ class ErrorDefinitionAutoGenerated(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDefinitionAutoGenerated"]] = None
-        self.additional_info: Optional[List["_models.TypedErrorInfo"]] = None
-
-
-class ErrorDefinitionAutoGenerated2(_serialization.Model):
-    """Error definition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: Service specific error code which serves as the substatus for the HTTP error code.
-    :vartype code: str
-    :ivar message: Description of the error.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: Internal error details.
-    :vartype details: list[~azure.mgmt.policyinsights.models.ErrorDefinitionAutoGenerated2]
-    :ivar additional_info: Additional scenario specific error details.
-    :vartype additional_info: list[~azure.mgmt.policyinsights.models.TypedErrorInfo]
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-        "details": {"readonly": True},
-        "additional_info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDefinitionAutoGenerated2]"},
-        "additional_info": {"key": "additionalInfo", "type": "[TypedErrorInfo]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.code: Optional[str] = None
-        self.message: Optional[str] = None
-        self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDefinitionAutoGenerated2"]] = None
-        self.additional_info: Optional[List["_models.TypedErrorInfo"]] = None
+        self.details: Optional[list["_models.ErrorDefinitionAutoGenerated"]] = None
+        self.additional_info: Optional[list["_models.TypedErrorInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -1136,26 +446,6 @@ class ErrorResponseAutoGenerated(_serialization.Model):
         """
         :keyword error: The error details.
         :paramtype error: ~azure.mgmt.policyinsights.models.ErrorDefinitionAutoGenerated
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseAutoGenerated2(_serialization.Model):
-    """Error response.
-
-    :ivar error: The error details.
-    :vartype error: ~azure.mgmt.policyinsights.models.ErrorDefinitionAutoGenerated2
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDefinitionAutoGenerated2"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorDefinitionAutoGenerated2"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error: The error details.
-        :paramtype error: ~azure.mgmt.policyinsights.models.ErrorDefinitionAutoGenerated2
         """
         super().__init__(**kwargs)
         self.error = error
@@ -1237,7 +527,7 @@ class FieldRestriction(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar result: The type of restriction that is imposed on the field. Known values are:
-     "Required", "Removed", "Deny", and "Audit".
+     "Required", "Removed", and "Deny".
     :vartype result: str or ~azure.mgmt.policyinsights.models.FieldRestrictionResult
     :ivar default_value: The value that policy will set for the field if the user does not provide
      a value.
@@ -1246,11 +536,6 @@ class FieldRestriction(_serialization.Model):
     :vartype values: list[str]
     :ivar policy: The details of the policy that is causing the field restriction.
     :vartype policy: ~azure.mgmt.policyinsights.models.PolicyReference
-    :ivar policy_effect: The effect of the policy that is causing the field restriction.
-     http://aka.ms/policyeffects.
-    :vartype policy_effect: str
-    :ivar reason: The reason for the restriction.
-    :vartype reason: str
     """
 
     _validation = {
@@ -1258,8 +543,6 @@ class FieldRestriction(_serialization.Model):
         "default_value": {"readonly": True},
         "values": {"readonly": True},
         "policy": {"readonly": True},
-        "policy_effect": {"readonly": True},
-        "reason": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1267,8 +550,6 @@ class FieldRestriction(_serialization.Model):
         "default_value": {"key": "defaultValue", "type": "str"},
         "values": {"key": "values", "type": "[str]"},
         "policy": {"key": "policy", "type": "PolicyReference"},
-        "policy_effect": {"key": "policyEffect", "type": "str"},
-        "reason": {"key": "reason", "type": "str"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -1276,10 +557,8 @@ class FieldRestriction(_serialization.Model):
         super().__init__(**kwargs)
         self.result: Optional[Union[str, "_models.FieldRestrictionResult"]] = None
         self.default_value: Optional[str] = None
-        self.values: Optional[List[str]] = None
+        self.values: Optional[list[str]] = None
         self.policy: Optional["_models.PolicyReference"] = None
-        self.policy_effect: Optional[str] = None
-        self.reason: Optional[str] = None
 
 
 class FieldRestrictions(_serialization.Model):
@@ -1303,7 +582,7 @@ class FieldRestrictions(_serialization.Model):
         "restrictions": {"key": "restrictions", "type": "[FieldRestriction]"},
     }
 
-    def __init__(self, *, restrictions: Optional[List["_models.FieldRestriction"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, restrictions: Optional[list["_models.FieldRestriction"]] = None, **kwargs: Any) -> None:
         """
         :keyword restrictions: The restrictions placed on that field by policy.
         :paramtype restrictions: list[~azure.mgmt.policyinsights.models.FieldRestriction]
@@ -1348,37 +627,26 @@ class Operation(_serialization.Model):
 
     :ivar name: Operation name.
     :vartype name: str
-    :ivar is_data_action: Indicates whether the operation is a data action.
-    :vartype is_data_action: bool
     :ivar display: Display metadata associated with the operation.
     :vartype display: ~azure.mgmt.policyinsights.models.OperationDisplay
     """
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
-        "is_data_action": {"key": "isDataAction", "type": "bool"},
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        is_data_action: Optional[bool] = None,
-        display: Optional["_models.OperationDisplay"] = None,
-        **kwargs: Any
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
     ) -> None:
         """
         :keyword name: Operation name.
         :paramtype name: str
-        :keyword is_data_action: Indicates whether the operation is a data action.
-        :paramtype is_data_action: bool
         :keyword display: Display metadata associated with the operation.
         :paramtype display: ~azure.mgmt.policyinsights.models.OperationDisplay
         """
         super().__init__(**kwargs)
         self.name = name
-        self.is_data_action = is_data_action
         self.display = display
 
 
@@ -1447,7 +715,7 @@ class OperationsListResults(_serialization.Model):
     }
 
     def __init__(
-        self, *, odata_count: Optional[int] = None, value: Optional[List["_models.Operation"]] = None, **kwargs: Any
+        self, *, odata_count: Optional[int] = None, value: Optional[list["_models.Operation"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword odata_count: OData entity count; represents the number of operations returned.
@@ -1482,7 +750,7 @@ class PendingField(_serialization.Model):
         "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(self, *, field: str, values: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, field: str, values: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword field: The name of the field. This can be a top-level property like 'name' or 'type'
          or an Azure Policy field alias. Required.
@@ -1526,8 +794,8 @@ class PolicyAssignmentSummary(_serialization.Model):
         policy_assignment_id: Optional[str] = None,
         policy_set_definition_id: Optional[str] = None,
         results: Optional["_models.SummaryResults"] = None,
-        policy_definitions: Optional[List["_models.PolicyDefinitionSummary"]] = None,
-        policy_groups: Optional[List["_models.PolicyGroupSummary"]] = None,
+        policy_definitions: Optional[list["_models.PolicyDefinitionSummary"]] = None,
+        policy_groups: Optional[list["_models.PolicyGroupSummary"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1579,7 +847,7 @@ class PolicyDefinitionSummary(_serialization.Model):
         *,
         policy_definition_id: Optional[str] = None,
         policy_definition_reference_id: Optional[str] = None,
-        policy_definition_group_names: Optional[List[str]] = None,
+        policy_definition_group_names: Optional[list[str]] = None,
         effect: Optional[str] = None,
         results: Optional["_models.SummaryResults"] = None,
         **kwargs: Any
@@ -1653,29 +921,6 @@ class PolicyDetails(_serialization.Model):
         self.policy_definition_reference_id: Optional[str] = None
 
 
-class PolicyEffectDetails(_serialization.Model):
-    """The details of the effect that was applied to the resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar policy_effect: The effect that was applied to the resource. http://aka.ms/policyeffects.
-    :vartype policy_effect: str
-    """
-
-    _validation = {
-        "policy_effect": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "policy_effect": {"key": "policyEffect", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.policy_effect: Optional[str] = None
-
-
 class PolicyEvaluationDetails(_serialization.Model):
     """Policy evaluation details.
 
@@ -1694,7 +939,7 @@ class PolicyEvaluationDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        evaluated_expressions: Optional[List["_models.ExpressionEvaluationDetails"]] = None,
+        evaluated_expressions: Optional[list["_models.ExpressionEvaluationDetails"]] = None,
         if_not_exists_details: Optional["_models.IfNotExistsEvaluationDetails"] = None,
         **kwargs: Any
     ) -> None:
@@ -1723,24 +968,19 @@ class PolicyEvaluationResult(_serialization.Model):
     :vartype evaluation_result: str
     :ivar evaluation_details: The detailed results of the policy expressions and values that were
      evaluated.
-    :vartype evaluation_details:
-     ~azure.mgmt.policyinsights.models.CheckRestrictionEvaluationDetails
-    :ivar effect_details: The details of the effect that was applied to the resource.
-    :vartype effect_details: ~azure.mgmt.policyinsights.models.PolicyEffectDetails
+    :vartype evaluation_details: ~azure.mgmt.policyinsights.models.PolicyEvaluationDetails
     """
 
     _validation = {
         "policy_info": {"readonly": True},
         "evaluation_result": {"readonly": True},
         "evaluation_details": {"readonly": True},
-        "effect_details": {"readonly": True},
     }
 
     _attribute_map = {
         "policy_info": {"key": "policyInfo", "type": "PolicyReference"},
         "evaluation_result": {"key": "evaluationResult", "type": "str"},
-        "evaluation_details": {"key": "evaluationDetails", "type": "CheckRestrictionEvaluationDetails"},
-        "effect_details": {"key": "effectDetails", "type": "PolicyEffectDetails"},
+        "evaluation_details": {"key": "evaluationDetails", "type": "PolicyEvaluationDetails"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -1748,8 +988,7 @@ class PolicyEvaluationResult(_serialization.Model):
         super().__init__(**kwargs)
         self.policy_info: Optional["_models.PolicyReference"] = None
         self.evaluation_result: Optional[str] = None
-        self.evaluation_details: Optional["_models.CheckRestrictionEvaluationDetails"] = None
-        self.effect_details: Optional["_models.PolicyEffectDetails"] = None
+        self.evaluation_details: Optional["_models.PolicyEvaluationDetails"] = None
 
 
 class PolicyEvent(_serialization.Model):
@@ -1872,7 +1111,7 @@ class PolicyEvent(_serialization.Model):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         odata_id: Optional[str] = None,
         odata_context: Optional[str] = None,
         timestamp: Optional[datetime.datetime] = None,
@@ -1903,7 +1142,7 @@ class PolicyEvent(_serialization.Model):
         compliance_state: Optional[str] = None,
         tenant_id: Optional[str] = None,
         principal_oid: Optional[str] = None,
-        components: Optional[List["_models.ComponentEventDetails"]] = None,
+        components: Optional[list["_models.ComponentEventDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2051,7 +1290,7 @@ class PolicyEventsQueryResults(_serialization.Model):
         odata_context: Optional[str] = None,
         odata_count: Optional[int] = None,
         odata_next_link: Optional[str] = None,
-        value: Optional[List["_models.PolicyEvent"]] = None,
+        value: Optional[list["_models.PolicyEvent"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2202,7 +1441,7 @@ class PolicyMetadataCollection(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SlimPolicyMetadata"]] = None
+        self.value: Optional[list["_models.SlimPolicyMetadata"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -2482,7 +1721,7 @@ class PolicyState(_serialization.Model):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         odata_id: Optional[str] = None,
         odata_context: Optional[str] = None,
         timestamp: Optional[datetime.datetime] = None,
@@ -2512,8 +1751,8 @@ class PolicyState(_serialization.Model):
         policy_definition_reference_id: Optional[str] = None,
         compliance_state: Optional[str] = None,
         policy_evaluation_details: Optional["_models.PolicyEvaluationDetails"] = None,
-        policy_definition_group_names: Optional[List[str]] = None,
-        components: Optional[List["_models.ComponentStateDetails"]] = None,
+        policy_definition_group_names: Optional[list[str]] = None,
+        components: Optional[list["_models.ComponentStateDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2664,7 +1903,7 @@ class PolicyStatesQueryResults(_serialization.Model):
         odata_context: Optional[str] = None,
         odata_count: Optional[int] = None,
         odata_next_link: Optional[str] = None,
-        value: Optional[List["_models.PolicyState"]] = None,
+        value: Optional[list["_models.PolicyState"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2755,7 +1994,7 @@ class PolicyTrackedResourcesQueryResults(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.PolicyTrackedResource"]] = None
+        self.value: Optional[list["_models.PolicyTrackedResource"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -2917,9 +2156,6 @@ class Remediation(_serialization.Model):
     :vartype type: str
     :ivar name: The name of the remediation.
     :vartype name: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.policyinsights.models.SystemData
     :ivar policy_assignment_id: The resource ID of the policy assignment that should be remediated.
     :vartype policy_assignment_id: str
     :ivar policy_definition_reference_id: The policy definition reference ID of the individual
@@ -2931,9 +2167,7 @@ class Remediation(_serialization.Model):
      "ReEvaluateCompliance".
     :vartype resource_discovery_mode: str or
      ~azure.mgmt.policyinsights.models.ResourceDiscoveryMode
-    :ivar provisioning_state: The status of the remediation. This refers to the entire remediation
-     task, not individual deployments. Allowed values are Evaluating, Canceled, Cancelling, Failed,
-     Complete, or Succeeded.
+    :ivar provisioning_state: The status of the remediation.
     :vartype provisioning_state: str
     :ivar created_on: The time at which the remediation was created.
     :vartype created_on: ~datetime.datetime
@@ -2944,42 +2178,22 @@ class Remediation(_serialization.Model):
     :ivar deployment_status: The deployment status summary for all deployments created by the
      remediation.
     :vartype deployment_status: ~azure.mgmt.policyinsights.models.RemediationDeploymentSummary
-    :ivar status_message: The remediation status message. Provides additional details regarding the
-     state of the remediation.
-    :vartype status_message: str
-    :ivar correlation_id: The remediation correlation Id. Can be used to find events related to the
-     remediation in the activity log.
-    :vartype correlation_id: str
-    :ivar resource_count: Determines the max number of resources that can be remediated by the
-     remediation job. If not provided, the default resource count is used.
-    :vartype resource_count: int
-    :ivar parallel_deployments: Determines how many resources to remediate at any given time. Can
-     be used to increase or reduce the pace of the remediation. If not provided, the default
-     parallel deployments value is used.
-    :vartype parallel_deployments: int
-    :ivar failure_threshold: The remediation failure threshold settings.
-    :vartype failure_threshold:
-     ~azure.mgmt.policyinsights.models.RemediationPropertiesFailureThreshold
     """
 
     _validation = {
         "id": {"readonly": True},
         "type": {"readonly": True},
         "name": {"readonly": True},
-        "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "created_on": {"readonly": True},
         "last_updated_on": {"readonly": True},
         "deployment_status": {"readonly": True},
-        "status_message": {"readonly": True},
-        "correlation_id": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "name": {"key": "name", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
         "policy_assignment_id": {"key": "properties.policyAssignmentId", "type": "str"},
         "policy_definition_reference_id": {"key": "properties.policyDefinitionReferenceId", "type": "str"},
         "resource_discovery_mode": {"key": "properties.resourceDiscoveryMode", "type": "str"},
@@ -2988,11 +2202,6 @@ class Remediation(_serialization.Model):
         "last_updated_on": {"key": "properties.lastUpdatedOn", "type": "iso-8601"},
         "filters": {"key": "properties.filters", "type": "RemediationFilters"},
         "deployment_status": {"key": "properties.deploymentStatus", "type": "RemediationDeploymentSummary"},
-        "status_message": {"key": "properties.statusMessage", "type": "str"},
-        "correlation_id": {"key": "properties.correlationId", "type": "str"},
-        "resource_count": {"key": "properties.resourceCount", "type": "int"},
-        "parallel_deployments": {"key": "properties.parallelDeployments", "type": "int"},
-        "failure_threshold": {"key": "properties.failureThreshold", "type": "RemediationPropertiesFailureThreshold"},
     }
 
     def __init__(
@@ -3002,9 +2211,6 @@ class Remediation(_serialization.Model):
         policy_definition_reference_id: Optional[str] = None,
         resource_discovery_mode: Optional[Union[str, "_models.ResourceDiscoveryMode"]] = None,
         filters: Optional["_models.RemediationFilters"] = None,
-        resource_count: Optional[int] = None,
-        parallel_deployments: Optional[int] = None,
-        failure_threshold: Optional["_models.RemediationPropertiesFailureThreshold"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3022,22 +2228,11 @@ class Remediation(_serialization.Model):
          ~azure.mgmt.policyinsights.models.ResourceDiscoveryMode
         :keyword filters: The filters that will be applied to determine which resources to remediate.
         :paramtype filters: ~azure.mgmt.policyinsights.models.RemediationFilters
-        :keyword resource_count: Determines the max number of resources that can be remediated by the
-         remediation job. If not provided, the default resource count is used.
-        :paramtype resource_count: int
-        :keyword parallel_deployments: Determines how many resources to remediate at any given time.
-         Can be used to increase or reduce the pace of the remediation. If not provided, the default
-         parallel deployments value is used.
-        :paramtype parallel_deployments: int
-        :keyword failure_threshold: The remediation failure threshold settings.
-        :paramtype failure_threshold:
-         ~azure.mgmt.policyinsights.models.RemediationPropertiesFailureThreshold
         """
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.type: Optional[str] = None
         self.name: Optional[str] = None
-        self.system_data: Optional["_models.SystemData"] = None
         self.policy_assignment_id = policy_assignment_id
         self.policy_definition_reference_id = policy_definition_reference_id
         self.resource_discovery_mode = resource_discovery_mode
@@ -3046,11 +2241,6 @@ class Remediation(_serialization.Model):
         self.last_updated_on: Optional[datetime.datetime] = None
         self.filters = filters
         self.deployment_status: Optional["_models.RemediationDeploymentSummary"] = None
-        self.status_message: Optional[str] = None
-        self.correlation_id: Optional[str] = None
-        self.resource_count = resource_count
-        self.parallel_deployments = parallel_deployments
-        self.failure_threshold = failure_threshold
 
 
 class RemediationDeployment(_serialization.Model):
@@ -3131,7 +2321,7 @@ class RemediationDeploymentsListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.RemediationDeployment"]] = None
+        self.value: Optional[list["_models.RemediationDeployment"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -3175,31 +2365,19 @@ class RemediationFilters(_serialization.Model):
 
     :ivar locations: The resource locations that will be remediated.
     :vartype locations: list[str]
-    :ivar resource_ids: The IDs of the resources that will be remediated. Can specify at most 100
-     IDs. This filter cannot be used when ReEvaluateCompliance is set to ReEvaluateCompliance, and
-     cannot be empty if provided.
-    :vartype resource_ids: list[str]
     """
 
     _attribute_map = {
         "locations": {"key": "locations", "type": "[str]"},
-        "resource_ids": {"key": "resourceIds", "type": "[str]"},
     }
 
-    def __init__(
-        self, *, locations: Optional[List[str]] = None, resource_ids: Optional[List[str]] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, locations: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword locations: The resource locations that will be remediated.
         :paramtype locations: list[str]
-        :keyword resource_ids: The IDs of the resources that will be remediated. Can specify at most
-         100 IDs. This filter cannot be used when ReEvaluateCompliance is set to ReEvaluateCompliance,
-         and cannot be empty if provided.
-        :paramtype resource_ids: list[str]
         """
         super().__init__(**kwargs)
         self.locations = locations
-        self.resource_ids = resource_ids
 
 
 class RemediationListResult(_serialization.Model):
@@ -3226,32 +2404,8 @@ class RemediationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Remediation"]] = None
+        self.value: Optional[list["_models.Remediation"]] = None
         self.next_link: Optional[str] = None
-
-
-class RemediationPropertiesFailureThreshold(_serialization.Model):
-    """The remediation failure threshold settings.
-
-    :ivar percentage: A number between 0.0 to 1.0 representing the percentage failure threshold.
-     The remediation will fail if the percentage of failed remediation operations (i.e. failed
-     deployments) exceeds this threshold.
-    :vartype percentage: float
-    """
-
-    _attribute_map = {
-        "percentage": {"key": "percentage", "type": "float"},
-    }
-
-    def __init__(self, *, percentage: Optional[float] = None, **kwargs: Any) -> None:
-        """
-        :keyword percentage: A number between 0.0 to 1.0 representing the percentage failure threshold.
-         The remediation will fail if the percentage of failed remediation operations (i.e. failed
-         deployments) exceeds this threshold.
-        :paramtype percentage: float
-        """
-        super().__init__(**kwargs)
-        self.percentage = percentage
 
 
 class SlimPolicyMetadata(_serialization.Model):
@@ -3345,7 +2499,7 @@ class SummarizeResults(_serialization.Model):
         *,
         odata_context: Optional[str] = None,
         odata_count: Optional[int] = None,
-        value: Optional[List["_models.Summary"]] = None,
+        value: Optional[list["_models.Summary"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3391,7 +2545,7 @@ class Summary(_serialization.Model):
         odata_id: Optional[str] = None,
         odata_context: Optional[str] = None,
         results: Optional["_models.SummaryResults"] = None,
-        policy_assignments: Optional[List["_models.PolicyAssignmentSummary"]] = None,
+        policy_assignments: Optional[list["_models.PolicyAssignmentSummary"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3454,9 +2608,9 @@ class SummaryResults(_serialization.Model):
         query_results_uri: Optional[str] = None,
         non_compliant_resources: Optional[int] = None,
         non_compliant_policies: Optional[int] = None,
-        resource_details: Optional[List["_models.ComplianceDetail"]] = None,
-        policy_details: Optional[List["_models.ComplianceDetail"]] = None,
-        policy_group_details: Optional[List["_models.ComplianceDetail"]] = None,
+        resource_details: Optional[list["_models.ComplianceDetail"]] = None,
+        policy_details: Optional[list["_models.ComplianceDetail"]] = None,
+        policy_group_details: Optional[list["_models.ComplianceDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3484,70 +2638,6 @@ class SummaryResults(_serialization.Model):
         self.resource_details = resource_details
         self.policy_details = policy_details
         self.policy_group_details = policy_group_details
-
-
-class SystemData(_serialization.Model):
-    """Metadata pertaining to creation and last modification of the resource.
-
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or ~azure.mgmt.policyinsights.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: str or ~azure.mgmt.policyinsights.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        "created_by": {"key": "createdBy", "type": "str"},
-        "created_by_type": {"key": "createdByType", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
-        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
-        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
-    }
-
-    def __init__(
-        self,
-        *,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype created_by_type: str or ~azure.mgmt.policyinsights.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype last_modified_by_type: str or ~azure.mgmt.policyinsights.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
-        """
-        super().__init__(**kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
 
 
 class TrackedResourceModificationDetails(_serialization.Model):

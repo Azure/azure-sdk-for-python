@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
@@ -26,7 +27,7 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _build_client(hook: InMemoryCreateSpanHook | None = None) -> TestClient:
     options = ResponsesServerOptions(create_span_hook=hook)
-    app = ResponsesAgentServerHost(options=options)
+    app = ResponsesAgentServerHost(options=options, configure_observability=None)
     app.response_handler(_noop_handler)
     return TestClient(app)
 
@@ -215,3 +216,171 @@ def test_tracing__span_tags_omit_request_id_when_header_absent() -> None:
     )
 
     assert "request.id" not in hook.spans[0].tags
+
+
+# ---------------------------------------------------------------------------
+# Incoming W3C baggage propagation
+# ---------------------------------------------------------------------------
+
+
+def test_tracing__incoming_baggage_merged_into_context() -> None:
+    """Incoming W3C baggage header entries are merged into OTel context."""
+    try:
+        from opentelemetry import baggage as _otel_baggage
+    except ImportError:
+        pytest.skip("opentelemetry SDK not installed")
+
+    captured_baggage: dict = {}
+
+    def _baggage_capture_handler(request, context, cancellation_signal):
+        captured_baggage.update(_otel_baggage.get_all())
+
+        async def _events():
+            if False:  # pragma: no cover
+                yield None
+
+        return _events()
+
+    options = ResponsesServerOptions()
+    app = ResponsesAgentServerHost(options=options)
+    app.response_handler(_baggage_capture_handler)
+    client = TestClient(app)
+
+    client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hi", "stream": False},
+        headers={"baggage": "user.id=test-user-789,custom.key=custom-value"},
+    )
+
+    # Incoming baggage entries should be present
+    assert captured_baggage.get("user.id") == "test-user-789"
+    assert captured_baggage.get("custom.key") == "custom-value"
+
+
+def test_tracing__framework_span_parented_under_incoming_traceparent() -> None:
+    """A span created inside the handler is parented directly under the
+    incoming traceparent — no intermediate invoke_agent span.
+
+    Uses a real OTel span + ``inject(headers)`` instead of a synthetic
+    traceparent string so that the trace context is always propagated
+    correctly regardless of which TracerProvider or auto-instrumentation
+    is active in the process (e.g. CI environments with
+    microsoft-opentelemetry installed).
+    """
+    try:
+        from opentelemetry import trace
+        from opentelemetry.propagate import inject
+        from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
+        from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+        from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+    except ImportError:
+        pytest.skip("opentelemetry SDK not installed")
+
+    exporter = InMemorySpanExporter()
+    existing = trace.get_tracer_provider()
+    if hasattr(existing, "add_span_processor"):
+        existing.add_span_processor(SimpleSpanProcessor(exporter))
+    else:
+        provider = SdkTracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        trace.set_tracer_provider(provider)
+
+    captured_trace_id = None
+    captured_parent_id = None
+
+    def _span_handler(request, context, cancellation_signal):
+        nonlocal captured_trace_id, captured_parent_id
+        tracer = trace.get_tracer("test.framework")
+        with tracer.start_as_current_span("framework_create_response") as span:
+            captured_trace_id = format(span.context.trace_id, "032x")
+            captured_parent_id = format(span.parent.span_id, "016x") if span.parent else None
+
+        async def _events():
+            if False:  # pragma: no cover
+                yield None
+
+        return _events()
+
+    options = ResponsesServerOptions()
+    app = ResponsesAgentServerHost(options=options, configure_observability=None)
+    app.response_handler(_span_handler)
+    client = TestClient(app)
+
+    # Create a real caller span and inject its trace context into headers.
+    caller_tracer = trace.get_tracer("test.caller")
+    with caller_tracer.start_as_current_span("CallerOperation") as caller_span:
+        caller_trace_id = format(caller_span.context.trace_id, "032x")
+        caller_span_id = format(caller_span.context.span_id, "016x")
+
+        headers: dict[str, str] = {"baggage": "user.id=test-user-parenting"}
+        inject(headers)
+
+        resp = client.post(
+            "/responses",
+            json={"model": "gpt-4o-mini", "input": "hi", "stream": False},
+            headers=headers,
+        )
+    assert resp.status_code == 200
+
+    # Framework span should share the same trace ID as the caller span
+    assert captured_trace_id == caller_trace_id
+    # Framework span should be parented directly under the caller span
+    assert captured_parent_id == caller_span_id
+
+    # Verify via exporter as well
+    spans = exporter.get_finished_spans()
+    fw_spans = [s for s in spans if s.name == "framework_create_response"]
+    assert len(fw_spans) == 1
+    fw = fw_spans[0]
+    assert format(fw.context.trace_id, "032x") == caller_trace_id
+    assert fw.parent is not None
+    assert format(fw.parent.span_id, "016x") == caller_span_id
+
+
+def test_tracing__incoming_baggage_empty_header_no_error() -> None:
+    """Empty baggage header does not cause errors."""
+    client = _build_client()
+    resp = client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hi", "stream": False},
+        headers={"baggage": ""},
+    )
+    assert resp.status_code == 200
+
+
+def test_tracing__sdk_set_baggage_available_in_handler() -> None:
+    """SDK-set baggage entries (response_id, conversation_id, streaming)
+    and incoming caller baggage are available inside the response handler."""
+    try:
+        from opentelemetry import baggage as _otel_baggage
+    except ImportError:
+        pytest.skip("opentelemetry SDK not installed")
+
+    captured_baggage: dict = {}
+
+    def _baggage_capture_handler(request, context, cancellation_signal):
+        captured_baggage.update(_otel_baggage.get_all())
+
+        async def _events():
+            if False:  # pragma: no cover
+                yield None
+
+        return _events()
+
+    options = ResponsesServerOptions()
+    app = ResponsesAgentServerHost(options=options)
+    app.response_handler(_baggage_capture_handler)
+    client = TestClient(app)
+
+    client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hi", "stream": False},
+        headers={"baggage": "caller.key=caller-value"},
+    )
+
+    # SDK-set baggage entries
+    assert "azure.ai.agentserver.response_id" in captured_baggage
+    assert "azure.ai.agentserver.conversation_id" in captured_baggage
+    assert "azure.ai.agentserver.streaming" in captured_baggage
+    # Incoming caller baggage is also preserved
+    assert captured_baggage.get("caller.key") == "caller-value"

@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_container_async.py
@@ -24,6 +23,7 @@ from datetime import datetime, timedelta
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
+
 
 class ContainerSamplesAsync(object):
     connection_string = os.getenv("STORAGE_CONNECTION_STRING")
@@ -49,7 +49,11 @@ class ContainerSamplesAsync(object):
             # [START create_container_client_sasurl]
             from azure.storage.blob.aio import ContainerClient
 
-            sas_url = sas_url = "https://account.blob.core.windows.net/mycontainer?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+            sas_url = (
+                "https://account.blob.core.windows.net/mycontainer?sv=2015-04-05&"
+                "st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&"
+                "sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+            )
             container = ContainerClient.from_container_url(sas_url)
             # [END create_container_client_sasurl]
 
@@ -150,8 +154,8 @@ class ContainerSamplesAsync(object):
                 # Create access policy
                 from azure.storage.blob import AccessPolicy, ContainerSasPermissions
                 access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                            expiry=datetime.utcnow() + timedelta(hours=1),
-                                            start=datetime.utcnow() - timedelta(minutes=1))
+                                             expiry=datetime.utcnow() + timedelta(hours=1),
+                                             start=datetime.utcnow() - timedelta(minutes=1))
 
                 identifiers = {'my-access-policy-id': access_policy}
 
@@ -246,28 +250,6 @@ class ContainerSamplesAsync(object):
             # Delete container
             await container_client.delete_container()
 
-    async def get_container_client_from_blob_client_async(self):
-        if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: get_container_client_from_blob_client_async")
-            sys.exit(1)
-        # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
-
-        async with blob_service_client:
-            # [START get_container_client_from_blob_client]
-            container_client1 = blob_service_client.get_container_client("blobcontainer1async")
-            await container_client1.create_container()
-            print(await container_client1.get_container_properties())
-            blob_client1 = container_client1.get_blob_client("blob1")
-            await blob_client1.upload_blob("hello")
-
-            container_client2 = blob_client1._get_container_client()
-            print(await container_client2.get_container_properties())
-            await container_client2.delete_container()
-            # [END get_container_client_from_blob_client]
-
 
 async def main():
     sample = ContainerSamplesAsync()
@@ -277,7 +259,6 @@ async def main():
     await sample.container_access_policy_async()
     await sample.list_blobs_in_container_async()
     await sample.get_blob_client_from_container_async()
-    await sample.get_container_client_from_blob_client_async()
 
 if __name__ == '__main__':
     asyncio.run(main())
