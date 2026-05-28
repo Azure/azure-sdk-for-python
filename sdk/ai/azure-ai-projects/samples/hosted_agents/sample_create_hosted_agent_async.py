@@ -34,11 +34,9 @@ import asyncio
 import os
 
 from dotenv import load_dotenv
-
 from azure.identity.aio import DefaultAzureCredential
-
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import HostedAgentDefinition, ProtocolVersionRecord
+from azure.ai.projects.models import HostedAgentDefinition, ProtocolVersionRecord, ContainerConfiguration
 from hosted_agents_util import wait_for_agent_version_active_async
 from rbac_util import ensure_agent_identity_rbac_async
 
@@ -64,8 +62,8 @@ async def main() -> None:
             definition=HostedAgentDefinition(
                 cpu="0.5",
                 memory="1Gi",
-                image=image,
-                container_protocol_versions=[
+                container_configuration=ContainerConfiguration(image=image),
+                protocol_versions=[
                     ProtocolVersionRecord(protocol="responses", version="1.0.0"),
                 ],
             ),
