@@ -77,6 +77,50 @@ def _normalize_newlines(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
+async def _tee_stream(proc: "asyncio.subprocess.Process", package: str, check: str) -> tuple:
+    """Read the child's stdout and stderr concurrently, mirroring each line to
+    this process's stdout/stderr while also accumulating the full text for the
+    final :class:`CheckResult`.
+
+    This exists because the default ``proc.communicate()`` path buffers all
+    output until the child exits. When a check hangs and the pipeline agent
+    cancels the parent at the job timeout, none of that buffered output is
+    ever printed -- the log shows ``CMD: ...`` followed by silence until the
+    cancellation marker. Streaming line-by-line ensures the last bytes the
+    child produced before getting stuck are visible in the pipeline log.
+
+    Should only be used when checks are running sequentially (``max_parallel
+    == 1``) -- otherwise output from concurrent children will interleave.
+    """
+    prefix = f"[{os.path.basename(os.path.normpath(package))} :: {check}] "
+
+    async def _pump(stream, sink) -> str:
+        if stream is None:
+            return ""
+        chunks: List[str] = []
+        while True:
+            line_b = await stream.readline()
+            if not line_b:
+                break
+            line = line_b.decode(errors="replace")
+            chunks.append(line)
+            try:
+                sink.write(prefix + line)
+                sink.flush()
+            except Exception:
+                # Never let a write failure on the parent's stdio kill the pump.
+                pass
+        return "".join(chunks)
+
+    stdout_text, stderr_text = await asyncio.gather(
+        _pump(proc.stdout, sys.stdout),
+        _pump(proc.stderr, sys.stderr),
+    )
+    # Make sure the process is reaped so returncode is populated.
+    await proc.wait()
+    return stdout_text, stderr_text
+
+
 def _checks_require_recording_restore(checks: List[str]) -> bool:
     return any(check in INSTALL_AND_TEST_CHECKS for check in checks)
 
@@ -139,6 +183,7 @@ async def run_check(
     dest_dir: Optional[str] = None,
     service: Optional[str] = None,
     python_version: Optional[str] = None,
+    stream_live: bool = False,
 ) -> CheckResult:
     """Run a single check (subprocess) within a concurrency semaphore, capturing output and timing.
 
@@ -156,6 +201,12 @@ async def run_check(
     :type total: int
     :param proxy_port: Dedicated proxy port assigned to this check instance.
     :type proxy_port: int
+    :param stream_live: If True, tee the child's stdout/stderr to this process's
+        stdout/stderr line-by-line while also capturing them. Use only when
+        checks run sequentially (``max_parallel == 1``) to avoid interleaved
+        output. This prevents silent hangs from hiding all diagnostics when the
+        agent kills the parent before the child exits.
+    :type stream_live: bool
     :returns: A :class:`CheckResult` describing exit code, duration and captured output.
     :rtype: CheckResult
     """
@@ -173,6 +224,11 @@ async def run_check(
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
         env["PROXY_URL"] = f"http://localhost:{proxy_port}"
+        # Force the child Python process to use unbuffered stdio. Without this,
+        # the child's output can sit in its own internal buffers for minutes
+        # (or never appear at all if the agent kills us at the job timeout),
+        # making hung checks look like total silence in the pipeline log.
+        env["PYTHONUNBUFFERED"] = "1"
 
         if in_ci():
             env["PROXY_ASSETS_FOLDER"] = os.path.join(root_dir, ".assets_distributed", str(proxy_port))
@@ -189,30 +245,37 @@ async def run_check(
             logger.error(f"Failed to start check {check} for {package}: {ex}")
             return CheckResult(package, check, 127, 0.0, "", str(ex))
 
-        stdout_b, stderr_b = await proc.communicate()
+        if stream_live:
+            stdout, stderr = await _tee_stream(proc, package, check)
+        else:
+            stdout_b, stderr_b = await proc.communicate()
+            stdout = stdout_b.decode(errors="replace")
+            stderr = stderr_b.decode(errors="replace")
         duration = time.time() - start
-        stdout = stdout_b.decode(errors="replace")
-        stderr = stderr_b.decode(errors="replace")
         exit_code = proc.returncode or 0
         status = "OK" if exit_code == 0 else f"FAIL({exit_code})"
         logger.info(f"[END   {idx}/{total}] {check} :: {package} -> {status} in {duration:.2f}s")
-        # Print captured output after completion to avoid interleaving
-        header = f"===== OUTPUT: {check} :: {package} (exit {exit_code}) ====="
-        trailer = "=" * len(header)
-        if in_ci():
-            print(f"##[group]{package} :: {check} :: {exit_code}")
+        # When streaming live we've already mirrored every line to the parent's
+        # stdout/stderr as it was produced, so skip the post-hoc grouped dump
+        # to avoid duplicating every line.
+        if not stream_live:
+            # Print captured output after completion to avoid interleaving
+            header = f"===== OUTPUT: {check} :: {package} (exit {exit_code}) ====="
+            trailer = "=" * len(header)
+            if in_ci():
+                print(f"##[group]{package} :: {check} :: {exit_code}")
 
-        if stdout:
-            print(header)
-            print(_normalize_newlines(stdout).rstrip())
-            print(trailer)
-        if stderr:
-            print(header.replace("OUTPUT", "STDERR"))
-            print(_normalize_newlines(stderr).rstrip())
-            print(trailer)
+            if stdout:
+                print(header)
+                print(_normalize_newlines(stdout).rstrip())
+                print(trailer)
+            if stderr:
+                print(header.replace("OUTPUT", "STDERR"))
+                print(_normalize_newlines(stderr).rstrip())
+                print(trailer)
 
-        if in_ci():
-            print("##[endgroup]")
+            if in_ci():
+                print("##[endgroup]")
 
         # if we have any output collections to complete, do so now here
 
@@ -324,6 +387,15 @@ async def run_all_checks(
 
     total = len(scheduled)
 
+    # Mirror the child's stdio live to the parent's stdout/stderr when no
+    # concurrent children could interleave output. This makes hangs visible
+    # in real time instead of being hidden behind a post-hoc grouped dump
+    # that never prints if the agent cancels us at the job timeout. We check
+    # both the semaphore cap AND the actual number of tasks because cosmos
+    # (and similar live test legs) ship a single check per matrix leg but
+    # leave --max-parallel at its CPU-count default.
+    stream_live = max_parallel == 1 or total <= 1
+
     for idx, (package, check, proxy_port, pkg_python_version) in enumerate(scheduled, start=1):
         tasks.append(
             asyncio.create_task(
@@ -339,6 +411,7 @@ async def run_all_checks(
                     dest_dir,
                     service,
                     pkg_python_version,
+                    stream_live=stream_live,
                 )
             )
         )

@@ -12,5 +12,6 @@ extends:
           Selection: all
           GenerateVMJobs: true
       MaxParallel: 8
+      TestTimeoutInMinutes: 300
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos
