@@ -13670,16 +13670,16 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_version(self, name: str, version: str, **kwargs: Any) -> _models.DeleteSkillVersionResponse:
+    async def delete_version(self, name: str, version: str, **kwargs: Any) -> _models.DeleteSkillVersionResult:
         """Delete a specific version of a skill.
 
         :param name: The name of the skill. Required.
         :type name: str
         :param version: The version identifier to delete. Required.
         :type version: str
-        :return: DeleteSkillVersionResponse. The DeleteSkillVersionResponse is compatible with
+        :return: DeleteSkillVersionResult. The DeleteSkillVersionResult is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteSkillVersionResponse
+        :rtype: ~azure.ai.projects.models.DeleteSkillVersionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13693,7 +13693,7 @@ class BetaSkillsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteSkillVersionResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeleteSkillVersionResult] = kwargs.pop("cls", None)
 
         _request = build_beta_skills_delete_skill_version_request(
             name=name,
@@ -13731,7 +13731,7 @@ class BetaSkillsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteSkillVersionResponse, response.json())
+            deserialized = _deserialize(_models.DeleteSkillVersionResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

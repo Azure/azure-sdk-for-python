@@ -5486,7 +5486,7 @@ class DeleteSkillResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteSkillVersionResponse(_Model):
+class DeleteSkillVersionResult(_Model):
     """A deleted skill version.
 
     :ivar id: The unique identifier of the deleted skill version. Required.
