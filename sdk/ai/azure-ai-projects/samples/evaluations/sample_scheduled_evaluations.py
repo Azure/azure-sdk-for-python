@@ -258,14 +258,14 @@ def schedule_dataset_evaluation() -> None:
                 name="violence",
                 evaluator_name="builtin.violence",
                 data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
-                initialization_parameters={"deployment_name": "{{aoai_deployment_and_model}}"},
+                initialization_parameters={"model": "{{aoai_deployment_and_model}}"},
             ),
             TestingCriterionAzureAIEvaluator(type="azure_ai_evaluator", name="f1", evaluator_name="builtin.f1_score"),
             TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
                 name="coherence",
                 evaluator_name="builtin.coherence",
-                initialization_parameters={"deployment_name": "{{aoai_deployment_and_model}}"},
+                initialization_parameters={"model": "{{aoai_deployment_and_model}}"},
             ),
         ]
 
@@ -380,7 +380,7 @@ def schedule_redteam_evaluation() -> None:  # pylint: disable=too-many-locals
             description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input
         )
 
-        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
+        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, taxonomy=eval_taxonomy_input)
         taxonomy_path = os.path.join(data_folder, f"taxonomy_{agent_name}.json")
         # Create the data folder if it doesn't exist
         os.makedirs(data_folder, exist_ok=True)

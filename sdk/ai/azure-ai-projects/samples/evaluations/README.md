@@ -69,6 +69,7 @@ These samples require additional setup or Azure services:
 | [sample_evaluations_score_model_grader_with_audio.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_audio.py) | Evaluate with audio data | Audio file, audio-capable model deployment |
 | [sample_evaluations_score_model_grader_with_audio_model_target.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_audio_model_target.py) | Evaluate audio data using a model as the target | Audio file, audio-capable model deployment |
 | [sample_evaluations_builtin_with_inline_data_oai.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_inline_data_oai.py) | Use OpenAI client directly | OpenAI SDK |
+| [sample_human_evaluations.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_human_evaluations.py) | Emit human evaluation events (binary / Likert-5) as OpenTelemetry custom events to Application Insights | Connected Application Insights on Foundry Project, `azure-monitor-opentelemetry` |
 
 ### Evaluator Types
 
@@ -79,6 +80,16 @@ These samples require additional setup or Azure services:
 | [sample_evaluations_ai_assisted.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_ai_assisted.py) | AI-assisted and NLP-based evaluators: Similarity, ROUGE, METEOR, GLEU, F1, BLEU |
 | [sample_eval_catalog_code_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_code_based_evaluators.py) | Custom code-based (inline) evaluators |
 | [sample_eval_catalog_prompt_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_prompt_based_evaluators.py) | Custom prompt-based evaluators |
+
+### Rubric Evaluators
+
+| Sample | Description |
+|--------|-------------|
+| [sample_rubric_evaluator_manual.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_manual.py) | Hand-author a rubric evaluator (dimensions, weights, pass threshold) with `create_version`, then use it in an OpenAI eval run |
+| [sample_rubric_evaluator_generation_basic.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_generation_basic.py) | Generate an evaluator from a single prompt source, inspect the produced dimensions, and use the auto-saved evaluator in an eval run |
+| [sample_rubric_evaluator_generation_all_sources.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_generation_all_sources.py) | Exercise every source type — prompt + agent + dataset in a combined job, plus a separate traces + agent-companion job |
+| [sample_rubric_evaluator_generation_iterate.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_generation_iterate.py) | Human-in-the-loop iteration: generate v1, edit dimensions locally, save as v2 with `create_version` |
+| [sample_rubric_evaluator_generation_lifecycle.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_rubric_evaluator_generation_lifecycle.py) | Full generation-job lifecycle: idempotent `create_generation_job`, polling, list, and delete |
 
 ### Agentic Evaluators
 

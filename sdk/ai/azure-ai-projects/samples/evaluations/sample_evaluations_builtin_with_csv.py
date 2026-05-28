@@ -94,7 +94,7 @@ with (
             name="violence",
             evaluator_name="builtin.violence",
             data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
-            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            initialization_parameters={"model": f"{model_deployment_name}"},
         ),
         TestingCriterionAzureAIEvaluator(type="azure_ai_evaluator", name="f1", evaluator_name="builtin.f1_score"),
         TestingCriterionAzureAIEvaluator(
@@ -102,7 +102,7 @@ with (
             name="coherence",
             evaluator_name="builtin.coherence",
             data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
-            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            initialization_parameters={"model": f"{model_deployment_name}"},
         ),
     ]
 

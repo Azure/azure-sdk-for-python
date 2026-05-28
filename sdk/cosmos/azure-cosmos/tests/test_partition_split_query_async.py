@@ -14,6 +14,7 @@ from azure.cosmos import PartitionKey
 from azure.cosmos import http_constants
 from azure.cosmos import _base
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 async def run_queries(container, iterations):
     ret_list = []
@@ -105,7 +106,8 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             if time.time() - start_time > self.MAX_TIME:  # timeout test at 10 minutes
                 self.skipTest("Partition split didn't complete in time.")
             if offer.properties['content'].get('isOfferReplacePending', False):
-                time.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
+                # Keep the event loop responsive while waiting.
+                await asyncio.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
                 offer = await self.key_container.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
@@ -141,14 +143,9 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Force initial routing map cache by running a query
         await run_queries(self.container, 1)
 
-        # Trigger split (1 -> 2 partitions)  -  control-plane via key-auth key_container
-        await self.key_container.replace_throughput(11000)
-        pending = True
-        while pending:
-            offer = await self.key_container.get_throughput()
-            pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-            if pending:
-                await asyncio.sleep(5)
+        # Trigger split via the shared bounded helper (timeout + SkipTest)
+        # instead of an unbounded polling loop.
+        await test_config.TestConfig.trigger_split_async(self.key_container, 11000)
 
         # Run queries to trigger routing map refresh
         await run_queries(self.container, 1)
@@ -228,14 +225,9 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             # Force initial routing map cache
             await run_queries(new_container, 1)
 
-            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)  -  control-plane
-            await new_setup_container.replace_throughput(25000)
-            pending = True
-            while pending:
-                offer = await new_setup_container.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    await asyncio.sleep(5)
+            # Trigger split via the shared bounded helper (timeout + SkipTest)
+            # instead of an unbounded polling loop.
+            await test_config.TestConfig.trigger_split_async(new_setup_container, 25000)
 
             # Run queries to trigger routing map refresh
             await run_queries(new_container, 1)
@@ -348,14 +340,8 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print(f"Before split - Container B: {len(ranges_b_before)} partitions")
             print(f"Container B routing map object ID: {map_b_object_id}")
 
-            # SPLIT ONLY CONTAINER A  -  control-plane
-            await key_container_a.replace_throughput(11000)
-            pending = True
-            while pending:
-                offer = await key_container_a.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    await asyncio.sleep(5)
+            # Split only Container A via the shared bounded helper.
+            await test_config.TestConfig.trigger_split_async(key_container_a, 11000)
 
             # Wait for physical partition ranges to reflect the split.
             split_convergence_deadline = time.time() + 300
@@ -592,12 +578,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.key_database.delete_container(container_id)
 
-    async def test_full_load_with_incomplete_ranges_returns_none_async(self):
+    async def test_full_load_with_incomplete_ranges_surfaces_503_async(self):
         """
-        Validates that a full load with incomplete ranges returns None immediately.
+        Validates that a full load with incomplete ranges surfaces a retryable
+        HTTP 503 after exhausting the bounded retry budget.
         When a full load is performed (previous_routing_map=None) and the service
-        returns gapped ranges, _fetch_routing_map should return None without retrying  - 
-        there is no incremental state to fall back from.
+        returns gapped ranges, _fetch_routing_map should not leak internal
+        map-construction failures to callers.
         """
         container_id = 'test_fallback_guard_async_' + str(uuid.uuid4())
         await self.key_database.create_container(
@@ -632,19 +619,20 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                     '_ReadPartitionKeyRanges',
                     side_effect=mock_read_ranges
             ):
-                # Full load with incomplete ranges should return None immediately
-                result = await provider._fetch_routing_map(
-                    collection_link=collection_link,
-                    collection_id=collection_id,
-                    previous_routing_map=None,
-                    feed_options={},
-                )
+                async def _no_sleep(_seconds):
+                    return None
 
-                # Should return None instead of recursing infinitely
-                assert result is None, \
-                    "_fetch_routing_map should return None when full load produces incomplete ranges"
+                with patch('azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep', new=_no_sleep):
+                    with self.assertRaises(CosmosHttpResponseError) as ctx:
+                        await provider._fetch_routing_map(
+                            collection_link=collection_link,
+                            collection_id=collection_id,
+                            previous_routing_map=None,
+                            feed_options={},
+                        )
+                self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
 
-            print("Validated: full load with incomplete ranges returns None without recursion")
+            print("Validated: full load with incomplete ranges surfaces retryable HTTP 503")
 
         finally:
             await self.key_database.delete_container(container_id)
