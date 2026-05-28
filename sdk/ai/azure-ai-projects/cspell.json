@@ -38,7 +38,8 @@
     "Udbk",
     "UPIA",
     "Vnext",
-    "xhigh"
+    "xhigh",
+    "likert"
   ],
   "ignorePaths": [
     "*.csv",
@@ -46,6 +47,8 @@
     "*.jsonl"
   ],
   "words": [
-    "Pxqzykebv"
+    "Pxqzykebv",
+    "qtumf",
+    "sess"
   ]
 }

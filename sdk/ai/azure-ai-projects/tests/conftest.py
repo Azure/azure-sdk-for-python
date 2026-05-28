@@ -33,7 +33,12 @@ def pytest_collection_modifyitems(items):
     if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":
         return
     for item in items:
-        if "tests\\evaluation" in item.fspath.strpath or "tests/evaluation" in item.fspath.strpath:
+        path = item.fspath.strpath
+        if "tests\\evaluation" in path or "tests/evaluation" in path:
+            # test_human_evaluations.py is a pure unit test with no Microsoft Foundry
+            # dependency, so it must keep running in the PR pipeline.
+            if "test_human_evaluations" in os.path.basename(path):
+                continue
             item.add_marker(
                 pytest.mark.skip(
                     reason="Skip running Evaluations tests in PR pipeline until we can sort out the failures related to Microsoft Foundry project settings"
