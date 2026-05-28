@@ -78,12 +78,14 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY."""
     RESPONSES = "responses"
     """RESPONSES."""
-    A2A = "a2a"
-    """A2A."""
+    A2_A = "a2a"
+    """A2_A."""
     MCP = "mcp"
     """MCP."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
+    INVOCATIONS_WS = "invocations_ws"
+    """WebSocket-based protocol for hosted voice and real-time streaming agents."""
 
 
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -125,6 +127,8 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
+    INVOCATIONS_WS = "invocations_ws"
+    """WebSocket-based protocol for hosted voice and real-time streaming agents."""
 
 
 class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -302,14 +306,14 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ContainerMemoryLimit."""
 
-    MEMORY_1GB = "1g"
-    """MEMORY_1GB."""
-    MEMORY_4GB = "4g"
-    """MEMORY_4GB."""
-    MEMORY_16GB = "16g"
-    """MEMORY_16GB."""
-    MEMORY_64GB = "64g"
-    """MEMORY_64GB."""
+    MEMORY1_GB = "1g"
+    """MEMORY1_GB."""
+    MEMORY4_GB = "4g"
+    """MEMORY4_GB."""
+    MEMORY16_GB = "16g"
+    """MEMORY16_GB."""
+    MEMORY64_GB = "64g"
+    """MEMORY64_GB."""
 
 
 class ContainerNetworkPolicyParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -385,8 +389,6 @@ class DataGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Agent source — references an agent."""
     TRACES = "traces"
     """Traces source — conversation traces from Application Insights."""
-    DATASET = "dataset"
-    """Dataset source — reference to a dataset."""
     FILE = "file"
     """File source — Azure OpenAI file."""
 
@@ -437,15 +439,13 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Model deployment."""
 
 
-class EvalRunOutputItemResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The evaluation status for an evaluation run output item result."""
+class EvaluationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The level at which evaluation is performed."""
 
-    COMPLETED = "completed"
-    """The evaluator completed successfully for this result item."""
-    ERRORED = "errored"
-    """The evaluator encountered an error for this result item."""
-    SKIPPED = "skipped"
-    """The evaluator skipped this result item."""
+    TURN = "turn"
+    """Evaluation is performed at the turn level."""
+    CONVERSATION = "conversation"
+    """Evaluation is performed at the conversation level."""
 
 
 class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -616,6 +616,15 @@ class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitive
     """CONTAINER_REFERENCE."""
 
 
+class GitHubIssueEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known GitHub issue events that can fire a routine."""
+
+    OPENED = "opened"
+    """The routine fires when a GitHub issue is opened."""
+    CLOSED = "closed"
+    """The routine fires when a GitHub issue is closed."""
+
+
 class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of GrammarSyntax1."""
 
@@ -783,24 +792,6 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been canceled by the user."""
 
 
-class OptimizationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Run mode for an optimization job."""
-
-    OPTIMIZE = "optimize"
-    """Full optimization: baseline + mutation strategies."""
-
-
-class OptimizationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Optimization strategy dimension."""
-
-    INSTRUCTION = "instruction"
-    """Instruction-tuning strategy — rewrites agent system prompts."""
-    MODEL = "model"
-    """Model-selection strategy — evaluates alternative LLM deployments."""
-    SKILL = "skill"
-    """Skill-tuning strategy — generates or modifies agent tool descriptions."""
-
-
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of PageOrder."""
 
@@ -827,8 +818,8 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AUTO = "auto"
     """AUTO."""
-    DEFAULT_2024_11_15 = "default-2024-11-15"
-    """DEFAULT_2024_11_15."""
+    DEFAULT2024_11_15 = "default-2024-11-15"
+    """DEFAULT2024_11_15."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -918,8 +909,10 @@ class RoutineRunPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RoutineTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The discriminator values supported for routine triggers."""
 
-    GITHUB_ISSUE_OPENED = "github_issue_opened"
-    """A GitHub issue-opened trigger."""
+    CUSTOM = "custom"
+    """A custom event trigger."""
+    GITHUB_ISSUE = "github_issue"
+    """A GitHub issue trigger."""
     SCHEDULE = "schedule"
     """A recurring cron-based trigger."""
     TIMER = "timer"
@@ -1052,8 +1045,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WEB_SEARCH_PREVIEW."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
     """COMPUTER_USE_PREVIEW."""
-    WEB_SEARCH_PREVIEW_2025_03_11 = "web_search_preview_2025_03_11"
-    """WEB_SEARCH_PREVIEW_2025_03_11."""
+    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
+    """WEB_SEARCH_PREVIEW2025_03_11."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"
@@ -1087,8 +1080,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WEB_SEARCH_PREVIEW."""
     APPLY_PATCH = "apply_patch"
     """APPLY_PATCH."""
-    A2A_PREVIEW = "a2a_preview"
-    """A2A_PREVIEW."""
+    A2_A_PREVIEW = "a2a_preview"
+    """A2_A_PREVIEW."""
     BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
     """BING_CUSTOM_SEARCH_PREVIEW."""
     BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
