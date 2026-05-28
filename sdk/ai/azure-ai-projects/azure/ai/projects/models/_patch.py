@@ -10,6 +10,13 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from dataclasses import dataclass
+from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
+from azure.core.polling.base_polling import (
+    LROBasePolling,
+    OperationFailed,
+    _raise_if_bad_http_status_and_method,
+)
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._patch_jobs import (
     CommandJob,
     CommandJobLimits,
@@ -18,13 +25,6 @@ from ._patch_jobs import (
     ValidationResult,
     load_job,
 )
-from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
-from azure.core.polling.base_polling import (
-    LROBasePolling,
-    OperationFailed,
-    _raise_if_bad_http_status_and_method,
-)
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._patch_evaluation_typeddicts import (
     AzureAIAgentTargetParam,
     AzureAIBenchmarkPreviewEvalRunDataSource,
@@ -77,6 +77,7 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
     "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
+    "jobs": _FoundryFeaturesOptInKeys.JOBS_V1_PREVIEW.value,
     "agents": _AGENT_OPERATION_FEATURE_HEADERS,
 }
 """Foundry-Features header values keyed by beta sub-client property name."""

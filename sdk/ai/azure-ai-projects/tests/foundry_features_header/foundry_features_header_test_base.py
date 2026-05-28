@@ -46,6 +46,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "toolboxes": "Toolboxes=V1Preview",
     "skills": "Skills=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
+    "jobs": "Jobs=V1Preview",
     "agents": "HostedAgents=V1Preview,WorkflowAgents=V1Preview,AgentEndpoints=V1Preview,CodeAgents=V1Preview,ExternalAgents=V1Preview,AgentsOptimization=V1Preview",
 }
 

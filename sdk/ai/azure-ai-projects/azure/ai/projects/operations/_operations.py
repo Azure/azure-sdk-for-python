@@ -13177,7 +13177,7 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
-            if body is _Unset:
+            if body is _Unset:  # pyright: ignore[reportUnboundVariable]
                 if scope is _Unset:
                     raise TypeError("missing required argument: scope")
                 body = {"scope": scope}

@@ -73,6 +73,9 @@ class CapturingTransport(HttpTransport):
 
 
 # ---------------------------------------------------------------------------
+# Methods that are purely local (never hit the transport) and must be excluded.
+_SKIP_METHODS: set[str] = {"validate", "create_or_update"}
+
 # Dynamic test-case discovery (runs at collection time, not at test time)
 # ---------------------------------------------------------------------------
 
@@ -115,6 +118,8 @@ def _discover_test_cases() -> list[pytest.param]:
         _excluded = EXCLUDED_BETA_METHODS.get(sc_name, frozenset())
         for m_name in sorted(dir(_underlying_op)):
             if m_name.startswith("_"):
+                continue
+            if m_name in _SKIP_METHODS:
                 continue
             if m_name in _excluded:
                 continue
