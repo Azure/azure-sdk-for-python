@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,49 +31,220 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.container_group_profiles.create_or_update(
+    response = client.cg_profile.create_or_update(
         resource_group_name="demo",
         container_group_profile_name="demo1",
         container_group_profile={
-            "location": "eastus2",
-            "properties": {
-                "containers": [
-                    {
-                        "name": "demo1",
-                        "properties": {
-                            "command": [],
-                            "environmentVariables": [],
-                            "image": "nginx",
-                            "ports": [{"port": 80}],
-                            "resources": {"requests": {"cpu": 1, "memoryInGB": 1.5}},
+            "confidentialComputeProperties": {"ccePolicy": "str"},
+            "containers": [
+                {
+                    "name": "str",
+                    "command": ["str"],
+                    "configMap": {"keyValuePairs": {"str": "str"}},
+                    "environmentVariables": [
+                        {"name": "str", "secureValue": "str", "secureValueReference": "str", "value": "str"}
+                    ],
+                    "image": "str",
+                    "instanceView": {
+                        "currentState": {
+                            "detailStatus": "str",
+                            "exitCode": 0,
+                            "finishTime": "2020-02-20 00:00:00",
+                            "startTime": "2020-02-20 00:00:00",
+                            "state": "str",
                         },
-                    }
-                ],
-                "extensions": [
-                    {
-                        "name": "kube-proxy",
-                        "properties": {
-                            "extensionType": "kube-proxy",
-                            "protectedSettings": {"kubeConfig": "<kubeconfig encoded string>"},
-                            "settings": {"clusterCidr": "10.240.0.0/16", "kubeVersion": "v1.9.10"},
-                            "version": "1.0",
+                        "events": [
+                            {
+                                "count": 0,
+                                "firstTimestamp": "2020-02-20 00:00:00",
+                                "lastTimestamp": "2020-02-20 00:00:00",
+                                "message": "str",
+                                "name": "str",
+                                "type": "str",
+                            }
+                        ],
+                        "previousState": {
+                            "detailStatus": "str",
+                            "exitCode": 0,
+                            "finishTime": "2020-02-20 00:00:00",
+                            "startTime": "2020-02-20 00:00:00",
+                            "state": "str",
                         },
+                        "restartCount": 0,
                     },
-                    {
-                        "name": "vk-realtime-metrics",
-                        "properties": {"extensionType": "realtime-metrics", "version": "1.0"},
+                    "livenessProbe": {
+                        "exec": {"command": ["str"]},
+                        "failureThreshold": 0,
+                        "httpGet": {
+                            "port": 0,
+                            "httpHeaders": [{"name": "str", "value": "str"}],
+                            "path": "str",
+                            "scheme": "str",
+                        },
+                        "initialDelaySeconds": 0,
+                        "periodSeconds": 0,
+                        "successThreshold": 0,
+                        "timeoutSeconds": 0,
                     },
-                ],
-                "imageRegistryCredentials": [],
-                "ipAddress": {"ports": [{"port": 80, "protocol": "TCP"}], "type": "Private"},
-                "osType": "Linux",
+                    "ports": [{"port": 0, "protocol": "str"}],
+                    "readinessProbe": {
+                        "exec": {"command": ["str"]},
+                        "failureThreshold": 0,
+                        "httpGet": {
+                            "port": 0,
+                            "httpHeaders": [{"name": "str", "value": "str"}],
+                            "path": "str",
+                            "scheme": "str",
+                        },
+                        "initialDelaySeconds": 0,
+                        "periodSeconds": 0,
+                        "successThreshold": 0,
+                        "timeoutSeconds": 0,
+                    },
+                    "resources": {
+                        "requests": {"cpu": 0.0, "memoryInGB": 0.0, "gpu": {"count": 0, "sku": "str"}},
+                        "limits": {"cpu": 0.0, "gpu": {"count": 0, "sku": "str"}, "memoryInGB": 0.0},
+                    },
+                    "securityContext": {
+                        "allowPrivilegeEscalation": bool,
+                        "capabilities": {"add": ["str"], "drop": ["str"]},
+                        "privileged": bool,
+                        "runAsGroup": 0,
+                        "runAsUser": 0,
+                        "seccompProfile": "str",
+                    },
+                    "volumeMounts": [{"mountPath": "str", "name": "str", "readOnly": bool}],
+                }
+            ],
+            "diagnostics": {
+                "logAnalytics": {
+                    "workspaceId": "str",
+                    "workspaceKey": "str",
+                    "logType": "str",
+                    "metadata": {"str": "str"},
+                    "workspaceResourceId": "str",
+                }
             },
-            "zones": ["1"],
+            "encryptionProperties": {"keyName": "str", "keyVersion": "str", "vaultBaseUrl": "str", "identity": "str"},
+            "extensions": [
+                {"name": "str", "extensionType": "str", "protectedSettings": {}, "settings": {}, "version": "str"}
+            ],
+            "id": "str",
+            "imageRegistryCredentials": [
+                {
+                    "server": "str",
+                    "identity": "str",
+                    "identityUrl": "str",
+                    "password": "str",
+                    "passwordReference": "str",
+                    "username": "str",
+                }
+            ],
+            "initContainers": [
+                {
+                    "name": "str",
+                    "command": ["str"],
+                    "environmentVariables": [
+                        {"name": "str", "secureValue": "str", "secureValueReference": "str", "value": "str"}
+                    ],
+                    "image": "str",
+                    "instanceView": {
+                        "currentState": {
+                            "detailStatus": "str",
+                            "exitCode": 0,
+                            "finishTime": "2020-02-20 00:00:00",
+                            "startTime": "2020-02-20 00:00:00",
+                            "state": "str",
+                        },
+                        "events": [
+                            {
+                                "count": 0,
+                                "firstTimestamp": "2020-02-20 00:00:00",
+                                "lastTimestamp": "2020-02-20 00:00:00",
+                                "message": "str",
+                                "name": "str",
+                                "type": "str",
+                            }
+                        ],
+                        "previousState": {
+                            "detailStatus": "str",
+                            "exitCode": 0,
+                            "finishTime": "2020-02-20 00:00:00",
+                            "startTime": "2020-02-20 00:00:00",
+                            "state": "str",
+                        },
+                        "restartCount": 0,
+                    },
+                    "securityContext": {
+                        "allowPrivilegeEscalation": bool,
+                        "capabilities": {"add": ["str"], "drop": ["str"]},
+                        "privileged": bool,
+                        "runAsGroup": 0,
+                        "runAsUser": 0,
+                        "seccompProfile": "str",
+                    },
+                    "volumeMounts": [{"mountPath": "str", "name": "str", "readOnly": bool}],
+                }
+            ],
+            "ipAddress": {
+                "ports": [{"port": 0, "protocol": "str"}],
+                "type": "str",
+                "autoGeneratedDomainNameLabelScope": "Unsecure",
+                "dnsNameLabel": "str",
+                "fqdn": "str",
+                "ip": "str",
+            },
+            "location": "str",
+            "name": "str",
+            "osType": "str",
+            "priority": "str",
+            "registeredRevisions": [0],
+            "restartPolicy": "str",
+            "revision": 0,
+            "securityContext": {
+                "allowPrivilegeEscalation": bool,
+                "capabilities": {"add": ["str"], "drop": ["str"]},
+                "privileged": bool,
+                "runAsGroup": 0,
+                "runAsUser": 0,
+                "seccompProfile": "str",
+            },
+            "shutdownGracePeriod": "2020-02-20 00:00:00",
+            "sku": "str",
+            "systemData": {
+                "createdAt": "2020-02-20 00:00:00",
+                "createdBy": "str",
+                "createdByType": "str",
+                "lastModifiedAt": "2020-02-20 00:00:00",
+                "lastModifiedBy": "str",
+                "lastModifiedByType": "str",
+            },
+            "tags": {"str": "str"},
+            "timeToLive": "2020-02-20 00:00:00",
+            "type": "str",
+            "useKrypton": bool,
+            "volumes": [
+                {
+                    "name": "str",
+                    "azureFile": {
+                        "shareName": "str",
+                        "storageAccountName": "str",
+                        "readOnly": bool,
+                        "storageAccountKey": "str",
+                        "storageAccountKeyReference": "str",
+                    },
+                    "emptyDir": {},
+                    "gitRepo": {"repository": "str", "directory": "str", "revision": "str"},
+                    "secret": {"str": "str"},
+                    "secretReference": {"str": "str"},
+                }
+            ],
+            "zones": ["str"],
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/preview/2024-05-01-preview/examples/ContainerGroupProfileCreateOrUpdate_Extensions.json
+# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/ContainerInstance/stable/2025-09-01/examples/ContainerGroupProfileCreateOrUpdate_Extensions.json
 if __name__ == "__main__":
     main()

@@ -21,13 +21,13 @@ class TestContainerInstanceManagementSubnetServiceAssociationLinkOperationsAsync
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_subnet_service_association_link_begin_delete(self, resource_group):
         response = await (
             await self.client.subnet_service_association_link.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_network_name="str",
                 subnet_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -20,9 +20,9 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_container_groups_list(self, resource_group):
         response = self.client.container_groups.list(
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_container_groups_list_by_resource_group(self, resource_group):
         response = self.client.container_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_container_groups_get(self, resource_group):
         response = self.client.container_groups.get(
             resource_group_name=resource_group.name,
             container_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_container_groups_begin_create_or_update(self, resource_group):
         response = self.client.container_groups.begin_create_or_update(
             resource_group_name=resource_group.name,
             container_group_name="str",
@@ -63,7 +63,9 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
                         "name": "str",
                         "command": ["str"],
                         "configMap": {"keyValuePairs": {"str": "str"}},
-                        "environmentVariables": [{"name": "str", "secureValue": "str", "value": "str"}],
+                        "environmentVariables": [
+                            {"name": "str", "secureValue": "str", "secureValueReference": "str", "value": "str"}
+                        ],
                         "image": "str",
                         "instanceView": {
                             "currentState": {
@@ -164,14 +166,24 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
                     "type": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "identityAcls": {"acls": [{"access": "str", "identity": "str"}], "defaultAccess": "str"},
                 "imageRegistryCredentials": [
-                    {"server": "str", "identity": "str", "identityUrl": "str", "password": "str", "username": "str"}
+                    {
+                        "server": "str",
+                        "identity": "str",
+                        "identityUrl": "str",
+                        "password": "str",
+                        "passwordReference": "str",
+                        "username": "str",
+                    }
                 ],
                 "initContainers": [
                     {
                         "name": "str",
                         "command": ["str"],
-                        "environmentVariables": [{"name": "str", "secureValue": "str", "value": "str"}],
+                        "environmentVariables": [
+                            {"name": "str", "secureValue": "str", "secureValueReference": "str", "value": "str"}
+                        ],
                         "image": "str",
                         "instanceView": {
                             "currentState": {
@@ -239,6 +251,7 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
                 "priority": "str",
                 "provisioningState": "str",
                 "restartPolicy": "str",
+                "secretReferences": [{"identity": "str", "name": "str", "secretReferenceUri": "str"}],
                 "sku": "str",
                 "standbyPoolProfile": {"failContainerGroupCreateOnReuseFailure": bool, "id": "str"},
                 "subnetIds": [{"id": "str", "name": "str"}],
@@ -252,15 +265,17 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
                             "storageAccountName": "str",
                             "readOnly": bool,
                             "storageAccountKey": "str",
+                            "storageAccountKeyReference": "str",
                         },
                         "emptyDir": {},
                         "gitRepo": {"repository": "str", "directory": "str", "revision": "str"},
                         "secret": {"str": "str"},
+                        "secretReference": {"str": "str"},
                     }
                 ],
                 "zones": ["str"],
             },
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -268,7 +283,7 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_container_groups_update(self, resource_group):
         response = self.client.container_groups.update(
             resource_group_name=resource_group.name,
             container_group_name="str",
@@ -280,7 +295,7 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -288,11 +303,11 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_container_groups_begin_delete(self, resource_group):
         response = self.client.container_groups.begin_delete(
             resource_group_name=resource_group.name,
             container_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -300,11 +315,11 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_restart(self, resource_group):
+    def test_container_groups_begin_restart(self, resource_group):
         response = self.client.container_groups.begin_restart(
             resource_group_name=resource_group.name,
             container_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -312,11 +327,11 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_stop(self, resource_group):
+    def test_container_groups_stop(self, resource_group):
         response = self.client.container_groups.stop(
             resource_group_name=resource_group.name,
             container_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -324,11 +339,11 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start(self, resource_group):
+    def test_container_groups_begin_start(self, resource_group):
         response = self.client.container_groups.begin_start(
             resource_group_name=resource_group.name,
             container_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -336,11 +351,11 @@ class TestContainerInstanceManagementContainerGroupsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_outbound_network_dependencies_endpoints(self, resource_group):
+    def test_container_groups_get_outbound_network_dependencies_endpoints(self, resource_group):
         response = self.client.container_groups.get_outbound_network_dependencies_endpoints(
             resource_group_name=resource_group.name,
             container_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself

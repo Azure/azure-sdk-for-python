@@ -20,10 +20,10 @@ class TestContainerInstanceManagementLocationOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_usage(self, resource_group):
+    def test_location_list_usage(self, resource_group):
         response = self.client.location.list_usage(
             location="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestContainerInstanceManagementLocationOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_cached_images(self, resource_group):
+    def test_location_list_cached_images(self, resource_group):
         response = self.client.location.list_cached_images(
             location="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -42,10 +42,10 @@ class TestContainerInstanceManagementLocationOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_capabilities(self, resource_group):
+    def test_location_list_capabilities(self, resource_group):
         response = self.client.location.list_capabilities(
             location="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

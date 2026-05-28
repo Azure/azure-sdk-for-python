@@ -21,10 +21,10 @@ class TestContainerInstanceManagementLocationOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_usage(self, resource_group):
+    async def test_location_list_usage(self, resource_group):
         response = self.client.location.list_usage(
             location="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -32,10 +32,10 @@ class TestContainerInstanceManagementLocationOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_cached_images(self, resource_group):
+    async def test_location_list_cached_images(self, resource_group):
         response = self.client.location.list_cached_images(
             location="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -43,10 +43,10 @@ class TestContainerInstanceManagementLocationOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_capabilities(self, resource_group):
+    async def test_location_list_capabilities(self, resource_group):
         response = self.client.location.list_capabilities(
             location="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
