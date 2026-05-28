@@ -73,7 +73,7 @@ def _is_attach_enabled():
     if attach_type is not None:
         # If the env var is set, attach is only enabled if the value is
         # "IntegratedAuto" AND the existing per-RP logic is satisfied.
-        if attach_type == "IntegratedAuto":
+        if attach_type.lower() == "integratedauto":
             return True
         return False
     # Fallback to legacy logic when the env var is not set

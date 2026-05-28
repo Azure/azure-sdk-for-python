@@ -731,6 +731,7 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     def test_attach_enabled(self, mock_isdir):
         self.assertEqual(_utils._is_attach_enabled(), True)
@@ -742,6 +743,7 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     def test_attach_app_service_disabled(self, mock_isdir):
         self.assertEqual(_utils._is_attach_enabled(), False)
@@ -792,6 +794,34 @@ class TestUtils(unittest.TestCase):
         },
     )
     def test_attach_type_integrated_auto_app_service(self, mock_isdir):
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "integratedauto",
+        },
+    )
+    def test_attach_type_integrated_auto_app_service_lower(self, mock_isdir):
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "INTEGRATEDAUTO",
+        },
+    )
+    def test_attach_type_integrated_auto_app_service_upper(self, mock_isdir):
         self.assertTrue(_utils._is_attach_enabled())
 
     @patch(
@@ -879,6 +909,7 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     def test_attach_fallback_no_env_var_app_service(self, mock_isdir):
         # Without the env var, falls back to legacy isdir check
