@@ -787,6 +787,15 @@ class TestMcpCallBuilderReturnTypes:
         event = mcp.emit_done()
         assert isinstance(event, ResponseOutputItemDoneEvent)
 
+    def test_emit_done_with_output_and_error(self) -> None:
+        s = _stream()
+        s.emit_created()
+        mcp = s.add_output_item_mcp_call("server", "tool", item_id="mcp_test")
+        mcp.emit_added()
+        mcp.emit_failed()
+        event = mcp.emit_done(output="ok", error={"reason": "failed"})
+        assert isinstance(event, ResponseOutputItemDoneEvent)
+
 
 # =====================================================================
 # OutputItemMcpListToolsBuilder

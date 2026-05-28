@@ -3,21 +3,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import asyncio
 import time
 import unittest
 from datetime import datetime, timedelta
 
 import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
-    ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceModifiedError,
     ResourceNotFoundError,
-    ServiceRequestError
+    ServiceRequestError,
 )
 from azure.storage.filedatalake import (
     AccessControlChangeCounters,
@@ -27,14 +32,12 @@ from azure.storage.filedatalake import (
     EncryptionScopeOptions,
     FileSystemSasPermissions,
     generate_directory_sas,
-    generate_file_system_sas
+    generate_file_system_sas,
 )
-from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeServiceClient
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
+from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeServiceClient
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import DataLakePreparer
+
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
 REMOVE_ACL = "mask," + "default:user,default:group," + \
@@ -86,9 +89,6 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
             sub_dir = await directory_client.create_sub_directory(self.get_resource_name('subdir' + str(i)))
             for j in range(0, num_of_files_per_dir):
                 await sub_dir.create_file(self.get_resource_name('subfile' + str(j)))
-
-    async def _create_file_system(self):
-        return await self.dsc.create_file_system(self._get_file_system_reference())
 
     # --Helpers-----------------------------------------------------------------
 
@@ -624,10 +624,14 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         await directory_client.create_directory(owner=test_guid)
-        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
-        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
-        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
-        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
+        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(
+            owner=test_guid, permissions='0777')
+        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(
+            owner=test_guid, permissions='0777')
+        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(
+            owner=test_guid, permissions='0777')
+        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(
+            owner=test_guid, permissions='0777')
         await directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions
@@ -820,10 +824,14 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         await directory_client.create_directory(owner=test_guid)
-        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
-        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
-        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
-        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
+        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(
+            owner=test_guid, permissions='0777')
+        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(
+            owner=test_guid, permissions='0777')
+        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(
+            owner=test_guid, permissions='0777')
+        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(
+            owner=test_guid, permissions='0777')
         await directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions
@@ -1042,10 +1050,14 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         await directory_client.create_directory(owner=test_guid)
-        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(owner=test_guid, permissions='0777')
-        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(owner=test_guid, permissions='0777')
-        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(owner=test_guid, permissions='0777')
-        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(owner=test_guid, permissions='0777')
+        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir1').create_directory(
+            owner=test_guid, permissions='0777')
+        await self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(
+            owner=test_guid, permissions='0777')
+        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(
+            owner=test_guid, permissions='0777')
+        await self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(
+            owner=test_guid, permissions='0777')
         await directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions
@@ -1080,8 +1092,11 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
             if resp.batch_failures:
                 failed_entries.append(resp.batch_failures)
 
-        summary = await owner_dir_client.remove_access_control_recursive(acl=REMOVE_ACL, progress_hook=progress_callback,
-                                                                         batch_size=2)
+        summary = await owner_dir_client.remove_access_control_recursive(
+            acl=REMOVE_ACL,
+            progress_hook=progress_callback,
+            batch_size=2
+        )
 
         # Assert
         assert summary.counters.failure_count == 1
@@ -1550,7 +1565,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
-            credential=token_credential, audience=f'https://badaudience.blob.core.windows.net/'
+            credential=token_credential, audience='https://badaudience.blob.core.windows.net/'
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge

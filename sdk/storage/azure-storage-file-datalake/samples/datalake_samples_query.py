@@ -16,6 +16,8 @@ USAGE: python datalake_samples_query.py
 """
 import os
 import sys
+
+from azure.core.exceptions import ResourceExistsError
 from azure.storage.filedatalake import DataLakeServiceClient, DelimitedJsonDialect, DelimitedTextDialect
 
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
@@ -64,7 +66,7 @@ def main():
     filesystem_client = datalake_service_client.get_file_system_client(filesystem_name)
     try:
         filesystem_client.create_file_system()
-    except:
+    except ResourceExistsError:
         pass
     # [START query]
     errors = []
@@ -77,9 +79,20 @@ def main():
 
     # select the second column of the csv file
     query_expression = "SELECT _2 from DataLakeStorage"
-    input_format = DelimitedTextDialect(delimiter=',', quotechar='"', lineterminator='\n', escapechar="", has_header=False)
+    input_format = DelimitedTextDialect(
+        delimiter=',',
+        quotechar='"',
+        lineterminator='\n',
+        escapechar="",
+        has_header=False
+    )
     output_format = DelimitedJsonDialect(delimiter='\n')
-    reader = file_client.query_file(query_expression, on_error=on_error, file_format=input_format, output_format=output_format)
+    reader = file_client.query_file(
+        query_expression,
+        on_error=on_error,
+        file_format=input_format,
+        output_format=output_format
+    )
     content = reader.readall()
     # [END query]
     print(content)

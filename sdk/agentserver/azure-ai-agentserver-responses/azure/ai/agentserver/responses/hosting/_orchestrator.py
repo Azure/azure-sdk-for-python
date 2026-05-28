@@ -18,6 +18,8 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
 
 import anyio
 
+from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
+
 from .._options import ResponsesServerOptions
 from ..models import _generated as generated_models
 from ..models.runtime import (
@@ -344,6 +346,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                         except Exception as persist_exc:  # pylint: disable=broad-exception-caught
                             # §3.3: Phase 1 create failure — mark persistence failed
                             # so the terminal update knows not to attempt update_response.
+                            setattr(persist_exc, PLATFORM_ERROR_TAG, True)
                             logger.error(
                                 "Phase 1 create_response failed for bg non-stream (response_id=%s): %s",
                                 response_id,
@@ -508,6 +511,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                         _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
                         await provider.create_response(record.response, _resolved_items, None, isolation=_isolation)
                 except Exception as persist_exc:  # pylint: disable=broad-exception-caught
+                    setattr(persist_exc, PLATFORM_ERROR_TAG, True)
                     logger.error(
                         "Persistence failed at bg non-stream finalization (response_id=%s): %s",
                         response_id,
@@ -941,6 +945,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                             isolation=_isolation,
                         )
                 except Exception as persist_exc:  # pylint: disable=broad-exception-caught
+                    setattr(persist_exc, PLATFORM_ERROR_TAG, True)
                     logger.error(
                         "Persistence failed at terminal event (response_id=%s): %s",
                         ctx.response_id,

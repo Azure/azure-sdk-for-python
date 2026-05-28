@@ -25,7 +25,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             policy_states_resource="str",
             management_group_name="str",
             management_groups_namespace="Microsoft.Management",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             policy_states_summary_resource="str",
             management_group_name="str",
             management_groups_namespace="Microsoft.Management",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
         response = self.client.policy_states.list_query_results_for_subscription(
             policy_states_resource="str",
             subscription_id="str",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
         response = self.client.policy_states.summarize_for_subscription(
             policy_states_summary_resource="str",
             subscription_id="str",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             policy_states_resource="str",
             subscription_id="str",
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             policy_states_summary_resource="str",
             subscription_id="str",
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
 
         # please add some check logic here by yourself
@@ -100,7 +100,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
         response = self.client.policy_states.list_query_results_for_resource(
             policy_states_resource="str",
             resource_id="str",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -112,7 +112,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
         response = self.client.policy_states.summarize_for_resource(
             policy_states_summary_resource="str",
             resource_id="str",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
 
         # please add some check logic here by yourself
@@ -123,7 +123,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
     def test_policy_states_begin_trigger_subscription_evaluation(self, resource_group):
         response = self.client.policy_states.begin_trigger_subscription_evaluation(
             subscription_id="str",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -135,7 +135,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
         response = self.client.policy_states.begin_trigger_resource_group_evaluation(
             subscription_id="str",
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -149,7 +149,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             subscription_id="str",
             policy_set_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -163,7 +163,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             subscription_id="str",
             policy_set_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
 
         # please add some check logic here by yourself
@@ -177,7 +177,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             subscription_id="str",
             policy_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -191,7 +191,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             subscription_id="str",
             policy_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
 
         # please add some check logic here by yourself
@@ -205,7 +205,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             subscription_id="str",
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -219,7 +219,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             subscription_id="str",
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
 
         # please add some check logic here by yourself
@@ -234,7 +234,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -249,7 +249,7 @@ class TestPolicyInsightsPolicyStatesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
-            api_version="2024-10-01",
+            api_version="2019-10-01",
         )
 
         # please add some check logic here by yourself

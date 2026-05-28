@@ -37,7 +37,6 @@ from opentelemetry.sdk.trace.sampling import (
 from azure.monitor.opentelemetry._constants import (
     _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
     _AZURE_VM_RESOURCE_DETECTOR_NAME,
-    AZURE_MONITOR_DISTRO_VERSION,
     _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _PREVIEW_INSTRUMENTED_LIBRARIES,
     BROWSER_SDK_LOADER_CONFIG_ARG,
@@ -93,7 +92,6 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     for key, val in kwargs.items():
         configurations[key] = val
     configurations[DISTRO_VERSION_ARG] = VERSION
-    environ[AZURE_MONITOR_DISTRO_VERSION] = VERSION
 
     _default_disable_logging(configurations)
     _default_disable_metrics(configurations)

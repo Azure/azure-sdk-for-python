@@ -7,9 +7,12 @@
 from azure.ai.voicelive.models import (
     AnimationOutputType,
     AudioTimestampType,
+    AzureRealtimeNativeVoiceName,
     AzureVoiceType,
     ClientEventType,
     ContentPartType,
+    EchoCancellationReferenceSource,
+    SessionIncludeOption,
     InputAudioFormat,
     ItemParamStatus,
     ItemType,
@@ -20,6 +23,7 @@ from azure.ai.voicelive.models import (
     PersonalVoiceModels,
     ResponseItemStatus,
     ResponseStatus,
+    ServerEventType,
     ToolChoiceLiteral,
     ToolType,
     TurnDetectionType,
@@ -71,6 +75,24 @@ class TestAzureVoiceType:
         assert AzureVoiceType.AZURE_STANDARD.value == "azure-standard"
 
 
+class TestAzureRealtimeNativeVoiceName:
+    """Test AzureRealtimeNativeVoiceName enum."""
+
+    def test_all_values(self):
+        """Test representative realtime native voice values are accessible."""
+        assert AzureRealtimeNativeVoiceName.AVA == "ava"
+        assert AzureRealtimeNativeVoiceName.XIAOXIAO == "xiaoxiao"
+
+
+class TestEchoCancellationReferenceSource:
+    """Test EchoCancellationReferenceSource enum."""
+
+    def test_all_values(self):
+        """Test all echo cancellation reference source values are accessible."""
+        assert EchoCancellationReferenceSource.SERVER == "server"
+        assert EchoCancellationReferenceSource.CLIENT == "client"
+
+
 class TestClientEventType:
     """Test ClientEventType enum."""
 
@@ -96,6 +118,15 @@ class TestClientEventType:
         """Test response events."""
         assert ClientEventType.RESPONSE_CREATE == "response.create"
         assert ClientEventType.RESPONSE_CANCEL == "response.cancel"
+
+    def test_rtc_call_events(self):
+        """Test RTC call events."""
+        assert ClientEventType.RTC_CALL_SDP_CREATE == "rtc.call.sdp.create"
+
+    def test_input_text_events(self):
+        """Test input text streaming events."""
+        assert ClientEventType.INPUT_TEXT_DELTA == "input_text.delta"
+        assert ClientEventType.INPUT_TEXT_DONE == "input_text.done"
 
 
 class TestContentPartType:
@@ -202,6 +233,11 @@ class TestOutputAudioFormat:
         assert OutputAudioFormat.PCM16_8000_HZ == "pcm16_8000hz"
         assert OutputAudioFormat.PCM16_16000_HZ == "pcm16_16000hz"
 
+    def test_legacy_hyphenated_pcm_formats(self):
+        """Test legacy hyphenated PCM values still resolve to current enum members."""
+        assert OutputAudioFormat("pcm16-8000hz") is OutputAudioFormat.PCM16_8000_HZ
+        assert OutputAudioFormat("PCM16-16000HZ") is OutputAudioFormat.PCM16_16000_HZ
+
     def test_g711_formats(self):
         """Test G.711 format values."""
         assert OutputAudioFormat.G711_ULAW == "g711_ulaw"
@@ -215,7 +251,8 @@ class TestPersonalVoiceModels:
         """Test all enum values are accessible."""
         assert PersonalVoiceModels.DRAGON_LATEST_NEURAL == "DragonLatestNeural"
         assert PersonalVoiceModels.PHOENIX_LATEST_NEURAL == "PhoenixLatestNeural"
-        assert PersonalVoiceModels.PHOENIX_V2_NEURAL == "PhoenixV2Neural"
+        assert PersonalVoiceModels.DRAGON_HD_OMNI_LATEST_NEURAL == "DragonHDOmniLatestNeural"
+        assert PersonalVoiceModels.MAI_VOICE1 == "MAI-Voice-1"
 
 
 class TestResponseItemStatus:
@@ -226,6 +263,77 @@ class TestResponseItemStatus:
         assert ResponseItemStatus.IN_PROGRESS == "in_progress"
         assert ResponseItemStatus.COMPLETED == "completed"
         assert ResponseItemStatus.INCOMPLETE == "incomplete"
+
+
+class TestAzureVoiceTypeNew:
+    """Test new AzureVoiceType enum values."""
+
+    def test_avatar_voice_sync(self):
+        assert AzureVoiceType.AVATAR_VOICE_SYNC == "avatar-voice-sync"
+
+
+class TestClientEventTypeNew:
+    """Test new ClientEventType enum values."""
+
+    def test_output_audio_buffer_clear(self):
+        assert ClientEventType.OUTPUT_AUDIO_BUFFER_CLEAR == "output_audio_buffer.clear"
+
+
+class TestItemTypeNew:
+    """Test new ItemType enum values."""
+
+    def test_web_search_call(self):
+        assert ItemType.WEB_SEARCH_CALL == "web_search_call"
+
+    def test_file_search_call(self):
+        assert ItemType.FILE_SEARCH_CALL == "file_search_call"
+
+
+class TestServerEventTypeNew:
+    """Test new ServerEventType enum values."""
+
+    def test_avatar_events(self):
+        assert ServerEventType.SESSION_AVATAR_SWITCH_TO_SPEAKING == "session.avatar.switch_to_speaking"
+        assert ServerEventType.SESSION_AVATAR_SWITCH_TO_IDLE == "session.avatar.switch_to_idle"
+
+    def test_video_delta(self):
+        assert ServerEventType.RESPONSE_VIDEO_DELTA == "response.video.delta"
+
+    def test_web_search_events(self):
+        assert ServerEventType.RESPONSE_WEB_SEARCH_CALL_SEARCHING == "response.web_search_call.searching"
+        assert ServerEventType.RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS == "response.web_search_call.in_progress"
+        assert ServerEventType.RESPONSE_WEB_SEARCH_CALL_COMPLETED == "response.web_search_call.completed"
+
+    def test_file_search_events(self):
+        assert ServerEventType.RESPONSE_FILE_SEARCH_CALL_SEARCHING == "response.file_search_call.searching"
+        assert ServerEventType.RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS == "response.file_search_call.in_progress"
+        assert ServerEventType.RESPONSE_FILE_SEARCH_CALL_COMPLETED == "response.file_search_call.completed"
+
+    def test_output_audio_buffer_cleared(self):
+        assert ServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED == "output_audio_buffer.cleared"
+
+    def test_output_audio_buffer_lifecycle(self):
+        assert ServerEventType.OUTPUT_AUDIO_BUFFER_STARTED == "output_audio_buffer.started"
+        assert ServerEventType.OUTPUT_AUDIO_BUFFER_STOPPED == "output_audio_buffer.stopped"
+
+    def test_invocation_and_rtc_events(self):
+        assert ServerEventType.RESPONSE_INVOCATION_DELTA == "response.invocation.delta"
+        assert ServerEventType.RTC_CALL_SDP_CREATED == "rtc.call.sdp.created"
+        assert ServerEventType.RTC_CALL_ERROR == "rtc.call.error"
+
+    def test_audio_transcript_annotation(self):
+        assert (
+            ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_ANNOTATION_ADDED == "response.audio_transcript.annotation.added"
+        )
+
+
+class TestSessionIncludeOption:
+    """Test SessionIncludeOption enum."""
+
+    def test_all_values(self):
+        assert SessionIncludeOption.ITEM_INPUT_AUDIO_TRANSCRIPTION_LOGPROBS == "item.input_audio_transcription.logprobs"
+        assert SessionIncludeOption.ITEM_INPUT_AUDIO_TRANSCRIPTION_PHRASES == "item.input_audio_transcription.phrases"
+        assert SessionIncludeOption.FILE_SEARCH_CALL_RESULTS == "file_search_call.results"
 
 
 class TestResponseStatus:
