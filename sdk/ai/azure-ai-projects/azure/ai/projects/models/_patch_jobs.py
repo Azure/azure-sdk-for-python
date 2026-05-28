@@ -240,7 +240,8 @@ def load_job(source: Union[str, "PathLike[str]", IO[AnyStr]]) -> CommandJob:
         import yaml  # type: ignore[import-untyped]
     except ImportError as e:
         raise ImportError(
-            "PyYAML (>=6.0) is required to load jobs from YAML files. " 'Install it with: pip install "pyyaml>=6.0"'
+            "PyYAML (>=6.0) is required to load jobs from YAML files. "
+            'Install it with: pip install "pyyaml>=6.0"'  # pylint: disable=implicit-str-concat
         ) from e
 
     if hasattr(source, "read"):

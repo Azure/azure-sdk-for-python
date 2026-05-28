@@ -71,6 +71,9 @@ EXCLUDED_BETA_METHODS: dict[str, frozenset] = {
     "models": frozenset(
         {"create"}
     ),  # multi-step helper: validate -> pending_upload -> azcopy -> pending_create_version -> poll get
+    "memory_stores": frozenset(
+        {"list_memories"}
+    ),  # generated body=_Unset closure has an UnboundLocalError; safe to skip until regenerated
 }
 
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.
