@@ -1,0 +1,59 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/analyze-documents/jobs?api-version=2026-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Content-Length": "436",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-language-documents/1.0.0b1 Python/3.13.13 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": {
+        "displayName": "Document Analysis.",
+        "analysisInput": {
+          "documents": [
+            {
+              "language": "en",
+              "id": "Sanitized",
+              "source": {
+                "location": "https://ambertextdevwestus2.blob.core.windows.net/input/git_operation.docx"
+              },
+              "target": {
+                "location": "https://ambertextdevwestus2.blob.core.windows.net/output"
+              }
+            }
+          ]
+        },
+        "tasks": [
+          {
+            "kind": "PiiEntityRecognition",
+            "parameters": {
+              "redactionPolicies": [
+                {
+                  "policyName": "defaultPolicy",
+                  "policyKind": "EntityMask",
+                  "isDefault": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "2f6796bd-e6ec-465b-84dc-2c8ff4d417ee",
+        "Content-Length": "0",
+        "Date": "Wed, 27 May 2026 19:08:33 GMT",
+        "operation-location": "https://fake_analyzedocuments_endpoint.comlanguage/analyze-documents/jobs/9bcc2f9b-9fb1-4595-8b4f-f6139046057b?api-version=2026-05-15-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "295",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

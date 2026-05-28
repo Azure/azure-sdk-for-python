@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import os
+import re
 import pytest
 from dotenv import load_dotenv
 from devtools_testutils import (
@@ -29,10 +30,28 @@ def add_sanitizers(test_proxy):
     analyzedocuments_client_secret = os.environ.get(
         "ANALYZEDOCUMENTS_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
     )
+    analyzedocuments_source_location = os.environ.get(
+        "ANALYZEDOCUMENTS_SOURCE_LOCATION",
+        "https://fakeaccount.blob.core.windows.net/input/fake.docx",
+    )
+    analyzedocuments_target_location = os.environ.get(
+        "ANALYZEDOCUMENTS_TARGET_LOCATION",
+        "https://fakeaccount.blob.core.windows.net/output",
+    )
+
     add_general_regex_sanitizer(regex=analyzedocuments_subscription_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=analyzedocuments_tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=analyzedocuments_client_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=analyzedocuments_client_secret, value="00000000-0000-0000-0000-000000000000")
+
+    add_general_regex_sanitizer(
+        regex=re.escape(analyzedocuments_source_location),
+        value="https://fakeaccount.blob.core.windows.net/input/fake.docx",
+    )
+    add_general_regex_sanitizer(
+        regex=re.escape(analyzedocuments_target_location),
+        value="https://fakeaccount.blob.core.windows.net/output",
+    )
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
