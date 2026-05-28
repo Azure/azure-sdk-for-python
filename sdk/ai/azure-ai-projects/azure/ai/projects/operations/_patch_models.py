@@ -205,8 +205,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         polling_timeout: float = 300.0,
         polling_interval: float = 2.0,
         **kwargs: Any,
-    ) -> ModelVersion:
-        ...
+    ) -> ModelVersion: ...
 
     @overload
     def create(
@@ -224,8 +223,7 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
         polling_timeout: float = 300.0,
         polling_interval: float = 2.0,
         **kwargs: Any,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @distributed_trace
     def create(
@@ -362,7 +360,8 @@ class BetaModelsOperations(BetaModelsOperationsGenerated):
                 last_exc = ex
                 if time.monotonic() >= deadline:
                     raise RuntimeError(
-                        f"Model {name!r}@{version!r} did not appear within " f"{polling_timeout}s after pending_create_version."
+                        f"Model {name!r}@{version!r} did not appear within "
+                        f"{polling_timeout}s after pending_create_version."
                     ) from last_exc
                 time.sleep(polling_interval)
 
