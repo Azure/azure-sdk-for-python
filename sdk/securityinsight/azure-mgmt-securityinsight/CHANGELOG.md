@@ -219,7 +219,6 @@
   - Added model `WorkspaceManagerMember`
   - Added model `WorkspaceManagerMemberProperties`
   - Operation group `EntitiesOperations` added method `run_playbook`
-  - Operation group `UpdateOperations` added method `recommendation`
   - Added operation group `AlertRuleOperations`
   - Added operation group `BillingStatisticsOperations`
   - Added operation group `ContentPackageOperations`
@@ -357,7 +356,7 @@
   - Method `SourceControlOperations.list_repositories` renamed its parameter `repo_type` to `repository_access`
   - Method `SourceControlsOperations.delete` inserted a `positional_or_keyword` parameter `repository_access`
   - Method `ThreatIntelligenceIndicatorsOperations.list` changed its parameter `orderby`/`skip_token` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `UpdateOperations.begin_recommendation`
+  - Operation group `UpdateOperations` renamed method `recommendation` to `begin_recommendation`
   - Method `WatchlistItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `WatchlistsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Operation group `WatchlistsOperations` renamed method `create_or_update` to `begin_create_or_update`
