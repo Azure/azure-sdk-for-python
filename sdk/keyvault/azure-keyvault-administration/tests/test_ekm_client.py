@@ -22,7 +22,6 @@ only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
 
 
 class TestEkm(KeyVaultTestCase):
-    @pytest.mark.live_test_only
     @pytest.mark.parametrize("api_version", only_latest)
     @KeyVaultEkmClientPreparer()
     @recorded_by_proxy

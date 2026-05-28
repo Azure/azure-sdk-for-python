@@ -15,7 +15,7 @@ class BaseClientPreparer(AzureRecordedTestCase):
         container_playback_uri = "https://storagename.blob.core.windows.net/container"
         playback_sas_token = "fake-sas"
         playback_ekm_host = "fake-ekm-host"
-        playback_ekm_certificate = "fake-server-ca-certificate"
+        playback_ekm_certificate = "ZmFrZS1jZXJ0LWRhdGE="
 
         if self.is_live:
             hsm = os.environ.get("AZURE_MANAGEDHSM_URL")
