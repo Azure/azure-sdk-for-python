@@ -15756,7 +15756,7 @@ class PrivateEndpointConnectionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class privateEndPointConnectionsOperations:
+class PrivateEndPointConnectionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -14,7 +14,7 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDataFactoryManagementprivateEndPointConnectionsOperations(AzureMgmtRecordedTestCase):
+class TestDataFactoryManagementPrivateEndPointConnectionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(DataFactoryManagementClient)
 

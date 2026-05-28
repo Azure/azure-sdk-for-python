@@ -33,7 +33,7 @@ from ._operations import ManagedVirtualNetworksOperations  # type: ignore
 from ._operations import ManagedPrivateEndpointsOperations  # type: ignore
 from ._operations import CredentialOperationsOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionOperations  # type: ignore
-from ._operations import privateEndPointConnectionsOperations  # type: ignore
+from ._operations import PrivateEndPointConnectionsOperations  # type: ignore
 from ._operations import GlobalParametersOperations  # type: ignore
 from ._operations import ChangeDataCaptureOperations  # type: ignore
 
@@ -63,7 +63,7 @@ __all__ = [
     "ManagedPrivateEndpointsOperations",
     "CredentialOperationsOperations",
     "PrivateEndpointConnectionOperations",
-    "privateEndPointConnectionsOperations",
+    "PrivateEndPointConnectionsOperations",
     "GlobalParametersOperations",
     "ChangeDataCaptureOperations",
 ]

@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.DataFactory": "2018-06-01"
   },
-  "commit": "da8db6e593df9f3ddc13139c39930fdad54d12f7",
+  "commit": "74c65d04c0ea0fa495359a37cf28c0b29c739397",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/datafactory/resource-manager/Microsoft.DataFactory/DataFactory",
   "emitterVersion": "0.62.1"

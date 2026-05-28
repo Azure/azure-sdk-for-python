@@ -39,11 +39,11 @@ from .operations import (
     Operations,
     PipelineRunsOperations,
     PipelinesOperations,
+    PrivateEndPointConnectionsOperations,
     PrivateEndpointConnectionOperations,
     PrivateLinkResourcesOperations,
     TriggerRunsOperations,
     TriggersOperations,
-    privateEndPointConnectionsOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -112,9 +112,9 @@ class DataFactoryManagementClient:  # pylint: disable=too-many-instance-attribut
     :ivar private_endpoint_connection: PrivateEndpointConnectionOperations operations
     :vartype private_endpoint_connection:
      azure.mgmt.datafactory.aio.operations.PrivateEndpointConnectionOperations
-    :ivar private_end_point_connections: privateEndPointConnectionsOperations operations
+    :ivar private_end_point_connections: PrivateEndPointConnectionsOperations operations
     :vartype private_end_point_connections:
-     azure.mgmt.datafactory.aio.operations.privateEndPointConnectionsOperations
+     azure.mgmt.datafactory.aio.operations.PrivateEndPointConnectionsOperations
     :ivar global_parameters: GlobalParametersOperations operations
     :vartype global_parameters: azure.mgmt.datafactory.aio.operations.GlobalParametersOperations
     :ivar change_data_capture: ChangeDataCaptureOperations operations
@@ -228,7 +228,7 @@ class DataFactoryManagementClient:  # pylint: disable=too-many-instance-attribut
         self.private_endpoint_connection = PrivateEndpointConnectionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.private_end_point_connections = privateEndPointConnectionsOperations(
+        self.private_end_point_connections = PrivateEndPointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.global_parameters = GlobalParametersOperations(
