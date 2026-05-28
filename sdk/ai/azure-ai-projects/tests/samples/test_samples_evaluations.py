@@ -22,6 +22,7 @@ evaluationsPreparer = functools.partial(
     foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     foundry_model_name="sanitized-model-deployment-name",
     foundry_agent_name="sanitized-agent-name",
+    foundry_instant_model_name="sanitized-instant-model-name",
 )
 
 
@@ -78,6 +79,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     Main evaluation samples (13):
     - sample_agent_evaluation.py
     - sample_model_evaluation.py
+    - sample_model_evaluation_instant_model.py
     - sample_agent_response_evaluation.py
     - sample_agent_response_evaluation_with_function_tool.py
     - sample_evaluations_builtin_with_inline_data.py

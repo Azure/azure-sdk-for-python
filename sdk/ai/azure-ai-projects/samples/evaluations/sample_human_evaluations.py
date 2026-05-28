@@ -70,9 +70,7 @@ def _validate_hex_id(*, name: str, value: str, length: int) -> int:
     try:
         parsed_value = int(value, 16)
     except ValueError as exc:
-        raise ValueError(
-            f"{name} must be a {length}-character hexadecimal string."
-        ) from exc
+        raise ValueError(f"{name} must be a {length}-character hexadecimal string.") from exc
 
     if parsed_value == 0:
         raise ValueError(f"{name} cannot be all zeros.")
@@ -111,9 +109,7 @@ def _log_evaluation_event(
         trace_flags=TraceFlags(TraceFlags.SAMPLED),
         trace_state=TraceState(),
     )
-    token = otel_context.attach(
-        trace.set_span_in_context(NonRecordingSpan(span_context))
-    )
+    token = otel_context.attach(trace.set_span_in_context(NonRecordingSpan(span_context)))
     try:
         logger.info("gen_ai.evaluation.result", extra=attributes)
     finally:
@@ -320,9 +316,7 @@ def emit_5_point_ordinal_evaluation(
     """
     threshold = float(threshold)
     if not 1.0 <= threshold <= 5.0:
-        raise ValueError(
-            f"threshold {threshold} is outside the allowed range [1.0, 5.0]."
-        )
+        raise ValueError(f"threshold {threshold} is outside the allowed range [1.0, 5.0].")
 
     _emit_human_evaluation(
         evaluation_metric_name=evaluation_metric_name,
@@ -364,9 +358,7 @@ if __name__ == "__main__":
         # Pull the Application Insights connection string attached to your Foundry
         # project and wire OpenTelemetry up to it. All `logger.info(...)` calls
         # below will be exported to Application Insights.
-        connection_string = (
-            project_client.telemetry.get_application_insights_connection_string()
-        )
+        connection_string = project_client.telemetry.get_application_insights_connection_string()
 
         configure_azure_monitor(connection_string=connection_string)
 
@@ -374,9 +366,7 @@ if __name__ == "__main__":
         # The endpoint URL alone only gives us the account + project names, but
         # every Connection's `id` is a full ARM path ending with /connections/<name>.
         any_connection = next(iter(project_client.connections.list()), None)
-        project_resource_id = (
-            any_connection.id.rsplit("/connections/", 1)[0] if any_connection else None
-        )
+        project_resource_id = any_connection.id.rsplit("/connections/", 1)[0] if any_connection else None
 
         # Sample trace and span IDs for demonstration purposes.
         trace_id = "4bf92f3577b34da6a3ce929d0e0e4736"

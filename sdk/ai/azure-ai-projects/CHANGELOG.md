@@ -71,6 +71,10 @@ Breaking changes in beta classes:
   * `sample_models_basic.py` — synchronous end-to-end registration via the `create` helper (uses `azcopy`), followed by `get`, `list_versions`, `list`, `get_credentials`, `update`, and `delete`.
   * `sample_models_create_and_poll.py` — alternative synchronous registration that hand-rolls the spec's three-step flow (`pending_upload` → upload via `azure-storage-blob` → `pending_create_version` + poll), without taking a dependency on `azcopy`.
   * `sample_models_basic_async.py` — asynchronous version of the same three-step flow using `azure.ai.projects.aio.AIProjectClient` and `azure.storage.blob.aio.ContainerClient`.
+* Added new evaluation sample `sample_model_evaluation_instant_model.py` demonstrating model evaluation with an instant model.
+* Added new Agent tool samples `sample_agent_work_iq.py` and `sample_agent_work_iq_async.py` demonstrating use of `WorkIQPreviewTool`.
+* Added new Agent tool samples `sample_agent_fabric_iq.py` and `sample_agent_fabric_iq_async.py` demonstrating use of `FabricIQPreviewTool`.
+* Refreshed evaluation samples under `samples/evaluations/` and `samples/evaluations/agentic_evaluators/` (including `sample_agent_evaluation`, `sample_agent_response_evaluation`, `sample_eval_catalog_prompt_based_evaluators`, `sample_evaluations_ai_assisted`, `sample_evaluations_builtin_with_csv`, `sample_evaluations_builtin_with_dataset_id`, `sample_evaluations_builtin_with_inline_data`, `sample_evaluations_builtin_with_inline_data_oai`, `sample_scheduled_evaluations`, `sample_coherence`, `sample_fluency`, `sample_intent_resolution`, `sample_relevance`, `sample_response_completeness`, `sample_tool_call_accuracy`, `sample_tool_call_success`, `sample_tool_input_accuracy`, `sample_tool_output_utilization`, `sample_tool_selection`, and `sample_generic_agentic_evaluator`).
 * New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
 
 ## 2.1.0 (2026-04-20)
