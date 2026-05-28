@@ -25,7 +25,7 @@ class TestSqlManagementDataMaskingRulesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            data_masking_policy_name="str",
+            data_masking_policy_name="Default",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,6 @@ class TestSqlManagementDataMaskingRulesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            data_masking_policy_name="str",
             data_masking_rule_name="str",
             parameters={
                 "id": "str",
@@ -69,6 +68,7 @@ class TestSqlManagementDataMaskingRulesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
+            data_masking_policy_name="Default",
         )
 
         # please add some check logic here by yourself

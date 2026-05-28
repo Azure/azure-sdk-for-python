@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b25 (2026-05-27)
+## 4.0.0b25 (2026-05-28)
 
 ### Features Added
 
@@ -200,7 +200,6 @@
   - Added enum `CheckNameAvailabilityResourceType`
   - Added enum `ClientClassificationSource`
   - Added model `CopyLongTermRetentionBackupParametersProperties`
-  - Added enum `DataMaskingPolicyName`
   - Added model `DatabaseVulnerabilityAssessmentScanExportProperties`
   - Added enum `ErrorType`
   - Added model `FreeLimitExhaustionBehaviorCapability`
@@ -246,7 +245,6 @@
   - Added model `UpsertManagedServerOperationStepWithEstimatesAndDuration`
   - Added enum `UpsertManagedServerOperationStepWithEstimatesAndDurationStatus`
   - Added model `VirtualClusterDnsServersProperties`
-  - Added enum `VulnerabilityAssessmentSystemDatabaseName`
   - Added model `ZonePinningCapability`
   - Model `GeoBackupPoliciesOperations` added method `list`
   - Model `LongTermRetentionManagedInstanceBackupsOperations` added parameter `skip` in method `list_by_location`
@@ -261,18 +259,6 @@
   - Model `ManagedInstancesOperations` added method `begin_reevaluate_inaccessible_database_state`
   - Model `ManagedInstancesOperations` added method `begin_validate_azure_key_vault_encryption_key`
   - Model `SensitivityLabelsOperations` added method `list_by_database`
-  - Model `SqlVulnerabilityAssessmentBaselineOperations` added parameter `system_database_name` in method `get`
-  - Model `SqlVulnerabilityAssessmentBaselineOperations` added parameter `system_database_name` in method `list_by_sql_vulnerability_assessment`
-  - Model `SqlVulnerabilityAssessmentBaselinesOperations` added parameter `system_database_name` in method `create_or_update`
-  - Model `SqlVulnerabilityAssessmentExecuteScanOperations` added parameter `system_database_name` in method `begin_execute`
-  - Model `SqlVulnerabilityAssessmentRuleBaselineOperations` added parameter `system_database_name` in method `create_or_update`
-  - Model `SqlVulnerabilityAssessmentRuleBaselineOperations` added parameter `system_database_name` in method `get`
-  - Model `SqlVulnerabilityAssessmentRuleBaselineOperations` added parameter `system_database_name` in method `list_by_baseline`
-  - Model `SqlVulnerabilityAssessmentRuleBaselinesOperations` added parameter `system_database_name` in method `delete`
-  - Model `SqlVulnerabilityAssessmentScanResultOperations` added parameter `system_database_name` in method `get`
-  - Model `SqlVulnerabilityAssessmentScanResultOperations` added parameter `system_database_name` in method `list_by_scan`
-  - Model `SqlVulnerabilityAssessmentScansOperations` added parameter `system_database_name` in method `get`
-  - Model `SqlVulnerabilityAssessmentScansOperations` added parameter `system_database_name` in method `list_by_sql_vulnerability_assessments`
   - Model `TransparentDataEncryptionsOperations` added method `begin_resume`
   - Model `TransparentDataEncryptionsOperations` added method `begin_suspend`
   - Model `VirtualClustersOperations` added method `begin_create_or_update`
@@ -526,10 +512,6 @@
   - Deleted or renamed model `UpsertManagedServerOperationStep`
   - Deleted or renamed model `UpsertManagedServerOperationStepStatus`
   - Method `CapabilitiesOperations.list_by_location` changed its parameter `include` from `positional_or_keyword` to `keyword_only`
-  - Method `DataMaskingPoliciesOperations.create_or_update` inserted a `positional_or_keyword` parameter `data_masking_policy_name`
-  - Method `DataMaskingPoliciesOperations.get` inserted a `positional_or_keyword` parameter `data_masking_policy_name`
-  - Method `DataMaskingRulesOperations.create_or_update` inserted a `positional_or_keyword` parameter `data_masking_policy_name`
-  - Method `DataMaskingRulesOperations.list_by_database` inserted a `positional_or_keyword` parameter `data_masking_policy_name`
   - Method `DatabaseAdvisorsOperations.list_by_database` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `DatabaseColumnsOperations.list_by_database` changed its parameter `schema` from `positional_or_keyword` to `keyword_only`
   - Method `DatabaseColumnsOperations.list_by_database` changed its parameter `table` from `positional_or_keyword` to `keyword_only`

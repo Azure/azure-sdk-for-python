@@ -485,7 +485,6 @@ from ._enums import (  # type: ignore
     CreatedByType,
     DNSRefreshOperationStatus,
     DataMaskingFunction,
-    DataMaskingPolicyName,
     DataMaskingRuleState,
     DataMaskingState,
     DataWarehouseUserActivityName,
@@ -629,7 +628,6 @@ from ._enums import (  # type: ignore
     VulnerabilityAssessmentPolicyBaselineName,
     VulnerabilityAssessmentScanState,
     VulnerabilityAssessmentScanTriggerType,
-    VulnerabilityAssessmentSystemDatabaseName,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -1103,7 +1101,6 @@ __all__ = [
     "CreatedByType",
     "DNSRefreshOperationStatus",
     "DataMaskingFunction",
-    "DataMaskingPolicyName",
     "DataMaskingRuleState",
     "DataMaskingState",
     "DataWarehouseUserActivityName",
@@ -1247,7 +1244,6 @@ __all__ = [
     "VulnerabilityAssessmentPolicyBaselineName",
     "VulnerabilityAssessmentScanState",
     "VulnerabilityAssessmentScanTriggerType",
-    "VulnerabilityAssessmentSystemDatabaseName",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

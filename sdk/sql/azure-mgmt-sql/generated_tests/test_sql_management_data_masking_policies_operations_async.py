@@ -26,7 +26,7 @@ class TestSqlManagementDataMaskingPoliciesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            data_masking_policy_name="str",
+            data_masking_policy_name="Default",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,6 @@ class TestSqlManagementDataMaskingPoliciesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            data_masking_policy_name="str",
             parameters={
                 "id": "str",
                 "kind": "str",
@@ -61,6 +60,7 @@ class TestSqlManagementDataMaskingPoliciesOperationsAsync(AzureMgmtRecordedTestC
                 },
                 "type": "str",
             },
+            data_masking_policy_name="Default",
         )
 
         # please add some check logic here by yourself

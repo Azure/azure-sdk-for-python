@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Sql": "2025-01-01"
   },
-  "commit": "52f376ac684569106909a4854a792c6ed89a2c61",
+  "commit": "fdc81c4feb633ebcb9a69123298f1f032da4123a",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/sql/resource-manager/Microsoft.Sql/SQL",
   "emitterVersion": "0.62.1"

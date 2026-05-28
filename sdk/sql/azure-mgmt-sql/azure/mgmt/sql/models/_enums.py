@@ -598,13 +598,6 @@ class DataMaskingFunction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Text."""
 
 
-class DataMaskingPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of DataMaskingPolicyName."""
-
-    DEFAULT = "Default"
-    """Default."""
-
-
 class DataMaskingRuleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The rule state. Used to delete a rule. To delete an existing rule, specify the schemaName,
     tableName, columnName, maskingFunction, and specify ruleState as disabled. However, if the rule
@@ -2183,12 +2176,3 @@ class VulnerabilityAssessmentScanTriggerType(str, Enum, metaclass=CaseInsensitiv
     """OnDemand."""
     RECURRING = "Recurring"
     """Recurring."""
-
-
-class VulnerabilityAssessmentSystemDatabaseName(  # pylint: disable=name-too-long
-    str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """Type of VulnerabilityAssessmentSystemDatabaseName."""
-
-    MASTER = "master"
-    """master."""

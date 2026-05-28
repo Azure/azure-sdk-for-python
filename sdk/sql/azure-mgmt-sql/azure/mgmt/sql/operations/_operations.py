@@ -2854,13 +2854,14 @@ def build_sql_vulnerability_assessment_baseline_get_request(  # pylint: disable=
     vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
     baseline_name: Union[str, _models.BaselineName],
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2893,13 +2894,14 @@ def build_sql_vulnerability_assessment_baseline_list_by_sql_vulnerability_assess
     server_name: str,
     vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -3222,13 +3224,14 @@ def build_sql_vulnerability_assessment_rule_baseline_get_request(  # pylint: dis
     baseline_name: Union[str, _models.BaselineName],
     rule_id: str,
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -3264,13 +3267,14 @@ def build_sql_vulnerability_assessment_rule_baseline_create_or_update_request(  
     baseline_name: Union[str, _models.BaselineName],
     rule_id: str,
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
@@ -3308,13 +3312,14 @@ def build_sql_vulnerability_assessment_rule_baseline_list_by_baseline_request(  
     vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
     baseline_name: Union[str, _models.BaselineName],
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -3429,13 +3434,14 @@ def build_sql_vulnerability_assessment_scan_result_get_request(  # pylint: disab
     scan_id: str,
     scan_result_id: str,
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -3470,13 +3476,14 @@ def build_sql_vulnerability_assessment_scan_result_list_by_scan_request(  # pyli
     vulnerability_assessment_name: Union[str, _models.SqlVulnerabilityAssessmentName],
     scan_id: str,
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -3510,13 +3517,14 @@ def build_sql_vulnerability_assessment_scans_get_request(  # pylint: disable=nam
     vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
     scan_id: str,
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -3549,13 +3557,14 @@ def build_sql_vulnerability_assessment_scans_list_by_sql_vulnerability_assessmen
     server_name: str,
     vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -4245,16 +4254,12 @@ def build_managed_database_vulnerability_assessment_scans_initiate_scan_request(
 
 
 def build_data_masking_policies_get_request(
-    resource_group_name: str,
-    server_name: str,
-    database_name: str,
-    data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, server_name: str, database_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -4280,16 +4285,12 @@ def build_data_masking_policies_get_request(
 
 
 def build_data_masking_policies_create_or_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    server_name: str,
-    database_name: str,
-    data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, server_name: str, database_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
@@ -16007,13 +16008,14 @@ def build_sql_vulnerability_assessment_baselines_create_or_update_request(  # py
     vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
     baseline_name: Union[str, _models.BaselineName],
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
@@ -16146,12 +16148,13 @@ def build_sql_vulnerability_assessment_execute_scan_execute_request(  # pylint: 
     server_name: str,
     vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/sqlVulnerabilityAssessments/{vulnerabilityAssessmentName}/initiateScan"
@@ -16180,12 +16183,13 @@ def build_sql_vulnerability_assessment_rule_baselines_delete_request(  # pylint:
     baseline_name: Union[str, _models.BaselineName],
     rule_id: str,
     subscription_id: str,
-    *,
-    system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    system_database_name: Literal["master"] = kwargs.pop(
+        "system_database_name", _params.pop("systemDatabaseName", "master")
+    )
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/sqlVulnerabilityAssessments/{vulnerabilityAssessmentName}/baselines/{baselineName}/rules/{ruleId}"
@@ -16434,16 +16438,12 @@ def build_database_vulnerability_assessment_scans_initiate_scan_request(  # pyli
 
 
 def build_data_masking_rules_list_by_database_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    server_name: str,
-    database_name: str,
-    data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, server_name: str, database_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -16472,7 +16472,6 @@ def build_data_masking_rules_create_or_update_request(  # pylint: disable=name-t
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
     data_masking_rule_name: str,
     subscription_id: str,
     **kwargs: Any
@@ -16480,6 +16479,7 @@ def build_data_masking_rules_create_or_update_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
@@ -30067,8 +30067,6 @@ class SqlVulnerabilityAssessmentBaselineOperations:  # pylint: disable=name-too-
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentBaselineSet:
         """Gets a list of database's sql vulnerability assessment rule baselines.
@@ -30083,10 +30081,6 @@ class SqlVulnerabilityAssessmentBaselineOperations:  # pylint: disable=name-too-
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
         :param baseline_name: "default" Required.
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: DatabaseSqlVulnerabilityAssessmentBaselineSet. The
          DatabaseSqlVulnerabilityAssessmentBaselineSet is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentBaselineSet
@@ -30103,6 +30097,9 @@ class SqlVulnerabilityAssessmentBaselineOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[_models.DatabaseSqlVulnerabilityAssessmentBaselineSet] = kwargs.pop("cls", None)
 
         _request = build_sql_vulnerability_assessment_baseline_get_request(
@@ -30158,8 +30155,6 @@ class SqlVulnerabilityAssessmentBaselineOperations:  # pylint: disable=name-too-
         resource_group_name: str,
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> ItemPaged["_models.DatabaseSqlVulnerabilityAssessmentBaselineSet"]:
         """Gets a list of database's sql vulnerability assessment rule baselines.
@@ -30172,10 +30167,6 @@ class SqlVulnerabilityAssessmentBaselineOperations:  # pylint: disable=name-too-
         :param vulnerability_assessment_name: The name of the vulnerability assessment. "default"
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: An iterator like instance of DatabaseSqlVulnerabilityAssessmentBaselineSet
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentBaselineSet]
@@ -30184,6 +30175,9 @@ class SqlVulnerabilityAssessmentBaselineOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[List[_models.DatabaseSqlVulnerabilityAssessmentBaselineSet]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -31314,8 +31308,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
         rule_id: str,
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentRuleBaseline:
         """Gets a system database's sql vulnerability assessment rule baseline.
@@ -31332,10 +31324,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
         :param rule_id: The vulnerability assessment rule ID. Required.
         :type rule_id: str
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: DatabaseSqlVulnerabilityAssessmentRuleBaseline. The
          DatabaseSqlVulnerabilityAssessmentRuleBaseline is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaseline
@@ -31352,6 +31340,9 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[_models.DatabaseSqlVulnerabilityAssessmentRuleBaseline] = kwargs.pop("cls", None)
 
         _request = build_sql_vulnerability_assessment_rule_baseline_get_request(
@@ -31412,7 +31403,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         rule_id: str,
         parameters: _models.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput,
         *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentRuleBaseline:
@@ -31432,10 +31422,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         :type rule_id: str
         :param parameters: The requested rule baseline resource. Required.
         :type parameters: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31455,7 +31441,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         rule_id: str,
         parameters: JSON,
         *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentRuleBaseline:
@@ -31475,10 +31460,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         :type rule_id: str
         :param parameters: The requested rule baseline resource. Required.
         :type parameters: JSON
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31498,7 +31479,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         rule_id: str,
         parameters: IO[bytes],
         *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentRuleBaseline:
@@ -31518,10 +31498,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         :type rule_id: str
         :param parameters: The requested rule baseline resource. Required.
         :type parameters: IO[bytes]
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31540,8 +31516,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         baseline_name: Union[str, _models.BaselineName],
         rule_id: str,
         parameters: Union[_models.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput, JSON, IO[bytes]],
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentRuleBaseline:
         """Creates or updates a database's vulnerability assessment rule baseline.
@@ -31562,10 +31536,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
          DatabaseSqlVulnerabilityAssessmentRuleBaselineInput, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput or
          JSON or IO[bytes]
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: DatabaseSqlVulnerabilityAssessmentRuleBaseline. The
          DatabaseSqlVulnerabilityAssessmentRuleBaseline is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaseline
@@ -31582,6 +31552,9 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DatabaseSqlVulnerabilityAssessmentRuleBaseline] = kwargs.pop("cls", None)
 
@@ -31649,8 +31622,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> ItemPaged["_models.DatabaseSqlVulnerabilityAssessmentRuleBaseline"]:
         """Gets a system database's sql vulnerability assessment rule baseline.
@@ -31665,10 +31636,6 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
         :param baseline_name: "default" Required.
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: An iterator like instance of DatabaseSqlVulnerabilityAssessmentRuleBaseline
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaseline]
@@ -31677,6 +31644,9 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[List[_models.DatabaseSqlVulnerabilityAssessmentRuleBaseline]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -32024,8 +31994,6 @@ class SqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=name-to
         vulnerability_assessment_name: Union[str, _models.SqlVulnerabilityAssessmentName],
         scan_id: str,
         scan_result_id: str,
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> _models.SqlVulnerabilityAssessmentScanResults:
         """Gets a vulnerability assessment scan record of a database.
@@ -32044,10 +32012,6 @@ class SqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=name-to
         :type scan_id: str
         :param scan_result_id: The scan result id of the specific result to retrieve. Required.
         :type scan_result_id: str
-        :keyword system_database_name: The SQL vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: SqlVulnerabilityAssessmentScanResults. The SqlVulnerabilityAssessmentScanResults is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.SqlVulnerabilityAssessmentScanResults
@@ -32064,6 +32028,9 @@ class SqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=name-to
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[_models.SqlVulnerabilityAssessmentScanResults] = kwargs.pop("cls", None)
 
         _request = build_sql_vulnerability_assessment_scan_result_get_request(
@@ -32121,8 +32088,6 @@ class SqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=name-to
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.SqlVulnerabilityAssessmentName],
         scan_id: str,
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> ItemPaged["_models.SqlVulnerabilityAssessmentScanResults"]:
         """Gets a vulnerability assessment scan record of a database.
@@ -32139,10 +32104,6 @@ class SqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=name-to
         :param scan_id: The scan id of the SQL Vulnerability Assessment scan to retrieve result from.
          Required.
         :type scan_id: str
-        :keyword system_database_name: The SQL vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: An iterator like instance of SqlVulnerabilityAssessmentScanResults
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.SqlVulnerabilityAssessmentScanResults]
@@ -32151,6 +32112,9 @@ class SqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=name-to
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[List[_models.SqlVulnerabilityAssessmentScanResults]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -32263,8 +32227,6 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         scan_id: str,
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> _models.SqlVulnerabilityAssessmentScanRecord:
         """Get a system database vulnerability assessment scan record.
@@ -32279,10 +32241,6 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
         :param scan_id: Required.
         :type scan_id: str
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: SqlVulnerabilityAssessmentScanRecord. The SqlVulnerabilityAssessmentScanRecord is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.SqlVulnerabilityAssessmentScanRecord
@@ -32299,6 +32257,9 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[_models.SqlVulnerabilityAssessmentScanRecord] = kwargs.pop("cls", None)
 
         _request = build_sql_vulnerability_assessment_scans_get_request(
@@ -32354,8 +32315,6 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
         resource_group_name: str,
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> ItemPaged["_models.SqlVulnerabilityAssessmentScanRecord"]:
         """Lists the vulnerability assessment scans of a database.
@@ -32368,10 +32327,6 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
         :param vulnerability_assessment_name: The name of the vulnerability assessment. "default"
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: An iterator like instance of SqlVulnerabilityAssessmentScanRecord
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.SqlVulnerabilityAssessmentScanRecord]
@@ -32380,6 +32335,9 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[List[_models.SqlVulnerabilityAssessmentScanRecord]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -34799,12 +34757,7 @@ class DataMaskingPoliciesOperations:
 
     @distributed_trace
     def get(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        database_name: str,
-        data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
-        **kwargs: Any
+        self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
     ) -> _models.DataMaskingPolicy:
         """Gets the database data masking policy.
 
@@ -34815,9 +34768,6 @@ class DataMaskingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param data_masking_policy_name: The name of the database for which the data masking policy
-         applies. "Default" Required.
-        :type data_masking_policy_name: str or ~azure.mgmt.sql.models.DataMaskingPolicyName
         :return: DataMaskingPolicy. The DataMaskingPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DataMaskingPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -34833,14 +34783,15 @@ class DataMaskingPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
         cls: ClsType[_models.DataMaskingPolicy] = kwargs.pop("cls", None)
 
         _request = build_data_masking_policies_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
-            data_masking_policy_name=data_masking_policy_name,
             subscription_id=self._config.subscription_id,
+            data_masking_policy_name=data_masking_policy_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -34887,7 +34838,6 @@ class DataMaskingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
         parameters: _models.DataMaskingPolicy,
         *,
         content_type: str = "application/json",
@@ -34902,9 +34852,6 @@ class DataMaskingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param data_masking_policy_name: The name of the database for which the data masking policy
-         applies. "Default" Required.
-        :type data_masking_policy_name: str or ~azure.mgmt.sql.models.DataMaskingPolicyName
         :param parameters: Parameters for creating or updating a data masking policy. Required.
         :type parameters: ~azure.mgmt.sql.models.DataMaskingPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -34921,7 +34868,6 @@ class DataMaskingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
         parameters: JSON,
         *,
         content_type: str = "application/json",
@@ -34936,9 +34882,6 @@ class DataMaskingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param data_masking_policy_name: The name of the database for which the data masking policy
-         applies. "Default" Required.
-        :type data_masking_policy_name: str or ~azure.mgmt.sql.models.DataMaskingPolicyName
         :param parameters: Parameters for creating or updating a data masking policy. Required.
         :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -34955,7 +34898,6 @@ class DataMaskingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -34970,9 +34912,6 @@ class DataMaskingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param data_masking_policy_name: The name of the database for which the data masking policy
-         applies. "Default" Required.
-        :type data_masking_policy_name: str or ~azure.mgmt.sql.models.DataMaskingPolicyName
         :param parameters: Parameters for creating or updating a data masking policy. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -34989,7 +34928,6 @@ class DataMaskingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
         parameters: Union[_models.DataMaskingPolicy, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataMaskingPolicy:
@@ -35002,9 +34940,6 @@ class DataMaskingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param data_masking_policy_name: The name of the database for which the data masking policy
-         applies. "Default" Required.
-        :type data_masking_policy_name: str or ~azure.mgmt.sql.models.DataMaskingPolicyName
         :param parameters: Parameters for creating or updating a data masking policy. Is one of the
          following types: DataMaskingPolicy, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.sql.models.DataMaskingPolicy or JSON or IO[bytes]
@@ -35023,6 +34958,7 @@ class DataMaskingPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DataMaskingPolicy] = kwargs.pop("cls", None)
 
@@ -35037,8 +34973,8 @@ class DataMaskingPoliciesOperations:
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
-            data_masking_policy_name=data_masking_policy_name,
             subscription_id=self._config.subscription_id,
+            data_masking_policy_name=data_masking_policy_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -85558,7 +85494,6 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         baseline_name: Union[str, _models.BaselineName],
         parameters: _models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput,
         *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentBaselineSet:
@@ -85577,10 +85512,6 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         :param parameters: The requested rule baseline resource. Required.
         :type parameters:
          ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -85599,7 +85530,6 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         baseline_name: Union[str, _models.BaselineName],
         parameters: JSON,
         *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentBaselineSet:
@@ -85617,10 +85547,6 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
         :param parameters: The requested rule baseline resource. Required.
         :type parameters: JSON
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -85639,7 +85565,6 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         baseline_name: Union[str, _models.BaselineName],
         parameters: IO[bytes],
         *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentBaselineSet:
@@ -85657,10 +85582,6 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
         :param parameters: The requested rule baseline resource. Required.
         :type parameters: IO[bytes]
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -85678,8 +85599,6 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
         parameters: Union[_models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput, JSON, IO[bytes]],
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentBaselineSet:
         """Add a database's vulnerability assessment rule baseline list.
@@ -85699,10 +85618,6 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         :type parameters:
          ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput or JSON or
          IO[bytes]
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: DatabaseSqlVulnerabilityAssessmentBaselineSet. The
          DatabaseSqlVulnerabilityAssessmentBaselineSet is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentBaselineSet
@@ -85719,6 +85634,9 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DatabaseSqlVulnerabilityAssessmentBaselineSet] = kwargs.pop("cls", None)
 
@@ -86167,8 +86085,6 @@ class SqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disable=name-t
         resource_group_name: str,
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -86182,6 +86098,9 @@ class SqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_sql_vulnerability_assessment_execute_scan_execute_request(
@@ -86237,8 +86156,6 @@ class SqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disable=name-t
         resource_group_name: str,
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Executes a Vulnerability Assessment database scan.
@@ -86251,10 +86168,6 @@ class SqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disable=name-t
         :param vulnerability_assessment_name: The name of the SQL Vulnerability Assessment. "default"
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -86262,6 +86175,9 @@ class SqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -86331,8 +86247,6 @@ class SqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=name
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
         rule_id: str,
-        *,
-        system_database_name: Union[str, _models.VulnerabilityAssessmentSystemDatabaseName],
         **kwargs: Any
     ) -> None:
         """Removes the database's vulnerability assessment rule baseline.
@@ -86349,10 +86263,6 @@ class SqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=name
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
         :param rule_id: The vulnerability assessment rule ID. Required.
         :type rule_id: str
-        :keyword system_database_name: The vulnerability assessment system database name. "master"
-         Required.
-        :paramtype system_database_name: str or
-         ~azure.mgmt.sql.models.VulnerabilityAssessmentSystemDatabaseName
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -86368,6 +86278,9 @@ class SqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=name
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        system_database_name: Literal["master"] = kwargs.pop(
+            "system_database_name", _params.pop("systemDatabaseName", "master")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_sql_vulnerability_assessment_rule_baselines_delete_request(
@@ -87104,12 +87017,7 @@ class DataMaskingRulesOperations:
 
     @distributed_trace
     def list_by_database(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        database_name: str,
-        data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
-        **kwargs: Any
+        self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
     ) -> ItemPaged["_models.DataMaskingRule"]:
         """Gets a list of database data masking rules.
 
@@ -87120,9 +87028,6 @@ class DataMaskingRulesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param data_masking_policy_name: The name of the database for which the data masking policy
-         applies. "Default" Required.
-        :type data_masking_policy_name: str or ~azure.mgmt.sql.models.DataMaskingPolicyName
         :return: An iterator like instance of DataMaskingRule
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.DataMaskingRule]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -87130,6 +87035,7 @@ class DataMaskingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
         cls: ClsType[List[_models.DataMaskingRule]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -87147,8 +87053,8 @@ class DataMaskingRulesOperations:
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     database_name=database_name,
-                    data_masking_policy_name=data_masking_policy_name,
                     subscription_id=self._config.subscription_id,
+                    data_masking_policy_name=data_masking_policy_name,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -87222,7 +87128,6 @@ class DataMaskingRulesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
         data_masking_rule_name: str,
         parameters: _models.DataMaskingRule,
         *,
@@ -87238,9 +87143,6 @@ class DataMaskingRulesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param data_masking_policy_name: The name of the database for which the data masking policy
-         applies. "Default" Required.
-        :type data_masking_policy_name: str or ~azure.mgmt.sql.models.DataMaskingPolicyName
         :param data_masking_rule_name: The name of the data masking rule. Required.
         :type data_masking_rule_name: str
         :param parameters: The required parameters for creating or updating a data masking rule.
@@ -87260,7 +87162,6 @@ class DataMaskingRulesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
         data_masking_rule_name: str,
         parameters: JSON,
         *,
@@ -87276,9 +87177,6 @@ class DataMaskingRulesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param data_masking_policy_name: The name of the database for which the data masking policy
-         applies. "Default" Required.
-        :type data_masking_policy_name: str or ~azure.mgmt.sql.models.DataMaskingPolicyName
         :param data_masking_rule_name: The name of the data masking rule. Required.
         :type data_masking_rule_name: str
         :param parameters: The required parameters for creating or updating a data masking rule.
@@ -87298,7 +87196,6 @@ class DataMaskingRulesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
         data_masking_rule_name: str,
         parameters: IO[bytes],
         *,
@@ -87314,9 +87211,6 @@ class DataMaskingRulesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param data_masking_policy_name: The name of the database for which the data masking policy
-         applies. "Default" Required.
-        :type data_masking_policy_name: str or ~azure.mgmt.sql.models.DataMaskingPolicyName
         :param data_masking_rule_name: The name of the data masking rule. Required.
         :type data_masking_rule_name: str
         :param parameters: The required parameters for creating or updating a data masking rule.
@@ -87336,7 +87230,6 @@ class DataMaskingRulesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        data_masking_policy_name: Union[str, _models.DataMaskingPolicyName],
         data_masking_rule_name: str,
         parameters: Union[_models.DataMaskingRule, JSON, IO[bytes]],
         **kwargs: Any
@@ -87350,9 +87243,6 @@ class DataMaskingRulesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param data_masking_policy_name: The name of the database for which the data masking policy
-         applies. "Default" Required.
-        :type data_masking_policy_name: str or ~azure.mgmt.sql.models.DataMaskingPolicyName
         :param data_masking_rule_name: The name of the data masking rule. Required.
         :type data_masking_rule_name: str
         :param parameters: The required parameters for creating or updating a data masking rule. Is one
@@ -87373,6 +87263,7 @@ class DataMaskingRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DataMaskingRule] = kwargs.pop("cls", None)
 
@@ -87387,9 +87278,9 @@ class DataMaskingRulesOperations:
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
-            data_masking_policy_name=data_masking_policy_name,
             data_masking_rule_name=data_masking_rule_name,
             subscription_id=self._config.subscription_id,
+            data_masking_policy_name=data_masking_policy_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
