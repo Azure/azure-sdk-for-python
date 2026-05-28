@@ -363,20 +363,19 @@
   - Operation group `WatchlistsOperations` renamed method `create_or_update` to `begin_create_or_update`
   - Operation group `WatchlistsOperations` renamed method `delete` to `begin_delete`
   - Deleted operation group `DomainWhoisOperations`/`IPGeodataOperations`
-  - Method `EntitiesOperations.queries` changed return type from `GetQueriesResponse` to `AsyncItemPaged[_models.EntityQueryItem]`
-  - Method `GetRecommendationsOperations.list` changed return type from `RecommendationList` to `AsyncItemPaged[_models.Recommendation]`
-  - Method `ProductSettingsOperations.list` changed return type from `SettingList` to `AsyncItemPaged[_models.Settings]`
-  - Method `AutomationRulesOperations.delete` changed return type from `JSON` to `Any`
   - Method `EntitiesOperations.queries` changed return type from `GetQueriesResponse` to `ItemPaged[_models.EntityQueryItem]`
   - Method `GetRecommendationsOperations.list` changed return type from `RecommendationList` to `ItemPaged[_models.Recommendation]`
-  - Method `IncidentsOperations.run_playbook` changed return type from `JSON` to `Any`
   - Method `ProductSettingsOperations.list` changed return type from `SettingList` to `ItemPaged[_models.Settings]`
   - Method `SourceControlsOperations.delete` changed return type from `None` to `Warning`
+  - Deleted model `RecommendationList`
+  - Deleted model `SettingList`
 
 ### Other Changes
 
-  - Deleted model `ActionsList`/`AlertRuleTemplatesList`/`AlertRulesList`/`AutomationRulesList`/`BookmarkList`/`DataConnectorList`/`EntityList`/`EntityQueryList`/`EntityQueryTemplateList`/`FileImportList`/`GetQueriesResponse`/`IncidentCommentList`/`IncidentList`/`IncidentTaskList`/`MetadataList`/`OfficeConsentList`/`OperationsList`/`RecommendationList`/`RelationList`/`RepoList`/`SecurityMLAnalyticsSettingsList`/`SettingList`/`SourceControlList`/`ThreatIntelligenceInformationList`/`WatchlistItemList`/`WatchlistList`/`TeamProperties` which actually were not used by SDK users
+  - Deleted model `ActionsList`/`AlertRuleTemplatesList`/`AlertRulesList`/`AutomationRulesList`/`BookmarkList`/`DataConnectorList`/`EntityList`/`EntityQueryList`/`EntityQueryTemplateList`/`FileImportList`/`GetQueriesResponse`/`IncidentCommentList`/`IncidentList`/`IncidentTaskList`/`MetadataList`/`OfficeConsentList`/`OperationsList`/`RelationList`/`RepoList`/`SecurityMLAnalyticsSettingsList`/`SourceControlList`/`ThreatIntelligenceInformationList`/`WatchlistItemList`/`WatchlistList`/`TeamProperties` which actually were not used by SDK users
   - Deleted enum `Enum13`/`Enum15` which actually were not used by SDK users
+  - Method `AutomationRulesOperations.delete` changed return type from `JSON` to `Any`
+  - Method `IncidentsOperations.run_playbook` changed return type from `JSON` to `Any`
 
 ## 2.0.0b2 (2022-12-27)
 
