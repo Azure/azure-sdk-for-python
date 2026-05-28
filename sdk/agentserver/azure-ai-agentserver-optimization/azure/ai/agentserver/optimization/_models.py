@@ -41,7 +41,8 @@ class Skill:
 class CandidateConfig:
     """Typed representation of the candidate config payload from the API.
 
-    Example:
+    Example payload::
+    
         {
             "name": "travel",
             "instructions": "You are a travel assistant...",
