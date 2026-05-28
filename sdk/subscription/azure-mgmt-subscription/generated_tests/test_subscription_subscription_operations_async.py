@@ -56,9 +56,7 @@ class TestSubscriptionSubscriptionOperationsAsync(AzureMgmtRecordedTestCase):
         response = await (
             await self.client.subscription.begin_accept_ownership(
                 subscription_id="str",
-                requestbody_body={
-                    "properties": {"displayName": "str", "managementGroupId": "str", "tags": {"str": "str"}}
-                },
+                body={"properties": {"displayName": "str", "managementGroupId": "str", "tags": {"str": "str"}}},
             )
         ).result()  # call '.result()' to poll until service return final result
 

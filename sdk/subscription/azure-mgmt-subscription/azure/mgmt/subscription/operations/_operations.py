@@ -2247,10 +2247,7 @@ class SubscriptionOperations:
         return deserialized  # type: ignore
 
     def _accept_ownership_initial(
-        self,
-        subscription_id: str,
-        requestbody_body: Union[_models.AcceptOwnershipRequest, JSON, IO[bytes]],
-        **kwargs: Any,
+        self, subscription_id: str, body: Union[_models.AcceptOwnershipRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2268,10 +2265,10 @@ class SubscriptionOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(requestbody_body, (IOBase, bytes)):
-            _content = requestbody_body
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(requestbody_body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_subscription_accept_ownership_request(
             subscription_id=subscription_id,
@@ -2321,7 +2318,7 @@ class SubscriptionOperations:
     def begin_accept_ownership(
         self,
         subscription_id: str,
-        requestbody_body: _models.AcceptOwnershipRequest,
+        body: _models.AcceptOwnershipRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -2330,8 +2327,8 @@ class SubscriptionOperations:
 
         :param subscription_id: Subscription Id. Required.
         :type subscription_id: str
-        :param requestbody_body: The request body. Required.
-        :type requestbody_body: ~azure.mgmt.subscription.models.AcceptOwnershipRequest
+        :param body: The request body. Required.
+        :type body: ~azure.mgmt.subscription.models.AcceptOwnershipRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2342,14 +2339,14 @@ class SubscriptionOperations:
 
     @overload
     def begin_accept_ownership(
-        self, subscription_id: str, requestbody_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, subscription_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Accept subscription ownership.
 
         :param subscription_id: Subscription Id. Required.
         :type subscription_id: str
-        :param requestbody_body: The request body. Required.
-        :type requestbody_body: JSON
+        :param body: The request body. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2360,19 +2357,14 @@ class SubscriptionOperations:
 
     @overload
     def begin_accept_ownership(
-        self,
-        subscription_id: str,
-        requestbody_body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, subscription_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Accept subscription ownership.
 
         :param subscription_id: Subscription Id. Required.
         :type subscription_id: str
-        :param requestbody_body: The request body. Required.
-        :type requestbody_body: IO[bytes]
+        :param body: The request body. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2383,19 +2375,15 @@ class SubscriptionOperations:
 
     @distributed_trace
     def begin_accept_ownership(
-        self,
-        subscription_id: str,
-        requestbody_body: Union[_models.AcceptOwnershipRequest, JSON, IO[bytes]],
-        **kwargs: Any,
+        self, subscription_id: str, body: Union[_models.AcceptOwnershipRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Accept subscription ownership.
 
         :param subscription_id: Subscription Id. Required.
         :type subscription_id: str
-        :param requestbody_body: The request body. Is one of the following types:
-         AcceptOwnershipRequest, JSON, IO[bytes] Required.
-        :type requestbody_body: ~azure.mgmt.subscription.models.AcceptOwnershipRequest or JSON or
-         IO[bytes]
+        :param body: The request body. Is one of the following types: AcceptOwnershipRequest, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.mgmt.subscription.models.AcceptOwnershipRequest or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2411,7 +2399,7 @@ class SubscriptionOperations:
         if cont_token is None:
             raw_result = self._accept_ownership_initial(
                 subscription_id=subscription_id,
-                requestbody_body=requestbody_body,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,

@@ -54,7 +54,7 @@ class TestSubscriptionSubscriptionOperations(AzureMgmtRecordedTestCase):
     def test_subscription_begin_accept_ownership(self, resource_group):
         response = self.client.subscription.begin_accept_ownership(
             subscription_id="str",
-            requestbody_body={"properties": {"displayName": "str", "managementGroupId": "str", "tags": {"str": "str"}}},
+            body={"properties": {"displayName": "str", "managementGroupId": "str", "tags": {"str": "str"}}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

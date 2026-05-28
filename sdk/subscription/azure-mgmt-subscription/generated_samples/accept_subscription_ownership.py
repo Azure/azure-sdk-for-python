@@ -31,7 +31,13 @@ def main():
 
     client.subscription.begin_accept_ownership(
         subscription_id="291bba3f-e0a5-47bc-a099-3bdcb2a50a05",
-        requestbody_body={"properties": {"displayName": "str", "managementGroupId": "str", "tags": {"str": "str"}}},
+        body={
+            "properties": {
+                "displayName": "Test Subscription",
+                "managementGroupId": None,
+                "tags": {"tag1": "Messi", "tag2": "Ronaldo", "tag3": "Lebron"},
+            }
+        },
     ).result()
 
 

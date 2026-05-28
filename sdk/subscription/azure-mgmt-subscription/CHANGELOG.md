@@ -1,6 +1,6 @@
 # Release History
 
-## 3.2.0b2 (2026-05-27)
+## 3.2.0b2 (2026-05-28)
 
 ### Features Added
 
@@ -43,15 +43,12 @@
   - Deleted or renamed model `SubscriptionPolicies`
   - Deleted or renamed model `SubscriptionState`
   - Deleted or renamed model `TenantIdDescription`
-  - Method `SubscriptionOperations.begin_accept_ownership` inserted a `positional_or_keyword` parameter `requestbody_body`
-  - Method `SubscriptionOperations.begin_accept_ownership` deleted or renamed its parameter `body` of kind `positional_or_keyword`
   - Deleted or renamed method `SubscriptionsOperations.get`
   - Deleted or renamed method `SubscriptionsOperations.list`
   - Deleted or renamed method `SubscriptionsOperations.list_locations`
   - Deleted or renamed model `TenantsOperations`
   - Method `AliasOperations.list` changed return type from `SubscriptionAliasListResult` to `AsyncItemPaged[_models.SubscriptionAliasResponse]`
   - Method `AliasOperations.list` changed return type from `SubscriptionAliasListResult` to `ItemPaged[_models.SubscriptionAliasResponse]`
-  - Method `SubscriptionOperations.begin_accept_ownership` re-ordered its parameters from `['self', 'subscription_id', 'body', 'kwargs']` to `['self', 'subscription_id', 'requestbody_body', 'kwargs']`
 
 ## 3.2.0b1 (2022-12-27)
 

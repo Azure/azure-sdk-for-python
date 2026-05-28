@@ -83,5 +83,5 @@
         "azure.mgmt.subscription.operations.SubscriptionOperationOperations.get": "Microsoft.Subscription.SubscriptionOperationOperationGroup.get",
         "azure.mgmt.subscription.aio.operations.SubscriptionOperationOperations.get": "Microsoft.Subscription.SubscriptionOperationOperationGroup.get"
     },
-    "CrossLanguageVersion": "03380b31f25f"
+    "CrossLanguageVersion": "7c5c760995a9"
 }
