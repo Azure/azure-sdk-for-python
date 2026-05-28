@@ -3,8 +3,8 @@
   "apiVersions": {
     "Microsoft.AzureFleet": "2026-04-01-preview"
   },
-  "commit": "9b2e35f833ccc2a00c6ae7d6a24e7c5f58624de0",
+  "commit": "5c7cd01768cc4a537f309dff14af7be34f87cd14",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/azurefleet/resource-manager/Microsoft.AzureFleet/AzureFleet",
-  "emitterVersion": "0.61.3"
+  "emitterVersion": "0.62.1"
 }
