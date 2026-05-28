@@ -7,23 +7,14 @@
 """
 DESCRIPTION:
     This sample demonstrates how to perform CRUD operations on Skills
-    (including version-scoped operations) using the asynchronous AIProjectClient.
+    using the asynchronous AIProjectClient.
 
-    Every call to `skills.create(name, ...)` (or `create_from_files(...)`)
-    appends a new version to the skill. This sample:
+    It creates two skill versions with different inline content (different
+    `description` values), switches the default version, and prints the
+    description from the fetched default version to show that the default
+    version pointer changes which content is returned.
 
-    1) Deletes the skill (and all versions) if it already exists.
-    2) Creates three inline versions with `skills.create(...)`; the third one
-       is promoted to default with `default=True`.
-    3) Retrieves the skill with `skills.get(...)` and lists all skills.
-    4) Lists all versions with `skills.list_versions(...)` and retrieves a
-       specific one with `skills.get_version(name, version)`.
-    5) Switches the default version with `skills.update(name, default_version=...)`
-       and shows the impact by re-resolving the default's content before/after.
-    6) Deletes a specific version with `skills.delete_version(name, version)`.
-    7) Deletes the whole skill to clean up.
-
-    Skills are a preview feature. In the Python SDK, you access
+    Skills are currently a preview feature. In the Python SDK, you access
     these operations via `project_client.beta.skills`.
 
 USAGE:
@@ -31,7 +22,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv
+    pip install "azure-ai-projects>=2.2.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -47,89 +38,93 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import SkillInlineContent
+from azure.ai.projects.models import SkillInlineContent, SkillVersion
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-skill_name = "product-support-skill"
+
+
+def print_skill_version_description(version: SkillVersion) -> None:
+    print(f"  - version `{version.version}` description: {version.description!r}")
 
 
 async def main() -> None:
+
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
-        skills_client = project_client.beta.skills
+
+        skill_name = "product-support-skill"
 
         try:
-            await skills_client.delete(skill_name)
+            await project_client.beta.skills.delete(skill_name)
             print(f"Skill `{skill_name}` deleted")
         except ResourceNotFoundError:
             pass
 
-        created_versions = []
-        for index in range(1, 4):
-            is_last = index == 3
-            version = await skills_client.create(
-                name=skill_name,
-                inline_content=SkillInlineContent(
-                    description=f"Example skill version {index} created by the azure-ai-projects sample.",
-                    instructions=(
-                        f"You are revision {index}. Help answer product support questions "
-                        "using company policy and product guidance."
-                    ),
-                    metadata={"revision": str(index)},
-                ),
-                # Promote the final version to the skill's default version.
-                default=is_last,
-            )
-            created_versions.append(version)
-            print(f"Created version: {version.version} (skill_id={version.skill_id})")
+        inline_content_v1 = SkillInlineContent(
+            description="Product support skill, revision 1 (concise replies).",
+            instructions="You are revision 1. Answer product support questions concisely.",
+            metadata={"revision": "1"},
+        )
 
-        fetched = await skills_client.get(skill_name)
-        print(f"Retrieved skill: {fetched.name} ({fetched.id}) description={fetched.description!r}")
+        inline_content_v2 = SkillInlineContent(
+            description="Product support skill, revision 2 (detailed replies with citations).",
+            instructions="You are revision 2. Answer product support questions in detail and cite sources.",
+            metadata={"revision": "2"},
+        )
+
+        created = await project_client.beta.skills.create(
+            name=skill_name,
+            inline_content=inline_content_v1,
+        )
+        print(f"Created skill: {created.name} revision 1 in version {created.version}")
+
+        created = await project_client.beta.skills.create(
+            name=skill_name,
+            inline_content=inline_content_v2,
+        )
+        print(f"Created skill: {created.name} revision 2 in version {created.version}")
+
+        updated = await project_client.beta.skills.update(
+            skill_name,
+            default_version="2",
+        )
+        print(f"Updated skill: {updated.name} default version is now {updated.default_version}")
+
+        fetched = await project_client.beta.skills.get(name=skill_name)
+        print(f"Retrieved skill with default version: {fetched.default_version}")
+        fetched_version = await project_client.beta.skills.get_version(
+            name=skill_name,
+            version=fetched.default_version,
+        )
+        print_skill_version_description(fetched_version)
+
+        updated = await project_client.beta.skills.update(
+            skill_name,
+            default_version="1",
+        )
+        print(f"Updated skill: {updated.name} default version is now {updated.default_version}")
+
+        fetched = await project_client.beta.skills.get(name=skill_name)
+        print(f"Retrieved skill with default version: {fetched.default_version}")
+        fetched_version = await project_client.beta.skills.get_version(
+            name=skill_name,
+            version=fetched.default_version,
+        )
+        print_skill_version_description(fetched_version)
 
         skills = []
-        async for skill in skills_client.list():
-            skills.append(skill)
-        print(f"Found {len(skills)} skills or more")
+        async for item in project_client.beta.skills.list():
+            skills.append(item)
+        print(f"Found {len(skills)} skills")
+        for item in skills:
+            print(f"  - {item.name} ({item.id})")
 
-        versions = []
-        async for v in skills_client.list_versions(skill_name):
-            versions.append(v)
-        print(f"Found {len(versions)} version(s) for `{skill_name}`:")
-        for v in versions:
-            print(f"  - version={v.version} created_at={v.created_at}")
-
-        target_version = created_versions[-1].version
-        fetched_version = await skills_client.get_version(skill_name, target_version)
-        print(f"Retrieved version: {fetched_version.version} description={fetched_version.description!r}")
-
-        skill_before = await skills_client.get(skill_name)
-        default_before = await skills_client.get_version(skill_name, skill_before.default_version)
-        print(
-            f"Before update -> default_version={skill_before.default_version} "
-            f"description={default_before.description!r}"
-        )
-
-        second_version = created_versions[1].version
-        updated_skill = await skills_client.update(skill_name, default_version=second_version)
-        print(f"Updated skill default to version `{second_version}`: default_version={updated_skill.default_version}")
-
-        skill_after = await skills_client.get(skill_name)
-        default_after = await skills_client.get_version(skill_name, skill_after.default_version)
-        print(
-            f"After update  -> default_version={skill_after.default_version} "
-            f"description={default_after.description!r}"
-        )
-
-        first_version = created_versions[0].version
-        deleted_version = await skills_client.delete_version(skill_name, first_version)
-        print(f"Deleted version `{first_version}`: {deleted_version}")
-
-        deleted = await skills_client.delete(skill_name)
-        print(f"Deleted skill: {deleted}")
+        await project_client.beta.skills.delete(name=skill_name)
+        print("Skill deleted")
 
 
 if __name__ == "__main__":
