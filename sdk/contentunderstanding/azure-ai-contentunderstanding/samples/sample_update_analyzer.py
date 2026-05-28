@@ -15,9 +15,10 @@ DESCRIPTION:
     - Description: Update the analyzer's description
     - Tags: Add or update tags
 
-    To change create-only properties such as models, field_schema, config, base_analyzer_id,
+    To change create-only properties such as models, field_schema, config,
     dynamic_field_schema, processing_location, or knowledge_sources, use begin_create_analyzer
-    with allow_replace=True.
+    with allow_replace=True. If base_analyzer_id is included in an update request, it must
+    match the existing analyzer.
 
 USAGE:
     python sample_update_analyzer.py
@@ -96,7 +97,8 @@ def main() -> None:
         print(f"  Tags: {tags_str}")
 
     # Create an updated analyzer with the properties supported by update_analyzer.
-    # Other analyzer properties are create-only and require begin_create_analyzer(..., allow_replace=True).
+    # Keep base_analyzer_id unchanged; other create-only properties require
+    # begin_create_analyzer(..., allow_replace=True).
     updated_analyzer = ContentAnalyzer(
         base_analyzer_id=current_analyzer.base_analyzer_id,
         description="Updated description",
