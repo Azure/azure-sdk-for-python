@@ -64,8 +64,6 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Deleted or renamed client operation group `AutomationClient.dsc_compilation_job`
-  - Deleted or renamed client operation group `AutomationClient.dsc_compilation_job_stream`
   - Model `AgentRegistration` renamed its instance variable `keys` to `keys_property`
   - Model `AutomationAccountCreateOrUpdateParameters` moved instance variable `sku`, `encryption`, `public_network_access` and `disable_local_auth` under property `properties` whose type is `AutomationAccountCreateOrUpdateProperties`
   - Model `AutomationAccountUpdateParameters` moved instance variable `sku`, `encryption`, `public_network_access` and `disable_local_auth` under property `properties` whose type is `AutomationAccountUpdateProperties`
@@ -103,10 +101,7 @@
   - Model `WatcherUpdateParameters` moved instance variable `execution_frequency_in_seconds` under property `properties` whose type is `WatcherUpdateProperties`
   - Model `WebhookCreateOrUpdateParameters` moved instance variable `is_enabled`, `uri`, `expiry_time`, `parameters`, `runbook` and `run_on` under property `properties` whose type is `WebhookCreateOrUpdateProperties`
   - Model `WebhookUpdateParameters` moved instance variable `is_enabled`, `run_on`, `parameters` and `description` under property `properties` whose type is `WebhookUpdateProperties`
-  - Deleted or renamed model `DscCompilationJob`
-  - Deleted or renamed model `DscCompilationJobCreateParameters`
-  - Deleted or renamed model `RunbookCreateOrUpdateDraftParameters`
-  - Deleted or renamed model `RunbookCreateOrUpdateDraftProperties`
+  - Deleted operation group `AutomationClient.dsc_compilation_job`/`AutomationClient.dsc_compilation_job_stream` and their corresponding models `DscCompilationJob`/`DscCompilationJobCreateParameters` were also deleted
   - Method `DscConfigurationOperations.list_by_automation_account` changed its parameter `inlinecount` from `positional_or_keyword` to `keyword_only`
   - Method `DscNodeConfigurationOperations.list_by_automation_account` changed its parameter `inlinecount` from `positional_or_keyword` to `keyword_only`
   - Method `DscNodeOperations.list_by_automation_account` changed its parameter `inlinecount` from `positional_or_keyword` to `keyword_only`
@@ -140,7 +135,7 @@
 
 ### Other Changes
 
-  - Deleted model `JobListResultV2`/`SourceControlSyncJobStreamsListBySyncJob` which actually were not used by SDK users
+  - Deleted model `JobListResultV2`/`SourceControlSyncJobStreamsListBySyncJob`/`RunbookCreateOrUpdateDraftParameters`/`RunbookCreateOrUpdateDraftProperties` which actually were not used by SDK users
 
 ## 1.0.1 (2026-05-14)
 
