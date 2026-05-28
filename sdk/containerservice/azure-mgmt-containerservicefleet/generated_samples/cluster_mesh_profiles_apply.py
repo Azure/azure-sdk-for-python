@@ -15,7 +15,7 @@ from azure.mgmt.containerservicefleet import ContainerServiceFleetMgmtClient
     pip install azure-identity
     pip install azure-mgmt-containerservicefleet
 # USAGE
-    python fleet_managed_namespaces_delete.py
+    python cluster_mesh_profiles_apply.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.fleet_managed_namespaces.begin_delete(
+    response = client.cluster_mesh_profiles.begin_apply(
         resource_group_name="rgfleets",
         fleet_name="fleet1",
-        managed_namespace_name="namespace1",
+        cluster_mesh_profile_name="clustermeshprofile1",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-03-02-preview/FleetManagedNamespaces_Delete.json
+# x-ms-original-file: 2026-03-02-preview/ClusterMeshProfiles_Apply.json
 if __name__ == "__main__":
     main()
