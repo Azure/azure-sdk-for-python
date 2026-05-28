@@ -2,6 +2,11 @@
 **/test_output*/
 **/sample_output*/
 
+# cu-sdk-generate-analyzer skill workflow output (per-user scratch, never committed)
+/layout/
+/schemas/
+/test_results/
+
 # Virtual environment
 .venv/
 

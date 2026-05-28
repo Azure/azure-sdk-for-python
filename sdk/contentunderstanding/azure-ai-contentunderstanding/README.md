@@ -627,6 +627,8 @@ This package includes [GitHub Copilot][github_copilot] skills under `.github/ski
 | [**cu-sdk-setup**][cu_sdk_setup_skill] | Interactive environment setup wizard — creates virtual environment, installs the SDK, configures `.env`, helps set up model deployments, and runs model defaults | In VS Code Copilot Chat, ask: *"Help me set up the Content Understanding Python SDK"* or reference the skill directly |
 | [**cu-sdk-sample-run**][cu_sdk_sample_run_skill] | Guided sample runner — helps you choose and run sync/async samples with troubleshooting | Ask: *"Run a Content Understanding sample"* or *"Run sample_analyze_invoice"* |
 | [**cu-sdk-common-knowledge**][cu_sdk_common_knowledge_skill] | Domain knowledge reference — answers questions about Content Understanding concepts, analyzers, field schemas, API operations, and SDK usage | Ask: *"What prebuilt analyzers are available?"* or *"How do I create a custom analyzer?"* |
+| [**cu-sdk-generate-analyzer**][cu_sdk_generate_analyzer_skill] | Author + test a custom analyzer for a single document type — layout extraction, schema drafting, local validation, batch test, stdout summary | Ask: *"Build me a custom analyzer for these invoices"* |
+| [**cu-sdk-generate-analyzer-classify-route**][cu_sdk_generate_analyzer_classify_route_skill] | Author + test a classify-and-route pipeline for mixed-document packets (e.g. invoice + bank statement + loan application in one PDF) | Ask: *"Build me an analyzer for this mixed financial packet"* |
 
 ### Using Skills in VS Code
 
@@ -695,6 +697,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cu_sdk_setup_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-setup
 [cu_sdk_sample_run_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-sample-run
 [cu_sdk_common_knowledge_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-common-knowledge
+[cu_sdk_generate_analyzer_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-generate-analyzer
+[cu_sdk_generate_analyzer_classify_route_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-generate-analyzer-classify-route
 [tests_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/tests/README.md
 [azure_sdk_testing_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
 [pip]: https://pypi.org/project/pip/

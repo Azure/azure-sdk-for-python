@@ -1,0 +1,463 @@
+#!/usr/bin/env python3
+"""Classify-and-route: create N inner analyzers + 1 outer classifier, batch-test.
+
+This is the multi-doc-type analogue of ``../cu-sdk-generate-analyzer/scripts/
+create_and_test.py``. Use it when a single input file (or folder) contains
+mixed document types — for example, an invoice + bank statement + loan
+application in one PDF.
+
+Flow
+----
+
+1. Validate every inner schema and the outer classifier schema locally
+   (catches typos in ``baseAnalyzerId``, missing ``content_categories``,
+   etc.).
+2. Verify every category in the outer schema that declares an ``analyzerId``
+   placeholder has a matching ``--inner-schema`` entry.
+3. Create each inner analyzer.
+4. Patch the outer schema's ``content_categories[*].analyzerId`` with the
+   real inner analyzer IDs.
+5. Create the outer (classifier) analyzer.
+6. Batch-analyze each input file; dump per-doc result JSON.
+7. Print a **category-aware** stdout summary: per-category fill rate
+   denominator is the number of segments classified into that category — not
+   the total number of segments (which is the bug CU-Tools' exporter has).
+
+Authentication
+--------------
+
+Same precedence as the sibling script and ``samples/sample_create_classifier.py``:
+``CONTENTUNDERSTANDING_KEY`` → ``AzureKeyCredential``; otherwise
+``DefaultAzureCredential`` (e.g. ``az login``).
+
+Usage
+-----
+
+::
+
+    create_and_test_router.py \\
+        --outer-schema schemas/classifier.json \\
+        --inner-schema invoice=schemas/invoice.json \\
+        --inner-schema bank_statement=schemas/bank_statement.json \\
+        --inner-schema loan_application=schemas/loan_application.json \\
+        --input samples/sample_files/mixed_financial_docs.pdf \\
+        --output test_results/v1
+"""
+
+from __future__ import annotations
+
+import argparse
+import importlib.util
+import json
+import os
+import sys
+import time
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple
+
+try:  # pragma: no cover
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:  # pragma: no cover
+    pass
+
+
+# Reuse helpers from the sibling script via direct file load.
+_HERE = Path(__file__).resolve().parent
+_SHARED_DIR = _HERE.parent.parent / "_shared"
+_SIBLING_CREATE_AND_TEST = (
+    _HERE.parent.parent
+    / "cu-sdk-generate-analyzer"
+    / "scripts"
+    / "create_and_test.py"
+)
+
+
+def _load_module(name: str, path: Path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    if not spec or not spec.loader:
+        raise SystemExit(f"could not load {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+_validator = _load_module(
+    "_skill_schema_validator", _SHARED_DIR / "schema_validator.py"
+)
+_create_and_test = _load_module(
+    "_skill_create_and_test", _SIBLING_CREATE_AND_TEST
+)
+
+_iter_inputs = _create_and_test._iter_inputs
+_result_to_dict = _create_and_test._result_to_dict
+_field_value = _create_and_test._field_value
+_iter_fields = _create_and_test._iter_fields
+_build_client = _create_and_test._build_client
+
+
+# ---------------------------------------------------------------------------
+# Inner / outer schema wiring
+# ---------------------------------------------------------------------------
+
+
+def _parse_inner_arg(values: List[str]) -> Dict[str, Path]:
+    """Parse ``--inner-schema alias=path`` repeats into ``{alias: Path}``."""
+
+    result: Dict[str, Path] = {}
+    for entry in values:
+        if "=" not in entry:
+            raise SystemExit(
+                f"--inner-schema must be alias=path, got: {entry!r}"
+            )
+        alias, _, raw_path = entry.partition("=")
+        alias = alias.strip()
+        path = Path(raw_path.strip())
+        if not alias:
+            raise SystemExit(f"--inner-schema alias empty in: {entry!r}")
+        if alias in result:
+            raise SystemExit(f"--inner-schema alias repeated: {alias!r}")
+        result[alias] = path
+    return result
+
+
+def _validate_all(
+    outer_schema_path: Path, inner_paths: Mapping[str, Path]
+) -> Tuple[Dict[str, Any], Dict[str, Dict[str, Any]]]:
+    """Validate outer + inner schemas, return loaded JSON for each.
+
+    Exits with code 2 if anything fails.
+    """
+
+    failures: List[str] = []
+
+    ok, errors = _validator.validate_schema_file(outer_schema_path)
+    if not ok:
+        failures.extend(f"[outer] {e}" for e in errors)
+
+    inner_schemas: Dict[str, Dict[str, Any]] = {}
+    for alias, p in inner_paths.items():
+        if not p.exists():
+            failures.append(f"[inner:{alias}] schema file not found: {p}")
+            continue
+        ok, errors = _validator.validate_schema_file(p)
+        if not ok:
+            failures.extend(f"[inner:{alias}] {e}" for e in errors)
+            continue
+        inner_schemas[alias] = json.loads(p.read_text(encoding="utf-8"))
+
+    if failures:
+        for line in failures:
+            print(f"[VALIDATE] {line}", file=sys.stderr)
+        raise SystemExit(2)
+
+    outer_schema = json.loads(outer_schema_path.read_text(encoding="utf-8"))
+    return outer_schema, inner_schemas
+
+
+def _wire_inner_ids(
+    outer_schema: Dict[str, Any], alias_to_real_id: Mapping[str, str]
+) -> Tuple[Dict[str, Any], List[str]]:
+    """Patch outer ``content_categories[*].analyzerId`` placeholders.
+
+    Returns ``(patched_outer_schema, errors)``. An empty ``errors`` list
+    means every referenced alias resolved.
+    """
+
+    errors: List[str] = []
+    patched = json.loads(json.dumps(outer_schema))  # deep copy
+    categories = (patched.get("config") or {}).get("contentCategories") or {}
+
+    for cat_name, entry in categories.items():
+        if not isinstance(entry, dict):
+            continue
+        alias = entry.get("analyzerId")
+        if alias is None:
+            continue
+        # Service prebuilts ("prebuilt-invoice", "prebuilt-receipt", ...)
+        # are valid analyzer IDs as-is and don't need a --inner-schema.
+        if isinstance(alias, str) and alias.startswith("prebuilt-"):
+            continue
+        real = alias_to_real_id.get(alias)
+        if real is None:
+            errors.append(
+                f"category {cat_name!r} references analyzerId={alias!r}, but "
+                f"no --inner-schema entry matches alias {alias!r}. "
+                f"Known aliases: {sorted(alias_to_real_id)}"
+            )
+            continue
+        entry["analyzerId"] = real
+
+    # Catch unused inner schemas (cheap typo check).
+    used = {
+        e.get("analyzerId")
+        for e in categories.values()
+        if isinstance(e, dict)
+    }
+    for alias in alias_to_real_id:
+        if alias_to_real_id[alias] not in used:
+            errors.append(
+                f"--inner-schema {alias!r} was supplied but no category in "
+                f"the outer schema routes to it"
+            )
+
+    return patched, errors
+
+
+# ---------------------------------------------------------------------------
+# Category-aware summary
+# ---------------------------------------------------------------------------
+
+
+def summarize_routed(
+    results: List[Tuple[str, Dict[str, Any]]],
+) -> str:
+    """Build a category-aware stdout summary.
+
+    Denominator per category = segments whose ``category`` matches. Avoids
+    the CU-Tools exporter bug that divides by total segments and produces
+    false "33%" fill rates.
+    """
+
+    # category → field → list[(doc_name, value, confidence)]
+    table: Dict[str, Dict[str, List[Tuple[str, Any, Optional[float]]]]] = {}
+    # category → total segment count
+    seg_counts: Dict[str, int] = {}
+
+    for doc_name, doc in results:
+        for content in doc.get("contents") or []:
+            category = content.get("category") or "(uncategorized)"
+            seg_counts[category] = seg_counts.get(category, 0) + 1
+            fields = content.get("fields") or {}
+            for fname, fval in fields.items():
+                if not isinstance(fval, dict):
+                    continue
+                row = table.setdefault(category, {}).setdefault(fname, [])
+                row.append((doc_name, _field_value(fval), fval.get("confidence")))
+
+    if not table and not seg_counts:
+        return "[SUMMARY] no segments classified."
+
+    lines: List[str] = ["", "=" * 72, "[SUMMARY] (category-aware)"]
+    for category in sorted(seg_counts):
+        denom = seg_counts[category]
+        per_field = table.get(category, {})
+        header = f"category: {category}  ({denom} segments)"
+        lines.append("")
+        lines.append(header)
+        lines.append("-" * len(header))
+        if not per_field:
+            lines.append("  (no extracted fields — classification-only or missing analyzerId)")
+            continue
+        lines.append(f"  {'field':<30} fill rate   avg conf")
+        for fname in sorted(per_field):
+            rows = per_field[fname]
+            filled = [r for r in rows if r[1] not in (None, "", [], {})]
+            fill_rate = (len(filled) / denom) if denom else 0.0
+            confs = [r[2] for r in rows if isinstance(r[2], (int, float))]
+            avg_conf = (sum(confs) / len(confs)) if confs else None
+            conf_str = f"{avg_conf:.3f}" if avg_conf is not None else "  n/a"
+            lines.append(f"  {fname:<30} {fill_rate * 100:>5.1f}%      {conf_str}")
+
+    lowest: List[Tuple[float, str, str, str]] = []
+    for category, per_field in table.items():
+        for fname, rows in per_field.items():
+            for doc_name, _value, conf in rows:
+                if isinstance(conf, (int, float)):
+                    lowest.append((float(conf), category, fname, doc_name))
+    lowest.sort(key=lambda x: x[0])
+    if lowest:
+        lines.append("")
+        lines.append("lowest-confidence fields across all categories:")
+        for conf, category, fname, doc_name in lowest[:3]:
+            lines.append(f"  {conf:.3f}  [{category}] {fname}  ({doc_name})")
+    lines.append("=" * 72)
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Service flow
+# ---------------------------------------------------------------------------
+
+
+def create_inner_analyzers(
+    client,
+    inner_schemas: Mapping[str, Dict[str, Any]],
+    *,
+    id_prefix: str,
+) -> Dict[str, str]:
+    """Create each inner analyzer; return ``{alias: real_analyzer_id}``."""
+
+    alias_to_id: Dict[str, str] = {}
+    for alias, schema in inner_schemas.items():
+        real_id = f"{id_prefix}_inner_{alias}"
+        print(f"[CREATE-INNER] {alias} → {real_id}")
+        poller = client.begin_create_analyzer(analyzer_id=real_id, resource=schema)
+        poller.result()
+        alias_to_id[alias] = real_id
+    return alias_to_id
+
+
+def run(
+    *,
+    outer_schema_path: Path,
+    inner_schema_paths: Mapping[str, Path],
+    input_path: Path,
+    output_dir: Path,
+    analyzer_id: Optional[str],
+    ephemeral: bool,
+) -> int:
+    outer_schema, inner_schemas = _validate_all(outer_schema_path, inner_schema_paths)
+
+    inputs = list(_iter_inputs(input_path))
+    if not inputs:
+        print(f"no supported documents found under {input_path}", file=sys.stderr)
+        return 2
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    if not analyzer_id:
+        analyzer_id = f"{outer_schema_path.stem}_{int(time.time())}"
+
+    client = _build_client()
+
+    alias_to_id: Dict[str, str] = {}
+    fail = 0
+    results: List[Tuple[str, Dict[str, Any]]] = []
+    try:
+        alias_to_id = create_inner_analyzers(
+            client, inner_schemas, id_prefix=analyzer_id
+        )
+
+        patched_outer, wire_errors = _wire_inner_ids(outer_schema, alias_to_id)
+        if wire_errors:
+            for e in wire_errors:
+                print(f"[VALIDATE] {e}", file=sys.stderr)
+            return 2
+
+        print(f"[CREATE-OUTER] {analyzer_id}")
+        poller = client.begin_create_analyzer(analyzer_id=analyzer_id, resource=patched_outer)
+        poller.result()
+        print(f"[CREATE-OUTER] {analyzer_id} ready")
+
+        for file_path in inputs:
+            out_path = output_dir / f"{file_path.stem}.json"
+            try:
+                print(f"[ANALYZE] {file_path} → {out_path}")
+                with file_path.open("rb") as fh:
+                    p = client.begin_analyze_binary(
+                        analyzer_id=analyzer_id, binary_input=fh.read()
+                    )
+                result = p.result()
+            except Exception as exc:  # noqa: BLE001
+                print(f"[FAIL]    {file_path}: {exc}", file=sys.stderr)
+                fail += 1
+                continue
+            doc = _result_to_dict(result)
+            out_path.write_text(
+                json.dumps(doc, indent=2, ensure_ascii=False), encoding="utf-8"
+            )
+            results.append((out_path.stem, doc))
+    finally:
+        if ephemeral:
+            for analyzer_id_to_delete in [analyzer_id, *alias_to_id.values()]:
+                try:
+                    print(f"[CLEANUP] delete {analyzer_id_to_delete}")
+                    client.delete_analyzer(analyzer_id=analyzer_id_to_delete)
+                except Exception as exc:  # noqa: BLE001
+                    print(
+                        f"[CLEANUP] failed for {analyzer_id_to_delete}: {exc}",
+                        file=sys.stderr,
+                    )
+        else:
+            kept = [analyzer_id, *alias_to_id.values()]
+            print(
+                f"[KEEP]    analyzers retained ({len(kept)}): {kept} "
+                "(use --ephemeral to delete)"
+            )
+
+    print(summarize_routed(results))
+    return 0 if fail == 0 else 1
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+
+def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Validate, create, and batch-test a classify-and-route pipeline "
+            "(outer classifier + N inner extractors)."
+        )
+    )
+    parser.add_argument(
+        "--outer-schema", required=True, type=Path, help="Outer (classifier) schema JSON."
+    )
+    parser.add_argument(
+        "--inner-schema",
+        action="append",
+        default=[],
+        metavar="ALIAS=PATH",
+        help=(
+            "Inner extractor schema, given as alias=path. The alias must "
+            "match the analyzerId placeholder used in the outer schema's "
+            "content_categories. Repeat for each inner extractor."
+        ),
+    )
+    parser.add_argument(
+        "--input", required=True, type=Path, help="Input file or folder."
+    )
+    parser.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="Directory to write per-document result JSON into.",
+    )
+    parser.add_argument(
+        "--analyzer-id",
+        default=None,
+        help="Outer analyzer ID (default: <outer-schema-stem>_<unix-timestamp>). "
+        "Inner analyzers are named <analyzer-id>_inner_<alias>.",
+    )
+    parser.add_argument(
+        "--ephemeral",
+        action="store_true",
+        help="Delete inner + outer analyzers at the end of the run.",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    args = _parse_args(argv)
+
+    if not args.inner_schema:
+        print(
+            "at least one --inner-schema alias=path is required",
+            file=sys.stderr,
+        )
+        return 2
+
+    inner_paths = _parse_inner_arg(args.inner_schema)
+
+    if not args.outer_schema.exists():
+        print(f"outer schema not found: {args.outer_schema}", file=sys.stderr)
+        return 2
+    if not args.input.exists():
+        print(f"input not found: {args.input}", file=sys.stderr)
+        return 2
+
+    return run(
+        outer_schema_path=args.outer_schema,
+        inner_schema_paths=inner_paths,
+        input_path=args.input,
+        output_dir=args.output,
+        analyzer_id=args.analyzer_id,
+        ephemeral=args.ephemeral,
+    )
+
+
+if __name__ == "__main__":
+    sys.exit(main())

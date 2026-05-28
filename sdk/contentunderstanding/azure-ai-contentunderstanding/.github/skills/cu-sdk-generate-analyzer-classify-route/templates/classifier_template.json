@@ -1,0 +1,26 @@
+{
+  "_comment": "Starter template for a classify-and-route outer classifier. Copy to schemas/<name>_classifier_v1.json and edit. See SKILL.md Step 3 for the rules. Each contentCategories entry's analyzerId is an alias resolved by --inner-schema alias=path at runtime; values starting with 'prebuilt-' are used as-is.",
+  "baseAnalyzerId": "prebuilt-document",
+  "description": "REPLACE: one-line description of what this packet contains.",
+  "config": {
+    "enableSegment": true,
+    "omitContent": true,
+    "contentCategories": {
+      "REPLACE_category_a": {
+        "description": "REPLACE: text-anchored description \u2014 reference labels, headings, table column names. Never visual cues.",
+        "analyzerId": "REPLACE_category_a"
+      },
+      "REPLACE_category_b": {
+        "description": "REPLACE: text-anchored description for the second document type.",
+        "analyzerId": "REPLACE_category_b"
+      },
+      "other": {
+        "description": "REPLACE: catch-all category for pages that match none of the above. Recommended even if you don't extract fields from it."
+      }
+    }
+  },
+  "models": {
+    "completion": "gpt-4.1",
+    "embedding": "text-embedding-3-large"
+  }
+}

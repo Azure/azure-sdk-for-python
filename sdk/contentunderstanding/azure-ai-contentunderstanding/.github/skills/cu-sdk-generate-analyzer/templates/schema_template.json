@@ -1,0 +1,50 @@
+{
+  "_comment": "Starter template for a single-doc-type custom analyzer. Copy to schemas/<name>_v1.json, replace placeholders, then run create_and_test.py. See SKILL.md Step 2 for the baseAnalyzerId table and field-description rules.",
+  "baseAnalyzerId": "prebuilt-document",
+  "description": "REPLACE: one-line description of what this analyzer extracts.",
+  "config": {
+    "estimateFieldSourceAndConfidence": true,
+    "returnDetails": true
+  },
+  "models": {
+    "completion": "gpt-4.1",
+    "embedding": "text-embedding-3-large"
+  },
+  "fieldSchema": {
+    "name": "REPLACE_schema_name_v1",
+    "description": "REPLACE: schema purpose.",
+    "fields": {
+      "exampleScalarField": {
+        "type": "string",
+        "method": "extract",
+        "description": "REPLACE: value printed after the 'EXAMPLE LABEL:' anchor near the top of the page. Reference text anchors (labels, headings), not visual appearance.",
+        "estimateSourceAndConfidence": true
+      },
+      "exampleDateField": {
+        "type": "date",
+        "method": "extract",
+        "description": "REPLACE: date printed after the 'DATE:' label. Not to be confused with other dates such as a due date or service date.",
+        "estimateSourceAndConfidence": true
+      },
+      "exampleAmountField": {
+        "type": "number",
+        "method": "extract",
+        "description": "REPLACE: amount on the row labelled 'TOTAL' in the totals table at the bottom. Excludes any 'Subtotal' or 'Previous Balance' values.",
+        "estimateSourceAndConfidence": true
+      },
+      "exampleArrayField": {
+        "type": "array",
+        "method": "extract",
+        "description": "REPLACE: each row of the line-items table.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "itemCode": { "type": "string", "method": "extract", "description": "REPLACE: value in the ITEM CODE column." },
+            "description": { "type": "string", "method": "extract", "description": "REPLACE: value in the DESCRIPTION column." },
+            "amount": { "type": "number", "method": "extract", "description": "REPLACE: value in the AMOUNT column." }
+          }
+        }
+      }
+    }
+  }
+}
