@@ -10,7 +10,7 @@ DESCRIPTION:
     asynchronous AIProjectClient.
 
     1) Delete an existing skill with the same name (if it exists).
-    2) Upload a package with `create_from_package(...)`.
+    2) Upload a package with `create_from_files(...)`.
     3) Retrieve the uploaded skill with `get(...)`.
     4) Download the package with `download(...)` to the temp folder.
     5) Delete the uploaded skill.
@@ -23,7 +23,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv
+    pip install "azure-ai-projects>=2.2.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -66,7 +66,7 @@ async def main() -> None:
         except ResourceNotFoundError:
             pass
 
-        imported = await project_client.beta.skills.create_from_package(
+        imported = await project_client.beta.skills.create_from_files(
             skill_name, content=CreateSkillVersionFromFilesBody(files=[Path(skill_file_path).read_bytes()])
         )
         imported_skill_name = imported.name

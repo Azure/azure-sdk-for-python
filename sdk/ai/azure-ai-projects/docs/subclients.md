@@ -179,7 +179,7 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.schedules.list_runs
 
 .beta.skills.create
-.beta.skills.create_from_package
+.beta.skills.create_from_files
 .beta.skills.delete
 .beta.skills.delete_version
 .beta.skills.download

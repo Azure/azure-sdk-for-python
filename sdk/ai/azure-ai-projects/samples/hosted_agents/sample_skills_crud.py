@@ -17,7 +17,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv
+    pip install "azure-ai-projects>=2.2.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -44,7 +44,7 @@ with (
 ):
     skills_client = project_client.beta.skills
 
-    skill_name = "product_support_skill"
+    skill_name = "product-support-skill"
 
     try:
         skills_client.delete(skill_name)
@@ -60,10 +60,7 @@ with (
             metadata={"status": "created", "domain": "support"},
         ),
     )
-    print(
-        f"Created skill: {created.name} ({created.skill_id}) "
-        f"version={created.version}"
-    )
+    print(f"Created skill: {created.name} ({created.skill_id}) " f"version={created.version}")
 
     fetched = skills_client.get(skill_name)
     print(f"Retrieved skill: {fetched.name} ({fetched.id}) " f"description={fetched.description!r}")
@@ -72,10 +69,7 @@ with (
         skill_name,
         default_version=created.version,
     )
-    print(
-        f"Updated skill: {updated.name} ({updated.id}) "
-        f"default_version={updated.default_version}"
-    )
+    print(f"Updated skill: {updated.name} ({updated.id}) " f"default_version={updated.default_version}")
 
     skills = list(skills_client.list())
     print(f"Found {len(skills)} skills or more")

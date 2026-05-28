@@ -35,10 +35,10 @@
 Breaking changes in beta methods:
 * Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
-* Argument `body` in method `.beta.skills.create_from_package()` renamed to `content`.
+* Argument `body` in method `.beta.skills.create_from_files()` renamed to `content`.
 * Method `.beta.agents.get_session_files` renamed to `.beta.agents.list_session_files`.
 * Method `.beta.skills.create` signature changed — now takes `name` and keyword `inline_content: SkillInlineContent`; returns `SkillVersion`.
-* Method `.beta.skills.create_from_package` signature changed — now takes `name` and `content: CreateSkillVersionFromFilesBody`; returns `SkillVersion`.
+* Method `.beta.skills.create_from_files` signature changed — now takes `name` and `content: CreateSkillVersionFromFilesBody`; returns `SkillVersion`.
 * Method `.beta.skills.update` signature changed — now only accepts keyword `default_version`; returns `SkillDetails`.
 
 Breaking changes in beta classes:

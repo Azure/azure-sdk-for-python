@@ -12899,7 +12899,7 @@ class BetaMemoryStoresOperations:
                 raise TypeError("missing required argument: scope")
             body = {"scope": scope}
             body = {k: v for k, v in body.items() if v is not None}
-        
+
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -16871,7 +16871,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def create_from_package(
+    def create_from_files(
         self, name: str, content: _models.CreateSkillVersionFromFilesBody, **kwargs: Any
     ) -> _models.SkillVersion:
         """Creates a new version of a skill from uploaded files via multipart form data.
@@ -16886,7 +16886,7 @@ class BetaSkillsOperations:
         """
 
     @overload
-    def create_from_package(self, name: str, content: JSON, **kwargs: Any) -> _models.SkillVersion:
+    def create_from_files(self, name: str, content: JSON, **kwargs: Any) -> _models.SkillVersion:
         """Creates a new version of a skill from uploaded files via multipart form data.
 
         :param name: The name of the skill. Required.
@@ -16899,7 +16899,7 @@ class BetaSkillsOperations:
         """
 
     @distributed_trace
-    def create_from_package(
+    def create_from_files(
         self, name: str, content: Union[_models.CreateSkillVersionFromFilesBody, JSON], **kwargs: Any
     ) -> _models.SkillVersion:
         """Creates a new version of a skill from uploaded files via multipart form data.
