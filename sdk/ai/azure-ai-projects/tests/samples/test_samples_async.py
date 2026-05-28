@@ -220,7 +220,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
             "hosted_agents",
             samples_to_skip=[
                 "sample_skills_upload_and_download_async.py",  # Skipped 5/27 to unblock dev-feed release. Fix before next release.
-                "sample_skills_crud.py",  # Skipped 5/27 to unblock dev-feed release. Fix before next release.
+                "sample_skills_crud_async.py",  # Skipped 5/27 to unblock dev-feed release. Fix before next release.
             ],
         ),
     )
