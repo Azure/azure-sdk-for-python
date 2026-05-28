@@ -218,8 +218,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "hosted_agents",
-            samples_to_skip=[
-            ],
+            samples_to_skip=[],
         ),
     )
     @SamplePathPasser()

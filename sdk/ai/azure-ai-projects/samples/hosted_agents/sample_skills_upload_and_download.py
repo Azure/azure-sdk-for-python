@@ -82,9 +82,7 @@ with (
     #   files=[(skill_path.name, skill_path.read_bytes(), "application/zip")]
     imported = project_client.beta.skills.create_from_files(
         skill_name,
-        content=CreateSkillVersionFromFilesBody(
-            files=[(skill_path.name, skill_path.read_bytes(), "application/zip")]
-        ),
+        content=CreateSkillVersionFromFilesBody(files=[(skill_path.name, skill_path.read_bytes(), "application/zip")]),
     )
     imported_skill_name = imported.name
     print(f"Imported skill from package: {imported.name} ({imported.skill_id}) version={imported.version}")

@@ -113,8 +113,8 @@ class Tool(_Model):
 class A2APreviewTool(Tool, discriminator="a2a_preview"):
     """An agent implementing the A2A protocol.
 
-    :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2A_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.A2A_PREVIEW
+    :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2_A_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.A2_A_PREVIEW
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -134,8 +134,8 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
     :vartype project_connection_id: str
     """
 
-    type: Literal[ToolType.A2A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``\"a2a_preview``. Required. A2A_PREVIEW."""
+    type: Literal[ToolType.A2_A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``\"a2a_preview``. Required. A2_A_PREVIEW."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -176,7 +176,7 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.A2A_PREVIEW  # type: ignore
+        self.type = ToolType.A2_A_PREVIEW  # type: ignore
 
 
 class AgentBlueprintReference(_Model):
@@ -5584,7 +5584,7 @@ class Dimension(_Model):
     :ivar always_applicable: When true, the LLM judge always scores this dimension regardless of
      relevance (skips applicability assessment). The service-generated general quality/policy
      dimension has this set to true and is non-editable. Users may set this on their own custom
-     dimensions. Defaults to ``false``.
+     dimensions. The service defaults to ``false`` if a value is not specified by the caller.
     :vartype always_applicable: bool
     """
 
@@ -5602,8 +5602,8 @@ class Dimension(_Model):
     always_applicable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """When true, the LLM judge always scores this dimension regardless of relevance (skips
      applicability assessment). The service-generated general quality/policy dimension has this set
-     to true and is non-editable. Users may set this on their own custom dimensions. Defaults to
-     ``false``."""
+     to true and is non-editable. Users may set this on their own custom dimensions. The service
+     defaults to ``false`` if a value is not specified by the caller."""
 
     @overload
     def __init__(
@@ -9508,7 +9508,7 @@ class MemoryStoreDefaultOptions(_Model):
      ``true``. Required.
     :vartype chat_summary_enabled: bool
     :ivar procedural_memory_enabled: Whether to enable procedural memory extraction and storage.
-     Defaults to ``true``.
+     The service defaults to ``true`` if a value is not specified by the caller.
     :vartype procedural_memory_enabled: bool
     :ivar default_ttl_seconds: The default time-to-live for memories in seconds. A value of ``0``
      indicates that memories do not expire. Defaults to ``0``.
@@ -9522,7 +9522,8 @@ class MemoryStoreDefaultOptions(_Model):
     chat_summary_enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable chat summary extraction and storage. Defaults to ``true``. Required."""
     procedural_memory_enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to enable procedural memory extraction and storage. Defaults to ``true``."""
+    """Whether to enable procedural memory extraction and storage. The service defaults to ``true`` if
+     a value is not specified by the caller."""
     default_ttl_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The default time-to-live for memories in seconds. A value of ``0`` indicates that memories do
      not expire. Defaults to ``0``."""
@@ -12108,8 +12109,9 @@ class RedTeam(_Model):
     :vartype num_turns: int
     :ivar attack_strategies: List of attack strategies or nested lists of attack strategies.
     :vartype attack_strategies: list[str or ~azure.ai.projects.models.AttackStrategy]
-    :ivar simulation_only: Simulation-only or Simulation + Evaluation. Default false, if true the
-     scan outputs conversation not evaluation result.
+    :ivar simulation_only: Simulation-only or Simulation + Evaluation. If ``true`` the scan outputs
+     conversation not evaluation result. The service defaults to ``false`` if a value is not
+     specified by the caller.
     :vartype simulation_only: bool
     :ivar risk_categories: List of risk categories to generate attack objectives for.
     :vartype risk_categories: list[str or ~azure.ai.projects.models.RiskCategory]
@@ -12142,8 +12144,8 @@ class RedTeam(_Model):
     simulation_only: Optional[bool] = rest_field(
         name="simulationOnly", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Simulation-only or Simulation + Evaluation. Default false, if true the scan outputs
-     conversation not evaluation result."""
+    """Simulation-only or Simulation + Evaluation. If ``true`` the scan outputs conversation not
+     evaluation result. The service defaults to ``false`` if a value is not specified by the caller."""
     risk_categories: Optional[list[Union[str, "_models.RiskCategory"]]] = rest_field(
         name="riskCategories", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12830,10 +12832,12 @@ class SessionLogEvent(_Model):
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}.
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -13319,8 +13323,8 @@ class StructuredInputDefinition(_Model):
     :vartype default_value: any
     :ivar schema: The JSON schema for the structured input (optional).
     :vartype schema: dict[str, any]
-    :ivar required: Whether the input property is required when the agent is invoked. Defaults to
-     ``false``.
+    :ivar required: Whether the input property is required when the agent is invoked. The service
+     defaults to ``false`` if a value is not specified by the caller.
     :vartype required: bool
     """
 
@@ -13331,7 +13335,8 @@ class StructuredInputDefinition(_Model):
     schema: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The JSON schema for the structured input (optional)."""
     required: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether the input property is required when the agent is invoked. Defaults to ``false``."""
+    """Whether the input property is required when the agent is invoked. The service defaults to
+     ``false`` if a value is not specified by the caller."""
 
     @overload
     def __init__(
@@ -14057,7 +14062,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      or a Literal["required"] type.
     :vartype mode: str or str
     :ivar tools: A list of tool definitions that the model should be allowed to call. For the
-     Responses API, the list of tool definitions might look like the following. Required.
+     Responses API, the list of tool definitions might look like:
 
      .. code-block:: json
 
@@ -14065,7 +14070,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
           { "type": "function", "name": "get_weather" },
           { "type": "mcp", "server_label": "deepwiki" },
           { "type": "image_generation" }
-        ]
+        ]. Required.
     :vartype tools: list[dict[str, any]]
     """
 
@@ -14078,7 +14083,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      Literal[\"required\"] type."""
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of tool definitions that the model should be allowed to call. For the Responses API, the
-     list of tool definitions might look like the following. Required.
+     list of tool definitions might look like:
      
      .. code-block:: json
      
@@ -14086,7 +14091,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
           { \"type\": \"function\", \"name\": \"get_weather\" },
           { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
           { \"type\": \"image_generation\" }
-        ]"""
+        ]. Required."""
 
     @overload
     def __init__(
@@ -14355,12 +14360,12 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
-    :ivar type: Required. WEB_SEARCH_PREVIEW_2025_03_11.
-    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW_2025_03_11
+    :ivar type: Required. WEB_SEARCH_PREVIEW2025_03_11.
+    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW2025_03_11
     """
 
-    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. WEB_SEARCH_PREVIEW_2025_03_11."""
+    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. WEB_SEARCH_PREVIEW2025_03_11."""
 
     @overload
     def __init__(
@@ -14376,7 +14381,7 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11  # type: ignore
+        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11  # type: ignore
 
 
 class ToolConfig(_Model):

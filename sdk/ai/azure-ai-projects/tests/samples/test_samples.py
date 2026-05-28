@@ -250,8 +250,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "hosted_agents",
-            samples_to_skip=[
-            ],
+            samples_to_skip=[],
         ),
     )
     @SamplePathPasser()

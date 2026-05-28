@@ -308,9 +308,10 @@ class AgentsOperations:
 
         :param agent_name: The name of the agent to delete. Required.
         :type agent_name: str
-        :keyword force: For Hosted Agents, if true, force-deletes the agent even if its versions have
-         active sessions, cascading deletion to all associated sessions. Defaults to ``false``. This
-         value is not relevant for other Agent types. Default value is None.
+        :keyword force: For Hosted Agents, if ``true``, force-deletes the agent even if its versions
+         have active sessions, cascading deletion to all associated sessions. The service defaults to
+         ``false`` if a value is not specified by the caller. This value is not relevant for other Agent
+         types. Default value is None.
         :paramtype force: bool
         :return: DeleteAgentResponse. The DeleteAgentResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DeleteAgentResponse
@@ -959,9 +960,10 @@ class AgentsOperations:
         :type agent_name: str
         :param agent_version: The version of the agent to delete. Required.
         :type agent_version: str
-        :keyword force: For Hosted Agents, if true, force-deletes the version even if it has active
-         sessions, cascading deletion to all associated sessions. Defaults to ``false``. This value is
-         not relevant for other Agent types. Default value is None.
+        :keyword force: For Hosted Agents, if ``true``, force-deletes the version even if it has active
+         sessions, cascading deletion to all associated sessions. The service defaults to ``false`` if a
+         value is not specified by the caller. This value is not relevant for other Agent types. Default
+         value is None.
         :paramtype force: bool
         :return: DeleteAgentVersionResponse. The DeleteAgentVersionResponse is compatible with
          MutableMapping
@@ -3970,23 +3972,29 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         Each SSE frame contains:
 
         * `event`: always `"log"`
-        * `data`: a plain-text log line (currently JSON-formatted, but the schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+        is not contractual and may include additional keys or change format
+        over time — clients should treat it as an opaque string)
 
         Example SSE frames:
 
         .. code-block::
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting FoundryCBAgent server on port 8088"}
+           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting
+        FoundryCBAgent server on port 8088"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application startup complete."}
+           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application
+        startup complete."}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+        connected to container"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since last 60 seconds"}
+           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since
+        last 60 seconds"}
 
         The stream remains open until the client disconnects or the server
         terminates the connection. Clients should handle reconnection as needed.
@@ -4028,7 +4036,7 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4367,8 +4375,8 @@ class BetaAgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword path: The file or directory path to delete, relative to the session home directory.
          Required.
         :paramtype path: str
-        :keyword recursive: Whether to recursively delete directory contents. Defaults to false.
-         Default value is None.
+        :keyword recursive: Whether to recursively delete directory contents. The service defaults to
+         ``false`` if a value is not specified by the caller. Default value is None.
         :paramtype recursive: bool
         :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
          (responses, conversations, sessions) to a specific end user. Default value is None.
@@ -9293,14 +9301,6 @@ class BetaMemoryStoresOperations:
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
-
-        # BUG? These lines were inside the prepare_request() method. Moved here instead.
-        if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {"scope": scope}
-            body = {k: v for k, v in body.items() if v is not None}
-
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -9309,11 +9309,11 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
-            # if body is _Unset:
-            #     if scope is _Unset:
-            #         raise TypeError("missing required argument: scope")
-            #     body = {"scope": scope}
-            #     body = {k: v for k, v in body.items() if v is not None}
+            if body is _Unset:
+                if scope is _Unset:
+                    raise TypeError("missing required argument: scope")
+                body = {"scope": scope}
+                body = {k: v for k, v in body.items() if v is not None}
 
             _request = build_beta_memory_stores_list_memories_request(
                 name=name,
@@ -9752,7 +9752,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        body: _models.UpdateModelVersionRequest,
+        model_version_update: _models.UpdateModelVersionRequest,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -9764,29 +9764,8 @@ class BetaModelsOperations:
         :param version: The specific version id of the UpdateModelVersionRequest to create or update.
          Required.
         :type version: str
-        :param body: The UpdateModelVersionRequest to create or update. Required.
-        :type body: ~azure.ai.projects.models.UpdateModelVersionRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ModelVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.ModelVersion:
-        """Update an existing ModelVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
-         Required.
-        :type version: str
-        :param body: The UpdateModelVersionRequest to create or update. Required.
-        :type body: JSON
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
+        :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -9800,7 +9779,7 @@ class BetaModelsOperations:
         self,
         name: str,
         version: str,
-        body: IO[bytes],
+        model_version_update: JSON,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -9812,8 +9791,35 @@ class BetaModelsOperations:
         :param version: The specific version id of the UpdateModelVersionRequest to create or update.
          Required.
         :type version: str
-        :param body: The UpdateModelVersionRequest to create or update. Required.
-        :type body: IO[bytes]
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
+        :type model_version_update: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ModelVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        name: str,
+        version: str,
+        model_version_update: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.ModelVersion:
+        """Update an existing ModelVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
+         Required.
+        :type version: str
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
+        :type model_version_update: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -9824,7 +9830,11 @@ class BetaModelsOperations:
 
     @distributed_trace_async
     async def update(
-        self, name: str, version: str, body: Union[_models.UpdateModelVersionRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        model_version_update: Union[_models.UpdateModelVersionRequest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ModelVersion:
         """Update an existing ModelVersion with the given version id.
 
@@ -9833,9 +9843,10 @@ class BetaModelsOperations:
         :param version: The specific version id of the UpdateModelVersionRequest to create or update.
          Required.
         :type version: str
-        :param body: The UpdateModelVersionRequest to create or update. Is one of the following types:
-         UpdateModelVersionRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.UpdateModelVersionRequest or JSON or IO[bytes]
+        :param model_version_update: The UpdateModelVersionRequest to create or update. Is one of the
+         following types: UpdateModelVersionRequest, JSON, IO[bytes] Required.
+        :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest or JSON or
+         IO[bytes]
         :return: ModelVersion. The ModelVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ModelVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9856,10 +9867,10 @@ class BetaModelsOperations:
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(model_version_update, (IOBase, bytes)):
+            _content = model_version_update
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(model_version_update, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_models_update_request(
             name=name,
