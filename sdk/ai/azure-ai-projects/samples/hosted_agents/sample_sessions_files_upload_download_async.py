@@ -88,12 +88,12 @@ async def main():
             )
 
             print("Listing session files for the session at path '.'...")
-            files = await project_client.beta.agents.list_session_files(
+            files = project_client.beta.agents.list_session_files(
                 agent_name=agent_name,
                 agent_session_id=session.agent_session_id,
                 path="/remote",
             )
-            for entry in files.entries:
+            async for entry in files:
                 print(f"  - name={entry.name}, size={entry.size}, is_directory={entry.is_directory}")
 
             print(f"Downloading and printing content from '{remote_file_path1}'")

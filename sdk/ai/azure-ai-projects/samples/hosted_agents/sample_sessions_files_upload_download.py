@@ -91,7 +91,7 @@ with (
             agent_session_id=session.agent_session_id,
             path="/remote",
         )
-        for entry in files.entries:
+        for entry in files:
             print(f"  - name={entry.name}, size={entry.size}, is_directory={entry.is_directory}")
 
         print(f"Downloading and printing content from '{remote_file_path1}'")
