@@ -26,7 +26,7 @@ class TestKustoManagementAttachedDatabaseConfigurationsOperationsAsync(AzureMgmt
             resource_group_name=resource_group.name,
             cluster_name="str",
             resource_name={"name": "str", "type": "Microsoft.Kusto/clusters/attachedDatabaseConfigurations"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestKustoManagementAttachedDatabaseConfigurationsOperationsAsync(AzureMgmt
         response = self.client.attached_database_configurations.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestKustoManagementAttachedDatabaseConfigurationsOperationsAsync(AzureMgmt
             resource_group_name=resource_group.name,
             cluster_name="str",
             attached_database_configuration_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestKustoManagementAttachedDatabaseConfigurationsOperationsAsync(AzureMgmt
                     },
                     "type": "str",
                 },
-                api_version="2024-04-13",
+                api_version="2025-02-14",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -103,7 +103,7 @@ class TestKustoManagementAttachedDatabaseConfigurationsOperationsAsync(AzureMgmt
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 attached_database_configuration_name="str",
-                api_version="2024-04-13",
+                api_version="2025-02-14",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -41,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2024-04-13/examples/KustoSandboxCustomImageUpdate.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/Kusto/stable/2025-02-14/examples/KustoSandboxCustomImageUpdate.json
 if __name__ == "__main__":
     main()

@@ -25,7 +25,7 @@ class TestKustoManagementDataConnectionsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestKustoManagementDataConnectionsOperations(AzureMgmtRecordedTestCase):
             cluster_name="str",
             database_name="str",
             parameters={"dataConnectionName": "str", "properties": "data_connection"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestKustoManagementDataConnectionsOperations(AzureMgmtRecordedTestCase):
             cluster_name="str",
             database_name="str",
             data_connection_name={"name": "str", "type": "Microsoft.Kusto/clusters/databases/dataConnections"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestKustoManagementDataConnectionsOperations(AzureMgmtRecordedTestCase):
             cluster_name="str",
             database_name="str",
             data_connection_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestKustoManagementDataConnectionsOperations(AzureMgmtRecordedTestCase):
                 "tableName": "str",
                 "type": "str",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -127,7 +127,7 @@ class TestKustoManagementDataConnectionsOperations(AzureMgmtRecordedTestCase):
                 "tableName": "str",
                 "type": "str",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -141,7 +141,7 @@ class TestKustoManagementDataConnectionsOperations(AzureMgmtRecordedTestCase):
             cluster_name="str",
             database_name="str",
             data_connection_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

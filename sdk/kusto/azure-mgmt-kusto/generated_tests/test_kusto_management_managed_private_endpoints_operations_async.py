@@ -26,7 +26,7 @@ class TestKustoManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             cluster_name="str",
             resource_name={"name": "str", "type": "Microsoft.Kusto/clusters/managedPrivateEndpoints"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestKustoManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtRecorde
         response = self.client.managed_private_endpoints.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestKustoManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             cluster_name="str",
             managed_private_endpoint_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestKustoManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtRecorde
                     },
                     "type": "str",
                 },
-                api_version="2024-04-13",
+                api_version="2025-02-14",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -116,7 +116,7 @@ class TestKustoManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtRecorde
                     },
                     "type": "str",
                 },
-                api_version="2024-04-13",
+                api_version="2025-02-14",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -131,7 +131,7 @@ class TestKustoManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtRecorde
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 managed_private_endpoint_name="str",
-                api_version="2024-04-13",
+                api_version="2025-02-14",
             )
         ).result()  # call '.result()' to poll until service return final result
 

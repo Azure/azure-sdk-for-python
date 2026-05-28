@@ -38,7 +38,7 @@ class TestKustoManagementDatabaseOperations(AzureMgmtRecordedTestCase):
                     "tablesToInclude": ["str"],
                 },
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself

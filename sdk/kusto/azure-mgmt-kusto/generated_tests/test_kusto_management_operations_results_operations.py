@@ -24,7 +24,7 @@ class TestKustoManagementOperationsResultsOperations(AzureMgmtRecordedTestCase):
         response = self.client.operations_results.get(
             location="str",
             operation_id="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself

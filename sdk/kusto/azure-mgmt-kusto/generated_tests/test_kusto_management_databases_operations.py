@@ -25,7 +25,7 @@ class TestKustoManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             resource_name={"name": "str", "type": "str"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestKustoManagementDatabasesOperations(AzureMgmtRecordedTestCase):
         response = self.client.databases.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestKustoManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -90,7 +90,7 @@ class TestKustoManagementDatabasesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -130,7 +130,7 @@ class TestKustoManagementDatabasesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -143,7 +143,7 @@ class TestKustoManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -156,7 +156,7 @@ class TestKustoManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -182,7 +182,7 @@ class TestKustoManagementDatabasesOperations(AzureMgmtRecordedTestCase):
                     }
                 ]
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -208,7 +208,7 @@ class TestKustoManagementDatabasesOperations(AzureMgmtRecordedTestCase):
                     }
                 ]
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself

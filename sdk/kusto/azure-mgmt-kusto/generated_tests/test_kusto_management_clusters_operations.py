@@ -24,7 +24,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -61,6 +61,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "keyVaultProperties": {
+                    "federatedIdentityClientId": "str",
                     "keyName": "str",
                     "keyVaultUri": "str",
                     "keyVersion": "str",
@@ -129,7 +130,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
                 "zoneStatus": "str",
                 "zones": ["str"],
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -163,6 +164,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "keyVaultProperties": {
+                    "federatedIdentityClientId": "str",
                     "keyName": "str",
                     "keyVaultUri": "str",
                     "keyVersion": "str",
@@ -225,7 +227,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
                 "zoneStatus": "str",
                 "zones": ["str"],
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -237,7 +239,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -249,7 +251,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_stop(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -261,7 +263,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_start(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -274,7 +276,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             cluster_migrate_request={"clusterResourceId": "str"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -286,7 +288,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.list_follower_databases_get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -298,7 +300,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.list_follower_databases(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -326,7 +328,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
                     "tablesToInclude": ["str"],
                 },
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -338,7 +340,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_diagnose_virtual_network(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -349,7 +351,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
     def test_clusters_list_by_resource_group(self, resource_group):
         response = self.client.clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -359,7 +361,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_clusters_list(self, resource_group):
         response = self.client.clusters.list(
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -369,7 +371,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_clusters_list_skus(self, resource_group):
         response = self.client.clusters.list_skus(
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -381,7 +383,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.check_name_availability(
             location="str",
             cluster_name={"name": "str", "type": "Microsoft.Kusto/clusters"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -393,7 +395,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.list_skus_by_resource(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -405,7 +407,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.list_outbound_network_dependencies_endpoints(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -423,7 +425,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
                     {"calloutId": "str", "calloutType": "str", "calloutUriRegex": "str", "outboundAccess": "str"}
                 ],
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -436,7 +438,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             callout_policy={"calloutId": "str"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -448,7 +450,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.list_callout_policies(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -460,7 +462,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.list_language_extensions(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -481,7 +483,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
                     }
                 ]
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -502,7 +504,7 @@ class TestKustoManagementClustersOperations(AzureMgmtRecordedTestCase):
                     }
                 ]
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

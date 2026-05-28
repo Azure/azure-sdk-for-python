@@ -25,7 +25,7 @@ class TestKustoManagementManagedPrivateEndpointsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             cluster_name="str",
             resource_name={"name": "str", "type": "Microsoft.Kusto/clusters/managedPrivateEndpoints"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestKustoManagementManagedPrivateEndpointsOperations(AzureMgmtRecordedTest
         response = self.client.managed_private_endpoints.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestKustoManagementManagedPrivateEndpointsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             cluster_name="str",
             managed_private_endpoint_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestKustoManagementManagedPrivateEndpointsOperations(AzureMgmtRecordedTest
                 },
                 "type": "str",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -112,7 +112,7 @@ class TestKustoManagementManagedPrivateEndpointsOperations(AzureMgmtRecordedTest
                 },
                 "type": "str",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -125,7 +125,7 @@ class TestKustoManagementManagedPrivateEndpointsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             cluster_name="str",
             managed_private_endpoint_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

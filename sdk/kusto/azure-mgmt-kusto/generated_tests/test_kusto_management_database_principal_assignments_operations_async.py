@@ -30,7 +30,7 @@ class TestKustoManagementDatabasePrincipalAssignmentsOperationsAsync(AzureMgmtRe
                 "name": "str",
                 "type": "Microsoft.Kusto/clusters/databases/principalAssignments",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestKustoManagementDatabasePrincipalAssignmentsOperationsAsync(AzureMgmtRe
             cluster_name="str",
             database_name="str",
             principal_assignment_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestKustoManagementDatabasePrincipalAssignmentsOperationsAsync(AzureMgmtRe
                     "tenantName": "str",
                     "type": "str",
                 },
-                api_version="2024-04-13",
+                api_version="2025-02-14",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -88,7 +88,7 @@ class TestKustoManagementDatabasePrincipalAssignmentsOperationsAsync(AzureMgmtRe
                 cluster_name="str",
                 database_name="str",
                 principal_assignment_name="str",
-                api_version="2024-04-13",
+                api_version="2025-02-14",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -102,7 +102,7 @@ class TestKustoManagementDatabasePrincipalAssignmentsOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

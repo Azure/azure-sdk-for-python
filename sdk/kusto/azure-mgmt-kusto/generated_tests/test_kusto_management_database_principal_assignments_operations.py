@@ -29,7 +29,7 @@ class TestKustoManagementDatabasePrincipalAssignmentsOperations(AzureMgmtRecorde
                 "name": "str",
                 "type": "Microsoft.Kusto/clusters/databases/principalAssignments",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -43,7 +43,7 @@ class TestKustoManagementDatabasePrincipalAssignmentsOperations(AzureMgmtRecorde
             cluster_name="str",
             database_name="str",
             principal_assignment_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestKustoManagementDatabasePrincipalAssignmentsOperations(AzureMgmtRecorde
                 "tenantName": "str",
                 "type": "str",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -84,7 +84,7 @@ class TestKustoManagementDatabasePrincipalAssignmentsOperations(AzureMgmtRecorde
             cluster_name="str",
             database_name="str",
             principal_assignment_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestKustoManagementDatabasePrincipalAssignmentsOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

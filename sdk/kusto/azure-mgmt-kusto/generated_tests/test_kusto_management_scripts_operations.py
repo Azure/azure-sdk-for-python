@@ -25,7 +25,7 @@ class TestKustoManagementScriptsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestKustoManagementScriptsOperations(AzureMgmtRecordedTestCase):
             cluster_name="str",
             database_name="str",
             script_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -57,6 +57,7 @@ class TestKustoManagementScriptsOperations(AzureMgmtRecordedTestCase):
                 "continueOnErrors": False,
                 "forceUpdateTag": "str",
                 "id": "str",
+                "managedIdentityResourceId": "str",
                 "name": "str",
                 "principalPermissionsAction": "str",
                 "provisioningState": "str",
@@ -74,7 +75,7 @@ class TestKustoManagementScriptsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,6 +93,7 @@ class TestKustoManagementScriptsOperations(AzureMgmtRecordedTestCase):
                 "continueOnErrors": False,
                 "forceUpdateTag": "str",
                 "id": "str",
+                "managedIdentityResourceId": "str",
                 "name": "str",
                 "principalPermissionsAction": "str",
                 "provisioningState": "str",
@@ -109,7 +111,7 @@ class TestKustoManagementScriptsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -123,7 +125,7 @@ class TestKustoManagementScriptsOperations(AzureMgmtRecordedTestCase):
             cluster_name="str",
             database_name="str",
             script_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -137,7 +139,7 @@ class TestKustoManagementScriptsOperations(AzureMgmtRecordedTestCase):
             cluster_name="str",
             database_name="str",
             script_name={"name": "str", "type": "Microsoft.Kusto/clusters/databases/scripts"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself

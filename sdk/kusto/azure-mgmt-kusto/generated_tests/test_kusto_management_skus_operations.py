@@ -23,7 +23,7 @@ class TestKustoManagementSkusOperations(AzureMgmtRecordedTestCase):
     def test_skus_list(self, resource_group):
         response = self.client.skus.list(
             location="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

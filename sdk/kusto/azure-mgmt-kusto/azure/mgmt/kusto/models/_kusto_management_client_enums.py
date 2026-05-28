@@ -202,6 +202,8 @@ class DataConnectionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EVENT_GRID = "EventGrid"
     IOT_HUB = "IotHub"
     COSMOS_DB = "CosmosDb"
+    EVENT_HUB_WITH_MANAGED_IDENTITY = "EventHubWithManagedIdentity"
+    EVENT_GRID_WITH_MANAGED_IDENTITY = "EventGridWithManagedIdentity"
 
 
 class DefaultPrincipalsModificationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -238,6 +240,7 @@ class EventGridDataFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ORC = "ORC"
     APACHEAVRO = "APACHEAVRO"
     W3_CLOGFILE = "W3CLOGFILE"
+    AZMONSTREAM = "AZMONSTREAM"
 
 
 class EventHubDataFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -259,6 +262,7 @@ class EventHubDataFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ORC = "ORC"
     APACHEAVRO = "APACHEAVRO"
     W3_CLOGFILE = "W3CLOGFILE"
+    AZMONSTREAM = "AZMONSTREAM"
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -292,6 +296,14 @@ class IotHubDataFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ORC = "ORC"
     APACHEAVRO = "APACHEAVRO"
     W3_CLOGFILE = "W3CLOGFILE"
+    AZMONSTREAM = "AZMONSTREAM"
+
+
+class IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of issue."""
+
+    UNKNOWN = "Unknown"
+    CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
 
 
 class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -331,6 +343,25 @@ class MigrationClusterRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SOURCE = "Source"
     DESTINATION = "Destination"
+
+
+class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Provisioning state of Network Security Perimeter configuration propagation."""
+
+    ACCEPTED = "Accepted"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    DELETING = "Deleting"
+    CANCELED = "Canceled"
+
+
+class NspAccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Direction of Access Rule."""
+
+    INBOUND = "Inbound"
+    OUTBOUND = "Outbound"
 
 
 class OutboundAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -384,11 +415,13 @@ class PublicIPType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Public network access to the cluster is enabled by default. When disabled, only private
-    endpoint connection to the cluster is allowed.
+    endpoint connections to the cluster are allowed. When 'SecuredByPerimeter', inbound and
+    outbound traffic is controlled by the NSP profile's access rules.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
 
 
 class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -398,6 +431,14 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALREADY_EXISTS = "AlreadyExists"
 
 
+class ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access Mode of the resource association."""
+
+    ENFORCED = "Enforced"
+    LEARNING = "Learning"
+    AUDIT = "Audit"
+
+
 class ScriptLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Differentiates between the type of script commands included - Database or Cluster. The default
     is Database.
@@ -405,6 +446,13 @@ class ScriptLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DATABASE = "Database"
     CLUSTER = "Cluster"
+
+
+class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the issue."""
+
+    WARNING = "Warning"
+    ERROR = "Error"
 
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):

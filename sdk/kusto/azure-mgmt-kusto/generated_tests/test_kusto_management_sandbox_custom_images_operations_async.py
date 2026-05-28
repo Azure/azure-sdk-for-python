@@ -25,7 +25,7 @@ class TestKustoManagementSandboxCustomImagesOperationsAsync(AzureMgmtRecordedTes
         response = self.client.sandbox_custom_images.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestKustoManagementSandboxCustomImagesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             cluster_name="str",
             sandbox_custom_image_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestKustoManagementSandboxCustomImagesOperationsAsync(AzureMgmtRecordedTes
                     "requirementsFileContent": "str",
                     "type": "str",
                 },
-                api_version="2024-04-13",
+                api_version="2025-02-14",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -87,7 +87,7 @@ class TestKustoManagementSandboxCustomImagesOperationsAsync(AzureMgmtRecordedTes
                     "requirementsFileContent": "str",
                     "type": "str",
                 },
-                api_version="2024-04-13",
+                api_version="2025-02-14",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -102,7 +102,7 @@ class TestKustoManagementSandboxCustomImagesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 sandbox_custom_image_name="str",
-                api_version="2024-04-13",
+                api_version="2025-02-14",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -116,7 +116,7 @@ class TestKustoManagementSandboxCustomImagesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             cluster_name="str",
             resource_name={"name": "str", "type": "Microsoft.Kusto/clusters/sandboxCustomImages"},
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself

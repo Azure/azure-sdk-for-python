@@ -25,7 +25,7 @@ class TestKustoManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecordedTe
         response = self.client.private_link_resources.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestKustoManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             cluster_name="str",
             private_link_resource_name="str",
-            api_version="2024-04-13",
+            api_version="2025-02-14",
         )
 
         # please add some check logic here by yourself
