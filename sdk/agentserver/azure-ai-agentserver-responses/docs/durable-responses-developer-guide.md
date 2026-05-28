@@ -124,6 +124,54 @@ matrix is the authoritative reference for "what guarantee applies in my case."
 steering on top of any row above. Recovery composes with steering — see the
 [handler guide's Recovery × Cancellation Composition](handler-implementation-guide.md#recovery--cancellation-composition).
 
+### Steerable conversations: no forking
+
+When `steerable_conversations=True`, each turn after the first must reference
+the previous turn's `response_id` via `previous_response_id`. The framework
+rejects forks with HTTP 409:
+
+```json
+{
+  "error": {
+    "message": "Conversation forking is not supported — previous_response_id must reference the most recent turn.",
+    "type": "conflict",
+    "code": "conversation_fork_not_supported",
+    "param": "previous_response_id"
+  }
+}
+```
+
+This includes both stale-predecessor cases (you sent a `previous_response_id`
+that refers to a turn other than the most recent one) and concurrent races
+(two POSTs arrive together with the same `previous_response_id` — exactly one
+wins; the other gets the 409). There is no soft path through; a steerable
+conversation cannot be branched.
+
+The check is enforced by the core durable layer's input-precondition primitive
+under the hood — see the core `durable-task-developer-guide.md` Input
+Acceptance Preconditions section for the underlying mechanism. From a
+responses-API consumer's perspective: keep `previous_response_id` pointing at
+the latest `response_id` you have seen for this conversation.
+
+### Provider configuration for local-dev recovery testing
+
+Real cross-process recovery requires durable storage that survives subprocess
+restarts. For local development:
+
+- **Durable task store**: use `LocalDurableProvider` (writes JSON under a chosen
+  filesystem path). The default in-memory provider does not survive a restart.
+- **Response store**: use `FileResponseStore(storage_dir=…)` — added in this
+  release. The default `MemoryResponseStore` does not survive a restart, so a
+  recovered handler would always see an empty store and false-positive on the
+  "fresh attempt" path. Use the file store when you want to exercise the
+  idempotent `response.created` swallow on recovery.
+- **Stream event store**: use `FileStreamProvider` (already existed). Same
+  rationale.
+
+All three providers accept a `tmp_path`-style directory. Wire them against the
+same root for a consistent local crash-recovery setup. For production, your
+deployment hosts these stores externally — typically via the Foundry providers.
+
 ## DurabilityContext API
 
 When `durable_background=True`, `context.durability` provides:
@@ -151,6 +199,31 @@ print(f"Attempt #{durability.run_attempt}")
 # Pending inputs (steerable mode only): how many newer turns are queued.
 print(f"{durability.pending_inputs} turns waiting")
 ```
+
+### Conversation chain identity
+
+`ResponseContext.conversation_chain_id: str` (added in this release) exposes
+the framework-computed conversation chain identifier. It's the same value the
+framework uses internally to partition durable tasks. Handlers that wrap a
+stateful upstream framework (Claude SDK, Copilot SDK, LangGraph, …) can use
+this as their upstream session id without allocating their own UUIDs:
+
+```python
+session = await upstream_client.create_or_resume_session(
+    session_id=context.conversation_chain_id,
+)
+```
+
+The value is derived as follows (same rule the framework uses internally):
+
+1. If the request has a `conversation_id`, return it.
+2. Else if `steerable_conversations=True` and the request has a
+   `previous_response_id`, return it (so every turn in a steerable conversation
+   returns the same value).
+3. Else return a deterministic derivative of `response_id` (so first-turn
+   handlers always get a non-None identity).
+
+Stable across all attempts of a given task (fresh, recovered, multiply-recovered).
 
 There is intentionally no `last_snapshot` property. The library only persists
 the response object at `response.created` and at the terminal event — between
@@ -203,6 +276,7 @@ This section adds the configuration / API context.
 - `context.durability.run_attempt > 0`
 - `context.durability.metadata` carrying whatever watermarks you stamped
 - The cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the signal is pre-set with the appropriate `cancellation_reason` on re-entry.
+- The framework guarantees the response object is persisted **exactly once** at the first attempt's `response.created` and **exactly once** at the first attempt that reaches a terminal event. Subsequent attempts' `response.created` and terminal events are deduplicated by the framework keyed on `response_id`; you don't need to do anything special. The SSE event stream is persisted as you emit it (no dedup).
 
 ### What you owe on recovered entry
 

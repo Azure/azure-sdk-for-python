@@ -1274,6 +1274,7 @@ is the naive fallback (see below).
 - Emits `response.in_progress` early in the recovered path (this is the reset).
 - Uses upstream framework's native resume facility (e.g. session resume, checkpoint replay) — never re-runs a side-effecting upstream call without checking a watermark first.
 - Watermarks any upstream side-effecting call by writing a small marker to `durability.metadata` **before** the call and clearing it **after** the call has been durably committed upstream.
+- For upstream-session-id needs: reads `context.conversation_chain_id` — the framework-computed stable identifier for the current conversation chain. Use this as the session id passed to upstream frameworks (Claude `session_id`, Copilot `session_id`, LangGraph `thread_id`) instead of allocating your own UUID. The value is derived from `conversation_id` if present, else `previous_response_id` in steerable mode, else `response_id` — stable across all attempts of a given task. See the [DurabilityContext API](durable-responses-developer-guide.md#durabilitycontext-api) section of the developer guide for the full derivation rule.
 
 ### Default Pattern (recovery-aware)
 
