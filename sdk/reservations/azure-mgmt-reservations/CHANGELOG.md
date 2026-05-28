@@ -1,5 +1,78 @@
 # Release History
 
+## 3.0.0b1 (2026-05-28)
+
+### Features Added
+
+  - Model `CurrentQuotaLimitBase` added property `system_data`
+  - Model `QuotaRequestDetails` added property `properties`
+  - Model `QuotaRequestDetails` added property `system_data`
+  - Model `ReservationOrderResponse` added property `properties`
+  - Model `SkuRestriction` added property `values_property`
+  - Added model `MergeProperties`
+  - Added model `PatchProperties`
+  - Added model `ReservationOrderProperties`
+  - Added model `SplitProperties`
+
+### Breaking Changes
+
+  - Deleted or renamed model `AzureReservationAPI`
+  - Model `MergeRequest` deleted or renamed its instance variable `sources`
+  - Model `Patch` deleted or renamed its instance variable `applied_scope_type`
+  - Model `Patch` deleted or renamed its instance variable `applied_scopes`
+  - Model `Patch` deleted or renamed its instance variable `applied_scope_properties`
+  - Model `Patch` deleted or renamed its instance variable `instance_flexibility`
+  - Model `Patch` deleted or renamed its instance variable `name`
+  - Model `Patch` deleted or renamed its instance variable `renew`
+  - Model `Patch` deleted or renamed its instance variable `renew_properties`
+  - Model `Patch` deleted or renamed its instance variable `review_date_time`
+  - Model `QuotaRequestDetails` deleted or renamed its instance variable `provisioning_state`
+  - Model `QuotaRequestDetails` deleted or renamed its instance variable `message`
+  - Model `QuotaRequestDetails` deleted or renamed its instance variable `request_submit_time`
+  - Model `QuotaRequestDetails` deleted or renamed its instance variable `value`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `display_name`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `request_date_time`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `created_date_time`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `expiry_date`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `expiry_date_time`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `benefit_start_time`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `original_quantity`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `term`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `provisioning_state`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `billing_plan`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `plan_information`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `reservations`
+  - Model `ReservationOrderResponse` deleted or renamed its instance variable `review_date_time`
+  - Model `SkuRestriction` deleted or renamed its instance variable `values`
+  - Model `SplitRequest` deleted or renamed its instance variable `quantities`
+  - Model `SplitRequest` deleted or renamed its instance variable `reservation_id`
+  - Deleted or renamed model `CatalogsResult`
+  - Deleted or renamed model `CreateGenericQuotaRequestParameters`
+  - Deleted or renamed model `CurrentQuotaLimit`
+  - Deleted or renamed model `DisplayProvisioningState`
+  - Deleted or renamed model `Location`
+  - Deleted or renamed model `OperationList`
+  - Deleted or renamed model `QuotaLimits`
+  - Deleted or renamed model `QuotaLimitsResponse`
+  - Deleted or renamed model `QuotaRequestDetailsList`
+  - Deleted or renamed model `QuotaRequestOneResourceSubmitResponse`
+  - Deleted or renamed model `QuotaRequestSubmitResponse`
+  - Deleted or renamed model `QuotaRequestSubmitResponse201`
+  - Deleted or renamed model `RefundResponse`
+  - Deleted or renamed model `ReservationList`
+  - Deleted or renamed model `ReservationOrderList`
+  - Deleted or renamed model `UserFriendlyAppliedScopeType`
+  - Deleted or renamed model `UserFriendlyRenewState`
+  - Method `QuotaRequestStatusOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOperations.list_all` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOperations.list_all` changed its parameter `refresh_summary` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOperations.list_all` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOperations.list_all` changed its parameter `selected_state` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOperations.list_all` changed its parameter `take` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOrderOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed model `AzureReservationAPIOperationsMixin`
+
 ## 2.3.0 (2023-03-20)
 
 ### Features Added
