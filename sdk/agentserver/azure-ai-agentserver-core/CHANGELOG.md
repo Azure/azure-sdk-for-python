@@ -2,6 +2,15 @@
 
 ## 2.0.0b4 (Unreleased)
 
+### Bugs Fixed
+
+- **Input data cleared at suspend for steerable tasks** (privacy / data minimization). The framework now clears `payload["input"]`, `_steering["active_input"]`, and `_steering["previous_input"]` at the suspend transition. These hold mirror copies of consumed user input that is no longer needed once the handler returns. Recovery transitions still preserve these slots because the handler will re-run with them; completion transitions are unaffected (terminal entries are deleted via `ephemeral=True` or retained via `ephemeral=False` by operator choice). See `docs/durable-task-developer-guide.md` §"Data Retention on Suspend".
+- **Suspended-resume input patch is now etag-protected**. Concurrent resumes of the same suspended task race safely under the standard etag retry loop instead of silently overwriting each other.
+
+### Other Changes
+
+- **Removed dead `_steering["generation_results"]` write block in `_try_drain_steering`.** The field was added as forward-compat scaffolding for durable backup of superseded-result delivery but had no consumer anywhere in the codebase. The in-process superseded-result delivery via `TaskResult(output=…, status="superseded")` is unchanged. If durable replay of superseded results becomes a requirement in the future, restore the write here with a corresponding recovery-side read path.
+
 ### Features Added
 
 - **Durable long-running agents** — New `@task` decorator and supporting types for building crash-resilient, long-running agents that survive container crashes, OOM kills, and redeployments. Key capabilities:

@@ -726,16 +726,38 @@ class Task(Generic[Input, Output]):
             )
 
         if existing.status == "suspended":
-            # Resume — patch input onto task, then start
+            # Resume — patch input onto task, then start.
+            # (Spec 013 US4) Etag-protected retry loop so concurrent
+            # suspended-resume POSTs race safely instead of silently
+            # overwriting each other.
             serialized = _serialize_input(input)
             from ._models import (  # pylint: disable=import-outside-toplevel
                 TaskPatchRequest,
             )
 
-            await manager.provider.update(
-                task_id,
-                TaskPatchRequest(payload={"input": serialized}),
-            )
+            max_resume_retries = 5
+            current_info = existing
+            for _attempt in range(max_resume_retries):
+                etag = getattr(current_info, "etag", None) or None
+                try:
+                    await manager.provider.update(
+                        task_id,
+                        TaskPatchRequest(payload={"input": serialized}, if_match=etag),
+                    )
+                    break
+                except ValueError:
+                    # Etag conflict — re-fetch and retry.
+                    refreshed = await manager.provider.get(task_id)
+                    if refreshed is None:
+                        raise RuntimeError(
+                            f"Task {task_id!r} disappeared during suspended-resume retry"
+                        )
+                    current_info = refreshed
+            else:
+                raise RuntimeError(
+                    f"Failed to apply suspended-resume input patch after "
+                    f"{max_resume_retries} retries (task {task_id!r})"
+                )
             # Re-fetch after input patch
             updated_info = await manager.provider.get(task_id)
             if updated_info is None:

@@ -1317,7 +1317,14 @@ class TaskManager:
         :keyword ctx: Current task context.
         :keyword opts: Task options.
         :keyword result_future: The current generation's result future.
-        :keyword partial_output: Output from the completed generation (for race recovery).
+        :keyword partial_output: Output from the previously-running generation,
+            delivered in-process via ``TaskResult(output=..., status="superseded")``
+            to whoever was awaiting the steered-out turn's result_future
+            (see ``_manager.py`` line ~1386). NOT durably persisted — if the
+            process crashes between completion and delivery, this output is
+            lost. (Spec 013 US4 scenario 11: the previously-existing durable
+            backup write at ``_steering["generation_results"]`` was removed
+            because no consumer existed.)
         :return: New context for the drained generation, or None.
         """
         task_info = await self._provider.get(task_id)
@@ -1345,11 +1352,15 @@ class TaskManager:
         steering["cancel_requested"] = len(pending) > 0
         steering["drain_in_progress"] = True
 
-        # Save partial output if function completed (race recovery)
-        if partial_output is not None:
-            gen_results = dict(steering.get("generation_results", {}))
-            gen_results[str(old_generation)] = _serialize_input(partial_output)
-            steering["generation_results"] = gen_results
+        # (Spec 013 US4 scenario 11) Previously this site captured handler output
+        # into `_steering["generation_results"]` as forward-compat durable backup
+        # for in-process superseded-result delivery (see `_manager.py:1386`
+        # `TaskResult(output=partial_output, status="superseded")`). Removed
+        # because no consumer existed anywhere in the codebase — `partial_output`
+        # is consumed at line 1386 for in-process delivery only. If durable
+        # replay of superseded results becomes a requirement in the future,
+        # restore the write here with a corresponding recovery-side read path
+        # that pumps stored output into the in-memory result_futures.
 
         payload["_steering"] = steering
 
@@ -1594,6 +1605,18 @@ class TaskManager:
     ) -> None:
         """Handle task suspension.
 
+        Per spec 013 US4: clears the three input-bearing payload slots at the
+        suspend transition — ``payload["input"]``, ``_steering["active_input"]``,
+        and ``_steering["previous_input"]``. These hold mirror copies of the
+        consumed input that are no longer needed once the handler returns.
+        ``_steering`` mechanism state (``generation``, ``cancel_requested``,
+        ``drain_in_progress``, ``pending_inputs``) is preserved.
+
+        Safe with respect to the race-recovery contract: that contract only
+        consumes ``active_input``/``previous_input`` when ``drain_in_progress``
+        is True, which is impossible at suspend by construction (drain check
+        runs first; if pending was non-empty the task would drain, not suspend).
+
         :keyword task_id: The task identifier.
         :paramtype task_id: str
         :keyword reason: Optional suspension reason.
@@ -1605,9 +1628,23 @@ class TaskManager:
         :keyword opts: The task options.
         :paramtype opts: TaskOptions
         """
+        # Read current payload so we can clear input-bearing slots while
+        # preserving _steering mechanism state (Spec 013 US4 scenarios 1, 2).
+        task_info = await self._provider.get(task_id)
+        steering_patch: dict[str, Any] = {}
+        if task_info is not None and task_info.payload:
+            existing_steering = task_info.payload.get("_steering") or {}
+            if existing_steering:
+                steering_patch = dict(existing_steering)
+                steering_patch["active_input"] = None
+                steering_patch["previous_input"] = None
+
         payload_patch: dict[str, Any] = {
             "metadata": metadata.to_dict(),
+            "input": None,
         }
+        if steering_patch:
+            payload_patch["_steering"] = steering_patch
         if output is not None:
             payload_patch["output"] = _serialize_input(output)
 

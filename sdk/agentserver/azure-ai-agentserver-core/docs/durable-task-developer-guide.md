@@ -929,6 +929,54 @@ Additionally, a subsequent `.run()` / `.start()` call with the same `task_id`
 will detect the stale task and recover it. Any work done *outside* the function
 (e.g., in an HTTP handler, in an `asyncio.create_task` callback) is lost.
 
+### Data Retention on Suspend
+
+For steerable tasks that suspend between turns (the common multi-turn
+conversational pattern), the framework clears consumed input data at the
+suspend transition. Specifically:
+
+- `payload["input"]` is set to `None`.
+- `payload["_steering"]["active_input"]` is set to `None`.
+- `payload["_steering"]["previous_input"]` is set to `None`.
+
+These three fields hold mirror copies of the input value the handler just
+finished processing. After the handler returns, that input is no longer
+needed — keeping it would mean user content (typically the user's message
+text) sits in the durable store indefinitely between turns. Clearing it at
+the suspend transition closes that data-minimization gap.
+
+**What is preserved across suspend**:
+
+- `payload["metadata"]` — your handler-managed key-value bag.
+- `payload["_steering"]["generation"]`, `["cancel_requested"]`, `["drain_in_progress"]` — mechanism state.
+- All other top-level payload keys (including any framework-reserved namespaces).
+
+**Other transitions are unaffected**:
+
+- **Recovery** (`entry_mode == "recovered"`): all three input slots are preserved because the handler will re-run with them. In the mid-drain recovery case specifically, `_steering["active_input"]` and `_steering["previous_input"]` are the documented race-recovery state.
+- **Completed (terminal)**: no field-level clearing. If your task is decorated with `ephemeral=True` (the default), the entire task entry is deleted on completion. If `ephemeral=False`, the entry stays as-is for operator inspection — the operator has chosen retention; the framework does not second-guess.
+
+**Practical consequence**: if your handler needs the input value for a
+post-suspend audit hook or similar, copy a sanitised projection into
+`metadata` before returning from the handler:
+
+```python
+@task(steerable=True)
+async def chat(ctx: TaskContext[dict]) -> dict:
+    ctx.metadata["audit.last_input_summary"] = _summarise(ctx.input)
+    return await ctx.suspend(reason="awaiting_next_turn")
+```
+
+`metadata` is preserved across the suspend; the cleared input slots are not.
+
+### Suspended-Resume Atomicity
+
+When a new turn arrives for a suspended task, the framework patches the new
+input back into `payload["input"]` atomically. The patch is etag-protected, so
+concurrent suspended-resume calls race safely — exactly one wins, the others
+retry. (Prior to this contract, concurrent resumes could silently overwrite
+each other; that has been fixed.)
+
 ---
 
 ## The Invocation Store Pattern
