@@ -1066,11 +1066,15 @@ class TestApplyToolDescriptions:
 
     def test_does_not_patch_input_model_param_descriptions(self):
         """Tool docs are patched, but input_model parameter descriptions are left unchanged."""
-        from pydantic import BaseModel, Field  # pylint: disable=import-outside-toplevel
+        class _FieldDef:
+            def __init__(self, description: str):
+                self.description = description
 
-        class SearchFlightsInput(BaseModel):
-            destination: str = Field(description="Old dest description")
-            date: str = Field(description="Old date description")
+        class SearchFlightsInput:
+            model_fields = {
+                "destination": _FieldDef("Old dest description"),
+                "date": _FieldDef("Old date description"),
+            }
 
         def search_flights(destination: str, date: str):
             """Search."""
@@ -1106,10 +1110,12 @@ class TestApplyToolDescriptions:
 
     def test_skips_unknown_params_in_input_model(self):
         """Parameters not in model_fields are silently ignored."""
-        from pydantic import BaseModel, Field  # pylint: disable=import-outside-toplevel
+        class _FieldDef:
+            def __init__(self, description: str):
+                self.description = description
 
-        class MyToolInput(BaseModel):
-            known: str = Field(description="Known param")
+        class MyToolInput:
+            model_fields = {"known": _FieldDef("Known param")}
 
         def my_tool():
             """Doc."""
@@ -1127,10 +1133,12 @@ class TestApplyToolDescriptions:
 
     def test_no_rebuild_when_no_params_patched(self):
         """model_rebuild is NOT called if no parameters were actually patched."""
-        from pydantic import BaseModel, Field  # pylint: disable=import-outside-toplevel
+        class _FieldDef:
+            def __init__(self, description: str):
+                self.description = description
 
-        class MyToolInput(BaseModel):
-            x: str = Field(description="X")
+        class MyToolInput:
+            model_fields = {"x": _FieldDef("X")}
 
         def my_tool():
             """Doc."""

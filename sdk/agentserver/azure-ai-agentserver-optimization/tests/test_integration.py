@@ -351,11 +351,15 @@ class TestApplyToolDescriptionsEndToEnd:
 
     def test_parameter_patching_e2e(self, monkeypatch):
         """Full flow: env config → apply → verify input_model descriptions are unchanged."""
-        from pydantic import BaseModel, Field  # pylint: disable=import-outside-toplevel
+        class _FieldDef:
+            def __init__(self, description: str):
+                self.description = description
 
-        class SearchFlightsInput(BaseModel):
-            destination: str = Field(description="Original dest")
-            date: str = Field(description="Original date")
+        class SearchFlightsInput:
+            model_fields = {
+                "destination": _FieldDef("Original dest"),
+                "date": _FieldDef("Original date"),
+            }
 
         cfg = {
             "instructions": "Agent.",
