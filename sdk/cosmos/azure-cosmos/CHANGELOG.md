@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.16.0b3 (Unreleased)
+### 4.16.0 (2026-05-29)
 
 #### Features Added
 * Added **preview** support for the optional `embeddingSource` field on entries in `vector_embedding_policy.vectorEmbeddings`, which allows the service to generate vector embeddings from the specified item paths. Requires the embedding-generation service to be enabled on the account. See [46870](https://github.com/Azure/azure-sdk-for-python/pull/46870)
