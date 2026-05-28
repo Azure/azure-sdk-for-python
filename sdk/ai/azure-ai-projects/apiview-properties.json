@@ -127,7 +127,7 @@
         "azure.ai.projects.models.DeleteMemoryResult": "Azure.AI.Projects.DeleteMemoryResponse",
         "azure.ai.projects.models.DeleteMemoryStoreResult": "Azure.AI.Projects.DeleteMemoryStoreResponse",
         "azure.ai.projects.models.DeleteSkillResult": "Azure.AI.Projects.DeleteSkillResponse",
-        "azure.ai.projects.models.DeleteSkillVersionResponse": "Azure.AI.Projects.DeleteSkillVersionResponse",
+        "azure.ai.projects.models.DeleteSkillVersionResult": "Azure.AI.Projects.DeleteSkillVersionResponse",
         "azure.ai.projects.models.Deployment": "Azure.AI.Projects.Deployment",
         "azure.ai.projects.models.Dimension": "Azure.AI.Projects.Dimension",
         "azure.ai.projects.models.DispatchRoutineResult": "Azure.AI.Projects.DispatchRoutineResponse",
@@ -475,5 +475,5 @@
         "azure.ai.projects.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion",
         "azure.ai.projects.aio.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion"
     },
-    "CrossLanguageVersion": "19d141e20299"
+    "CrossLanguageVersion": "e06669bf0882"
 }
