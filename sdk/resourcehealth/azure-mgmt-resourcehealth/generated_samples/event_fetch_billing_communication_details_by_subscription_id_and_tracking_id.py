@@ -15,7 +15,7 @@ from azure.mgmt.resourcehealth import ResourceHealthMgmtClient
     pip install azure-identity
     pip install azure-mgmt-resourcehealth
 # USAGE
-    python event_get_by_tenant_id_and_tracking_id.py
+    python event_fetch_billing_communication_details_by_subscription_id_and_tracking_id.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.event.get_by_tenant_id_and_tracking_id(
+    response = client.event.fetch_billling_communication_details_by_subscription_id_and_tracking_id(
         event_tracking_id="eventTrackingId",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/Event_GetByTenantIdAndTrackingId.json
+# x-ms-original-file: 2025-05-01/Event_fetchBillingCommunicationDetailsBySubscriptionIdAndTrackingId.json
 if __name__ == "__main__":
     main()
