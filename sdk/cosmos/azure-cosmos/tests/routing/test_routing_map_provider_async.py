@@ -3,6 +3,8 @@
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import unittest
+from typing import Optional, Mapping, Any
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -13,8 +15,6 @@ from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvid
 from azure.cosmos._routing.aio.routing_map_provider import PartitionKeyRangeCache
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
-from typing import Optional, Mapping, Any
-from unittest.mock import MagicMock
 
 
 @pytest.mark.cosmosEmulator
@@ -770,21 +770,12 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         Verifies that coroutines don't corrupt the cache and all get a valid result.
         """
-        # The cache uses a small per-collection lock to make sure that even
-        # under concurrent `force_refresh=True` storms (e.g. lots of 410
-        # responses arriving at once), the cache state stays consistent and
-        # no caller gets back garbage.
-        #
-        # We do not assert that exactly one fetch happens — the production
-        # code allows the first refresh to populate, and subsequent contending
-        # refreshes may either skip (if they see the new ETag) or proceed.
-        # The contract this test pins down is the weaker but essential one:
-        # nothing crashes, nothing corrupts, and every caller gets back a
-        # valid routing map.
+        # The cache uses a per-collection lock to serialise concurrent
+        # `force_refresh=True` callers. The contract we pin down here is
+        # the weak one: no caller raises, every caller gets a valid map.
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
-        # A gate so we can force contention: refreshes will all pile up
-        # waiting here, then we open the gate and let them race.
+        # Gate the mock so refreshes stack up before we let them run.
         fetch_event = asyncio.Event()
 
         class SlowCountingClient:
@@ -838,19 +829,10 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         The cache entry is atomically replaced, never deleted.
         """
-        # Important property for fast-path readers: the cache slot is
-        # ALWAYS either the old map or the new map — it is never
-        # transiently set to None while a refresh is in flight.
-        #
-        # If the refresh code did `del cache[key]; cache[key] = new_map`,
-        # there would be a window where a concurrent fast-path reader could
-        # observe `None` and incorrectly conclude the cache is cold, which
-        # would trigger a redundant fetch storm. The fix uses atomic
-        # replacement, so readers always see a valid map.
-        #
-        # We verify this by spinning a reader coroutine that polls the
-        # cache slot continuously while a refresh runs, and asserting it
-        # never once observed None.
+        # A fast-path reader must never observe `None` in the cache slot
+        # while a refresh is in flight, otherwise it would assume the cache
+        # is cold and trigger a redundant fetch. The refresh code uses
+        # atomic assignment, never delete-then-reinsert.
         original_ranges = self.partition_key_ranges
         call_count = {'count': 0}
 
@@ -915,26 +897,16 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         task runs independently of the caller, owns the cache assignment, and
         completes successfully so the cache ends up populated.
         """
-        # The bug this test pins down: in the old code, the routing-map fetch
-        # ran on the customer's call stack. If the customer wrapped their call
-        # in `asyncio.wait_for(..., timeout=2)` and the timeout fired mid-fetch,
-        # the CancelledError tore down the fetch, skipped the cache-write line
-        # that lived right after the `await`, and the cache stayed empty. Every
-        # retry repeated the same doomed sequence.
-        #
-        # The fix: move the fetch + cache-write into a shared task per
-        # collection, and have callers wait on it through `asyncio.shield`. Now
-        # when the caller is cancelled, only the *waiter* unwinds — the task
-        # itself keeps running on the event loop, finishes the fetch, and
-        # writes the result into the cache before returning.
-        #
-        # This test reproduces the cancellation, then verifies the cache *does*
-        # get populated once the gated fetch completes — even though nobody is
-        # awaiting it anymore.
+        # Before the fix, the fetch ran on the customer's call stack. A
+        # cancellation mid-fetch tore down the fetch and skipped the
+        # cache write, so every retry repeated the same doomed sequence.
+        # The fix moves the fetch into a shared task per collection and
+        # waits on it through `asyncio.shield`, so cancellation only
+        # unwinds the waiter -- the task keeps running and writes the
+        # result into the cache.
         original_ranges = self.partition_key_ranges
-        # A gate we control: the fetch will block here until we set the event.
-        # This lets us guarantee the fetch is still in flight at the moment
-        # the customer's deadline fires.
+        # Gate the mock so we can guarantee the fetch is still in flight
+        # at the moment the customer's deadline fires.
         fetch_gate = asyncio.Event()
         call_count = {'count': 0}
 
@@ -1193,23 +1165,10 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_waiter_joining_after_originator_cancelled_gets_result_async(self):
         """A waiter that joins after the originating caller is cancelled still receives the fetched map."""
-        # The trickiest property of the shared-task fix: the originating caller
-        # (the one who created the in-flight task) can be cancelled at any
-        # point, but a *later* caller arriving while the fetch is still
-        # running must successfully join that same task and receive its
-        # result. The cancellation of the originator can't take the task
-        # down with it (that's what `asyncio.shield` guarantees).
-        #
-        # Scenario walked through:
-        #   1. Originator starts → registers the in-flight task → parks.
-        #   2. Originator is cancelled before the fetch can finish.
-        #   3. A NEW caller (the "waiter") arrives. The fetch is still
-        #      running on the loop. The waiter finds the task in the
-        #      in-flight dict and awaits it.
-        #   4. We open the fetch gate. The task completes successfully.
-        #   5. The waiter wakes up with the routing map.
-        #
-        # The mock must show ONE call total — the waiter joined, didn't
+        # The originator can be cancelled, but a later caller that arrives
+        # while the fetch is still in flight must find the same task in
+        # the in-flight dict, await it, and receive the result. The mock
+        # must record exactly ONE call -- the waiter joined, it did not
         # start a fresh fetch.
         original_ranges = self.partition_key_ranges
         fetch_gate = asyncio.Event()
@@ -1235,22 +1194,14 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         originator = asyncio.create_task(
             provider.get_routing_map(collection_link, feed_options={})
         )
-        # Poll for the originator to enter the slow path and register the
-        # in-flight task. Polling is more robust than ``sleep(0) × N``
-        # because it captures the actual condition we care about, not a
-        # guess at how many event-loop ticks the registration path happens
-        # to need today. Without this, a future ``await`` added anywhere
-        # on the registration path could leave the originator un-registered
-        # when ``cancel()`` fires below — the waiter would then start its
-        # own fresh fetch and ``call_count`` would still end at 1, making
-        # this test silently pass for the wrong reason.
+        # Poll for the in-flight task to be registered before we cancel
+        # the originator. Polling on the condition itself avoids any
+        # assumption about how many event-loop ticks the registration
+        # path needs.
         for _ in range(100):
             if provider._inflight_fetches:  # pylint: disable=protected-access
                 break
             await asyncio.sleep(0.01)
-        # Loud failure if registration never happened — otherwise the
-        # test would silently pass without ever exercising the join path
-        # it is trying to validate.
         self.assertTrue(
             provider._inflight_fetches,  # pylint: disable=protected-access
             "Originator should have registered an in-flight task before cancellation",
@@ -1288,19 +1239,9 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_failed_fetch_clears_inflight_slot_so_next_caller_retries_async(self):
         """When a fetch fails, the in-flight slot is freed and the next caller can retry."""
-        # The shared-task fix relies on the `finally` block inside the fetch
-        # task to remove its entry from the in-flight dict — REGARDLESS of
-        # whether the fetch succeeded or raised. If a failed fetch left a
-        # dead task in the dict, the next caller would find that dead task
-        # and await it forever (or get back the same stale exception).
-        #
-        # This test simulates the failure case:
-        #   1. First fetch raises CosmosHttpResponseError (simulated 500).
-        #   2. The caller sees the exception propagate out — expected.
-        #   3. The in-flight dict slot must be EMPTY now, so a fresh attempt
-        #      can be registered.
-        #   4. A second caller arrives, finds an empty slot, registers a
-        #      brand-new fetch, and that one succeeds.
+        # The `finally` block in `_fetch_and_publish` must pop the slot
+        # whether the fetch succeeded or raised. Otherwise the next caller
+        # would find a dead task in the dict and await it forever.
         original_ranges = self.partition_key_ranges
         call_count = {'count': 0}
 
@@ -1350,12 +1291,9 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_inflight_slot_freed_after_successful_fetch_async(self):
         """The in-flight slot must be empty after a successful fetch completes."""
-        # The companion to the previous test: cleanup must also happen on
-        # the SUCCESS path. If it only happened on failure, every successful
-        # fetch would leave a stale `done` task in the in-flight dict, and
-        # the dict would grow unbounded over the lifetime of the client.
-        #
-        # We do exactly one successful fetch, then check the dict is empty.
+        # Companion to the previous test: cleanup must also happen on the
+        # success path, otherwise the dict would grow over the lifetime
+        # of the client.
         provider = PartitionKeyRangeCache(
             TestRoutingMapProviderAsync.MockedCosmosClientConnection(self.partition_key_ranges)
         )
@@ -1373,13 +1311,10 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
     async def test_cold_cache_caller_joins_incremental_refresh_in_flight_async(self):
         """A cold-cache caller should join an in-flight incremental refresh.
 
-        Symmetric counterpart to
-        ``test_force_refresh_caller_joins_cold_cache_fetch_async``: there the
-        first caller drove a full load and a force-refresh caller joined. Here
-        the first caller drives an *incremental* refresh and a cold-cache
-        caller (no force_refresh, no previous_routing_map) joins. The
-        in-flight key is per-collection — not per-refresh-mode — so callers
-        of either shape must coalesce onto the single task.
+        The in-flight key is per-collection, not per-refresh-mode, so a
+        cold-cache caller (no force_refresh, no previous_routing_map)
+        must coalesce onto an in-flight incremental refresh task instead
+        of starting its own fetch.
         """
         original_ranges = self.partition_key_ranges
         # Mock a topology delta so we can tell the incremental refresh result
@@ -1581,8 +1516,9 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_customer_timeout_reaches_pipeline_with_opt_in_async(self):
         """When ``read_feed_ranges`` sets ``_honor_customer_timeout=True``
-        the customer's ``timeout`` must reach the pipeline unchanged, and
-        the internal sentinel must NOT escape onto the wire.
+        the customer's ``timeout`` / ``read_timeout`` / ``connection_timeout``
+        must all reach the pipeline unchanged, and the internal sentinel
+        must NOT escape onto the wire.
         """
         seen_kwargs = {}
 
@@ -1602,20 +1538,28 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         provider = PartitionKeyRangeCache(CapturingClient())
         await provider.get_routing_map(
             "dbs/db/colls/container", feed_options={},
-            timeout=7, _honor_customer_timeout=True,
+            timeout=7, read_timeout=5, connection_timeout=3,
+            _honor_customer_timeout=True,
         )
 
         self.assertEqual(seen_kwargs.get("timeout"), 7,
                          "Opt-in caller's timeout must reach the pipeline")
+        self.assertEqual(seen_kwargs.get("read_timeout"), 5,
+                         "Opt-in caller's read_timeout must reach the pipeline")
+        self.assertEqual(seen_kwargs.get("connection_timeout"), 3,
+                         "Opt-in caller's connection_timeout must reach the pipeline")
         self.assertNotIn(
             "_honor_customer_timeout", seen_kwargs,
             "Internal sentinel must never reach the pipeline / wire",
         )
 
     async def test_customer_timeout_stripped_without_opt_in_async(self):
-        """Without the sentinel, customer ``timeout`` must be stripped by
-        the cache layer to protect the internal metadata fetch from a
-        data-operation deadline.
+        """Without the sentinel, customer ``timeout`` / ``read_timeout`` /
+        ``connection_timeout`` must all be stripped by the cache layer to
+        protect the internal metadata fetch from a data-operation
+        deadline. Stripping all three uniformly prevents an aggressively
+        short ``connection_timeout`` on a data call from gating an
+        internal metadata fetch on TCP connect.
         """
         seen_kwargs = {}
 
@@ -1635,16 +1579,135 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         provider = PartitionKeyRangeCache(CapturingClient())
         await provider.get_routing_map(
             "dbs/db/colls/container", feed_options={},
-            timeout=7,
+            timeout=7, read_timeout=5, connection_timeout=3,
         )
 
         self.assertNotIn(
             "timeout", seen_kwargs,
             "Default path must strip customer timeout to protect the metadata fetch",
         )
+        self.assertNotIn(
+            "read_timeout", seen_kwargs,
+            "Default path must strip customer read_timeout to protect the metadata fetch",
+        )
+        self.assertNotIn(
+            "connection_timeout", seen_kwargs,
+            "Default path must strip customer connection_timeout to protect the metadata fetch",
+        )
+
+    async def test_coalesced_fetch_keeps_originator_default_timeout_posture_async(self):
+        """A timeout-opt-in joiner cannot retrofit timeout kwargs onto an in-flight
+        fetch started by a default-path originator.
+        """
+        seen_kwargs = {}
+        call_count = {"n": 0}
+        gate = asyncio.Event()
+
+        class SlowCapturingClient:
+            url_connection = "https://mock-async-timeout-coalesce-default.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count["n"] += 1
+                seen_kwargs.update(kwargs)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"e"')
+
+                async def _gen():
+                    await gate.wait()
+                    for r in TestRoutingMapProviderAsync._sample_ranges():
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowCapturingClient())
+        collection_link = "dbs/db/colls/container"
+
+        originator = asyncio.create_task(
+            provider.get_routing_map(collection_link, feed_options={})
+        )
+        await self._wait_for_inflight_slot(provider, collection_link)
+        joiner = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link,
+                feed_options={},
+                timeout=7,
+                read_timeout=5,
+                connection_timeout=3,
+                _honor_customer_timeout=True,
+            )
+        )
+        await asyncio.sleep(0)
+        gate.set()
+        result_originator, result_joiner = await asyncio.gather(originator, joiner)
+
+        self.assertEqual(call_count["n"], 1, "Joiner should share originator fetch, not create a second call")
+        self.assertIs(result_originator, result_joiner)
+        self.assertNotIn("timeout", seen_kwargs, "Originator default posture should strip timeout on shared fetch")
+        self.assertNotIn("read_timeout", seen_kwargs, "Originator default posture should strip read_timeout")
+        self.assertNotIn("connection_timeout", seen_kwargs, "Originator default posture should strip connection_timeout")
+
+    async def test_coalesced_fetch_keeps_originator_opt_in_timeout_posture_async(self):
+        """A joiner with different timeout kwargs cannot override an in-flight
+        timeout-opted-in originator fetch.
+        """
+        seen_kwargs = {}
+        call_count = {"n": 0}
+        gate = asyncio.Event()
+
+        class SlowCapturingClient:
+            url_connection = "https://mock-async-timeout-coalesce-optin.documents.azure.com:443/"
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                call_count["n"] += 1
+                seen_kwargs.update(kwargs)
+                TestRoutingMapProviderAsync._capture_internal_headers(kwargs, '"e"')
+
+                async def _gen():
+                    await gate.wait()
+                    for r in TestRoutingMapProviderAsync._sample_ranges():
+                        yield r
+
+                return _gen()
+
+        provider = PartitionKeyRangeCache(SlowCapturingClient())
+        collection_link = "dbs/db/colls/container"
+
+        originator = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link,
+                feed_options={},
+                timeout=7,
+                read_timeout=5,
+                connection_timeout=3,
+                _honor_customer_timeout=True,
+            )
+        )
+        await self._wait_for_inflight_slot(provider, collection_link)
+        joiner = asyncio.create_task(
+            provider.get_routing_map(
+                collection_link,
+                feed_options={},
+                timeout=1,
+                read_timeout=1,
+                connection_timeout=1,
+                _honor_customer_timeout=True,
+            )
+        )
+        await asyncio.sleep(0)
+        gate.set()
+        result_originator, result_joiner = await asyncio.gather(originator, joiner)
+
+        self.assertEqual(call_count["n"], 1, "Joiner should share originator fetch, not create a second call")
+        self.assertIs(result_originator, result_joiner)
+        self.assertEqual(seen_kwargs.get("timeout"), 7, "Originator timeout should govern the shared fetch")
+        self.assertEqual(seen_kwargs.get("read_timeout"), 5, "Originator read_timeout should govern shared fetch")
+        self.assertEqual(
+            seen_kwargs.get("connection_timeout"),
+            3,
+            "Originator connection_timeout should govern shared fetch",
+        )
 
     # ---------------------------------------------------------------
-    # Fix #4: coalesced fetch exceptions must not produce noisy GC logs
+    # Coalesced fetch exceptions must not produce noisy GC logs
     # ---------------------------------------------------------------
 
     async def test_coalesced_fetch_exception_is_retrieved_after_awaiter_cancel(self):
@@ -1704,7 +1767,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         _consume_task_exception(cancelled_task)  # must not raise
 
     # ---------------------------------------------------------------
-    # Fix #5: release() at refcount==0 cancels still-running in-flight tasks
+    # release() at refcount==0 cancels still-running in-flight tasks
     # ---------------------------------------------------------------
 
     async def test_release_cancels_inflight_tasks_at_refcount_zero(self):

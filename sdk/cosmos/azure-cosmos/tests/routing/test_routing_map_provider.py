@@ -752,25 +752,16 @@ class TestRoutingMapProvider(unittest.TestCase):
         Subsequent threads see the updated ETag and skip the redundant fetch.
         """
 
-        # Sync mirror of the async concurrent-refresh test. On sync, the
-        # cache uses a `threading.Lock` (not an asyncio Lock) to serialise
-        # concurrent refreshes — this is the same lock that prevents the
-        # gateway-side stampede where every cold-cache caller would fire
-        # its own concurrent fetch.
-        #
-        # Even if 5 threads all decide to `force_refresh` at the same moment,
-        # the lock makes sure they take turns, and the double-checked ETag
-        # logic short-circuits the second-through-fifth threads once the
-        # first one has already done the refresh.
-        #
-        # The test forces all this contention by gating the mock client with
-        # a `threading.Event`, then releases the gate and verifies that
-        # every thread came out the other side with a valid result and no
-        # exceptions.
+        # Sync mirror of the async concurrent-refresh test. The sync
+        # cache uses a `threading.Lock` to serialise concurrent refreshes;
+        # the double-checked ETag short-circuits the second-through-Nth
+        # threads once the first one has refreshed. The contract we pin
+        # down is the weak one: no thread raises, every thread gets a
+        # valid map.
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
-        # A threading.Event so we can pin the mock client mid-fetch while
-        # the contention builds up, then release them all at once.
+        # Gate the mock so threads stack up on the lock before we let
+        # them run.
         fetch_event = threading.Event()
 
         class SlowCountingClient:
@@ -832,28 +823,20 @@ class TestRoutingMapProvider(unittest.TestCase):
         that concurrent readers always see either the old valid map or the new valid map.
         """
 
-        # Sync mirror of the async "cache never None" test. Same property
-        # applies: a concurrent reader (running on its own thread, hitting
-        # the cache fast path) must never observe None while a refresher
-        # thread is replacing the map. The implementation must use atomic
-        # dict assignment (`cache[key] = new_map`), never delete-then-
-        # reinsert.
-        #
-        # If a reader ever did see None, it would conclude the cache was
-        # cold and trigger its own fetch — a needless extra HTTP request,
-        # multiplied by however many readers happened to look at the wrong
-        # microsecond. Across many readers under load this would compound
-        # into the same kind of stampede the lock was added to prevent.
+        # Sync mirror of the async "cache never None" test. A concurrent
+        # reader on its own thread (hitting the cache fast path) must
+        # never observe None while a refresher is replacing the map. The
+        # implementation must use atomic dict assignment, never
+        # delete-then-reinsert -- otherwise readers would think the cache
+        # is cold and trigger redundant fetches.
         original_ranges = self.partition_key_ranges
         call_count = {'count': 0}
 
         class SlowClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count['count'] += 1
-                # Artificial 100 ms delay so the refresher is provably mid-
-                # flight while the reader is polling — without it, the
-                # refresh might complete before the reader observes even
-                # one read.
+                # 100 ms delay so the refresher is still in flight while
+                # the reader is polling.
                 time.sleep(0.1)  # Simulate network delay
                 TestRoutingMapProvider._capture_internal_headers(kwargs, f'"etag-{call_count["count"]}"')
                 return original_ranges
@@ -906,9 +889,14 @@ class TestRoutingMapProvider(unittest.TestCase):
     # ---------------------------------------------------------------
 
     def test_prepare_fetch_strips_customer_timeout_by_default(self):
-        """Without the opt-in sentinel, ``timeout`` / ``read_timeout`` are
-        stripped so a customer's data-operation deadline cannot bound the
-        internal routing-map fetch and leave the cache empty or stale.
+        """Without the opt-in sentinel, ``timeout`` / ``read_timeout`` /
+        ``connection_timeout`` are all stripped so a customer's
+        data-operation deadline cannot bound the internal routing-map
+        fetch and leave the cache empty or stale. All three per-request
+        timeout kwargs consumed by the sync/async request layers must be
+        stripped uniformly — otherwise an aggressively short
+        ``connection_timeout`` on a data call could still gate an
+        internal metadata fetch on TCP connect.
         """
         from azure.cosmos._routing._routing_map_provider_common import (
             prepare_fetch_options_and_headers,
@@ -917,6 +905,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         kwargs = {
             "timeout": 2,
             "read_timeout": 1,
+            "connection_timeout": 3,
             "headers": {"x-ms-custom": "preserved"},
         }
         prepare_fetch_options_and_headers(
@@ -927,6 +916,8 @@ class TestRoutingMapProvider(unittest.TestCase):
                          "Default behaviour must strip customer timeout")
         self.assertNotIn("read_timeout", kwargs,
                          "Default behaviour must strip customer read_timeout")
+        self.assertNotIn("connection_timeout", kwargs,
+                         "Default behaviour must strip customer connection_timeout")
         # Custom headers must survive the sanitisation.
         self.assertEqual(kwargs["headers"].get("x-ms-custom"), "preserved")
 
@@ -934,7 +925,9 @@ class TestRoutingMapProvider(unittest.TestCase):
         """``read_feed_ranges`` is the one call site where the PK-range fetch
         IS the customer operation. It opts in via
         ``_honor_customer_timeout=True``; the sentinel is consumed inside the
-        cache layer and must never reach the wire.
+        cache layer and must never reach the wire. All three per-request
+        timeout kwargs (``timeout`` / ``read_timeout`` /
+        ``connection_timeout``) must be forwarded unchanged.
         """
         from azure.cosmos._routing._routing_map_provider_common import (
             prepare_fetch_options_and_headers,
@@ -943,6 +936,7 @@ class TestRoutingMapProvider(unittest.TestCase):
         kwargs = {
             "timeout": 2,
             "read_timeout": 1,
+            "connection_timeout": 3,
             "_honor_customer_timeout": True,
         }
         prepare_fetch_options_and_headers(
@@ -953,6 +947,8 @@ class TestRoutingMapProvider(unittest.TestCase):
                          "Opt-in caller's timeout must survive")
         self.assertEqual(kwargs.get("read_timeout"), 1,
                          "Opt-in caller's read_timeout must survive")
+        self.assertEqual(kwargs.get("connection_timeout"), 3,
+                         "Opt-in caller's connection_timeout must survive")
         self.assertNotIn(
             "_honor_customer_timeout", kwargs,
             "Sentinel must be consumed inside the cache layer; "

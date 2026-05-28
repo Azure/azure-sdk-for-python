@@ -82,7 +82,13 @@ _INCOMPLETE_ROUTING_MAP_MAX_RETRIES = 1
 
 
 def _consume_task_exception(task: "asyncio.Task") -> None:
-    """Consume task exceptions to avoid noisy asyncio warnings."""
+    """Consume task exceptions to avoid noisy asyncio warnings.
+
+    :param task: The completed asyncio task whose exception (if any) should be
+        retrieved so that asyncio does not emit a ``Task exception was never
+        retrieved`` warning after all awaiters have unwound.
+    :type task: asyncio.Task
+    """
     if task.cancelled():
         return
     try:
@@ -311,12 +317,9 @@ class PartitionKeyRangeCache(object):
             fetched_map = await asyncio.shield(fetch_task)
             # Return the task's result directly instead of re-reading from
             # the cache dict. Between the task completing and this line
-            # running, any other ready coroutine can execute — including
-            # ``clear_cache()`` from a concurrent retry path — which would
-            # empty the dict and leave us returning ``None`` despite the
-            # fetch having just succeeded. Using the task's return value
-            # sidesteps that window entirely. Matches the
-            # ``AsyncCacheNonBlocking`` pattern in the Java/.NET SDKs.
+            # running, another coroutine (e.g. ``clear_cache()`` from a
+            # concurrent retry) could empty the dict, leaving us returning
+            # ``None`` despite the fetch having just succeeded.
             if fetched_map is not None:
                 return fetched_map
 
@@ -342,6 +345,13 @@ class PartitionKeyRangeCache(object):
         When a new task is created, this method wraps the originator's
         ``raw_response_hook`` and fans out callbacks to joined callers.
 
+        The shared fetch runs with the originator's ``timeout`` /
+        ``read_timeout`` / ``_honor_customer_timeout`` kwargs. Joiners
+        contribute only their ``raw_response_hook``; their timeout kwargs
+        are not applied to the shared HTTP call, since only one HTTP call
+        is issued. Callers needing an overall deadline should wrap the
+        call in ``asyncio.wait_for(...)``.
+
         :param str collection_id: The resolved collection identifier used as the cache key.
         :param str collection_link: The link to the collection.
         :param Optional[Dict[str, Any]] feed_options: Optional query options.
@@ -360,7 +370,10 @@ class PartitionKeyRangeCache(object):
             existing_entry = self._inflight_fetches.get(inflight_key)
             if existing_entry is not None:
                 if not existing_entry.task.done():
-                    # Join in-flight fetch and register joiner hook if present.
+                    # Join in-flight fetch. Only ``raw_response_hook`` is
+                    # taken from the joiner; timeout kwargs are dropped
+                    # because the shared HTTP call already runs under the
+                    # originator's timeout kwargs.
                     joiner_hook = fetch_kwargs.get("raw_response_hook")
                     if joiner_hook is not None:
                         existing_entry.joined_hooks.append(joiner_hook)
@@ -377,13 +390,10 @@ class PartitionKeyRangeCache(object):
             if not should_fetch:
                 return None
 
-            # Install one shared raw_response_hook that fans out to every
-            # caller joined to this fetch. Only one network call happens,
-            # so there is only one place hooks can fire; we replay that
-            # single response to the originator's hook and to each joiner's
-            # hook. Hook exceptions are logged and isolated -- a bad hook
-            # in one caller cannot prevent the cache update for the other
-            # callers sharing this fetch.
+            # Install one shared raw_response_hook. Only one HTTP call
+            # happens, so we replay its response to every caller's hook.
+            # A failing hook is logged and swallowed so it cannot break
+            # the fetch outcome for the other callers.
             wrapped_fetch_kwargs = dict(fetch_kwargs)
             originator_hook = wrapped_fetch_kwargs.pop("raw_response_hook", None)
             joined_hooks: List[Optional[Callable[..., None]]] = []
@@ -396,6 +406,11 @@ class PartitionKeyRangeCache(object):
                 WARNING with ``exc_info`` and swallowed, so one caller's
                 buggy hook cannot break the fetch outcome for the others
                 that joined the same network call.
+
+                :param response: The raw response object produced by the single
+                    coalesced PK-range fetch, fanned out to every joined
+                    caller's ``raw_response_hook``.
+                :type response: Any
                 """
                 # Originator's hook runs first so its ordering matches the
                 # non-coalesced path where the originator's hook was the
@@ -487,12 +502,9 @@ class PartitionKeyRangeCache(object):
 
             return new_routing_map
         finally:
-            # ``dict.pop(key, default)`` is a single C-level operation under
-            # the GIL, so this cleanup is atomic and needs no explicit lock.
-            # The ``None`` default makes it tolerant of the key already being
-            # gone. Runs on success, on fetch error, and on cancellation
-            # alike, so the next caller can register a fresh fetch
-            # immediately.
+            # Always free the slot so the next caller can register a fresh
+            # fetch. ``dict.pop`` with a default is atomic under the GIL
+            # and tolerant of the key already being gone.
             self._inflight_fetches.pop(inflight_key, None)
 
 

@@ -1,5 +1,6 @@
 {
     "ignoreWords": [
+        "coro",
         "hdrh",
         "hdrhistogram",
         "dedupe",
@@ -9,6 +10,7 @@
         "ppcb",
         "reindexing",
         "reranker",
-        "toctou"
+        "toctou",
+        "unretrieved"
     ]
 }
