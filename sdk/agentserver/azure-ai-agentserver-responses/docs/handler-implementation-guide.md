@@ -1226,7 +1226,7 @@ Three layers, each owning a specific slice of state:
 
 | Layer | Owns | On crash recovery, surfaces / provides |
 |---|---|---|
-| **Library** (this SDK) | Persisted SSE event stream (every event you emitted, in order) — used for client replay via `starting_after=`. The library only writes the persisted response *object* twice: at `response.created` and at the terminal event. It does NOT keep a running snapshot of in-flight state. | Re-invokes the handler. Surfaces `entry_mode = "recovered"`, `is_recovery`, `run_attempt`. Replays persisted events to reconnecting clients. |
+| **Library** (this SDK) | Persisted SSE event stream (every event you emitted, in order) — used for client replay via `starting_after=`. The library writes the persisted response *object* exactly twice per response across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts emit `response.created` again but the framework dedups the write (idempotent persistence keyed on `response_id`). It does NOT keep a running snapshot of in-flight state. | Re-invokes the handler. Surfaces `entry_mode = "recovered"`, `is_recovery`, `run_attempt`. Replays persisted events to reconnecting clients. Reconstructs the in-memory handler context (`record`, `parsed`, `context`, cancellation signal) from the durable task input — the handler sees the same `response_id` it had on the first attempt. |
 | **Handler** (your code) | The "what was safely committed" decision, plus side-effect watermarks in `durability.metadata`. | Decides the resumption point. Constructs the **resumption response**. Emits a fresh `response.in_progress` carrying it. Continues producing new output items. |
 | **Upstream framework** (Claude SDK, Copilot SDK, LangGraph, your own LLM client) | The conversational / graph / agent state that has to outlive a process death. | Has its own resume facility (session ID, checkpoint store) that you call from the handler. |
 
@@ -1242,7 +1242,7 @@ When the server restarts after a crash and your handler is re-invoked:
 2. You query upstream (and your own `metadata` watermarks) to determine the **resumption point** — the most recent state you are confident is durably committed.
 3. You build a **resumption response**: a `ResponseObject` reflecting only the output items you trust at the resumption point. **In-flight items from the crashed attempt are excluded.** Construct this from upstream framework state + your own metadata watermarks — the library does NOT give you a snapshot of the prior attempt's in-flight state, because none exists in a useful form.
 4. You construct `ResponseEventStream(response=resumption_response, ...)` instead of the usual `request=request` form.
-5. You MAY emit `response.created`; the library tolerates a duplicate and only the first one matters.
+5. You emit `response.created` exactly as you would on a fresh attempt — the framework dedups the response-store write so it happens exactly once across all recovery attempts. You do not need to branch on `is_recovery` to decide whether to emit `response.created`.
 6. You emit `response.in_progress`. This event's `response` payload IS the resumption response — and the library treats it as a **client-visible snapshot reset**. Reconnecting clients discard any partial in-progress state they had and adopt this payload as authoritative.
 7. You continue producing new output items, potentially at the same `output_index` values you used before the crash. Content does NOT have to match the pre-crash content (LLMs are non-deterministic; that's fine).
 8. You emit your terminal event.
@@ -1257,11 +1257,11 @@ is the naive fallback (see below).
 
 ### What the Library Does
 
-- Persists every SSE event in order. No reordering, no deduplication.
+- Persists every SSE event in order. No reordering, no deduplication of stream events.
+- Persists the response *object* exactly twice per response_id across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts' `response.created` and terminal writes are deduplicated by the framework (idempotent persistence keyed on `response_id`); the handler does not need to branch.
+- Reconstructs the in-memory handler context (`record`, `parsed`, `context`, cancellation signal, runtime-state registration) from the durable task input on any cross-process recovery. The recovered handler sees the same `response_id` it had on the first attempt — id generation is a fresh-entry-only concern.
 - Surfaces `entry_mode`, `run_attempt`, `is_recovery` via `context.durability` (see [DurabilityContext API](durable-responses-developer-guide.md#durabilitycontext-api)). The library does NOT expose a snapshot of the prior attempt — handler must consult its upstream framework for resumption state.
 - Treats any `response.in_progress` event after the first one as a snapshot reset.
-- Tolerates duplicate `response.created` (only the first one is authoritative).
-- Tolerates duplicate terminal events (only the first one is authoritative).
 - Replays persisted events to reconnecting clients on `starting_after=`. The reset `in_progress` is part of the replay; clients use it as the reconciliation signal.
 - For `background=false` responses: marks the response `failed` on crash and does NOT re-invoke the handler.
 - For `store=false` responses: best-effort `failed` marker during shutdown grace period; no recovery.
@@ -1304,7 +1304,7 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
             response_id=context.response_id, request=request,
         )
 
-    yield stream.emit_created()  # library is fine with duplicate on recovery
+    yield stream.emit_created()  # same call on fresh and recovered; framework dedups
 
     # Cancellation policy composes with recovery:
     # Phase 1 pre-entry cancel still applies — only emit completed on STEERED.
@@ -1456,11 +1456,12 @@ def _build_resumption_response(durability, context, request) -> ResponseObject:
 ```
 
 There is no library-managed snapshot of the prior attempt's in-flight state.
-The library persists the response object only at `response.created` and at the
-terminal event — between those points it persists the SSE event stream (for
-client replay), not a running `ResponseObject`. Trust your upstream framework
-(or your own metadata watermarks) as the source of truth for what's safely
-committed.
+The library persists the response object exactly once at start (the first
+attempt's `response.created`) and exactly once at end (the first attempt
+that reaches a terminal event). Subsequent attempts re-emit these events
+naturally; the framework dedups the writes keyed on `response_id`. Trust your
+upstream framework (or your own metadata watermarks) as the source of truth
+for what's safely committed.
 
 ### Recovery × Cancellation Composition
 
