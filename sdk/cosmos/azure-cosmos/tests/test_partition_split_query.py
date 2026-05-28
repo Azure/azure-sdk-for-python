@@ -144,14 +144,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache by running a query
             run_queries(container, 1)
 
-            # Trigger split (1 -> 2 partitions)  -  control-plane
-            key_container.replace_throughput(11000)
-            pending = True
-            while pending:
-                offer = key_container.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    time.sleep(5)
+            # Trigger split with bounded polling helper (timeout + SkipTest).
+            test_config.TestConfig.trigger_split(key_container, 11000)
 
             # Run queries to trigger routing map refresh
             run_queries(container, 1)
@@ -235,14 +229,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache
             run_queries(container, 1)
 
-            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)  -  control-plane
-            key_container.replace_throughput(25000)
-            pending = True
-            while pending:
-                offer = key_container.read_offer()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    time.sleep(5)
+            # Trigger split with bounded polling helper (timeout + SkipTest).
+            test_config.TestConfig.trigger_split(key_container, 25000)
 
             # Run queries to trigger routing map refresh
             run_queries(container, 1)
@@ -355,14 +343,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print(f"Before split - Container B: {len(ranges_b_before)} partitions")
             print(f"Container B routing map object ID: {map_b_object_id}")
 
-            # Split only Container A  -  control-plane
-            key_container_a.replace_throughput(11000)
-            pending = True
-            while pending:
-                offer = key_container_a.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    time.sleep(5)
+            # Split only Container A with bounded polling helper.
+            test_config.TestConfig.trigger_split(key_container_a, 11000)
 
             # Wait for physical partition ranges to reflect the split.
             split_convergence_deadline = time.time() + 300

@@ -105,7 +105,8 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             if time.time() - start_time > self.MAX_TIME:  # timeout test at 10 minutes
                 self.skipTest("Partition split didn't complete in time.")
             if offer.properties['content'].get('isOfferReplacePending', False):
-                time.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
+                # Keep the event loop responsive while waiting.
+                await asyncio.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
                 offer = await self.key_container.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
@@ -141,14 +142,8 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Force initial routing map cache by running a query
         await run_queries(self.container, 1)
 
-        # Trigger split (1 -> 2 partitions)  -  control-plane via key-auth key_container
-        await self.key_container.replace_throughput(11000)
-        pending = True
-        while pending:
-            offer = await self.key_container.get_throughput()
-            pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-            if pending:
-                await asyncio.sleep(5)
+        # Trigger split with bounded polling helper (timeout + SkipTest).
+        await test_config.TestConfig.trigger_split_async(self.key_container, 11000)
 
         # Run queries to trigger routing map refresh
         await run_queries(self.container, 1)
@@ -228,14 +223,8 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             # Force initial routing map cache
             await run_queries(new_container, 1)
 
-            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)  -  control-plane
-            await new_setup_container.replace_throughput(25000)
-            pending = True
-            while pending:
-                offer = await new_setup_container.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    await asyncio.sleep(5)
+            # Trigger split with bounded polling helper (timeout + SkipTest).
+            await test_config.TestConfig.trigger_split_async(new_setup_container, 25000)
 
             # Run queries to trigger routing map refresh
             await run_queries(new_container, 1)
@@ -348,14 +337,8 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print(f"Before split - Container B: {len(ranges_b_before)} partitions")
             print(f"Container B routing map object ID: {map_b_object_id}")
 
-            # SPLIT ONLY CONTAINER A  -  control-plane
-            await key_container_a.replace_throughput(11000)
-            pending = True
-            while pending:
-                offer = await key_container_a.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    await asyncio.sleep(5)
+            # Split only Container A with bounded polling helper.
+            await test_config.TestConfig.trigger_split_async(key_container_a, 11000)
 
             # Wait for physical partition ranges to reflect the split.
             split_convergence_deadline = time.time() + 300
