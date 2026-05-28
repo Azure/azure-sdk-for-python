@@ -37,7 +37,7 @@ from ..models.runtime import (
 from ..models.runtime import (
     build_failed_response as _build_failed_response,
 )
-from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
+from ..store._base import ResponseAlreadyExistsError, ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import (
     _apply_stream_event_defaults,
     _build_events,
@@ -61,6 +61,30 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+
+def _serialize_for_recovery(value: Any) -> Any:
+    """Convert a model or list of models to a JSON-safe representation.
+
+    The durable task input is serialized as JSON. Objects that pass through
+    this helper survive a cross-process task re-fire — used by Spec 013 US1(a)
+    reconstruction.
+
+    :param value: Any object — typically a generated model with ``as_dict``,
+        a list of such models, or a plain value.
+    :type value: Any
+    :returns: A JSON-safe representation (dict, list, str, None, etc.).
+    :rtype: Any
+    """
+    if value is None:
+        return None
+    if isinstance(value, list):
+        return [_serialize_for_recovery(item) for item in value]
+    if isinstance(value, dict):
+        return dict(value)
+    if hasattr(value, "as_dict") and callable(value.as_dict):
+        return value.as_dict()
+    return value
 
 _STORAGE_ERROR_MESSAGE = (
     "An internal error occurred while storing the response. "
@@ -374,6 +398,15 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                                 _resolved_items,
                                 _history_ids,
                                 isolation=_isolation,
+                            )
+                            _provider_created = True
+                        except ResponseAlreadyExistsError:
+                            # Recovery: response was persisted by a prior attempt.
+                            # The terminal update_response is the next write;
+                            # nothing else to do here. (Spec 013 US1 deliverable (b).)
+                            logger.info(
+                                "Response %s already exists in store (recovery — swallowed by idempotent create).",
+                                response_id,
                             )
                             _provider_created = True
                         except (
@@ -1104,6 +1137,28 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                             _history_ids,
                             isolation=_isolation,
                         )
+                except ResponseAlreadyExistsError:
+                    # Recovery: response was persisted by a prior attempt. Convert
+                    # this terminal-side create attempt into an update so the final
+                    # state still lands in the store. (Spec 013 US1 deliverable (b).)
+                    logger.info(
+                        "Response %s already exists in store at terminal create (recovery — switching to update).",
+                        ctx.response_id,
+                    )
+                    try:
+                        await self._provider.update_response(
+                            record.response, isolation=_isolation
+                        )
+                    except Exception as update_exc:  # pylint: disable=broad-exception-caught
+                        setattr(update_exc, PLATFORM_ERROR_TAG, True)
+                        logger.error(
+                            "Terminal update_response after already-exists swallow failed (response_id=%s): %s",
+                            ctx.response_id,
+                            update_exc,
+                            exc_info=True,
+                        )
+                        record.persistence_failed = True
+                        record.persistence_exception = update_exc
                 except (
                     Exception
                 ) as persist_exc:  # pylint: disable=broad-exception-caught
@@ -1205,6 +1260,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     _resolved_items,
                     _history_ids,
                     isolation=_isolation,
+                )
+                state.provider_created = True
+            except ResponseAlreadyExistsError:
+                # Recovery: response was persisted by a prior attempt.
+                # Swallow and proceed; terminal update_response will fire.
+                logger.info(
+                    "Response %s already exists in store (recovery — swallowed by idempotent create at bg+stream first-event).",
+                    ctx.response_id,
                 )
                 state.provider_created = True
             except Exception as persist_exc:  # pylint: disable=broad-exception-caught
@@ -2279,7 +2342,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             "_parsed_ref": ctx.parsed,
             "_cancel_ref": ctx.cancellation_signal,
             "_runtime_state_ref": self._runtime_state,
-            # Serializable params
+            # Serializable params (these survive cross-process recovery)
             "agent_reference": ctx.agent_reference,
             "model": ctx.model,
             "store": ctx.store,
@@ -2289,6 +2352,17 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             "history_limit": self._runtime_options.default_fetch_history_count,
             "agent_name": getattr(self._runtime_options, "agent_name", "default"),
             "session_id": ctx.agent_session_id or "",
+            # Spec 013 US1(a) reconstruction support — fields needed to rebuild
+            # ResponseExecution, ResponseContext, and the parsed request across
+            # a cross-process recovery. None of these touches the existing
+            # same-process path (which uses the _*_ref entries above).
+            "user_isolation_key": ctx.user_isolation_key,
+            "chat_isolation_key": ctx.chat_isolation_key,
+            "prefetched_history_ids": ctx.prefetched_history_ids,
+            "input_items": _serialize_for_recovery(ctx.input_items),
+            "parsed_payload": _serialize_for_recovery(ctx.parsed),
+            "stream": ctx.stream,
+            "background": ctx.background,
         }
 
         try:

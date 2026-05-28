@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- **Cross-process recovery for durable background responses**: when a server crashes mid-response, the recovered task rebuilds the in-memory handler context (`ResponseExecution`, `ResponseContext`, parsed request) from the durable task input and resumes the canonical recovery contract. Previously the recovered task's early-exit path made cross-process recovery a no-op even though same-process tests passed; now both paths behave correctly. (Spec 013 US1 (a))
+- **`FileResponseStore` for local-dev recovery testing**: new `azure.ai.agentserver.responses.store.FileResponseStore` provider persists response objects as JSON files under a configurable directory with atomic `os.replace()` writes. The default `MemoryResponseProvider` does not survive a process restart, so cross-process recovery scenarios require either this file-backed provider or the production Foundry provider. (Spec 013 US1 (c))
+- **`ResponseAlreadyExistsError` typed exception** in `azure.ai.agentserver.responses.store`. Raised by both the in-memory and Foundry response-store providers on duplicate `create_response`. Replaces the previously-untyped `ValueError`. Callers can catch it as the idempotent-create signal during recovery. (Spec 013 US1 (b))
 - **Durable background responses**: Background responses with `store=True` are now automatically crash-recoverable. If the server crashes mid-response, handlers are re-invoked on restart via the durable task primitive. Zero handler code changes required for basic crash recovery.
 - **Stream recovery**: SSE events are persisted incrementally during streaming. Clients can reconnect using the `starting_after` query parameter and resume from their last received event. Stream events are retained for a configurable TTL (default 10 minutes) after response completion.
 - **Steerable conversations**: Enable `steerable_conversations=True` for multi-turn agents. New turns can cancel in-progress responses via cooperative cancellation. Queued turns return a "queued" response shape, customizable via `@app.response_acceptor`.
@@ -13,6 +16,10 @@
 - Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Client validation errors (400/404) are classified as `user`, Foundry storage infrastructure errors (transport failures, 5xx) as `platform`, and developer handler exceptions as `upstream`. Platform errors additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics. Matches the container image specification §8 error source classification.
 
 - Added durable samples demonstrating real SDK integrations: Claude Agent SDK (`durable_claude`), Copilot SDK (`durable_copilot`), LangGraph (`durable_langgraph`), and multi-turn conversation (`durable_multiturn`).
+
+### Bugs Fixed
+
+- **Idempotent `response.created` persistence across recovery attempts**: the response object is now persisted exactly once at `response.created` and exactly once at the terminal event, regardless of how many recovery attempts occur in between. Recovered handlers' re-emit of `response.created` against a store that already has the response no longer leaves the response stuck in `in_progress` — the existing entry is preserved and the terminal `update_response` lands. (Spec 013 US1 (b))
 
 ### Breaking Changes
 

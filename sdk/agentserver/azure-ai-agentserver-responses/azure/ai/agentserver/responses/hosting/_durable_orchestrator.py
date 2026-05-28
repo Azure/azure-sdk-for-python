@@ -48,6 +48,110 @@ logger = logging.getLogger("azure.ai.agentserver.responses.durable")
 
 # Framework-internal metadata key prefix
 _FW_PREFIX = "_framework."
+
+
+def _reconstruct_parsed_from_params(params: dict[str, Any]) -> Any:
+    """Re-parse the serialized raw payload back to a CreateResponse model.
+
+    Used on cross-process recovery when the in-process ``_parsed_ref`` is
+    unavailable. The original request payload was serialized to
+    ``params["parsed_payload"]`` at fresh-entry time (Spec 013 US1 deliverable (a)).
+
+    :param params: The durable task input dict.
+    :type params: dict[str, Any]
+    :returns: A re-hydrated request model, or the raw dict if parsing fails.
+    :rtype: Any
+    :raises RuntimeError: If parsed_payload is missing from params.
+    """
+    payload = params.get("parsed_payload")
+    if payload is None:
+        raise RuntimeError(
+            "Cannot reconstruct parsed request — params['parsed_payload'] is "
+            "missing. Ensure the orchestrator stamps it at fresh-entry."
+        )
+    # Late import to avoid circular dependency on hosting/_request_parsing.
+    from ..models._generated import CreateResponse  # pylint: disable=import-outside-toplevel
+
+    if isinstance(payload, dict):
+        return CreateResponse(payload)
+    return payload
+
+
+def _reconstruct_from_params(
+    *,
+    params: dict[str, Any],
+    response_id: str,
+    provider: "ResponseProviderProtocol | None",
+    runtime_state: "_RuntimeState | None",
+    runtime_options: ResponsesServerOptions,
+) -> tuple["ResponseExecution", "ResponseContext"]:
+    """Rebuild ResponseExecution and ResponseContext from the durable task input.
+
+    Called on cross-process recovery when ``_record_ref`` is missing.
+    All inputs are derived from the serialized ``params`` dict that the
+    orchestrator stamped at fresh-entry time.
+
+    :keyword params: The durable task input.
+    :paramtype params: dict[str, Any]
+    :keyword response_id: The stable response id from ``params["response_id"]``.
+    :paramtype response_id: str
+    :keyword provider: The response-store provider.
+    :paramtype provider: ResponseProviderProtocol | None
+    :keyword runtime_state: The per-process runtime state tracker.
+    :paramtype runtime_state: _RuntimeState | None
+    :keyword runtime_options: Server options.
+    :paramtype runtime_options: ResponsesServerOptions
+    :returns: ``(record, context)`` tuple — both ready for use by the existing
+        pipeline.
+    :rtype: tuple[ResponseExecution, ResponseContext]
+    """
+    # Late imports to avoid module-level circular dependencies.
+    from .._response_context import IsolationContext, ResponseContext  # pylint: disable=import-outside-toplevel
+    from ..models.runtime import ResponseExecution, ResponseModeFlags  # pylint: disable=import-outside-toplevel
+
+    parsed = _reconstruct_parsed_from_params(params)
+
+    record = ResponseExecution(
+        response_id=response_id,
+        mode_flags=ResponseModeFlags(
+            stream=bool(params.get("stream", False)),
+            store=bool(params.get("store", True)),
+            background=bool(params.get("background", True)),
+        ),
+        status="in_progress",
+        input_items=list(params.get("input_items") or []),
+        previous_response_id=params.get("previous_response_id"),
+        initial_model=params.get("model"),
+        initial_agent_reference=params.get("agent_reference"),
+        agent_session_id=params.get("agent_session_id"),
+        conversation_id=params.get("conversation_id"),
+        chat_isolation_key=params.get("chat_isolation_key"),
+    )
+
+    context = ResponseContext(
+        response_id=response_id,
+        mode_flags=record.mode_flags,
+        request=parsed,
+        provider=provider,
+        input_items=record.input_items,
+        previous_response_id=record.previous_response_id,
+        conversation_id=record.conversation_id,
+        history_limit=int(
+            params.get("history_limit", runtime_options.default_fetch_history_count)
+        ),
+        # Client headers / query params are not preserved across recovery
+        # — they were specific to the original HTTP request and are not
+        # meaningful for the recovered handler.
+        client_headers={},
+        query_parameters={},
+        isolation=IsolationContext(
+            user_key=params.get("user_isolation_key"),
+            chat_key=params.get("chat_isolation_key"),
+        ),
+        prefetched_history_ids=params.get("prefetched_history_ids"),
+    )
+    record.response_context = context
+    return record, context
 _FW_RESPONSE_ID = f"{_FW_PREFIX}response_id"
 _FW_LAST_SEQ = f"{_FW_PREFIX}last_sequence_number"
 _FW_BACKGROUND = f"{_FW_PREFIX}background"
@@ -186,14 +290,19 @@ class DurableResponseOrchestrator:
 
         record: ResponseExecution | None = params.get("_record_ref")
         if record is None:
-            # This shouldn't happen in normal flow — but on recovery we need
-            # to reconstruct. For Phase 1 (no recovery yet), log and return.
-            logger.error(
-                "No record reference in task input (response_id=%s, entry_mode=%s)",
-                response_id,
-                entry_mode,
+            # Cross-process recovery: in-memory references were lost when the
+            # task input was serialized to the durable store. Reconstruct from
+            # the serialized params (Spec 013 US1 deliverable (a)).
+            record, context = _reconstruct_from_params(
+                params=params,
+                response_id=response_id,
+                provider=self._provider,
+                runtime_state=self._runtime_state,
+                runtime_options=self._options,
             )
-            return
+            await self._runtime_state.add(record)
+            if context is not None:
+                context._durability = durability_ctx  # pylint: disable=protected-access
 
         # Bridge task cancellation → response cancellation signal
         cancellation_signal: asyncio.Event = params.get("_cancel_ref", asyncio.Event())
@@ -213,9 +322,13 @@ class DurableResponseOrchestrator:
             cancellation_signal.set()
 
         try:
+            parsed_ref = params.get("_parsed_ref")
+            if parsed_ref is None:
+                # Cross-process recovery: re-parse the serialized payload.
+                parsed_ref = _reconstruct_parsed_from_params(params)
             await _run_background_non_stream(
                 create_fn=self._create_fn,
-                parsed=params["_parsed_ref"],
+                parsed=parsed_ref,
                 context=context,
                 cancellation_signal=cancellation_signal,
                 record=record,
@@ -227,7 +340,7 @@ class DurableResponseOrchestrator:
                 agent_session_id=params.get("agent_session_id"),
                 conversation_id=params.get("conversation_id"),
                 history_limit=params.get("history_limit", 100),
-                runtime_state=params.get("_runtime_state_ref"),
+                runtime_state=params.get("_runtime_state_ref") or self._runtime_state,
             )
         finally:
             if cancel_bridge is not None and not cancel_bridge.done():
