@@ -111,6 +111,11 @@ def add_sanitizers(test_proxy):
         value="https://Sanitized.services.ai.azure.com",
         regex=r"https://[a-zA-Z0-9\-]+\.services\.ai\.azure\.com",
     )
+    # Keep playback stable when recorded endpoints include a trailing slash.
+    add_uri_regex_sanitizer(
+        regex=r"//contentunderstanding",
+        value="/contentunderstanding",
+    )
 
     # Sanitize Ocp-Apim-Subscription-Key header (where the API key is sent)
     add_header_regex_sanitizer(key="Ocp-Apim-Subscription-Key", value="fake-api-key", regex=".*")
