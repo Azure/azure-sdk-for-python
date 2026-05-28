@@ -80,7 +80,6 @@ def is_cache_unchanged_since_previous(
 
 
 
-
 def prepare_fetch_options_and_headers(
     previous_routing_map: Optional[CollectionRoutingMap],
     feed_options: Optional[Dict[str, Any]],
@@ -91,23 +90,17 @@ def prepare_fetch_options_and_headers(
     This mutates *kwargs* in-place:
 
     * sets ``headers`` (with the PK-range page size, the incremental-feed
-      ``A-IM`` value, and the optional ``If-None-Match`` ETag); and
-    * drops any customer-supplied ``timeout`` / ``read_timeout`` kwargs.
+      ``A-IM`` value, and the optional ``If-None-Match`` ETag);
+    * always pops the internal ``_honor_customer_timeout`` sentinel so it
+      never escapes onto the wire; and
+    * drops any customer-supplied ``timeout`` / ``read_timeout`` kwargs
+      **unless** the caller explicitly opted in via that sentinel.
 
-    Stripping the customer's deadline at the cache layer is deliberate.
-    Most cache call sites already drop ``**kwargs`` two layers above the
-    fetch, but a small set of paths -- ``read_feed_ranges`` (sync and
-    async) and the circuit-breaker recovery path -- forward ``**kwargs``
-    all the way down. If the customer passed ``timeout=N`` on one of those
-    paths, the HTTP pipeline's connection-retry policy would otherwise read
-    it as a wall-clock budget on the routing-map fetch and raise
-    ``CosmosClientTimeoutError`` mid-fetch, leaving the cache empty
-    (cold-cache call) or stale (refresh call) and pushing the customer's
-    retry into a doomed loop. The routing-map fetch is internal metadata
-    and should be governed by the SDK's own retry behaviour, not by
-    deadlines the customer intended for their data operation. Stripping
-    here applies uniformly on sync and async, and is belt-and-braces with
-    the call-site-level drops that already cover the common paths.
+    By default, the cache layer strips customer ``timeout`` values so
+    metadata fetches are not cut short by data-operation budgets.
+    ``read_feed_ranges`` is the exception: that API sets
+    ``_honor_customer_timeout=True`` because the PK-range read itself is
+    the customer operation.
 
     :param previous_routing_map: The base routing map for incremental
         updates, or ``None`` for a full load.
@@ -116,7 +109,9 @@ def prepare_fetch_options_and_headers(
         or None
     :param dict feed_options: Raw feed options from the caller.
     :param dict kwargs: Keyword arguments (mutated -- ``headers`` is set,
-        ``timeout`` and ``read_timeout`` are removed).
+        ``_honor_customer_timeout`` is always popped, and
+        ``timeout`` / ``read_timeout`` are removed unless the sentinel
+        opted in).
     :return: The sanitised ``change_feed_options`` dict.
     :rtype: dict
     """
@@ -139,12 +134,12 @@ def prepare_fetch_options_and_headers(
         headers.pop(http_constants.HttpHeaders.IfNoneMatch, None)
 
     kwargs['headers'] = headers
-    # Strip customer-side deadlines so they do not bound the metadata
-    # fetch -- see the function docstring for the full rationale.
-    kwargs.pop('timeout', None)
-    kwargs.pop('read_timeout', None)
+    # Remove internal sentinel and strip timeout unless caller opts in.
+    honor_customer_timeout = bool(kwargs.pop('_honor_customer_timeout', False))
+    if not honor_customer_timeout:
+        kwargs.pop('timeout', None)
+        kwargs.pop('read_timeout', None)
     return change_feed_options
-
 
 
 

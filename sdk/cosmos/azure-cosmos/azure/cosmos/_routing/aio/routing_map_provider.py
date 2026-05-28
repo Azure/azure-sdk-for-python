@@ -25,7 +25,7 @@ Cosmos database service.
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import threading
-from typing import Dict, Any, Optional, List, TYPE_CHECKING
+from typing import Callable, Dict, Any, NamedTuple, Optional, List, TYPE_CHECKING
 from azure.core.utils import CaseInsensitiveDict
 from ... import _base, http_constants
 from ..collection_routing_map import CollectionRoutingMap
@@ -44,65 +44,32 @@ from .._routing_map_provider_common import (
 if TYPE_CHECKING:
     from ...aio._cosmos_client_connection_async import CosmosClientConnection
 
-# Module-level shared state, keyed by endpoint URL. All five module globals
-# (four state dicts plus the refcount dict) are mutated only while holding
-# ``_shared_cache_lock``. Sharing across every async CosmosClient that targets
-# the same endpoint is what eliminates the per-client duplicate copies of the
-# routing map (the memory win driving this change), and what lets concurrent
-# readers single-flight a single refresh.
+# Module-level state keyed by endpoint. Access is guarded by
+# ``_shared_cache_lock``.
 
 # endpoint -> { collection_id -> CollectionRoutingMap }. The actual cached
 # routing maps. The inner dict is shared by every client for that endpoint, so
 # a routing-map populated by one client is immediately visible to all others.
 _shared_routing_map_cache: dict = {}
 
-# endpoint -> { (loop_id, collection_id) -> asyncio.Lock }. Per-collection
-# refresh lock, scoped to the asyncio event loop that owns it. We key by loop
-# id (``id(asyncio.get_running_loop())``) because ``asyncio.Lock`` instances
-# bind to the loop on first ``acquire()`` (CPython 3.10+) and raise
-# ``RuntimeError: ... bound to a different event loop`` if reused from a
-# different running loop. Single-flighting only needs to be per-loop in
-# practice — coroutines on different loops have different connection pools
-# and are effectively independent clients.
+# endpoint -> { (loop_id, collection_id) -> asyncio.Lock }. Locks are scoped
+# per loop because ``asyncio.Lock`` objects are loop-bound.
 _shared_collection_locks: Dict[str, Dict[tuple, asyncio.Lock]] = {}
 
-# endpoint -> threading.Lock. Guards the creation of new entries in the inner
-# dict of ``_shared_collection_locks``. Was an ``asyncio.Lock`` previously,
-# but its critical sections are pure dict reads/writes (no await), so a
-# ``threading.Lock`` works identically and avoids the same loop-binding
-# hazard described above. Without this guard, two coroutines racing on a
-# brand-new (loop, collection_id) could each create a different Lock object
-# and defeat the single-flight invariant.
+# endpoint -> threading.Lock. Guards creation of entries in
+# ``_shared_collection_locks``.
 _shared_locks_locks: Dict[str, threading.Lock] = {}
 
-# endpoint -> { (loop_id, collection_id) -> asyncio.Task }. The single
-# in-flight fetch-and-publish task per (loop, collection). Any caller that
-# arrives during a cold-cache fetch joins this task via ``asyncio.shield``
-# instead of issuing its own network round trip, so concurrent callers
-# share a single fetch. The task body owns both the fetch and the cache
-# write, so the publish survives any individual caller being cancelled
-# (e.g. by ``asyncio.wait_for``) while awaiting it.
-_shared_inflight_fetches: Dict[str, Dict[tuple, asyncio.Task]] = {}
+# endpoint -> { (loop_id, collection_id) -> _InflightEntry }. Tracks one
+# in-flight fetch per (loop, collection) and joined hooks.
+_shared_inflight_fetches: Dict[str, Dict[tuple, "_InflightEntry"]] = {}
 
-# endpoint -> int. Number of live async ``PartitionKeyRangeCache`` instances
-# using this endpoint. Incremented on construction and decremented in
-# ``release`` (called from ``CosmosClient.__aexit__`` / ``close`` / ``__del__``).
-# When the count hits zero we drop the entry from all five dicts so an idle
-# endpoint does not pin memory forever. ``clear_cache`` does NOT touch this
-# count — it only wipes routing-map contents.
+# endpoint -> int. Number of live async ``PartitionKeyRangeCache`` instances.
+# When this reaches zero, shared endpoint state is evicted.
 _shared_cache_refcounts: Dict[str, int] = {}
 
-# Process-wide lock guarding the five dicts above for *this* (async) module.
-# Note: the sync module ``_routing/routing_map_provider.py`` defines its own
-# independent set of module-level dicts and its own ``_shared_cache_lock`` —
-# state is NOT shared between the sync and async modules. A sync and an async
-# ``CosmosClient`` targeting the same endpoint maintain separate routing-map
-# caches. Using a ``threading.Lock`` (not an ``asyncio.Lock``) is also
-# essential for correctness across multiple event loops in the same process:
-# an ``asyncio.Lock`` binds to the loop that first acquires it. The critical
-# sections this lock guards are pure dict reads/writes — never await, never
-# network I/O — so a brief threading-lock acquisition from a coroutine is
-# safe and does not block the event loop in any meaningful way.
+# Process-wide lock for this async module's shared dicts. Sync and async
+# routing providers keep separate shared state.
 _shared_cache_lock = threading.Lock()
 
 
@@ -112,6 +79,32 @@ logger = logging.getLogger(__name__)
 # Number of extra incremental attempts after an incomplete incremental merge
 # before falling back to a full routing-map refresh.
 _INCOMPLETE_ROUTING_MAP_MAX_RETRIES = 1
+
+
+def _consume_task_exception(task: "asyncio.Task") -> None:
+    """Consume task exceptions to avoid noisy asyncio warnings."""
+    if task.cancelled():
+        return
+    try:
+        exc = task.exception()
+    except asyncio.CancelledError:
+        return
+    if exc is not None:
+        logger.debug(
+            "Coalesced PK-range fetch raised after all awaiters unwound: %s",
+            exc,
+        )
+
+
+class _InflightEntry(NamedTuple):
+    """Per-(loop, collection) value stored in ``_shared_inflight_fetches``.
+
+    Stores the in-flight task and joined ``raw_response_hook`` callbacks.
+    """
+    task: asyncio.Task
+    joined_hooks: List[Optional[Callable[..., None]]]
+
+
 class PartitionKeyRangeCache(object):
     """
     PartitionKeyRangeCache provides list of effective partition key ranges for a
@@ -148,7 +141,7 @@ class PartitionKeyRangeCache(object):
             self._collection_routing_map_by_item = _shared_routing_map_cache[self._endpoint]
             self._collection_locks: Dict[tuple, asyncio.Lock] = _shared_collection_locks[self._endpoint]
             self._locks_lock: threading.Lock = _shared_locks_locks[self._endpoint]
-            self._inflight_fetches: Dict[tuple, asyncio.Task] = _shared_inflight_fetches[self._endpoint]
+            self._inflight_fetches: Dict[tuple, _InflightEntry] = _shared_inflight_fetches[self._endpoint]
 
     def clear_cache(self):
         """Clear the shared routing map cache for this endpoint.
@@ -170,16 +163,7 @@ class PartitionKeyRangeCache(object):
                 _shared_routing_map_cache[self._endpoint].clear()
 
     def release(self) -> None:
-        """Decrement the per-endpoint refcount and evict shared state at zero.
-
-        Safe to call multiple times concurrently. Best-effort: never raises.
-
-        The ``_released`` check-and-set is performed *inside* the shared
-        cache lock to close the TOCTOU window between two concurrent callers
-        (e.g. ``CosmosClient.__aexit__`` racing the GC's ``__del__``).
-        Without the lock, both callers could pass the early-return guard
-        before either set the flag, then both would decrement the refcount.
-        """
+        """Decrease endpoint refcount and evict shared state at zero."""
         endpoint = self._endpoint
         try:
             with _shared_cache_lock:
@@ -192,7 +176,12 @@ class PartitionKeyRangeCache(object):
                     _shared_routing_map_cache.pop(endpoint, None)
                     _shared_collection_locks.pop(endpoint, None)
                     _shared_locks_locks.pop(endpoint, None)
-                    _shared_inflight_fetches.pop(endpoint, None)
+                    inflight = _shared_inflight_fetches.pop(endpoint, None)
+                    if inflight:
+                        # Best-effort cancellation of leftover in-flight tasks.
+                        for entry in inflight.values():
+                            if not entry.task.done():
+                                entry.task.cancel()
                 else:
                     _shared_cache_refcounts[endpoint] = count
         except Exception:  # pylint: disable=broad-except
@@ -350,6 +339,9 @@ class PartitionKeyRangeCache(object):
         concurrent caller scheduled moments earlier — either way the caller
         should await it through ``asyncio.shield``.
 
+        When a new task is created, this method wraps the originator's
+        ``raw_response_hook`` and fans out callbacks to joined callers.
+
         :param str collection_id: The resolved collection identifier used as the cache key.
         :param str collection_link: The link to the collection.
         :param Optional[Dict[str, Any]] feed_options: Optional query options.
@@ -365,17 +357,15 @@ class PartitionKeyRangeCache(object):
         inflight_key = (id(asyncio.get_running_loop()), collection_id)
         collection_lock = await self._get_lock_for_collection(collection_id)
         async with collection_lock:
-            existing_task = self._inflight_fetches.get(inflight_key)
-            if existing_task is not None:
-                if not existing_task.done():
-                    return existing_task
-                # Stale completed task. Under normal scheduling this never
-                # happens because ``_fetch_and_publish``'s ``finally`` pops
-                # the entry before the task transitions to ``done``. The one
-                # realistic way an orphan can sit here is a previous event
-                # loop being closed mid-fetch whose ``id()`` was then reused
-                # by the current loop . Drop the orphan and fall through to start a
-                # fresh fetch on the live loop.
+            existing_entry = self._inflight_fetches.get(inflight_key)
+            if existing_entry is not None:
+                if not existing_entry.task.done():
+                    # Join in-flight fetch and register joiner hook if present.
+                    joiner_hook = fetch_kwargs.get("raw_response_hook")
+                    if joiner_hook is not None:
+                        existing_entry.joined_hooks.append(joiner_hook)
+                    return existing_entry.task
+                # Drop stale completed entry and start a new fetch.
                 self._inflight_fetches.pop(inflight_key, None)
 
             should_fetch, base_routing_map = determine_refresh_action(
@@ -387,6 +377,57 @@ class PartitionKeyRangeCache(object):
             if not should_fetch:
                 return None
 
+            # Install one shared raw_response_hook that fans out to every
+            # caller joined to this fetch. Only one network call happens,
+            # so there is only one place hooks can fire; we replay that
+            # single response to the originator's hook and to each joiner's
+            # hook. Hook exceptions are logged and isolated -- a bad hook
+            # in one caller cannot prevent the cache update for the other
+            # callers sharing this fetch.
+            wrapped_fetch_kwargs = dict(fetch_kwargs)
+            originator_hook = wrapped_fetch_kwargs.pop("raw_response_hook", None)
+            joined_hooks: List[Optional[Callable[..., None]]] = []
+
+            def _hook_fan_out(response: Any) -> None:
+                """Replay the shared response to every caller's raw_response_hook.
+
+                Fires the originator's hook first, then each joiner's hook
+                in join order. Exceptions from any hook are logged at
+                WARNING with ``exc_info`` and swallowed, so one caller's
+                buggy hook cannot break the fetch outcome for the others
+                that joined the same network call.
+                """
+                # Originator's hook runs first so its ordering matches the
+                # non-coalesced path where the originator's hook was the
+                # only one installed.
+                if originator_hook is not None:
+                    try:
+                        originator_hook(response)
+                    except Exception:  # pylint: disable=broad-except
+                        logger.warning(
+                            "raw_response_hook (originator) raised during "
+                            "coalesced PK-range fetch for collection '%s'",
+                            collection_link,
+                            exc_info=True,
+                        )
+                # Joiners run in the order they registered. ``list(...)``
+                # snapshots the list so a hook that itself triggers another
+                # join cannot mutate what we are iterating.
+                for joiner_hook in list(joined_hooks):
+                    if joiner_hook is None:
+                        continue
+                    try:
+                        joiner_hook(response)
+                    except Exception:  # pylint: disable=broad-except
+                        logger.warning(
+                            "raw_response_hook (joiner) raised during "
+                            "coalesced PK-range fetch for collection '%s'",
+                            collection_link,
+                            exc_info=True,
+                        )
+
+            wrapped_fetch_kwargs["raw_response_hook"] = _hook_fan_out
+
             new_task = asyncio.create_task(
                 self._fetch_and_publish(
                     collection_id,
@@ -394,10 +435,15 @@ class PartitionKeyRangeCache(object):
                     base_routing_map,
                     feed_options,
                     inflight_key,
-                    fetch_kwargs,
+                    wrapped_fetch_kwargs,
                 )
             )
-            self._inflight_fetches[inflight_key] = new_task
+            # Consume task exceptions so asyncio does not log unretrieved errors.
+            new_task.add_done_callback(_consume_task_exception)
+            self._inflight_fetches[inflight_key] = _InflightEntry(
+                task=new_task,
+                joined_hooks=joined_hooks,
+            )
             return new_task
 
     async def _fetch_and_publish(

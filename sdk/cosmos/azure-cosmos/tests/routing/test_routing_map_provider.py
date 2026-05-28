@@ -901,6 +901,85 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(none_seen['count'], 0,
                          "Cache entry should never be None during a refresh — it should be atomically replaced")
 
+    # ---------------------------------------------------------------
+    # prepare_fetch_options_and_headers -- customer-timeout strip behaviour
+    # ---------------------------------------------------------------
+
+    def test_prepare_fetch_strips_customer_timeout_by_default(self):
+        """Without the opt-in sentinel, ``timeout`` / ``read_timeout`` are
+        stripped so a customer's data-operation deadline cannot bound the
+        internal routing-map fetch and leave the cache empty or stale.
+        """
+        from azure.cosmos._routing._routing_map_provider_common import (
+            prepare_fetch_options_and_headers,
+        )
+
+        kwargs = {
+            "timeout": 2,
+            "read_timeout": 1,
+            "headers": {"x-ms-custom": "preserved"},
+        }
+        prepare_fetch_options_and_headers(
+            previous_routing_map=None, feed_options=None, kwargs=kwargs,
+        )
+
+        self.assertNotIn("timeout", kwargs,
+                         "Default behaviour must strip customer timeout")
+        self.assertNotIn("read_timeout", kwargs,
+                         "Default behaviour must strip customer read_timeout")
+        # Custom headers must survive the sanitisation.
+        self.assertEqual(kwargs["headers"].get("x-ms-custom"), "preserved")
+
+    def test_prepare_fetch_honors_customer_timeout_opt_in(self):
+        """``read_feed_ranges`` is the one call site where the PK-range fetch
+        IS the customer operation. It opts in via
+        ``_honor_customer_timeout=True``; the sentinel is consumed inside the
+        cache layer and must never reach the wire.
+        """
+        from azure.cosmos._routing._routing_map_provider_common import (
+            prepare_fetch_options_and_headers,
+        )
+
+        kwargs = {
+            "timeout": 2,
+            "read_timeout": 1,
+            "_honor_customer_timeout": True,
+        }
+        prepare_fetch_options_and_headers(
+            previous_routing_map=None, feed_options=None, kwargs=kwargs,
+        )
+
+        self.assertEqual(kwargs.get("timeout"), 2,
+                         "Opt-in caller's timeout must survive")
+        self.assertEqual(kwargs.get("read_timeout"), 1,
+                         "Opt-in caller's read_timeout must survive")
+        self.assertNotIn(
+            "_honor_customer_timeout", kwargs,
+            "Sentinel must be consumed inside the cache layer; "
+            "leaking it to the pipeline would risk surfacing on the wire",
+        )
+
+    def test_prepare_fetch_pops_sentinel_even_when_falsy(self):
+        """The sentinel must be popped whenever present, regardless of value,
+        so it can never leak to the HTTP pipeline. A falsy value still means
+        ``strip the timeout`` -- the default safety behaviour applies.
+        """
+        from azure.cosmos._routing._routing_map_provider_common import (
+            prepare_fetch_options_and_headers,
+        )
+
+        kwargs = {
+            "timeout": 5,
+            "_honor_customer_timeout": False,
+        }
+        prepare_fetch_options_and_headers(
+            previous_routing_map=None, feed_options=None, kwargs=kwargs,
+        )
+
+        self.assertNotIn("_honor_customer_timeout", kwargs)
+        self.assertNotIn("timeout", kwargs,
+                         "Falsy sentinel means default-strip applies")
+
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

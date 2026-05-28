@@ -2077,6 +2077,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._get_properties_with_options()
         feed_options = {Constants.ContainerRID: self.__get_client_container_caches()[self.container_link]["_rid"]}
 
+        # For read_feed_ranges, timeout should flow to the PK-range request.
+        # The cache layer strips timeout by default, so this call opts in.
+        kwargs["_honor_customer_timeout"] = True
+
         def get_next(continuation_token:str) -> list[dict[str, Any]]: # pylint: disable=unused-argument
             partition_key_ranges = \
                 self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access

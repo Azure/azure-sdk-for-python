@@ -17,6 +17,8 @@ from azure.cosmos._routing.aio.routing_map_provider import (
 )
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos import _base, http_constants
+from azure.cosmos._constants import _Constants as Constants
+from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 
 
 # =====================================================================
@@ -66,6 +68,26 @@ class CapturingMockClient:
             response_hook({"etag": "test-etag-1"}, None)
         for item in self.partition_key_ranges:
             yield item
+
+
+class CapturingRoutingMapProviderAsync:
+    def __init__(self):
+        self.captured_feed_options = None
+        self.captured_kwargs = None
+
+    async def get_overlapping_ranges(self, _collection_link, _ranges, feed_options=None, **kwargs):
+        self.captured_feed_options = dict(feed_options) if feed_options else {}
+        self.captured_kwargs = dict(kwargs)
+        return [{"id": "0", "minInclusive": "", "maxExclusive": "FF"}]
+
+
+class ContainerConnectionStubAsync:
+    def __init__(self):
+        self._container_properties_cache = {}
+        self._routing_map_provider = CapturingRoutingMapProviderAsync()
+
+    async def refresh_routing_map_provider(self):
+        return None
 
 
 class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
@@ -395,6 +417,20 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
         )
         assert client.call_count == 1
         assert len(result) == len(PARTITION_KEY_RANGES)
+
+    async def test_read_feed_ranges_forwards_timeout_to_routing_provider_async(self):
+        """Async read_feed_ranges should forward timeout kwargs to routing fetch."""
+        connection = ContainerConnectionStubAsync()
+        container = AsyncContainerProxy(connection, "dbs/mydb", "mycoll")
+        connection._container_properties_cache[container.container_link] = {"_rid": CONTAINER_RID}
+
+        ranges = [item async for item in container.read_feed_ranges(timeout=9, read_timeout=4)]
+
+        assert len(ranges) == 1
+        assert connection._routing_map_provider.captured_feed_options[Constants.ContainerRID] == CONTAINER_RID
+        assert connection._routing_map_provider.captured_kwargs["timeout"] == 9
+        assert connection._routing_map_provider.captured_kwargs["read_timeout"] == 4
+        assert connection._routing_map_provider.captured_kwargs["_honor_customer_timeout"] is True
 
 
 if __name__ == "__main__":
