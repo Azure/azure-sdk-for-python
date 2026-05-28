@@ -3,6 +3,11 @@
 ## 12.31.0b1 (Unreleased)
 
 ### Features Added
+- Added opt-in session-based authentication for `ContainerClient` via the new
+`use_session` keyword argument. When enabled, it must be used with a
+`TokenCredential`. GET blob download operations issued through the client
+are authenticated using a short-lived session credential obtained from the
+service instead of the bearer token.
 
 ## 12.29.0 (2026-05-14)
 
