@@ -22,7 +22,7 @@ class AsyncKeysClientPreparer(AzureRecordedTestCase):
     def __init__(self, *args, **kwargs):
         vault_playback_url = "https://vaultname.vault.azure.net"
         hsm_playback_url = "https://managedhsmvaultname.managedhsm.azure.net"
-        playback_ekm_external_id = "fake-ekm-host"
+        playback_ekm_external_id = "fake-external-key"
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
 
         if self.is_live:
