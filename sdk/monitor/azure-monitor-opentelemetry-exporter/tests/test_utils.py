@@ -782,6 +782,16 @@ class TestUtils(unittest.TestCase):
 
     # Attach with APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE env var
 
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_app_service(self):
+        self.assertTrue(_utils._is_attach_enabled())
+
     @patch(
         "azure.monitor.opentelemetry.exporter._utils.isdir",
         return_value=True,
@@ -792,9 +802,11 @@ class TestUtils(unittest.TestCase):
             "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
         },
+        clear=True,
     )
     def test_attach_type_integrated_auto_app_service(self, mock_isdir):
         self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
 
     @patch(
         "azure.monitor.opentelemetry.exporter._utils.isdir",
@@ -806,9 +818,11 @@ class TestUtils(unittest.TestCase):
             "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "integratedauto",
         },
+        clear=True,
     )
     def test_attach_type_integrated_auto_app_service_lower(self, mock_isdir):
         self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
 
     @patch(
         "azure.monitor.opentelemetry.exporter._utils.isdir",
@@ -820,9 +834,11 @@ class TestUtils(unittest.TestCase):
             "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "INTEGRATEDAUTO",
         },
+        clear=True,
     )
     def test_attach_type_integrated_auto_app_service_upper(self, mock_isdir):
         self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
 
     @patch(
         "azure.monitor.opentelemetry.exporter._utils.isdir",
@@ -834,6 +850,7 @@ class TestUtils(unittest.TestCase):
             "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "Manual",
         },
+        clear=True,
     )
     def test_attach_type_manual_app_service(self, mock_isdir):
         self.assertFalse(_utils._is_attach_enabled())
@@ -897,35 +914,38 @@ class TestUtils(unittest.TestCase):
             "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
         },
     )
-    def test_attach_type_integrated_auto_app_service_requires_isdir_check(self, mock_isdir):
-        # Even with IntegratedAuto, App Service attach still follows the legacy isdir gate.
-        self.assertFalse(_utils._is_attach_enabled())
-        mock_isdir.assert_called()
+    def test_attach_type_integrated_auto_app_service_no_isdir_check(self, mock_isdir):
+        # APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE overrides the legacy isdir gate.
+        self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
 
     @patch(
         "azure.monitor.opentelemetry.exporter._utils.isdir",
-        return_value=True,
+        return_value=False,
     )
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
-        clear=True,
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "manual",
+        },
     )
-    def test_attach_fallback_no_env_var_app_service(self, mock_isdir):
-        # Without the env var, falls back to legacy isdir check
-        self.assertTrue(_utils._is_attach_enabled())
+    def test_attach_type_manual_app_service_no_isdir_check(self, mock_isdir):
+        # APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE overrides the legacy isdir gate.
+        self.assertFalse(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
             "FUNCTIONS_WORKER_RUNTIME": "python",
-            "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
+            "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "false",
             "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
         },
         clear=True,
     )
-    def test_attach_type_integrated_auto_functions_still_checks_enable_telemetry(self):
-        # IntegratedAuto still requires the per-RP enable telemetry check
+    def test_attach_type_integrated_auto_functions_enable_telemetry_false(self):
+        # APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE overrides the legacy PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY check.
         self.assertTrue(_utils._is_attach_enabled())
 
     @patch.dict(
