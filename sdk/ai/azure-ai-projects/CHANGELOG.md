@@ -7,27 +7,35 @@
 * Support integration of external Agents (in preview). See new `ExternalAgentDefinition` class.
 * New Agent tool in preview `FabricIQPreviewTool`.
 * New Agent tool in preview `ToolboxSearchPreviewTool`.
-* New optional string properties `description` and `name` added to Agent tools classes which did not have them before.
-* New optional `tool_configs` added to Agent tool classes.
 * New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New `.beta.models` sub-client to handle AI model weights: `list_versions`, `list`, `get`, `delete`, `update`, `pending_create_version`, `pending_upload`, `get_credentials`.
 * New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `list_runs`, `dispatch`.
 * New methods on `.beta.evaluators` for evaluator generation jobs: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New methods on `.beta.agents` for code-based hosted agents: `create_version_from_code`, `download_code`.
 * New methods on `.beta.agents` for optimization jobs: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `list_optimization_candidates`.
+* New methods on `.beta.agents` for optimization candidate management: `get_candidate_file`, `promote_candidate`.
+* New method `beta.agents.stop_session` to stop a running agent session.
 * New methods on `.beta.memory_stores` to handle individual memory items:`.beta.memory_stores`: `get_memory`, `delete_memory`.
+* New convenience method `.beta.models.create()` that wraps the spec's three-step upload-first sequence (`pending_upload` --> `azcopy copy` --> `pending_create_version`) and polls `get()` until the new `ModelVersion` is observable.
+* New methods on `.beta.skills` for versioned skill management: `create`, `list_versions`, `get_version`, `download_version`, `delete_version`.
+* New optional string properties `description` and `name` added to Agent tools classes which did not have them before.
+* New optional `tool_configs` added to Agent tool classes.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 * New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
-* New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
-* New convenience method `.beta.models.create()` that wraps the spec's three-step upload-first sequence (`pending_upload` → `azcopy copy` → `pending_create_version`) and polls `get()` until the new `ModelVersion` is observable.
+
 
 ### Breaking Changes
 
 Breaking changes in beta methods:
 * Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
-* Argument `body` in method `.beta.skills.create_from_package()` renamed to `content`.
+* Argument `body` in method `.beta.skills.create_from_files()` renamed to `content`.
+* Method `.beta.agents.get_session_files` renamed to `.beta.agents.list_session_files`.
+* Method `.beta.skills.create` signature changed — now takes `name` and keyword `inline_content: SkillInlineContent`; returns `SkillVersion`.
+* Method `.beta.skills.create_from_package` renamed to `.beta.skills.create_from_files`.
+* Method `.beta.skills.create_from_files` signature changed — now takes `name` and `content: CreateSkillVersionFromFilesBody`; returns `SkillVersion`.
+* Method `.beta.skills.update` signature changed — now only accepts keyword `default_version`; returns `SkillDetails`.
 
 Breaking changes in beta classes:
 * Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
@@ -40,6 +48,13 @@ Breaking changes in beta classes:
 * Renamed class `TargetConfig` to `RedTeamTargetConfig`.
 * Removed class `FabricIQPreviewToolParameters`.
 * Removed class `WorkIQPreviewToolParameters`.
+* Enum values `ContainerMemoryLimit.MEMORY_1GB/4GB/16GB/64GB` renamed to `MEMORY1_GB/MEMORY4_GB/MEMORY16_GB/MEMORY64_GB`.
+* Renamed class `GitHubIssueOpenedRoutineTrigger` to `GitHubIssueRoutineTrigger`.
+* Renamed enum value `RoutineTriggerType.GITHUB_ISSUE_OPENED` to `GITHUB_ISSUE`.
+* Removed enum value `DataGenerationJobSourceType.DATASET`.
+* Removed classes: `DatasetDataGenerationJobSource`, `DatasetItem`, `EvalRunOutputItemResultStatus`, `EvaluationCriterion`, `OptimizationAgentSkill`, `RoutineRunDiagnostics`.
+* Removed enums: `OptimizationMode`, `OptimizationStrategy`.
+* Removed properties `has_blob`, `skill_id`, `metadata` from class `SkillDetails`.
 
 ### Bugs Fixed
 
@@ -60,6 +75,7 @@ Breaking changes in beta classes:
 * Added new Agent tool samples `sample_agent_work_iq.py` and `sample_agent_work_iq_async.py` demonstrating use of `WorkIQPreviewTool`.
 * Added new Agent tool samples `sample_agent_fabric_iq.py` and `sample_agent_fabric_iq_async.py` demonstrating use of `FabricIQPreviewTool`.
 * Refreshed evaluation samples under `samples/evaluations/` and `samples/evaluations/agentic_evaluators/` (including `sample_agent_evaluation`, `sample_agent_response_evaluation`, `sample_eval_catalog_prompt_based_evaluators`, `sample_evaluations_ai_assisted`, `sample_evaluations_builtin_with_csv`, `sample_evaluations_builtin_with_dataset_id`, `sample_evaluations_builtin_with_inline_data`, `sample_evaluations_builtin_with_inline_data_oai`, `sample_scheduled_evaluations`, `sample_coherence`, `sample_fluency`, `sample_intent_resolution`, `sample_relevance`, `sample_response_completeness`, `sample_tool_call_accuracy`, `sample_tool_call_success`, `sample_tool_input_accuracy`, `sample_tool_output_utilization`, `sample_tool_selection`, and `sample_generic_agentic_evaluator`).
+* New sample `sample_dataset_generation_job_simpleqna_with_prompt_source.py` showing an end-to-end flow that generates a QnA dataset via `.beta.datasets.create_generation_job` and runs an OpenAI evaluation.
 
 ## 2.1.0 (2026-04-20)
 
