@@ -15,7 +15,7 @@ from azure.mgmt.resourcegraph import ResourceGraphClient
     pip install azure-identity
     pip install azure-mgmt-resourcegraph
 # USAGE
-    python resources_basic_query.py
+    python graph_query_list1.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.resources(
-        query={
-            "query": "Resources | project id, name, type, location, tags | limit 3",
-            "subscriptions": ["cfbbd179-59d2-4052-aa06-9270a38aa9d6"],
-        },
+    response = client.graph_query.list(
+        resource_group_name="my-resource-group",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2024-04-01/ResourcesBasicQuery.json
+# x-ms-original-file: 2024-04-01/GraphQueryList1.json
 if __name__ == "__main__":
     main()

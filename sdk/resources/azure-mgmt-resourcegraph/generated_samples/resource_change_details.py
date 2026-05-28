@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.resourcegraph import ResourceGraphClient
     pip install azure-identity
     pip install azure-mgmt-resourcegraph
 # USAGE
-    python resources_basic_query.py
+    python resource_change_details.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +31,17 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.resources(
-        query={
-            "query": "Resources | project id, name, type, location, tags | limit 3",
-            "subscriptions": ["cfbbd179-59d2-4052-aa06-9270a38aa9d6"],
+    response = client.resource_change_details(
+        parameters={
+            "changeIds": ["53dc0515-b86b-4bc2-979b-e4694ab4a556"],
+            "resourceIds": [
+                "/subscriptions/4d962866-1e3f-47f2-bd18-450c08f914c1/resourceGroups/MyResourceGroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount"
+            ],
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2024-04-01/ResourcesBasicQuery.json
+# x-ms-original-file: 2020-09-01-preview/ResourceChangeDetails.json
 if __name__ == "__main__":
     main()
