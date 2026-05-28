@@ -7,16 +7,30 @@ Sync unit tests for PartitionKeyRangeCache:
   - Empty change feed response (304 Not Modified / zero ranges from incremental update)
 """
 
+import logging
 import threading
 import time
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
+from azure.cosmos._routing._routing_map_provider_common import (
+    _handle_transient_snapshot_retry_decision,
+    _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
+    _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS,
+    _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS,
+    _deterministic_backoff_for_attempt,
+    _jittered_backoff,
+    process_fetched_ranges,
+    _IncrementalMergeFailed,
+)
+from azure.cosmos._routing.routing_map_provider import (
+    PartitionKeyRangeCache,
+)
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos import http_constants
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._gone_retry_policy_base import _PartitionKeyRangeGoneRetryPolicyBase
 
 
@@ -287,9 +301,10 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         self.assertEqual(ids, ['0'], "Ranges should be preserved from previous map")
         self.assertEqual(result.change_feed_etag, '"etag-new"', "ETag should be updated")
 
-    def test_fetch_routing_map_empty_full_load_returns_none(self):
-        """_fetch_routing_map should return None when a full load (no previous
-        map) returns zero ranges — this means the service returned nothing."""
+    def test_fetch_routing_map_empty_full_load_raises_503_after_budget(self):
+        """A full load that repeatedly returns zero ranges should retry up
+        to the budget and then raise ``CosmosHttpResponseError(503)``
+        instead of returning ``None``."""
         client = MagicMock()
 
         def read_pk_ranges_empty(collection_link, options, response_hook=None, **kwargs):
@@ -301,14 +316,17 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
 
         cache = PartitionKeyRangeCache(client)
 
-        result = cache._fetch_routing_map(
-            collection_link="dbs/db1/colls/coll1",
-            collection_id="dbs/db1/colls/coll1",
-            previous_routing_map=None,  # Full load
-            feed_options={}
-        )
-
-        self.assertIsNone(result, "Full load with empty ranges should return None")
+        # Patch ``time.sleep`` so the retry loop's backoffs do not slow
+        # this unit test down.
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                cache._fetch_routing_map(
+                    collection_link="dbs/db1/colls/coll1",
+                    collection_id="dbs/db1/colls/coll1",
+                    previous_routing_map=None,  # Full load
+                    feed_options={}
+                )
+        self.assertEqual(ctx.exception.status_code, 503)
 
 
     def test_get_previous_routing_map_exact_key_finds_entry(self):
@@ -617,6 +635,497 @@ class TestRoutingMapProviderUnit(unittest.TestCase):
         ids = [r['id'] for r in result._orderedPartitionKeyRanges]
         self.assertEqual(ids, ['4', '5', '3', '1'])
         self.assertEqual(result.change_feed_etag, '"etag-old"')
+
+
+    # ==========================================================================
+    # Helper-level retry-policy unit tests.
+    #
+    # These target only the pure helper that computes retry backoff / 503
+    # escalation (no cache object, no fetch loop). They check that backoff
+    # stays within the deterministic upper bound and that jitter is applied.
+    # ==========================================================================
+
+    def test_overlap_retry_backoff_is_within_deterministic_upper_bound(self):
+        """Each non-terminal attempt's backoff must lie in
+        ``[floor, _deterministic_backoff_for_attempt(attempt)]``.
+
+        The expected upper bound is *derived from the same helper the
+        production code uses* rather than hard-coded -- a regression that
+        changes the base constant or the doubling factor fails one test
+        here instead of silently widening the bound.
+        """
+        test_logger = logging.getLogger(__name__ + ".jitter_bounds_test")
+
+        # Non-terminal attempts are 1 .. MAX_ATTEMPTS - 1; the final attempt
+        # raises 503 instead of returning a backoff.
+        for attempt_index in range(1, _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS):
+            expected_upper_bound = _deterministic_backoff_for_attempt(attempt_index)
+            expected_floor = min(
+                _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS,
+                expected_upper_bound / 4,
+            )
+            for _ in range(50):
+                backoff = _handle_transient_snapshot_retry_decision(
+                    retry_attempt_count=attempt_index,
+                    collection_link="dbs/db1/colls/coll1",
+                    logger=test_logger,
+                )
+                self.assertGreaterEqual(
+                    backoff, expected_floor,
+                    "Backoff for attempt {} below floor {}s; got {}s.".format(
+                        attempt_index, expected_floor, backoff,
+                    )
+                )
+                self.assertLessEqual(
+                    backoff, expected_upper_bound,
+                    "Backoff for attempt {} exceeded upper bound {}s; got {}s.".format(
+                        attempt_index, expected_upper_bound, backoff,
+                    )
+                )
+
+    def test_backoff_schedule_is_exponential_doubling_until_cap(self):
+        """Pin the *shape* of the deterministic schedule: each attempt's
+        upper bound is exactly 2x the previous attempt's, until the per-sleep
+        cap kicks in. A regression that flattens the schedule (e.g.
+        ``2 ** attempt`` instead of ``2 ** (attempt - 1)``) or removes the
+        cap fails here, independently of the absolute base value."""
+        # Walk attempts until we observe the cap being applied at least once.
+        bounds = [_deterministic_backoff_for_attempt(a) for a in range(1, 12)]
+
+        # Pre-cap region: each value is exactly 2x the previous.
+        for i in range(1, len(bounds)):
+            prev, curr = bounds[i - 1], bounds[i]
+            if curr >= _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS:
+                # Once we hit the cap, the doubling invariant is intentionally
+                # broken by clamping; verify clamp and stop checking growth.
+                self.assertEqual(curr, _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS)
+                break
+            self.assertAlmostEqual(
+                curr, prev * 2.0, places=9,
+                msg="Schedule must double between attempts {} and {}; got {} -> {}.".format(
+                    i, i + 1, prev, curr,
+                )
+            )
+        else:
+            self.fail(
+                "Expected the deterministic schedule to reach "
+                "_TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS within 12 attempts; "
+                "got bounds {}.".format(bounds)
+            )
+
+    def test_backoff_respects_max_cap(self):
+        """For attempts large enough that ``INITIAL * 2^(attempt-1)`` would
+        exceed the cap, the deterministic bound and any jittered draw must
+        stay at or below ``_TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS``.
+        Forward-protection against a future bump to ``MAX_ATTEMPTS``."""
+        # Pick an attempt index large enough that the unclamped schedule
+        # would blow well past the cap (2^20 * 0.2 = ~210000s).
+        bound = _deterministic_backoff_for_attempt(20)
+        self.assertEqual(
+            bound, _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS,
+            "Deterministic bound for attempt=20 must be clamped to the cap."
+        )
+        for _ in range(50):
+            sample = _jittered_backoff(bound)
+            self.assertLessEqual(
+                sample, _TRANSIENT_SNAPSHOT_RETRY_MAX_BACKOFF_SECONDS,
+                "Jittered sample {} exceeded the per-sleep cap.".format(sample)
+            )
+
+    def test_backoff_respects_min_floor(self):
+        """For deterministic upper bounds large enough that the floor does
+        not get clamped down, every jittered draw must be at least
+        ``_TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS``. Pins the
+        non-zero-floor invariant that prevents wasted retries on
+        state-propagation failure modes."""
+        # Pick an upper bound where MIN < upper/4 so the floor is not
+        # clamped down (otherwise the assertion would be vacuous).
+        upper = _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS * 8
+        self.assertGreater(
+            upper / 4, _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS,
+            "Test precondition: chosen upper must leave the floor un-clamped."
+        )
+        for _ in range(200):
+            sample = _jittered_backoff(upper)
+            self.assertGreaterEqual(
+                sample, _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS,
+                "Floored full jitter must never sleep below the configured "
+                "minimum; got {}.".format(sample)
+            )
+            self.assertLessEqual(sample, upper)
+
+        # Edge case: when upper is small enough that upper/4 < MIN, the floor
+        # collapses to upper/4 so the jitter range stays at 75% of upper.
+        small_upper = _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS * 2
+        expected_clamped_floor = small_upper / 4
+        self.assertLess(expected_clamped_floor, _TRANSIENT_SNAPSHOT_RETRY_MIN_BACKOFF_SECONDS)
+        for _ in range(200):
+            sample = _jittered_backoff(small_upper)
+            self.assertGreaterEqual(sample, expected_clamped_floor)
+            self.assertLessEqual(sample, small_upper)
+
+    def test_overlap_retry_backoff_actually_varies_between_calls(self):
+        """Consecutive calls for the same attempt index must produce varying
+        values; otherwise jitter has regressed to a fixed backoff."""
+        test_logger = logging.getLogger(__name__ + ".jitter_variance_test")
+        samples = [
+            _handle_transient_snapshot_retry_decision(
+                retry_attempt_count=1,
+                collection_link="dbs/db1/colls/coll1",
+                logger=test_logger,
+            )
+            for _ in range(50)
+        ]
+        self.assertGreater(
+            len(set(samples)), 1,
+            "Overlap-retry backoff returned identical values across 50 draws."
+        )
+
+    def test_overlap_retry_raises_503_at_attempt_budget_exhaustion(self):
+        """Once the attempt budget is reached, the helper raises 503 instead
+        of returning a backoff."""
+        test_logger = logging.getLogger(__name__ + ".jitter_budget_test")
+        with self.assertRaises(CosmosHttpResponseError) as ctx:
+            _handle_transient_snapshot_retry_decision(
+                retry_attempt_count=_TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
+                collection_link="dbs/db1/colls/coll1",
+                logger=test_logger,
+            )
+        self.assertEqual(
+            ctx.exception.status_code,
+            http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+        )
+
+    # ==========================================================================
+    # Provider retry-loop behavior tests (mocked integration path).
+    #
+    # These exercise the sync provider's fetch/retry loop with mocked
+    # ``/pkranges`` payloads: transient inconsistencies either recover on
+    # retry or surface as HTTP 503; ``ValueError("Ranges overlap")`` never
+    # leaks to callers.
+    # ==========================================================================
+
+    def test_fetch_routing_map_recovers_after_transient_overlap(self):
+        """An inconsistent ``/pkranges`` snapshot followed by a consistent
+        one should populate the cache cleanly on the second attempt."""
+        # First call: stale parent + children missing parent reference.
+        bad_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},  # stale parent
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},  # missing parents=['10']
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},  # missing parents=['10']
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        # Second call: consistent snapshot, lineage metadata correctly propagated.
+        good_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90', 'parents': ['10']},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0', 'parents': ['10']},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+
+        responses = [bad_payload, good_payload]
+        call_count = {'n': 0}
+
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-{}"'.format(call_count['n'])}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+            return iter(payload)
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        # Patch time.sleep so the test does not actually wait the backoff.
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            result = cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertIsNotNone(
+            result,
+            "Sync cache should populate after the transient overlap clears on retry."
+        )
+        self.assertEqual(
+            call_count['n'], 2,
+            "Expected exactly one retry: one failed fetch + one successful fetch."
+        )
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
+
+    def test_fetch_routing_map_surfaces_503_after_persistent_overlap(self):
+        """Persistent inconsistent snapshots across every retry must surface
+        as HTTP 503, not as empty results from ``get_overlapping_ranges``."""
+        bad_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        call_count = {'n': 0}
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+            return iter(bad_payload)
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertEqual(
+            ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+            "Persistent overlap must surface as HTTP 503 (transient), not as a bare ValueError "
+            "or as a silent empty-result return."
+        )
+        self.assertEqual(
+            call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
+            "Should have made exactly _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS fetch attempts before giving up."
+        )
+
+    def test_fetch_routing_map_recovers_after_transient_gap(self):
+        """Mirror of the overlap-recovery test for the gap side: when the
+        gateway returns a snapshot with a hole in the key space once and a
+        consistent one on retry, the sync cache should populate cleanly on
+        the second attempt rather than letting the empty result reach
+        ``SmartRoutingMapProvider`` (which would crash with
+        ``AssertionError``)."""
+        # First call: gap between "80" and "A0" (parent removed, children not yet visible).
+        bad_payload = [
+            {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        # Second call: gap is gone, children have propagated.
+        good_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+
+        responses = [bad_payload, good_payload]
+        call_count = {'n': 0}
+
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            payload = responses[call_count['n']] if call_count['n'] < len(responses) else good_payload
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-{}"'.format(call_count['n'])}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+            return iter(payload)
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            result = cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertIsNotNone(
+            result,
+            "Sync cache should populate after the transient gap clears on retry."
+        )
+        self.assertEqual(call_count['n'], 2, "Expected exactly one retry.")
+        ids = [r['id'] for r in result._orderedPartitionKeyRanges]
+        self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
+
+    def test_fetch_routing_map_surfaces_503_after_persistent_gap(self):
+        """A persistent gap across the retry budget must surface as
+        ``CosmosHttpResponseError(503)``."""
+        bad_payload = [
+            {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        call_count = {'n': 0}
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+            return iter(bad_payload)
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
+        self.assertEqual(
+            call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
+            "Should have made exactly _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS fetch attempts before giving up."
+        )
+
+    def test_incremental_overlap_converts_to_incremental_merge_failed(self):
+        """An overlap raised during incremental merge must convert to
+        ``_IncrementalMergeFailed`` so the standard fallback (retry
+        incremental, then full refresh) takes over; a bare ``ValueError``
+        must never escape to the caller."""
+
+        # Existing cached map: '0' covers ['', '80'] and '1' covers ['80', 'FF'].
+        previous_map = CollectionRoutingMap.CompleteRoutingMap(
+            [
+                ({'id': '0', 'minInclusive': '',   'maxExclusive': '80'}, True),
+                ({'id': '1', 'minInclusive': '80', 'maxExclusive': 'FF'}, True),
+            ],
+            'coll1', '"etag-prev"'
+        )
+
+        # Delta:
+        #   - '0' re-declared with the same span (resolves via the existing
+        #     ``known_range_info_by_id`` lookup -- no parents needed).
+        #   - '2' with ``parents=['1']`` and a span that overlaps '0'. The
+        #     parent-resolution loop succeeds because '1' is in the cache,
+        #     so we reach ``try_combine``. Once '1' is removed as the gone
+        #     parent, the merged map is { '0' ('', '80'), '2' ('40', 'FF') }
+        #     -- '0' overlaps '2' on ['40', '80'], so ``is_complete_set_of_range``
+        #     raises ``ValueError("Ranges overlap: ...")`` from inside
+        #     ``try_combine``.
+        bad_delta = [
+            {'id': '0', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '2', 'minInclusive': '40', 'maxExclusive': 'FF', 'parents': ['1']},
+        ]
+
+        # The wrapper around try_combine must absorb the ValueError and convert
+        # it to _IncrementalMergeFailed for the caller's retry loop.
+        with self.assertRaises(_IncrementalMergeFailed):
+            process_fetched_ranges(
+                bad_delta, previous_map, 'coll1', 'dbs/db1/colls/coll1', '"etag-new"'
+            )
+
+    def test_fetch_routing_map_mixed_overlap_and_gap_signals_share_retry_budget(self):
+        """``_OverlapDetected`` and ``_GapDetected`` share one retry counter.
+        Alternating snapshots must still raise 503 once the budget is
+        exhausted; the budget is not per-signal-type."""
+        # Overlap payload: stale parent '10' coexists with its children that
+        # lack a ``parents`` reference. Triggers ``_OverlapDetected``.
+        overlap_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+        # Gap payload: ['80', 'A0') is missing entirely. Triggers ``_GapDetected``.
+        gap_payload = [
+            {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
+            {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+
+        responses = [overlap_payload, gap_payload, overlap_payload]
+        call_count = {'n': 0}
+
+        client = MagicMock()
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            payload = responses[call_count['n']] if call_count['n'] < len(responses) else overlap_payload
+            call_count['n'] += 1
+            headers = {http_constants.HttpHeaders.ETag: '"etag-mixed-{}"'.format(call_count['n'])}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+            return iter(payload)
+
+        client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+        cache = PartitionKeyRangeCache(client)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                cache.get_routing_map("dbs/db1/colls/coll1", feed_options={})
+
+        self.assertEqual(
+            ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+            "Alternating overlap/gap signals must still surface as HTTP 503 once "
+            "the shared budget is exhausted."
+        )
+        self.assertEqual(
+            call_count['n'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS,
+            "Overlap and gap signals must share one retry budget; alternating "
+            "between them must NOT extend the total number of attempts."
+        )
+
+    def test_fetch_routing_map_preserves_existing_cache_entry_when_force_refresh_surfaces_503(self):
+        """A 503 raised by ``_fetch_routing_map`` during a forced refresh
+        must not corrupt the cached routing map. Subsequent reads should
+        still see the previously-cached entry."""
+        # Pre-populate the shared cache with a known-good routing map.
+        cached_map = _make_complete_routing_map("dbs/db1/colls/coll1", '"etag-cached"')
+        cache = PartitionKeyRangeCache(MagicMock())
+        cache._collection_routing_map_by_item["dbs/db1/colls/coll1"] = cached_map
+
+        # Wire the client to return an inconsistent (overlap) snapshot every
+        # time -- forces the retry loop to exhaust its budget and raise 503.
+        bad_payload = [
+            {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+            {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
+            {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+            {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+            {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+        ]
+
+        def fake_read_pk_ranges(collection_link, options, response_hook=None, **kwargs):
+            headers = {http_constants.HttpHeaders.ETag: '"etag-bad"'}
+            if response_hook:
+                response_hook(headers, None)
+            capture_headers = kwargs.get('_internal_response_headers_capture')
+            if capture_headers is not None:
+                capture_headers.update(headers)
+            return iter(bad_payload)
+
+        cache._document_client._ReadPartitionKeyRanges = MagicMock(side_effect=fake_read_pk_ranges)
+
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                cache.get_routing_map(
+                    "dbs/db1/colls/coll1",
+                    feed_options={},
+                    force_refresh=True,
+                    previous_routing_map=cached_map,
+                )
+
+        self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
+
+        # Critical invariant: the previously-cached map must still be reachable
+        # via the same key. A 503 from a forced refresh must never evict good
+        # cache state -- otherwise every transient gateway blip would force the
+        # next reader to pay a cold-start cost.
+        self.assertIs(
+            cache._collection_routing_map_by_item.get("dbs/db1/colls/coll1"), cached_map,
+            "Cached routing map must be preserved after a 503 from forced refresh -- "
+            "transient inconsistencies must not evict good cache state."
+        )
+        self.assertEqual(
+            cache._collection_routing_map_by_item["dbs/db1/colls/coll1"].change_feed_etag,
+            '"etag-cached"',
+            "Cached ETag must remain the pre-503 value (no partial overwrite)."
+        )
 
 
 if __name__ == "__main__":

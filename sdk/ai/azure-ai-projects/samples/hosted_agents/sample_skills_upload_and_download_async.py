@@ -10,7 +10,7 @@ DESCRIPTION:
     asynchronous AIProjectClient.
 
     1) Delete an existing skill with the same name (if it exists).
-    2) Upload a package with `create_from_package(...)`.
+    2) Upload a package with `create_from_files(...)`.
     3) Retrieve the uploaded skill with `get(...)`.
     4) Download the package with `download(...)` to the temp folder.
     5) Delete the uploaded skill.
@@ -23,7 +23,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv
+    pip install "azure-ai-projects>=2.2.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -44,6 +44,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import CreateSkillVersionFromFilesBody
 
 load_dotenv()
 
@@ -65,12 +66,14 @@ async def main() -> None:
         except ResourceNotFoundError:
             pass
 
-        imported = await project_client.beta.skills.create_from_package(Path(skill_file_path).read_bytes())
+        imported = await project_client.beta.skills.create_from_files(
+            skill_name, content=CreateSkillVersionFromFilesBody(files=[Path(skill_file_path).read_bytes()])
+        )
         imported_skill_name = imported.name
-        print(f"Imported skill from package: {imported.name} ({imported.skill_id}) has_blob={imported.has_blob}")
+        print(f"Imported skill from package: {imported.name} ({imported.skill_id}) version={imported.version}")
 
         fetched = await project_client.beta.skills.get(imported.name)
-        print(f"Fetched imported skill: {fetched.name} ({fetched.skill_id}) has_blob={fetched.has_blob}")
+        print(f"Fetched imported skill: {fetched.name} ({fetched.id}) default_version={fetched.default_version}")
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         download_path = download_folder / f"{fetched.name}_{timestamp}.zip"

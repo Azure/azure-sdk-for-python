@@ -463,8 +463,6 @@ class TestPerPartitionCircuitBreakerMMAsync:
         except AssertionError:
             await cleanup_method([custom_setup, setup])
             pytest.skip("Recovery-phase precondition not met: partition was not marked unavailable.")
-
-
         number_of_errors = 0
 
         async def concurrent_upsert():

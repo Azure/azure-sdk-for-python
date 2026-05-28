@@ -38,6 +38,9 @@ from .._routing_map_provider_common import (
     determine_refresh_action,
     get_smart_overlapping_ranges,
     _IncrementalMergeFailed,
+    _OverlapDetected,
+    _GapDetected,
+    _handle_transient_snapshot_retry_decision,
 )
 
 
@@ -68,9 +71,21 @@ _shared_inflight_fetches: Dict[str, Dict[tuple, "_InflightEntry"]] = {}
 # When this reaches zero, shared endpoint state is evicted.
 _shared_cache_refcounts: Dict[str, int] = {}
 
-# Process-wide lock for this async module's shared dicts. Sync and async
-# routing providers keep separate shared state.
-_shared_cache_lock = threading.Lock()
+# Process-wide lock guarding the four dicts above. The sync module
+# (``_routing/routing_map_provider.py``) has its own independent set, so
+# sync and async clients targeting the same endpoint do not share state.
+#
+# A ``threading`` lock (not ``asyncio.Lock``) is used because an
+# ``asyncio.Lock`` binds to the loop that first acquires it, which breaks
+# across multiple event loops in the same process. The critical sections
+# are pure dict reads/writes with no await and no network I/O, so a brief
+# threading-lock acquisition from a coroutine does not meaningfully block
+# the event loop.
+#
+# Reentrant (``RLock``) to tolerate same-thread re-entry (for example
+# ``__del__`` -> ``release()``) if future refactors add allocation points
+# inside this critical section.
+_shared_cache_lock = threading.RLock()
 
 
 # pylint: disable=protected-access
@@ -497,8 +512,12 @@ class PartitionKeyRangeCache(object):
                 **fetch_kwargs,
             )
 
-            if new_routing_map:
-                self._collection_routing_map_by_item[collection_id] = new_routing_map
+            # ``_fetch_routing_map`` always returns a populated
+            # ``CollectionRoutingMap`` on success and raises otherwise -- no
+            # defensive ``if new_routing_map:`` check needed; one would only
+            # mask a future regression by silently leaving the cache empty
+            # instead of surfacing the failure.
+            self._collection_routing_map_by_item[collection_id] = new_routing_map
 
             return new_routing_map
         finally:
@@ -515,7 +534,7 @@ class PartitionKeyRangeCache(object):
             previous_routing_map: Optional[CollectionRoutingMap],
             feed_options: Optional[Dict[str, Any]],
             **kwargs
-    ) -> Optional[CollectionRoutingMap]:
+    ) -> CollectionRoutingMap:
         """Fetches or updates the routing map using an incremental change feed.
 
         This method handles both the initial loading of a collection's routing
@@ -525,18 +544,30 @@ class PartitionKeyRangeCache(object):
         of inconsistencies during an incremental update, it automatically falls
         back to a full refresh.
 
+        Always returns a populated :class:`CollectionRoutingMap` on success.
+        Failure modes raise an exception rather than returning ``None``:
+        ``CosmosHttpResponseError`` for the underlying network call (including
+        the transient HTTP 503 raised once the snapshot-inconsistency retry
+        budget is exhausted), or the internal ``_IncrementalMergeFailed``
+        signal when the incremental-merge path cannot make progress and there
+        is no previous map to fall back on.
+
         :param str collection_link: The link to the collection.
         :param str collection_id: The ID of the collection.
         :param previous_routing_map: The last known routing map for incremental updates.
         :type previous_routing_map: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
         :param feed_options: Options for the change feed request.
         :type feed_options: dict or None
-        :return: The updated or newly created CollectionRoutingMap, or None if the update fails.
-        :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap or None
-        :raises CosmosHttpResponseError: If the underlying request to fetch ranges fails.
+        :return: The updated or newly created CollectionRoutingMap.
+        :rtype: azure.cosmos.routing.collection_routing_map.CollectionRoutingMap
+        :raises CosmosHttpResponseError: If the underlying ``/pkranges`` fetch
+            fails, or if every snapshot-inconsistency retry exhausts the
+            budget (surfaced as HTTP 503 so the upstream retry policy can
+            take over).
         """
         current_previous_map = previous_routing_map
         incomplete_attempt_count = 0
+        inconsistency_attempt_count = 0
 
         while True:
             request_kwargs = dict(kwargs)
@@ -592,6 +623,18 @@ class PartitionKeyRangeCache(object):
                     continue
 
                 raise
+            except (_OverlapDetected, _GapDetected):
+                # Reset to ``None`` so the next attempt runs a full refresh
+                # instead of merging onto the same inconsistent base.
+                inconsistency_attempt_count += 1
+                backoff = _handle_transient_snapshot_retry_decision(
+                    retry_attempt_count=inconsistency_attempt_count,
+                    collection_link=collection_link,
+                    logger=logger,
+                )
+                await asyncio.sleep(backoff)
+                current_previous_map = None
+                continue
 
     async def get_range_by_partition_key_range_id(
             self,
