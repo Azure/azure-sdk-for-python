@@ -343,12 +343,6 @@ async def run_all_checks(
     base_args = [sys.executable, "-m", "azpysdk.main"]
     tasks = []
     semaphore = asyncio.Semaphore(max_parallel)
-    # When only one check runs at a time, mirror the child's stdio live so
-    # hangs surface immediately in the pipeline log instead of being swallowed
-    # by the post-hoc grouped dump (which never prints if the agent kills us
-    # at the job timeout). With max_parallel > 1, interleaved live output
-    # would be unreadable, so we keep the existing "capture then print" path.
-    stream_live = max_parallel == 1
     combos = [(p, c) for p in packages for c in checks]
     scheduled: List[tuple] = []
 
@@ -392,6 +386,15 @@ async def run_all_checks(
         next_proxy_port += 1
 
     total = len(scheduled)
+
+    # Mirror the child's stdio live to the parent's stdout/stderr when no
+    # concurrent children could interleave output. This makes hangs visible
+    # in real time instead of being hidden behind a post-hoc grouped dump
+    # that never prints if the agent cancels us at the job timeout. We check
+    # both the semaphore cap AND the actual number of tasks because cosmos
+    # (and similar live test legs) ship a single check per matrix leg but
+    # leave --max-parallel at its CPU-count default.
+    stream_live = max_parallel == 1 or total <= 1
 
     for idx, (package, check, proxy_port, pkg_python_version) in enumerate(scheduled, start=1):
         tasks.append(
