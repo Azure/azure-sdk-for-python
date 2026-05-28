@@ -6,8 +6,9 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list evaluation and and eval runs.
+    Given an AIProjectClient, this sample demonstrates how to assign RBAC permissions,
+    create a scheduled agent trace evaluation using `project_client.beta.schedules`,
+    list the schedule runs, and delete the schedule when finished.
 
 USAGE:
     python sample_scheduled_agent_traces_evaluation_smart_filter.py
