@@ -39,6 +39,7 @@ def main():
         patch_extension={
             "properties": {
                 "autoUpgradeMinorVersion": True,
+                "autoUpgradeMode": "compatible",
                 "configurationProtectedSettings": {"omsagent.secret.key": "secretKeyValue01"},
                 "configurationSettings": {
                     "omsagent.env.clusterName": "clusterName1",
@@ -51,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/PatchExtension.json
+# x-ms-original-file: 2025-03-01/PatchExtension.json
 if __name__ == "__main__":
     main()

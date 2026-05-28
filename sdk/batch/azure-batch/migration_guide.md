@@ -308,7 +308,7 @@ for i in range(10):
 result = client.create_tasks(
     job_id="my-job", 
     task_collection=tasks,
-    concurrencies=4  # Use 4 parallel threads for submission
+    max_concurrency=4  # Use 4 parallel threads for submission
 )
 ```
 

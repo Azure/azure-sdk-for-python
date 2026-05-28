@@ -5,11 +5,12 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from azure.storage.blob.aio import BlobServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.storage.blob.aio import BlobServiceClient
 
 
 # --Test Class -----------------------------------------------------------------

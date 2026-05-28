@@ -100,8 +100,14 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                                 "cpuCfsQuotaPeriod": "str",
                                 "cpuManagerPolicy": "str",
                                 "failSwapOn": bool,
+                                "hardEvictionThreshold": {
+                                    "memoryAvailable": "str",
+                                    "nodeFsAvailable": "str",
+                                    "nodeFsInodesFree": "str",
+                                },
                                 "imageGcHighThreshold": 0,
                                 "imageGcLowThreshold": 0,
+                                "kubeReserved": {"cpuMillicores": 0, "memoryMB": 0},
                                 "podMaxPids": 0,
                                 "seccompDefault": "str",
                                 "topologyManagerPolicy": "str",
@@ -178,9 +184,12 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                             "networkProfile": {
                                 "allowedHostPorts": [{"portEnd": 0, "portStart": 0, "protocol": "str"}],
                                 "applicationSecurityGroups": ["str"],
+                                "nodePublicIPPrefixIDs": ["str"],
                                 "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
+                                "secondaryNetworkInterfaces": [
+                                    {"enableAcceleratedNetworking": bool, "type": "str", "vnetSubnetId": "str"}
+                                ],
                             },
-                            "nodeCustomizationProfile": {"nodeCustomizationId": "str"},
                             "nodeImageVersion": "str",
                             "nodeInitializationTaints": ["str"],
                             "nodeLabels": {"str": "str"},
@@ -194,6 +203,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                             "podIPAllocationMode": "str",
                             "podSubnetID": "str",
                             "powerState": {"code": "str"},
+                            "preparedImageSpecificationProfile": {"preparedImageSpecificationId": "str"},
                             "provisioningState": "str",
                             "proximityPlacementGroupID": "str",
                             "scaleDownMode": "str",
@@ -230,7 +240,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                             "virtualMachineNodesStatus": [{"count": 0, "size": "str"}],
                             "virtualMachinesProfile": {
                                 "scale": {
-                                    "autoscale": {"maxCount": 0, "minCount": 0, "size": "str"},
+                                    "autoscale": [{"maxCount": 0, "minCount": 0, "size": "str"}],
                                     "manual": [{"count": 0, "size": "str"}],
                                 }
                             },
@@ -276,8 +286,8 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                     "azureMonitorProfile": {
                         "appMonitoring": {
                             "autoInstrumentation": {"enabled": bool},
-                            "openTelemetryLogs": {"enabled": bool, "port": 0},
-                            "openTelemetryMetrics": {"enabled": bool, "port": 0},
+                            "openTelemetryLogsAndTraces": {"enabled": bool, "grpcPort": 0, "httpPort": 0},
+                            "openTelemetryMetrics": {"enabled": bool, "grpcPort": 0, "httpPort": 0},
                         },
                         "containerInsights": {
                             "containerNetworkLogs": "str",
@@ -289,16 +299,19 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                         },
                         "metrics": {
                             "enabled": bool,
+                            "controlPlane": {"enabled": bool},
                             "kubeStateMetrics": {"metricAnnotationsAllowList": "str", "metricLabelsAllowlist": "str"},
                         },
                     },
                     "azurePortalFQDN": "str",
                     "bootstrapProfile": {"artifactSource": "str", "containerRegistryId": "str"},
+                    "controlPlaneScalingProfile": {"scalingSize": "str"},
                     "creationData": {"sourceResourceId": "str"},
                     "currentKubernetesVersion": "str",
                     "disableLocalAccounts": bool,
                     "diskEncryptionSetID": "str",
                     "dnsPrefix": "str",
+                    "enableFIPS": bool,
                     "enableNamespaceResources": bool,
                     "enableRBAC": bool,
                     "fqdn": "str",
@@ -307,7 +320,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                         "enableContinuousControlPlaneAndAddonMonitor": bool,
                         "enableOnDemandMonitor": bool,
                     },
-                    "hostedSystemProfile": {"enabled": bool},
+                    "hostedSystemProfile": {"enabled": bool, "nodeSubnetID": "str", "systemNodeSubnetID": "str"},
                     "httpProxyConfig": {
                         "effectiveNoProxy": ["str"],
                         "enabled": bool,
@@ -391,6 +404,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                         "serviceCidrs": ["str"],
                         "staticEgressGatewayProfile": {"enabled": bool},
                     },
+                    "nodeDisruptionProfile": {"nodeDisruptionPolicy": "str"},
                     "nodeProvisioningProfile": {"defaultNodePools": "str", "mode": "str"},
                     "nodeResourceGroup": "str",
                     "nodeResourceGroupProfile": {"restrictionLevel": "str"},
@@ -500,7 +514,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                     },
                     "storageProfile": {
                         "blobCSIDriver": {"enabled": bool},
-                        "diskCSIDriver": {"enabled": bool, "version": "str"},
+                        "diskCSIDriver": {"enabled": bool},
                         "fileCSIDriver": {"enabled": bool},
                         "snapshotController": {"enabled": bool},
                     },

@@ -3891,9 +3891,9 @@ class RecoveryPointsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-01-01-preview",
+        method_added_on="2026-01-31-preview",
         params_added_on={
-            "2026-01-01-preview": [
+            "2026-01-31-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3906,7 +3906,7 @@ class RecoveryPointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-31-preview"],
     )
     async def update(
         self,
@@ -10892,8 +10892,8 @@ class _RecoveryServicesBackupClientOperationsMixin(
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -10911,7 +10911,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.OkResponse]:
+    ) -> AsyncLROPoller[None]:
         """Prepares source vault for Data Move operation.
 
         :param vault_name: The name of the VaultResource. Required.
@@ -10924,10 +10924,8 @@ class _RecoveryServicesBackupClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OkResponse. The OkResponse is compatible
-         with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.recoveryservicesbackup.models.OkResponse]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -10940,7 +10938,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.OkResponse]:
+    ) -> AsyncLROPoller[None]:
         """Prepares source vault for Data Move operation.
 
         :param vault_name: The name of the VaultResource. Required.
@@ -10953,10 +10951,8 @@ class _RecoveryServicesBackupClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OkResponse. The OkResponse is compatible
-         with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.recoveryservicesbackup.models.OkResponse]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -10969,7 +10965,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.OkResponse]:
+    ) -> AsyncLROPoller[None]:
         """Prepares source vault for Data Move operation.
 
         :param vault_name: The name of the VaultResource. Required.
@@ -10982,10 +10978,8 @@ class _RecoveryServicesBackupClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OkResponse. The OkResponse is compatible
-         with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.recoveryservicesbackup.models.OkResponse]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -10996,7 +10990,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         resource_group_name: str,
         parameters: Union[_models.PrepareDataMoveRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.OkResponse]:
+    ) -> AsyncLROPoller[None]:
         """Prepares source vault for Data Move operation.
 
         :param vault_name: The name of the VaultResource. Required.
@@ -11008,17 +11002,15 @@ class _RecoveryServicesBackupClientOperationsMixin(
          PrepareDataMoveRequest, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.PrepareDataMoveRequest or JSON or
          IO[bytes]
-        :return: An instance of AsyncLROPoller that returns OkResponse. The OkResponse is compatible
-         with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.recoveryservicesbackup.models.OkResponse]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OkResponse] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -11036,16 +11028,9 @@ class _RecoveryServicesBackupClientOperationsMixin(
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.OkResponse, response.json())
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -11060,15 +11045,13 @@ class _RecoveryServicesBackupClientOperationsMixin(
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.OkResponse].from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.OkResponse](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _bms_trigger_data_move_initial(
         self,
@@ -11135,8 +11118,8 @@ class _RecoveryServicesBackupClientOperationsMixin(
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -11154,7 +11137,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.OkResponse]:
+    ) -> AsyncLROPoller[None]:
         """Triggers Data Move Operation on target vault.
 
         :param vault_name: The name of the VaultResource. Required.
@@ -11167,10 +11150,8 @@ class _RecoveryServicesBackupClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OkResponse. The OkResponse is compatible
-         with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.recoveryservicesbackup.models.OkResponse]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -11183,7 +11164,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.OkResponse]:
+    ) -> AsyncLROPoller[None]:
         """Triggers Data Move Operation on target vault.
 
         :param vault_name: The name of the VaultResource. Required.
@@ -11196,10 +11177,8 @@ class _RecoveryServicesBackupClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OkResponse. The OkResponse is compatible
-         with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.recoveryservicesbackup.models.OkResponse]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -11212,7 +11191,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.OkResponse]:
+    ) -> AsyncLROPoller[None]:
         """Triggers Data Move Operation on target vault.
 
         :param vault_name: The name of the VaultResource. Required.
@@ -11225,10 +11204,8 @@ class _RecoveryServicesBackupClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OkResponse. The OkResponse is compatible
-         with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.recoveryservicesbackup.models.OkResponse]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -11239,7 +11216,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         resource_group_name: str,
         parameters: Union[_models.TriggerDataMoveRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.OkResponse]:
+    ) -> AsyncLROPoller[None]:
         """Triggers Data Move Operation on target vault.
 
         :param vault_name: The name of the VaultResource. Required.
@@ -11251,17 +11228,15 @@ class _RecoveryServicesBackupClientOperationsMixin(
          TriggerDataMoveRequest, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.TriggerDataMoveRequest or JSON or
          IO[bytes]
-        :return: An instance of AsyncLROPoller that returns OkResponse. The OkResponse is compatible
-         with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.recoveryservicesbackup.models.OkResponse]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OkResponse] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -11279,16 +11254,9 @@ class _RecoveryServicesBackupClientOperationsMixin(
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.OkResponse, response.json())
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -11303,15 +11271,13 @@ class _RecoveryServicesBackupClientOperationsMixin(
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.OkResponse].from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.OkResponse](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get_operation_status(

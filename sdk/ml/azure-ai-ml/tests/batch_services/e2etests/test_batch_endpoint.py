@@ -34,7 +34,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         try:
             client.batch_endpoints.get(name=name)
         except Exception as e:
-            assert type(e) is ResourceNotFoundError
+            assert isinstance(e, ResourceNotFoundError)
             return
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
@@ -62,7 +62,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         try:
             client.batch_endpoints.get(name=name)
         except Exception as e:
-            assert type(e) is ResourceNotFoundError
+            assert isinstance(e, ResourceNotFoundError)
             return
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")

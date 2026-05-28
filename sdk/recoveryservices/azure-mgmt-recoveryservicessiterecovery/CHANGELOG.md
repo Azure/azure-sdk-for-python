@@ -1,5 +1,428 @@
 # Release History
 
+## 2.0.0b1 (2026-04-27)
+
+### Features Added
+
+  - Client `SiteRecoveryManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SiteRecoveryManagementClient` added method `send_request`
+  - Model `A2AEnableProtectionInput` added property `platform_fault_domain`
+  - Model `A2AReplicationDetails` added property `agent_reinstall_attempt_to_version`
+  - Model `A2AReplicationDetails` added property `os_family_name`
+  - Model `A2AReplicationDetails` added property `distro_name`
+  - Model `A2AReplicationDetails` added property `distro_name_for_which_agent_is_installed`
+  - Model `A2AReplicationDetails` added property `is_agent_upgradeable`
+  - Model `A2AReplicationDetails` added property `is_agent_reinstall_required`
+  - Model `A2AReplicationDetails` added property `reasons_blocking_re_install`
+  - Model `A2AReplicationDetails` added property `reasons_blocking_reinstall_details`
+  - Model `A2AReplicationDetails` added property `is_agent_upgrade_in_progress`
+  - Model `A2AReplicationDetails` added property `auto_agent_upgrade_retry_count`
+  - Model `A2AReplicationDetails` added property `is_agent_upgrade_retry_threshold_exhausted`
+  - Model `A2AReplicationDetails` added property `platform_fault_domain`
+  - Model `A2ASwitchProtectionInput` added property `platform_fault_domain`
+  - Model `A2AUpdateReplicationProtectedItemInput` added property `recovery_availability_zone`
+  - Model `A2AUpdateReplicationProtectedItemInput` added property `platform_fault_domain`
+  - Enum `AgentUpgradeBlockedReason` added member `RE_INSTALL_REQUIRED`
+  - Model `Alert` added property `system_data`
+  - Model `Event` added property `system_data`
+  - Model `Fabric` added property `system_data`
+  - Model `HyperVReplicaAzureDiskInputDetails` added property `iops`
+  - Model `HyperVReplicaAzureDiskInputDetails` added property `throughput_in_mbps`
+  - Model `HyperVReplicaAzureDiskInputDetails` added property `disk_size_in_gb`
+  - Model `HyperVReplicaAzureEnableProtectionInput` added property `target_capacity_reservation_group_id`
+  - Model `HyperVReplicaAzureManagedDiskDetails` added property `iops`
+  - Model `HyperVReplicaAzureManagedDiskDetails` added property `throughput_in_mbps`
+  - Model `HyperVReplicaAzureManagedDiskDetails` added property `disk_size_in_gb`
+  - Model `HyperVReplicaAzurePlannedFailoverProviderInput` added property `target_capacity_reservation_group_id`
+  - Model `HyperVReplicaAzureReplicationDetails` added property `target_capacity_reservation_group_id`
+  - Model `HyperVReplicaAzureUpdateReplicationProtectedItemInput` added property `target_capacity_reservation_group_id`
+  - Model `InMageRcmDiskInput` added property `iops`
+  - Model `InMageRcmDiskInput` added property `throughput_in_mbps`
+  - Model `InMageRcmDiskInput` added property `disk_size_in_gb`
+  - Model `InMageRcmDisksDefaultInput` added property `iops`
+  - Model `InMageRcmDisksDefaultInput` added property `throughput_in_mbps`
+  - Model `InMageRcmDisksDefaultInput` added property `disk_size_in_gb`
+  - Model `InMageRcmEnableProtectionInput` added property `target_capacity_reservation_group_id`
+  - Model `InMageRcmMobilityAgentDetails` added property `agent_reinstall_state`
+  - Model `InMageRcmMobilityAgentDetails` added property `last_agent_reinstall_type`
+  - Model `InMageRcmMobilityAgentDetails` added property `agent_reinstall_job_id`
+  - Model `InMageRcmMobilityAgentDetails` added property `agent_reinstall_attempt_to_version`
+  - Model `InMageRcmMobilityAgentDetails` added property `os_family_name`
+  - Model `InMageRcmMobilityAgentDetails` added property `distro_name`
+  - Model `InMageRcmMobilityAgentDetails` added property `distro_name_for_which_agent_is_installed`
+  - Model `InMageRcmMobilityAgentDetails` added property `is_agent_upgradeable`
+  - Model `InMageRcmMobilityAgentDetails` added property `is_agent_reinstall_required`
+  - Model `InMageRcmMobilityAgentDetails` added property `is_last_reinstall_successful`
+  - Model `InMageRcmMobilityAgentDetails` added property `reasons_blocking_reinstall`
+  - Model `InMageRcmMobilityAgentDetails` added property `reasons_blocking_reinstall_details`
+  - Model `InMageRcmProtectedDiskDetails` added property `iops`
+  - Model `InMageRcmProtectedDiskDetails` added property `throughput_in_mbps`
+  - Model `InMageRcmProtectedDiskDetails` added property `disk_size_in_gb`
+  - Model `InMageRcmReplicationDetails` added property `target_capacity_reservation_group_id`
+  - Model `InMageRcmUnplannedFailoverInput` added property `target_capacity_reservation_group_id`
+  - Model `InMageRcmUpdateReplicationProtectedItemInput` added property `vm_disks`
+  - Model `InMageRcmUpdateReplicationProtectedItemInput` added property `target_capacity_reservation_group_id`
+  - Model `Job` added property `system_data`
+  - Model `LogicalNetwork` added property `system_data`
+  - Model `MigrationItem` added property `system_data`
+  - Model `MigrationRecoveryPoint` added property `system_data`
+  - Model `Network` added property `system_data`
+  - Model `NetworkMapping` added property `system_data`
+  - Model `Policy` added property `system_data`
+  - Model `ProtectableItem` added property `system_data`
+  - Model `ProtectionContainer` added property `system_data`
+  - Model `ProtectionContainerMapping` added property `system_data`
+  - Model `RecoveryPlan` added property `system_data`
+  - Model `RecoveryPoint` added property `system_data`
+  - Model `RecoveryServicesProvider` added property `system_data`
+  - Model `ReplicationEligibilityResults` added property `system_data`
+  - Model `ReplicationProtectedItem` added property `system_data`
+  - Model `ReplicationProtectionCluster` added property `system_data`
+  - Model `ReplicationProtectionIntent` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `StorageClassification` added property `system_data`
+  - Model `StorageClassificationMapping` added property `system_data`
+  - Model `SupportedOperatingSystems` added property `system_data`
+  - Model `UpdateDiskInput` added property `iops`
+  - Model `UpdateDiskInput` added property `throughput_in_mbps`
+  - Model `UpdateDiskInput` added property `disk_size_in_gb`
+  - Model `VCenter` added property `system_data`
+  - Model `VMwareCbtDiskInput` added property `iops`
+  - Model `VMwareCbtDiskInput` added property `throughput_in_mbps`
+  - Model `VMwareCbtDiskInput` added property `disk_size_in_gb`
+  - Model `VMwareCbtEnableMigrationInput` added property `target_capacity_reservation_group_id`
+  - Model `VMwareCbtMigrateInput` added property `target_capacity_reservation_group_id`
+  - Model `VMwareCbtMigrationDetails` added property `target_capacity_reservation_group_id`
+  - Model `VMwareCbtProtectedDiskDetails` added property `iops`
+  - Model `VMwareCbtProtectedDiskDetails` added property `throughput_in_mbps`
+  - Model `VMwareCbtProtectedDiskDetails` added property `disk_size_in_gb`
+  - Model `VMwareCbtUpdateDiskInput` added property `iops`
+  - Model `VMwareCbtUpdateDiskInput` added property `throughput_in_mbps`
+  - Model `VMwareCbtUpdateDiskInput` added property `disk_size_in_gb`
+  - Model `VMwareCbtUpdateMigrationItemInput` added property `target_capacity_reservation_group_id`
+  - Model `VaultHealthDetails` added property `system_data`
+  - Model `VaultSetting` added property `system_data`
+  - Added model `A2AAgentReinstallBlockingErrorDetails`
+  - Added enum `AgentReinstallBlockedReason`
+  - Added enum `CreatedByType`
+  - Added model `InMageRcmAgentReinstallBlockingErrorDetails`
+  - Added enum `MobilityAgentReinstallType`
+  - Added model `ProxyResource`
+  - Added model `ReinstallMobilityServiceRequest`
+  - Added model `ReinstallMobilityServiceRequestProperties`
+  - Added model `SystemData`
+  - Operation group `ReplicationProtectedItemsOperations` added method `begin_reinstall_mobility_service`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Method `SiteRecoveryManagementClient.__init__` deleted or renamed its parameter `resource_group_name` of kind `positional_or_keyword`
+  - Method `SiteRecoveryManagementClient.__init__` deleted or renamed its parameter `resource_name` of kind `positional_or_keyword`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Deleted or renamed model `RoleAssignment`
+  - Method `ClusterRecoveryPointOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ClusterRecoveryPointsOperations.list_by_replication_protection_cluster` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `MigrationRecoveryPointsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `MigrationRecoveryPointsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `MigrationRecoveryPointsOperations.list_by_replication_migration_items` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `MigrationRecoveryPointsOperations.list_by_replication_migration_items` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `Operations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `RecoveryPointsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `RecoveryPointsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `RecoveryPointsOperations.list_by_replication_protected_items` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `RecoveryPointsOperations.list_by_replication_protected_items` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationAlertSettingsOperations.create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationAlertSettingsOperations.create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationAlertSettingsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationAlertSettingsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationAlertSettingsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationAlertSettingsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationAppliancesOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationAppliancesOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationEligibilityResultsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationEligibilityResultsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationEventsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationEventsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationEventsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationEventsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationFabricsOperations.begin_check_consistency` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationFabricsOperations.begin_check_consistency` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationFabricsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationFabricsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationFabricsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationFabricsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationFabricsOperations.begin_migrate_to_aad` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationFabricsOperations.begin_migrate_to_aad` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationFabricsOperations.begin_purge` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationFabricsOperations.begin_purge` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationFabricsOperations.begin_reassociate_gateway` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationFabricsOperations.begin_reassociate_gateway` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationFabricsOperations.begin_remove_infra` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationFabricsOperations.begin_renew_certificate` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationFabricsOperations.begin_renew_certificate` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationFabricsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationFabricsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationFabricsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationFabricsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationJobsOperations.begin_cancel` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationJobsOperations.begin_cancel` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationJobsOperations.begin_export` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationJobsOperations.begin_export` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationJobsOperations.begin_restart` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationJobsOperations.begin_restart` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationJobsOperations.begin_resume` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationJobsOperations.begin_resume` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationJobsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationJobsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationJobsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationJobsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationLogicalNetworksOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationLogicalNetworksOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationLogicalNetworksOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationLogicalNetworksOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_migrate` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.begin_migrate` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_pause_replication` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.begin_pause_replication` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_resume_replication` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.begin_resume_replication` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_resync` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.begin_resync` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_test_migrate` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.begin_test_migrate` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_test_migrate_cleanup` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.begin_test_migrate_cleanup` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationMigrationItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationNetworkMappingsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationNetworkMappingsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationNetworkMappingsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationNetworkMappingsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationNetworkMappingsOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationNetworkMappingsOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationNetworkMappingsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationNetworkMappingsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationNetworkMappingsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationNetworkMappingsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationNetworkMappingsOperations.list_by_replication_networks` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationNetworkMappingsOperations.list_by_replication_networks` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationNetworksOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationNetworksOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationNetworksOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationNetworksOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationNetworksOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationNetworksOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationPoliciesOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationPoliciesOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationPoliciesOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationPoliciesOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationPoliciesOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationPoliciesOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationPoliciesOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationPoliciesOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationPoliciesOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationPoliciesOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectableItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectableItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectableItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectableItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_add_disks` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_add_disks` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_apply_recovery_point` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_apply_recovery_point` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_failover_cancel` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_failover_cancel` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_failover_commit` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_failover_commit` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_planned_failover` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_planned_failover` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_purge` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_purge` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_remove_disks` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_remove_disks` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_repair_replication` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_repair_replication` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_reprotect` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_reprotect` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_resolve_health_errors` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_resolve_health_errors` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_switch_provider` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_switch_provider` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_test_failover` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_test_failover` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_test_failover_cleanup` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_test_failover_cleanup` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_unplanned_failover` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_unplanned_failover` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_update_appliance` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_update_appliance` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.begin_update_mobility_service` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.begin_update_mobility_service` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectedItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionClustersOperations.begin_apply_recovery_point` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionClustersOperations.begin_failover_commit` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.begin_purge` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.begin_purge` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionClustersOperations.begin_repair_replication` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.begin_test_failover` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.begin_test_failover_cleanup` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.begin_unplanned_failover` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.get_operation_results` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.begin_purge` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.begin_purge` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainerMappingsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainersOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainersOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainersOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainersOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainersOperations.begin_discover_protectable_item` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainersOperations.begin_discover_protectable_item` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainersOperations.begin_switch_cluster_protection` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainersOperations.begin_switch_protection` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainersOperations.begin_switch_protection` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainersOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainersOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainersOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainersOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionContainersOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionContainersOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionIntentsOperations.create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionIntentsOperations.create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionIntentsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionIntentsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionIntentsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionIntentsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_failover_cancel` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_failover_cancel` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_failover_commit` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_failover_commit` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_planned_failover` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_planned_failover` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_reprotect` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_reprotect` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_test_failover` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_test_failover` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_test_failover_cleanup` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_test_failover_cleanup` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_unplanned_failover` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_unplanned_failover` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryPlansOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryPlansOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.begin_purge` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.begin_purge` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.begin_refresh_provider` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.begin_refresh_provider` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationRecoveryServicesProvidersOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationStorageClassificationMappingsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationStorageClassificationMappingsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationStorageClassificationMappingsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationStorageClassificationMappingsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationStorageClassificationMappingsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationStorageClassificationMappingsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationStorageClassificationMappingsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationStorageClassificationMappingsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationStorageClassificationMappingsOperations.list_by_replication_storage_classifications` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationStorageClassificationMappingsOperations.list_by_replication_storage_classifications` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationStorageClassificationsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationStorageClassificationsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationStorageClassificationsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationStorageClassificationsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationStorageClassificationsOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationStorageClassificationsOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationVaultHealthOperations.begin_refresh` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationVaultHealthOperations.begin_refresh` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationVaultHealthOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationVaultHealthOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationVaultSettingOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationVaultSettingOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationVaultSettingOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationVaultSettingOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationVaultSettingOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationVaultSettingOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationvCentersOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationvCentersOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationvCentersOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationvCentersOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationvCentersOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationvCentersOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationvCentersOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationvCentersOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationvCentersOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationvCentersOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationvCentersOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationvCentersOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `SupportedOperatingSystemsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `SupportedOperatingSystemsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `TargetComputeSizesOperations.list_by_replication_protected_items` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `TargetComputeSizesOperations.list_by_replication_protected_items` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_delete` changed its parameter `delete_option` from `positional_or_keyword` to `keyword_only`
+  - Method `ReplicationMigrationItemsOperations.list` changed its parameter `skip_token`/`take_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ReplicationMigrationItemsOperations.list_by_replication_protection_containers` changed its parameter `skip_token`/`take_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ReplicationProtectableItemsOperations.list_by_replication_protection_containers` changed its parameter `take`/`skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ReplicationProtectedItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ReplicationProtectionClustersOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ReplicationProtectionIntentsOperations.list` changed its parameter `skip_token`/`take_token` from `positional_or_keyword` to `keyword_only`
+  - Method `SupportedOperatingSystemsOperations.get` changed its parameter `instance_type` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `ApplianceQueryParameter`/`EventQueryParameter`/`FabricQueryParameter`/`MigrationItemsQueryParameter`/`ProtectableItemQueryParameter`/`ProtectedClustersQueryParameter`/`ProtectedItemsQueryParameter`/`AlertCollection`/`ApplianceCollection`/`ClusterRecoveryPointCollection`/`EventCollection`/`FabricCollection`/`JobCollection`/`LogicalNetworkCollection`/`MigrationItemCollection`/`MigrationRecoveryPointCollection`/`NetworkCollection`/`NetworkMappingCollection`/`OperationsDiscoveryCollection`/`PolicyCollection`/`ProtectableItemCollection`/`ProtectionContainerCollection`/`ProtectionContainerMappingCollection`/`RecoveryPlanCollection`/`RecoveryPointCollection`/`RecoveryServicesProviderCollection`/`ReplicationProtectedItemCollection`/`ReplicationProtectionClusterCollection`/`ReplicationProtectionIntentCollection`/`StorageClassificationCollection`/`StorageClassificationMappingCollection`/`TargetComputeSizeCollection`/`VCenterCollection`/`VaultSettingCollection` which actually were not used by SDK users
+
 ## 1.3.0 (2025-04-23)
 
 ### Features Added

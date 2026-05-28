@@ -16,7 +16,6 @@ The repository pins specific versions of pylint, mypy, and pyright and runs week
 > **Required cross-repo check (do not skip):** After updating `azure-sdk-for-python`, you must also check whether matching updates are required in **both** [azure-sdk-tools](https://github.com/Azure/azure-sdk-tools) and [Microsoft/TypeSpec](https://github.com/microsoft/typespec). Treat the version bump as complete only after those repositories are reviewed and, when needed, PRs are opened.
 
 Files updated in **azure-sdk-for-python**:
-- `eng/tox/tox.ini` – pinned versions for `[testenv:pylint]`, `[testenv:mypy]`, `[testenv:pyright]`
 - `eng/tools/azure-sdk-tools/azpysdk/pylint.py` – `PYLINT_VERSION` constant
 - `eng/tools/azure-sdk-tools/azpysdk/mypy.py` – `MYPY_VERSION` constant
 - `eng/tools/azure-sdk-tools/azpysdk/pyright.py` – `PYRIGHT_VERSION` constant
@@ -55,9 +54,9 @@ Before promoting, confirm the next-* weekly analyze jobs have passed for the `ht
 
 Check the Azure DevOps pipeline named **"python - corehttp - tests-weekly"** or similar weekly analyze pipelines. All three of the following jobs must pass (or only have pre-existing failures that are tracked):
 
-- **Run Pylint Next** (uses `next-pylint` tox env)
-- **Run MyPy Next** (uses `next-mypy` tox env)
-- **Run Pyright Next** (uses `next-pyright` tox env)
+- **Run Pylint Next** (uses `azpysdk next-pylint`)
+- **Run MyPy Next** (uses `azpysdk next-mypy`)
+- **Run Pyright Next** (uses `azpysdk next-pyright`)
 
 Also verify via GitHub issues: the vnext issue creator creates/closes issues per-package. Check that there are no open `next-pylint`, `next-mypy`, or `next-pyright` issues for the core packages.
 
@@ -66,7 +65,7 @@ Also verify via GitHub issues: the vnext issue creator creates/closes issues per
 Read the current next-* versions from `doc/analyze_check_versions.md`:
 
 ```bash
-grep -E "pylint_version|mypy_version|pyright_version" eng/tox/tox.ini
+grep -E "VERSION" eng/tools/azure-sdk-tools/azpysdk/pylint.py eng/tools/azure-sdk-tools/azpysdk/mypy.py eng/tools/azure-sdk-tools/azpysdk/pyright.py
 ```
 
 Note the **Next Version** values for pylint, mypy, and pyright. These are the versions being promoted to current.
@@ -109,43 +108,7 @@ git checkout -b bump-next-versions-{YYYYMMDD}
 
 Replace `{YYYYMMDD}` with today's date (e.g., `bump-next-versions-20260420`).
 
-### 6. Update `eng/tox/tox.ini`
-
-**Promote next versions to current** (update the `[testenv:pylint]`, `[testenv:mypy]`, `[testenv:pyright]` sections):
-
-In the `[testenv:pylint]` section:
-```
-pylint_version={OLD_NEXT_PYLINT_VERSION}
-```
-
-In the `[testenv:mypy]` section:
-```
-mypy_version={OLD_NEXT_MYPY_VERSION}
-```
-
-In the `[testenv:pyright]` section:
-```
-pyright_version={OLD_NEXT_PYRIGHT_VERSION}
-```
-
-**Set new next-* versions** (update the `[testenv:next-pylint]`, `[testenv:next-mypy]`, `[testenv:next-pyright]` sections):
-
-In the `[testenv:next-pylint]` section:
-```
-pylint_version={NEW_NEXT_PYLINT_VERSION}
-```
-
-In the `[testenv:next-mypy]` section:
-```
-mypy_version={NEW_NEXT_MYPY_VERSION}
-```
-
-In the `[testenv:next-pyright]` section:
-```
-pyright_version={NEW_NEXT_PYRIGHT_VERSION}
-```
-
-### 7. Update `azpysdk` Python Constants
+### 6. Update `azpysdk` Python Constants
 
 Update the version constants used by the azpysdk CLI:
 
@@ -164,7 +127,7 @@ In `eng/tools/azure-sdk-tools/azpysdk/pyright.py`:
 PYRIGHT_VERSION = "{OLD_NEXT_PYRIGHT_VERSION}"
 ```
 
-### 8. Update `pylintrc` Files
+### 7. Update `pylintrc` Files
 
 When pylint's **version** changes, the root `pylintrc` and `eng/pylintrc` may need to be updated to disable new warnings or enable newly-available rules.
 
@@ -182,10 +145,10 @@ When pylint's **version** changes, the root `pylintrc` and `eng/pylintrc` may ne
 **For a minor/patch version bump:** Typically no pylintrc changes are needed, but verify by running:
 ```bash
 cd sdk/core/corehttp
-tox -e next-pylint
+azpysdk next-pylint .
 ```
 
-### 9. Update `doc/analyze_check_versions.md`
+### 8. Update `doc/analyze_check_versions.md`
 
 Update the version table to reflect the new pinned versions and next targets:
 
@@ -201,7 +164,7 @@ The `{TARGET_DATE}` should be approximately 12 weeks from today (the date when t
 
 If there is no newer version available yet, use `N/A` for both **Next Version** and **Next Version Merge Date**.
 
-### 10. Update `eng/apiview_reqs.txt`
+### 9. Update `eng/apiview_reqs.txt`
 
 Update the pylint version used by the apiview stub generator:
 
@@ -212,13 +175,13 @@ pylint=={OLD_NEXT_PYLINT_VERSION}
 > **Note:** The `astroid` and related packages may also need version updates to be compatible with the new pylint version. Run the apistub check locally to verify:
 > ```bash
 > cd sdk/core/azure-core
-> tox -e apistub
+> azpysdk apistub .
 > ```
 
-### 11. Commit Changes in azure-sdk-for-python
+### 10. Commit Changes in azure-sdk-for-python
 
 ```bash
-git add pylintrc eng/pylintrc eng/tox/tox.ini \
+git add pylintrc eng/pylintrc \
         eng/tools/azure-sdk-tools/azpysdk/pylint.py \
         eng/tools/azure-sdk-tools/azpysdk/mypy.py \
         eng/tools/azure-sdk-tools/azpysdk/pyright.py \
@@ -227,7 +190,7 @@ git add pylintrc eng/pylintrc eng/tox/tox.ini \
 git commit -m "Promote next-* tool versions: pylint {OLD_NEXT_PYLINT_VERSION}, mypy {OLD_NEXT_MYPY_VERSION}, pyright {OLD_NEXT_PYRIGHT_VERSION}"
 ```
 
-### 12. Create Pull Request in azure-sdk-for-python
+### 11. Create Pull Request in azure-sdk-for-python
 
 Push branch and create PR:
 
@@ -250,7 +213,7 @@ gh pr create \
 - [ ] Checked **Microsoft/TypeSpec** for matching tool-version updates; opened PR if needed"
 ```
 
-### 13. Update azure-sdk-tools Repository (Separate PR)
+### 12. Update azure-sdk-tools Repository (Separate PR)
 
 > **Required review:** Always review this repo for every run of this skill. A PR is required whenever the version bump affects apiview parser dependencies/config.
 
@@ -285,7 +248,7 @@ For a pylint **version** bump, create a separate PR in the [azure-sdk-tools](htt
      --body "Updates the pylint version used by the apiview stub generator from {OLD_PYLINT_VERSION} to {OLD_NEXT_PYLINT_VERSION}."
    ```
 
-### 14. Update Microsoft/TypeSpec Repository (Separate PR)
+### 13. Update Microsoft/TypeSpec Repository (Separate PR)
 
 > **Required review:** Always review this repo for every run of this skill. A PR is required whenever TypeSpec pins or tooling references the bumped versions.
 

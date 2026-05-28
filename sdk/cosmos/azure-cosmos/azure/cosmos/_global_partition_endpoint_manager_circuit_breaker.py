@@ -21,7 +21,7 @@
 
 """Internal class for global endpoint manager for circuit breaker.
 """
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Dict, Any
 
 from azure.cosmos._constants import _Constants
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
@@ -67,9 +67,10 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
         partition_key_definition = properties["partitionKey"]
         partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
 
-        options = {}
+        options: Dict[str, Any] = {}
         if request.excluded_locations:
             options[_Constants.Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
+        options[_Constants.ContainerRID] = container_rid
         if request.pk_val:
             partition_key_value = request.pk_val
             # get the partition key range for the given partition key

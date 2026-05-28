@@ -1,14 +1,16 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0 (2026-05-18)
 
 ### Features Added
 
-### Breaking Changes
+- First stable release of the Azure AI Transcription client library for Python.
 
-### Bugs Fixed
+## 1.0.0b4 (2026-04-20)
 
 ### Other Changes
+
+- Moved the package to a new service category folder `transcription`.
 
 ## 1.0.0b3 (2026-02-04)
 

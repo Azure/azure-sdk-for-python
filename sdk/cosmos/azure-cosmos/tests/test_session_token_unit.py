@@ -1,13 +1,96 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import asyncio
 import unittest
 import os
+from unittest import mock
 
 import pytest
 
+from azure.cosmos import _session, http_constants
 from azure.cosmos._vector_session_token import VectorSessionToken
 from azure.cosmos.exceptions import CosmosHttpResponseError
+
+
+class _DummyCollectionRanges:
+    def __init__(self):
+        self._rangeById = {}
+
+
+class _DummyRoutingMapProvider:
+    def __init__(self, collection_link: str):
+        self._collection_routing_map_by_item = {collection_link: _DummyCollectionRanges()}
+
+
+class _DummySyncClient:
+    def __init__(self, collection_link: str):
+        self._routing_map_provider = _DummyRoutingMapProvider(collection_link)
+        self.refresh_calls = 0
+
+    def refresh_routing_map_provider(self):
+        self.refresh_calls += 1
+
+
+class _DummyAsyncClient:
+    def __init__(self, collection_link: str):
+        self._routing_map_provider = _DummyRoutingMapProvider(collection_link)
+        self.refresh_calls = 0
+
+    async def refresh_routing_map_provider(self):
+        self.refresh_calls += 1
+
+
+@pytest.mark.cosmosEmulator
+class TestSessionRefreshCompatibilityUnitTest(unittest.IsolatedAsyncioTestCase):
+    """Tests session refresh compatibility across sync and async client connections."""
+
+    async def test_set_session_token_schedules_async_refresh(self):
+        collection_link = "dbs/db1/colls/c1"
+        session_container = _session.SessionContainer()
+        async_client = _DummyAsyncClient(collection_link)
+
+        response_result = {"id": "doc1"}
+        response_headers = {
+            http_constants.HttpHeaders.AlternateContentPath: collection_link,
+            http_constants.HttpHeaders.PartitionKeyRangeID: "3",
+        }
+
+        session_container.set_session_token(async_client, response_result, response_headers)
+        await asyncio.sleep(0)
+
+        self.assertEqual(async_client.refresh_calls, 1)
+
+    async def test_set_session_token_calls_sync_refresh_directly(self):
+        collection_link = "dbs/db1/colls/c1"
+        session_container = _session.SessionContainer()
+        sync_client = _DummySyncClient(collection_link)
+
+        response_result = {"id": "doc1"}
+        response_headers = {
+            http_constants.HttpHeaders.AlternateContentPath: collection_link,
+            http_constants.HttpHeaders.PartitionKeyRangeID: "3",
+        }
+
+        session_container.set_session_token(sync_client, response_result, response_headers)
+
+        self.assertEqual(sync_client.refresh_calls, 1)
+
+    async def test_set_session_token_closes_coroutine_when_no_running_loop(self):
+        collection_link = "dbs/db1/colls/c1"
+        session_container = _session.SessionContainer()
+        async_client = _DummyAsyncClient(collection_link)
+
+        response_result = {"id": "doc1"}
+        response_headers = {
+            http_constants.HttpHeaders.AlternateContentPath: collection_link,
+            http_constants.HttpHeaders.PartitionKeyRangeID: "3",
+        }
+
+        with mock.patch("azure.cosmos._session.asyncio.get_running_loop", side_effect=RuntimeError):
+            session_container.set_session_token(async_client, response_result, response_headers)
+
+        self.assertEqual(async_client.refresh_calls, 0)
 
 
 @pytest.mark.cosmosEmulator
@@ -171,3 +254,66 @@ class TestSessionTokenUnitTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+
+class TestResolvePartitionLocalSessionTokenRegression(unittest.TestCase):
+    """Regression tests for ``_resolve_partition_local_session_token``.
+
+    Companion-fix for the PKRange migration at ``_session.py:386``:
+    ``parents = list(pk_range[0].get('parents') or ())``. Previously this was
+    ``pk_range[0]['parents'].copy()`` which crashed (a) on PKRange namedtuples
+    because tuples have no ``.copy()`` and (b) when ``parents`` was ``None``.
+    """
+
+    def _container(self):
+        return _session.SessionContainer()
+
+    def test_pkrange_tuple_with_parents(self):
+        """PKRange (namedtuple) input does not crash and parents are walked."""
+        from azure.cosmos._routing.routing_range import PKRange
+        pkr = PKRange(id="child", minInclusive="80", maxExclusive="FF",
+                      parents=("parentA", "parentB"))
+        # No tokens — function must not crash on the parents iteration.
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_dict_with_none_parents_does_not_crash(self):
+        """Old code did ``parents.copy()`` which raised AttributeError on None."""
+        pkr = {"id": "0", "minInclusive": "", "maxExclusive": "FF", "parents": None}
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_dict_with_empty_parents(self):
+        pkr = {"id": "0", "minInclusive": "", "maxExclusive": "FF", "parents": []}
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_dict_with_tuple_parents(self):
+        pkr = {"id": "child", "parents": ("parentA",)}
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={})
+        self.assertIsNone(result)
+
+    def test_pkrange_walks_parents_then_self(self):
+        """The iteration appends ``pk_range[0]['id']`` after parents, so an id
+        token alone (no parent tokens) still resolves."""
+        from azure.cosmos._routing.routing_range import PKRange
+        from azure.cosmos._vector_session_token import VectorSessionToken
+        pkr = PKRange(id="child", minInclusive="80", maxExclusive="FF", parents=())
+        # Build a token for the child id only.
+        # VectorSessionToken.create accepts the standard "version#globalLsn" form;
+        # use a minimal valid token so .session_token round-trips.
+        token = VectorSessionToken.create("1#1")
+        # The session container holds dict[id] -> SessionToken-like object
+        # whose ``session_token`` attribute is the string form. Wrap accordingly.
+        class _Wrap:
+            def __init__(self, t):
+                self.session_token = t.session_token
+        result = self._container()._resolve_partition_local_session_token(
+            (pkr,), token_dict={"child": _Wrap(token)})
+        self.assertEqual(result, token.session_token)
+

@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-02-01/InitializeDisableProcess.json
+# x-ms-original-file: 2026-04-01-preview/InitializeDisableProcess.json
 if __name__ == "__main__":
     main()

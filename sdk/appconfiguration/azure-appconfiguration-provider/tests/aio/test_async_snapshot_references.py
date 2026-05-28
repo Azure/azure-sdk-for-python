@@ -33,7 +33,9 @@ class TestResolveSnapshotReferenceAsync:
             ConfigurationSetting(key="key2", value="value2"),
         ]
 
-        with patch.object(wrapper, "load_configuration_settings", new_callable=AsyncMock, return_value=mock_settings):
+        with patch.object(
+            wrapper, "load_configuration_settings", new_callable=AsyncMock, return_value=(mock_settings, [[]])
+        ):
             setting = ConfigurationSetting(
                 key="SnapshotRef1",
                 value='{"snapshot_name": "test-snapshot"}',

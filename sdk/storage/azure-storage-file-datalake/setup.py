@@ -79,13 +79,16 @@ setup(
     python_requires=">=3.9",
     install_requires=[
         "azure-core>=1.37.0",
-        "azure-storage-blob>=12.30.0b1",
+        "azure-storage-blob>=12.31.0b1",
         "typing-extensions>=4.6.0",
         "isodate>=0.6.1"
     ],
     extras_require={
         "aio": [
             "azure-core[aio]>=1.37.0",
+        ],
+        "ext-checksums": [
+            "azure-storage-extensions>=0.1.0,<1.0.0",
         ],
     },
 )

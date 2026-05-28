@@ -93,6 +93,7 @@ dev = [
     "azure-identity",
     "azure-keyvault-nspkg",
     "azure-sdk-tools",
+    "cryptography>=44.0.2,<47.0.0",
     "parameterized>=0.7.3",
     "pyopenssl",
     "python-dateutil>=2.8.0",

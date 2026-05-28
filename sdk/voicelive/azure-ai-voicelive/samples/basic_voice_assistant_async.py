@@ -13,22 +13,37 @@ FILE: basic_voice_assistant_async.py
 DESCRIPTION:
     This sample demonstrates the fundamental capabilities of the VoiceLive SDK by creating
     a basic voice assistant that can engage in natural conversation with proper interruption
-    handling. This serves as the foundational example that showcases the core value 
+    handling. This serves as the foundational example that showcases the core value
     proposition of unified speech-to-speech interaction.
 
 USAGE:
     python basic_voice_assistant_async.py
-    
+
     Set the environment variables with your own values before running the sample:
-    1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key
-    2) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
-    
+    1) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
+
+    Optional environment variables:
+    - AZURE_VOICELIVE_USE_API_KEY - Set to "true" to use AZURE_VOICELIVE_API_KEY instead of Entra ID
+    - AZURE_VOICELIVE_API_KEY - VoiceLive API key used when AZURE_VOICELIVE_USE_API_KEY is enabled
+    - AZURE_VOICELIVE_MODEL - The VoiceLive model to use (default: gpt-realtime)
+    - AZURE_VOICELIVE_VOICE - The voice to use for synthesis
+    - AZURE_VOICELIVE_INSTRUCTIONS - System instructions for the assistant
+
     Or copy .env.template to .env and fill in your values.
+
+    To enable OpenTelemetry tracing (optional):
+    python basic_voice_assistant_async.py --enable-tracing
+    python basic_voice_assistant_async.py --enable-tracing --enable-content-recording
 
 REQUIREMENTS:
     - azure-ai-voicelive
     - python-dotenv
     - pyaudio (for audio capture and playback)
+
+    For telemetry tracing (optional):
+    - azure-identity
+    - opentelemetry-sdk
+    - azure-core-tracing-opentelemetry
 """
 
 from __future__ import annotations
@@ -37,14 +52,13 @@ import sys
 import argparse
 import asyncio
 import base64
-from datetime import datetime
 import logging
 import queue
 from typing import Union, Optional, TYPE_CHECKING, cast
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity.aio import AzureCliCredential, DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.voicelive.aio import connect
 from azure.ai.voicelive.models import (
@@ -58,31 +72,50 @@ from azure.ai.voicelive.models import (
     ServerEventType,
     ServerVad,
 )
-from dotenv import load_dotenv
 import pyaudio
+
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    print("Note: python-dotenv not installed. Using existing environment variables.")
 
 if TYPE_CHECKING:
     # Only needed for type checking; avoids runtime import issues
     from azure.ai.voicelive.aio import VoiceLiveConnection
 
+
+def setup_telemetry(enable_content_recording: bool = False):
+    """Set up OpenTelemetry tracing with console exporter and VoiceLive instrumentation."""
+    from azure.core.settings import settings
+
+    settings.tracing_implementation = "opentelemetry"
+
+    from opentelemetry import trace
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+
+    tracer_provider = TracerProvider()
+    tracer_provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+    trace.set_tracer_provider(tracer_provider)
+
+    os.environ.setdefault("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", "true")
+    if enable_content_recording:
+        os.environ.setdefault("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
+
+    from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
+    VoiceLiveInstrumentor().instrument()
+
+    return trace.get_tracer(__name__)
+
+
 ## Change to the directory where this script is located
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-# Environment variable loading
-load_dotenv("./.env", override=True)
-
 # Set up logging
-## Add folder for logging
-if not os.path.exists("logs"):
-    os.makedirs("logs")
-
-## Add timestamp for logfiles
-timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-## Set up logging
 logging.basicConfig(
-    filename=f"logs/{timestamp}_voicelive.log",
-    filemode="w",
     format="%(asctime)s:%(name)s:%(levelname)s:%(message)s",
     level=logging.INFO,
 )
@@ -432,7 +465,7 @@ def parse_arguments():
 
     parser.add_argument(
         "--api-key",
-        help="Azure VoiceLive API key. If not provided, will use AZURE_VOICELIVE_API_KEY environment variable.",
+        help="Azure VoiceLive API key. Required only when --use-api-key is enabled.",
         type=str,
         default=os.environ.get("AZURE_VOICELIVE_API_KEY"),
     )
@@ -470,13 +503,25 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--use-token-credential",
-        help="Use Azure token credential instead of API key",
+        "--use-api-key",
+        help="Use API key authentication instead of DefaultAzureCredential",
         action="store_true",
-        default=True,
+        default=os.environ.get("AZURE_VOICELIVE_USE_API_KEY", "").strip().lower() in {"1", "true", "yes"},
     )
 
     parser.add_argument("--verbose", help="Enable verbose logging", action="store_true")
+
+    parser.add_argument(
+        "--enable-tracing",
+        help="Enable OpenTelemetry tracing with console exporter",
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "--enable-content-recording",
+        help="Record full message content in traces (may contain personal data)",
+        action="store_true",
+    )
 
     return parser.parse_args()
 
@@ -489,21 +534,26 @@ def main():
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
 
+    # Set up telemetry if requested
+    tracer = None
+    if args.enable_tracing:
+        tracer = setup_telemetry(enable_content_recording=args.enable_content_recording)
+        logger.info("Telemetry tracing enabled")
+
     # Validate credentials
-    if not args.api_key and not args.use_token_credential:
+    if args.use_api_key and not args.api_key:
         print("❌ Error: No authentication provided")
-        print("Please provide an API key using --api-key or set AZURE_VOICELIVE_API_KEY environment variable,")
-        print("or use --use-token-credential for Azure authentication.")
+        print("Please provide an API key using --api-key or set AZURE_VOICELIVE_API_KEY environment variable.")
         sys.exit(1)
 
     # Create client with appropriate credential
     credential: Union[AzureKeyCredential, AsyncTokenCredential]
-    if args.use_token_credential:
-        credential = AzureCliCredential()  # or DefaultAzureCredential() if needed
-        logger.info("Using Azure token credential")
-    else:
+    if args.use_api_key:
         credential = AzureKeyCredential(args.api_key)
         logger.info("Using API key credential")
+    else:
+        credential = DefaultAzureCredential()
+        logger.info("Using DefaultAzureCredential")
 
     # Create and start voice assistant
     assistant = BasicVoiceAssistant(
@@ -516,7 +566,14 @@ def main():
 
     # Start the assistant
     try:
-        asyncio.run(assistant.start())
+        async def _run_assistant() -> None:
+            try:
+                await assistant.start()
+            finally:
+                if isinstance(credential, AsyncTokenCredential):
+                    await credential.close()
+
+        asyncio.run(_run_assistant())
     except KeyboardInterrupt:
         print("\n👋 Voice assistant shut down. Goodbye!")
     except Exception as e:

@@ -42,12 +42,17 @@ def main():
                 "product": "azure-vote-standard-offer-id",
                 "publisher": "Microsoft",
             },
-            "properties": {"autoUpgradeMinorVersion": True, "extensionType": "azure-vote", "releaseTrain": "Preview"},
+            "properties": {
+                "autoUpgradeMinorVersion": True,
+                "autoUpgradeMode": "compatible",
+                "extensionType": "azure-vote",
+                "releaseTrain": "Preview",
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/CreateExtensionWithPlan.json
+# x-ms-original-file: 2025-03-01/CreateExtensionWithPlan.json
 if __name__ == "__main__":
     main()

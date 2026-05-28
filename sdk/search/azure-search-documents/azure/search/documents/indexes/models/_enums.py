@@ -16,13 +16,11 @@ class AIFoundryModelCatalogName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     OPEN_AI_CLIP_IMAGE_TEXT_EMBEDDINGS_VIT_BASE_PATCH32 = "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32"
     """OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32."""
-    OPEN_AI_CLIP_IMAGE_TEXT_EMBEDDINGS_VI_T_LARGE_PATCH14_336 = (
-        "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336"
-    )
+    OPEN_AI_CLIP_IMAGE_TEXT_EMBEDDINGS_VIT_LARGE_PATCH14_336 = "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336"
     """OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336."""
-    FACEBOOK_DINO_V2_IMAGE_EMBEDDINGS_VI_T_BASE = "Facebook-DinoV2-Image-Embeddings-ViT-Base"
+    FACEBOOK_DINO_V2_IMAGE_EMBEDDINGS_VIT_BASE = "Facebook-DinoV2-Image-Embeddings-ViT-Base"
     """Facebook-DinoV2-Image-Embeddings-ViT-Base."""
-    FACEBOOK_DINO_V2_IMAGE_EMBEDDINGS_VI_T_GIANT = "Facebook-DinoV2-Image-Embeddings-ViT-Giant"
+    FACEBOOK_DINO_V2_IMAGE_EMBEDDINGS_VIT_GIANT = "Facebook-DinoV2-Image-Embeddings-ViT-Giant"
     """Facebook-DinoV2-Image-Embeddings-ViT-Giant."""
     COHERE_EMBED_V3_ENGLISH = "Cohere-embed-v3-english"
     """Cohere-embed-v3-english."""
@@ -53,10 +51,20 @@ class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gpt41Nano model."""
     GPT5 = "gpt-5"
     """Gpt5 model."""
-    GPT5_MINI = "gpt-5-mini"
+    GPT_5_MINI = "gpt-5-mini"
     """Gpt5Mini model."""
-    GPT5_NANO = "gpt-5-nano"
+    GPT_5_NANO = "gpt-5-nano"
     """Gpt5Nano model."""
+    GPT51 = "gpt-5.1"
+    """Gpt51 model."""
+    GPT52 = "gpt-5.2"
+    """Gpt52 model."""
+    GPT54 = "gpt-5.4"
+    """Gpt54 model."""
+    GPT_5_4_MINI = "gpt-5.4-mini"
+    """Gpt54Mini model."""
+    GPT_5_4_NANO = "gpt-5.4-nano"
+    """Gpt54Nano model."""
 
 
 class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -172,11 +180,22 @@ class CjkBigramTokenFilterScripts(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ignore Hangul script when forming bigrams of CJK terms."""
 
 
+class ContentUnderstandingSkillChunkingMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The chunking strategy used by the Content Understanding skill. Default is 'fixedSize'."""
+
+    FIXED_SIZE = "fixedSize"
+    """Fixed-size character-based windowed chunking."""
+    SEMANTIC = "semantic"
+    """Layout-aware, paragraph-boundary-respecting chunking."""
+
+
 class ContentUnderstandingSkillChunkingUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Controls the cardinality of the chunk unit. Default is 'characters'."""
 
     CHARACTERS = "characters"
     """Specifies chunk by characters."""
+    TOKENS = "tokens"
+    """Specifies chunk by tokens."""
 
 
 class ContentUnderstandingSkillExtractionOptions(  # pylint: disable=name-too-long
@@ -279,6 +298,76 @@ class EdgeNGramTokenFilterSide(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies that the n-gram should be generated from the front of the input."""
     BACK = "back"
     """Specifies that the n-gram should be generated from the back of the input."""
+
+
+class EntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A string indicating what entity categories to return."""
+
+    LOCATION = "location"
+    """Entities describing a physical location."""
+    ORGANIZATION = "organization"
+    """Entities describing an organization."""
+    PERSON = "person"
+    """Entities describing a person."""
+    QUANTITY = "quantity"
+    """Entities describing a quantity."""
+    DATETIME = "datetime"
+    """Entities describing a date and time."""
+    URL = "url"
+    """Entities describing a URL."""
+    EMAIL = "email"
+    """Entities describing an email address."""
+
+
+class EntityRecognitionSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The language codes supported for input text by EntityRecognitionSkill."""
+
+    AR = "ar"
+    """Arabic."""
+    CS = "cs"
+    """Czech."""
+    ZH_HANS = "zh-Hans"
+    """Chinese-Simplified."""
+    ZH_HANT = "zh-Hant"
+    """Chinese-Traditional."""
+    DA = "da"
+    """Danish."""
+    NL = "nl"
+    """Dutch."""
+    EN = "en"
+    """English."""
+    FI = "fi"
+    """Finnish."""
+    FR = "fr"
+    """French."""
+    DE = "de"
+    """German."""
+    EL = "el"
+    """Greek."""
+    HU = "hu"
+    """Hungarian."""
+    IT = "it"
+    """Italian."""
+    JA = "ja"
+    """Japanese."""
+    KO = "ko"
+    """Korean."""
+    NO = "no"
+    """Norwegian (Bokmaal)."""
+    PL = "pl"
+    """Polish."""
+    PT_PT = "pt-PT"
+    """Portuguese (Portugal)."""
+    PT_BR = "pt-BR"
+    """Portuguese (Brazil)."""
+    RU = "ru"
+    """Russian."""
+    ES = "es"
+    """Spanish."""
+    SV = "sv"
+    """Swedish."""
+    TR = "tr"
+    """Turkish."""
 
 
 class ImageAnalysisSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -559,6 +648,8 @@ class KnowledgeSourceIngestionPermissionOption(str, Enum, metaclass=CaseInsensit
     """Ingest group identifiers alongside document content."""
     RBAC_SCOPE = "rbacScope"
     """Ingest RBAC scope information alongside document content."""
+    SENSITIVITY_LABELS = "sensitivityLabels"
+    """Ingest Microsoft Purview sensitivity labels alongside document content."""
 
 
 class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -570,12 +661,25 @@ class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A knowledge source that read and ingest data from Azure Blob Storage to a Search Index."""
     INDEXED_SHARE_POINT = "indexedSharePoint"
     """A knowledge source that reads data from indexed SharePoint."""
-    INDEXED_ONE_LAKE = "indexedOneLake"
+    INDEXED_ONELAKE = "indexedOneLake"
     """A knowledge source that reads data from indexed OneLake."""
+    INDEXED_SQL = "indexedSql"
+    """A knowledge source that retrieves and ingests data from Azure SQL Database or SQL Managed
+    Instance to a Search Index."""
     WEB = "web"
     """A knowledge source that reads data from the web."""
     REMOTE_SHARE_POINT = "remoteSharePoint"
     """A knowledge source that reads data from remote SharePoint."""
+    WORK_IQ = "workIQ"
+    """A knowledge source that reads data from work IQ."""
+    FILE = "file"
+    """A knowledge source that supports direct file upload and indexing."""
+    MCP_SERVER = "mcpServer"
+    """A knowledge source backed by an MCP (Model Context Protocol) server."""
+    FABRIC_DATA_AGENT = "fabricDataAgent"
+    """A knowledge source that retrieves data from a Fabric Data Agent."""
+    FABRIC_ONTOLOGY = "fabricOntology"
+    """A knowledge source that retrieves data from Microsoft Fabric Ontology ontologies."""
 
 
 class KnowledgeSourceSynchronizationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -905,6 +1009,38 @@ class MarkdownParsingSubmode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     search documents. This is the default sub-mode."""
     ONE_TO_ONE = "oneToOne"
     """Indicates that each markdown file will be parsed into a single search document."""
+
+
+class McpServerAuthenticationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of authentication for an MCP server."""
+
+    FOUNDRY_CONNECTION = "foundryConnection"
+    """Authenticate using an Azure AI Foundry connection."""
+    STORED_HEADERS = "storedHeaders"
+    """Authenticate using stored HTTP headers."""
+
+
+class McpServerOutputParsingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of output parsing for an MCP server tool."""
+
+    AUTO = "auto"
+    """Automatically detect the output format and parse accordingly."""
+    JSON = "json"
+    """Parse the output as a JSON document using the configured JSON parameters."""
+    SPLIT = "split"
+    """Split the output into pages using the configured split parameters."""
+    NONE = "none"
+    """Treat the output as a single block without any parsing."""
+
+
+class McpServerToolInclusionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls how parsed MCP tool results are integrated into the final result set."""
+
+    RERANKED = "reranked"
+    """Tool results go through the reranking and aggregation pipeline alongside results from other
+    knowledge sources. This is the default behavior."""
+    ALWAYS = "always"
+    """Tool results bypass reranking and are always included in the agent context."""
 
 
 class MicrosoftStemmingTokenizerLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1237,7 +1373,7 @@ class OcrSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ho (Devanagiri)."""
     HU = "hu"
     """Hungarian."""
-    IS_ENUM = "is"
+    IS = "is"
     """Icelandic."""
     SMN = "smn"
     """Inari Sami."""
@@ -1619,13 +1755,13 @@ class SearchIndexerDataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates an Azure Blob datasource."""
     AZURE_TABLE = "azuretable"
     """Indicates an Azure Table datasource."""
-    MY_SQL = "mysql"
+    MYSQL = "mysql"
     """Indicates a MySql datasource."""
     ADLS_GEN2 = "adlsgen2"
     """Indicates an ADLS Gen2 datasource."""
-    ONE_LAKE = "onelake"
+    ONELAKE = "onelake"
     """Indicates a Microsoft Fabric OneLake datasource."""
-    SHARE_POINT = "sharepoint"
+    SHAREPOINT = "sharepoint"
     """Indicates a SharePoint datasource."""
 
 
@@ -1633,9 +1769,44 @@ class SearchIndexPermissionFilterOption(str, Enum, metaclass=CaseInsensitiveEnum
     """A value indicating whether permission filtering is enabled for the index."""
 
     ENABLED = "enabled"
-    """enabled."""
+    """Permission filtering is enabled for the index."""
     DISABLED = "disabled"
-    """disabled."""
+    """Permission filtering is disabled for the index."""
+
+
+class SentimentSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The language codes supported for input text by SentimentSkill."""
+
+    DA = "da"
+    """Danish."""
+    NL = "nl"
+    """Dutch."""
+    EN = "en"
+    """English."""
+    FI = "fi"
+    """Finnish."""
+    FR = "fr"
+    """French."""
+    DE = "de"
+    """German."""
+    EL = "el"
+    """Greek."""
+    IT = "it"
+    """Italian."""
+    NO = "no"
+    """Norwegian (Bokmaal)."""
+    PL = "pl"
+    """Polish."""
+    PT_PT = "pt-PT"
+    """Portuguese (Portugal)."""
+    RU = "ru"
+    """Russian."""
+    ES = "es"
+    """Spanish."""
+    SV = "sv"
+    """Swedish."""
+    TR = "tr"
+    """Turkish."""
 
 
 class SnowballTokenFilterLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1738,7 +1909,7 @@ class SplitSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Hungarian."""
     ID = "id"
     """Indonesian."""
-    IS_ENUM = "is"
+    IS = "is"
     """Icelandic."""
     IT = "it"
     """Italian."""
@@ -2030,7 +2201,7 @@ class TextTranslationSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Hmong Daw."""
     HU = "hu"
     """Hungarian."""
-    IS_ENUM = "is"
+    IS = "is"
     """Icelandic."""
     ID = "id"
     """Indonesian."""

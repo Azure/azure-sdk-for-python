@@ -1,6 +1,30 @@
 # Release History
 
-## 1.32.0 (unreleased)
+## 1.34.0 (unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+- Fixed cross-tenant registry endpoint resolution for deployment template operations by using the registry discovery API instead of ARM calls.
+- Fixed deployment template update failing with immutable field errors by ensuring `allowedInstanceType` and `allowedEnvironmentVariableOverrides` are properly round-tripped during serialization.
+
+### Other Changes
+
+## 1.33.0 (2026-05-11)
+
+### Features Added
+
+### Bugs Fixed
+
+- Removing deployment templates experimental warning while initializing.
+- Resolving next-pylint 4.0.5 issues for azure-ai-ml sdk and updating. 
+- Update Major Version Checker due to setup removal. 
+- Path traversal protection in unzip to temp file.
+
+### Other Changes
+
+## 1.32.0 (2026-03-17)
 
 ### Features Added
 
@@ -8,6 +32,7 @@
 
 - Fixed default deployment template check to verify `asset_id` is not None before logging template information.
 - Skip _list_secrets for identity-based datastores to prevent noisy telemetry traces.
+- Deployment templates `allowed_instance_types` now accepts a list instead of string.
 
 ### Other Changes
 

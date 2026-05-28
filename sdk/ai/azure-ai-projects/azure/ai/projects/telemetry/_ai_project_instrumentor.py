@@ -234,14 +234,20 @@ class AIProjectInstrumentor:
           spans to be correlated with client-side spans. `True` will enable it, `False` will
           disable it. If no value is provided, then the value read from environment variable
           AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION is used. If the environment
-          variable is not found, then the value will default to `False`.
+          variable is not found, then the value will default to `True`.
+          Note: Changing this value only affects OpenAI clients obtained via get_openai_client() after
+          the change; previously acquired clients are unaffected.
         :type enable_trace_context_propagation: bool, optional
         :param enable_baggage_propagation: Whether to include baggage headers in trace context propagation.
           Only applies when enable_trace_context_propagation is True. `True` will enable baggage propagation,
           `False` will disable it. If no value is provided, then the value read from environment variable
           AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE is used. If the environment
           variable is not found, then the value will default to `False`.
-          Note: Baggage may contain sensitive application data.
+          Note: Baggage may contain sensitive application data. This value is evaluated dynamically on
+          each request, so changes apply immediately — but only for OpenAI clients that had the trace
+          context propagation hook registered at acquisition time (i.e. clients obtained via
+          get_openai_client() while enable_trace_context_propagation was True). Clients acquired when
+          trace context propagation was disabled will never propagate baggage regardless of this value.
         :type enable_baggage_propagation: bool, optional
 
         """
@@ -330,13 +336,20 @@ class _AIAgentsInstrumentorPreview:
         :param enable_trace_context_propagation: Whether to enable automatic trace context propagation.
           `True` will enable it, `False` will disable it. If no value is provided, then the
           value read from environment variable AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION
-          is used. If the environment variable is not found, then the value will default to `False`.
+          is used. If the environment variable is not found, then the value will default to `True`.
+          Note: Changing this value only affects OpenAI clients obtained via get_openai_client() after
+          the change; previously acquired clients are unaffected.
         :type enable_trace_context_propagation: bool, optional
         :param enable_baggage_propagation: Whether to include baggage in trace context propagation.
           Only applies when enable_trace_context_propagation is True. `True` will enable it, `False`
           will disable it. If no value is provided, then the value read from environment variable
           AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE is used. If the
           environment variable is not found, then the value will default to `False`.
+          Note: This value is evaluated dynamically on each request, so changes apply immediately —
+          but only for OpenAI clients that had the trace context propagation hook registered at
+          acquisition time (i.e. clients obtained via get_openai_client() while
+          enable_trace_context_propagation was True). Clients acquired when trace context propagation
+          was disabled will never propagate baggage regardless of this value.
         :type enable_baggage_propagation: bool, optional
 
         """
@@ -347,7 +360,7 @@ class _AIAgentsInstrumentorPreview:
 
         if enable_trace_context_propagation is None:
             var_value = os.environ.get("AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION")
-            enable_trace_context_propagation = self._str_to_bool(var_value)
+            enable_trace_context_propagation = True if var_value is None else self._str_to_bool(var_value)
 
         if enable_baggage_propagation is None:
             var_value = os.environ.get("AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE")
