@@ -201,7 +201,10 @@ class OptimizationConfig:  # pylint: disable=too-many-instance-attributes
 
     @property
     def has_skills(self) -> bool:
-        """Whether this config carries any skill data."""
+        """Whether this config carries any skill data.
+
+        :rtype: bool
+        """
         return len(self.skills) > 0 or self.skills_dir is not None
 
     def apply_tool_descriptions(self, tools: list) -> list:

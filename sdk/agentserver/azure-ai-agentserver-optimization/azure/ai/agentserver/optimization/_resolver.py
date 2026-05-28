@@ -99,7 +99,7 @@ def resolve_candidate(
             try:
                 _persist_to_local_layout(candidate_path, config)
             except OSError as exc:
-                logger.warning(
+                logger.debug(
                     "Failed to persist candidate %s to disk: %s", candidate_id, exc
                 )
             else:

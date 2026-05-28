@@ -303,7 +303,7 @@ def _load_tool_definitions(tool_file: Path) -> list[dict]:
             return data
         return []
     except (json.JSONDecodeError, OSError) as exc:
-        logger.warning("Failed to read tools file %s: %s", tool_file, exc)
+        logger.debug("Failed to read tools file %s: %s", tool_file, exc)
         return []
 
 
@@ -363,7 +363,7 @@ def load_skills_from_dir(skills_dir: Path) -> list[Skill]:
                 body = lines[1].strip() if len(lines) > 1 else ""
             skills.append(Skill(name=name, description=description, body=body))
         except OSError as exc:
-            logger.warning("Failed to read skill %s: %s", skill_file, exc)
+            logger.debug("Failed to read skill %s: %s", skill_file, exc)
 
     return skills
 
