@@ -12,6 +12,24 @@ if TYPE_CHECKING:
     from .._response_context import IsolationContext
 
 
+class ResponseAlreadyExistsError(Exception):
+    """Raised by a response-store provider when ``create_response`` is called for
+    a ``response_id`` that already has a non-deleted entry.
+
+    Callers should treat this as the idempotent-create signal: the response is
+    already persisted from a prior attempt (typically a recovered handler
+    re-emitting ``response.created``), and there is no need to write again.
+    Continue execution toward the terminal ``update_response``.
+
+    :param response_id: The response identifier that already exists.
+    :type response_id: str
+    """
+
+    def __init__(self, response_id: str) -> None:
+        super().__init__(f"response '{response_id}' already exists")
+        self.response_id = response_id
+
+
 @runtime_checkable
 class ResponseProviderProtocol(Protocol):
     """Protocol for response storage providers.
