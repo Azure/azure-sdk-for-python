@@ -122,7 +122,9 @@ For each new method, pick the exposure path:
 
 5. **List projection wrapper** — for `list_*`. Add a `select` parameter, a name-only projection via `cls` callback (`list_index_names`, `list_indexer_names`, `list_skillset_names`), or convert a generated projection type back to the canonical model via `_convert_index_response`.
 
-6. **Re-export via `__all__`** — any NEW symbol you add or override in `_patch.py` MUST be appended to that file's `__all__`. Otherwise `patch_sdk()` will not surface it.
+6. **Friendly-input wrapper** — when a generated parameter takes a structured string the caller would otherwise assemble by hand, add an optional higher-level kwarg that builds it from simpler inputs. Keep the raw parameter accepted too.
+
+7. **Re-export via `__all__`** — any NEW symbol you add or override in `_patch.py` MUST be appended to that file's `__all__`. Otherwise `patch_sdk()` will not surface it.
 
    ```powershell
    venv python -c "import azure.search.documents as m; print(sorted(m.__all__))"
