@@ -331,6 +331,15 @@
   - Model `TIDataConnector` moved instance variable `tenant_id`, `tip_lookback_period` and `data_types` under property `properties` whose type is `TIDataConnectorProperties`
   - Model `ThreatIntelligenceAlertRuleTemplate` moved instance variable `alert_rules_created_by_template_count`, `last_updated_date_utc`, `created_date_utc`, `description`, `display_name`, `required_data_connectors`, `status`, `tactics`, `techniques` and `severity` under property `properties` whose type is `ThreatIntelligenceAlertRuleTemplateProperties`
   - Model `ThreatIntelligenceIndicatorModel` moved instance variable `additional_data`, `friendly_name`, `threat_intelligence_tags`, `last_updated_time_utc`, `source`, `display_name`, `description`, `indicator_types`, `pattern`, `pattern_type`, `pattern_version`, `kill_chain_phases`, `parsed_pattern`, `external_id`, `created_by_ref`, `defanged`, `external_last_updated_time_utc`, `external_references`, `granular_markings`, `labels`, `revoked`, `confidence`, `object_marking_refs`, `language`, `threat_types`, `valid_from`, `valid_until`, `created`, `modified` and `extensions` under property `properties` whose type is `ThreatIntelligenceIndicatorProperties`
+  - Deleted or renamed model `Category`
+  - Deleted or renamed model `Content`
+  - Deleted or renamed model `ContentPathMap`
+  - Deleted or renamed model `Context`
+  - Deleted or renamed model `Instructions`
+  - Deleted or renamed model `MSTIDataConnectorDataTypesBingSafetyPhishingURL`
+  - Deleted or renamed model `Priority`
+  - Deleted or renamed model `QueryBasedAlertRuleTemplateProperties`
+  - Deleted or renamed model `RecommendedAction`
   - Model `TiTaxiiCheckRequirements` moved instance variable `tenant_id` under property `properties` whose type is `TiTaxiiCheckRequirementsProperties`
   - Model `TiTaxiiDataConnector` moved instance variable `tenant_id`, `workspace_id`, `friendly_name`, `taxii_server`, `collection_id`, `user_name`, `password`, `taxii_lookback_period`, `polling_frequency` and `data_types` under property `properties` whose type is `TiTaxiiDataConnectorProperties`
   - Model `UrlEntity` moved instance variable `additional_data`, `friendly_name` and `url` under property `properties` whose type is `UrlEntityProperties`
@@ -366,8 +375,8 @@
 
 ### Other Changes
 
-  - Deleted model `ActionsList`/`AlertRuleTemplatesList`/`AlertRulesList`/`AutomationRulesList`/`BookmarkList`/`DataConnectorList`/`EntityList`/`EntityQueryList`/`EntityQueryTemplateList`/`FileImportList`/`GetQueriesResponse`/`IncidentCommentList`/`IncidentList`/`IncidentTaskList`/`MetadataList`/`OfficeConsentList`/`OperationsList`/`RecommendationList`/`RelationList`/`RepoList`/`SecurityMLAnalyticsSettingsList`/`SettingList`/`SourceControlList`/`ThreatIntelligenceInformationList`/`WatchlistItemList`/`WatchlistList`/`TeamProperties`/`Content`/`ContentPathMap`/`Instructions`/`MSTIDataConnectorDataTypesBingSafetyPhishingURL`/`QueryBasedAlertRuleTemplateProperties`/`RecommendedAction` which actually were not used by SDK users
-  - Deleted enum `Enum13`/`Enum15`/`Category`/`Context`/`Priority` which actually were not used by SDK users
+  - Deleted model `ActionsList`/`AlertRuleTemplatesList`/`AlertRulesList`/`AutomationRulesList`/`BookmarkList`/`DataConnectorList`/`EntityList`/`EntityQueryList`/`EntityQueryTemplateList`/`FileImportList`/`GetQueriesResponse`/`IncidentCommentList`/`IncidentList`/`IncidentTaskList`/`MetadataList`/`OfficeConsentList`/`OperationsList`/`RecommendationList`/`RelationList`/`RepoList`/`SecurityMLAnalyticsSettingsList`/`SettingList`/`SourceControlList`/`ThreatIntelligenceInformationList`/`WatchlistItemList`/`WatchlistList`/`TeamProperties` which actually were not used by SDK users
+  - Deleted enum `Enum13`/`Enum15` which actually were not used by SDK users
 
 ## 2.0.0b2 (2022-12-27)
 
