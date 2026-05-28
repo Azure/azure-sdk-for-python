@@ -1,0 +1,32 @@
+name: Monitor Batch Endpoint
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # every 30 mins
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install -r tutorials/batch_endpoint_monitor/requirements.txt
+
+      - name: Run monitor script
+        env:
+          SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+          RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}
+          WORKSPACE_NAME: ${{ secrets.WORKSPACE_NAME }}
+          BATCH_ENDPOINT_NAME: ${{ secrets.BATCH_ENDPOINT_NAME }}
+        run: |
+          python monitoring/batch_endpoint_monitor/monitor.py
