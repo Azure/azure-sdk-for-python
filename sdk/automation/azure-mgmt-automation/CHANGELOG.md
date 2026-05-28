@@ -64,6 +64,7 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `AgentRegistration` renamed its instance variable `keys` to `keys_property`
   - Model `AutomationAccountCreateOrUpdateParameters` moved instance variable `sku`, `encryption`, `public_network_access` and `disable_local_auth` under property `properties` whose type is `AutomationAccountCreateOrUpdateProperties`
   - Model `AutomationAccountUpdateParameters` moved instance variable `sku`, `encryption`, `public_network_access` and `disable_local_auth` under property `properties` whose type is `AutomationAccountUpdateProperties`
@@ -123,10 +124,6 @@
   - Method `SoftwareUpdateConfigurationsOperations.delete` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
   - Method `SoftwareUpdateConfigurationsOperations.get_by_name` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
   - Method `SoftwareUpdateConfigurationsOperations.list` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
-  - Method `DscConfigurationOperations.get_content` changed return type from `AsyncIterator[bytes]` to `str`
-  - Method `RunbookDraftOperations.begin_replace_content` changed return type from `AsyncLROPoller[AsyncIterator[bytes]]` to `AsyncLROPoller[None]`
-  - Method `RunbookDraftOperations.get_content` changed return type from `AsyncIterator[bytes]` to `str`
-  - Method `RunbookOperations.get_content` changed return type from `AsyncIterator[bytes]` to `str`
   - Method `DscConfigurationOperations.get_content` changed return type from `Iterator[bytes]` to `str`
   - Method `NodeReportsOperations.get_content` changed return type from `JSON` to `str`
   - Method `RunbookDraftOperations.begin_replace_content` changed return type from `LROPoller[Iterator[bytes]]` to `LROPoller[None]`
