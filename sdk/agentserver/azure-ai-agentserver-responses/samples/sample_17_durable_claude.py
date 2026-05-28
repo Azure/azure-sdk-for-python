@@ -11,18 +11,33 @@ Recovery model:
 - The Claude session UUID is stamped into ``durability.metadata`` as
   ``claude_session_id`` so each turn (and each recovered attempt within
   a turn) resumes the same session.
-- A ``last_processed_input_item_id`` watermark records which user input
-  item we most-recently sent to Claude. On a recovered entry, if the
-  watermark already points at the current turn's input, we DO NOT call
-  ``client.query`` again — that would put a duplicate user message in
-  the session JSONL. Instead we just consume ``client.receive_response``.
+- Before sending the user's input, the handler reads the session's
+  persisted message history via
+  ``claude_agent_sdk.get_session_messages``. If the LAST message in
+  that history is a user message whose text equals this turn's input,
+  the handler skips ``client.query`` — Claude already has the message
+  from a prior attempt and only owes us the assistant reply. Otherwise
+  the handler sends.
+- This means the **upstream session JSONL is the source of truth** for
+  "did I already send this turn". No handler-managed metadata
+  watermark, no flush ordering between metadata writes and SDK calls,
+  no race window between persistence and side effect.
 - On a steered cancellation that fires *before* this handler did any
   work (pre-entry), we still send the user input to Claude so the
   message is preserved in the conversation history — otherwise the
   newer turn that supersedes us would lose context.
 - On crash recovery, we never *fork* the Claude session. Forking would
-  create a fresh branch and abandon any progress in the original session
-  that hadn't yet committed. We simply resume the same session.
+  create a fresh branch and abandon any progress in the original
+  session that hadn't yet committed. We simply resume the same session.
+
+Known limitation: if a prior turn's user input was identical to this
+turn's input AND that prior turn completed normally, the detection
+heuristic ("last message is user with matching text") cannot distinguish
+the recovered mid-turn case from the legitimate repeat. The handler
+will skip in this rare case and the new turn will not be sent to
+Claude. For typical conversational use this is rare; for workflows
+where this might happen, decompose into smaller queries or pass an
+explicit disambiguator at the application level.
 
 Limitations (honest about what crash recovery cannot do for Claude):
 
@@ -73,7 +88,9 @@ from claude_agent_sdk import (  # type: ignore[import-untyped]
     ClaudeAgentOptions,
     ClaudeSDKClient,
     ResultMessage,
+    SessionMessage,
     TextBlock,
+    get_session_messages,
 )
 
 from azure.ai.agentserver.responses import (
@@ -105,36 +122,64 @@ def _claude_options_for(durability) -> ClaudeAgentOptions:
     return ClaudeAgentOptions(session_id=new_id)
 
 
-async def _send_input_if_unprocessed(
+def _extract_user_text(session_message: SessionMessage) -> str | None:
+    """Extract text content from a Claude SessionMessage if it's a user message."""
+    if session_message.type != "user":
+        return None
+    msg = session_message.message
+    if not isinstance(msg, dict):
+        return None
+    content = msg.get("content")
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts: list[str] = []
+        for block in content:
+            if isinstance(block, dict) and block.get("type") == "text":
+                text = block.get("text")
+                if isinstance(text, str):
+                    parts.append(text)
+        return "".join(parts) if parts else None
+    return None
+
+
+async def _send_input_if_not_in_session(
     client: ClaudeSDKClient,
+    session_id: str,
     context: ResponseContext,
-    durability,
 ) -> None:
-    """Send this turn's input to Claude unless we already did on a prior attempt.
+    """Send this turn's input to Claude unless it is already in the session.
 
-    Uses ``last_processed_input_item_id`` as the watermark. The watermark is
-    written AND explicitly flushed BEFORE the upstream call so a crash
-    between flush and call still recovers cleanly (the recovered attempt
-    sees the persisted watermark and skips re-sending). The trade-off is
-    that a crash in this tiny window will leave the Claude session without
-    this turn's user message, but that is preferable to silently
-    duplicating the user message on recovery.
+    Detection rule: if the LAST message in the persisted session JSONL is a
+    user message whose text equals this turn's input, we have already sent
+    it on a prior attempt that didn't complete its assistant reply — skip
+    the send and let ``receive_response`` deliver whatever continuation
+    the SDK has. Otherwise, send.
 
-    Without the explicit ``flush()`` the watermark write only reaches the
-    task store at the next 5-second auto-flush or the next lifecycle
-    transition — a crash within that window would lose the watermark and
-    cause the recovered attempt to issue ``query`` a second time.
+    The upstream session is the source of truth here — no handler-managed
+    watermark, no metadata flush ordering. The detection is deterministic
+    for the realistic crash window (within an in-flight turn). The one
+    edge case is when a prior turn legitimately completed AND the user's
+    NEW input happens to be identical to the prior input; the heuristic
+    cannot distinguish that from a recovered mid-turn and will skip. For
+    typical conversational use this is rare; document it if it matters.
     """
-    input_items = await context.get_input_items()
-    last_input_item_id = getattr(input_items[-1], "id", None) if input_items else None
-    if last_input_item_id is None:
-        return
-    if durability.metadata.get("last_processed_input_item_id") == last_input_item_id:
-        return  # already sent on a prior attempt; let receive_response handle it
-
     input_text = await context.get_input_text()
-    durability.metadata["last_processed_input_item_id"] = last_input_item_id
-    await durability.metadata.flush()
+
+    # Source of truth: the upstream's persisted session JSONL.
+    try:
+        history = get_session_messages(session_id) or []
+    except Exception:  # pylint: disable=broad-exception-caught
+        # Session has no prior messages on disk yet (fresh session).
+        history = []
+
+    if history:
+        last_user_text = _extract_user_text(history[-1])
+        if last_user_text == input_text:
+            # Already in the session — skip the query, let receive_response
+            # surface whatever assistant content is queued.
+            return
+
     await client.query(input_text)
 
 
@@ -187,8 +232,9 @@ async def handler(
     if cancellation_signal.is_set():
         if context.cancellation_reason == CancellationReason.STEERED:
             sdk_options = _claude_options_for(durability)
+            session_id = durability.metadata["claude_session_id"]
             async with ClaudeSDKClient(options=sdk_options) as client:
-                await _send_input_if_unprocessed(client, context, durability)
+                await _send_input_if_not_in_session(client, session_id, context)
             yield stream.emit_completed()
         return
 
@@ -204,11 +250,13 @@ async def handler(
     yield text.emit_added()
 
     sdk_options = _claude_options_for(durability)
+    session_id = durability.metadata["claude_session_id"]
     accumulated = ""
 
     async with ClaudeSDKClient(options=sdk_options) as client:
-        # Watermarked send — skipped on recovery if input was already sent.
-        await _send_input_if_unprocessed(client, context, durability)
+        # Upstream-history-gated send: skipped on recovery when Claude's
+        # session JSONL already has our user message as its tail.
+        await _send_input_if_not_in_session(client, session_id, context)
 
         async def _watch_cancel() -> None:
             await cancellation_signal.wait()

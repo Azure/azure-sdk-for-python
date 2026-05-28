@@ -4,18 +4,19 @@
 
 Pins:
 
-1. Fresh entry calls ``client.query`` exactly once and updates the
-   ``last_processed_input_item_id`` watermark.
-2. Recovered entry with the watermark already pointing at the current
-   input does NOT call ``client.query`` again — the session is resumed
-   and we receive whatever Claude has.
-3. Recovered entry where the watermark does not match (e.g. crash
-   before query was issued) DOES call ``client.query`` once.
-4. Recovery uses ``ClaudeAgentOptions(resume=…)`` — never ``fork_session``.
-5. Pre-entry STEERED sends the user input to Claude (so it is preserved
-   in conversation history) and then emits ``response.completed``.
-6. Pre-entry CLIENT_CANCELLED and SHUTTING_DOWN return without making
+1. Fresh entry calls ``client.query`` exactly once. The Claude options
+   carry ``session_id=<new uuid>`` (not ``resume``, never ``fork_session``).
+2. Recovered entry where the upstream session ALREADY contains our
+   input as its most recent user message does NOT call ``client.query``
+   again. Recovery options carry ``resume=…``, never ``fork_session``.
+3. Recovered entry where upstream session does NOT contain our input
+   (e.g. crashed before the user message was committed to JSONL) DOES
+   call ``client.query`` once.
+4. Pre-entry STEERED sends the input to Claude (preserving conversation
+   context) and emits ``response.completed``.
+5. Pre-entry CLIENT_CANCELLED and SHUTTING_DOWN return without making
    any SDK calls.
+6. The sample never uses ``fork_session`` in any code path.
 """
 
 from __future__ import annotations
@@ -44,7 +45,7 @@ except ImportError:  # pragma: no cover
 
 
 # ---------------------------------------------------------------------------
-# Test scaffolding
+# Scaffolding
 # ---------------------------------------------------------------------------
 
 
@@ -53,7 +54,7 @@ def _make_context(
     response_id: str,
     entry_mode: str = "fresh",
     metadata: dict[str, Any] | None = None,
-    input_item_id: str = "item-1",
+    input_text: str = "test prompt",
 ) -> ResponseContext:
     durability = DurabilityContext(
         entry_mode=entry_mode,  # type: ignore[arg-type]
@@ -68,11 +69,11 @@ def _make_context(
     context.cancellation_reason = None
 
     async def _get_input_text() -> str:
-        return "test prompt"
+        return input_text
 
     async def _get_input_items(*, resolve_references: bool = True) -> list[Any]:
         item = MagicMock()
-        item.id = input_item_id
+        item.id = "item-test"
         return [item]
 
     context.get_input_text = _get_input_text
@@ -93,6 +94,18 @@ async def _drive(handler_coro_fn, request, context, cancellation_signal) -> list
 
 def _event_type(e: Any) -> str | None:
     return getattr(e, "type", None) or (e.get("type") if isinstance(e, dict) else None)
+
+
+def _make_session_message(*, msg_type: str, text: str) -> Any:
+    """Build a SessionMessage-shaped object the sample's history extractor accepts."""
+    from claude_agent_sdk import SessionMessage
+
+    return SessionMessage(
+        type=msg_type,  # type: ignore[arg-type]
+        uuid="msg-stub",
+        session_id="session-stub",
+        message={"role": msg_type, "content": text},
+    )
 
 
 def _make_claude_client_stub(
@@ -120,8 +133,7 @@ def _make_claude_client_stub(
             pass
 
         async def receive_response(self):
-            block = TextBlock(text=reply_text)
-            yield AssistantMessage(content=[block], model="claude")
+            yield AssistantMessage(content=[TextBlock(text=reply_text)], model="claude")
             yield ResultMessage(
                 subtype="success",
                 duration_ms=10,
@@ -145,99 +157,78 @@ def _make_claude_client_stub(
 
 @pytest.mark.asyncio
 class TestSample17FreshEntry:
-    async def test_fresh_entry_calls_query_once_and_updates_watermark(self) -> None:
+    async def test_fresh_entry_calls_query_once_with_session_id(self) -> None:
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
 
         stub_class, query_calls = _make_claude_client_stub()
         with patch.object(mod, "ClaudeSDKClient", stub_class):
-            ctx = _make_context(
-                response_id=IdGenerator.new_response_id(),
-                input_item_id="item-fresh-1",
-            )
-            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+            # Fresh session → get_session_messages returns nothing.
+            with patch.object(mod, "get_session_messages", return_value=[]):
+                ctx = _make_context(response_id=IdGenerator.new_response_id())
+                events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
         assert len(query_calls) == 1
         assert query_calls[0]["prompt"] == "test prompt"
-        # Fresh: options carries session_id, NOT resume, NEVER fork.
         opts = query_calls[0]["options"]
         assert getattr(opts, "session_id", None) is not None
         assert getattr(opts, "resume", None) is None
         assert getattr(opts, "fork_session", False) is False
-
-        # Watermark updated to current input item id.
-        assert ctx.durability.metadata.get("last_processed_input_item_id") == "item-fresh-1"
         assert "response.completed" in [_event_type(e) for e in events]
 
 
 @pytest.mark.asyncio
-class TestSample17RecoverySkipsQueryWhenWatermarkMatches:
-    async def test_recovery_with_matching_watermark_skips_query(self) -> None:
+class TestSample17RecoverySkipsWhenSessionHasOurInput:
+    async def test_recovery_with_input_already_in_session_skips_query(self) -> None:
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
 
         stub_class, query_calls = _make_claude_client_stub()
+        # Upstream session JSONL already ends with our user message.
+        history = [_make_session_message(msg_type="user", text="test prompt")]
+
         with patch.object(mod, "ClaudeSDKClient", stub_class):
-            ctx = _make_context(
-                response_id=IdGenerator.new_response_id(),
-                entry_mode="recovered",
-                metadata={
-                    "claude_session_id": "original-session",
-                    "last_processed_input_item_id": "item-recovered-1",
-                },
-                input_item_id="item-recovered-1",
-            )
-            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+            with patch.object(mod, "get_session_messages", return_value=history):
+                ctx = _make_context(
+                    response_id=IdGenerator.new_response_id(),
+                    entry_mode="recovered",
+                    metadata={"claude_session_id": "original-session"},
+                )
+                await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
 
-        # Watermark matched → no query() this attempt.
+        # No query — Claude already has our message.
         assert query_calls == []
-
-        # Options carries resume (the existing session id), NEVER fork_session.
-        # No query was issued so we can't read options from the recording —
-        # but the prior session_id should still be in metadata.
-        assert ctx.durability.metadata.get("claude_session_id") == "session-after"
-
-        # Lifecycle: recovery in_progress with empty resumption.
-        in_progress = next(
-            e for e in events if _event_type(e) == "response.in_progress"
-        )
-        payload = getattr(in_progress, "response", None) or in_progress.get("response")
-        output = payload.get("output") if isinstance(payload, dict) else payload.output
-        assert output == []
 
 
 @pytest.mark.asyncio
-class TestSample17RecoveryQueriesWhenWatermarkStale:
-    async def test_recovery_with_stale_watermark_does_query(self) -> None:
+class TestSample17RecoveryQueriesWhenSessionMissesOurInput:
+    async def test_recovery_with_input_not_in_session_does_query(self) -> None:
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
 
         stub_class, query_calls = _make_claude_client_stub()
-        with patch.object(mod, "ClaudeSDKClient", stub_class):
-            ctx = _make_context(
-                response_id=IdGenerator.new_response_id(),
-                entry_mode="recovered",
-                metadata={
-                    "claude_session_id": "original-session",
-                    "last_processed_input_item_id": "item-from-prior-turn",
-                },
-                input_item_id="item-current-turn",
-            )
-            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+        # Session has a prior assistant reply but not our new input.
+        history = [
+            _make_session_message(msg_type="user", text="prior question"),
+            _make_session_message(msg_type="assistant", text="prior reply"),
+        ]
 
-        # Watermark stale → query() once with current input.
+        with patch.object(mod, "ClaudeSDKClient", stub_class):
+            with patch.object(mod, "get_session_messages", return_value=history):
+                ctx = _make_context(
+                    response_id=IdGenerator.new_response_id(),
+                    entry_mode="recovered",
+                    metadata={"claude_session_id": "original-session"},
+                )
+                await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+
         assert len(query_calls) == 1
         opts = query_calls[0]["options"]
-        # Recovery uses resume, NEVER fork.
         assert getattr(opts, "resume", None) == "original-session"
         assert getattr(opts, "fork_session", False) is False
         assert getattr(opts, "session_id", None) is None
-
-        # Watermark advanced to the current item.
-        assert ctx.durability.metadata.get("last_processed_input_item_id") == "item-current-turn"
 
 
 @pytest.mark.asyncio
 class TestSample17NeverForks:
     async def test_no_attempt_uses_fork_session(self) -> None:
-        """Regression guard: the sample MUST NOT use fork_session in any code path."""
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
         import inspect
 
@@ -249,101 +240,31 @@ class TestSample17NeverForks:
 
 
 @pytest.mark.asyncio
-class TestSample17FlushBeforeQuery:
-    """Pin the watermark-flush-then-query ordering.
-
-    The contract: between writing the watermark and calling the upstream
-    side-effecting API, the metadata MUST be explicitly flushed. A crash
-    in the tiny window between flush and call still recovers cleanly
-    because the recovered handler sees the persisted watermark and skips
-    the re-query. Without the flush, the watermark sits in the in-memory
-    dict and is only persisted on lifecycle transitions — a crash in
-    that window loses the watermark and the recovered handler re-issues
-    ``client.query`` (duplicate user message in session JSONL).
-
-    Tests below pin BOTH (a) flush is called and (b) flush happens
-    BEFORE the query call.
+class TestSample17NoWatermarkOrFlush:
+    """Regression guard: the sample MUST NOT use a handler-managed watermark
+    or call durability.metadata.flush(). The upstream session is the source
+    of truth; relying on metadata persistence ordering reintroduces the
+    crash-window inconsistency.
     """
 
-    async def test_flush_called_before_query_on_watermarked_send(self) -> None:
+    async def test_no_last_processed_input_item_id(self) -> None:
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
+        import inspect
 
-        # Record the order in which flush() and query() are invoked.
-        events_in_order: list[str] = []
-
-        stub_class, query_calls = _make_claude_client_stub()
-
-        # Wrap the stub's query() to record its position.
-        original_query = stub_class.query
-
-        async def _recording_query(self_inner: Any, prompt: str) -> None:
-            events_in_order.append("query")
-            await original_query(self_inner, prompt)
-
-        stub_class.query = _recording_query  # type: ignore[method-assign]
-
-        with patch.object(mod, "ClaudeSDKClient", stub_class):
-            ctx = _make_context(
-                response_id=IdGenerator.new_response_id(),
-                input_item_id="item-flush-1",
-            )
-
-            # Wrap the FilteredMetadata's flush() so we can record its position.
-            metadata = ctx.durability.metadata  # _FilteredMetadata wrapping dict
-            original_flush = metadata.flush
-
-            async def _recording_flush() -> None:
-                events_in_order.append("flush")
-                await original_flush()
-
-            metadata.flush = _recording_flush  # type: ignore[assignment]
-
-            await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
-
-        # The contract: flush() must appear in the trace, and it must come
-        # before the first query().
-        assert "flush" in events_in_order, (
-            "sample_17 must call await durability.metadata.flush() after the "
-            "watermark write — see backlog B0 (deterministic metadata persistence)"
-        )
-        flush_idx = events_in_order.index("flush")
-        query_idx = events_in_order.index("query")
-        assert flush_idx < query_idx, (
-            f"flush() must happen BEFORE the upstream query(). Got order: "
-            f"{events_in_order}. If flush is after query, a crash between "
-            f"them loses the watermark and recovery re-queries (duplicate user message)."
+        src = inspect.getsource(mod)
+        assert "last_processed_input_item_id" not in src, (
+            "sample_17 must use upstream history (get_session_messages) for "
+            "deduplication, not a handler-managed watermark"
         )
 
-    async def test_flush_is_at_most_once_after_a_single_watermark_write(self) -> None:
-        """Dirty-tracking sanity check: idempotent flush after one watermark write."""
+    async def test_no_metadata_flush_call(self) -> None:
         from samples import sample_17_durable_claude as mod  # type: ignore[import-not-found]
+        import inspect
 
-        flush_count = [0]
-
-        stub_class, _query_calls = _make_claude_client_stub()
-        with patch.object(mod, "ClaudeSDKClient", stub_class):
-            ctx = _make_context(
-                response_id=IdGenerator.new_response_id(),
-                input_item_id="item-once",
-            )
-            metadata = ctx.durability.metadata
-            original_flush = metadata.flush
-
-            async def _counting_flush() -> None:
-                flush_count[0] += 1
-                await original_flush()
-
-            metadata.flush = _counting_flush  # type: ignore[assignment]
-
-            await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
-
-        # One watermark write → at most one flush in the watermarked-send path.
-        # (Steered pre-entry test below covers the other call site separately.)
-        assert flush_count[0] >= 1, "sample_17 must flush at least once after watermark write"
-        assert flush_count[0] <= 2, (
-            f"sample_17 flushed {flush_count[0]} times; expected at most 2 "
-            f"(one in the main path + at most one in the close-out). Excess "
-            f"flushes suggest watermark is being re-written or dirty tracking is broken."
+        src = inspect.getsource(mod)
+        assert ".metadata.flush(" not in src, (
+            "sample_17 must not depend on metadata flush ordering; the "
+            "upstream session is the source of truth"
         )
 
 
@@ -354,20 +275,16 @@ class TestSample17PreEntrySteeredPreservesInput:
 
         stub_class, query_calls = _make_claude_client_stub()
         with patch.object(mod, "ClaudeSDKClient", stub_class):
-            ctx = _make_context(
-                response_id=IdGenerator.new_response_id(),
-                input_item_id="item-steered",
-            )
-            ctx.cancellation_reason = CancellationReason.STEERED
-            signal = asyncio.Event()
-            signal.set()
+            with patch.object(mod, "get_session_messages", return_value=[]):
+                ctx = _make_context(response_id=IdGenerator.new_response_id())
+                ctx.cancellation_reason = CancellationReason.STEERED
+                signal = asyncio.Event()
+                signal.set()
 
-            events = await _drive(mod.handler, _make_request(), ctx, signal)
+                events = await _drive(mod.handler, _make_request(), ctx, signal)
 
-        # Input was sent to Claude before completing — preserves conversation context.
         assert len(query_calls) == 1
         assert query_calls[0]["prompt"] == "test prompt"
-        assert ctx.durability.metadata.get("last_processed_input_item_id") == "item-steered"
         assert "response.completed" in [_event_type(e) for e in events]
 
 

@@ -39,6 +39,7 @@
   - [The Recovery Loop](#the-recovery-loop)
   - [Default Pattern (recovery-aware)](#default-pattern-recovery-aware)
   - [Fallback Pattern (no opt-in)](#fallback-pattern-no-opt-in)
+  - [Upstream History Pattern](#upstream-history-pattern)
   - [Watermark Pattern](#watermark-pattern)
   - [Resumption Response Construction](#resumption-response-construction)
 - [Best Practices](#best-practices)
@@ -1344,11 +1345,53 @@ durable history that matters, you MUST adopt the recovery-aware pattern. If
 your handler has no upstream side effects (e.g. it streams from an
 idempotent source), the fallback is fine.
 
-### Watermark Pattern
+### Upstream History Pattern (preferred when available)
 
-The framework cannot know which of your calls have side effects, so you stamp
-a marker in `durability.metadata` before the call and clear it after the
-upstream commit.
+Many stateful upstream SDKs expose their persisted conversation log directly —
+e.g. `claude_agent_sdk.get_session_messages(session_id)` returns the list of
+messages the SDK has durably committed, and Copilot's `session.get_messages()`
+does the same for its event log. When that API is available, use it as the
+source of truth for "did my prior attempt already send this turn?" — no handler
+metadata, no watermark, no flush ordering.
+
+```python
+async def _send_input_if_not_in_session(session, session_id, user_input):
+    history = await session.get_messages()
+    # If the most recent user message in upstream history matches the current
+    # input, the prior attempt already sent it — skip the upstream call.
+    last_user = next(
+        (evt for evt in reversed(history) if _is_user_message(evt)),
+        None,
+    )
+    if last_user is not None and _extract_user_text(last_user) == user_input:
+        return
+    await session.send(user_input)
+```
+
+Why this beats a handler-managed watermark:
+
+- The detection input is the upstream's own durable log — there is no window
+  between "we sent the call" and "we wrote our watermark" where a crash leaves
+  the handler and the upstream out of sync.
+- No `durability.metadata` write, no `metadata.flush()`, no decision about
+  flush-before vs flush-after.
+- On any attempt (fresh, recovered, multiply-recovered) the same one-liner
+  works: query history, compare, send only if needed.
+
+Edge case to document in your sample: if a prior turn's input was byte-equal to
+the current turn's input AND that prior turn completed normally, the
+"last user message in history equals current input" heuristic incorrectly
+skips. Rare in practice for human-driven conversations; if your domain has
+machine-generated identical-input replays, fall back to the watermark pattern
+below, or have the framework provide stable per-turn identity (see the
+`conversation_chain_id` follow-up in spec 013).
+
+### Watermark Pattern (fallback when upstream exposes no persisted history)
+
+When the upstream SDK does **not** expose its committed log — or does not
+distinguish "queued but unacked" from "durably committed" — the framework
+cannot know which of your calls have side effects, so you stamp a marker in
+`durability.metadata` before the call and clear it after the upstream commit.
 
 ```python
 # Stamp BEFORE the side-effecting call.

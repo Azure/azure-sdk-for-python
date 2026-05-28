@@ -10,31 +10,36 @@ bridge.
 Recovery model:
 
 - The Copilot session UUID is stamped into ``durability.metadata`` as
-  ``copilot_session_id`` so each turn (and each recovered attempt
-  within a turn) reattaches to the same session via
-  ``client.create_session(session_id=…)``.
-- A ``last_processed_input_item_id`` watermark records which user input
-  item we most-recently sent to Copilot. On a recovered entry, if the
-  watermark already points at the current turn's input, we DO NOT call
-  ``session.send`` again — that would put a duplicate user message in
-  Copilot's session history.
+  ``copilot_session_id``. The fresh-entry path uses
+  ``client.create_session(session_id=…)``; the recovery and follow-up
+  steerable-turn path uses ``client.resume_session(session_id, …)`` —
+  the SDK's documented reattach API.
+- Before sending the user's input, the handler reads the session's
+  persisted event history via ``session.get_messages()``, scans for
+  ``UserMessageData`` events, and skips ``session.send`` if the most
+  recent user message's content equals this turn's input. The
+  **upstream session event log is the source of truth** for "did I
+  already send this turn". No handler-managed metadata watermark, no
+  metadata flush ordering, no race between persistence and side effect.
 - On a steered cancellation that fires pre-entry, we still send the
-  user input to Copilot so the message is preserved in the conversation
-  history — otherwise the newer turn that supersedes us would lose
-  context.
+  user input to Copilot so the message is preserved in the
+  conversation history — otherwise the newer turn that supersedes us
+  would lose context.
 - On crash recovery, we never start a fresh session. Recovery always
-  reattaches to the existing session.
+  reattaches via ``resume_session``.
 
-Limitations (honest about what crash recovery cannot do for Copilot):
+Limitations:
 
 - Like Claude, the Copilot SDK does not checkpoint within an assistant
-  response. If we crash mid-stream, the partial reply written so far is
+  response. If we crash mid-stream the partial reply written so far is
   lost. For workflows where within-turn progress matters, decompose
   into smaller queries (see ``sample_19``) or use a framework with
   native node-level checkpointing (see ``sample_21``).
-- The exact behaviour of ``create_session(session_id=<existing>)`` is
-  not spelled out in the SDK docs. This sample assumes reattach. An
-  upstream issue will confirm; the sample may need revision.
+- If a prior turn's user input was identical to this turn's input AND
+  that prior turn completed normally, the "last user matches input"
+  heuristic will incorrectly skip the send. Rare in normal use; for
+  workflows where this matters, decompose or disambiguate at the
+  application level.
 
 Requirements::
 
@@ -70,6 +75,7 @@ from copilot import CopilotClient  # type: ignore[import-untyped]
 from copilot.generated.session_events import (  # type: ignore[import-untyped]
     AssistantMessageData,
     SessionIdleData,
+    UserMessageData,
 )
 from copilot.session import PermissionHandler  # type: ignore[import-untyped]
 
@@ -102,38 +108,79 @@ def _ensure_copilot_session_id(durability) -> str:
     return new_id
 
 
-async def _send_input_if_unprocessed(
+async def _open_session(
+    client: Any,
+    session_id: str,
+    durability,
+) -> Any:
+    """Open the Copilot session — ``resume_session`` if it pre-existed.
+
+    On a fresh-allocated session id we use ``create_session``. On any
+    subsequent attempt (including recovery and steerable follow-up turns)
+    we use ``resume_session``, the SDK's explicit reattach API. The
+    sentinel for "pre-existed" is whether the id existed in metadata
+    when this attempt started — if it did, we are reattaching.
+    """
+    # If this attempt allocated the id (i.e. it wasn't in metadata before
+    # ``_ensure_copilot_session_id`` ran), use create_session. Otherwise,
+    # resume_session. We detect this by storing a "newly allocated" marker
+    # transiently in metadata. Simpler check: if the id appears in the
+    # in-memory metadata AND we already allocated it on a prior attempt,
+    # there will have been a lifecycle-flush — recovery enters with the
+    # id already persisted. So: durability.is_recovery == True implies
+    # reattach; otherwise we just created it this attempt.
+    if durability.is_recovery:
+        return await client.resume_session(
+            session_id,
+            on_permission_request=PermissionHandler.approve_all,
+            model="gpt-5",
+        )
+    return await client.create_session(
+        session_id=session_id,
+        on_permission_request=PermissionHandler.approve_all,
+        model="gpt-5",
+    )
+
+
+async def _send_input_if_not_in_session(
     session: Any,
     context: ResponseContext,
-    durability,
 ) -> bool:
-    """Send the user's input to Copilot unless we already did on a prior attempt.
+    """Send this turn's input to Copilot unless it is already in the session.
 
     Returns True if a send happened on this call; False otherwise.
 
-    Uses ``last_processed_input_item_id`` as the watermark. The watermark
-    is written AND explicitly flushed BEFORE the upstream ``session.send``
-    so a crash between flush and send still recovers cleanly: the
-    recovered attempt sees the persisted watermark and skips re-sending.
-    The trade-off is that a crash in this tiny window will leave Copilot
-    without this turn's user message, but that is preferable to silently
-    duplicating the user message in session history on recovery.
+    Detection rule: list the session's persisted event history via
+    ``session.get_messages()``, scan for ``UserMessageData`` payloads,
+    and skip the send if the most recent user message's content equals
+    this turn's input. The upstream session is the source of truth —
+    no handler-managed watermark, no metadata flush ordering.
 
-    Without the explicit ``flush()`` the watermark write only reaches the
-    task store at the next 5-second auto-flush or the next lifecycle
-    transition — a crash within that window would lose the watermark and
-    cause the recovered attempt to issue ``session.send`` a second time.
+    See ``sample_17``'s ``_send_input_if_not_in_session`` docstring for
+    the full discussion of why this is deterministic for the realistic
+    crash window and what the (rare) "user repeats themselves" edge
+    case looks like.
     """
-    input_items = await context.get_input_items()
-    last_input_item_id = getattr(input_items[-1], "id", None) if input_items else None
-    if last_input_item_id is None:
-        return False
-    if durability.metadata.get("last_processed_input_item_id") == last_input_item_id:
-        return False
-
     input_text = await context.get_input_text()
-    durability.metadata["last_processed_input_item_id"] = last_input_item_id
-    await durability.metadata.flush()
+
+    try:
+        events = await session.get_messages()
+    except Exception:  # pylint: disable=broad-exception-caught
+        events = []
+
+    # Find the most recent user-message event.
+    last_user_text: str | None = None
+    for ev in reversed(events):
+        data = getattr(ev, "data", None)
+        if isinstance(data, UserMessageData):
+            content = getattr(data, "content", None)
+            if isinstance(content, str):
+                last_user_text = content
+            break
+
+    if last_user_text == input_text:
+        return False  # already in the session — skip
+
     await session.send(input_text)
     return True
 
@@ -181,12 +228,8 @@ async def handler(
         if context.cancellation_reason == CancellationReason.STEERED:
             session_id = _ensure_copilot_session_id(durability)
             async with CopilotClient() as client:
-                async with await client.create_session(
-                    session_id=session_id,
-                    on_permission_request=PermissionHandler.approve_all,
-                    model="gpt-5",
-                ) as session:
-                    await _send_input_if_unprocessed(session, context, durability)
+                async with await _open_session(client, session_id, durability) as session:
+                    await _send_input_if_not_in_session(session, context)
             yield stream.emit_completed()
         return
 
@@ -213,18 +256,13 @@ async def handler(
             idle_event.set()
 
     async with CopilotClient() as client:
-        # Reattach to (or create) the named session. Reattach semantics
-        # are upstream-SDK-defined; see the docstring caveat.
-        async with await client.create_session(
-            session_id=session_id,
-            on_permission_request=PermissionHandler.approve_all,
-            model="gpt-5",
-        ) as session:
+        # Reattach on recovery (resume_session), create on fresh (create_session).
+        async with await _open_session(client, session_id, durability) as session:
             session.on(on_event)
 
-            # Watermark-gated send — skipped on recovery if input was
-            # already delivered to Copilot.
-            sent_this_attempt = await _send_input_if_unprocessed(session, context, durability)
+            # Upstream-history-gated send: skipped when Copilot's persisted
+            # event log already has our user message as its most recent user event.
+            sent_this_attempt = await _send_input_if_not_in_session(session, context)
 
             # Only wait for idle if we actually sent something this attempt.
             # On recovery-skip we have nothing to wait for; the session
@@ -258,8 +296,8 @@ async def handler(
         shutdown_timer.cancel()
 
     # Mid-stream shutdown: return without terminal so the framework
-    # re-invokes us; the recovery branch reattaches the same session
-    # and the watermark prevents re-sending the input.
+    # re-invokes us; the recovery branch reattaches the same session via
+    # resume_session and the upstream-history check prevents re-sending.
     if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:
         return
 
