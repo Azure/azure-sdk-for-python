@@ -97,7 +97,6 @@ _STORE_DISABLED = _env_bool("CONFORMANCE_STORE_DISABLED", False)
 _SLEEP_MS = _env_int("CONFORMANCE_HANDLER_SLEEP_MS", 50)
 _SHUTDOWN_GRACE_S = max(1, _env_int("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", 10))
 _PRE_SLEEP_DELTAS = max(0, _env_int("CONFORMANCE_PRE_SLEEP_DELTAS", 0))
-_POST_SLEEP_DELTAS = max(0, _env_int("CONFORMANCE_POST_SLEEP_DELTAS", 1))
 _EMIT_WATERMARK = _env_bool("CONFORMANCE_EMIT_METADATA_WATERMARK", False)
 
 
@@ -213,12 +212,11 @@ async def handle_create(
         # per-row Path-B / Path-C contract takes over.
         return
 
-    # Post-sleep deltas — same tagging discipline.
-    for j in range(_POST_SLEEP_DELTAS):
-        yield text.emit_delta(delta_content(lifetime, PHASE_POST, j))
-        await asyncio.sleep(0)
-
-    # Final text — composite of every dimension a test might care about.
+    # Natural completion: emit the composite final text as a single delta
+    # so it accumulates into the response.output snapshot's text field
+    # (the framework's snapshot extraction uses delta accumulation, not
+    # the emit_text_done payload), then emit text_done with the same
+    # value so the wire's done event also carries the composite.
     visited_now = (
         list(durability.metadata.get(WATERMARK_METADATA_KEY, []))
         if _EMIT_WATERMARK
@@ -227,10 +225,11 @@ async def handle_create(
     final = final_text(
         lifetime=lifetime,
         pre_count=_PRE_SLEEP_DELTAS,
-        post_count=_POST_SLEEP_DELTAS,
+        post_count=1,  # the composite delta itself
         chain_id=chain_id,
         visited=visited_now,
     )
+    yield text.emit_delta(final)
     yield text.emit_text_done(final)
     yield text.emit_done()
     yield message.emit_done()

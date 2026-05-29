@@ -90,7 +90,6 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
         store_disabled: bool = False,
         handler_sleep_ms: int = 50,
         pre_sleep_deltas: int = 0,
-        post_sleep_deltas: int = 1,
         emit_metadata_watermark: bool = False,
         shutdown_grace_seconds: int = LONG_GRACE_S,
         readiness_timeout: float = 15.0,
@@ -100,7 +99,6 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
             "CONFORMANCE_STORE_DISABLED": "true" if store_disabled else "false",
             "CONFORMANCE_HANDLER_SLEEP_MS": str(handler_sleep_ms),
             "CONFORMANCE_PRE_SLEEP_DELTAS": str(pre_sleep_deltas),
-            "CONFORMANCE_POST_SLEEP_DELTAS": str(post_sleep_deltas),
             "CONFORMANCE_EMIT_METADATA_WATERMARK": (
                 "true" if emit_metadata_watermark else "false"
             ),
