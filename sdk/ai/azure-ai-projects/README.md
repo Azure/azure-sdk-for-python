@@ -182,7 +182,7 @@ The table below lists the operation groups supported by the client library, with
 | Responses | [Responses API](https://platform.openai.com/docs/api-reference/responses) | `samples/responses/` |
 | Routines (preview) | | |
 | Skills (preview) | | `samples/hosted_agents/` |
-| Toolboxes (preview) | | `samples/hosted_agents/` |
+| Toolboxes (preview) | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/` |
 
 
 ## Client-side tracing
