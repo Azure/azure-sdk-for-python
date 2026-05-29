@@ -35,7 +35,7 @@ package — the same client `samples/sample_create_analyzer.py` and
 > 1. "Is your virtual environment active and the SDK installed?" — if no, route to `cu-sdk-setup`.
 > 2. "Is `CONTENTUNDERSTANDING_ENDPOINT` set in `.env`?" — if no, route to `cu-sdk-setup` Step 4.
 > 3. "Have you run `sample_update_defaults.py` for this resource?" — if no, ask them to run it first.
-> 4. "How many representative documents do you have, and where are they?" — fewer than 3 is fine but more is better for stage 2.
+> 4. "How many representative documents do you have, and where are they?" — fewer than 3 is fine but more is better for testing coverage.
 
 ## Package directory
 
@@ -200,18 +200,7 @@ lowest-confidence fields:
 ========================================================================
 ```
 
-> **[ASK USER]** "Which fields had low confidence or low fill rate? Let's
-> sharpen their descriptions in `v2`."
-
-### Step 5 — Iterate
-
-Copy `schemas/invoice_v1.json` → `schemas/invoice_v2.json`. Sharpen the
-descriptions for the weak fields (add alternative labels, disambiguate from
-similar fields, give format examples). Re-run with `--output test_results/v2`
-and compare the summaries by eye, or `diff` the two `<doc>.json` files
-directly.
-
-### Step 6 — Clean up (optional)
+### Step 5 — Clean up (optional)
 
 By default the analyzer is kept in your resource so you can re-use it. Pass
 `--ephemeral` to delete it at the end of a run:
@@ -223,6 +212,12 @@ python .github/skills/cu-sdk-generate-analyzer/scripts/create_and_test.py \
     --output test_results/v1 \
     --ephemeral
 ```
+
+> **Iteration helper — `--reuse`:** add `--reuse` to name the analyzer by a
+> sha1 of its schema (`<schema-stem>_<hash[:8]>`) and skip creation when an
+> analyzer with that ID already exists. Re-running with the same schema is
+> a no-op on the create side, so you don't pile up stale analyzers while
+> iterating. Edit the schema → hash changes → new analyzer is created.
 
 For explicit lifecycle management see
 [`samples/sample_get_analyzer.py`](../../../samples/sample_get_analyzer.py),

@@ -21,7 +21,7 @@ Flow
 6. Batch-analyze each input file; dump per-doc result JSON.
 7. Print a **category-aware** stdout summary: per-category fill rate
    denominator is the number of segments classified into that category — not
-   the total number of segments (which is the bug CU-Tools' exporter has).
+   the total number of segments across the packet.
 
 Authentication
 --------------
@@ -95,6 +95,8 @@ _result_to_dict = _create_and_test._result_to_dict
 _field_value = _create_and_test._field_value
 _iter_fields = _create_and_test._iter_fields
 _build_client = _create_and_test._build_client
+_schema_hash = _create_and_test.schema_hash
+_ensure_analyzer = _create_and_test.ensure_analyzer
 
 
 # ---------------------------------------------------------------------------
@@ -120,6 +122,53 @@ def _parse_inner_arg(values: List[str]) -> Dict[str, Path]:
             raise SystemExit(f"--inner-schema alias repeated: {alias!r}")
         result[alias] = path
     return result
+
+
+def _discover_inner_from_dir(
+    outer_schema: Dict[str, Any], schema_dir: Path
+) -> Dict[str, Path]:
+    """Auto-build {alias: path} from a directory.
+
+    For every category in the outer schema whose ``analyzerId`` is a non-
+    prebuilt alias, find a matching JSON file in ``schema_dir``. The
+    matching rule is: filename stem == alias, or stem startswith
+    ``<alias>_`` (picks the alphabetically last match, so ``invoice_v2.json``
+    wins over ``invoice_v1.json``).
+    """
+
+    if not schema_dir.is_dir():
+        raise SystemExit(f"--schema-dir is not a directory: {schema_dir}")
+
+    categories = (outer_schema.get("config") or {}).get("contentCategories") or {}
+    aliases: List[str] = []
+    for entry in categories.values():
+        if not isinstance(entry, dict):
+            continue
+        alias = entry.get("analyzerId")
+        if not isinstance(alias, str) or alias.startswith("prebuilt-"):
+            continue
+        aliases.append(alias)
+
+    json_files = sorted(schema_dir.glob("*.json"))
+    resolved: Dict[str, Path] = {}
+    missing: List[str] = []
+    for alias in aliases:
+        matches = [
+            p for p in json_files
+            if p.stem == alias or p.stem.startswith(f"{alias}_")
+        ]
+        if not matches:
+            missing.append(alias)
+            continue
+        resolved[alias] = matches[-1]  # alphabetically last → newest version
+
+    if missing:
+        raise SystemExit(
+            "--schema-dir could not resolve inner schemas for: "
+            f"{missing}. Looked in {schema_dir} for files named "
+            "<alias>.json or <alias>_*.json."
+        )
+    return resolved
 
 
 def _validate_all(
@@ -215,9 +264,10 @@ def summarize_routed(
 ) -> str:
     """Build a category-aware stdout summary.
 
-    Denominator per category = segments whose ``category`` matches. Avoids
-    the CU-Tools exporter bug that divides by total segments and produces
-    false "33%" fill rates.
+    Denominator per category = segments whose ``category`` matches, not the
+    total number of segments across the packet — so a field that's only
+    meaningful in one category doesn't get penalised by other categories'
+    segment counts.
     """
 
     # category → field → list[(doc_name, value, confidence)]
@@ -255,7 +305,14 @@ def summarize_routed(
             rows = per_field[fname]
             filled = [r for r in rows if r[1] not in (None, "", [], {})]
             fill_rate = (len(filled) / denom) if denom else 0.0
-            confs = [r[2] for r in rows if isinstance(r[2], (int, float))]
+            # Only consider confidence from rows where the value was actually
+            # extracted; reporting confidence for empty fields is misleading.
+            confs = [
+                r[2]
+                for r in rows
+                if r[1] not in (None, "", [], {})
+                and isinstance(r[2], (int, float))
+            ]
             avg_conf = (sum(confs) / len(confs)) if confs else None
             conf_str = f"{avg_conf:.3f}" if avg_conf is not None else "  n/a"
             lines.append(f"  {fname:<30} {fill_rate * 100:>5.1f}%      {conf_str}")
@@ -263,7 +320,9 @@ def summarize_routed(
     lowest: List[Tuple[float, str, str, str]] = []
     for category, per_field in table.items():
         for fname, rows in per_field.items():
-            for doc_name, _value, conf in rows:
+            for doc_name, value, conf in rows:
+                if value in (None, "", [], {}):
+                    continue
                 if isinstance(conf, (int, float)):
                     lowest.append((float(conf), category, fname, doc_name))
     lowest.sort(key=lambda x: x[0])
@@ -286,17 +345,24 @@ def create_inner_analyzers(
     inner_schemas: Mapping[str, Dict[str, Any]],
     *,
     id_prefix: str,
-) -> Dict[str, str]:
-    """Create each inner analyzer; return ``{alias: real_analyzer_id}``."""
+    reuse: bool = False,
+) -> Tuple[Dict[str, str], Dict[str, bool]]:
+    """Create each inner analyzer; return ``({alias: real_id}, {alias: reused})``."""
 
     alias_to_id: Dict[str, str] = {}
+    reused_map: Dict[str, bool] = {}
     for alias, schema in inner_schemas.items():
-        real_id = f"{id_prefix}_inner_{alias}"
-        print(f"[CREATE-INNER] {alias} → {real_id}")
-        poller = client.begin_create_analyzer(analyzer_id=real_id, resource=schema)
-        poller.result()
+        if reuse:
+            real_id = f"{id_prefix}_inner_{alias}_{_schema_hash(schema)}"
+            reused_map[alias] = _ensure_analyzer(client, real_id, schema)
+        else:
+            real_id = f"{id_prefix}_inner_{alias}"
+            print(f"[CREATE-INNER] {alias} → {real_id}")
+            poller = client.begin_create_analyzer(analyzer_id=real_id, resource=schema)
+            poller.result()
+            reused_map[alias] = False
         alias_to_id[alias] = real_id
-    return alias_to_id
+    return alias_to_id, reused_map
 
 
 def run(
@@ -307,6 +373,7 @@ def run(
     output_dir: Path,
     analyzer_id: Optional[str],
     ephemeral: bool,
+    reuse: bool,
 ) -> int:
     outer_schema, inner_schemas = _validate_all(outer_schema_path, inner_schema_paths)
 
@@ -318,16 +385,27 @@ def run(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     if not analyzer_id:
-        analyzer_id = f"{outer_schema_path.stem}_{int(time.time())}"
+        if reuse:
+            # Outer hash depends on patched analyzerIds, which depend on
+            # inner hashes — fold them in so any inner schema edit also
+            # gives the outer a new ID.
+            inner_hash_blob = "".join(
+                f"{a}:{_schema_hash(s)};" for a, s in sorted(inner_schemas.items())
+            )
+            outer_id_input = {"outer": outer_schema, "inner": inner_hash_blob}
+            analyzer_id = f"{outer_schema_path.stem}_{_schema_hash(outer_id_input)}"
+        else:
+            analyzer_id = f"{outer_schema_path.stem}_{int(time.time())}"
 
     client = _build_client()
 
     alias_to_id: Dict[str, str] = {}
+    outer_reused = False
     fail = 0
     results: List[Tuple[str, Dict[str, Any]]] = []
     try:
-        alias_to_id = create_inner_analyzers(
-            client, inner_schemas, id_prefix=analyzer_id
+        alias_to_id, _inner_reused = create_inner_analyzers(
+            client, inner_schemas, id_prefix=analyzer_id, reuse=reuse
         )
 
         patched_outer, wire_errors = _wire_inner_ids(outer_schema, alias_to_id)
@@ -336,10 +414,13 @@ def run(
                 print(f"[VALIDATE] {e}", file=sys.stderr)
             return 2
 
-        print(f"[CREATE-OUTER] {analyzer_id}")
-        poller = client.begin_create_analyzer(analyzer_id=analyzer_id, resource=patched_outer)
-        poller.result()
-        print(f"[CREATE-OUTER] {analyzer_id} ready")
+        if reuse:
+            outer_reused = _ensure_analyzer(client, analyzer_id, patched_outer)
+        else:
+            print(f"[CREATE-OUTER] {analyzer_id}")
+            poller = client.begin_create_analyzer(analyzer_id=analyzer_id, resource=patched_outer)
+            poller.result()
+            print(f"[CREATE-OUTER] {analyzer_id} ready")
 
         for file_path in inputs:
             out_path = output_dir / f"{file_path.stem}.json"
@@ -404,7 +485,19 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         help=(
             "Inner extractor schema, given as alias=path. The alias must "
             "match the analyzerId placeholder used in the outer schema's "
-            "content_categories. Repeat for each inner extractor."
+            "content_categories. Repeat for each inner extractor. "
+            "Mutually exclusive with --schema-dir."
+        ),
+    )
+    parser.add_argument(
+        "--schema-dir",
+        type=Path,
+        default=None,
+        help=(
+            "Directory containing inner schema files. Auto-maps each "
+            "non-prebuilt analyzerId alias in the outer schema to "
+            "<alias>.json or <alias>_*.json in this directory (newest "
+            "version wins). Mutually exclusive with --inner-schema."
         ),
     )
     parser.add_argument(
@@ -427,20 +520,21 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         action="store_true",
         help="Delete inner + outer analyzers at the end of the run.",
     )
+    parser.add_argument(
+        "--reuse",
+        action="store_true",
+        help=(
+            "Name analyzers using a sha1 of the schema instead of a "
+            "timestamp, and skip creation when an analyzer with that ID "
+            "already exists. Use this to avoid piling up stale analyzers "
+            "while iterating."
+        ),
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = _parse_args(argv)
-
-    if not args.inner_schema:
-        print(
-            "at least one --inner-schema alias=path is required",
-            file=sys.stderr,
-        )
-        return 2
-
-    inner_paths = _parse_inner_arg(args.inner_schema)
 
     if not args.outer_schema.exists():
         print(f"outer schema not found: {args.outer_schema}", file=sys.stderr)
@@ -449,6 +543,33 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"input not found: {args.input}", file=sys.stderr)
         return 2
 
+    if args.inner_schema and args.schema_dir:
+        print(
+            "--inner-schema and --schema-dir are mutually exclusive",
+            file=sys.stderr,
+        )
+        return 2
+    if not args.inner_schema and not args.schema_dir:
+        print(
+            "provide --schema-dir DIR or one or more --inner-schema alias=path",
+            file=sys.stderr,
+        )
+        return 2
+
+    if args.schema_dir:
+        outer_schema_preview = json.loads(
+            args.outer_schema.read_text(encoding="utf-8")
+        )
+        inner_paths = _discover_inner_from_dir(
+            outer_schema_preview, args.schema_dir
+        )
+        print(
+            "[SCHEMA-DIR] resolved: "
+            + ", ".join(f"{a}={p.name}" for a, p in inner_paths.items())
+        )
+    else:
+        inner_paths = _parse_inner_arg(args.inner_schema)
+
     return run(
         outer_schema_path=args.outer_schema,
         inner_schema_paths=inner_paths,
@@ -456,6 +577,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         output_dir=args.output,
         analyzer_id=args.analyzer_id,
         ephemeral=args.ephemeral,
+        reuse=args.reuse,
     )
 
 

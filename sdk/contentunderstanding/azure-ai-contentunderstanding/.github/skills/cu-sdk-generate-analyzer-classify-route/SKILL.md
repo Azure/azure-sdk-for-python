@@ -21,10 +21,18 @@ for field extraction.
 
 ## Prerequisites
 
-Same as [`cu-sdk-generate-analyzer`](../cu-sdk-generate-analyzer/SKILL.md):
-SDK installed, `.env` configured, model defaults updated.
+- Python >= 3.9 with the SDK installed (see [`cu-sdk-setup`](../cu-sdk-setup/SKILL.md)).
+- Virtual environment active.
+- `.env` configured with `CONTENTUNDERSTANDING_ENDPOINT` (and optionally `CONTENTUNDERSTANDING_KEY`).
+- Model deployments set up via `samples/sample_update_defaults.py`.
 
-> **[ASK USER]**
+> **[ASK USER] Prerequisites check:**
+> 1. "Is your virtual environment active and the SDK installed?" — if no, route to `cu-sdk-setup`.
+> 2. "Is `CONTENTUNDERSTANDING_ENDPOINT` set in `.env`?" — if no, route to `cu-sdk-setup` Step 4.
+> 3. "Have you run `sample_update_defaults.py` for this resource?" — if no, ask them to run it first.
+> 4. "How many representative documents do you have, and where are they?" — fewer than 3 is fine but more is better.
+
+> **[ASK USER] Packet check:**
 > 1. "Does each document in your packet contain more than one type of form (e.g. an invoice page followed by a bank statement page)?" — if no, route to `cu-sdk-generate-analyzer`.
 > 2. "What types of documents appear in your packets?" — capture as the list of inner analyzers.
 
@@ -61,12 +69,21 @@ Key rules (also captured in
 4. **Category fill rate is per-category**, not packet-wide. The script's
    stdout summary uses the right denominator.
 
-## Scripts
+## Package directory
 
 ```
-.github/skills/cu-sdk-generate-analyzer-classify-route/scripts/
-├── create_and_test_router.py
-└── create_and_test_router.sh
+sdk/contentunderstanding/azure-ai-contentunderstanding
+```
+
+## Scripts and templates
+
+```
+.github/skills/cu-sdk-generate-analyzer-classify-route/
+├── scripts/
+│   ├── create_and_test_router.py
+│   └── create_and_test_router.sh
+└── templates/
+    └── classifier_template.json   # Starter outer-classifier schema for Step 3
 ```
 
 ## Workflow
@@ -101,7 +118,15 @@ the field schema rules.
 ### Step 3 — Draft the outer classifier schema
 
 The outer schema has **no** `fieldSchema`. Its job is classification + routing.
+Start from the template:
 
+```bash
+mkdir -p schemas
+cp .github/skills/cu-sdk-generate-analyzer-classify-route/templates/classifier_template.json \
+   schemas/<name>_classifier_v1.json
+```
+
+Example after editing:
 ```json
 {
   "baseAnalyzerId": "prebuilt-document",
@@ -162,6 +187,18 @@ python .github/skills/cu-sdk-generate-analyzer-classify-route/scripts/create_and
     --output test_results/v1
 ```
 
+> **Shortcut — `--schema-dir`:** if your inner schema filenames match the
+> outer-schema category aliases (e.g. `schemas/invoice_v1.json` for category
+> `invoice`), replace every `--inner-schema alias=path` with a single
+> `--schema-dir schemas/`. The script picks the newest matching file per
+> alias (alphabetical sort, so `invoice_v2.json` wins over `invoice_v1.json`).
+
+> **Iteration helper — `--reuse`:** add `--reuse` to name analyzers by a
+> sha1 of their schema (`<stem>_<hash[:8]>`) and skip creation when an
+> analyzer with that ID already exists. Re-running with the same schemas
+> is a no-op on the create side, so you don't pile up stale analyzers while
+> iterating. Edit a schema → hash changes → new analyzer is created.
+
 The script:
 
 1. Validates every schema (exits with code **2** if any fails — no service
@@ -208,12 +245,7 @@ lowest-confidence fields across all categories:
 ========================================================================
 ```
 
-### Step 6 — Iterate
-
-Same loop as the single-type skill: tighten the description for low-confidence
-fields and re-run with `--output test_results/v2`.
-
-### Step 7 — Clean up (optional)
+### Step 6 — Clean up (optional)
 
 By default the script leaves both the outer classifier **and** all inner
 analyzers in your resource so you can re-use them. Pass `--ephemeral` to

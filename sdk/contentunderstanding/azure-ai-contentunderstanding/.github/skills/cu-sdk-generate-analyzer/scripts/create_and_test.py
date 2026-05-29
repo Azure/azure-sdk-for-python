@@ -43,6 +43,7 @@ Usage
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import os
@@ -202,7 +203,14 @@ def summarize(results: List[Tuple[str, Dict[str, Any]]]) -> str:
             denom = len(rows)
             filled = [r for r in rows if r[1] not in (None, "", [], {})]
             fill_rate = (len(filled) / denom) if denom else 0.0
-            confs = [r[2] for r in rows if isinstance(r[2], (int, float))]
+            # Only consider confidence from rows where the value was actually
+            # extracted; reporting confidence for empty fields is misleading.
+            confs = [
+                r[2]
+                for r in rows
+                if r[1] not in (None, "", [], {})
+                and isinstance(r[2], (int, float))
+            ]
             avg_conf = (sum(confs) / len(confs)) if confs else None
             conf_str = f"{avg_conf:.3f}" if avg_conf is not None else "  n/a"
             lines.append(f"  {fname:<40} {fill_rate * 100:>5.1f}%      {conf_str}")
@@ -211,7 +219,9 @@ def summarize(results: List[Tuple[str, Dict[str, Any]]]) -> str:
     lowest: List[Tuple[Optional[float], str, str, str]] = []
     for category, per_field in table.items():
         for fname, rows in per_field.items():
-            for doc_name, _value, conf in rows:
+            for doc_name, value, conf in rows:
+                if value in (None, "", [], {}):
+                    continue
                 if isinstance(conf, (int, float)):
                     lowest.append((conf, category, fname, doc_name))
     lowest.sort(key=lambda x: (x[0] if x[0] is not None else 1.0))
@@ -259,6 +269,26 @@ def create_analyzer(client, analyzer_id: str, schema: Dict[str, Any]) -> None:
     print(f"[CREATE] {analyzer_id} ready")
 
 
+def schema_hash(schema: Dict[str, Any]) -> str:
+    """Stable 8-char hash of a schema dict, for --reuse naming."""
+
+    blob = json.dumps(schema, sort_keys=True, ensure_ascii=False).encode("utf-8")
+    return hashlib.sha1(blob).hexdigest()[:8]
+
+
+def ensure_analyzer(client, analyzer_id: str, schema: Dict[str, Any]) -> bool:
+    """Create the analyzer if it doesn't already exist. Return True if reused."""
+
+    try:
+        client.get_analyzer(analyzer_id=analyzer_id)
+        print(f"[REUSE]  analyzer {analyzer_id} already exists")
+        return True
+    except Exception:  # noqa: BLE001 — ResourceNotFoundError or transport
+        pass
+    create_analyzer(client, analyzer_id, schema)
+    return False
+
+
 def analyze_file(client, analyzer_id: str, file_path: Path) -> Dict[str, Any]:
     with file_path.open("rb") as fh:
         poller = client.begin_analyze_binary(
@@ -276,6 +306,7 @@ def run(
     analyzer_id: Optional[str],
     iterations: int,
     ephemeral: bool,
+    reuse: bool,
 ) -> int:
     # Validate
     validator = _load_shared_validator()
@@ -298,14 +329,21 @@ def run(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     if not analyzer_id:
-        analyzer_id = f"{schema_path.stem}_{int(time.time())}"
+        if reuse:
+            analyzer_id = f"{schema_path.stem}_{schema_hash(schema)}"
+        else:
+            analyzer_id = f"{schema_path.stem}_{int(time.time())}"
 
     client = _build_client()
 
     fail = 0
+    reused = False
     results: List[Tuple[str, Dict[str, Any]]] = []
     try:
-        create_analyzer(client, analyzer_id, schema)
+        if reuse:
+            reused = ensure_analyzer(client, analyzer_id, schema)
+        else:
+            create_analyzer(client, analyzer_id, schema)
         for file_path in inputs:
             for iter_idx in range(1, iterations + 1):
                 suffix = f"_iter{iter_idx:03d}" if iterations > 1 else ""
@@ -329,6 +367,8 @@ def run(
                 client.delete_analyzer(analyzer_id=analyzer_id)
             except Exception as exc:  # noqa: BLE001
                 print(f"[CLEANUP] delete failed: {exc}", file=sys.stderr)
+        elif reused:
+            print(f"[KEEP]    reused analyzer {analyzer_id} retained")
         else:
             print(f"[KEEP]    analyzer {analyzer_id} retained (use --ephemeral to delete)")
 
@@ -371,12 +411,22 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         type=int,
         default=1,
         help="Run each document this many times (default: 1). N>1 emits "
-        "<doc>_iterNNN.json suffixes — used by the eval skill in P2.",
+        "<doc>_iterNNN.json suffixes for stability testing.",
     )
     parser.add_argument(
         "--ephemeral",
         action="store_true",
         help="Delete the created analyzer at the end of the run.",
+    )
+    parser.add_argument(
+        "--reuse",
+        action="store_true",
+        help=(
+            "Name the analyzer <schema-stem>_<sha1[:8]> instead of "
+            "appending a unix timestamp, and skip creation if an analyzer "
+            "with that ID already exists. Use this when iterating on a "
+            "schema to avoid piling up stale analyzers."
+        ),
     )
     return parser.parse_args(argv)
 
@@ -401,6 +451,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         analyzer_id=args.analyzer_id,
         iterations=args.iterations,
         ephemeral=args.ephemeral,
+        reuse=args.reuse,
     )
 
 
