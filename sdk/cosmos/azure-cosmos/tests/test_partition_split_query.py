@@ -144,14 +144,9 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache by running a query
             run_queries(container, 1)
 
-            # Trigger split (1 -> 2 partitions)  -  control-plane
-            key_container.replace_throughput(11000)
-            pending = True
-            while pending:
-                offer = key_container.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    time.sleep(5)
+            # Trigger split via the shared bounded helper (timeout + SkipTest)
+            # instead of an unbounded polling loop.
+            test_config.TestConfig.trigger_split(key_container, 11000)
 
             # Run queries to trigger routing map refresh
             run_queries(container, 1)
@@ -235,14 +230,9 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache
             run_queries(container, 1)
 
-            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)  -  control-plane
-            key_container.replace_throughput(25000)
-            pending = True
-            while pending:
-                offer = key_container.read_offer()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    time.sleep(5)
+            # Trigger split via the shared bounded helper (timeout + SkipTest)
+            # instead of an unbounded polling loop.
+            test_config.TestConfig.trigger_split(key_container, 25000)
 
             # Run queries to trigger routing map refresh
             run_queries(container, 1)
@@ -355,14 +345,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print(f"Before split - Container B: {len(ranges_b_before)} partitions")
             print(f"Container B routing map object ID: {map_b_object_id}")
 
-            # Split only Container A  -  control-plane
-            key_container_a.replace_throughput(11000)
-            pending = True
-            while pending:
-                offer = key_container_a.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    time.sleep(5)
+            # Split only Container A via the shared bounded helper.
+            test_config.TestConfig.trigger_split(key_container_a, 11000)
 
             # Wait for physical partition ranges to reflect the split.
             split_convergence_deadline = time.time() + 300
@@ -608,9 +592,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
         the service returns an incomplete set of partition ranges.
 
         When a full load is performed (previous_routing_map=None) and the service
-        returns gapped ranges, _fetch_routing_map must return None immediately  - 
-        there is no incremental state to fall back from, and repeating the
-        identical request would produce the same result."""
+        returns gapped ranges, _fetch_routing_map should surface a retryable
+        HTTP 503 after exhausting the bounded retry budget."""
         container_id = 'test_fallback_guard_' + str(uuid.uuid4())
         self.key_database.create_container(
             id=container_id,
@@ -644,19 +627,17 @@ class TestPartitionSplitQuery(unittest.TestCase):
                     '_ReadPartitionKeyRanges',
                     side_effect=mock_read_ranges
             ):
-                # Full load with incomplete ranges should return None immediately
-                result = provider._fetch_routing_map(
-                    collection_link=collection_link,
-                    collection_id=collection_id,
-                    previous_routing_map=None,
-                    feed_options={},
-                )
+                with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+                    with self.assertRaises(CosmosHttpResponseError) as ctx:
+                        provider._fetch_routing_map(
+                            collection_link=collection_link,
+                            collection_id=collection_id,
+                            previous_routing_map=None,
+                            feed_options={},
+                        )
+                    self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
 
-                # Should return None instead of recursing infinitely
-                assert result is None, \
-                    "_fetch_routing_map should return None when full load produces incomplete ranges"
-
-            print("Validated: full load with incomplete ranges returns None without recursion")
+            print("Validated: full load with incomplete ranges surfaces retryable HTTP 503")
 
         finally:
             self.key_database.delete_container(container_id)
