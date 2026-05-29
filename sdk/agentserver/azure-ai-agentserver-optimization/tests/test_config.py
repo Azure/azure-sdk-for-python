@@ -19,6 +19,7 @@ from azure.ai.agentserver.optimization._models import (
 )
 from azure.ai.agentserver.optimization._config import (
     _load_tool_definitions,
+    _parse_simple_yaml,
     _parse_skill_frontmatter,
     _resolve_candidate_folder,
     _resolve_local_dir,
@@ -39,14 +40,18 @@ def clear_downloaded():
 class TestDefaults:
     """When no env vars or config dir are set."""
 
-    def test_returns_none_when_no_config(self):
-        config = load_config()
+    def test_required_true_raises_by_default(self):
+        with pytest.raises(ValueError, match="No optimization config found"):
+            load_config()
+
+    def test_required_false_returns_none(self):
+        config = load_config(required=False)
         assert config is None
 
     def test_falls_back_to_model_deployment_name_env(self, monkeypatch):
-        """MODEL_DEPLOYMENT_NAME is only used by priority 1/2, not by no-config None."""
+        """MODEL_DEPLOYMENT_NAME is only used by priority 1/2, not by required=False."""
         monkeypatch.setenv("MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
-        config = load_config()
+        config = load_config(required=False)
         assert config is None
 
     def test_config_dir_loads_baseline(self, monkeypatch, tmp_path):
@@ -156,14 +161,14 @@ class TestEnvConfig:
         assert config.tool_definitions[0]["function"]["name"] == "lookup_policy"
 
 
-    def test_bad_json_raises_value_error(self, monkeypatch):
+    def test_bad_json_falls_through(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CONFIG", "not-json{{{")
-        with pytest.raises(ValueError, match="Bad OPTIMIZATION_CONFIG env var"):
-            load_config()
+        config = load_config(required=False)
+        assert config is None
 
     def test_empty_env_var_ignored(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CONFIG", "   ")
-        config = load_config()
+        config = load_config(required=False)
         assert config is None
 
     def test_partial_config_fills_none(self, monkeypatch):
@@ -200,7 +205,7 @@ class TestCandidateResolver:
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None, credential=None: resolved,
+            lambda cid, endpoint, local_dir=None: resolved,
         )
         config = load_config()
         assert config.source == "api:candidate:cand-123"
@@ -208,35 +213,20 @@ class TestCandidateResolver:
         assert config.candidate_id == "cand-123"
         assert len(config.skills) == 1
 
-    def test_resolver_returns_none_falls_to_defaults(self, monkeypatch):
-        """When resolver returns None (already cached, no local dir), load_config returns None."""
+    def test_resolver_failure_falls_to_defaults(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "bad-id")
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None, credential=None: None,
+            lambda cid, endpoint, local_dir=None: None,
         )
-        config = load_config()
+        config = load_config(required=False)
         assert config is None
-
-    def test_resolver_error_raises_value_error(self, monkeypatch):
-        """Resolver ValueError propagates through load_config."""
-        def mock_resolver(cid, endpoint, local_dir=None, credential=None):
-            raise ValueError("API failed")
-
-        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-err")
-        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
-        monkeypatch.setattr(
-            "azure.ai.agentserver.optimization._config.resolve_candidate",
-            mock_resolver,
-        )
-        with pytest.raises(ValueError, match="API failed"):
-            load_config()
 
     def test_missing_endpoint_skips_resolver(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "cand-1")
         # No ENDPOINT set
-        config = load_config()
+        config = load_config(required=False)
         assert config is None
 
     def test_resolver_falls_to_local_dir(self, monkeypatch, tmp_path):
@@ -246,7 +236,7 @@ class TestCandidateResolver:
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None, credential=None: None,
+            lambda cid, endpoint, local_dir=None: None,
         )
         # Set up local dir with this candidate
         candidate_dir = tmp_path / "cand-local"
@@ -258,6 +248,133 @@ class TestCandidateResolver:
         assert config.source.startswith("local:")
         assert config.instructions == "Local instructions."
         assert config.model == "local-model"
+
+
+class TestCandidateIdParam:
+    """candidate_id parameter overrides OPTIMIZATION_CANDIDATE_ID env var."""
+
+    def test_param_overrides_env_var(self, monkeypatch):
+        """candidate_id kwarg takes precedence over the env var."""
+        resolved = {
+            "instructions": "From param.",
+            "model": "gpt-4o",
+            "temperature": 0.5,
+        }
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "env-id")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved if cid == "param-id" else None,
+        )
+        config = load_config(candidate_id="param-id")
+        assert config.source == "api:candidate:param-id"
+        assert config.candidate_id == "param-id"
+
+    def test_param_without_env_var(self, monkeypatch):
+        """candidate_id kwarg works even without env var set."""
+        resolved = {
+            "instructions": "Resolved.",
+            "model": "gpt-4o",
+        }
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved,
+        )
+        config = load_config(candidate_id="header-id")
+        assert config.source == "api:candidate:header-id"
+        assert config.candidate_id == "header-id"
+
+    def test_falls_back_to_env_var(self, monkeypatch):
+        """When candidate_id param is None, falls back to env var."""
+        resolved = {
+            "instructions": "From env.",
+            "model": "gpt-4o",
+        }
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "env-cand")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved if cid == "env-cand" else None,
+        )
+        config = load_config()
+        assert config.source == "api:candidate:env-cand"
+        assert config.candidate_id == "env-cand"
+
+    def test_param_with_local_dir_fallback(self, monkeypatch, tmp_path):
+        """candidate_id param is used for local dir lookup when resolver fails."""
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: None,
+        )
+        candidate_dir = tmp_path / "my-candidate"
+        candidate_dir.mkdir()
+        (candidate_dir / "metadata.yaml").write_text("model: local-m\n")
+        (candidate_dir / "instructions.md").write_text("Local fallback.")
+
+        config = load_config(candidate_id="my-candidate")
+        assert config.source.startswith("local:")
+        assert config.instructions == "Local fallback."
+
+    def test_header_auto_detected(self, monkeypatch):
+        """X-Foundry-Optimization-Candidate-Id header is auto-extracted."""
+        resolved = {
+            "instructions": "From header.",
+            "model": "gpt-4o",
+        }
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved if cid == "hdr-123" else None,
+        )
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config._get_candidate_id_from_request",
+            lambda: "hdr-123",
+        )
+        config = load_config()
+        assert config.source == "api:candidate:hdr-123"
+        assert config.candidate_id == "hdr-123"
+
+    def test_param_overrides_header(self, monkeypatch):
+        """Explicit candidate_id param takes precedence over header."""
+        resolved = {
+            "instructions": "From param.",
+            "model": "gpt-4o",
+        }
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved if cid == "explicit" else None,
+        )
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config._get_candidate_id_from_request",
+            lambda: "from-header",
+        )
+        config = load_config(candidate_id="explicit")
+        assert config.source == "api:candidate:explicit"
+        assert config.candidate_id == "explicit"
+
+    def test_header_overrides_env_var(self, monkeypatch):
+        """Header takes precedence over env var when no param is given."""
+        resolved = {
+            "instructions": "From header.",
+            "model": "gpt-4o",
+        }
+        monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "env-id")
+        monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config.resolve_candidate",
+            lambda cid, endpoint, local_dir=None: resolved if cid == "hdr-id" else None,
+        )
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config._get_candidate_id_from_request",
+            lambda: "hdr-id",
+        )
+        config = load_config()
+        assert config.source == "api:candidate:hdr-id"
+        assert config.candidate_id == "hdr-id"
 
 
 # ── Local directory (Priority 3) ────────────────────────────────────
@@ -320,24 +437,6 @@ class TestLocalDir:
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
         config = load_config()
         assert config.instructions == "No metadata instructions."
-
-    def test_invalid_metadata_yaml_raises(self, monkeypatch, tmp_path):
-        candidate_dir = tmp_path / "baseline"
-        candidate_dir.mkdir()
-        (candidate_dir / "metadata.yaml").write_text("model: [unterminated\n")
-
-        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
-        with pytest.raises(ValueError, match="Invalid metadata file"):
-            load_config()
-
-    def test_non_mapping_metadata_yaml_raises(self, monkeypatch, tmp_path):
-        candidate_dir = tmp_path / "baseline"
-        candidate_dir.mkdir()
-        (candidate_dir / "metadata.yaml").write_text("- not\n- a\n- mapping\n")
-
-        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
-        with pytest.raises(ValueError, match="expected a YAML mapping"):
-            load_config()
 
     def test_loads_skills_from_local_dir(self, monkeypatch, tmp_path):
         candidate_dir = tmp_path / "baseline"
@@ -418,13 +517,13 @@ class TestLocalDir:
 
     def test_nonexistent_local_dir_falls_to_defaults(self, monkeypatch):
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent/path")
-        config = load_config()
+        config = load_config(required=False)
         assert config is None
 
     def test_no_candidate_no_baseline_falls_to_defaults(self, monkeypatch, tmp_path):
         """Empty local dir with no baseline falls through."""
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", str(tmp_path))
-        config = load_config()
+        config = load_config(required=False)
         assert config is None
 
     def test_metadata_instruction_file_outside_candidate(self, monkeypatch, tmp_path):
@@ -561,29 +660,36 @@ class TestResolveCandidateFolder:
 
 
 class TestGracefulErrorHandling:
-    """load_config lets exceptions propagate to the caller."""
+    """load_config never crashes — always returns a valid config (unless required ValueError)."""
 
-    def test_corrupt_env_raises_value_error(self, monkeypatch):
-        """Bad OPTIMIZATION_CONFIG JSON raises ValueError."""
+    def test_unexpected_exception_returns_none(self, monkeypatch):
+        """Any unexpected error in _load_config_inner returns None."""
+        monkeypatch.setattr(
+            "azure.ai.agentserver.optimization._config._load_config_inner",
+            lambda **kwargs: (_ for _ in ()).throw(RuntimeError("boom")),
+        )
+        config = load_config(required=False)
+        assert config is None
+
+    def test_load_config_never_raises_on_corrupt_env(self, monkeypatch):
+        """Even with corrupted env vars, load_config(required=False) returns None."""
         monkeypatch.setenv("OPTIMIZATION_CONFIG", "{invalid")
-        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent")
-        with pytest.raises(ValueError, match="Bad OPTIMIZATION_CONFIG env var"):
-            load_config()
-
-    def test_resolver_configured_but_fails_raises(self, monkeypatch):
-        """When resolver is configured but fails, ValueError is raised."""
-        def mock_resolver(cid, endpoint, local_dir=None, credential=None):
-            raise ValueError("service unreachable")
-
         monkeypatch.setenv("OPTIMIZATION_CANDIDATE_ID", "x")
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://nope")
         monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent")
-        monkeypatch.setattr(
-            "azure.ai.agentserver.optimization._config.resolve_candidate",
-            mock_resolver,
-        )
-        with pytest.raises(ValueError, match="service unreachable"):
+        config = load_config(required=False)
+        assert config is None
+
+    def test_required_true_raises_value_error(self):
+        """required=True (default) raises ValueError when no config found."""
+        with pytest.raises(ValueError, match="No optimization config found"):
             load_config()
+
+    def test_required_true_not_caught_by_broad_except(self, monkeypatch):
+        """ValueError from required=True is NOT swallowed by the outer try/except."""
+        monkeypatch.setenv("OPTIMIZATION_LOCAL_DIR", "/nonexistent")
+        with pytest.raises(ValueError, match="baseline"):
+            load_config(required=True)
 
 
 # ── OptimizationConfig dataclass ────────────────────────────────────
@@ -707,20 +813,20 @@ class TestCandidateConfig:
         assert len(candidate.tool_definitions) == 1
         assert candidate.tool_definitions[0]["function"]["name"] == "get_weather"
 
-    def test_tools_non_list_raises(self):
-        """Non-list tools value raises TypeError."""
-        with pytest.raises(TypeError, match="Expected 'tools' to be a list"):
-            CandidateConfig.from_dict({"tools": "not a list"})
+    def test_tools_non_list_ignored(self):
+        """Non-list tools value is coerced to empty list."""
+        candidate = CandidateConfig.from_dict({"tools": "not a list"})
+        assert candidate.tool_definitions == []
 
-    def test_tools_dict_raises(self):
-        """Dict tools value raises TypeError."""
-        with pytest.raises(TypeError, match="Expected 'tools' to be a list"):
-            CandidateConfig.from_dict({"tools": {"a": "b"}})
+    def test_tools_dict_ignored(self):
+        """Dict tools value is coerced to empty list."""
+        candidate = CandidateConfig.from_dict({"tools": {"a": "b"}})
+        assert candidate.tool_definitions == []
 
-    def test_tools_none_raises(self):
-        """None tools value raises TypeError."""
-        with pytest.raises(TypeError, match="Expected 'tools' to be a list"):
-            CandidateConfig.from_dict({"tools": None})
+    def test_tools_none_ignored(self):
+        """None tools value results in empty list."""
+        candidate = CandidateConfig.from_dict({"tools": None})
+        assert candidate.tool_definitions == []
 
     def test_no_job_id_field(self):
         """OptimizationConfig no longer carries a job_id field."""
@@ -886,67 +992,58 @@ class TestSkillFrontmatter:
         assert fm == {}
         assert body == "Body."
 
-    def test_block_scalar_literal(self):
-        """Block scalar with '|' preserves newlines (issue #5586)."""
-        content = (
-            "---\n"
-            "name: my-skill\n"
-            "description: |\n"
-            "  This is a multiline\n"
-            "  description for the skill.\n"
-            "---\n"
-            "Body text."
-        )
-        fm, body = _parse_skill_frontmatter(content)
-        assert fm["name"] == "my-skill"
-        assert "This is a multiline\n" in fm["description"]
-        assert "description for the skill." in fm["description"]
-        assert body == "Body text."
 
-    def test_block_scalar_folded(self):
-        """Block scalar with '>' folds into single line."""
-        content = (
-            "---\n"
-            "name: folded-skill\n"
-            "description: >\n"
-            "  This is a folded\n"
-            "  description.\n"
-            "---\n"
-            "Body."
-        )
-        fm, body = _parse_skill_frontmatter(content)
-        assert fm["name"] == "folded-skill"
-        assert "This is a folded" in fm["description"]
-        assert "description." in fm["description"]
-        assert body == "Body."
+# ── Simple YAML parser ──────────────────────────────────────────────
 
-    def test_quoted_value_with_colon(self):
-        """Quoted values containing colons are parsed correctly."""
-        content = (
-            "---\n"
-            'name: "my:skill"\n'
-            'description: "Has a colon: inside"\n'
-            "---\n"
-            "Body."
-        )
-        fm, body = _parse_skill_frontmatter(content)
-        assert fm["name"] == "my:skill"
-        assert fm["description"] == "Has a colon: inside"
-        assert body == "Body."
 
-    def test_invalid_yaml_returns_empty(self):
-        """Malformed YAML in frontmatter returns empty dict."""
-        content = "---\n: invalid\n  bad indent\n---\nBody."
-        fm, body = _parse_skill_frontmatter(content)
-        assert fm == {}
-        assert body == "Body."
+class TestSimpleYaml:
+    """Tests for the fallback YAML parser (no PyYAML)."""
 
-    def test_non_dict_frontmatter_returns_empty(self):
-        """Frontmatter that parses to a non-dict returns empty dict."""
-        content = "---\n- item1\n- item2\n---\nBody."
-        fm, body = _parse_skill_frontmatter(content)
-        assert fm == {}
-        assert body == "Body."
+    def test_basic_parsing(self, tmp_path):
+        f = tmp_path / "test.yaml"
+        f.write_text("model: gpt-4o\ntemperature: 0.5\n")
+        result = _parse_simple_yaml(f)
+        assert result["model"] == "gpt-4o"
+        assert result["temperature"] == 0.5
+        assert isinstance(result["temperature"], float)
+
+    def test_skips_comments_and_blanks(self, tmp_path):
+        f = tmp_path / "test.yaml"
+        f.write_text("# comment\n\nmodel: gpt-4o\n")
+        result = _parse_simple_yaml(f)
+        assert result == {"model": "gpt-4o"}
+
+    def test_missing_file(self, tmp_path):
+        result = _parse_simple_yaml(tmp_path / "nope.yaml")
+        assert result == {}
+
+    def test_colon_in_value(self, tmp_path):
+        f = tmp_path / "test.yaml"
+        f.write_text("url: http://example.com\n")
+        result = _parse_simple_yaml(f)
+        assert result["url"] == "http://example.com"
+
+    def test_coerces_int(self, tmp_path):
+        f = tmp_path / "test.yaml"
+        f.write_text("count: 42\n")
+        result = _parse_simple_yaml(f)
+        assert result["count"] == 42
+        assert isinstance(result["count"], int)
+
+    def test_coerces_null(self, tmp_path):
+        f = tmp_path / "test.yaml"
+        f.write_text("value: null\nempty: ~\nblank:\n")
+        result = _parse_simple_yaml(f)
+        assert result["value"] is None
+        assert result["empty"] is None
+        assert result["blank"] is None
+
+    def test_coerces_bool(self, tmp_path):
+        f = tmp_path / "test.yaml"
+        f.write_text("enabled: true\ndisabled: false\n")
+        result = _parse_simple_yaml(f)
+        assert result["enabled"] is True
+        assert result["disabled"] is False
 
 
 # ── apply_tool_descriptions ──────────────────────────────────────────
@@ -1094,22 +1191,27 @@ class TestApplyToolDescriptions:
         assert tool.__doc__ == "Patched."
         assert tool.description == "read-only"  # unchanged
 
-    def test_does_not_patch_input_model_param_descriptions(self):
-        """Tool docs are patched, but input_model parameter descriptions are left unchanged."""
-        class _FieldDef:
-            def __init__(self, description: str):
-                self.description = description
+    def test_patches_input_model_param_descriptions(self):
+        """Patches parameter descriptions on input_model.model_fields."""
+        class FakeField:
+            def __init__(self, desc):
+                self.description = desc
 
-        class SearchFlightsInput:
+        class FakeInputModel:
             model_fields = {
-                "destination": _FieldDef("Old dest description"),
-                "date": _FieldDef("Old date description"),
+                "destination": FakeField("Old dest description"),
+                "date": FakeField("Old date description"),
             }
+            _rebuild_called = False
+
+            @classmethod
+            def model_rebuild(cls, force=False):
+                cls._rebuild_called = True
 
         def search_flights(destination: str, date: str):
             """Search."""
 
-        search_flights.input_model = SearchFlightsInput  # type: ignore[attr-defined]
+        search_flights.input_model = FakeInputModel  # type: ignore[attr-defined]
 
         config = self._make_config([
             self._tool_def("search_flights", "Find flights.", parameters={
@@ -1121,8 +1223,9 @@ class TestApplyToolDescriptions:
         ])
         config.apply_tool_descriptions([search_flights])
         assert search_flights.__doc__ == "Find flights."
-        assert SearchFlightsInput.model_fields["destination"].description == "Old dest description"
-        assert SearchFlightsInput.model_fields["date"].description == "Old date description"
+        assert FakeInputModel.model_fields["destination"].description == "The travel destination city"
+        assert FakeInputModel.model_fields["date"].description == "Old date description"
+        assert FakeInputModel._rebuild_called is True
 
     def test_skips_param_patch_when_no_input_model(self):
         """No crash when tool has no input_model attribute."""
@@ -1140,17 +1243,22 @@ class TestApplyToolDescriptions:
 
     def test_skips_unknown_params_in_input_model(self):
         """Parameters not in model_fields are silently ignored."""
-        class _FieldDef:
-            def __init__(self, description: str):
-                self.description = description
+        class FakeField:
+            def __init__(self, desc):
+                self.description = desc
 
-        class MyToolInput:
-            model_fields = {"known": _FieldDef("Known param")}
+        class FakeInputModel:
+            model_fields = {"known": FakeField("Known param")}
+            _rebuild_called = False
+
+            @classmethod
+            def model_rebuild(cls, force=False):
+                cls._rebuild_called = True
 
         def my_tool():
             """Doc."""
 
-        my_tool.input_model = MyToolInput  # type: ignore[attr-defined]
+        my_tool.input_model = FakeInputModel  # type: ignore[attr-defined]
 
         config = self._make_config([
             self._tool_def("my_tool", "New doc.", parameters={
@@ -1159,28 +1267,33 @@ class TestApplyToolDescriptions:
             }),
         ])
         config.apply_tool_descriptions([my_tool])
-        assert MyToolInput.model_fields["known"].description == "Known param"
+        assert FakeInputModel.model_fields["known"].description == "Known param"
+        assert FakeInputModel._rebuild_called is False
 
     def test_no_rebuild_when_no_params_patched(self):
         """model_rebuild is NOT called if no parameters were actually patched."""
-        class _FieldDef:
-            def __init__(self, description: str):
-                self.description = description
+        class FakeField:
+            def __init__(self, desc):
+                self.description = desc
 
-        class MyToolInput:
-            model_fields = {"x": _FieldDef("X")}
+        class FakeInputModel:
+            model_fields = {"x": FakeField("X")}
+            _rebuild_called = False
+
+            @classmethod
+            def model_rebuild(cls, force=False):
+                cls._rebuild_called = True
 
         def my_tool():
             """Doc."""
 
-        my_tool.input_model = MyToolInput  # type: ignore[attr-defined]
+        my_tool.input_model = FakeInputModel  # type: ignore[attr-defined]
 
         config = self._make_config([
             self._tool_def("my_tool", "New."),
         ])
         config.apply_tool_descriptions([my_tool])
-        # No parameters in tool_def properties, so no field patching occurs
-        assert MyToolInput.model_fields["x"].description == "X"
+        assert FakeInputModel._rebuild_called is False
 
     def test_empty_tools_list(self):
         """Passing an empty list is fine."""
@@ -1276,7 +1389,7 @@ class TestPriorityOrdering:
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None, credential=None: {"instructions": "From resolver."},
+            lambda cid, endpoint, local_dir=None: {"instructions": "From resolver."},
         )
         config = load_config()
         assert config.source == "api:candidate:cand-1"
@@ -1313,7 +1426,7 @@ class TestPriorityOrdering:
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None, credential=None: resolved,
+            lambda cid, endpoint, local_dir=None: resolved,
         )
         config = load_config()
         assert config.skills_dir == "/some/path/skills"
@@ -1330,7 +1443,7 @@ class TestPriorityOrdering:
         monkeypatch.setenv("OPTIMIZATION_RESOLVE_ENDPOINT", "http://fake")
         monkeypatch.setattr(
             "azure.ai.agentserver.optimization._config.resolve_candidate",
-            lambda cid, endpoint, local_dir=None, credential=None: resolved,
+            lambda cid, endpoint, local_dir=None: resolved,
         )
         config = load_config()
         assert len(config.tool_definitions) == 1
@@ -1358,9 +1471,13 @@ class TestConfigDirParam:
         config = load_config(config_dir=Path(tmp_path))
         assert config.instructions == "Path dir."
 
-    def test_config_dir_nonexistent_returns_none(self, tmp_path):
-        config = load_config(config_dir=tmp_path / "nope")
+    def test_config_dir_nonexistent_required_false(self, tmp_path):
+        config = load_config(config_dir=tmp_path / "nope", required=False)
         assert config is None
+
+    def test_config_dir_nonexistent_required_true(self, tmp_path):
+        with pytest.raises(ValueError, match="baseline"):
+            load_config(config_dir=tmp_path / "nope")
 
     def test_config_dir_with_candidate(self, tmp_path, monkeypatch):
         """config_dir + OPTIMIZATION_CANDIDATE_ID selects the right folder."""
