@@ -436,9 +436,7 @@ class TestSizeCaps(unittest.TestCase):
     def test_bounded_decompress_brotli_bomb_raises(self):
         if not snippet_injector_module.HAS_BROTLI:
             self.skipTest("brotli not installed")
-        bomb = snippet_injector_module._BROTLI_MODULE.compress(
-            b"a" * (_MAX_DECOMPRESSED_BYTES + 1024)
-        )
+        bomb = snippet_injector_module._BROTLI_MODULE.compress(b"a" * (_MAX_DECOMPRESSED_BYTES + 1024))
         with self.assertRaises(ValueError):
             _bounded_decompress(bomb, "br")
 

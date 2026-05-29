@@ -69,7 +69,7 @@ def _bounded_decompress(data: bytes, encoding: str) -> bytes:
         out += decompressor.flush()
         if len(out) > cap:
             raise ValueError("deflate-decompressed body exceeds cap")
-        return out
+        return bytes(out)
     elif encoding == "br":
         if _BROTLI_MODULE is None:
             raise RuntimeError("brotli module not available")
@@ -164,7 +164,7 @@ class WebSnippetInjector:
         ]
         _mark_browser_loader_feature(self.config.enabled)
 
-    def should_inject(
+    def should_inject(  # pylint: disable=too-many-return-statements
         self, request_method: str, content_type: Optional[str], content: bytes, content_encoding: Optional[str] = None
     ) -> bool:
         """Determine whether the web snippet should be injected into the response.
