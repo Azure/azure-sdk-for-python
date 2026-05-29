@@ -81,7 +81,9 @@ class DurabilityContext:
 
     :param entry_mode: How the handler was entered — ``"fresh"`` for normal
         invocation or ``"recovered"`` after a crash.
-    :param run_attempt: Number of recovery attempts (0 on first run).
+    :param run_attempt: Per-process retry attempt counter (see the
+        :attr:`run_attempt` property docstring for the **important**
+        caveat about cross-lifetime semantics).
     :param was_steered: Whether this invocation resulted from steering.
     :param pending_inputs: Number of queued steering inputs after this one.
     :param metadata: Developer-accessible checkpoint store.
@@ -127,7 +129,29 @@ class DurabilityContext:
 
     @property
     def run_attempt(self) -> int:
-        """Recovery attempt counter (0 on first run, incremented on each crash recovery)."""
+        """Per-process retry attempt counter.
+
+        .. warning::
+           **Per-process semantics — this counter does NOT survive crash
+           recovery.** It increments only within a single process
+           lifetime, on in-process retries after a handler raises. On a
+           new process lifetime (i.e. after the framework re-invokes the
+           handler post-crash), ``run_attempt`` resets to 0.
+
+           To detect whether your handler is running for the first time
+           or as a crash-recovered re-invocation, use
+           :attr:`is_recovery` (equivalently ``entry_mode == "recovered"``).
+           Those signals ARE cross-lifetime stable.
+
+           The original design intent was for ``run_attempt`` to be a
+           cross-lifetime counter (incrementing on every re-invocation,
+           whether in-process retry or post-crash recovery). The
+           implementation drifted and the cross-lifetime semantic is
+           tracked as backlog item B10 in
+           ``sdk/agentserver/specs/backlog.md``. Until that lands,
+           handlers must use ``is_recovery`` for cross-lifetime
+           detection.
+        """
         return self._run_attempt
 
     @property
