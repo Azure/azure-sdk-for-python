@@ -1,3 +1,0 @@
-python-dotenv>=1.0.0
-azure-ai-agentserver-core
-azure-ai-agentserver-langgraph

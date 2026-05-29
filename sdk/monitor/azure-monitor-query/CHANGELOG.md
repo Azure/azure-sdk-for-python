@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Bump minimum dependency on `azure-core` to `>=1.37.0`.
+
 ## 2.0.0 (2025-07-30)
 
 ### Breaking Changes
@@ -108,7 +110,7 @@
 
 ### Other Changes
 
-* Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+* Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 * Removed `msrest` dependency.
 * Bumped minimum dependency on `azure-core` to `>=1.24.0`.
 * Added requirement for `isodate>=0.6.0` (`isodate` was required by `msrest`).

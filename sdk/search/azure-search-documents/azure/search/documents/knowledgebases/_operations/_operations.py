@@ -31,6 +31,7 @@ from ... import models as _models2
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Serializer
 from ..._utils.utils import ClientMixinABC
+from ..._validation import api_version_validation
 from .._configuration import KnowledgeBaseRetrievalClientConfiguration
 
 JSON = MutableMapping[str, Any]
@@ -48,7 +49,7 @@ def build_knowledge_base_retrieval_retrieve_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -63,7 +64,8 @@ def build_knowledge_base_retrieval_retrieve_request(  # pylint: disable=name-too
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if query_source_authorization is not None:
         _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
             "query_source_authorization", query_source_authorization, "str"
@@ -81,7 +83,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     @overload
     def retrieve(
         self,
-        knowledge_base_name: str,
         retrieval_request: _models1.KnowledgeBaseRetrievalRequest,
         *,
         query_source_authorization: Optional[str] = None,
@@ -90,8 +91,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request:
          ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest
@@ -111,7 +110,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     @overload
     def retrieve(
         self,
-        knowledge_base_name: str,
         retrieval_request: JSON,
         *,
         query_source_authorization: Optional[str] = None,
@@ -120,8 +118,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: JSON
         :keyword query_source_authorization: Token identifying the user for which the query is being
@@ -140,7 +136,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     @overload
     def retrieve(
         self,
-        knowledge_base_name: str,
         retrieval_request: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
@@ -149,8 +144,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
@@ -167,9 +160,12 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         """
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-05-01-preview": ["query_source_authorization"]},
+        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview"],
+    )
     def retrieve(
         self,
-        knowledge_base_name: str,
         retrieval_request: Union[_models1.KnowledgeBaseRetrievalRequest, JSON, IO[bytes]],
         *,
         query_source_authorization: Optional[str] = None,
@@ -177,8 +173,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Is one of the following types:
          KnowledgeBaseRetrievalRequest, JSON, IO[bytes] Required.
         :type retrieval_request:
@@ -215,7 +209,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             _content = json.dumps(retrieval_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_knowledge_base_retrieval_retrieve_request(
-            knowledge_base_name=knowledge_base_name,
+            knowledge_base_name=self._config.knowledge_base_name,
             query_source_authorization=query_source_authorization,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -228,6 +222,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -249,7 +244,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models1.KnowledgeBaseRetrievalResponse, response.json())
 

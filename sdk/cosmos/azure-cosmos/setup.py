@@ -80,4 +80,9 @@ setup(
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0"
     ],
+    extras_require={
+        "aio": [
+            "azure-core[aio]>=1.30.0",
+        ],
+    },
 )

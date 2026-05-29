@@ -18,7 +18,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry portal.
     2) MODEL_NAME - Optional. The base model name to use for fine-tuning. Default to the `gpt-4.1` model.
     3) TRAINING_FILE_PATH - Optional. Path to the training data file. Default to the `data` folder.
@@ -27,13 +27,13 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from fine_tuning_sample_helper import resolve_data_file_path  # pylint: disable=import-error
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from fine_tuning_sample_helper import resolve_data_file_path
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ.get("MODEL_NAME", "Ministral-3B")
 training_file_path = resolve_data_file_path(__file__, "TRAINING_FILE_PATH", "sft_training_set.jsonl")
 validation_file_path = resolve_data_file_path(__file__, "VALIDATION_FILE_PATH", "sft_validation_set.jsonl")
@@ -44,7 +44,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START finetuning_oss_model_supervised_job_sample]
     print("Uploading training file...")
     with open(training_file_path, "rb") as f:
         train_file = openai_client.files.create(file=f, purpose="fine-tune")
@@ -75,4 +74,3 @@ with (
         # Learn more - https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/explore/global-infrastructure/data-residency/
     )
     print(fine_tuning_job)
-    # [END finetuning_oss_model_supervised_job_sample]

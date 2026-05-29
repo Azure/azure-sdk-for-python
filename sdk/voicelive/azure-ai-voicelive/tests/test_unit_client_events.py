@@ -18,6 +18,9 @@ from azure.ai.voicelive.models import (
     ClientEventConversationItemTruncate,
     ClientEventResponseCreate,
     ClientEventResponseCancel,
+    ClientEventInputTextDelta,
+    ClientEventInputTextDone,
+    ClientEventRtcCallSdpCreate,
     # Event Types
     ClientEventType,
     # Supporting Models
@@ -245,6 +248,53 @@ class TestClientEventResponse:
         event = ClientEventResponseCancel(event_id=event_id)
 
         assert event.event_id == event_id
+
+
+class TestClientEventRtcCall:
+    """Test RTC call client events."""
+
+    def test_rtc_call_sdp_create_basic(self):
+        """Test creating an RTC SDP offer event."""
+        event = ClientEventRtcCallSdpCreate(sdp_offer="v=0\r\no=- 1 2 IN IP4 127.0.0.1")
+
+        assert event.type == ClientEventType.RTC_CALL_SDP_CREATE
+        assert event.sdp_offer.startswith("v=0")
+        assert event.session is None
+
+    def test_rtc_call_sdp_create_with_session(self):
+        """Test creating an RTC SDP offer event with an initial session."""
+        session = RequestSession(model="gpt-4o-realtime-preview", modalities=[Modality.AUDIO])
+        event = ClientEventRtcCallSdpCreate(
+            sdp_offer="v=0\r\no=- 1 2 IN IP4 127.0.0.1",
+            session=session,
+            event_id="rtc-evt-1",
+        )
+
+        assert event.event_id == "rtc-evt-1"
+        assert event.session == session
+
+
+class TestClientEventInputText:
+    """Test streaming text input client events."""
+
+    def test_input_text_delta_basic(self):
+        """Test creating an input text delta event."""
+        event = ClientEventInputTextDelta(id="item-123", delta="hello", content_index=0, event_id="evt-1")
+
+        assert event.type == ClientEventType.INPUT_TEXT_DELTA
+        assert event.id == "item-123"
+        assert event.delta == "hello"
+        assert event.content_index == 0
+        assert event.event_id == "evt-1"
+
+    def test_input_text_done_basic(self):
+        """Test creating an input text done event."""
+        event = ClientEventInputTextDone(id="item-123", content_index=0, event_id="evt-2")
+
+        assert event.type == ClientEventType.INPUT_TEXT_DONE
+        assert event.id == "item-123"
+        assert event.content_index == 0
+        assert event.event_id == "evt-2"
 
 
 class TestClientEventSerialization:

@@ -8,19 +8,18 @@
 
 from typing import Any, Dict, Iterable, Optional, cast
 
-from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import DeploymentTemplate
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class DeploymentTemplateOperations(_ScopeDependentOperations):
     """DeploymentTemplateOperations.
 
@@ -46,14 +45,20 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
     def _get_registry_endpoint(self) -> str:
         """Dynamically determine the registry endpoint based on registry region.
 
+        Uses the registry discovery API (which does not require ARM access to the
+        registry's subscription) to resolve the primary region, then constructs the
+        appropriate dataplane endpoint.
+
         :return: The API endpoint URL for the registry
         :rtype: str
         """
         try:
-            # Import here to avoid circular dependencies
-            from azure.ai.ml.operations import RegistryOperations
-            from azure.ai.ml._restclient.v2022_10_01_preview import (
-                AzureMachineLearningWorkspaces as ServiceClient102022,
+            from azure.ai.ml._azure_environments import (
+                _get_default_cloud_name,
+                _get_registry_discovery_endpoint_from_metadata,
+            )
+            from azure.ai.ml._restclient.registry_discovery import (
+                RegistryDiscoveryClient as ServiceClientRegistryDiscovery,
             )
 
             # Try to get credential from service client or operation config
@@ -64,31 +69,15 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                 credential = self._operation_config.credential
 
             if credential and self._operation_scope.registry_name:
-                # Get registry information to determine the region
-                registry_operations = RegistryOperations(
-                    operation_scope=self._operation_scope,
-                    service_client=ServiceClient102022(
-                        credential=credential,
-                        subscription_id=self._operation_scope.subscription_id,
-                        resource_group_name=self._operation_scope.resource_group_name,
-                    ),
-                    all_operations=None,  # type: ignore[arg-type]
-                    credentials=credential,
+                # Use registry discovery API to get the primary region
+                discovery_base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
+                discovery_client = ServiceClientRegistryDiscovery(credential=credential, base_url=discovery_base_url)
+                response = discovery_client.registry_management_non_workspace.get_registry_management_non_workspace(
+                    self._operation_scope.registry_name
                 )
 
-                registry = registry_operations.get(self._operation_scope.registry_name)
-
-                # Extract region from registry location or replication locations
-                region = None
-                if registry.location:
-                    region = registry.location
-                elif registry.replication_locations and len(registry.replication_locations) > 0:
-                    region = registry.replication_locations[0].location
-
-                if region:
-                    # Format the endpoint using the detected region
-                    # return f"https://int.experiments.azureml-test.net"
-                    return f"https://{region}.api.azureml.ms"
+                if response.primary_region:
+                    return f"https://{response.primary_region}.api.azureml.ms"
 
         except Exception as e:
             module_logger.debug("Could not determine registry region dynamically: %s. Using default.", e)
@@ -140,9 +129,6 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
         # Handle field name variations for constructor parameters
         allowed_instance_types = get_field_value(data, "allowed_instance_types", "allowedInstanceTypes")
-        if isinstance(allowed_instance_types, str):
-            # Convert space-separated string to list
-            allowed_instance_types = allowed_instance_types.split()
 
         default_instance_type = get_field_value(data, "default_instance_type", "defaultInstanceType")
         deployment_template_type = get_field_value(data, "deployment_template_type", "deploymentTemplateType")
@@ -264,6 +250,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.List", ActivityType.PUBLICAPI)
+    @experimental
     def list(
         self,
         *,
@@ -310,6 +297,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Get", ActivityType.PUBLICAPI)
+    @experimental
     def get(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Get a deployment template by name and version.
 
@@ -342,6 +330,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @experimental
     def create_or_update(self, deployment_template: DeploymentTemplate, **kwargs: Any) -> DeploymentTemplate:
         """Create or update a deployment template.
 
@@ -375,6 +364,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Delete", ActivityType.PUBLICAPI)
+    @experimental
     def delete(self, name: str, version: Optional[str] = None, **kwargs: Any) -> None:
         """Delete a deployment template.
 
@@ -408,6 +398,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Archive", ActivityType.PUBLICAPI)
+    @experimental
     def archive(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Archive a deployment template by setting its stage to 'Archived'.
 
@@ -430,6 +421,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Restore", ActivityType.PUBLICAPI)
+    @experimental
     def restore(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Restore a deployment template by setting its stage to 'Development'.
 

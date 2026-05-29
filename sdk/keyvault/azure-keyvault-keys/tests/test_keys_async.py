@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -34,16 +35,12 @@ from test_key_client import _assert_lifetime_actions_equal, _assert_rotation_pol
 from devtools_testutils.aio import recorded_by_proxy_async
 from _keys_test_case import KeysTestCase
 
-
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_default = get_decorator(only_hsm=True, is_async=True, api_versions=[DEFAULT_VERSION])
-only_hsm_7_4_plus = get_decorator(
-    only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5]
-)
-only_vault_7_4_plus = get_decorator(
-    only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5]
-)
+default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
+only_hsm_7_4_plus = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
+only_vault_7_4_plus = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 only_7_4_plus = get_decorator(is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
@@ -69,15 +66,15 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
                 assert getattr(jwk1, field) == getattr(jwk2, field)
 
     def _assert_key_attributes_equal(self, k1: KeyProperties, k2: KeyProperties) -> None:
-        assert k1.name== k2.name
-        assert k1.vault_url== k2.vault_url
-        assert k1.enabled== k2.enabled
-        assert k1.not_before== k2.not_before
-        assert k1.expires_on== k2.expires_on
-        assert k1.created_on== k2.created_on
-        assert k1.updated_on== k2.updated_on
-        assert k1.tags== k2.tags
-        assert k1.recovery_level== k2.recovery_level
+        assert k1.name == k2.name
+        assert k1.vault_url == k2.vault_url
+        assert k1.enabled == k2.enabled
+        assert k1.not_before == k2.not_before
+        assert k1.expires_on == k2.expires_on
+        assert k1.created_on == k2.created_on
+        assert k1.updated_on == k2.updated_on
+        assert k1.tags == k2.tags
+        assert k1.recovery_level == k2.recovery_level
         assert k1.hsm_platform == k2.hsm_platform
 
     async def _create_rsa_key(self, client, key_name, **kwargs):
@@ -100,6 +97,16 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         self._validate_ec_key_bundle(key_curve, created_key, client.vault_url, key_name, key_type)
         return created_key
 
+    async def _create_oct_key(self, client, key_name, **kwargs):
+        hsm = kwargs.get("hardware_protected") or False
+        size = kwargs.get("size") or 256
+        if self.is_live:
+            await asyncio.sleep(2)  # to avoid throttling by the service
+        created_key = await client.create_oct_key(key_name, **kwargs)
+        kty = "oct-HSM"
+        self._validate_oct_key_bundle(created_key, client.vault_url, key_name, kty, size)
+        return created_key
+
     def _validate_ec_key_bundle(self, key_curve, key_attributes, vault, key_name, kty):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
@@ -107,7 +114,9 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert key_curve == key.crv
         assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
         assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
-        assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
+        assert (
+            key_attributes.properties.created_on and key_attributes.properties.updated_on
+        ), "Missing required date attributes."
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
@@ -117,7 +126,22 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
         assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
-        assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
+        assert (
+            key_attributes.properties.created_on and key_attributes.properties.updated_on
+        ), "Missing required date attributes."
+
+    def _validate_oct_key_bundle(self, key_attributes, vault, key_name, kty, size):
+        prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
+        key = key_attributes.key
+        kid = key_attributes.id
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
+        assert (
+            key_attributes.properties.key_size == size
+        ), f"key_size should be {size}, but is {key_attributes.properties.key_size}"
+        assert (
+            key_attributes.properties.created_on and key_attributes.properties.updated_on
+        ), "Missing required date attributes."
 
     async def _update_key_properties(self, client, key, release_policy=None):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
@@ -183,7 +207,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         return imported_key
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_key_crud_operations(self, client, is_hsm, **kwargs):
@@ -224,9 +248,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
             self._assert_key_attributes_equal(rsa_key.properties, key.properties)
 
             # get key without version
-            self._assert_key_attributes_equal(
-                rsa_key.properties, (await client.get_key(rsa_key.name)).properties
-            )
+            self._assert_key_attributes_equal(rsa_key.properties, (await client.get_key(rsa_key.name)).properties)
 
             # update key with version
             if self.is_live:
@@ -242,7 +264,9 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
             # aside from key_ops, the original updated keys should have the same JWKs
             self._assert_jwks_equal(rsa_key.key, deleted_key.key)
             assert deleted_key.id == rsa_key.id
-            assert deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,"Missing required deleted key attributes."
+            assert (
+                deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date
+            ), "Missing required deleted key attributes."
 
             # get the deleted key when soft deleted enabled
             deleted_key = await client.get_deleted_key(rsa_key.name)
@@ -250,7 +274,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
             assert rsa_key.id == deleted_key.id
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_rsa_public_exponent(self, client, **kwargs):
@@ -263,7 +287,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert public_exponent == 17
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_backup_restore(self, client, is_hsm, **kwargs):
@@ -276,7 +300,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
         # backup key
         key_backup = await client.backup_key(created_bundle.name)
-        #self.assertIsNotNone(key_backup, "key_backup")
+        # self.assertIsNotNone(key_backup, "key_backup")
         assert key_backup is not None
 
         # delete key
@@ -291,7 +315,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_key_list(self, client, is_hsm, **kwargs):
@@ -315,7 +339,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert len(expected) == 0
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_list_versions(self, client, is_hsm, **kwargs):
@@ -343,7 +367,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.skip("Temporarily disabled due to service issue")
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_list_deleted_keys(self, client, is_hsm, **kwargs):
@@ -376,7 +400,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.skip("Temporarily disabled due to service issue")
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_recover(self, client, is_hsm, **kwargs):
@@ -407,7 +431,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert len(set(expected.keys()) & set(actual.keys())) == len(expected)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_purge(self, client, is_hsm, **kwargs):
@@ -435,8 +459,8 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
             assert deleted_key.name not in key_names
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",logging_enabled)
-    @AsyncKeysClientPreparer(logging_enable = True)
+    @pytest.mark.parametrize("api_version,is_hsm", logging_enabled)
+    @AsyncKeysClientPreparer(logging_enable=True)
     @recorded_by_proxy_async
     async def test_logging_enabled(self, client, is_hsm, **kwargs):
         mock_handler = MockHandler()
@@ -471,8 +495,8 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert False, "Expected request body wasn't logged"
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",logging_disabled)
-    @AsyncKeysClientPreparer(logging_enable = False)
+    @pytest.mark.parametrize("api_version,is_hsm", logging_disabled)
+    @AsyncKeysClientPreparer(logging_enable=False)
     @recorded_by_proxy_async
     async def test_logging_disabled(self, client, is_hsm, **kwargs):
         mock_handler = MockHandler()
@@ -506,7 +530,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         mock_handler.close()
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_4_plus)
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_get_random_bytes(self, client, **kwargs):
@@ -523,11 +547,11 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
             generated_random_bytes.append(random_bytes)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_4_plus)
+    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_key_release(self, client, is_hsm, **kwargs):
-        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+        if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
             pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
         if is_hsm and client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
@@ -553,7 +577,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
                 pytest.skip("Target environment attestation statement cannot be verified. Likely transient failure.")
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_4_plus)
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_imported_key_release(self, client, **kwargs):
@@ -576,11 +600,11 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert release_result.value
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_4_plus)
+    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_update_release_policy(self, client, **kwargs):
-        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+        if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
             pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
         if client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
@@ -600,17 +624,9 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
         new_release_policy_json = {
             "anyOf": [
-                {
-                    "anyOf": [
-                        {
-                            "claim": "sdk-test",
-                            "equals": False
-                        }
-                    ],
-                    "authority": attestation_uri.rstrip("/") + "/"
-                }
+                {"anyOf": [{"claim": "sdk-test", "equals": False}], "authority": attestation_uri.rstrip("/") + "/"}
             ],
-            "version": "1.0.0"
+            "version": "1.0.0",
         }
         policy_string = json.dumps(new_release_policy_json).encode()
         new_release_policy = KeyReleasePolicy(policy_string)
@@ -623,11 +639,11 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
     # Immutable policies aren't currently supported on Managed HSM
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_4_plus)
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_immutable_release_policy(self, client, **kwargs):
-        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+        if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
             pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
 
         attestation_uri = self._get_attestation_uri()
@@ -641,17 +657,9 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
         new_release_policy_json = {
             "anyOf": [
-                {
-                    "anyOf": [
-                        {
-                            "claim": "sdk-test",
-                            "equals": False
-                        }
-                    ],
-                    "authority": attestation_uri.rstrip("/") + "/"
-                }
+                {"anyOf": [{"claim": "sdk-test", "equals": False}], "authority": attestation_uri.rstrip("/") + "/"}
             ],
-            "version": "1.0.0"
+            "version": "1.0.0",
         }
         policy_string = json.dumps(new_release_policy_json).encode()
         new_release_policy = KeyReleasePolicy(policy_string, immutable=True)
@@ -660,11 +668,11 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
             await self._update_key_properties(client, key, new_release_policy)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_4_plus)
+    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_key_rotation(self, client, is_hsm, **kwargs):
-        if (not is_public_cloud() and self.is_live):
+        if not is_public_cloud() and self.is_live:
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
         key_name = self.get_resource_name("rotation-key")
@@ -684,11 +692,11 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert key.key.n != rotated_key.key.n
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_4_plus)
+    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_key_rotation_policy(self, client, is_hsm, **kwargs):
-        if (not is_public_cloud() and self.is_live):
+        if not is_public_cloud() and self.is_live:
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
         key_name = self.get_resource_name("rotation-key")
@@ -763,7 +771,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
             _assert_lifetime_actions_equal(newest_policy_actions, newest_fetched_policy_actions)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_get_cryptography_client(self, client, is_hsm, **kwargs):
@@ -800,7 +808,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert plaintext == result.plaintext
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_4_plus)
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_send_request(self, client, is_hsm, **kwargs):
@@ -817,7 +825,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert response.json()["key"]["kid"] == key.id
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_default)
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_get_key_attestation(self, client, **kwargs):
@@ -851,6 +859,26 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert original_attestation.version == attestation.version
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm", default_version)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_key_size(self, client, is_hsm, **kwargs):
+        """The key_size property is returned for oct keys created with 2026-01-01-preview"""
+        # EC keys should return None for key_size
+        ec_key_name = self.get_resource_name("ec-key-size")
+        ec_key = await self._create_ec_key(client, ec_key_name, hardware_protected=True)
+        assert ec_key.properties.key_size is None
+
+        # oct-HSM keys should return the correct key_size
+        oct_key_name = self.get_resource_name("oct-key-256")
+        oct_key = await self._create_oct_key(client, oct_key_name, size=256, hardware_protected=True)
+        assert oct_key.properties.key_size == 256
+
+        # key_size is also available when fetching an existing oct-HSM key
+        fetched = await client.get_key(oct_key_name)
+        assert fetched.properties.key_size == 256
+
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
@@ -864,6 +892,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         # Test that 409 is raised correctly (`create_key` shouldn't actually trigger this, but for raising behavior)
         async def run(*_, **__):
             return Mock(http_response=Mock(status_code=409))
+
         with patch.object(client._client._client._pipeline, "run", run):
             with pytest.raises(ResourceExistsError):
                 await client.create_key("...", "RSA")

@@ -28,6 +28,7 @@ steps:
   - template: auth-dev-feed.yml
     parameters:
       DevFeedName: ${{ parameters.DevFeedName }}
+      EnableTwineAuth: false
 
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.13'
@@ -74,10 +75,6 @@ steps:
           --service="${{ parameters.ServiceDirectory }}"
           --checks="sphinx"
           --wheel_dir="$(Build.ArtifactStagingDirectory)"
-      env:
-        TOX_PIP_IMPL: "uv"
-        VIRTUAL_ENV: ""
-        PYTHONHOME: ""
         
   - ${{ if eq(parameters.RunApiStubGen, 'true') }}:
     - template: /eng/pipelines/templates/steps/run_apistub.yml

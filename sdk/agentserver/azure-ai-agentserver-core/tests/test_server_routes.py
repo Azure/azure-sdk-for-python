@@ -10,7 +10,7 @@ import httpx
 
 from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.core._config import resolve_port
-from azure.ai.agentserver.core._constants import Constants
+
 
 
 # ------------------------------------------------------------------ #
@@ -34,7 +34,7 @@ class TestResolvePort:
             env = os.environ.copy()
             env.pop("PORT", None)
             with mock.patch.dict(os.environ, env, clear=True):
-                assert resolve_port(None) == Constants.DEFAULT_PORT
+                assert resolve_port(None) == 8088
 
     def test_invalid_env_var_raises(self) -> None:
         with mock.patch.dict(os.environ, {"PORT": "not-a-number"}):

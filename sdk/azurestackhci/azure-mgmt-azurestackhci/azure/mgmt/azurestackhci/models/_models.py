@@ -12,7 +12,7 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import DeviceKind, EdgeDeviceKind, HciEdgeDeviceJobType
+from ._enums import DeviceKind, EdgeDeviceKind, EdgeMachineJobType, HciEdgeDeviceJobType, HciJobType
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -464,6 +464,128 @@ class AssemblyInfoPayload(_Model):
     """Url of assembly package for Validated Solution Recipe for AzureStackHCI Cluster."""
 
 
+class ChangeRingRequest(_Model):
+    """ChangeRingRequest.
+
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.azurestackhci.models.ChangeRingRequestProperties
+    """
+
+    properties: Optional["_models.ChangeRingRequestProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ChangeRingRequestProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeRingRequestProperties(_Model):
+    """ChangeRingRequestProperties.
+
+    :ivar target_ring: The target ring for the cluster.
+    :vartype target_ring: str
+    """
+
+    target_ring: Optional[str] = rest_field(
+        name="targetRing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target ring for the cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_ring: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CheckUpdatesRequest(_Model):
+    """Request body for the check updates action on update summaries.
+
+    :ivar update_name: Name of update.
+    :vartype update_name: str
+    """
+
+    update_name: Optional[str] = rest_field(
+        name="updateName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        update_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClaimDeviceRequest(_Model):
+    """Request for claiming devices of the pool.
+
+    :ivar devices: List of resource ids of the devices to be modified. Required.
+    :vartype devices: list[str]
+    :ivar claimed_by: Resource Id of group device belongs to.
+    :vartype claimed_by: str
+    """
+
+    devices: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of resource ids of the devices to be modified. Required."""
+    claimed_by: Optional[str] = rest_field(name="claimedBy", visibility=["read", "create", "update", "delete", "query"])
+    """Resource Id of group device belongs to."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        devices: list[str],
+        claimed_by: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TrackedResource(Resource):
     """Tracked Resource.
 
@@ -530,6 +652,9 @@ class Cluster(TrackedResource):
     :vartype properties: ~azure.mgmt.azurestackhci.models.ClusterProperties
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.azurestackhci.models.ManagedServiceIdentity
+    :ivar kind: This property identifies the purpose of the Cluster deployment. For example, a
+     valid value is AzureLocal.
+    :vartype kind: str
     """
 
     properties: Optional["_models.ClusterProperties"] = rest_field(
@@ -540,12 +665,16 @@ class Cluster(TrackedResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
+    kind: Optional[str] = rest_field(visibility=["read", "create"])
+    """This property identifies the purpose of the Cluster deployment. For example, a valid value is
+     AzureLocal."""
 
     __flattened_items = [
         "provisioning_state",
         "status",
         "connectivity_status",
         "cloud_id",
+        "ring",
         "cloud_management_endpoint",
         "aad_client_id",
         "aad_tenant_id",
@@ -560,6 +689,7 @@ class Cluster(TrackedResource):
         "isolated_vm_attestation_configuration",
         "trial_days_remaining",
         "billing_model",
+        "billing_properties",
         "registration_timestamp",
         "last_sync_timestamp",
         "last_billing_timestamp",
@@ -567,8 +697,11 @@ class Cluster(TrackedResource):
         "resource_provider_object_id",
         "secrets_locations",
         "cluster_pattern",
+        "confidential_vm_properties",
+        "sdn_properties",
         "local_availability_zones",
         "identity_provider",
+        "storage_type",
         "principal_id",
         "tenant_id",
         "type",
@@ -583,6 +716,7 @@ class Cluster(TrackedResource):
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ClusterProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
+        kind: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -612,6 +746,36 @@ class Cluster(TrackedResource):
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
+
+
+class ClusterBillingProperties(_Model):
+    """Billing properties of the cluster.
+
+    :ivar next_billing_model: The next billing model to be applied to the cluster.
+    :vartype next_billing_model: ~azure.mgmt.azurestackhci.models.NextBillingModel
+    """
+
+    next_billing_model: Optional["_models.NextBillingModel"] = rest_field(
+        name="nextBillingModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The next billing model to be applied to the cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        next_billing_model: Optional["_models.NextBillingModel"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ClusterDesiredProperties(_Model):
@@ -707,6 +871,127 @@ class ClusterIdentityResponseProperties(_Model):
         aad_tenant_id: Optional[str] = None,
         aad_service_principal_object_id: Optional[str] = None,
         aad_application_object_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterJob(ProxyResource):
+    """Cluster Jobs resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.ClusterJobProperties
+    """
+
+    properties: Optional["_models.ClusterJobProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ClusterJobProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterJobProperties(_Model):
+    """Cluster Job properties.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    HciConfigureCvmJobProperties, HciConfigureSdnIntegrationJobProperties
+
+    :ivar job_type: Job Type to support polymorphic resource. Required. Known values are:
+     "ConfigureCVM" and "ConfigureSdnIntegration".
+    :vartype job_type: str or ~azure.mgmt.azurestackhci.models.HciJobType
+    :ivar deployment_mode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deployment_mode: str or ~azure.mgmt.azurestackhci.models.DeploymentMode
+    :ivar provisioning_state: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :ivar job_id: Unique, immutable job id.
+    :vartype job_id: str
+    :ivar start_time_utc: The UTC date and time at which the job started.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The UTC date and time at which the job completed.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar status: Status of Cluster job. Known values are: "NotSpecified", "ValidationInProgress",
+     "ValidationSuccess", "ValidationFailed", "DeploymentInProgress", "DeploymentFailed",
+     "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and "Scheduled".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.JobStatus
+    :ivar reported_properties: Reported properties for job.
+    :vartype reported_properties: ~azure.mgmt.azurestackhci.models.JobReportedProperties
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    job_type: str = rest_discriminator(name="jobType", visibility=["read", "create"])
+    """Job Type to support polymorphic resource. Required. Known values are: \"ConfigureCVM\" and
+     \"ConfigureSdnIntegration\"."""
+    deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = rest_field(
+        name="deploymentMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    job_id: Optional[str] = rest_field(name="jobId", visibility=["read"])
+    """Unique, immutable job id."""
+    start_time_utc: Optional[datetime.datetime] = rest_field(name="startTimeUtc", visibility=["read"], format="rfc3339")
+    """The UTC date and time at which the job started."""
+    end_time_utc: Optional[datetime.datetime] = rest_field(name="endTimeUtc", visibility=["read"], format="rfc3339")
+    """The UTC date and time at which the job completed."""
+    status: Optional[Union[str, "_models.JobStatus"]] = rest_field(visibility=["read"])
+    """Status of Cluster job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    reported_properties: Optional["_models.JobReportedProperties"] = rest_field(
+        name="reportedProperties", visibility=["read"]
+    )
+    """Reported properties for job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_type: str,
+        deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -941,6 +1226,8 @@ class ClusterProperties(_Model):
     :vartype connectivity_status: str or ~azure.mgmt.azurestackhci.models.ConnectivityStatus
     :ivar cloud_id: Unique, immutable resource id.
     :vartype cloud_id: str
+    :ivar ring: The ring to which this cluster belongs to.
+    :vartype ring: str
     :ivar cloud_management_endpoint: Endpoint configured for management from the Azure portal.
     :vartype cloud_management_endpoint: str
     :ivar aad_client_id: App id of cluster AAD identity.
@@ -973,6 +1260,9 @@ class ClusterProperties(_Model):
     :vartype trial_days_remaining: float
     :ivar billing_model: Type of billing applied to the resource.
     :vartype billing_model: str
+    :ivar billing_properties: Billing properties of the cluster, including upcoming billing model
+     details.
+    :vartype billing_properties: ~azure.mgmt.azurestackhci.models.ClusterBillingProperties
     :ivar registration_timestamp: First cluster sync timestamp.
     :vartype registration_timestamp: ~datetime.datetime
     :ivar last_sync_timestamp: Most recent cluster sync timestamp.
@@ -988,12 +1278,20 @@ class ClusterProperties(_Model):
     :ivar cluster_pattern: Supported Storage Type for HCI Cluster. Known values are: "Standard" and
      "RackAware".
     :vartype cluster_pattern: str or ~azure.mgmt.azurestackhci.models.ClusterPattern
+    :ivar confidential_vm_properties: Represents the Confidential Virtual Machine (CVM) support
+     intent and current status for the cluster resource.
+    :vartype confidential_vm_properties: ~azure.mgmt.azurestackhci.models.ConfidentialVmProperties
+    :ivar sdn_properties: Software Defined Networking Properties of the cluster.
+    :vartype sdn_properties: ~azure.mgmt.azurestackhci.models.ClusterSdnProperties
     :ivar local_availability_zones: Local Availability Zone information for HCI cluster.
     :vartype local_availability_zones:
      list[~azure.mgmt.azurestackhci.models.LocalAvailabilityZones]
     :ivar identity_provider: Identity Provider for the cluster. Known values are: "ActiveDirectory"
      and "LocalIdentity".
     :vartype identity_provider: str or ~azure.mgmt.azurestackhci.models.IdentityProvider
+    :ivar storage_type: Storage type of the cluster. Indicates whether the cluster uses S2D, SAN,
+     or a combination. Known values are: "S2D", "SAN", and "SANS2D".
+    :vartype storage_type: str or ~azure.mgmt.azurestackhci.models.StorageType
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -1020,6 +1318,8 @@ class ClusterProperties(_Model):
      \"Disconnected\", and \"NotSpecified\"."""
     cloud_id: Optional[str] = rest_field(name="cloudId", visibility=["read"])
     """Unique, immutable resource id."""
+    ring: Optional[str] = rest_field(visibility=["read"])
+    """The ring to which this cluster belongs to."""
     cloud_management_endpoint: Optional[str] = rest_field(
         name="cloudManagementEndpoint", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1071,6 +1371,10 @@ class ClusterProperties(_Model):
     """Number of days remaining in the trial period."""
     billing_model: Optional[str] = rest_field(name="billingModel", visibility=["read"])
     """Type of billing applied to the resource."""
+    billing_properties: Optional["_models.ClusterBillingProperties"] = rest_field(
+        name="billingProperties", visibility=["read"]
+    )
+    """Billing properties of the cluster, including upcoming billing model details."""
     registration_timestamp: Optional[datetime.datetime] = rest_field(
         name="registrationTimestamp", visibility=["read"], format="rfc3339"
     )
@@ -1095,6 +1399,13 @@ class ClusterProperties(_Model):
         name="clusterPattern", visibility=["read"]
     )
     """Supported Storage Type for HCI Cluster. Known values are: \"Standard\" and \"RackAware\"."""
+    confidential_vm_properties: Optional["_models.ConfidentialVmProperties"] = rest_field(
+        name="confidentialVmProperties", visibility=["read"]
+    )
+    """Represents the Confidential Virtual Machine (CVM) support intent and current status for the
+     cluster resource."""
+    sdn_properties: Optional["_models.ClusterSdnProperties"] = rest_field(name="sdnProperties", visibility=["read"])
+    """Software Defined Networking Properties of the cluster."""
     local_availability_zones: Optional[list["_models.LocalAvailabilityZones"]] = rest_field(
         name="localAvailabilityZones", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1103,6 +1414,9 @@ class ClusterProperties(_Model):
         name="identityProvider", visibility=["read"]
     )
     """Identity Provider for the cluster. Known values are: \"ActiveDirectory\" and \"LocalIdentity\"."""
+    storage_type: Optional[Union[str, "_models.StorageType"]] = rest_field(name="storageType", visibility=["read"])
+    """Storage type of the cluster. Indicates whether the cluster uses S2D, SAN, or a combination.
+     Known values are: \"S2D\", \"SAN\", and \"SANS2D\"."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -1216,6 +1530,197 @@ class ClusterReportedProperties(_Model):
         self,
         *,
         diagnostic_level: Optional[Union[str, "_models.DiagnosticLevel"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SdnProperties(_Model):
+    """Represents the Software Defined Networking (SDN) configuration state.
+
+    :ivar sdn_status: Indicates the current Software Defined Networking (SDN) status of the
+     resource, which may be an individual device or a cluster. Known values are: "Unknown",
+     "Disabled", and "Enabled".
+    :vartype sdn_status: str or ~azure.mgmt.azurestackhci.models.SdnStatus
+    :ivar sdn_domain_name: The fully qualified domain name (FQDN) associated with the SDN
+     deployment. This value is propagated from the Device Management Extension to the cluster
+     resource. It is typically in the format ``<sdnPrefix>-nc.<domain>`` when SDN is enabled. May be
+     null or absent in unsupported or disabled states.
+    :vartype sdn_domain_name: str
+    :ivar sdn_api_address: Represents the API address for the SDN deployment.
+    :vartype sdn_api_address: str
+    """
+
+    sdn_status: Optional[Union[str, "_models.SdnStatus"]] = rest_field(name="sdnStatus", visibility=["read"])
+    """Indicates the current Software Defined Networking (SDN) status of the resource, which may be an
+     individual device or a cluster. Known values are: \"Unknown\", \"Disabled\", and \"Enabled\"."""
+    sdn_domain_name: Optional[str] = rest_field(name="sdnDomainName", visibility=["read"])
+    """The fully qualified domain name (FQDN) associated with the SDN deployment. This value is
+     propagated from the Device Management Extension to the cluster resource. It is typically in the
+     format ``<sdnPrefix>-nc.<domain>`` when SDN is enabled. May be null or absent in unsupported or
+     disabled states."""
+    sdn_api_address: Optional[str] = rest_field(name="sdnApiAddress", visibility=["read"])
+    """Represents the API address for the SDN deployment."""
+
+
+class ClusterSdnProperties(SdnProperties):
+    """Represents the Software Defined Networking (SDN) configuration state of the Azure Stack HCI
+    cluster.
+
+    :ivar sdn_status: Indicates the current Software Defined Networking (SDN) status of the
+     resource, which may be an individual device or a cluster. Known values are: "Unknown",
+     "Disabled", and "Enabled".
+    :vartype sdn_status: str or ~azure.mgmt.azurestackhci.models.SdnStatus
+    :ivar sdn_domain_name: The fully qualified domain name (FQDN) associated with the SDN
+     deployment. This value is propagated from the Device Management Extension to the cluster
+     resource. It is typically in the format ``<sdnPrefix>-nc.<domain>`` when SDN is enabled. May be
+     null or absent in unsupported or disabled states.
+    :vartype sdn_domain_name: str
+    :ivar sdn_api_address: Represents the API address for the SDN deployment.
+    :vartype sdn_api_address: str
+    :ivar sdn_integration_intent: Indicates whether Software Defined Networking (SDN) integration
+     should be enabled or disabled for this deployment. Known values are: "Enable" and "Disable".
+    :vartype sdn_integration_intent: str or ~azure.mgmt.azurestackhci.models.SdnIntegrationIntent
+    """
+
+    sdn_integration_intent: Optional[Union[str, "_models.SdnIntegrationIntent"]] = rest_field(
+        name="sdnIntegrationIntent", visibility=["read"]
+    )
+    """Indicates whether Software Defined Networking (SDN) integration should be enabled or disabled
+     for this deployment. Known values are: \"Enable\" and \"Disable\"."""
+
+
+class ConfidentialVmProfile(_Model):
+    """Represents the Confidential Virtual Machine (CVM) configuration status for an edge device. It
+    includes the current IGVM support state and detailed component-level status information.
+
+    :ivar igvm_status: Indicates whether Independent Guest Virtual Machine (IGVM) support is
+     available on the device. This will be 'Enabled' if the device supports CVMs, 'Disabled' if not,
+     and 'Unknown' if the status cannot be determined. Known values are: "Unknown", "Enabled", and
+     "Disabled".
+    :vartype igvm_status: str or ~azure.mgmt.azurestackhci.models.IgvmStatus
+    :ivar status_details: Provides detailed status entries for IGVM-related components, including
+     deployment status, compatibility checks, and error diagnostics.
+    :vartype status_details: list[~azure.mgmt.azurestackhci.models.IgvmStatusDetail]
+    """
+
+    igvm_status: Optional[Union[str, "_models.IgvmStatus"]] = rest_field(name="igvmStatus", visibility=["read"])
+    """Indicates whether Independent Guest Virtual Machine (IGVM) support is available on the device.
+     This will be 'Enabled' if the device supports CVMs, 'Disabled' if not, and 'Unknown' if the
+     status cannot be determined. Known values are: \"Unknown\", \"Enabled\", and \"Disabled\"."""
+    status_details: Optional[list["_models.IgvmStatusDetail"]] = rest_field(
+        name="statusDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provides detailed status entries for IGVM-related components, including deployment status,
+     compatibility checks, and error diagnostics."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status_details: Optional[list["_models.IgvmStatusDetail"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfidentialVmProperties(_Model):
+    """Represents the Confidential Virtual Machine (CVM) support intent and current status for the
+    cluster resource.
+
+    :ivar confidential_vm_intent: Captures the customer's intent to enable or disable CVM support
+     on the cluster, either during initial deployment (Day-0) or at a later stage (Day-N). Known
+     values are: "Enable" and "Disable".
+    :vartype confidential_vm_intent: str or ~azure.mgmt.azurestackhci.models.ConfidentialVmIntent
+    :ivar confidential_vm_status: Captures the current status of CVM support on the cluster. Known
+     values are: "Enabled", "PartiallyEnabled", and "Disabled".
+    :vartype confidential_vm_status: str or ~azure.mgmt.azurestackhci.models.ConfidentialVmStatus
+    :ivar confidential_vm_status_summary: Additional context about CVM support on the cluster, such
+     as reasons for partial enablement or hardware constraints.
+    :vartype confidential_vm_status_summary: str
+    """
+
+    confidential_vm_intent: Optional[Union[str, "_models.ConfidentialVmIntent"]] = rest_field(
+        name="confidentialVmIntent", visibility=["read"]
+    )
+    """Captures the customer's intent to enable or disable CVM support on the cluster, either during
+     initial deployment (Day-0) or at a later stage (Day-N). Known values are: \"Enable\" and
+     \"Disable\"."""
+    confidential_vm_status: Optional[Union[str, "_models.ConfidentialVmStatus"]] = rest_field(
+        name="confidentialVmStatus", visibility=["read"]
+    )
+    """Captures the current status of CVM support on the cluster. Known values are: \"Enabled\",
+     \"PartiallyEnabled\", and \"Disabled\"."""
+    confidential_vm_status_summary: Optional[str] = rest_field(name="confidentialVmStatusSummary", visibility=["read"])
+    """Additional context about CVM support on the cluster, such as reasons for partial enablement or
+     hardware constraints."""
+
+
+class ContentPayload(_Model):
+    """Represents details of a specific update content payload.
+
+    :ivar url: Represents url of a update payload.
+    :vartype url: str
+    :ivar hash: Represents hash of a update payload.
+    :vartype hash: str
+    :ivar hash_algorithm: Represents hash algorithm of a update payload.
+    :vartype hash_algorithm: str
+    :ivar identifier: Represents identifier of a update payload.
+    :vartype identifier: str
+    :ivar package_size_in_bytes: Represents size in bytes of a update payload.
+    :vartype package_size_in_bytes: str
+    :ivar group: Represents the group of a update payload.
+    :vartype group: str
+    :ivar file_name: Represents the file name of a update payload.
+    :vartype file_name: str
+    """
+
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents url of a update payload."""
+    hash: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents hash of a update payload."""
+    hash_algorithm: Optional[str] = rest_field(
+        name="hashAlgorithm", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents hash algorithm of a update payload."""
+    identifier: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents identifier of a update payload."""
+    package_size_in_bytes: Optional[str] = rest_field(
+        name="packageSizeInBytes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents size in bytes of a update payload."""
+    group: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the group of a update payload."""
+    file_name: Optional[str] = rest_field(name="fileName", visibility=["read", "create", "update", "delete", "query"])
+    """Represents the file name of a update payload."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: Optional[str] = None,
+        hash: Optional[str] = None,
+        hash_algorithm: Optional[str] = None,
+        identifier: Optional[str] = None,
+        package_size_in_bytes: Optional[str] = None,
+        group: Optional[str] = None,
+        file_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1746,6 +2251,9 @@ class DeploymentSettingHostNetwork(_Model):
     :ivar storage_networks: List of StorageNetworks config to deploy AzureStackHCI Cluster.
     :vartype storage_networks:
      list[~azure.mgmt.azurestackhci.models.DeploymentSettingStorageNetworks]
+    :ivar san_networks: SAN network configuration for the host network. Applicable when StorageType
+     is 'SAN' or 'SANS2D'.
+    :vartype san_networks: ~azure.mgmt.azurestackhci.models.SanNetworks
     :ivar storage_connectivity_switchless: Defines how the storage adapters between nodes are
      connected either switch or switch less..
     :vartype storage_connectivity_switchless: bool
@@ -1765,6 +2273,11 @@ class DeploymentSettingHostNetwork(_Model):
         name="storageNetworks", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of StorageNetworks config to deploy AzureStackHCI Cluster."""
+    san_networks: Optional["_models.SanNetworks"] = rest_field(
+        name="sanNetworks", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SAN network configuration for the host network. Applicable when StorageType is 'SAN' or
+     'SANS2D'."""
     storage_connectivity_switchless: Optional[bool] = rest_field(
         name="storageConnectivitySwitchless", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1782,6 +2295,7 @@ class DeploymentSettingHostNetwork(_Model):
         *,
         intents: Optional[list["_models.DeploymentSettingIntents"]] = None,
         storage_networks: Optional[list["_models.DeploymentSettingStorageNetworks"]] = None,
+        san_networks: Optional["_models.SanNetworks"] = None,
         storage_connectivity_switchless: Optional[bool] = None,
         enable_storage_auto_ip: Optional[bool] = None,
     ) -> None: ...
@@ -2178,6 +2692,200 @@ class DeviceConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
+class DeviceDetail(_Model):
+    """Device details.
+
+    :ivar device_resource_id: Resource Id of the device.
+    :vartype device_resource_id: str
+    :ivar claimed_by: Resource Id of group device belongs to.
+    :vartype claimed_by: str
+    """
+
+    device_resource_id: Optional[str] = rest_field(
+        name="deviceResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource Id of the device."""
+    claimed_by: Optional[str] = rest_field(name="claimedBy", visibility=["read"])
+    """Resource Id of group device belongs to."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        device_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DevicePool(TrackedResource):
+    """DevicePool details.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.DevicePoolProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.azurestackhci.models.ManagedServiceIdentity
+    """
+
+    properties: Optional["_models.DevicePoolProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.DevicePoolProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DevicePoolPatch(_Model):
+    """Properties for patching Device Pool.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.azurestackhci.models.ManagedServiceIdentity
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DevicePoolProperties(_Model):
+    """Properties for device pool.
+
+    :ivar provisioning_state: The provisioning state of a resource. Known values are:
+     "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
+     "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
+     "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :ivar cloud_id: Unique, immutable resource id.
+    :vartype cloud_id: str
+    :ivar devices: List of machines in device pool.
+    :vartype devices: list[~azure.mgmt.azurestackhci.models.DeviceDetail]
+    :ivar custom_location_resource_id: Custom Location Resource Id for the pool.
+    :vartype custom_location_resource_id: str
+    :ivar custom_location_name: Custom Location Name for the pool, default: <DevicePoolName>-CL.
+    :vartype custom_location_name: str
+    :ivar managed_resource_group: Managed resource group name for the pool.
+    :vartype managed_resource_group: str
+    :ivar operation_details: operation status details for device pool.
+    :vartype operation_details: list[~azure.mgmt.azurestackhci.models.OperationDetail]
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of a resource. Known values are: \"NotSpecified\", \"Error\",
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\",
+     \"Creating\", \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\",
+     \"PartiallyConnected\", \"InProgress\", \"Accepted\", \"Provisioning\", and
+     \"DisableInProgress\"."""
+    cloud_id: Optional[str] = rest_field(name="cloudId", visibility=["read"])
+    """Unique, immutable resource id."""
+    devices: Optional[list["_models.DeviceDetail"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of machines in device pool."""
+    custom_location_resource_id: Optional[str] = rest_field(name="customLocationResourceId", visibility=["read"])
+    """Custom Location Resource Id for the pool."""
+    custom_location_name: Optional[str] = rest_field(
+        name="customLocationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Custom Location Name for the pool, default: <DevicePoolName>-CL."""
+    managed_resource_group: Optional[str] = rest_field(
+        name="managedResourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed resource group name for the pool."""
+    operation_details: Optional[list["_models.OperationDetail"]] = rest_field(
+        name="operationDetails", visibility=["read"]
+    )
+    """operation status details for device pool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        devices: Optional[list["_models.DeviceDetail"]] = None,
+        custom_location_name: Optional[str] = None,
+        managed_resource_group: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DnsZones(_Model):
     """Details of the DNS Zones to be configured.
 
@@ -2202,6 +2910,253 @@ class DnsZones(_Model):
         *,
         dns_zone_name: Optional[str] = None,
         dns_forwarder: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeMachineJobProperties(_Model):
+    """EdgeMachine Job properties.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EdgeMachineCollectLogJobProperties, DownloadOsJobProperties, ProvisionOsJobProperties,
+    EdgeMachineRemoteSupportJobProperties
+
+    :ivar job_type: Job Type to support polymorphic resource. Required. Known values are:
+     "CollectLog", "RemoteSupport", "ProvisionOs", and "DownloadOs".
+    :vartype job_type: str or ~azure.mgmt.azurestackhci.models.EdgeMachineJobType
+    :ivar deployment_mode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deployment_mode: str or ~azure.mgmt.azurestackhci.models.DeploymentMode
+    :ivar provisioning_state: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :ivar job_id: Unique, immutable job id.
+    :vartype job_id: str
+    :ivar start_time_utc: The UTC date and time at which the job started.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The UTC date and time at which the job completed.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.JobStatus
+    :ivar error: error details.
+    :vartype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    job_type: str = rest_discriminator(name="jobType", visibility=["read", "create"])
+    """Job Type to support polymorphic resource. Required. Known values are: \"CollectLog\",
+     \"RemoteSupport\", \"ProvisionOs\", and \"DownloadOs\"."""
+    deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = rest_field(
+        name="deploymentMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deployment mode to trigger job. Known values are: \"Validate\" and \"Deploy\"."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Job provisioning state. Known values are: \"NotSpecified\", \"Error\", \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\", \"PartiallyConnected\",
+     \"InProgress\", \"Accepted\", \"Provisioning\", and \"DisableInProgress\"."""
+    job_id: Optional[str] = rest_field(name="jobId", visibility=["read"])
+    """Unique, immutable job id."""
+    start_time_utc: Optional[datetime.datetime] = rest_field(name="startTimeUtc", visibility=["read"], format="rfc3339")
+    """The UTC date and time at which the job started."""
+    end_time_utc: Optional[datetime.datetime] = rest_field(name="endTimeUtc", visibility=["read"], format="rfc3339")
+    """The UTC date and time at which the job completed."""
+    status: Optional[Union[str, "_models.JobStatus"]] = rest_field(visibility=["read"])
+    """Status of Edge device job. Known values are: \"NotSpecified\", \"ValidationInProgress\",
+     \"ValidationSuccess\", \"ValidationFailed\", \"DeploymentInProgress\", \"DeploymentFailed\",
+     \"DeploymentSuccess\", \"Succeeded\", \"Failed\", \"Canceled\", \"Paused\", and \"Scheduled\"."""
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
+    """error details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_type: str,
+        deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DownloadOsJobProperties(EdgeMachineJobProperties, discriminator="DownloadOs"):
+    """Represents the properties of Download Os job.
+
+    :ivar deployment_mode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deployment_mode: str or ~azure.mgmt.azurestackhci.models.DeploymentMode
+    :ivar provisioning_state: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :ivar job_id: Unique, immutable job id.
+    :vartype job_id: str
+    :ivar start_time_utc: The UTC date and time at which the job started.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The UTC date and time at which the job completed.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.JobStatus
+    :ivar error: error details.
+    :vartype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
+    :ivar job_type: Job Type to support polymorphic resource. Required. Job to download OS packages
+     on to the device.
+    :vartype job_type: str or ~azure.mgmt.azurestackhci.models.DOWNLOAD_OS
+    :ivar download_request: Download OS request. Required.
+    :vartype download_request: ~azure.mgmt.azurestackhci.models.DownloadRequest
+    :ivar reported_properties: Reported Properties for Download Os job.
+    :vartype reported_properties: ~azure.mgmt.azurestackhci.models.ProvisionOsReportedProperties
+    """
+
+    job_type: Literal[EdgeMachineJobType.DOWNLOAD_OS] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Job Type to support polymorphic resource. Required. Job to download OS packages on to the
+     device."""
+    download_request: "_models.DownloadRequest" = rest_field(
+        name="downloadRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Download OS request. Required."""
+    reported_properties: Optional["_models.ProvisionOsReportedProperties"] = rest_field(
+        name="reportedProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reported Properties for Download Os job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        download_request: "_models.DownloadRequest",
+        deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
+        reported_properties: Optional["_models.ProvisionOsReportedProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = EdgeMachineJobType.DOWNLOAD_OS  # type: ignore
+
+
+class DownloadOsProfile(_Model):
+    """Operating system profile.
+
+    :ivar os_name: Name of the operating system.
+    :vartype os_name: str
+    :ivar os_type: Type of the operating system.
+    :vartype os_type: str
+    :ivar os_version: Version of the operating system.
+    :vartype os_version: str
+    :ivar os_image_location: Location of the operating system image.
+    :vartype os_image_location: str
+    :ivar vsr_version: Validated Solution Recipe version to be used for the job.
+    :vartype vsr_version: str
+    :ivar image_hash: Hash of the OS package downloaded.
+    :vartype image_hash: str
+    :ivar gpg_pub_key: GPG Public Key used for package verification.
+    :vartype gpg_pub_key: str
+    """
+
+    os_name: Optional[str] = rest_field(name="osName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the operating system."""
+    os_type: Optional[str] = rest_field(name="osType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the operating system."""
+    os_version: Optional[str] = rest_field(name="osVersion", visibility=["read", "create", "update", "delete", "query"])
+    """Version of the operating system."""
+    os_image_location: Optional[str] = rest_field(
+        name="osImageLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Location of the operating system image."""
+    vsr_version: Optional[str] = rest_field(
+        name="vsrVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Validated Solution Recipe version to be used for the job."""
+    image_hash: Optional[str] = rest_field(name="imageHash", visibility=["read", "create", "update", "delete", "query"])
+    """Hash of the OS package downloaded."""
+    gpg_pub_key: Optional[str] = rest_field(
+        name="gpgPubKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GPG Public Key used for package verification."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        os_name: Optional[str] = None,
+        os_type: Optional[str] = None,
+        os_version: Optional[str] = None,
+        os_image_location: Optional[str] = None,
+        vsr_version: Optional[str] = None,
+        image_hash: Optional[str] = None,
+        gpg_pub_key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DownloadRequest(_Model):
+    """Download Request properties.
+
+    :ivar target: Target operating system to support polymorphic resource. Required. Known values
+     are: "AzureLinux" and "HCI".
+    :vartype target: str or ~azure.mgmt.azurestackhci.models.ProvisioningOsType
+    :ivar os_profile: Operating system profile. Required.
+    :vartype os_profile: ~azure.mgmt.azurestackhci.models.DownloadOsProfile
+    """
+
+    target: Union[str, "_models.ProvisioningOsType"] = rest_field(visibility=["read", "create"])
+    """Target operating system to support polymorphic resource. Required. Known values are:
+     \"AzureLinux\" and \"HCI\"."""
+    os_profile: "_models.DownloadOsProfile" = rest_field(
+        name="osProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Operating system profile. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target: Union[str, "_models.ProvisioningOsType"],
+        os_profile: "_models.DownloadOsProfile",
     ) -> None: ...
 
     @overload
@@ -2357,6 +3312,25 @@ class EdgeDevice(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
+class EdgeDeviceDisks(_Model):
+    """Represents a storage disk on the device.
+
+    :ivar id: The unique identifier of the disk. Required.
+    :vartype id: str
+    :ivar size_in_bytes: The size of the disk in bytes.
+    :vartype size_in_bytes: str
+    :ivar type: The type of the disk. For example, S2D or SAN.
+    :vartype type: str
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """The unique identifier of the disk. Required."""
+    size_in_bytes: Optional[str] = rest_field(name="sizeInBytes", visibility=["read"])
+    """The size of the disk in bytes."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the disk. For example, S2D or SAN."""
+
+
 class EdgeDeviceJob(ExtensionResource):
     """EdgeDevice Jobs resource.
 
@@ -2445,6 +3419,641 @@ class EdgeDeviceProperties(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class EdgeMachine(TrackedResource):
+    """EdgeMachine details.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.EdgeMachineProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.azurestackhci.models.ManagedServiceIdentity
+    """
+
+    properties: Optional["_models.EdgeMachineProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.EdgeMachineProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeMachineCollectLogJobProperties(EdgeMachineJobProperties, discriminator="CollectLog"):
+    """Properties for pausing a server in the cluster.
+
+    :ivar deployment_mode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deployment_mode: str or ~azure.mgmt.azurestackhci.models.DeploymentMode
+    :ivar provisioning_state: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :ivar job_id: Unique, immutable job id.
+    :vartype job_id: str
+    :ivar start_time_utc: The UTC date and time at which the job started.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The UTC date and time at which the job completed.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.JobStatus
+    :ivar error: error details.
+    :vartype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
+    :ivar job_type: ClusterJob Type to support polymorphic resource. Required. Job to collect logs
+     from the device.
+    :vartype job_type: str or ~azure.mgmt.azurestackhci.models.COLLECT_LOG
+    :ivar from_date: From date for log collection. Required.
+    :vartype from_date: ~datetime.datetime
+    :ivar to_date: To date for log collection. Required.
+    :vartype to_date: ~datetime.datetime
+    :ivar last_log_generated: To date for log collection.
+    :vartype last_log_generated: ~datetime.datetime
+    :ivar reported_properties: log collection job reported properties.
+    :vartype reported_properties:
+     ~azure.mgmt.azurestackhci.models.EdgeMachineCollectLogJobReportedProperties
+    """
+
+    job_type: Literal[EdgeMachineJobType.COLLECT_LOG] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """ClusterJob Type to support polymorphic resource. Required. Job to collect logs from the device."""
+    from_date: datetime.datetime = rest_field(
+        name="fromDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """From date for log collection. Required."""
+    to_date: datetime.datetime = rest_field(
+        name="toDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """To date for log collection. Required."""
+    last_log_generated: Optional[datetime.datetime] = rest_field(
+        name="lastLogGenerated", visibility=["read"], format="rfc3339"
+    )
+    """To date for log collection."""
+    reported_properties: Optional["_models.EdgeMachineCollectLogJobReportedProperties"] = rest_field(
+        name="reportedProperties", visibility=["read"]
+    )
+    """log collection job reported properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        from_date: datetime.datetime,
+        to_date: datetime.datetime,
+        deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = EdgeMachineJobType.COLLECT_LOG  # type: ignore
+
+
+class EdgeMachineCollectLogJobReportedProperties(_Model):  # pylint: disable=name-too-long
+    """Represents the reported properties of a log collection job.
+
+    :ivar percent_complete: The percentage of the job that is complete.
+    :vartype percent_complete: int
+    :ivar validation_status: Validation status of job.
+    :vartype validation_status: ~azure.mgmt.azurestackhci.models.EceActionStatus
+    :ivar deployment_status: Deployment status of job.
+    :vartype deployment_status: ~azure.mgmt.azurestackhci.models.EceActionStatus
+    :ivar log_collection_session_details: Details of the log collection session.
+    :vartype log_collection_session_details:
+     list[~azure.mgmt.azurestackhci.models.LogCollectionJobSession]
+    """
+
+    percent_complete: Optional[int] = rest_field(name="percentComplete", visibility=["read"])
+    """The percentage of the job that is complete."""
+    validation_status: Optional["_models.EceActionStatus"] = rest_field(name="validationStatus", visibility=["read"])
+    """Validation status of job."""
+    deployment_status: Optional["_models.EceActionStatus"] = rest_field(name="deploymentStatus", visibility=["read"])
+    """Deployment status of job."""
+    log_collection_session_details: Optional[list["_models.LogCollectionJobSession"]] = rest_field(
+        name="logCollectionSessionDetails", visibility=["read"]
+    )
+    """Details of the log collection session."""
+
+
+class EdgeMachineJob(ProxyResource):
+    """Cluster Jobs resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.EdgeMachineJobProperties
+    """
+
+    properties: Optional["_models.EdgeMachineJobProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.EdgeMachineJobProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeMachineNetworkProfile(_Model):
+    """NetworkProfile of edge machine.
+
+    :ivar nic_details: List of Network Interface Card (NIC) Details of edge machine.
+    :vartype nic_details: list[~azure.mgmt.azurestackhci.models.EdgeMachineNicDetail]
+    :ivar switch_details: List of switch Details of edge machine.
+    :vartype switch_details: list[~azure.mgmt.azurestackhci.models.SwitchDetail]
+    """
+
+    nic_details: Optional[list["_models.EdgeMachineNicDetail"]] = rest_field(name="nicDetails", visibility=["read"])
+    """List of Network Interface Card (NIC) Details of edge machine."""
+    switch_details: Optional[list["_models.SwitchDetail"]] = rest_field(name="switchDetails", visibility=["read"])
+    """List of switch Details of edge machine."""
+
+
+class EdgeMachineNicDetail(_Model):
+    """Network Interface Card (NIC) Details of edge machine.
+
+    :ivar adapter_name: Adapter Name of NIC.
+    :vartype adapter_name: str
+    :ivar interface_description: Interface Description of NIC.
+    :vartype interface_description: str
+    :ivar component_id: Component Id of NIC.
+    :vartype component_id: str
+    :ivar driver_version: Driver Version of NIC.
+    :vartype driver_version: str
+    :ivar ip4_address: Subnet Mask of NIC.
+    :vartype ip4_address: str
+    :ivar subnet_mask: Subnet Mask of NIC.
+    :vartype subnet_mask: str
+    :ivar default_gateway: Default Gateway of NIC.
+    :vartype default_gateway: str
+    :ivar dns_servers: DNS Servers for NIC.
+    :vartype dns_servers: list[str]
+    :ivar default_isolation_id: Default Isolation of Management NIC.
+    :vartype default_isolation_id: str
+    :ivar mac_address: MAC address information of NIC.
+    :vartype mac_address: str
+    :ivar slot: The slot attached to the NIC.
+    :vartype slot: str
+    :ivar switch_name: The switch attached to the NIC, if any.
+    :vartype switch_name: str
+    :ivar nic_type: The type of NIC, physical, virtual, management.
+    :vartype nic_type: str
+    :ivar vlan_id: The VLAN ID of the physical NIC.
+    :vartype vlan_id: str
+    :ivar nic_status: The status of NIC, up, disconnected.
+    :vartype nic_status: str
+    :ivar rdma_capability: Describes the RDMA capability of the network adapter. Known values are:
+     "Enabled" and "Disabled".
+    :vartype rdma_capability: str or ~azure.mgmt.azurestackhci.models.RdmaCapability
+    """
+
+    adapter_name: Optional[str] = rest_field(name="adapterName", visibility=["read"])
+    """Adapter Name of NIC."""
+    interface_description: Optional[str] = rest_field(name="interfaceDescription", visibility=["read"])
+    """Interface Description of NIC."""
+    component_id: Optional[str] = rest_field(name="componentId", visibility=["read"])
+    """Component Id of NIC."""
+    driver_version: Optional[str] = rest_field(name="driverVersion", visibility=["read"])
+    """Driver Version of NIC."""
+    ip4_address: Optional[str] = rest_field(name="ip4Address", visibility=["read"])
+    """Subnet Mask of NIC."""
+    subnet_mask: Optional[str] = rest_field(name="subnetMask", visibility=["read"])
+    """Subnet Mask of NIC."""
+    default_gateway: Optional[str] = rest_field(name="defaultGateway", visibility=["read"])
+    """Default Gateway of NIC."""
+    dns_servers: Optional[list[str]] = rest_field(name="dnsServers", visibility=["read"])
+    """DNS Servers for NIC."""
+    default_isolation_id: Optional[str] = rest_field(name="defaultIsolationId", visibility=["read"])
+    """Default Isolation of Management NIC."""
+    mac_address: Optional[str] = rest_field(name="macAddress", visibility=["read"])
+    """MAC address information of NIC."""
+    slot: Optional[str] = rest_field(visibility=["read"])
+    """The slot attached to the NIC."""
+    switch_name: Optional[str] = rest_field(name="switchName", visibility=["read"])
+    """The switch attached to the NIC, if any."""
+    nic_type: Optional[str] = rest_field(name="nicType", visibility=["read"])
+    """The type of NIC, physical, virtual, management."""
+    vlan_id: Optional[str] = rest_field(name="vlanId", visibility=["read"])
+    """The VLAN ID of the physical NIC."""
+    nic_status: Optional[str] = rest_field(name="nicStatus", visibility=["read"])
+    """The status of NIC, up, disconnected."""
+    rdma_capability: Optional[Union[str, "_models.RdmaCapability"]] = rest_field(
+        name="rdmaCapability", visibility=["read"]
+    )
+    """Describes the RDMA capability of the network adapter. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+
+
+class EdgeMachinePatch(_Model):
+    """Model for patching edge machine.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.azurestackhci.models.ManagedServiceIdentity
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeMachineProperties(_Model):
+    """Properties for edge machine.
+
+    :ivar edge_machine_kind: Edge Machine type. Known values are: "Standard" and "Dedicated".
+    :vartype edge_machine_kind: str or ~azure.mgmt.azurestackhci.models.EdgeMachineKind
+    :ivar provisioning_state: The provisioning state of a resource. Known values are:
+     "NotSpecified", "Error", "Succeeded", "Failed", "Canceled", "Connected", "Disconnected",
+     "Deleted", "Creating", "Updating", "Deleting", "Moving", "PartiallySucceeded",
+     "PartiallyConnected", "InProgress", "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :ivar cloud_id: Unique, immutable resource id.
+    :vartype cloud_id: str
+    :ivar arc_machine_resource_group_id: Optional property to create arc machine in custom resource
+     group.
+    :vartype arc_machine_resource_group_id: str
+    :ivar arc_machine_resource_id: Arc machine instance resource id.
+    :vartype arc_machine_resource_id: str
+    :ivar arc_gateway_resource_id: Link to Arc Gateway ARM resource Id.
+    :vartype arc_gateway_resource_id: str
+    :ivar site_details: Service fetches common configuration from site.
+    :vartype site_details: ~azure.mgmt.azurestackhci.models.SiteDetails
+    :ivar ownership_voucher_details: Ownership voucher details for provisioned machine.
+    :vartype ownership_voucher_details: ~azure.mgmt.azurestackhci.models.OwnershipVoucherDetails
+    :ivar provisioning_details: Details for device provisioning.
+    :vartype provisioning_details: ~azure.mgmt.azurestackhci.models.ProvisioningDetails
+    :ivar device_pool_resource_id: A machine can only be assigned to single device pool.
+    :vartype device_pool_resource_id: str
+    :ivar machine_state: OS configuration status details. Known values are: "Created",
+     "Registering", "Unpurposed", "Transitioning", "Purposed", "Updating", "Resetting", "Failed",
+     and "Preparing".
+    :vartype machine_state: str or ~azure.mgmt.azurestackhci.models.EdgeMachineState
+    :ivar connectivity_status: machine connectivity status. Known values are: "NotSpecified",
+     "Disconnected", and "Connected".
+    :vartype connectivity_status: str or
+     ~azure.mgmt.azurestackhci.models.EdgeMachineConnectivityStatus
+    :ivar claimed_by: Tracks the ID of the consuming resource, setting the machine as in-use.
+    :vartype claimed_by: str
+    :ivar reported_properties: Reported properties for edge machine.
+    :vartype reported_properties: ~azure.mgmt.azurestackhci.models.EdgeMachineReportedProperties
+    :ivar operation_details: operation status details for edge machine.
+    :vartype operation_details: list[~azure.mgmt.azurestackhci.models.OperationDetail]
+    :ivar last_sync_timestamp: Last time data updated to service.
+    :vartype last_sync_timestamp: ~datetime.datetime
+    """
+
+    edge_machine_kind: Optional[Union[str, "_models.EdgeMachineKind"]] = rest_field(
+        name="edgeMachineKind", visibility=["read", "create"]
+    )
+    """Edge Machine type. Known values are: \"Standard\" and \"Dedicated\"."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of a resource. Known values are: \"NotSpecified\", \"Error\",
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Connected\", \"Disconnected\", \"Deleted\",
+     \"Creating\", \"Updating\", \"Deleting\", \"Moving\", \"PartiallySucceeded\",
+     \"PartiallyConnected\", \"InProgress\", \"Accepted\", \"Provisioning\", and
+     \"DisableInProgress\"."""
+    cloud_id: Optional[str] = rest_field(name="cloudId", visibility=["read"])
+    """Unique, immutable resource id."""
+    arc_machine_resource_group_id: Optional[str] = rest_field(
+        name="arcMachineResourceGroupId", visibility=["read", "create"]
+    )
+    """Optional property to create arc machine in custom resource group."""
+    arc_machine_resource_id: Optional[str] = rest_field(
+        name="arcMachineResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Arc machine instance resource id."""
+    arc_gateway_resource_id: Optional[str] = rest_field(name="arcGatewayResourceId", visibility=["read", "create"])
+    """Link to Arc Gateway ARM resource Id."""
+    site_details: Optional["_models.SiteDetails"] = rest_field(name="siteDetails", visibility=["read", "create"])
+    """Service fetches common configuration from site."""
+    ownership_voucher_details: Optional["_models.OwnershipVoucherDetails"] = rest_field(
+        name="ownershipVoucherDetails", visibility=["read", "create"]
+    )
+    """Ownership voucher details for provisioned machine."""
+    provisioning_details: Optional["_models.ProvisioningDetails"] = rest_field(
+        name="provisioningDetails", visibility=["read", "create"]
+    )
+    """Details for device provisioning."""
+    device_pool_resource_id: Optional[str] = rest_field(name="devicePoolResourceId", visibility=["read"])
+    """A machine can only be assigned to single device pool."""
+    machine_state: Optional[Union[str, "_models.EdgeMachineState"]] = rest_field(
+        name="machineState", visibility=["read"]
+    )
+    """OS configuration status details. Known values are: \"Created\", \"Registering\",
+     \"Unpurposed\", \"Transitioning\", \"Purposed\", \"Updating\", \"Resetting\", \"Failed\", and
+     \"Preparing\"."""
+    connectivity_status: Optional[Union[str, "_models.EdgeMachineConnectivityStatus"]] = rest_field(
+        name="connectivityStatus", visibility=["read"]
+    )
+    """machine connectivity status. Known values are: \"NotSpecified\", \"Disconnected\", and
+     \"Connected\"."""
+    claimed_by: Optional[str] = rest_field(name="claimedBy", visibility=["read"])
+    """Tracks the ID of the consuming resource, setting the machine as in-use."""
+    reported_properties: Optional["_models.EdgeMachineReportedProperties"] = rest_field(
+        name="reportedProperties", visibility=["read"]
+    )
+    """Reported properties for edge machine."""
+    operation_details: Optional[list["_models.OperationDetail"]] = rest_field(
+        name="operationDetails", visibility=["read"]
+    )
+    """operation status details for edge machine."""
+    last_sync_timestamp: Optional[datetime.datetime] = rest_field(
+        name="lastSyncTimestamp", visibility=["read"], format="rfc3339"
+    )
+    """Last time data updated to service."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        edge_machine_kind: Optional[Union[str, "_models.EdgeMachineKind"]] = None,
+        arc_machine_resource_group_id: Optional[str] = None,
+        arc_machine_resource_id: Optional[str] = None,
+        arc_gateway_resource_id: Optional[str] = None,
+        site_details: Optional["_models.SiteDetails"] = None,
+        ownership_voucher_details: Optional["_models.OwnershipVoucherDetails"] = None,
+        provisioning_details: Optional["_models.ProvisioningDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeMachineRemoteSupportJobProperties(EdgeMachineJobProperties, discriminator="RemoteSupport"):
+    """Properties for adding a server in the cluster.
+
+    :ivar deployment_mode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deployment_mode: str or ~azure.mgmt.azurestackhci.models.DeploymentMode
+    :ivar provisioning_state: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :ivar job_id: Unique, immutable job id.
+    :vartype job_id: str
+    :ivar start_time_utc: The UTC date and time at which the job started.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The UTC date and time at which the job completed.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.JobStatus
+    :ivar error: error details.
+    :vartype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
+    :ivar job_type: Job Type to support polymorphic resource. Required. Job to provide remote
+     support to the device.
+    :vartype job_type: str or ~azure.mgmt.azurestackhci.models.REMOTE_SUPPORT
+    :ivar access_level: Remote support access level. Required. Known values are: "None",
+     "Diagnostics", and "DiagnosticsAndRepair".
+    :vartype access_level: str or ~azure.mgmt.azurestackhci.models.RemoteSupportAccessLevel
+    :ivar expiration_timestamp: Remote support expiration timestamp. Required.
+    :vartype expiration_timestamp: ~datetime.datetime
+    :ivar type: Remote support type. Required. Known values are: "Enable" and "Revoke".
+    :vartype type: str or ~azure.mgmt.azurestackhci.models.RemoteSupportType
+    :ivar reported_properties: log collection job reported properties.
+    :vartype reported_properties:
+     ~azure.mgmt.azurestackhci.models.EdgeMachineRemoteSupportJobReportedProperties
+    """
+
+    job_type: Literal[EdgeMachineJobType.REMOTE_SUPPORT] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Job Type to support polymorphic resource. Required. Job to provide remote support to the
+     device."""
+    access_level: Union[str, "_models.RemoteSupportAccessLevel"] = rest_field(
+        name="accessLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Remote support access level. Required. Known values are: \"None\", \"Diagnostics\", and
+     \"DiagnosticsAndRepair\"."""
+    expiration_timestamp: datetime.datetime = rest_field(
+        name="expirationTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Remote support expiration timestamp. Required."""
+    type: Union[str, "_models.RemoteSupportType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Remote support type. Required. Known values are: \"Enable\" and \"Revoke\"."""
+    reported_properties: Optional["_models.EdgeMachineRemoteSupportJobReportedProperties"] = rest_field(
+        name="reportedProperties", visibility=["read"]
+    )
+    """log collection job reported properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        access_level: Union[str, "_models.RemoteSupportAccessLevel"],
+        expiration_timestamp: datetime.datetime,
+        type: Union[str, "_models.RemoteSupportType"],
+        deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = EdgeMachineJobType.REMOTE_SUPPORT  # type: ignore
+
+
+class EdgeMachineRemoteSupportJobReportedProperties(_Model):  # pylint: disable=name-too-long
+    """Represents the reported properties of a remote support job.
+
+    :ivar percent_complete: The percentage of the job that is complete.
+    :vartype percent_complete: int
+    :ivar validation_status: Validation status of job.
+    :vartype validation_status: ~azure.mgmt.azurestackhci.models.EceActionStatus
+    :ivar deployment_status: Deployment status of job.
+    :vartype deployment_status: ~azure.mgmt.azurestackhci.models.EceActionStatus
+    :ivar node_settings: Optional settings for configuring the node for remote support.
+    :vartype node_settings: ~azure.mgmt.azurestackhci.models.EdgeMachineRemoteSupportNodeSettings
+    :ivar session_details: Details of the remote support session.
+    :vartype session_details: list[~azure.mgmt.azurestackhci.models.RemoteSupportSession]
+    """
+
+    percent_complete: Optional[int] = rest_field(name="percentComplete", visibility=["read"])
+    """The percentage of the job that is complete."""
+    validation_status: Optional["_models.EceActionStatus"] = rest_field(name="validationStatus", visibility=["read"])
+    """Validation status of job."""
+    deployment_status: Optional["_models.EceActionStatus"] = rest_field(name="deploymentStatus", visibility=["read"])
+    """Deployment status of job."""
+    node_settings: Optional["_models.EdgeMachineRemoteSupportNodeSettings"] = rest_field(
+        name="nodeSettings", visibility=["read"]
+    )
+    """Optional settings for configuring the node for remote support."""
+    session_details: Optional[list["_models.RemoteSupportSession"]] = rest_field(
+        name="sessionDetails", visibility=["read"]
+    )
+    """Details of the remote support session."""
+
+
+class EdgeMachineRemoteSupportNodeSettings(_Model):
+    """Represents the settings of a remote support node.
+
+    :ivar state: The state of the remote support node.
+    :vartype state: str
+    :ivar created_at: The timestamp when the node settings were created, in UTC.
+    :vartype created_at: ~datetime.datetime
+    :ivar updated_at: The timestamp when the node settings were last updated, in UTC.
+    :vartype updated_at: ~datetime.datetime
+    :ivar connection_status: The current connection status of the remote support session.
+    :vartype connection_status: str
+    :ivar connection_error_message: The error message, if any, from the last connection attempt.
+    :vartype connection_error_message: str
+    """
+
+    state: Optional[str] = rest_field(visibility=["read"])
+    """The state of the remote support node."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The timestamp when the node settings were created, in UTC."""
+    updated_at: Optional[datetime.datetime] = rest_field(name="updatedAt", visibility=["read"], format="rfc3339")
+    """The timestamp when the node settings were last updated, in UTC."""
+    connection_status: Optional[str] = rest_field(name="connectionStatus", visibility=["read"])
+    """The current connection status of the remote support session."""
+    connection_error_message: Optional[str] = rest_field(name="connectionErrorMessage", visibility=["read"])
+    """The error message, if any, from the last connection attempt."""
+
+
+class EdgeMachineReportedProperties(_Model):
+    """Reported properties for edge machine.
+
+    :ivar last_updated: Last time data reported.
+    :vartype last_updated: ~datetime.datetime
+    :ivar network_profile: Network details for edge machine.
+    :vartype network_profile: ~azure.mgmt.azurestackhci.models.EdgeMachineNetworkProfile
+    :ivar os_profile: OS Properties for edge machine.
+    :vartype os_profile: ~azure.mgmt.azurestackhci.models.OsProfile
+    :ivar hardware_profile: Hardware related information for edge machine.
+    :vartype hardware_profile: ~azure.mgmt.azurestackhci.models.HardwareProfile
+    :ivar storage_profile: Storage related information for edge machine.
+    :vartype storage_profile: ~azure.mgmt.azurestackhci.models.StorageProfile
+    :ivar sbe_deployment_package_info: Solution builder extension (SBE) deployment package
+     information.
+    :vartype sbe_deployment_package_info: ~azure.mgmt.azurestackhci.models.SbeDeploymentPackageInfo
+    :ivar extension_profile: Extension details for edge machine.
+    :vartype extension_profile: ~azure.mgmt.azurestackhci.models.ExtensionProfile
+    """
+
+    last_updated: Optional[datetime.datetime] = rest_field(name="lastUpdated", visibility=["read"], format="rfc3339")
+    """Last time data reported."""
+    network_profile: Optional["_models.EdgeMachineNetworkProfile"] = rest_field(
+        name="networkProfile", visibility=["read"]
+    )
+    """Network details for edge machine."""
+    os_profile: Optional["_models.OsProfile"] = rest_field(name="osProfile", visibility=["read"])
+    """OS Properties for edge machine."""
+    hardware_profile: Optional["_models.HardwareProfile"] = rest_field(name="hardwareProfile", visibility=["read"])
+    """Hardware related information for edge machine."""
+    storage_profile: Optional["_models.StorageProfile"] = rest_field(name="storageProfile", visibility=["read"])
+    """Storage related information for edge machine."""
+    sbe_deployment_package_info: Optional["_models.SbeDeploymentPackageInfo"] = rest_field(
+        name="sbeDeploymentPackageInfo", visibility=["read"]
+    )
+    """Solution builder extension (SBE) deployment package information."""
+    extension_profile: Optional["_models.ExtensionProfile"] = rest_field(name="extensionProfile", visibility=["read"])
+    """Extension details for edge machine."""
 
 
 class ErrorAdditionalInfo(_Model):
@@ -3025,6 +4634,41 @@ class ExtensionUpgradeParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
+class HardwareProfile(_Model):
+    """Hardware profile for the machine.
+
+    :ivar cpu_cores: Number of cpu cores in the machine.
+    :vartype cpu_cores: int
+    :ivar cpu_sockets: Number of cpu sockets in the machine.
+    :vartype cpu_sockets: int
+    :ivar memory_capacity_in_gb: Memory capacity of the machine.
+    :vartype memory_capacity_in_gb: int
+    :ivar model: Model info of the machine.
+    :vartype model: str
+    :ivar manufacturer: manufacturer info of the machine.
+    :vartype manufacturer: str
+    :ivar serial_number: Serial number of the machine.
+    :vartype serial_number: str
+    :ivar processor_type: Process type of the machine.
+    :vartype processor_type: str
+    """
+
+    cpu_cores: Optional[int] = rest_field(name="cpuCores", visibility=["read"])
+    """Number of cpu cores in the machine."""
+    cpu_sockets: Optional[int] = rest_field(name="cpuSockets", visibility=["read"])
+    """Number of cpu sockets in the machine."""
+    memory_capacity_in_gb: Optional[int] = rest_field(name="memoryCapacityInGb", visibility=["read"])
+    """Memory capacity of the machine."""
+    model: Optional[str] = rest_field(visibility=["read"])
+    """Model info of the machine."""
+    manufacturer: Optional[str] = rest_field(visibility=["read"])
+    """manufacturer info of the machine."""
+    serial_number: Optional[str] = rest_field(name="serialNumber", visibility=["read"])
+    """Serial number of the machine."""
+    processor_type: Optional[str] = rest_field(name="processorType", visibility=["read"])
+    """Process type of the machine."""
+
+
 class HciEdgeDeviceJobProperties(_Model):
     """HCI Edge device job properties.
 
@@ -3173,6 +4817,134 @@ class HciCollectLogJobProperties(HciEdgeDeviceJobProperties, discriminator="Coll
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.job_type = HciEdgeDeviceJobType.COLLECT_LOG  # type: ignore
+
+
+class HciConfigureCvmJobProperties(ClusterJobProperties, discriminator="ConfigureCVM"):
+    """Defines the customer's intent for updating confidential VM properties.
+
+    :ivar deployment_mode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deployment_mode: str or ~azure.mgmt.azurestackhci.models.DeploymentMode
+    :ivar provisioning_state: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :ivar job_id: Unique, immutable job id.
+    :vartype job_id: str
+    :ivar start_time_utc: The UTC date and time at which the job started.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The UTC date and time at which the job completed.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar status: Status of Cluster job. Known values are: "NotSpecified", "ValidationInProgress",
+     "ValidationSuccess", "ValidationFailed", "DeploymentInProgress", "DeploymentFailed",
+     "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and "Scheduled".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.JobStatus
+    :ivar reported_properties: Reported properties for job.
+    :vartype reported_properties: ~azure.mgmt.azurestackhci.models.JobReportedProperties
+    :ivar job_type: ClusterJob Type to support polymorphic resource. Required. Job to CVM  intent
+     for the cluster.
+    :vartype job_type: str or ~azure.mgmt.azurestackhci.models.CONFIGURE_CVM
+    :ivar confidential_vm_intent: Defines the customer's intent for updating confidential VM
+     properties. Required. Known values are: "Enable" and "Disable".
+    :vartype confidential_vm_intent: str or ~azure.mgmt.azurestackhci.models.ConfidentialVmIntent
+    """
+
+    job_type: Literal[HciJobType.CONFIGURE_CVM] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """ClusterJob Type to support polymorphic resource. Required. Job to CVM  intent for the cluster."""
+    confidential_vm_intent: Union[str, "_models.ConfidentialVmIntent"] = rest_field(
+        name="confidentialVmIntent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the customer's intent for updating confidential VM properties. Required. Known values
+     are: \"Enable\" and \"Disable\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        confidential_vm_intent: Union[str, "_models.ConfidentialVmIntent"],
+        deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = HciJobType.CONFIGURE_CVM  # type: ignore
+
+
+class HciConfigureSdnIntegrationJobProperties(ClusterJobProperties, discriminator="ConfigureSdnIntegration"):
+    """Properties for configuring SDN integration intent for the cluster.
+
+    :ivar deployment_mode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deployment_mode: str or ~azure.mgmt.azurestackhci.models.DeploymentMode
+    :ivar provisioning_state: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :ivar job_id: Unique, immutable job id.
+    :vartype job_id: str
+    :ivar start_time_utc: The UTC date and time at which the job started.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The UTC date and time at which the job completed.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar status: Status of Cluster job. Known values are: "NotSpecified", "ValidationInProgress",
+     "ValidationSuccess", "ValidationFailed", "DeploymentInProgress", "DeploymentFailed",
+     "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and "Scheduled".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.JobStatus
+    :ivar reported_properties: Reported properties for job.
+    :vartype reported_properties: ~azure.mgmt.azurestackhci.models.JobReportedProperties
+    :ivar job_type: ClusterJob Type to support polymorphic resource. Required. Job to configure SDN
+     (Software Defined Networking) integration for the cluster.
+    :vartype job_type: str or ~azure.mgmt.azurestackhci.models.CONFIGURE_SDN_INTEGRATION
+    :ivar sdn_integration_intent: Defines the customer's intent for configuring SDN integration.
+     Required. Known values are: "Enable" and "Disable".
+    :vartype sdn_integration_intent: str or ~azure.mgmt.azurestackhci.models.SdnIntegrationIntent
+    :ivar sdn_prefix: A string identifier used to construct the Network Controller (NC) REST
+     resource name. This prefix helps group and distinguish SDN-managed network components and must
+     follow specific formatting rules.
+    :vartype sdn_prefix: str
+    """
+
+    job_type: Literal[HciJobType.CONFIGURE_SDN_INTEGRATION] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """ClusterJob Type to support polymorphic resource. Required. Job to configure SDN (Software
+     Defined Networking) integration for the cluster."""
+    sdn_integration_intent: Union[str, "_models.SdnIntegrationIntent"] = rest_field(
+        name="sdnIntegrationIntent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the customer's intent for configuring SDN integration. Required. Known values are:
+     \"Enable\" and \"Disable\"."""
+    sdn_prefix: Optional[str] = rest_field(name="sdnPrefix", visibility=["read", "create", "update", "delete", "query"])
+    """A string identifier used to construct the Network Controller (NC) REST resource name. This
+     prefix helps group and distinguish SDN-managed network components and must follow specific
+     formatting rules."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sdn_integration_intent: Union[str, "_models.SdnIntegrationIntent"],
+        deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
+        sdn_prefix: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = HciJobType.CONFIGURE_SDN_INTEGRATION  # type: ignore
 
 
 class HciEdgeDevice(EdgeDevice, discriminator="HCI"):
@@ -3587,6 +5359,8 @@ class HciNetworkProfile(_Model):
     :vartype switch_details: list[~azure.mgmt.azurestackhci.models.SwitchDetail]
     :ivar host_network: HostNetwork config to deploy AzureStackHCI Cluster.
     :vartype host_network: ~azure.mgmt.azurestackhci.models.HciEdgeDeviceHostNetwork
+    :ivar sdn_properties: oftware Defined Networking Properties of the cluster.
+    :vartype sdn_properties: ~azure.mgmt.azurestackhci.models.SdnProperties
     """
 
     nic_details: Optional[list["_models.HciNicDetail"]] = rest_field(name="nicDetails", visibility=["read"])
@@ -3595,6 +5369,8 @@ class HciNetworkProfile(_Model):
     """List of switch details for edge device."""
     host_network: Optional["_models.HciEdgeDeviceHostNetwork"] = rest_field(name="hostNetwork", visibility=["read"])
     """HostNetwork config to deploy AzureStackHCI Cluster."""
+    sdn_properties: Optional["_models.SdnProperties"] = rest_field(name="sdnProperties", visibility=["read"])
+    """oftware Defined Networking Properties of the cluster."""
 
 
 class HciNicDetail(_Model):
@@ -3775,6 +5551,10 @@ class ReportedProperties(_Model):
     :vartype device_state: str or ~azure.mgmt.azurestackhci.models.DeviceState
     :ivar extension_profile: Extensions details for edge device.
     :vartype extension_profile: ~azure.mgmt.azurestackhci.models.ExtensionProfile
+    :ivar last_sync_timestamp: Most recent edge device sync timestamp in UTC.
+    :vartype last_sync_timestamp: ~datetime.datetime
+    :ivar confidential_vm_profile: CVM support details for edge device.
+    :vartype confidential_vm_profile: ~azure.mgmt.azurestackhci.models.ConfidentialVmProfile
     """
 
     device_state: Optional[Union[str, "_models.DeviceState"]] = rest_field(name="deviceState", visibility=["read"])
@@ -3782,6 +5562,14 @@ class ReportedProperties(_Model):
      \"Repairing\", \"Draining\", \"InMaintenance\", \"Resuming\", and \"Processing\"."""
     extension_profile: Optional["_models.ExtensionProfile"] = rest_field(name="extensionProfile", visibility=["read"])
     """Extensions details for edge device."""
+    last_sync_timestamp: Optional[datetime.datetime] = rest_field(
+        name="lastSyncTimestamp", visibility=["read"], format="rfc3339"
+    )
+    """Most recent edge device sync timestamp in UTC."""
+    confidential_vm_profile: Optional["_models.ConfidentialVmProfile"] = rest_field(
+        name="confidentialVmProfile", visibility=["read"]
+    )
+    """CVM support details for edge device."""
 
 
 class HciReportedProperties(ReportedProperties):
@@ -3792,6 +5580,10 @@ class HciReportedProperties(ReportedProperties):
     :vartype device_state: str or ~azure.mgmt.azurestackhci.models.DeviceState
     :ivar extension_profile: Extensions details for edge device.
     :vartype extension_profile: ~azure.mgmt.azurestackhci.models.ExtensionProfile
+    :ivar last_sync_timestamp: Most recent edge device sync timestamp in UTC.
+    :vartype last_sync_timestamp: ~datetime.datetime
+    :ivar confidential_vm_profile: CVM support details for edge device.
+    :vartype confidential_vm_profile: ~azure.mgmt.azurestackhci.models.ConfidentialVmProfile
     :ivar network_profile: HCI device network information.
     :vartype network_profile: ~azure.mgmt.azurestackhci.models.HciNetworkProfile
     :ivar os_profile: HCI device OS specific information.
@@ -3824,10 +5616,14 @@ class HciStorageProfile(_Model):
 
     :ivar poolable_disks_count: Number of storage disks in the device with $CanPool as true.
     :vartype poolable_disks_count: int
+    :ivar disks: List of storage disks on the device.
+    :vartype disks: list[~azure.mgmt.azurestackhci.models.EdgeDeviceDisks]
     """
 
     poolable_disks_count: Optional[int] = rest_field(name="poolableDisksCount", visibility=["read"])
     """Number of storage disks in the device with $CanPool as true."""
+    disks: Optional[list["_models.EdgeDeviceDisks"]] = rest_field(visibility=["read"])
+    """List of storage disks on the device."""
 
 
 class HciValidationFailureDetail(_Model):
@@ -3839,6 +5635,24 @@ class HciValidationFailureDetail(_Model):
 
     exception: Optional[str] = rest_field(visibility=["read"])
     """Exception details while installing extension."""
+
+
+class IgvmStatusDetail(_Model):
+    """Provides component-level status information related to IGVM enablement on the device.
+
+    :ivar code: A machine-readable status code indicating the result or condition of a specific
+     IGVM-related check or operation.
+    :vartype code: str
+    :ivar message: A human-readable message providing context or explanation for the associated
+     status code.
+    :vartype message: str
+    """
+
+    code: Optional[str] = rest_field(visibility=["read"])
+    """A machine-readable status code indicating the result or condition of a specific IGVM-related
+     check or operation."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """A human-readable message providing context or explanation for the associated status code."""
 
 
 class InfrastructureNetwork(_Model):
@@ -3916,6 +5730,39 @@ class InfrastructureNetwork(_Model):
         super().__init__(*args, **kwargs)
 
 
+class IpAddressRange(_Model):
+    """IP address range configuration.
+
+    :ivar start_ip: Start IP address. Required.
+    :vartype start_ip: str
+    :ivar end_ip: End IP address. Required.
+    :vartype end_ip: str
+    """
+
+    start_ip: str = rest_field(name="startIp", visibility=["read", "create", "update", "delete", "query"])
+    """Start IP address. Required."""
+    end_ip: str = rest_field(name="endIp", visibility=["read", "create", "update", "delete", "query"])
+    """End IP address. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_ip: str,
+        end_ip: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class IpPools(_Model):
     """The dnsServers of a device.
 
@@ -3979,6 +5826,94 @@ class IsolatedVmAttestationConfiguration(_Model):
     """Region specific endpoint for relying party service."""
     attestation_service_endpoint: Optional[str] = rest_field(name="attestationServiceEndpoint", visibility=["read"])
     """Region specific endpoint for Microsoft Azure Attestation service for the cluster."""
+
+
+class JobReportedProperties(_Model):
+    """Reported Properties for job triggered from cloud.
+
+    :ivar percent_complete: The percentage of the job that is complete.
+    :vartype percent_complete: int
+    :ivar validation_status: Validation status of job.
+    :vartype validation_status: ~azure.mgmt.azurestackhci.models.EceActionStatus
+    :ivar deployment_status: Deployment status of job.
+    :vartype deployment_status: ~azure.mgmt.azurestackhci.models.EceActionStatus
+    """
+
+    percent_complete: Optional[int] = rest_field(name="percentComplete", visibility=["read"])
+    """The percentage of the job that is complete."""
+    validation_status: Optional["_models.EceActionStatus"] = rest_field(name="validationStatus", visibility=["read"])
+    """Validation status of job."""
+    deployment_status: Optional["_models.EceActionStatus"] = rest_field(name="deploymentStatus", visibility=["read"])
+    """Deployment status of job."""
+
+
+class KubernetesVersion(ProxyResource):
+    """Represents a kubernetes version resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.KubernetesVersionProperties
+    """
+
+    properties: Optional["_models.KubernetesVersionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.KubernetesVersionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KubernetesVersionProperties(_Model):
+    """Represents properties of a kubernetes version.
+
+    :ivar version: Represents kubernetes version. Required.
+    :vartype version: str
+    """
+
+    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents kubernetes version. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class LocalAvailabilityZones(_Model):
@@ -4297,6 +6232,117 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
+class NetworkAdapter(_Model):
+    """Network adapter configuration.
+
+    :ivar ip_assignment_type: Type of IP assignment. Required. Known values are: "Automatic" and
+     "Manual".
+    :vartype ip_assignment_type: str or ~azure.mgmt.azurestackhci.models.IpAssignmentType
+    :ivar ip_address: IP address.
+    :vartype ip_address: str
+    :ivar adapter_name: Adapter Name.
+    :vartype adapter_name: str
+    :ivar mac_address: MAC address.
+    :vartype mac_address: str
+    :ivar ip_address_range: IP address range.
+    :vartype ip_address_range: ~azure.mgmt.azurestackhci.models.IpAddressRange
+    :ivar gateway: Gateway id.
+    :vartype gateway: str
+    :ivar subnet_mask: Subnet mask.
+    :vartype subnet_mask: str
+    :ivar dns_address_array: Array of DNS addresses.
+    :vartype dns_address_array: list[str]
+    :ivar vlan_id: VLAN ID for the network setup.
+    :vartype vlan_id: str
+    """
+
+    ip_assignment_type: Union[str, "_models.IpAssignmentType"] = rest_field(
+        name="ipAssignmentType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of IP assignment. Required. Known values are: \"Automatic\" and \"Manual\"."""
+    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read", "create", "update", "delete", "query"])
+    """IP address."""
+    adapter_name: Optional[str] = rest_field(
+        name="adapterName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Adapter Name."""
+    mac_address: Optional[str] = rest_field(
+        name="macAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """MAC address."""
+    ip_address_range: Optional["_models.IpAddressRange"] = rest_field(
+        name="ipAddressRange", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP address range."""
+    gateway: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Gateway id."""
+    subnet_mask: Optional[str] = rest_field(
+        name="subnetMask", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Subnet mask."""
+    dns_address_array: Optional[list[str]] = rest_field(
+        name="dnsAddressArray", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of DNS addresses."""
+    vlan_id: Optional[str] = rest_field(name="vlanId", visibility=["read", "create", "update", "delete", "query"])
+    """VLAN ID for the network setup."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ip_assignment_type: Union[str, "_models.IpAssignmentType"],
+        ip_address: Optional[str] = None,
+        adapter_name: Optional[str] = None,
+        mac_address: Optional[str] = None,
+        ip_address_range: Optional["_models.IpAddressRange"] = None,
+        gateway: Optional[str] = None,
+        subnet_mask: Optional[str] = None,
+        dns_address_array: Optional[list[str]] = None,
+        vlan_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkConfiguration(_Model):
+    """Network configuration.
+
+    :ivar network_adapters: List of network adapters.
+    :vartype network_adapters: list[~azure.mgmt.azurestackhci.models.NetworkAdapter]
+    """
+
+    network_adapters: Optional[list["_models.NetworkAdapter"]] = rest_field(
+        name="networkAdapters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of network adapters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        network_adapters: Optional[list["_models.NetworkAdapter"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class NetworkController(_Model):
     """network controller config for SDN Integration to deploy AzureStackHCI Cluster.
 
@@ -4330,6 +6376,50 @@ class NetworkController(_Model):
         mac_address_pool_start: Optional[str] = None,
         mac_address_pool_stop: Optional[str] = None,
         network_virtualization_enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NextBillingModel(_Model):
+    """Details of the next billing model for the cluster.
+
+    :ivar billing_model: Type of billing model.
+    :vartype billing_model: str
+    :ivar capabilities_enabled: Capabilities enabled under this billing model.
+    :vartype capabilities_enabled: list[str]
+    :ivar trial_days_remaining: Number of days remaining in the trial period.
+    :vartype trial_days_remaining: float
+    """
+
+    billing_model: Optional[str] = rest_field(
+        name="billingModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of billing model."""
+    capabilities_enabled: Optional[list[str]] = rest_field(
+        name="capabilitiesEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Capabilities enabled under this billing model."""
+    trial_days_remaining: Optional[float] = rest_field(
+        name="trialDaysRemaining", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of days remaining in the trial period."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        billing_model: Optional[str] = None,
+        capabilities_enabled: Optional[list[str]] = None,
+        trial_days_remaining: Optional[float] = None,
     ) -> None: ...
 
     @overload
@@ -4593,6 +6683,59 @@ class OfferProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class OnboardingConfiguration(_Model):
+    """Onboarding configuration.
+
+    :ivar type: Type of the onboarding resource to support polymorphic resource.
+     "HybridComputeMachine"
+    :vartype type: str or ~azure.mgmt.azurestackhci.models.OnboardingResourceType
+    :ivar resource_id: Resource ID.
+    :vartype resource_id: str
+    :ivar location: Location of the resource.
+    :vartype location: str
+    :ivar tenant_id: Tenant ID of the resource.
+    :vartype tenant_id: str
+    :ivar arc_virtual_machine_id: Azure Arc virtual machine ID.
+    :vartype arc_virtual_machine_id: str
+    """
+
+    type: Optional[Union[str, "_models.OnboardingResourceType"]] = rest_field(visibility=["read", "create"])
+    """Type of the onboarding resource to support polymorphic resource. \"HybridComputeMachine\""""
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource ID."""
+    location: Optional[str] = rest_field(visibility=["read", "create"])
+    """Location of the resource."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """Tenant ID of the resource."""
+    arc_virtual_machine_id: Optional[str] = rest_field(
+        name="arcVirtualMachineId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure Arc virtual machine ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.OnboardingResourceType"]] = None,
+        resource_id: Optional[str] = None,
+        location: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        arc_virtual_machine_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Operation(_Model):
     """REST API Operation.
 
@@ -4650,6 +6793,41 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
+class OperationDetail(_Model):
+    """operation detail.
+
+    :ivar name: operation name.
+    :vartype name: str
+    :ivar id: operation id.
+    :vartype id: str
+    :ivar type: operation type.
+    :vartype type: str
+    :ivar resource_id: operation resource id.
+    :vartype resource_id: str
+    :ivar description: operation description.
+    :vartype description: str
+    :ivar status: operation status.
+    :vartype status: str
+    :ivar error: error details.
+    :vartype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
+    """
+
+    name: Optional[str] = rest_field(visibility=["read"])
+    """operation name."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """operation id."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """operation type."""
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """operation resource id."""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """operation description."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """operation status."""
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
+    """error details."""
+
+
 class OperationDisplay(_Model):
     """Localized display information for an operation.
 
@@ -4698,6 +6876,326 @@ class OptionalServices(_Model):
         self,
         *,
         custom_location: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OsImage(ProxyResource):
+    """Represents a os image resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.OsImageProperties
+    """
+
+    properties: Optional["_models.OsImageProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.OsImageProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OsImageProperties(_Model):
+    """Represents properties of a os image resource.
+
+    :ivar validated_solution_recipe_version: Represents validated solution recipe version of a os
+     image.
+    :vartype validated_solution_recipe_version: str
+    :ivar composed_image_version: Represents composed image version of a os image.
+    :vartype composed_image_version: str
+    :ivar composed_image_iso_url: Represents composed image iso download url of a os image.
+    :vartype composed_image_iso_url: str
+    :ivar composed_image_iso_hash: Represents composed image iso hash of a os image.
+    :vartype composed_image_iso_hash: str
+    """
+
+    validated_solution_recipe_version: Optional[str] = rest_field(
+        name="validatedSolutionRecipeVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents validated solution recipe version of a os image."""
+    composed_image_version: Optional[str] = rest_field(
+        name="composedImageVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents composed image version of a os image."""
+    composed_image_iso_url: Optional[str] = rest_field(
+        name="composedImageIsoUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents composed image iso download url of a os image."""
+    composed_image_iso_hash: Optional[str] = rest_field(
+        name="composedImageIsoHash", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents composed image iso hash of a os image."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        validated_solution_recipe_version: Optional[str] = None,
+        composed_image_version: Optional[str] = None,
+        composed_image_iso_url: Optional[str] = None,
+        composed_image_iso_hash: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OsProfile(_Model):
+    """OS configurations for HCI device.
+
+    :ivar boot_type: The boot type of the device. e.g. UEFI, Legacy etc.
+    :vartype boot_type: str
+    :ivar assembly_version: Version of assembly present on device.
+    :vartype assembly_version: str
+    :ivar os_type: OS type (“windows", “linux”).
+    :vartype os_type: str
+    :ivar os_sku: OS SKU (e.g., “ Microsoft Azure Linux ROE“, “Azure Stack HCI", "Microsoft Azure
+     Linux 3.0").
+    :vartype os_sku: str
+    :ivar os_version: OS Version.
+    :vartype os_version: str
+    :ivar build_number: OS Build Number.
+    :vartype build_number: str
+    :ivar base_image_version: OS Base Image Version.
+    :vartype base_image_version: str
+    :ivar image_version: OS Image Version.
+    :vartype image_version: str
+    """
+
+    boot_type: Optional[str] = rest_field(name="bootType", visibility=["read"])
+    """The boot type of the device. e.g. UEFI, Legacy etc."""
+    assembly_version: Optional[str] = rest_field(name="assemblyVersion", visibility=["read"])
+    """Version of assembly present on device."""
+    os_type: Optional[str] = rest_field(name="osType", visibility=["read"])
+    """OS type (“windows\", “linux”)."""
+    os_sku: Optional[str] = rest_field(name="osSku", visibility=["read"])
+    """OS SKU (e.g., “ Microsoft Azure Linux ROE“, “Azure Stack HCI\", \"Microsoft Azure Linux 3.0\")."""
+    os_version: Optional[str] = rest_field(name="osVersion", visibility=["read"])
+    """OS Version."""
+    build_number: Optional[str] = rest_field(name="buildNumber", visibility=["read"])
+    """OS Build Number."""
+    base_image_version: Optional[str] = rest_field(name="baseImageVersion", visibility=["read"])
+    """OS Base Image Version."""
+    image_version: Optional[str] = rest_field(name="imageVersion", visibility=["read"])
+    """OS Image Version."""
+
+
+class OsProvisionProfile(_Model):
+    """Operating system profile.
+
+    :ivar os_name: Name of the operating system.
+    :vartype os_name: str
+    :ivar os_type: Type of the operating system.
+    :vartype os_type: str
+    :ivar os_version: Version of the operating system.
+    :vartype os_version: str
+    :ivar os_image_location: Location of the operating system image.
+    :vartype os_image_location: str
+    :ivar vsr_version: Validated Solution Recipe version to be used for the job.
+    :vartype vsr_version: str
+    :ivar image_hash: Hash of the OS package downloaded.
+    :vartype image_hash: str
+    :ivar gpg_pub_key: GPG Public Key used for package verification.
+    :vartype gpg_pub_key: str
+    :ivar operation_type: Operation sub type of OS Provisioning. Known values are: "Provision",
+     "Update", and "ReImage".
+    :vartype operation_type: str or ~azure.mgmt.azurestackhci.models.OSOperationType
+    """
+
+    os_name: Optional[str] = rest_field(name="osName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the operating system."""
+    os_type: Optional[str] = rest_field(name="osType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the operating system."""
+    os_version: Optional[str] = rest_field(name="osVersion", visibility=["read", "create", "update", "delete", "query"])
+    """Version of the operating system."""
+    os_image_location: Optional[str] = rest_field(
+        name="osImageLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Location of the operating system image."""
+    vsr_version: Optional[str] = rest_field(
+        name="vsrVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Validated Solution Recipe version to be used for the job."""
+    image_hash: Optional[str] = rest_field(name="imageHash", visibility=["read", "create", "update", "delete", "query"])
+    """Hash of the OS package downloaded."""
+    gpg_pub_key: Optional[str] = rest_field(
+        name="gpgPubKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GPG Public Key used for package verification."""
+    operation_type: Optional[Union[str, "_models.OSOperationType"]] = rest_field(
+        name="operationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Operation sub type of OS Provisioning. Known values are: \"Provision\", \"Update\", and
+     \"ReImage\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        os_name: Optional[str] = None,
+        os_type: Optional[str] = None,
+        os_version: Optional[str] = None,
+        os_image_location: Optional[str] = None,
+        vsr_version: Optional[str] = None,
+        image_hash: Optional[str] = None,
+        gpg_pub_key: Optional[str] = None,
+        operation_type: Optional[Union[str, "_models.OSOperationType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OwnershipVoucherDetails(_Model):
+    """Details for ownership voucher.
+
+    :ivar ownership_voucher: Ownership voucher in base64 encoded format. Required.
+    :vartype ownership_voucher: str
+    :ivar owner_key_type: Owner key type. Required. "MicrosoftManaged"
+    :vartype owner_key_type: str or ~azure.mgmt.azurestackhci.models.OwnerKeyType
+    :ivar validation_details: Ownership Voucher Validation Details.
+    :vartype validation_details: ~azure.mgmt.azurestackhci.models.OwnershipVoucherValidationDetails
+    """
+
+    ownership_voucher: str = rest_field(
+        name="ownershipVoucher", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ownership voucher in base64 encoded format. Required."""
+    owner_key_type: Union[str, "_models.OwnerKeyType"] = rest_field(
+        name="ownerKeyType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Owner key type. Required. \"MicrosoftManaged\""""
+    validation_details: Optional["_models.OwnershipVoucherValidationDetails"] = rest_field(
+        name="validationDetails", visibility=["read"]
+    )
+    """Ownership Voucher Validation Details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ownership_voucher: str,
+        owner_key_type: Union[str, "_models.OwnerKeyType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OwnershipVoucherValidationDetails(_Model):
+    """Ownership Voucher Validation Details.
+
+    :ivar validation_status: The ownership voucher validation status. Known values are: "Valid" and
+     "Invalid".
+    :vartype validation_status: str or
+     ~azure.mgmt.azurestackhci.models.OwnershipVoucherValidationStatus
+    :ivar serial_number: Serial number of the device.
+    :vartype serial_number: str
+    :ivar id: FDO guid of the Ownership Voucher.
+    :vartype id: str
+    :ivar manufacturer: Name of the manufacturer.
+    :vartype manufacturer: str
+    :ivar model_name: Name of the model.
+    :vartype model_name: str
+    :ivar version: Version of the Ownership Voucher format.
+    :vartype version: str
+    :ivar azure_machine_id: Azure Machine Id of the Ownership voucher.
+    :vartype azure_machine_id: str
+    :ivar error: Error details if the validation failed.
+    :vartype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
+    """
+
+    validation_status: Optional[Union[str, "_models.OwnershipVoucherValidationStatus"]] = rest_field(
+        name="validationStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ownership voucher validation status. Known values are: \"Valid\" and \"Invalid\"."""
+    serial_number: Optional[str] = rest_field(
+        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Serial number of the device."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """FDO guid of the Ownership Voucher."""
+    manufacturer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the manufacturer."""
+    model_name: Optional[str] = rest_field(name="modelName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the model."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Version of the Ownership Voucher format."""
+    azure_machine_id: Optional[str] = rest_field(
+        name="azureMachineId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure Machine Id of the Ownership voucher."""
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error details if the validation failed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        validation_status: Optional[Union[str, "_models.OwnershipVoucherValidationStatus"]] = None,
+        serial_number: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        manufacturer: Optional[str] = None,
+        model_name: Optional[str] = None,
+        version: Optional[str] = None,
+        azure_machine_id: Optional[str] = None,
+        error: Optional["_models.ErrorDetail"] = None,
     ) -> None: ...
 
     @overload
@@ -4848,6 +7346,8 @@ class PerNodeRemoteSupportSession(_Model):
     :ivar access_level: Remote Support Access Level. Known values are: "Diagnostics" and
      "DiagnosticsAndRepair".
     :vartype access_level: str or ~azure.mgmt.azurestackhci.models.AccessLevel
+    :ivar transcript_location: The location where the session transcript is stored.
+    :vartype transcript_location: str
     """
 
     session_start_time: Optional[datetime.datetime] = rest_field(
@@ -4864,6 +7364,8 @@ class PerNodeRemoteSupportSession(_Model):
     """Duration of Remote Support Enablement."""
     access_level: Optional[Union[str, "_models.AccessLevel"]] = rest_field(name="accessLevel", visibility=["read"])
     """Remote Support Access Level. Known values are: \"Diagnostics\" and \"DiagnosticsAndRepair\"."""
+    transcript_location: Optional[str] = rest_field(name="transcriptLocation", visibility=["read"])
+    """The location where the session transcript is stored."""
 
 
 class PerNodeState(_Model):
@@ -4924,6 +7426,173 @@ class PhysicalNodes(_Model):
         *,
         name: Optional[str] = None,
         ipv4_address: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformPayload(_Model):
+    """Represents details of a specific platform update payload.
+
+    :ivar payload_url: Represents url of a platform update payload.
+    :vartype payload_url: str
+    :ivar payload_hash: Represents hash of a platform update payload.
+    :vartype payload_hash: str
+    :ivar payload_package_size_in_bytes: Represents size in bytes of a platform update payload.
+    :vartype payload_package_size_in_bytes: str
+    :ivar payload_identifier: Represents identifier of a platform update payload.
+    :vartype payload_identifier: str
+    """
+
+    payload_url: Optional[str] = rest_field(
+        name="payloadUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents url of a platform update payload."""
+    payload_hash: Optional[str] = rest_field(
+        name="payloadHash", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents hash of a platform update payload."""
+    payload_package_size_in_bytes: Optional[str] = rest_field(
+        name="payloadPackageSizeInBytes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents size in bytes of a platform update payload."""
+    payload_identifier: Optional[str] = rest_field(
+        name="payloadIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents identifier of a platform update payload."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        payload_url: Optional[str] = None,
+        payload_hash: Optional[str] = None,
+        payload_package_size_in_bytes: Optional[str] = None,
+        payload_identifier: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformUpdate(ProxyResource):
+    """Represents a platform update resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.PlatformUpdateProperties
+    """
+
+    properties: Optional["_models.PlatformUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PlatformUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformUpdateDetails(_Model):
+    """Represents details of a specific platform update.
+
+    :ivar validated_solution_recipe_version: Represents validated solution recipe version of a
+     platform update.
+    :vartype validated_solution_recipe_version: str
+    :ivar platform_version: Represents version of a platform update.
+    :vartype platform_version: str
+    :ivar platform_payloads: Represents the platform payloads of a platform update. Required.
+    :vartype platform_payloads: list[~azure.mgmt.azurestackhci.models.PlatformPayload]
+    """
+
+    validated_solution_recipe_version: Optional[str] = rest_field(
+        name="validatedSolutionRecipeVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents validated solution recipe version of a platform update."""
+    platform_version: Optional[str] = rest_field(
+        name="platformVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents version of a platform update."""
+    platform_payloads: list["_models.PlatformPayload"] = rest_field(
+        name="platformPayloads", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the platform payloads of a platform update. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        platform_payloads: list["_models.PlatformPayload"],
+        validated_solution_recipe_version: Optional[str] = None,
+        platform_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformUpdateProperties(_Model):
+    """Represents properties of a platform update resource.
+
+    :ivar platform_update_details: Represents applicable platform updates. Required.
+    :vartype platform_update_details: list[~azure.mgmt.azurestackhci.models.PlatformUpdateDetails]
+    """
+
+    platform_update_details: list["_models.PlatformUpdateDetails"] = rest_field(
+        name="platformUpdateDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents applicable platform updates. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        platform_update_details: list["_models.PlatformUpdateDetails"],
     ) -> None: ...
 
     @overload
@@ -5108,6 +7777,265 @@ class PrecheckResultTags(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ProvisioningDetails(_Model):
+    """Details for device provisioning.
+
+    :ivar os_profile: Operating system profile. Required.
+    :vartype os_profile: ~azure.mgmt.azurestackhci.models.OsProvisionProfile
+    :ivar user_details: User configuration.
+    :vartype user_details: list[~azure.mgmt.azurestackhci.models.UserDetails]
+    """
+
+    os_profile: "_models.OsProvisionProfile" = rest_field(
+        name="osProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Operating system profile. Required."""
+    user_details: Optional[list["_models.UserDetails"]] = rest_field(
+        name="userDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """User configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        os_profile: "_models.OsProvisionProfile",
+        user_details: Optional[list["_models.UserDetails"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProvisioningRequest(_Model):
+    """Represents a provisioning request.
+
+    :ivar target: Target operating system to support polymorphic resource. Required. Known values
+     are: "AzureLinux" and "HCI".
+    :vartype target: str or ~azure.mgmt.azurestackhci.models.ProvisioningOsType
+    :ivar os_profile: Operating system profile. Required.
+    :vartype os_profile: ~azure.mgmt.azurestackhci.models.OsProvisionProfile
+    :ivar user_details: User configuration.
+    :vartype user_details: list[~azure.mgmt.azurestackhci.models.UserDetails]
+    :ivar onboarding_configuration: Onboarding configuration.
+    :vartype onboarding_configuration: ~azure.mgmt.azurestackhci.models.OnboardingConfiguration
+    :ivar device_configuration: Device configuration.
+    :vartype device_configuration: ~azure.mgmt.azurestackhci.models.TargetDeviceConfiguration
+    :ivar custom_configuration: Base64 encoded custom configuration for CAPI to use.
+    :vartype custom_configuration: str
+    """
+
+    target: Union[str, "_models.ProvisioningOsType"] = rest_field(visibility=["read", "create"])
+    """Target operating system to support polymorphic resource. Required. Known values are:
+     \"AzureLinux\" and \"HCI\"."""
+    os_profile: "_models.OsProvisionProfile" = rest_field(
+        name="osProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Operating system profile. Required."""
+    user_details: Optional[list["_models.UserDetails"]] = rest_field(
+        name="userDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """User configuration."""
+    onboarding_configuration: Optional["_models.OnboardingConfiguration"] = rest_field(
+        name="onboardingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Onboarding configuration."""
+    device_configuration: Optional["_models.TargetDeviceConfiguration"] = rest_field(
+        name="deviceConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Device configuration."""
+    custom_configuration: Optional[str] = rest_field(
+        name="customConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Base64 encoded custom configuration for CAPI to use."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target: Union[str, "_models.ProvisioningOsType"],
+        os_profile: "_models.OsProvisionProfile",
+        user_details: Optional[list["_models.UserDetails"]] = None,
+        onboarding_configuration: Optional["_models.OnboardingConfiguration"] = None,
+        device_configuration: Optional["_models.TargetDeviceConfiguration"] = None,
+        custom_configuration: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProvisionOsJobProperties(EdgeMachineJobProperties, discriminator="ProvisionOs"):
+    """Represents the properties of an Azure Linux restricted operating environment Provision Os job.
+
+    :ivar deployment_mode: Deployment mode to trigger job. Known values are: "Validate" and
+     "Deploy".
+    :vartype deployment_mode: str or ~azure.mgmt.azurestackhci.models.DeploymentMode
+    :ivar provisioning_state: Job provisioning state. Known values are: "NotSpecified", "Error",
+     "Succeeded", "Failed", "Canceled", "Connected", "Disconnected", "Deleted", "Creating",
+     "Updating", "Deleting", "Moving", "PartiallySucceeded", "PartiallyConnected", "InProgress",
+     "Accepted", "Provisioning", and "DisableInProgress".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhci.models.ProvisioningState
+    :ivar job_id: Unique, immutable job id.
+    :vartype job_id: str
+    :ivar start_time_utc: The UTC date and time at which the job started.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The UTC date and time at which the job completed.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar status: Status of Edge device job. Known values are: "NotSpecified",
+     "ValidationInProgress", "ValidationSuccess", "ValidationFailed", "DeploymentInProgress",
+     "DeploymentFailed", "DeploymentSuccess", "Succeeded", "Failed", "Canceled", "Paused", and
+     "Scheduled".
+    :vartype status: str or ~azure.mgmt.azurestackhci.models.JobStatus
+    :ivar error: error details.
+    :vartype error: ~azure.mgmt.azurestackhci.models.ErrorDetail
+    :ivar job_type: Job Type to support polymorphic resource. Required. Job to provision operating
+     system in the device.
+    :vartype job_type: str or ~azure.mgmt.azurestackhci.models.PROVISION_OS
+    :ivar provisioning_request: Os Provisioning request. Required.
+    :vartype provisioning_request: ~azure.mgmt.azurestackhci.models.ProvisioningRequest
+    :ivar reported_properties: Reported Properties for Provision Os job.
+    :vartype reported_properties: ~azure.mgmt.azurestackhci.models.ProvisionOsReportedProperties
+    """
+
+    job_type: Literal[EdgeMachineJobType.PROVISION_OS] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Job Type to support polymorphic resource. Required. Job to provision operating system in the
+     device."""
+    provisioning_request: "_models.ProvisioningRequest" = rest_field(
+        name="provisioningRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Os Provisioning request. Required."""
+    reported_properties: Optional["_models.ProvisionOsReportedProperties"] = rest_field(
+        name="reportedProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reported Properties for Provision Os job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provisioning_request: "_models.ProvisioningRequest",
+        deployment_mode: Optional[Union[str, "_models.DeploymentMode"]] = None,
+        reported_properties: Optional["_models.ProvisionOsReportedProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = EdgeMachineJobType.PROVISION_OS  # type: ignore
+
+
+class ProvisionOsReportedProperties(_Model):
+    """Reported Properties for Provision Os job.
+
+    :ivar percent_complete: The percentage of the job that is complete.
+    :vartype percent_complete: int
+    :ivar validation_status: Validation status of job.
+    :vartype validation_status: ~azure.mgmt.azurestackhci.models.EceActionStatus
+    :ivar deployment_status: Deployment status of job.
+    :vartype deployment_status: ~azure.mgmt.azurestackhci.models.EceActionStatus
+    """
+
+    percent_complete: Optional[int] = rest_field(name="percentComplete", visibility=["read"])
+    """The percentage of the job that is complete."""
+    validation_status: Optional["_models.EceActionStatus"] = rest_field(name="validationStatus", visibility=["read"])
+    """Validation status of job."""
+    deployment_status: Optional["_models.EceActionStatus"] = rest_field(name="deploymentStatus", visibility=["read"])
+    """Deployment status of job."""
+
+
+class Publisher(ProxyResource):
+    """Publisher details.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar properties: Publisher properties.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.PublisherProperties
+    """
+
+    properties: Optional["_models.PublisherProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Publisher properties."""
+
+    __flattened_items = ["provisioning_state"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PublisherProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class PublisherProperties(_Model):
+    """Publisher properties.
+
+    :ivar provisioning_state: Provisioning State.
+    :vartype provisioning_state: str
+    """
+
+    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
+    """Provisioning State."""
+
+
 class QosPolicyOverrides(_Model):
     """The QoSPolicyOverrides of a cluster.
 
@@ -5244,6 +8172,34 @@ class ReconcileArcSettingsRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ReleaseDeviceRequest(_Model):
+    """Request for releasing devices of the pool.
+
+    :ivar devices: List of resource ids of the devices to be modified. Required.
+    :vartype devices: list[str]
+    """
+
+    devices: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of resource ids of the devices to be modified. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        devices: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RemoteSupportJobNodeSettings(_Model):
     """Represents the settings of a remote support node.
 
@@ -5355,6 +8311,10 @@ class RemoteSupportProperties(_Model):
     :ivar remote_support_session_details:
     :vartype remote_support_session_details:
      list[~azure.mgmt.azurestackhci.models.PerNodeRemoteSupportSession]
+    :ivar remote_support_provisioning_state: Remote Support Provisioning State. Known values are:
+     "None", "GrantInProgress", "RevokeInProgress", "Succeeded", and "Failed".
+    :vartype remote_support_provisioning_state: str or
+     ~azure.mgmt.azurestackhci.models.RemoteSupportProvisioningState
     """
 
     access_level: Optional[Union[str, "_models.AccessLevel"]] = rest_field(name="accessLevel", visibility=["read"])
@@ -5373,6 +8333,11 @@ class RemoteSupportProperties(_Model):
     remote_support_session_details: Optional[list["_models.PerNodeRemoteSupportSession"]] = rest_field(
         name="remoteSupportSessionDetails", visibility=["read"]
     )
+    remote_support_provisioning_state: Optional[Union[str, "_models.RemoteSupportProvisioningState"]] = rest_field(
+        name="remoteSupportProvisioningState", visibility=["read"]
+    )
+    """Remote Support Provisioning State. Known values are: \"None\", \"GrantInProgress\",
+     \"RevokeInProgress\", \"Succeeded\", and \"Failed\"."""
 
 
 class RemoteSupportRequest(_Model):
@@ -5482,6 +8447,171 @@ class RemoteSupportSession(_Model):
      \"Diagnostics\", and \"DiagnosticsAndRepair\"."""
     transcript_location: Optional[str] = rest_field(name="transcriptLocation", visibility=["read"])
     """The location where the session transcript is stored."""
+
+
+class SanAdapterIPConfig(_Model):
+    """Per-adapter IP configuration for SAN cluster network.
+
+    :ivar name: Logical name of the adapter IP configuration (e.g., clusterNetwork-A).
+    :vartype name: str
+    :ivar network_adapter_name: Physical NIC name (e.g., ethernet 3).
+    :vartype network_adapter_name: str
+    :ivar vlan_id: VLAN ID (0-4095). Value of 0 or omitted means untagged.
+    :vartype vlan_id: int
+    :ivar address_prefix: Subnet address prefix in CIDR notation (e.g., 10.10.30.0/24).
+    :vartype address_prefix: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Logical name of the adapter IP configuration (e.g., clusterNetwork-A)."""
+    network_adapter_name: Optional[str] = rest_field(
+        name="networkAdapterName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Physical NIC name (e.g., ethernet 3)."""
+    vlan_id: Optional[int] = rest_field(name="vlanId", visibility=["read", "create", "update", "delete", "query"])
+    """VLAN ID (0-4095). Value of 0 or omitted means untagged."""
+    address_prefix: Optional[str] = rest_field(
+        name="addressPrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Subnet address prefix in CIDR notation (e.g., 10.10.30.0/24)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        network_adapter_name: Optional[str] = None,
+        vlan_id: Optional[int] = None,
+        address_prefix: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SanAdapterProperties(_Model):
+    """QoS and adapter property overrides for SAN cluster network traffic.
+
+    :ivar priority_value8021_action_cluster: 802.1p priority value for cluster traffic.
+    :vartype priority_value8021_action_cluster: int
+    :ivar priority_value8021_action_smb: 802.1p priority value for SMB traffic.
+    :vartype priority_value8021_action_smb: int
+    :ivar bandwidth_percentage_smb: SMB bandwidth percentage (1-97).
+    :vartype bandwidth_percentage_smb: int
+    :ivar jumbo_packet: Jumbo frame size in bytes.
+    :vartype jumbo_packet: int
+    """
+
+    priority_value8021_action_cluster: Optional[int] = rest_field(
+        name="priorityValue8021ActionCluster", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """802.1p priority value for cluster traffic."""
+    priority_value8021_action_smb: Optional[int] = rest_field(
+        name="priorityValue8021ActionSmb", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """802.1p priority value for SMB traffic."""
+    bandwidth_percentage_smb: Optional[int] = rest_field(
+        name="bandwidthPercentageSmb", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SMB bandwidth percentage (1-97)."""
+    jumbo_packet: Optional[int] = rest_field(
+        name="jumboPacket", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Jumbo frame size in bytes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        priority_value8021_action_cluster: Optional[int] = None,
+        priority_value8021_action_smb: Optional[int] = None,
+        bandwidth_percentage_smb: Optional[int] = None,
+        jumbo_packet: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SanClusterNetworkConfig(_Model):
+    """Cluster network configuration for SAN deployments (CSV/LiveMig traffic).
+
+    :ivar adapter_properties: QoS and adapter overrides for the cluster network.
+    :vartype adapter_properties: ~azure.mgmt.azurestackhci.models.SanAdapterProperties
+    :ivar adapter_ip_config: Per-adapter IP configuration for the cluster network.
+    :vartype adapter_ip_config: list[~azure.mgmt.azurestackhci.models.SanAdapterIPConfig]
+    """
+
+    adapter_properties: Optional["_models.SanAdapterProperties"] = rest_field(
+        name="adapterProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """QoS and adapter overrides for the cluster network."""
+    adapter_ip_config: Optional[list["_models.SanAdapterIPConfig"]] = rest_field(
+        name="adapterIPConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per-adapter IP configuration for the cluster network."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        adapter_properties: Optional["_models.SanAdapterProperties"] = None,
+        adapter_ip_config: Optional[list["_models.SanAdapterIPConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SanNetworks(_Model):
+    """SAN network configuration for host network of AzureStackHCI Cluster.
+
+    :ivar cluster_network_config: Cluster (CSV/LiveMig) network configuration for SAN deployments.
+    :vartype cluster_network_config: ~azure.mgmt.azurestackhci.models.SanClusterNetworkConfig
+    """
+
+    cluster_network_config: Optional["_models.SanClusterNetworkConfig"] = rest_field(
+        name="clusterNetworkConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cluster (CSV/LiveMig) network configuration for SAN deployments."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_network_config: Optional["_models.SanClusterNetworkConfig"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SbeCredentials(_Model):
@@ -6035,6 +9165,44 @@ class ServiceConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SiteDetails(_Model):
+    """Site Details consists of common configurations.
+
+    :ivar site_resource_id: Site resource Id to be set during Edge Machine resource creation.
+     Required.
+    :vartype site_resource_id: str
+    :ivar device_configuration: Edge Device configuration received from site common configuration.
+    :vartype device_configuration: ~azure.mgmt.azurestackhci.models.TargetDeviceConfiguration
+    """
+
+    site_resource_id: str = rest_field(
+        name="siteResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Site resource Id to be set during Edge Machine resource creation. Required."""
+    device_configuration: Optional["_models.TargetDeviceConfiguration"] = rest_field(
+        name="deviceConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Edge Device configuration received from site common configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        site_resource_id: str,
+        device_configuration: Optional["_models.TargetDeviceConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Sku(ProxyResource):
     """Sku details.
 
@@ -6397,6 +9565,15 @@ class Storage(_Model):
      configured as per best practices based on the number of nodes in the cluster. Allowed values
      are 'Express','InfraOnly', 'KeepStorage'.
     :vartype configuration_mode: str
+    :ivar storage_type: Storage type for the HCI Cluster. Allowed values are 'S2D', 'SAN',
+     'SANS2D'. Known values are: "S2D", "SAN", and "SANS2D".
+    :vartype storage_type: str or ~azure.mgmt.azurestackhci.models.StorageType
+    :ivar s2_d: S2D (Storage Spaces Direct) configuration. Applicable when StorageType is 'S2D' or
+     'SANS2D'.
+    :vartype s2_d: ~azure.mgmt.azurestackhci.models.StorageS2dConfig
+    :ivar san: SAN (Storage Area Network) configuration. Applicable when StorageType is 'SAN' or
+     'SANS2D'.
+    :vartype san: ~azure.mgmt.azurestackhci.models.StorageSanConfig
     """
 
     configuration_mode: Optional[str] = rest_field(
@@ -6405,12 +9582,145 @@ class Storage(_Model):
     """By default, this mode is set to Express and your storage is configured as per best practices
      based on the number of nodes in the cluster. Allowed values are 'Express','InfraOnly',
      'KeepStorage'."""
+    storage_type: Optional[Union[str, "_models.StorageType"]] = rest_field(
+        name="storageType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage type for the HCI Cluster. Allowed values are 'S2D', 'SAN', 'SANS2D'. Known values are:
+     \"S2D\", \"SAN\", and \"SANS2D\"."""
+    s2_d: Optional["_models.StorageS2dConfig"] = rest_field(
+        name="s2d", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """S2D (Storage Spaces Direct) configuration. Applicable when StorageType is 'S2D' or 'SANS2D'."""
+    san: Optional["_models.StorageSanConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """SAN (Storage Area Network) configuration. Applicable when StorageType is 'SAN' or 'SANS2D'."""
 
     @overload
     def __init__(
         self,
         *,
         configuration_mode: Optional[str] = None,
+        storage_type: Optional[Union[str, "_models.StorageType"]] = None,
+        s2_d: Optional["_models.StorageS2dConfig"] = None,
+        san: Optional["_models.StorageSanConfig"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageConfiguration(_Model):
+    """Storage configuration.
+
+    :ivar partition_size: Partition size.
+    :vartype partition_size: str
+    """
+
+    partition_size: Optional[str] = rest_field(
+        name="partitionSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Partition size."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        partition_size: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageProfile(_Model):
+    """StorageProfile of edge machine.
+
+    :ivar poolable_disks_count: Number of storage disks in the device with $CanPool as true.
+    :vartype poolable_disks_count: int
+    """
+
+    poolable_disks_count: Optional[int] = rest_field(name="poolableDisksCount", visibility=["read"])
+    """Number of storage disks in the device with $CanPool as true."""
+
+
+class StorageS2dConfig(_Model):
+    """The S2D (Storage Spaces Direct) configuration for AzureStackHCI Cluster storage.
+
+    :ivar volume_type: Volume provisioning type. Allowed values are 'Fixed', 'ThinProvisioned'.
+     Known values are: "Fixed" and "ThinProvisioned".
+    :vartype volume_type: str or ~azure.mgmt.azurestackhci.models.VolumeType
+    :ivar overprovisioning_ratio: Overprovisioning ratio for S2D storage. Allowed values are '0',
+     '1', '2'. Known values are: "0", "1", and "2".
+    :vartype overprovisioning_ratio: str or ~azure.mgmt.azurestackhci.models.OverprovisioningRatio
+    """
+
+    volume_type: Optional[Union[str, "_models.VolumeType"]] = rest_field(
+        name="volumeType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Volume provisioning type. Allowed values are 'Fixed', 'ThinProvisioned'. Known values are:
+     \"Fixed\" and \"ThinProvisioned\"."""
+    overprovisioning_ratio: Optional[Union[str, "_models.OverprovisioningRatio"]] = rest_field(
+        name="overprovisioningRatio", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Overprovisioning ratio for S2D storage. Allowed values are '0', '1', '2'. Known values are:
+     \"0\", \"1\", and \"2\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        volume_type: Optional[Union[str, "_models.VolumeType"]] = None,
+        overprovisioning_ratio: Optional[Union[str, "_models.OverprovisioningRatio"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageSanConfig(_Model):
+    """The SAN (Storage Area Network) configuration for AzureStackHCI Cluster storage.
+
+    :ivar infra_vol_lun_id: Infrastructure volume LUN ID (e.g. PURE1234567890ABCDEF).
+    :vartype infra_vol_lun_id: str
+    :ivar infra_perf_lun_id: Infrastructure performance LUN ID.
+    :vartype infra_perf_lun_id: str
+    """
+
+    infra_vol_lun_id: Optional[str] = rest_field(
+        name="infraVolLunId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Infrastructure volume LUN ID (e.g. PURE1234567890ABCDEF)."""
+    infra_perf_lun_id: Optional[str] = rest_field(
+        name="infraPerfLunId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Infrastructure performance LUN ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        infra_vol_lun_id: Optional[str] = None,
+        infra_perf_lun_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -6529,6 +9839,102 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
+class TargetDeviceConfiguration(_Model):
+    """Device configuration.
+
+    :ivar network: Network configuration.
+    :vartype network: ~azure.mgmt.azurestackhci.models.NetworkConfiguration
+    :ivar host_name: Hostname of the device.
+    :vartype host_name: str
+    :ivar web_proxy: Web proxy configuration.
+    :vartype web_proxy: ~azure.mgmt.azurestackhci.models.WebProxyConfiguration
+    :ivar time: Time configuration.
+    :vartype time: ~azure.mgmt.azurestackhci.models.TimeConfiguration
+    :ivar storage: Storage configuration.
+    :vartype storage: ~azure.mgmt.azurestackhci.models.StorageConfiguration
+    """
+
+    network: Optional["_models.NetworkConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Network configuration."""
+    host_name: Optional[str] = rest_field(name="hostName", visibility=["read", "create", "update", "delete", "query"])
+    """Hostname of the device."""
+    web_proxy: Optional["_models.WebProxyConfiguration"] = rest_field(
+        name="webProxy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Web proxy configuration."""
+    time: Optional["_models.TimeConfiguration"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Time configuration."""
+    storage: Optional["_models.StorageConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        network: Optional["_models.NetworkConfiguration"] = None,
+        host_name: Optional[str] = None,
+        web_proxy: Optional["_models.WebProxyConfiguration"] = None,
+        time: Optional["_models.TimeConfiguration"] = None,
+        storage: Optional["_models.StorageConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TimeConfiguration(_Model):
+    """Time configuration.
+
+    :ivar primary_time_server: Primary NTP server.
+    :vartype primary_time_server: str
+    :ivar secondary_time_server: Secondary NTP server.
+    :vartype secondary_time_server: str
+    :ivar time_zone: Time zone.
+    :vartype time_zone: str
+    """
+
+    primary_time_server: Optional[str] = rest_field(
+        name="primaryTimeServer", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Primary NTP server."""
+    secondary_time_server: Optional[str] = rest_field(
+        name="secondaryTimeServer", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secondary NTP server."""
+    time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
+    """Time zone."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        primary_time_server: Optional[str] = None,
+        secondary_time_server: Optional[str] = None,
+        time_zone: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Update(ProxyResource):
     """Update details.
 
@@ -6562,6 +9968,77 @@ class Update(ProxyResource):
         *,
         properties: Optional["_models.UpdateProperties"] = None,
         location: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpdateContent(ProxyResource):
+    """Represents a update content.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhci.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhci.models.UpdateContentProperties
+    """
+
+    properties: Optional["_models.UpdateContentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.UpdateContentProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpdateContentProperties(_Model):
+    """Represents properties of a update content resource.
+
+    :ivar update_payloads: Represents the payloads of a update content resource. Required.
+    :vartype update_payloads: list[~azure.mgmt.azurestackhci.models.ContentPayload]
+    """
+
+    update_payloads: list["_models.ContentPayload"] = rest_field(
+        name="updatePayloads", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the payloads of a update content resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        update_payloads: list["_models.ContentPayload"],
     ) -> None: ...
 
     @overload
@@ -6640,7 +10117,8 @@ class UpdateProperties(_Model):
      "HasPrerequisite", "Obsolete", "Ready", "NotApplicableBecauseAnotherUpdateIsInProgress",
      "Preparing", "Installing", "Installed", "PreparationFailed", "InstallationFailed", "Invalid",
      "Recalled", "Downloading", "DownloadFailed", "HealthChecking", "HealthCheckFailed",
-     "ReadyToInstall", "ScanInProgress", "ScanFailed", and "AdditionalContentRequired".
+     "ReadyToInstall", "ScanInProgress", "ScanFailed", "AdditionalContentRequired",
+     "HealthCheckExpired", and "PendingOEMValidation".
     :vartype state: str or ~azure.mgmt.azurestackhci.models.State
     :ivar prerequisites: If update State is HasPrerequisite, this property contains an array of
      objects describing prerequisite updates before installing this update. Otherwise, it is empty.
@@ -6716,7 +10194,8 @@ class UpdateProperties(_Model):
      \"Obsolete\", \"Ready\", \"NotApplicableBecauseAnotherUpdateIsInProgress\", \"Preparing\",
      \"Installing\", \"Installed\", \"PreparationFailed\", \"InstallationFailed\", \"Invalid\",
      \"Recalled\", \"Downloading\", \"DownloadFailed\", \"HealthChecking\", \"HealthCheckFailed\",
-     \"ReadyToInstall\", \"ScanInProgress\", \"ScanFailed\", and \"AdditionalContentRequired\"."""
+     \"ReadyToInstall\", \"ScanInProgress\", \"ScanFailed\", \"AdditionalContentRequired\",
+     \"HealthCheckExpired\", and \"PendingOEMValidation\"."""
     prerequisites: Optional[list["_models.UpdatePrerequisite"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7290,6 +10769,57 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
+class UserDetails(_Model):
+    """User configuration.
+
+    :ivar user_name: Name of the user. Required.
+    :vartype user_name: str
+    :ivar secret_type: Type of the secret used for authentication. Required. Known values are:
+     "KeyVault" and "SshPubKey".
+    :vartype secret_type: str or ~azure.mgmt.azurestackhci.models.SecretType
+    :ivar secret_location: Location of the secret used for authentication.
+    :vartype secret_location: str
+    :ivar ssh_pub_key: SSH Public Key for the user.
+    :vartype ssh_pub_key: list[str]
+    """
+
+    user_name: str = rest_field(name="userName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the user. Required."""
+    secret_type: Union[str, "_models.SecretType"] = rest_field(
+        name="secretType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of the secret used for authentication. Required. Known values are: \"KeyVault\" and
+     \"SshPubKey\"."""
+    secret_location: Optional[str] = rest_field(
+        name="secretLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Location of the secret used for authentication."""
+    ssh_pub_key: Optional[list[str]] = rest_field(
+        name="sshPubKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SSH Public Key for the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_name: str,
+        secret_type: Union[str, "_models.SecretType"],
+        secret_location: Optional[str] = None,
+        ssh_pub_key: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ValidatedSolutionRecipe(ProxyResource):
     """Represents a validated solution recipe resource.
 
@@ -7714,6 +11244,68 @@ class ValidatedSolutionRecipeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ValidateOwnershipVouchersRequest(_Model):
+    """Validate Ownership Voucher Request.
+
+    :ivar ownership_voucher_details: Ownership Voucher Details. Required.
+    :vartype ownership_voucher_details:
+     list[~azure.mgmt.azurestackhci.models.OwnershipVoucherDetails]
+    """
+
+    ownership_voucher_details: list["_models.OwnershipVoucherDetails"] = rest_field(
+        name="ownershipVoucherDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ownership Voucher Details. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ownership_voucher_details: list["_models.OwnershipVoucherDetails"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ValidateOwnershipVouchersResponse(_Model):
+    """Validate Ownership Voucher Response.
+
+    :ivar ownership_voucher_validation_details: Ownership Voucher Validation Details. Required.
+    :vartype ownership_voucher_validation_details:
+     list[~azure.mgmt.azurestackhci.models.OwnershipVoucherValidationDetails]
+    """
+
+    ownership_voucher_validation_details: list["_models.OwnershipVoucherValidationDetails"] = rest_field(
+        name="ownershipVoucherValidationDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ownership Voucher Validation Details. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ownership_voucher_validation_details: list["_models.OwnershipVoucherValidationDetails"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ValidateRequest(_Model):
     """The validate request for Edge Device.
 
@@ -7760,3 +11352,45 @@ class ValidateResponse(_Model):
 
     status: Optional[str] = rest_field(visibility=["read"])
     """edge device validation status."""
+
+
+class WebProxyConfiguration(_Model):
+    """Web proxy configuration.
+
+    :ivar connection_uri: Connection URI of the web proxy.
+    :vartype connection_uri: str
+    :ivar port: Port of the web proxy.
+    :vartype port: str
+    :ivar bypass_list: Bypass list for the web proxy.
+    :vartype bypass_list: list[str]
+    """
+
+    connection_uri: Optional[str] = rest_field(
+        name="connectionUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Connection URI of the web proxy."""
+    port: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Port of the web proxy."""
+    bypass_list: Optional[list[str]] = rest_field(
+        name="bypassList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Bypass list for the web proxy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_uri: Optional[str] = None,
+        port: Optional[str] = None,
+        bypass_list: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)

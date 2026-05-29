@@ -4,9 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-from unittest.mock import patch, call, MagicMock
+from unittest.mock import patch, call, Mock, MagicMock
 import pytest
-from azure.appconfiguration.provider._client_manager import ConfigurationClientManager
+from azure.appconfiguration.provider._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper
+from azure.appconfiguration.provider._models import SettingSelector
 
 
 def _create_mock_credential():
@@ -322,3 +323,51 @@ class TestConfigurationClientManager(unittest.TestCase):
         assert 30000.0 <= manager._calculate_backoff(10) <= 600000.0
 
         assert manager_invalid._calculate_backoff(0) == 600000
+
+
+def test_check_page_etags_snapshot_first_then_keys():
+    """Refresh enabled without watch settings: snapshot selector first, then normal keys."""
+    mock_client = Mock()
+    wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client)
+
+    selects = [
+        SettingSelector(snapshot_name="my-snapshot"),
+        SettingSelector(key_filter="app/*"),
+    ]
+    page_etags = [[], ["etag1"]]
+
+    mock_response = Mock()
+    mock_response.by_page.return_value = iter([])
+    mock_client.list_configuration_settings.return_value = mock_response
+
+    result = wrapper.check_page_etags(selects, page_etags)
+
+    assert result is False
+    # Only the non-snapshot selector should trigger a service call
+    mock_client.list_configuration_settings.assert_called_once_with(
+        key_filter="app/*", label_filter="\0", tags_filter=None
+    )
+
+
+def test_check_page_etags_keys_first_then_snapshot():
+    """Refresh enabled without watch settings: normal keys first, then snapshot selector."""
+    mock_client = Mock()
+    wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client)
+
+    selects = [
+        SettingSelector(key_filter="app/*"),
+        SettingSelector(snapshot_name="my-snapshot"),
+    ]
+    page_etags = [["etag1"], []]
+
+    mock_response = Mock()
+    mock_response.by_page.return_value = iter([])
+    mock_client.list_configuration_settings.return_value = mock_response
+
+    result = wrapper.check_page_etags(selects, page_etags)
+
+    assert result is False
+    # Only the non-snapshot selector should trigger a service call
+    mock_client.list_configuration_settings.assert_called_once_with(
+        key_filter="app/*", label_filter="\0", tags_filter=None
+    )

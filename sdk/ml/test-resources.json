@@ -410,6 +410,34 @@
       "metadata": {
         "description": "Specifies the name of the Azure Machine Learning feature store."
       }
+    },
+    "registryName": {
+      "type": "string",
+      "defaultValue": "sdk-test-registry",
+      "metadata": {
+        "description": "Specifies the name of the Azure ML Registry for model/component sharing."
+      }
+    },
+    "adlsAccountName": {
+      "type": "string",
+      "defaultValue": "[concat('adls', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Specifies the name of the ADLS Gen2 storage account (HNS enabled) for feature store offline store."
+      }
+    },
+    "redisCacheName": {
+      "type": "string",
+      "defaultValue": "[concat('redis', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Specifies the name of the Azure Cache for Redis for feature store online store."
+      }
+    },
+    "testIdentityName": {
+      "type": "string",
+      "defaultValue": "[concat('test-identity-', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Specifies the name of the user-assigned managed identity for test operations."
+      }
     }
   },
   "variables": {
@@ -904,6 +932,71 @@
       }
     },
     {
+      "type": "Microsoft.MachineLearningServices/registries",
+      "apiVersion": "2023-04-01",
+      "name": "[parameters('registryName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tagValues')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "regionDetails": [
+          {
+            "location": "[parameters('location')]",
+            "storageAccountDetails": [],
+            "acrDetails": [
+              {
+                "systemCreatedAcrAccount": {
+                  "acrAccountSku": "Standard"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-09-01",
+      "name": "[parameters('adlsAccountName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tagValues')]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "isHnsEnabled": true,
+        "supportsHttpsTrafficOnly": true,
+        "minimumTlsVersion": "TLS1_2",
+        "accessTier": "Hot"
+      }
+    },
+    {
+      "type": "Microsoft.Cache/redis",
+      "apiVersion": "2023-08-01",
+      "name": "[parameters('redisCacheName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tagValues')]",
+      "properties": {
+        "sku": {
+          "name": "Basic",
+          "family": "C",
+          "capacity": 0
+        },
+        "enableNonSslPort": false,
+        "minimumTlsVersion": "1.2"
+      }
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[parameters('testIdentityName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tagValues')]"
+    },
+    {
       "type": "Microsoft.MachineLearningServices/workspaces",
       "apiVersion": "2020-09-01-preview",
       "name": "[parameters('featureStoreName')]",
@@ -967,6 +1060,26 @@
     "ML_FEATURE_STORE_NAME": {
       "type": "string",
       "value": "[parameters('featureStoreName')]"
+    },
+    "ML_REGISTRY_NAME": {
+      "type": "string",
+      "value": "[parameters('registryName')]"
+    },
+    "ML_ADLS_ACCOUNT_NAME": {
+      "type": "string",
+      "value": "[parameters('adlsAccountName')]"
+    },
+    "ML_REDIS_NAME": {
+      "type": "string",
+      "value": "[parameters('redisCacheName')]"
+    },
+    "ML_IDENTITY_NAME": {
+      "type": "string",
+      "value": "[parameters('testIdentityName')]"
+    },
+    "ML_IDENTITY_CLIENT_ID": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('testIdentityName'))).clientId]"
     }
   }
 }
