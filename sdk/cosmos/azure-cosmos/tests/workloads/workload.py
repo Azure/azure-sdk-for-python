@@ -86,6 +86,10 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                         await query_items_concurrently(
                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
                         )
+                    if "feedrange_query" in ops:
+                        await query_items_by_feed_ranges_concurrently(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, stats
+                        )
                 except Exception as e:
                     client_logger.info("Exception in application layer")
                     client_logger.error(e)
@@ -158,6 +162,10 @@ def run_workload_sync(client_id, client_logger):
                     if "query" in ops:
                         query_items(
                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
+                        )
+                    if "feedrange_query" in ops:
+                        query_items_by_feed_ranges(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, stats
                         )
                 except Exception as e:
                     client_logger.info("Exception in application layer")

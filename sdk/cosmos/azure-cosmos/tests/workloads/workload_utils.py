@@ -284,3 +284,52 @@ class WorkloadLoggerFilter(logging.Filter):
             if record.duration >= 1000:
                 return True
         return False
+
+# ---------------------------------------------------------------------------
+# Feed-range query operations
+# ---------------------------------------------------------------------------
+
+_FEEDRANGE_COUNT_QUERY = "SELECT VALUE COUNT(1) FROM c"
+
+
+def query_items_by_feed_ranges(container, excluded_locations, stats=None):
+    """Sync: read feed ranges, then issue a simple query against each one."""
+    extra = _extra_kwargs(excluded_locations)
+    feed_ranges = _timed_call(
+        "ReadFeedRanges", stats, lambda: list(container.read_feed_ranges())
+    )
+    for fr in feed_ranges:
+        def _do_query(fr=fr):
+            results = container.query_items(
+                query=_FEEDRANGE_COUNT_QUERY, feed_range=fr, **extra,
+            )
+            return [item for item in results]
+        _timed_call("FeedRangeQuery", stats, _do_query)
+
+
+async def query_items_by_feed_ranges_concurrently(container, excluded_locations, stats=None):
+    """Async: read feed ranges, then issue a simple query against each in parallel."""
+    extra = _extra_kwargs(excluded_locations)
+    feed_ranges = await _timed_call_async(
+        "ReadFeedRanges", stats, _collect_feed_ranges_async(container)
+    )
+
+    async def _do_query(fr):
+        results = container.query_items(
+            query=_FEEDRANGE_COUNT_QUERY, feed_range=fr, **extra,
+        )
+        return [item async for item in results]
+
+    tasks = [
+        _timed_call_async("FeedRangeQuery", stats, _do_query(fr)) for fr in feed_ranges
+    ]
+    await asyncio.gather(*tasks)
+
+
+async def _collect_feed_ranges_async(container):
+    """read_feed_ranges may return either an awaitable list or an async iterator."""
+    result = container.read_feed_ranges()
+    if hasattr(result, "__aiter__"):
+        return [fr async for fr in result]
+    return list(await result)
+

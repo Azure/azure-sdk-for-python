@@ -45,7 +45,7 @@ NUMBER_OF_LOGICAL_PARTITIONS = int(
 THROUGHPUT = _safe_int(os.environ.get("COSMOS_THROUGHPUT", "100000"), 100000)  # For DR drills, set COSMOS_THROUGHPUT=1000000
 
 # Workload behavior
-_VALID_OPERATIONS = {"read", "write", "query"}
+_VALID_OPERATIONS = {"read", "write", "query", "feedrange_query"}
 WORKLOAD_OPERATIONS = frozenset(
     op.strip().lower()
     for op in os.environ.get("WORKLOAD_OPERATIONS", "read,write,query").split(",")
