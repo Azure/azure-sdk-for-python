@@ -303,7 +303,11 @@ def query_items_by_feed_ranges(container, excluded_locations, stats=None):
             results = container.query_items(
                 query=_FEEDRANGE_QUERY, feed_range=fr, **extra,
             )
-            return [item for item in results]
+            # iterate without buffering to bound memory
+            count = 0
+            for _ in results:
+                count += 1
+            return count
         _timed_call("FeedRangeQuery", stats, _do_query)
 
 
@@ -318,7 +322,11 @@ async def query_items_by_feed_ranges_concurrently(container, excluded_locations,
         results = container.query_items(
             query=_FEEDRANGE_QUERY, feed_range=fr, **extra,
         )
-        return [item async for item in results]
+        # iterate without buffering to bound memory
+        count = 0
+        async for _ in results:
+            count += 1
+        return count
 
     tasks = [
         _timed_call_async("FeedRangeQuery", stats, _do_query(fr)) for fr in feed_ranges
