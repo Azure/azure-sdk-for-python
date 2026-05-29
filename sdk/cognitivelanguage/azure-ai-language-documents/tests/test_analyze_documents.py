@@ -180,12 +180,18 @@ class TestAnalyzeDocuments(AnalyzeDocumentsClientTestBase):
         parsed = urlparse(operation_location["value"])
         job_id = parsed.path.rstrip("/").split("/")[-1]
 
+        # cancel_poller = client.begin_cancel_job(job_id=job_id, polling=False)
+        # print("initial cancel poller status:", cancel_poller.status())
+
+        # response = client.get_job_state(job_id=job_id)
+        # print("job state status:", response["status"])
+        
         cancel_poller = client.begin_cancel_job(job_id=job_id)
         assert cancel_poller is not None
         assert cancel_poller.continuation_token()
-        # cancel_poller.result()
+        cancel_poller.result()
 
-        # response = client.get_job_state(job_id=job_id)
-        # assert response is not None
-        # assert response["jobId"] == job_id
-        # assert response["status"] in ["cancelled", "cancelling", "notStarted"]
+        response = client.get_job_state(job_id=job_id)
+        assert response is not None
+        assert response["jobId"] == job_id
+        assert response["status"] in ["cancelled", "cancelling", "notStarted"]
