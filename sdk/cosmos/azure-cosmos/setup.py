@@ -55,7 +55,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "Operating System :: OS Independent",
@@ -80,4 +80,9 @@ setup(
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0"
     ],
+    extras_require={
+        "aio": [
+            "azure-core[aio]>=1.30.0",
+        ],
+    },
 )

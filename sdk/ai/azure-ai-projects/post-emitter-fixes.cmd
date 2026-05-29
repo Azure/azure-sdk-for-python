@@ -25,8 +25,16 @@ powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 
 REM Rename DEFAULT2024_11_15 to DEFAULT_2024_11_15
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'DEFAULT2024_11_15', 'DEFAULT_2024_11_15' | Set-Content azure\ai\projects\models\_enums.py"
 
-REM Rename `A2_A` to `A2A` in enum class AgentEndpointProtocol in _enums.py
+REM Rename `A2_A` to `A2A` in enum class AgentEndpointProtocol and ToolType
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'A2_A', 'A2A' | Set-Content azure\ai\projects\models\_enums.py"
+powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'A2_A', 'A2A' | Set-Content azure\ai\projects\models\_models.py"
+
+REM Rename MEMORY1_GB/MEMORY4_GB/MEMORY16_GB/MEMORY64_GB to MEMORY_1GB/MEMORY_4GB/MEMORY_16GB/MEMORY_64GB in enum class ContainerMemoryLimit
+REM For some reason these TypeSpec decorators stopped working. Need to understand why: @@clientName(OpenAI.ContainerMemoryLimit.`1g`, "MEMORY_1GB", "python");
+powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY1_GB', 'MEMORY_1GB' | Set-Content azure\ai\projects\models\_enums.py"
+powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY4_GB', 'MEMORY_4GB' | Set-Content azure\ai\projects\models\_enums.py"
+powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY16_GB', 'MEMORY_16GB' | Set-Content azure\ai\projects\models\_enums.py"
+powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY64_GB', 'MEMORY_64GB' | Set-Content azure\ai\projects\models\_enums.py"
 
 REM Edit both _operations.py files to fix missing Foundry-Features HTTP request header in continued list paging calls. Add:
 REM   headers=_headers
@@ -62,7 +70,24 @@ REM Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + as
 REM The emitter wraps bullet/code-block lines with insufficient indentation.
 powershell -Command "$files='azure\ai\projects\operations\_operations.py','azure\ai\projects\aio\operations\_operations.py'; foreach ($f in $files) { $c=Get-Content $f -Raw; $c=$c -replace 'schema\r?\n\s+is not contractual and may include additional keys or change format\r?\n\s+over time [^\r\n]*clients should treat it as an opaque string\)', 'schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)'; $c=$c -replace '(message\":\"Starting)\r?\n\s+(FoundryCBAgent server on port 8088\"})', '$1 $2'; $c=$c -replace '(message\":\"INFO: Application)\r?\n\s+(startup complete\.\"})', '$1 $2'; $c=$c -replace '(message\":\"Successfully)\r?\n\s+(connected to container\"})', '$1 $2'; $c=$c -replace '(message\":\"No logs since)\r?\n\s+(last 60 seconds\"})', '$1 $2'; Set-Content $f $c -NoNewline }"
 
+REM Reorder loops in `prepare_multipart_form_data` and synthesize filenames for
+REM bare bytes/str/IO file entries (azure\ai\projects\_utils\utils.py).
+REM 1) The emitter generates the multipart-file loop before the data-field loop,
+REM    so JSON metadata parts end up after large binary file parts in the encoded
+REM    body. Some streaming server-side parsers (e.g. the Foundry hosted-agents
+REM    `create_agent_version_from_code` endpoint) require the small JSON metadata
+REM    parts to precede the binary file parts; otherwise they report the metadata
+REM    part as missing.
+REM 2) When callers pass bare bytes (e.g. `Path("x.zip").read_bytes()`) for a
+REM    multipart file field, the part is emitted without a `filename=` in its
+REM    Content-Disposition, and servers (e.g. Foundry `create_from_files` for
+REM    skills) reject it with "At least one file must be uploaded". This rewrite
+REM    synthesizes a filename for bare bytes/str/IO entries (from `.name` when
+REM    available, otherwise a stable default) so the part is encoded as a file.
+powershell -Command "$f='azure\ai\projects\_utils\utils.py'; $c=Get-Content $f -Raw; if ($c -notmatch '(?m)^import os\r?$') { $c=$c -replace '(?m)^import json\r?$', \"import json`r`nimport os\" }; if ($c -notmatch ':param field_name: The multipart form field name') { $c=$c -replace '(?s)def _normalize_multipart_file_entry\(.*?return \(filename, entry\)\r?\n\r?\n\r?\n', ''; $helper=(@('def _normalize_multipart_file_entry(field_name: str, entry: Any, index: int) -> Any:','    \"\"\"Ensure each multipart file entry carries a filename so that it is encoded','    as a file part (with ``filename=``) rather than a plain form field.','','    Servers commonly distinguish multipart file parts from form-data parts by','    the presence of ``filename=`` in the part''s ``Content-Disposition`` header.','    When callers pass bare bytes / str / IO objects (e.g.','    ``Path(\"x.zip\").read_bytes()``), the underlying HTTP client emits the part','    without a filename, which several Foundry endpoints reject with errors like','    \"At least one file must be uploaded\". This helper synthesizes a filename','    from the IO object''s ``name`` attribute when available, otherwise falls','    back to a stable default.','','    :param field_name: The multipart form field name, used as a fallback filename.','    :type field_name: str','    :param entry: The file entry to normalize. May be a tuple, bytes, str, or IO object.','    :type entry: any','    :param index: Position of the entry within its field''s list, used to disambiguate fallback filenames.','    :type index: int','    :return: A ``(filename, entry)`` tuple if ``entry`` was not already a tuple, otherwise ``entry`` unchanged.','    :rtype: any','    \"\"\"','    if isinstance(entry, tuple):','        return entry','    filename: Optional[str] = None','    name_attr = getattr(entry, \"name\", None)','    if isinstance(name_attr, str) and name_attr:','        filename = os.path.basename(name_attr)','    if not filename:','        filename = f\"{field_name}_{index}\" if index else field_name','    return (filename, entry)','','') -join [Environment]::NewLine); $c=$c -replace '(?m)^def prepare_multipart_form_data\(', ($helper + 'def prepare_multipart_form_data('); $pattern='(?s)    files: list\[FileType\] = \[\]\r?\n.*?    return files'; $new=(@('    files: list[FileType] = []','','    # Append data fields first so they appear before file parts in the encoded','    # multipart body. Some streaming server-side parsers (e.g. the Foundry','    # hosted-agents `create_agent_version_from_code` endpoint) require small','    # JSON metadata parts to precede large binary file parts; otherwise they','    # report the metadata part as missing.','    for data_field in data_fields:','        data_entry = body.get(data_field)','        if data_entry:','            files.append((data_field, str(serialize_multipart_data_entry(data_entry))))','','    for multipart_field in multipart_fields:','        multipart_entry = body.get(multipart_field)','        if isinstance(multipart_entry, list):','            for idx, e in enumerate(multipart_entry):','                files.append((multipart_field, _normalize_multipart_file_entry(multipart_field, e, idx)))','        elif multipart_entry:','            files.append((multipart_field, _normalize_multipart_file_entry(multipart_field, multipart_entry, 0)))','','    return files') -join [Environment]::NewLine); $c=[regex]::Replace($c, $pattern, $new) }; Set-Content $f $c -NoNewline"
+
 REM Finishing by running 'black' tool to format code. 
+pip install black
 black --config ../../../eng/black-pyproject.toml . || echo black not found, skipping formatting.
 
 

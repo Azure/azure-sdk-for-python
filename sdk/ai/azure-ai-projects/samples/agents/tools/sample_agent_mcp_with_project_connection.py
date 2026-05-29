@@ -42,14 +42,12 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START tool_declaration]
     tool = MCPTool(
         server_label="api-specs",
         server_url="https://api.githubcopilot.com/mcp",
         require_approval="always",
         project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
     )
-    # [END tool_declaration]
 
     # Create a prompt agent with MCP tool capabilities
     agent = project_client.agents.create_version(

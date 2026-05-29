@@ -14,7 +14,8 @@ DESCRIPTION:
     This sample demonstrates the fundamental capabilities of the VoiceLive SDK by creating
     a basic voice assistant that can engage in natural conversation with proper interruption
     handling. This serves as the foundational example that showcases the core value
-    proposition of unified speech-to-speech interaction.
+    proposition of unified speech-to-speech interaction. Logs are written to standard output
+    and the sample does not create log files.
 
 USAGE:
     python basic_voice_assistant_async.py
@@ -26,7 +27,7 @@ USAGE:
     - AZURE_VOICELIVE_USE_API_KEY - Set to "true" to use AZURE_VOICELIVE_API_KEY instead of Entra ID
     - AZURE_VOICELIVE_API_KEY - VoiceLive API key used when AZURE_VOICELIVE_USE_API_KEY is enabled
     - AZURE_VOICELIVE_MODEL - The VoiceLive model to use (default: gpt-realtime)
-    - AZURE_VOICELIVE_VOICE - The voice to use for synthesis
+    - AZURE_VOICELIVE_VOICE - The voice to use for synthesis (default: en-US-Ava:DragonHDLatestNeural)
     - AZURE_VOICELIVE_INSTRUCTIONS - System instructions for the assistant
 
     Or copy .env.template to .env and fill in your values.
@@ -566,6 +567,7 @@ def main():
 
     # Start the assistant
     try:
+
         async def _run_assistant() -> None:
             try:
                 await assistant.start()
