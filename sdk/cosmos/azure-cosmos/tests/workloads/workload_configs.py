@@ -67,3 +67,7 @@ WORKLOAD_USE_SYNC = os.environ.get("WORKLOAD_USE_SYNC", "false").lower() == "tru
 # When true, the client is created without a context manager (no automatic close).
 # Simulates applications that don't properly close the Cosmos client.
 WORKLOAD_SKIP_CLOSE = os.environ.get("WORKLOAD_SKIP_CLOSE", "false").lower() == "true"
+
+# When true, each enabled WORKLOAD_OPERATIONS op-type runs in its own loop (async task or thread)
+# so a stalled op-type does not starve the others. Default false preserves sequential behavior.
+WORKLOAD_PARALLEL_OPS = os.environ.get("WORKLOAD_PARALLEL_OPS", "false").lower() == "true"

@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Unified Cosmos DB workload — operations, proxy, and sync/async controlled by env vars.
+"""Unified Cosmos DB workload - operations, proxy, and sync/async controlled by env vars.
 
 Environment variables:
   WORKLOAD_OPERATIONS  comma-separated list of operations (default: read,write,query)
   WORKLOAD_USE_PROXY   route through Envoy proxy (default: false)
   WORKLOAD_USE_SYNC    use sync client instead of async (default: false)
+  WORKLOAD_PARALLEL_OPS  run each enabled op-type in its own loop so a stalled op-type
+                         (e.g. writes blocked by a regional outage) does not starve the
+                         others (default: false; opt-in).
 """
 
 import logging
 import os
 import asyncio
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
 from azure.cosmos import CosmosClient as SyncClient, documents
@@ -22,8 +26,32 @@ from workload_utils import *
 from workload_configs import *
 
 
+async def _op_loop_async(op_name, factory, client_logger):
+    """Infinite loop driving a single op-type. Catches per-iteration exceptions so a failing
+    iteration cannot terminate the task; cancellation is honored to allow clean shutdown."""
+    while True:
+        try:
+            await factory()
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            client_logger.info("Exception in %s loop", op_name)
+            client_logger.error(e)
+
+
+def _op_loop_sync(op_name, factory, client_logger, stop_event):
+    """Sync counterpart for ThreadPoolExecutor. Exits when stop_event is set (used on
+    interpreter shutdown / SIGTERM via finally blocks)."""
+    while not stop_event.is_set():
+        try:
+            factory()
+        except Exception as e:
+            client_logger.info("Exception in %s loop", op_name)
+            client_logger.error(e)
+
+
 async def run_workload_async(client_id, client_logger, stats=None, reporter=None):
-    """Async workload loop — default mode."""
+    """Async workload loop - default mode."""
     ops = WORKLOAD_OPERATIONS
     use_proxy = WORKLOAD_USE_PROXY
 
@@ -72,27 +100,49 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
             cont = db.get_container_client(COSMOS_CONTAINER)
             await asyncio.sleep(1)
 
-            while True:
-                try:
-                    if "write" in ops:
-                        await upsert_item_concurrently(
-                            cont, WRITE_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "read" in ops:
-                        await read_item_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "query" in ops:
-                        await query_items_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
-                        )
-                    if "feedrange_query" in ops:
-                        await query_items_by_feed_ranges_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, stats
-                        )
-                except Exception as e:
-                    client_logger.info("Exception in application layer")
-                    client_logger.error(e)
+            if WORKLOAD_PARALLEL_OPS:
+                op_factories = []
+                if "write" in ops:
+                    op_factories.append(("write", lambda: upsert_item_concurrently(
+                        cont, WRITE_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats)))
+                if "read" in ops:
+                    op_factories.append(("read", lambda: read_item_concurrently(
+                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats)))
+                if "query" in ops:
+                    op_factories.append(("query", lambda: query_items_concurrently(
+                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats)))
+                if "feedrange_query" in ops:
+                    op_factories.append(("feedrange_query", lambda: query_items_by_feed_ranges_concurrently(
+                        cont, REQUEST_EXCLUDED_LOCATIONS, stats)))
+                client_logger.info(
+                    "Running %d op-types in parallel: %s",
+                    len(op_factories), [name for name, _ in op_factories],
+                )
+                await asyncio.gather(
+                    *(_op_loop_async(name, factory, client_logger) for name, factory in op_factories)
+                )
+            else:
+                while True:
+                    try:
+                        if "write" in ops:
+                            await upsert_item_concurrently(
+                                cont, WRITE_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                            )
+                        if "read" in ops:
+                            await read_item_concurrently(
+                                cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                            )
+                        if "query" in ops:
+                            await query_items_concurrently(
+                                cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
+                            )
+                        if "feedrange_query" in ops:
+                            await query_items_by_feed_ranges_concurrently(
+                                cont, REQUEST_EXCLUDED_LOCATIONS, stats
+                            )
+                    except Exception as e:
+                        client_logger.info("Exception in application layer")
+                        client_logger.error(e)
         finally:
             if not WORKLOAD_SKIP_CLOSE:
                 await client.__aexit__(None, None, None)
@@ -107,7 +157,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
 
 
 def run_workload_sync(client_id, client_logger):
-    """Sync workload loop — used when WORKLOAD_USE_SYNC=true."""
+    """Sync workload loop - used when WORKLOAD_USE_SYNC=true."""
     if WORKLOAD_USE_PROXY:
         raise RuntimeError("Proxy mode is not supported with sync client. "
                            "Set WORKLOAD_USE_SYNC=false or WORKLOAD_USE_PROXY=false.")
@@ -149,27 +199,58 @@ def run_workload_sync(client_id, client_logger):
             cont = db.get_container_client(COSMOS_CONTAINER)
             time.sleep(1)
 
-            while True:
+            if WORKLOAD_PARALLEL_OPS:
+                import threading
+                stop_event = threading.Event()
+                op_factories = []
+                if "write" in ops:
+                    op_factories.append(("write", lambda: upsert_item(
+                        cont, WRITE_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats)))
+                if "read" in ops:
+                    op_factories.append(("read", lambda: read_item(
+                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats)))
+                if "query" in ops:
+                    op_factories.append(("query", lambda: query_items(
+                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats)))
+                if "feedrange_query" in ops:
+                    op_factories.append(("feedrange_query", lambda: query_items_by_feed_ranges(
+                        cont, REQUEST_EXCLUDED_LOCATIONS, stats)))
+                client_logger.info(
+                    "Running %d op-types in parallel threads: %s",
+                    len(op_factories), [name for name, _ in op_factories],
+                )
                 try:
-                    if "write" in ops:
-                        upsert_item(
-                            cont, WRITE_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "read" in ops:
-                        read_item(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "query" in ops:
-                        query_items(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
-                        )
-                    if "feedrange_query" in ops:
-                        query_items_by_feed_ranges(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, stats
-                        )
-                except Exception as e:
-                    client_logger.info("Exception in application layer")
-                    client_logger.error(e)
+                    with ThreadPoolExecutor(max_workers=len(op_factories) or 1) as pool:
+                        futures = [
+                            pool.submit(_op_loop_sync, name, factory, client_logger, stop_event)
+                            for name, factory in op_factories
+                        ]
+                        for fut in futures:
+                            fut.result()
+                finally:
+                    stop_event.set()
+            else:
+                while True:
+                    try:
+                        if "write" in ops:
+                            upsert_item(
+                                cont, WRITE_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                            )
+                        if "read" in ops:
+                            read_item(
+                                cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                            )
+                        if "query" in ops:
+                            query_items(
+                                cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
+                            )
+                        if "feedrange_query" in ops:
+                            query_items_by_feed_ranges(
+                                cont, REQUEST_EXCLUDED_LOCATIONS, stats
+                            )
+                    except Exception as e:
+                        client_logger.info("Exception in application layer")
+                        client_logger.error(e)
     finally:
         if reporter:
             try:
