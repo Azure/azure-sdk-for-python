@@ -16,21 +16,21 @@ class TestPlaywrightWorkspacesOperationsAsync(PlaywrightClientTestBaseAsync):
     @PlaywrightPreparer()
     @recorded_by_proxy_async
     async def test_workspaces_get(self, playwright_endpoint, playwright_workspace_id):
-        client = self.create_async_client(endpoint=playwright_endpoint)
-        response = await client.workspaces.get(
-            workspace_id=playwright_workspace_id,
-        )
-        assert response is not None
-        assert "id" in response
+        async with self.create_async_client(endpoint=playwright_endpoint) as client:
+            response = await client.workspaces.get(
+                workspace_id=playwright_workspace_id,
+            )
+            assert response is not None
+            assert "id" in response
 
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
     async def test_workspaces_get_browsers(self):
         endpoint = os.environ["PLAYWRIGHT_ENDPOINT"]
         workspace_id = os.environ["PLAYWRIGHT_WORKSPACE_ID"]
-        client = self.create_async_client(endpoint=endpoint)
-        response = await client.workspaces.get_browsers(
-            workspace_id=workspace_id,
-            os="Linux",
-        )
-        assert response is None
+        async with self.create_async_client(endpoint=endpoint) as client:
+            response = await client.workspaces.get_browsers(
+                workspace_id=workspace_id,
+                os="Linux",
+            )
+            assert response is None

@@ -16,12 +16,12 @@ class TestPlaywrightBrowserSessionsOperationsAsync(PlaywrightClientTestBaseAsync
     @PlaywrightPreparer()
     @recorded_by_proxy_async
     async def test_browser_sessions_list(self, playwright_endpoint, playwright_workspace_id):
-        client = self.create_async_client(endpoint=playwright_endpoint)
-        response = client.browser_sessions.list(
-            workspace_id=playwright_workspace_id,
-        )
-        result = [r async for r in response]
-        assert isinstance(result, list)
+        async with self.create_async_client(endpoint=playwright_endpoint) as client:
+            response = client.browser_sessions.list(
+                workspace_id=playwright_workspace_id,
+            )
+            result = [r async for r in response]
+            assert isinstance(result, list)
 
     @pytest.mark.asyncio
     @recorded_by_proxy_async
@@ -38,12 +38,12 @@ class TestPlaywrightBrowserSessionsOperationsAsync(PlaywrightClientTestBaseAsync
         workspace_id = os.environ.get("PLAYWRIGHT_SESSION_WORKSPACE_ID", "00000000-0000-0000-0000-000000000000")
         session_id = os.environ.get("PLAYWRIGHT_SESSION_ID", "00000000-0000-0000-0000-000000000000")
 
-        client = self.create_async_client(endpoint=endpoint)
-        response = await client.browser_sessions.get(
-            workspace_id=workspace_id,
-            session_id=session_id,
-        )
+        async with self.create_async_client(endpoint=endpoint) as client:
+            response = await client.browser_sessions.get(
+                workspace_id=workspace_id,
+                session_id=session_id,
+            )
 
-        assert response is not None
-        assert "id" in response
-        assert "status" in response
+            assert response is not None
+            assert "id" in response
+            assert "status" in response

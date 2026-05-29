@@ -19,20 +19,20 @@ class TestPlaywrightTestRunsOperationsAsync(PlaywrightClientTestBaseAsync):
         variables = kwargs.pop("variables", {})
         run_id = variables.setdefault("run_id", str(uuid.uuid4()))
 
-        client = self.create_async_client(endpoint=playwright_endpoint)
-        response = await client.test_runs.create_or_update(
-            workspace_id=playwright_workspace_id,
-            run_id=run_id,
-            resource={
-                "displayName": "test-run",
-            },
-        )
+        async with self.create_async_client(endpoint=playwright_endpoint) as client:
+            response = await client.test_runs.create_or_update(
+                workspace_id=playwright_workspace_id,
+                run_id=run_id,
+                resource={
+                    "displayName": "test-run",
+                },
+            )
 
-        assert response is not None
-        assert response["displayName"] == "test-run"
-        assert "runId" in response
-        assert "creatorId" in response
-        return variables
+            assert response is not None
+            assert response["displayName"] == "test-run"
+            assert "runId" in response
+            assert "creatorId" in response
+            return variables
 
     @PlaywrightPreparer()
     @recorded_by_proxy_async
@@ -40,28 +40,28 @@ class TestPlaywrightTestRunsOperationsAsync(PlaywrightClientTestBaseAsync):
         variables = kwargs.pop("variables", {})
         run_id = variables.setdefault("run_id", str(uuid.uuid4()))
 
-        client = self.create_async_client(endpoint=playwright_endpoint)
-        # Create a run first so we can get it
-        await client.test_runs.create_or_update(
-            workspace_id=playwright_workspace_id,
-            run_id=run_id,
-            resource={"displayName": "test-run-for-get"},
-        )
-        response = await client.test_runs.get(
-            workspace_id=playwright_workspace_id,
-            run_id=run_id,
-        )
-        assert response is not None
-        assert "runId" in response
-        assert response["displayName"] == "test-run-for-get"
-        return variables
+        async with self.create_async_client(endpoint=playwright_endpoint) as client:
+            # Create a run first so we can get it
+            await client.test_runs.create_or_update(
+                workspace_id=playwright_workspace_id,
+                run_id=run_id,
+                resource={"displayName": "test-run-for-get"},
+            )
+            response = await client.test_runs.get(
+                workspace_id=playwright_workspace_id,
+                run_id=run_id,
+            )
+            assert response is not None
+            assert "runId" in response
+            assert response["displayName"] == "test-run-for-get"
+            return variables
 
     @PlaywrightPreparer()
     @recorded_by_proxy_async
     async def test_test_runs_list(self, playwright_endpoint, playwright_workspace_id):
-        client = self.create_async_client(endpoint=playwright_endpoint)
-        response = client.test_runs.list(
-            workspace_id=playwright_workspace_id,
-        )
-        result = [r async for r in response]
-        assert isinstance(result, list)
+        async with self.create_async_client(endpoint=playwright_endpoint) as client:
+            response = client.test_runs.list(
+                workspace_id=playwright_workspace_id,
+            )
+            result = [r async for r in response]
+            assert isinstance(result, list)
