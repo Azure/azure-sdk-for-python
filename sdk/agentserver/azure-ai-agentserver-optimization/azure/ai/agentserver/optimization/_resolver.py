@@ -207,7 +207,7 @@ def _persist_to_local_layout(
             if skill.get("description"):
                 fm["description"] = skill["description"]
             fm_text = yaml.dump(
-                fm, default_flow_style=False, allow_unicode=True
+                fm, default_flow_style=False, allow_unicode=True, width=float("inf")
             ).rstrip("\n")
             parts: list[str] = [f"---\n{fm_text}\n---"]
             if skill.get("body"):
