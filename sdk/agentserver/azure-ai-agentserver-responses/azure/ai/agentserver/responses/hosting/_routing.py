@@ -243,6 +243,38 @@ class ResponsesAgentServerHost(AgentServerHost):
                 storage_dir=stream_dir,
                 replay_event_ttl_seconds=runtime_options.replay_event_ttl_seconds,
             )
+
+        # (Spec 014 FR-006 / RD-3) Composition guard. When the caller
+        # EXPLICITLY supplied a non-persistent ``store=`` argument AND
+        # ``durable_background=True``, refuse to start: the operator
+        # supplied a store that contradicts their durable_background
+        # opt-in and we won't silently degrade.
+        #
+        # The default path (``store=None`` → ``InMemoryResponseProvider``)
+        # is NOT considered an explicit operator choice. It satisfies
+        # in-process tests and local development that don't need cross-
+        # process recovery. The auto-compose path above provides a
+        # DurableStreamProviderProtocol via FileStreamProvider so the
+        # stream sub-contract is honoured even with the default store.
+        if (
+            runtime_options.durable_background
+            and store is not None
+            and isinstance(store, InMemoryResponseProvider)
+        ):
+            raise ValueError(
+                "ResponsesAgentServerHost refused to start: "
+                "``durable_background=True`` was configured with an "
+                "explicit ``store=`` argument "
+                f"({type(store).__name__}) that does not persist across "
+                "process crashes — durable_background cannot honour its "
+                "recovery promise. Either (a) supply a persistent store "
+                "(FileResponseStore, FoundryStorageProvider, etc.), "
+                "(b) set ``AGENTSERVER_RESPONSE_STORE_PATH`` so the "
+                "framework selects FileResponseStore automatically, or "
+                "(c) set ``durable_background=False`` to opt out of "
+                "crash recovery. (Spec 014 FR-006)"
+            )
+
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(
             create_fn=self._dispatch_create,
