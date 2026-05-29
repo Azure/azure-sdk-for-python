@@ -20,6 +20,11 @@ def _parse_region_list(env_var_name):
 PREFERRED_LOCATIONS = _parse_region_list("COSMOS_PREFERRED_LOCATIONS")
 CLIENT_EXCLUDED_LOCATIONS = _parse_region_list("COSMOS_CLIENT_EXCLUDED_LOCATIONS")
 REQUEST_EXCLUDED_LOCATIONS = _parse_region_list("COSMOS_REQUEST_EXCLUDED_LOCATIONS")
+# When set, excluded_locations applies only to write operations (upserts/deletes).
+# Falls back to REQUEST_EXCLUDED_LOCATIONS so existing single-knob behavior is preserved.
+WRITE_EXCLUDED_LOCATIONS = (
+    _parse_region_list("COSMOS_WRITE_EXCLUDED_LOCATIONS") or REQUEST_EXCLUDED_LOCATIONS
+)
 COSMOS_PROXY_URI = os.environ.get("COSMOS_PROXY_URI", "0.0.0.0")
 COSMOS_URI = os.environ.get("COSMOS_URI", "")
 COSMOS_KEY = os.environ.get("COSMOS_KEY", "")

@@ -76,7 +76,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                 try:
                     if "write" in ops:
                         await upsert_item_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                            cont, WRITE_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
                         )
                     if "read" in ops:
                         await read_item_concurrently(
@@ -153,7 +153,7 @@ def run_workload_sync(client_id, client_logger):
                 try:
                     if "write" in ops:
                         upsert_item(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                            cont, WRITE_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
                         )
                     if "read" in ops:
                         read_item(
