@@ -21,16 +21,32 @@ for field extraction.
 
 ## Prerequisites
 
-- Python >= 3.9 with the SDK installed (see [`cu-sdk-setup`](../cu-sdk-setup/SKILL.md)).
-- Virtual environment active.
-- `.env` configured with `CONTENTUNDERSTANDING_ENDPOINT` (and optionally `CONTENTUNDERSTANDING_KEY`).
-- Model deployments set up via `samples/sample_update_defaults.py`.
+Required: venv active, SDK installed, `.env` with `CONTENTUNDERSTANDING_ENDPOINT`
+(plus `CONTENTUNDERSTANDING_KEY` or `az login`), and `samples/sample_update_defaults.py`
+run once for this resource. Full setup lives in [`cu-sdk-setup`](../cu-sdk-setup/SKILL.md).
 
-> **[ASK USER] Prerequisites check:**
-> 1. "Is your virtual environment active and the SDK installed?" — if no, route to `cu-sdk-setup`.
-> 2. "Is `CONTENTUNDERSTANDING_ENDPOINT` set in `.env`?" — if no, route to `cu-sdk-setup` Step 4.
-> 3. "Have you run `sample_update_defaults.py` for this resource?" — if no, ask them to run it first.
-> 4. "How many representative documents do you have, and where are they?" — fewer than 3 is fine but more is better.
+> **[COPILOT] Probe first, then route on failure — do not duplicate setup logic here.**
+>
+> ```bash
+> python -c "import sys; print('venv:', 'ok' if sys.prefix != sys.base_prefix else 'INACTIVE')"
+> ( [ -f .env ] && grep -E '^CONTENTUNDERSTANDING_ENDPOINT=https?://' .env >/dev/null && echo 'endpoint: ok' ) || echo 'endpoint: MISSING'
+> ( [ -f .env ] && grep -E '^CONTENTUNDERSTANDING_KEY=.+' .env >/dev/null && echo 'key: set' ) || echo 'key: empty'
+> az account show >/dev/null 2>&1 && echo 'az: ok' || echo 'az: not logged in'
+> ```
+>
+> | Failure | Route to |
+> |---|---|
+> | venv `INACTIVE` or `azure.ai.contentunderstanding` import fails | [`cu-sdk-setup`](../cu-sdk-setup/SKILL.md) Steps 2–3, then resume |
+> | endpoint `MISSING` | [`cu-sdk-setup`](../cu-sdk-setup/SKILL.md) Step 4 (env vars), then resume |
+> | endpoint `ok`, key `empty`, `az: not logged in` | [`cu-sdk-setup`](../cu-sdk-setup/SKILL.md) Step 4 auth section (run `az login` **or** add `CONTENTUNDERSTANDING_KEY` to `.env`), then resume |
+> | All env checks pass but service calls fail with model errors | [`cu-sdk-setup`](../cu-sdk-setup/SKILL.md) Step 6 (`sample_update_defaults.py`), then resume |
+> | All ok | ✅ Proceed to the Packet check below. |
+>
+> Never ask the user to paste an endpoint or API key into chat — they edit `.env` directly or run `az login`.
+
+> **[ASK USER] Packet check:**
+> 1. "Does each document in your packet contain more than one type of form (e.g. an invoice page followed by a bank statement page)?" — if no, route to `cu-sdk-generate-analyzer`.
+> 2. "What types of documents appear in your packets?" — capture as the list of inner analyzers.
 
 > **[ASK USER] Packet check:**
 > 1. "Does each document in your packet contain more than one type of form (e.g. an invoice page followed by a bank statement page)?" — if no, route to `cu-sdk-generate-analyzer`.
