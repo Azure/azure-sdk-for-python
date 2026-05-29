@@ -297,19 +297,13 @@ class AgentServerHost(Starlette):
                 self._graceful_shutdown_timeout,
             )
 
-            # Shutdown task manager
-            if task_manager is not None:
-                try:
-                    await task_manager.shutdown()
-                    from .durable._manager import (  # pylint: disable=import-outside-toplevel
-                        set_task_manager as _clear_manager,
-                    )
-
-                    _clear_manager(None)
-                    logger.info("TaskManager shut down")
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Error shutting down TaskManager", exc_info=True)
-
+            # (Spec 014) Run on_shutdown FIRST so the responses layer's
+            # ``handle_shutdown`` can set ``_shutdown_requested`` and signal
+            # cancellation BEFORE the TaskManager waits its grace period.
+            # Without this, Row 3 (foreground) handlers can race against
+            # Hypercorn's client-connection close — the disconnect-poll loop
+            # stamps ``CLIENT_CANCELLED`` instead of ``SHUTTING_DOWN`` and
+            # B11 emits a cancelled terminal instead of failed.
             if self._graceful_shutdown_timeout == 0:
                 logger.info("Graceful shutdown drain period disabled (timeout=0)")
             else:
@@ -325,6 +319,21 @@ class AgentServerHost(Starlette):
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Error in on_shutdown", exc_info=True)
+
+            # Shutdown task manager AFTER on_shutdown so durable handlers
+            # have had time to checkpoint via the responses layer's
+            # ``handle_shutdown``.
+            if task_manager is not None:
+                try:
+                    await task_manager.shutdown()
+                    from .durable._manager import (  # pylint: disable=import-outside-toplevel
+                        set_task_manager as _clear_manager,
+                    )
+
+                    _clear_manager(None)
+                    logger.info("TaskManager shut down")
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Error shutting down TaskManager", exc_info=True)
 
         # Merge routes: subclass routes (if any) + health endpoint
         all_routes: list[Any] = list(routes or [])
