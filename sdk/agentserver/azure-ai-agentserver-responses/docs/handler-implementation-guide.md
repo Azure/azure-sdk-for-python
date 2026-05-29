@@ -1216,6 +1216,14 @@ The framework re-invokes your handler when the server crashes mid-response
 What that re-invocation gives you, what you have to do to take advantage of it,
 and how clients reconcile a multi-attempt stream is the **Recovery Contract**.
 
+The normative version of the Recovery Contract — every row × cancellation-path
+cell, the exact handler-visible signals on recovery, and the framework's
+persistence guarantees — lives in
+[`sdk/agentserver/specs/durability-contract.md`](../../specs/durability-contract.md).
+That document is the source of truth; this section is the developer-facing
+how-to plus worked examples. The conformance suite at
+`tests/e2e/durability_contract/` exercises every cell.
+
 You can opt out of all of this and your response will still be correct (just
 duplicative). You opt in when you want the recovered attempt to pick up where
 the crashed one left off instead of re-running the whole turn.
@@ -1395,9 +1403,20 @@ distinguish "queued but unacked" from "durably committed" — the framework
 cannot know which of your calls have side effects, so you stamp a marker in
 `durability.metadata` before the call and clear it after the upstream commit.
 
+The strict at-most-once pattern is **write → flush → side effect → write →
+flush**. The explicit `await metadata.flush()` ensures the watermark hits
+durable storage before the side effect runs; otherwise the framework's 5s
+auto-flush could leave the watermark in memory only and a crash between
+"side effect issued" and "auto-flush fires" would re-issue the side effect
+on recovery.
+
 ```python
-# Stamp BEFORE the side-effecting call.
+durability = context.durability
+
+# Stamp BEFORE the side-effecting call, and FLUSH to make the marker durable.
 durability.metadata["upstream_query_in_flight"] = True
+await durability.metadata.flush()
+
 await upstream.send_message(prompt)
 
 # Stream the response back…
@@ -1407,16 +1426,25 @@ async for chunk in upstream.receive_response():
     yield ...emit_delta(chunk)
 
 # Clear AFTER the upstream durably committed the result
-# (e.g. assistant message landed in the upstream's session log).
+# (e.g. assistant message landed in the upstream's session log), and
+# FLUSH so the cleared marker survives a subsequent crash.
 durability.metadata["upstream_query_in_flight"] = False
+await durability.metadata.flush()
 ```
 
 On recovery you check the marker:
+
 - Marker `True`: prior attempt called the upstream API. Use upstream's resume
   facility (and, if available, fork primitive) to avoid duplicating the
   message in upstream history. **Do NOT call `upstream.send_message(prompt)` again.**
 - Marker `False` (or missing): no prior side effect. Treat as fresh entry from
   the upstream's perspective.
+
+The two flushes are the cost of at-most-once. If your side effect is naturally
+idempotent (e.g. it carries a client-supplied request id and the upstream
+dedupes), you can skip both flushes and rely on the upstream's dedup. The
+upstream-history pattern above is preferred whenever it's available because
+it removes the watermark window entirely.
 
 Watermark naming convention (recommended): `<upstream>_<operation>_in_flight: bool`.
 SDK-specific names belong in your sample's docstring.

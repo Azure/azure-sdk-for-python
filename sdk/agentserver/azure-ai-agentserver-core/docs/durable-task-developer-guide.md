@@ -47,6 +47,21 @@
 
 ## Overview
 
+> **Building a response handler instead?** The `@task` primitive described
+> here is the foundation; the responses package layers a recovery contract
+> on top of it that defines what happens row-by-row across the durability
+> matrix (`store`, `background`, `durable_background`, `stream`) and per
+> cancellation path (client cancel, graceful shutdown, crash). The
+> normative contract lives in
+> [`sdk/agentserver/specs/durability-contract.md`](../../specs/durability-contract.md),
+> with the developer-facing how-to in the responses package's
+> [`durable-responses-developer-guide.md`](../../azure-ai-agentserver-responses/docs/durable-responses-developer-guide.md)
+> and worked patterns in
+> [`handler-implementation-guide.md`](../../azure-ai-agentserver-responses/docs/handler-implementation-guide.md).
+> Read those if your work is at the response-handler layer; read this
+> guide if your work is in the durable-task primitive itself or in a
+> non-responses use of `@task`.
+
 ### Why This Exists
 
 Azure AI Foundry Hosted Agents run your code in platform-managed containers.

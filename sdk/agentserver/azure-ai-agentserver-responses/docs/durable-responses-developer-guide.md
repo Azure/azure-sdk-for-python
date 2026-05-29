@@ -110,15 +110,26 @@ def my_acceptor(request, context):
 
 ## Configuration Matrix
 
-Recovery semantics depend on three request flags and one server option. This
-matrix is the authoritative reference for "what guarantee applies in my case."
+Recovery semantics depend on three request flags and one server option. The
+table below is a quick orientation. The **normative** specification — the
+exact behaviour you can rely on per row, per cancellation path, and per
+stream/poll mode — lives in
+[`sdk/agentserver/specs/durability-contract.md`](../../specs/durability-contract.md).
+That document is the source of truth; this section summarises it for
+developer ergonomics.
 
-| `store` | `background` | `durable_background` | Guarantee on crash |
+| `store` | `background` | `durable_background` | Summary |
 |---|---|---|---|
-| `true` | `true` | `True` | **Full recovery contract** applies. Handler is re-invoked with `entry_mode="recovered"`. Persisted events replay to reconnecting clients. See [Crash Recovery](#crash-recovery). |
-| `true` | `true` | `False` | Response is marked `failed` on restart. Handler is NOT re-invoked. Events that were persisted before the crash remain replayable until TTL expires. |
-| `true` | `false` (foreground) | any | Response is marked `failed` with `code=server_crashed`. Handler is NOT re-invoked (the client's HTTP connection is already dead). Persisted events remain queryable. |
-| `false` | any | any | Best-effort `failed` marker during shutdown grace period. No persistence. Recovery does not apply. |
+| `true` | `true` | `True` | **Full recovery.** Handler is re-invoked with `entry_mode="recovered"`. Persisted events replay to reconnecting clients. See [Crash Recovery](#crash-recovery). |
+| `true` | `true` | `False` | **Failed marker.** Response is marked `failed` on restart. Handler is NOT re-invoked. Pre-crash persisted events remain replayable until TTL expires. |
+| `true` | `false` (foreground) | any | **Failed marker.** Response is marked `failed` with `code=server_error`. Handler is NOT re-invoked (the client's HTTP connection is already dead). Persisted events remain queryable. |
+| `false` | any | any | **Best-effort failed marker** during shutdown grace period only. No persistence. Recovery does not apply. |
+
+Each row × cancellation path cell (Path A = client cancel, Path B = graceful
+shutdown, Path C = SIGKILL crash) is covered by a dedicated conformance test
+in `tests/e2e/durability_contract/`. If something behaves differently from
+what the contract doc claims, that's a bug in either the implementation or
+the doc — open an issue.
 
 `steerable_conversations=True` composes orthogonally: it enables multi-turn
 steering on top of any row above. Recovery composes with steering — see the
@@ -299,14 +310,23 @@ side effects against the upstream framework (LLM calls, session writes)
 
 ## Stream Recovery (client-side reconciliation)
 
-The library persists every SSE event in order. Reconnecting clients use
-the standard `starting_after=` query parameter to resume:
+The library persists every SSE event in order — including events emitted
+across multiple recovery attempts. Reconnecting clients use the standard
+`starting_after=` query parameter to resume:
 
 ```
 GET /responses/{id}?stream=true&starting_after=42
 ```
 
 This returns only events with `sequence_number > 42`.
+
+The post-recovery part of this guarantee is normative per
+[`durability-contract.md`](../../specs/durability-contract.md): for
+`(store=true, background=true, durable_background=True, stream=true)` —
+the row that supports handler re-invoke — a client reconnecting AFTER a
+crash receives the events the recovered handler emits, framed by the
+reset-on-`in_progress` rule below. The conformance suite covers this
+under Row 1 Path C.
 
 ### The reset-on-`in_progress` rule
 
