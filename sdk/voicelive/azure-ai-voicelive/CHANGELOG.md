@@ -1,6 +1,41 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.3.0b1 (2026-05-28)
+
+### Features Added
+
+- **Azure Realtime Native Voice Support**: Added `AzureRealtimeNativeVoice` and
+  `AzureRealtimeNativeVoiceName`, and expanded `voice` fields to accept Azure realtime native voices.
+- **WebRTC Call Negotiation Support**: Added `ClientEventRtcCallSdpCreate`, `ServerEventRtcCallSdpCreated`,
+  `ServerEventRtcCallError`, and `RtcCallErrorDetails` for SDP-based WebRTC call setup.
+- **Input Text Streaming Support**: Added `ClientEventInputTextDelta` and `ClientEventInputTextDone`
+  for incrementally streaming text input into existing conversation items.
+- **Hosted Agent Invocation Input**: Added `invoke_input` to `ResponseCreateParams` and
+  `ServerEventResponseInvocationDelta` for hosted agent invocation passthrough data.
+- **Audio Playback Lifecycle Events**: Added `ServerEventOutputAudioBufferStarted` and
+  `ServerEventOutputAudioBufferStopped` to track model audio playback start and stop.
+- **Echo Cancellation Configuration**: Added `EchoCancellationReferenceSource` and new
+  `reference_source` / `channels` options on `AudioEchoCancellation` to support both the default
+  server loopback reference path and client-provided stereo echo reference input.
+- **Smart End-of-Turn Detection**: Added `SmartEndOfTurnDetection` as an audio-based end-of-turn
+  detection option.
+- **Parallel Tool Call Control**: Added `parallel_tool_calls` to session models so callers can
+  control whether tool calls may run in parallel.
+
+### Breaking Changes
+
+- **Image Input Field Rename**: Renamed `RequestImageContentPart.url` to `image_url`. Update
+  image input construction to use `image_url=` instead of `url=`.
+- **Default API Version Update**: Changed the SDK default API version from `2026-04-10` to
+  `2026-06-01-preview`. Pass `api_version="2026-04-10"` explicitly to keep the previous default
+  behavior.
+
+### Bug Fixes
+
+- **Deserialization Improvements**: Improved XML model deserialization and common scalar header
+  deserialization paths for better compatibility and lower overhead.
+
+## 1.2.0 (2026-05-22)
 
 ### Features Added
 
@@ -34,7 +69,7 @@
   - Response & function call ID tracking for end-to-end tracing
   - Agent v2 telemetry with agent identity and configuration tracking
   - MCP telemetry with tool call and approval flow tracking
-- **Agent Session Configuration**: Added `AgentSessionConfig` for configuring Azure AI Foundry agents
+- **Agent Session Configuration**: Added flattened `connect()` keyword arguments for configuring Azure AI Foundry agents
   at connection time with `agent_name`, `project_name`, `agent_version`, `conversation_id`, and more
 - **Transcription Improvements**:
   - Added `TranscriptionPhrase` and `TranscriptionWord` models for detailed transcription data
@@ -56,7 +91,12 @@
 ### Breaking Changes
 
 - Removed Foundry Agent Tool classes (`FoundryAgentTool`, `ResponseFoundryAgentCallItem`, etc.) —
-  use `AgentSessionConfig` with `connect()` instead
+  use flattened Azure AI Foundry keyword arguments with `connect()` instead
+- **Audio Format Values**: Changed `OutputAudioFormat` enum values to use underscore format
+  (`pcm16_8000hz`, `pcm16_16000hz`) instead of the previous hyphenated values.
+  This is a breaking change for code that compares, persists, or serializes the raw enum values.
+  Legacy hyphenated values continue to deserialize for backward compatibility.
+- Renamed `AvatarConfig.type` field to `avatar_type` to avoid conflict with Python's built-in `type`
 
 ### Other Changes
 
@@ -100,7 +140,7 @@
 - **Agent v2 Telemetry**: Added agent identity and configuration tracking on the connect span:
   - `gen_ai.agent.id` and `gen_ai.agent.thread_id` extracted from `session.created`/`session.updated`
     server events.
-  - `gen_ai.agent.version` and `gen_ai.agent.project_name` from `AgentSessionConfig` at connect time.
+  - `gen_ai.agent.version` and `gen_ai.agent.project_name` from Azure AI Foundry `connect()` keyword arguments at connect time.
 - **MCP (Model Context Protocol) Telemetry**: Added tracking for MCP tool calls and approval flows:
   - Per-event: `gen_ai.voice.mcp.server_label`, `gen_ai.voice.mcp.tool_name`,
     `gen_ai.voice.mcp.approval_request_id`, `gen_ai.voice.mcp.approve` on recv/send spans.
@@ -116,7 +156,7 @@
 
 ### Features Added
 
-- **Agent Session Configuration**: Added `AgentSessionConfig` TypedDict for configuring Azure AI Foundry agents at connection time:
+- **Agent Session Configuration**: Added flattened `connect()` keyword arguments for configuring Azure AI Foundry agents at connection time:
   - `agent_name`: The name of the agent (required)
   - `project_name`: The Foundry project containing the agent (required)
   - `agent_version`: Optional version specification
@@ -129,7 +169,7 @@
 ### Breaking Changes
 
 - **Removed Foundry Agent Tools**: The following classes and enums related to Foundry agent tools have been removed:
-  - `FoundryAgentTool` - Use `AgentSessionConfig` with `connect()` instead
+  - `FoundryAgentTool` - Use flattened Azure AI Foundry keyword arguments with `connect()` instead
   - `ResponseFoundryAgentCallItem`
   - `FoundryAgentContextType` enum
   - `ToolType.FOUNDRY_AGENT` enum value
