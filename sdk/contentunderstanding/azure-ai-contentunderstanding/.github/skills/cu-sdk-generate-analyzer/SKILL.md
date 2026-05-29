@@ -119,21 +119,29 @@ with two required top-level keys:
 - `baseAnalyzerId` — which prebuilt analyzer your custom analyzer extends. Use the table below.
 - `fieldSchema.fields` — the named fields you want to extract.
 
+The template demonstrates **all three extraction methods** (`extract`,
+`generate`, `classify`) plus the **nested object** and **array of objects**
+shapes. Delete the example fields you don't need.
+
+> **Template comment keys**: any key whose name starts with `_`
+> (e.g. `_comment`, `_optional_enableOcr`) is stripped from the request body
+> by `create_and_test.py` before it hits the service. Use them freely as
+> inline documentation.
+
+> **`models.completion` is effectively required**: whenever `fieldSchema` is
+> present, the service needs a completion model. Leave the `models` block in
+> the template populated unless you've run
+> [`samples/sample_update_defaults.py`](../../../samples/sample_update_defaults.py)
+> to set resource defaults. Omitting it fails with `InvalidRequest:
+> 'models.completion' is not set` *after* a misleadingly successful
+> `[CREATE]` log line. `create_and_test.py` prints a `[WARN]` if the schema
+> is missing it.
+
 #### Choosing `baseAnalyzerId`
 
-| Content type | `baseAnalyzerId` |
-|---|---|
-| Documents (PDF, image of a page) | `prebuilt-document` |
-| Documents needing rich semantic search content | `prebuilt-documentSearch` |
-| Audio (mp3, wav, m4a) | `prebuilt-audio` |
-| Audio needing semantic search | `prebuilt-audioSearch` |
-| Video (mp4, mov) | `prebuilt-video` |
-| Video needing semantic search | `prebuilt-videoSearch` |
-| Image-only analyzer | `prebuilt-imageAnalyzer` |
-| Invoices (built-in fields) | `prebuilt-invoice` |
-| Receipts (built-in fields) | `prebuilt-receipt` |
-
-> Typos here are a common first-time error. The local validator (Step 3) rejects any value not in this table.
+See the prebuilt-analyzer table in
+[`cu-sdk-common-knowledge` § Choosing `baseAnalyzerId`](../cu-sdk-common-knowledge/SKILL.md#choosing-baseanalyzerid).
+The local validator (Step 3) rejects any value not on that list.
 
 #### Example single-type schema
 
@@ -213,6 +221,15 @@ lowest-confidence fields:
   0.732  invoiceNumber  (mixed_financial_docs)
 ========================================================================
 ```
+
+For each input document the script writes two files into `--output`:
+
+- `<doc>.json` — full per-document `AnalysisResult` (fields, grounding, confidences).
+- `<doc>.llm.md` — same result rendered via the SDK's
+  [`to_llm_input`](../../../samples/sample_create_classifier.py) helper:
+  YAML front matter (category, page range, fields) plus the document text.
+  Drop this straight into an LLM prompt, or skim it in VS Code for a fast
+  human review.
 
 ### Step 5 — Clean up (optional)
 

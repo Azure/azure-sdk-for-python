@@ -95,6 +95,7 @@ _field_value = _create_and_test._field_value
 _build_client = _create_and_test._build_client
 _schema_hash = _create_and_test.schema_hash
 _ensure_analyzer = _create_and_test.ensure_analyzer
+_strip_comments = _create_and_test._strip_comments
 
 
 # ---------------------------------------------------------------------------
@@ -192,14 +193,30 @@ def _validate_all(
         if not ok:
             failures.extend(f"[inner:{alias}] {e}" for e in errors)
             continue
-        inner_schemas[alias] = json.loads(p.read_text(encoding="utf-8"))
+        inner_schemas[alias] = _strip_comments(json.loads(p.read_text(encoding="utf-8")))
 
     if failures:
         for line in failures:
             print(f"[VALIDATE] {line}", file=sys.stderr)
         raise SystemExit(2)
 
-    outer_schema = json.loads(outer_schema_path.read_text(encoding="utf-8"))
+    outer_schema = _strip_comments(json.loads(outer_schema_path.read_text(encoding="utf-8")))
+
+    # Pre-flight: every inner schema with fieldSchema needs models.completion
+    # unless resource defaults are set. Surface this up front — otherwise the
+    # service polls to InvalidRequest only AFTER begin_create_analyzer
+    # returns success.
+    for alias, schema in inner_schemas.items():
+        if isinstance(schema, dict) and "fieldSchema" in schema:
+            models = schema.get("models") or {}
+            if not (isinstance(models, dict) and models.get("completion")):
+                print(
+                    f"[WARN]    inner schema {alias!r} has fieldSchema but no "
+                    "models.completion; this will fail unless resource defaults "
+                    "are configured (see samples/sample_update_defaults.py).",
+                    file=sys.stderr,
+                )
+
     return outer_schema, inner_schemas
 
 
@@ -437,6 +454,16 @@ def run(
             out_path.write_text(
                 json.dumps(doc, indent=2, ensure_ascii=False), encoding="utf-8"
             )
+            # Best-effort LLM-ready markdown next to the JSON. For
+            # classify-and-route results, to_llm_input expands each segment
+            # into its own block with the category in the YAML front matter.
+            try:
+                from azure.ai.contentunderstanding import to_llm_input  # type: ignore
+
+                llm_text = to_llm_input(result)
+                out_path.with_suffix(".llm.md").write_text(llm_text, encoding="utf-8")
+            except Exception:  # noqa: BLE001 — best-effort
+                pass
             results.append((out_path.stem, doc))
     finally:
         if ephemeral:

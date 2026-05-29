@@ -69,6 +69,32 @@ Good description:
 Used by [`cu-sdk-generate-analyzer`](../cu-sdk-generate-analyzer/SKILL.md)
 and [`cu-sdk-generate-analyzer-classify-route`](../cu-sdk-generate-analyzer-classify-route/SKILL.md).
 
+## Choosing `baseAnalyzerId`
+
+Every custom analyzer extends a built-in prebuilt analyzer via
+`baseAnalyzerId`. Pick the row that matches the content you're analyzing
+(documents, audio, video, image) and whether you also need rich semantic
+search content. Typos here are a common first-time error; the local schema
+validator (in [`_shared/schema_validator.py`](../_shared/)) rejects any
+value not in this table.
+
+| Content type | `baseAnalyzerId` |
+|---|---|
+| Documents (PDF, image of a page) | `prebuilt-document` |
+| Documents needing rich semantic search content | `prebuilt-documentSearch` |
+| Audio (mp3, wav, m4a) | `prebuilt-audio` |
+| Audio needing semantic search | `prebuilt-audioSearch` |
+| Video (mp4, mov) | `prebuilt-video` |
+| Video needing semantic search | `prebuilt-videoSearch` |
+| Image-only analyzer | `prebuilt-imageAnalyzer` |
+| Invoices (built-in fields) | `prebuilt-invoice` |
+| Receipts (built-in fields) | `prebuilt-receipt` |
+
+Used by [`cu-sdk-generate-analyzer`](../cu-sdk-generate-analyzer/SKILL.md)
+(custom analyzer) and
+[`cu-sdk-generate-analyzer-classify-route`](../cu-sdk-generate-analyzer-classify-route/SKILL.md)
+(both inner extractors and the outer classifier).
+
 ## Classify-and-route rule
 
 When using `config.contentCategories` to classify and route mixed-document

@@ -119,6 +119,19 @@ def _result_to_dict(result: Any) -> Dict[str, Any]:
     return json.loads(json.dumps(result, default=lambda o: getattr(o, "__dict__", str(o))))
 
 
+def _strip_comments(obj: Any) -> Any:
+    """Recursively drop any dict key whose name starts with ``_``.
+
+    Lets the template carry ``_comment`` / ``_optional_*`` documentation keys
+    without poisoning the service request body. Pure, returns a new object.
+    """
+    if isinstance(obj, dict):
+        return {k: _strip_comments(v) for k, v in obj.items() if not (isinstance(k, str) and k.startswith("_"))}
+    if isinstance(obj, list):
+        return [_strip_comments(v) for v in obj]
+    return obj
+
+
 def _iter_fields(doc: Dict[str, Any]) -> Iterable[Tuple[str, str, Dict[str, Any]]]:
     """Yield ``(category, field_path, field_value_dict)`` for each *leaf* field.
 
@@ -289,13 +302,26 @@ def ensure_analyzer(client, analyzer_id: str, schema: Dict[str, Any]) -> bool:
     return False
 
 
-def analyze_file(client, analyzer_id: str, file_path: Path) -> Dict[str, Any]:
+def analyze_file(client, analyzer_id: str, file_path: Path) -> Tuple[Dict[str, Any], Optional[str]]:
+    """Run analysis and return (result_dict, llm_markdown_or_None).
+
+    ``llm_markdown`` is produced via the SDK's ``to_llm_input`` helper. It is
+    safe to fall through to ``None`` if the helper raises (e.g. on a result
+    shape it doesn't recognise) — the raw JSON is always written.
+    """
     with file_path.open("rb") as fh:
         poller = client.begin_analyze_binary(
             analyzer_id=analyzer_id, binary_input=fh.read()
         )
     result = poller.result()
-    return _result_to_dict(result)
+    llm_text: Optional[str] = None
+    try:
+        from azure.ai.contentunderstanding import to_llm_input  # type: ignore
+
+        llm_text = to_llm_input(result)
+    except Exception:  # noqa: BLE001 — best-effort
+        llm_text = None
+    return _result_to_dict(result), llm_text
 
 
 def run(
@@ -317,7 +343,22 @@ def run(
         return 2
 
     with schema_path.open("r", encoding="utf-8") as fp:
-        schema = json.load(fp)
+        raw_schema = json.load(fp)
+    schema = _strip_comments(raw_schema)
+
+    # Pre-flight: warn if the schema has fieldSchema but no completion model.
+    # Without resource defaults set (see samples/sample_update_defaults.py)
+    # the service polls to InvalidRequest only AFTER begin_create_analyzer
+    # returns success — surface the risk up front.
+    if isinstance(schema, dict) and "fieldSchema" in schema:
+        models = schema.get("models") or {}
+        if not (isinstance(models, dict) and models.get("completion")):
+            print(
+                "[WARN]   schema has fieldSchema but no models.completion; "
+                "this will fail unless resource defaults are configured "
+                "(see samples/sample_update_defaults.py).",
+                file=sys.stderr,
+            )
 
     inputs = list(_iter_inputs(input_path))
     if not inputs:
@@ -350,7 +391,7 @@ def run(
                 out_path = output_dir / f"{file_path.stem}{suffix}.json"
                 try:
                     print(f"[ANALYZE] {file_path} → {out_path}")
-                    doc = analyze_file(client, analyzer_id, file_path)
+                    doc, llm_text = analyze_file(client, analyzer_id, file_path)
                 except Exception as exc:  # noqa: BLE001
                     print(f"[FAIL]   {file_path}: {exc}", file=sys.stderr)
                     fail += 1
@@ -359,6 +400,9 @@ def run(
                 out_path.write_text(
                     json.dumps(doc, indent=2, ensure_ascii=False), encoding="utf-8"
                 )
+                if llm_text is not None:
+                    llm_path = out_path.with_suffix(".llm.md")
+                    llm_path.write_text(llm_text, encoding="utf-8")
                 results.append((out_path.stem, doc))
     finally:
         if ephemeral:

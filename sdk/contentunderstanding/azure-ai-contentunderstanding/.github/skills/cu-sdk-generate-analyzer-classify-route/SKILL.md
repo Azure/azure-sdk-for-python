@@ -121,10 +121,14 @@ python .github/skills/cu-sdk-generate-analyzer/scripts/extract_layout.py \
 
 ### Step 2 — Draft one inner schema per type
 
-Treat each type as a single-doc-type analyzer
-(`baseAnalyzerId: prebuilt-document`, with `fieldSchema.fields`). See
+Treat each type as a single-doc-type analyzer (pick `baseAnalyzerId` from
+the table in
+[`cu-sdk-common-knowledge` § Choosing `baseAnalyzerId`](../cu-sdk-common-knowledge/SKILL.md#choosing-baseanalyzerid),
+then add `fieldSchema.fields`). Field descriptions follow the
+[two-stage pipeline rule](../cu-sdk-common-knowledge/SKILL.md#field-description-rule-the-two-stage-pipeline)
+— reference text and structure, never visual appearance. See
 [`cu-sdk-generate-analyzer`](../cu-sdk-generate-analyzer/SKILL.md) Step 2 for
-the field schema rules.
+the full field-schema walkthrough.
 
 > **Reference**:
 > [`samples/sample_create_classifier.py`](../../../samples/sample_create_classifier.py)
@@ -261,6 +265,27 @@ lowest-confidence fields across all categories:
 ========================================================================
 ```
 
+For each input document the script writes two files into `--output`:
+
+- `<doc>.json` — full `AnalysisResult` with all per-segment fields and grounding.
+- `<doc>.llm.md` — the same result rendered via the SDK's
+  [`to_llm_input`](../../../samples/sample_create_classifier.py) helper.
+  For classify-and-route, the helper expands each classified segment into
+  its own block with the **category in the YAML front matter**, separated by
+  `*****` dividers — drop it into an LLM prompt or skim it in VS Code.
+
+> **Template comment keys**: any key whose name starts with `_`
+> (e.g. `_comment`, `_optional_returnDetails`) is stripped from both the
+> outer and inner schemas before the request body is sent. Use them freely
+> as inline documentation.
+
+> **`models.completion` for inner schemas**: each inner schema (which has a
+> `fieldSchema`) needs `models.completion` set unless the resource has
+> defaults configured via
+> [`samples/sample_update_defaults.py`](../../../samples/sample_update_defaults.py).
+> `create_and_test_router.py` prints a `[WARN]` per inner schema that is
+> missing it, before any service call.
+
 ### Step 6 — Clean up (optional)
 
 By default the script leaves both the outer classifier **and** all inner
@@ -278,5 +303,6 @@ delete all of them at the end of the run.
 ## Related skills
 
 - [`cu-sdk-generate-analyzer`](../cu-sdk-generate-analyzer/SKILL.md) — single doc type.
-- [`cu-sdk-common-knowledge`](../cu-sdk-common-knowledge/SKILL.md) — service concepts, two-stage pipeline, classify-and-route rules.
+- [`cu-sdk-common-knowledge`](../cu-sdk-common-knowledge/SKILL.md) — service concepts, two-stage pipeline, `baseAnalyzerId` table, classify-and-route rules.
+- [`cu-sdk-sample-run`](../cu-sdk-sample-run/SKILL.md) — run individual SDK samples (e.g. `sample_create_classifier.py`) for deeper reference.
 - [`cu-sdk-setup`](../cu-sdk-setup/SKILL.md) — install the SDK, configure env.
