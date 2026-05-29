@@ -34,6 +34,7 @@ from . import _container_recreate_retry_policy, _health_check_retry_policy, _ser
 from . import _default_retry_policy
 from . import _endpoint_discovery_retry_policy
 from . import _gone_retry_policy
+from . import _metadata_request_retry_policy
 from . import _resource_throttle_retry_policy
 from . import _service_request_retry_policy, _service_response_retry_policy
 from . import _session_retry_policy
@@ -87,11 +88,16 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     health_check_retry_policy = _health_check_retry_policy.HealthCheckRetryPolicy(
         client.connection_policy, *args
     )
-    resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(
-        client.connection_policy.RetryOptions.MaxRetryAttemptCount,
-        client.connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds,
-        client.connection_policy.RetryOptions.MaxWaitTimeInSeconds,
-    )
+    # Use metadata throttle retry policy for PK range cache fetches (retries indefinitely),
+    # otherwise use the standard document throttle retry policy (max 9 retries by default).
+    if kwargs.get('_internal_pk_range_fetch', False):
+        resourceThrottle_retry_policy = _metadata_request_retry_policy.MetadataRequestRetryPolicy()
+    else:
+        resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(
+            client.connection_policy.RetryOptions.MaxRetryAttemptCount,
+            client.connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds,
+            client.connection_policy.RetryOptions.MaxWaitTimeInSeconds,
+        )
     defaultRetry_policy = _default_retry_policy.DefaultRetryPolicy(*args)
 
     sessionRetry_policy = _session_retry_policy._SessionRetryPolicy(
