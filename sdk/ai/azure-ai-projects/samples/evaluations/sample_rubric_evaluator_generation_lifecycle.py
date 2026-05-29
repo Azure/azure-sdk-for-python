@@ -39,6 +39,7 @@ USAGE:
 """
 
 import os
+import itertools
 import time
 import uuid
 from datetime import datetime, timezone
@@ -109,8 +110,11 @@ with (
     print(f"Generated evaluator `{evaluator.name}` version `{evaluator.version}`.")
 
     # 3. List the 5 most recent generation jobs in this project.
+    #    `limit` controls the page size; use `itertools.islice` to cap the total.
     print("Recent generation jobs:")
-    for entry in project_client.beta.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC):
+    for entry in itertools.islice(
+        project_client.beta.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5
+    ):
         entry_name = entry.inputs.evaluator_name if entry.inputs is not None else "<unknown>"
         print(f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` evaluator_name=`{entry_name}`")
 
