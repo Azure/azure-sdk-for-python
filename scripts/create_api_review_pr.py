@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
 """Create an API review PR for an Azure SDK Python package.
 
 Workflow:
@@ -32,6 +38,7 @@ access on the ``origin`` remote.
 from __future__ import annotations
 
 import argparse
+import json
 import glob
 import os
 import re
@@ -40,6 +47,7 @@ import subprocess
 import sys
 import tempfile
 from typing import Optional
+from urllib.parse import quote
 
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -153,6 +161,28 @@ def remote_branch_ref(branch: str) -> str:
     return f"{REMOTE}/{branch}"
 
 
+def resolve_target_ref(target: str) -> str:
+    """Resolve ``--target`` to a checkoutable ref.
+
+    Supports both:
+    - ``branch``: fetched from ``origin`` and returned as ``origin/branch``
+    - ``owner:branch``: fetched from ``https://github.com/{owner}/azure-sdk-for-python.git``
+      and returned as ``FETCH_HEAD``
+    """
+    if ":" not in target:
+        return remote_branch_ref(target)
+
+    owner, branch = target.split(":", 1)
+    if not owner or not branch:
+        raise SystemExit(
+            f"ERROR: invalid --target '{target}'. Expected either 'branch' or 'owner:branch'."
+        )
+
+    fork_url = f"https://github.com/{owner}/azure-sdk-for-python.git"
+    git("fetch", fork_url, branch)
+    return "FETCH_HEAD"
+
+
 # ---------------------------------------------------------------------------
 # API.md generation
 # ---------------------------------------------------------------------------
@@ -182,14 +212,15 @@ def current_branch_or_sha() -> str:
 # ---------------------------------------------------------------------------
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    doc = __doc__ or "Create an API review PR"
+    p = argparse.ArgumentParser(description=doc.splitlines()[0])
     p.add_argument("--package-name", required=True,
                    help="Package directory name under sdk/*/ (e.g. azure-ai-projects)")
     p.add_argument("--base", default=None,
                    help="Tag to use as the API.md baseline, formatted as "
                         "'{package-name}_{version}'. Omit to make the baseline empty.")
     p.add_argument("--target", default=None,
-                   help="Branch containing the API to review. Omit to use the latest origin/main.")
+                   help="Branch containing the API to review. Supports 'branch' or 'owner:branch'. Omit to use the latest origin/main.")
     return p.parse_args()
 
 
@@ -237,7 +268,7 @@ def main() -> int:
     if args.target is None:
         target_ref = MAIN_REF
     else:
-        target_ref = remote_branch_ref(args.target)
+        target_ref = resolve_target_ref(args.target)
 
     # Cache the generate + export scripts (they may not exist on older refs we check out).
     tmp_script_dir = tempfile.mkdtemp(prefix="apirev_script_")
@@ -316,9 +347,12 @@ def main() -> int:
 
         # ---- Step 5: open PR --------------------------------------------
         title = f"[API Review] {package_name} {target_version} (base {base_version})"
+        working_selector = args.target or original_branch
+        working_ref = _working_reference_markdown(working_selector)
         body_lines = [
             f"Automated API review PR for `{package_name}`.",
             "",
+            f"- **Working branch:** {working_ref}",
             f"- **Target:** `{args.target or 'origin/main'}` (version `{target_version}`)",
             f"- **Baseline:** {'tag `' + args.base + '`' if args.base else '_empty_'} "
             f"(version `{base_version}`)",
@@ -400,6 +434,134 @@ def _env_with_real_git() -> dict:
         env["PATH"] = git_dir + os.pathsep + current_path
         print(f"(prepending real git to PATH for gh: {git_dir})")
     return env
+
+
+def _find_open_pr_for_head(head_selector: str) -> Optional[dict]:
+    """Return best PR metadata for a head selector, or None when no PR exists.
+
+    ``head_selector`` supports both ``branch`` and ``owner:branch``.
+    Preference order:
+    1) Open PRs
+    2) Most recently updated PR (if only closed/merged PRs exist)
+    """
+
+    def _parse_prs(output: str) -> Optional[list]:
+        try:
+            prs = json.loads(output or "[]")
+        except json.JSONDecodeError:
+            return None
+        if not isinstance(prs, list):
+            return None
+        return prs
+
+    def _select_best(prs: list) -> Optional[dict]:
+        candidates = [
+            pr
+            for pr in prs
+            if isinstance(pr, dict)
+            and "number" in pr
+            and "url" in pr
+            and "state" in pr
+            and "updatedAt" in pr
+        ]
+        if not candidates:
+            return None
+
+        open_prs = [pr for pr in candidates if str(pr.get("state", "")).lower() == "open"]
+        pool = open_prs or candidates
+        # ISO-8601 timestamps sort correctly lexicographically.
+        pool.sort(key=lambda pr: str(pr.get("updatedAt", "")), reverse=True)
+        return pool[0]
+
+    env = _env_with_real_git()
+    selectors = [head_selector]
+    if ":" in head_selector:
+        _, branch_only = head_selector.split(":", 1)
+        if branch_only and branch_only not in selectors:
+            selectors.append(branch_only)
+
+    all_prs = []
+
+    # First attempt: native head filter for each selector form.
+    for selector in selectors:
+        direct = run(
+            [
+                "gh",
+                "pr",
+                "list",
+                "--repo",
+                "Azure/azure-sdk-for-python",
+                "--head",
+                selector,
+                "--state",
+                "all",
+                "--json",
+                "number,url,state,updatedAt",
+                "--limit",
+                "50",
+            ],
+            check=False,
+            capture=True,
+            env=env,
+        )
+        if direct.returncode == 0:
+            direct_prs = _parse_prs(direct.stdout)
+            if direct_prs:
+                all_prs.extend(direct_prs)
+
+    # Fallback: search filter for each selector form.
+    for selector in selectors:
+        search_query = f"repo:Azure/azure-sdk-for-python head:{selector}"
+        search = run(
+            [
+                "gh",
+                "pr",
+                "list",
+                "--repo",
+                "Azure/azure-sdk-for-python",
+                "--search",
+                search_query,
+                "--state",
+                "all",
+                "--json",
+                "number,url,state,updatedAt",
+                "--limit",
+                "50",
+            ],
+            check=False,
+            capture=True,
+            env=env,
+        )
+        if search.returncode == 0:
+            search_prs = _parse_prs(search.stdout)
+            if search_prs:
+                all_prs.extend(search_prs)
+
+    if not all_prs:
+        return None
+
+    # De-duplicate by PR number.
+    deduped = {}
+    for pr in all_prs:
+        if isinstance(pr, dict) and "number" in pr:
+            deduped[pr["number"]] = pr
+
+    return _select_best(list(deduped.values()))
+
+
+def _working_reference_markdown(head_selector: str) -> str:
+    """Build markdown for a working head selector, preferring an open PR link."""
+    pr = _find_open_pr_for_head(head_selector)
+    if pr:
+        return f"[PR #{pr['number']}]({pr['url']})"
+
+    if ":" in head_selector:
+        owner, branch = head_selector.split(":", 1)
+        branch_url = f"https://github.com/{owner}/azure-sdk-for-python/tree/{quote(branch, safe='')}"
+        return f"[branch `{head_selector}`]({branch_url})"
+
+    branch_url = f"https://github.com/Azure/azure-sdk-for-python/tree/{quote(head_selector, safe='')}"
+    return f"[branch `{head_selector}`]({branch_url})"
 
 
 def _generate_with_cached_script(cached_script: str, cached_export: str, package_name: str, package_dir: str) -> bytes:

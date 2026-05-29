@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
 """Generate API.md for an Azure SDK package.
 
 Usage:
@@ -17,7 +23,9 @@ import tempfile
 REPO_ROOT = os.environ.get("AZSDK_REPO_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APIVIEW_REQS = os.path.join(REPO_ROOT, "eng", "apiview_reqs.txt")
 AZURE_SDK_INDEX = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
-EXPORT_SCRIPT = os.environ.get("AZSDK_EXPORT_SCRIPT") or os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
+EXPORT_SCRIPT = os.environ.get("AZSDK_EXPORT_SCRIPT") or os.path.join(
+    REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1"
+)
 
 
 def find_package_dir(package_name: str) -> str:
@@ -26,11 +34,10 @@ def find_package_dir(package_name: str) -> str:
     matches = glob.glob(pattern)
     # Filter to directories that contain a pyproject.toml or setup.py
     valid = [
-        m for m in matches
-        if os.path.isdir(m) and (
-            os.path.exists(os.path.join(m, "pyproject.toml"))
-            or os.path.exists(os.path.join(m, "setup.py"))
-        )
+        m
+        for m in matches
+        if os.path.isdir(m)
+        and (os.path.exists(os.path.join(m, "pyproject.toml")) or os.path.exists(os.path.join(m, "setup.py")))
     ]
     if not valid:
         raise FileNotFoundError(f"Package '{package_name}' not found under sdk/*/")
@@ -44,7 +51,9 @@ def get_installed_version(package: str) -> str | None:
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pip", "show", package],
-            capture_output=True, text=True, check=True,
+            capture_output=True,
+            text=True,
+            check=True,
         )
         for line in result.stdout.splitlines():
             if line.startswith("Version:"):
@@ -58,9 +67,10 @@ def get_latest_version(package: str) -> str | None:
     """Query the Azure SDK feed for the latest version of a package."""
     try:
         result = subprocess.run(
-            [sys.executable, "-m", "pip", "index", "versions", package,
-             "--index-url", AZURE_SDK_INDEX],
-            capture_output=True, text=True, check=True,
+            [sys.executable, "-m", "pip", "index", "versions", package, "--index-url", AZURE_SDK_INDEX],
+            capture_output=True,
+            text=True,
+            check=True,
         )
         # Output format: "apiview-stub-generator (0.3.28)"
         for line in result.stdout.splitlines():
@@ -73,7 +83,11 @@ def get_latest_version(package: str) -> str | None:
 
 
 def ensure_latest_apiview_stub_generator():
-    """Ensure the latest apiview-stub-generator is installed from the Azure SDK feed."""
+    """Ensure the latest apiview-stub-generator is installed from the Azure SDK feed.
+
+    If we cannot determine the latest version (e.g. the feed query fails),
+    fail fast rather than proceeding with an unknown potentially stale version.
+    """
     installed = get_installed_version("apiview-stub-generator")
     latest = get_latest_version("apiview-stub-generator")
 
@@ -83,19 +97,31 @@ def ensure_latest_apiview_stub_generator():
         print("Already at latest version.")
         return
 
+    if not latest:
+        raise RuntimeError(
+            "Could not determine the latest apiview-stub-generator from the "
+            "Azure SDK feed. Failing to avoid using an unknown local version."
+        )
+
     # Install from apiview_reqs.txt first (gets dependencies right)
     print("Installing apiview_reqs.txt...")
     subprocess.run(
-        [sys.executable, "-m", "pip", "install", "-r", APIVIEW_REQS,
-         f"--index-url={AZURE_SDK_INDEX}"],
+        [sys.executable, "-m", "pip", "install", "-r", APIVIEW_REQS, f"--index-url={AZURE_SDK_INDEX}"],
         check=True,
     )
 
     # Override with latest version (not the pinned one)
     print("Upgrading apiview-stub-generator to latest...")
     subprocess.run(
-        [sys.executable, "-m", "pip", "install", "--upgrade", "apiview-stub-generator",
-         f"--index-url={AZURE_SDK_INDEX}"],
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "apiview-stub-generator",
+            f"--index-url={AZURE_SDK_INDEX}",
+        ],
         check=True,
     )
 
@@ -118,20 +144,34 @@ def build_wheel(package_dir: str, output_dir: str) -> str:
 def run_apistub(whl_path: str, out_path: str):
     """Run apiview-stub-generator on the wheel."""
     subprocess.run(
-        [sys.executable, "-m", "apistub",
-         "--pkg-path", whl_path,
-         "--out-path", out_path,
-         "--skip-pylint"],
+        [
+            sys.executable,
+            "-m",
+            "apistub",
+            "--pkg-path",
+            whl_path,
+            "--out-path",
+            out_path,
+            "--skip-pylint",
+        ],
         check=True,
     )
 
 
 def export_api_markdown(token_json_path: str, output_path: str):
     """Run the Export-APIViewMarkdown.ps1 script to convert token JSON to API.md."""
-    subprocess.run(
-        ["pwsh", EXPORT_SCRIPT, "-TokenJsonPath", token_json_path, "-OutputPath", output_path],
-        check=True,
-    )
+    try:
+        subprocess.run(
+            ["pwsh", EXPORT_SCRIPT, "-TokenJsonPath", token_json_path, "-OutputPath", output_path],
+            check=True,
+        )
+    except FileNotFoundError as exc:
+        raise RuntimeError(
+            "PowerShell 7 (pwsh) is required to export API markdown but was not found on PATH. "
+            "Install PowerShell from "
+            "https://learn.microsoft.com/powershell/scripting/install/installing-powershell "
+            "and restart your terminal/IDE."
+        ) from exc
 
 
 def main():
